@@ -1,0 +1,12 @@
+@import '../../../util/variables';
+
+.onboarding {
+    color: $primary-green;
+
+    &__content {
+        .icon {
+            width: 8rem !important;
+            height: 8rem !important;
+        }
+    }
+}

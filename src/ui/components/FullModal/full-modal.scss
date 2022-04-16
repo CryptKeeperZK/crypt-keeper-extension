@@ -1,0 +1,52 @@
+@import '../../../util/variables';
+
+.full-modal {
+    @extend %col-nowrap;
+    overflow-x: hidden;
+    overflow-y: auto;
+
+    @media only screen and (min-width: 358px) {
+        border: 1px solid $gray-700;
+        max-width: 32rem;
+        min-height: 24rem;
+        max-height: 36rem;
+    }
+
+    @media only screen and (max-width: 357px) {
+        margin: 0;
+        width: 100vw;
+        height: 100vh;
+    }
+
+    &__header {
+        @extend %row-nowrap;
+        align-items: center;
+        padding: 1rem;
+        background-color: $gray-900;
+        border-bottom: 1px solid $gray-800;
+
+        &__content {
+            @extend %row-nowrap;
+        }
+
+        &__action {
+        }
+    }
+
+    &__content {
+        @extend %col-nowrap;
+        overflow-y: auto;
+        flex: 1 1 auto;
+        height: 0;
+        padding: 1rem;
+    }
+
+    &__footer {
+        @extend %row-nowrap;
+        align-items: center;
+        justify-content: end;
+        border-top: 1px solid $gray-800;
+        flex: 0 0 auto;
+        padding: 1rem 2rem;
+    }
+}

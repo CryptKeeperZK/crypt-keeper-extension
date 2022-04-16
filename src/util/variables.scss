@@ -1,0 +1,146 @@
+$white: #ffffff;
+$black: #000000;
+
+$bg-black: #000403;
+$primary-blue: #2580f8;
+$primary-green: #94febf;
+
+$header-gray: rgba($black, 0.05);
+$border-gray: rgba($black, 0.1);
+$gray-950: lighten($black, 5);
+$gray-900: lighten($black, 10);
+$gray-800: lighten($black, 20);
+$gray-700: lighten($black, 30);
+$gray-600: lighten($black, 40);
+$gray-500: lighten($black, 50);
+$gray-400: lighten($black, 60);
+$gray-300: lighten($black, 70);
+$gray-200: lighten($black, 80);
+$gray-100: lighten($black, 90);
+
+$primary-text: $gray-200;
+$secondary-text: $gray-400;
+$label-text: lighten($black, 75);
+
+$error-red: #f52525;
+$success-green: #2ed272;
+$warning-orange: #ffa31a;
+
+%flex {
+    display: flex;
+}
+
+%col-nowrap {
+    @extend %flex;
+    flex-flow: column nowrap;
+}
+
+%row-nowrap {
+    @extend %flex;
+    flex-flow: row nowrap;
+}
+
+%small-font {
+    font-size: 0.8125rem;
+    line-height: 1.3125;
+}
+
+%lite-font {
+    font-size: 0.875rem;
+    line-height: 1.3125;
+}
+
+%regular-font {
+    font-size: 0.9375rem;
+    line-height: 1.3125;
+}
+
+%h1-font {
+    font-size: 2rem;
+    line-height: 1.3125;
+}
+
+%h2-font {
+    font-size: 1.5rem;
+    line-height: 1.3125;
+}
+
+%h3-font {
+    font-size: 1.17rem;
+    line-height: 1.3125;
+}
+
+%h5-font {
+    font-size: 0.83rem;
+    line-height: 1.3125;
+}
+
+%h4-font {
+    font-size: 1rem;
+    line-height: 1.3125;
+}
+
+%bold {
+    font-weight: 600;
+}
+
+%ellipsis {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+%clickable {
+    cursor: pointer;
+    transition: 200ms ease-in-out;
+
+    &:hover {
+        opacity: 0.8;
+    }
+
+    &:active {
+        opacity: 1;
+    }
+}
+
+$breakpoint-tablet: 768px;
+
+table {
+    @extend %col-nowrap;
+    width: 100%;
+    border-collapse: collapse;
+}
+
+thead {
+    @extend %bold;
+    @extend %lite-font;
+    flex: 0 0 auto;
+    background-color: $black;
+    color: rgba($white, 0.5);
+    text-transform: uppercase;
+}
+
+tr {
+    @extend %row-nowrap;
+
+    &:nth-of-type(odd) {
+        background-color: rgba($black, 0.1);
+    }
+}
+
+td {
+    align-items: flex-start;
+    flex: 1 1 auto;
+    padding: 0.75rem 1.5rem;
+}
+
+tbody {
+    flex: 1 1 auto;
+    td {
+        @extend %lite-font;
+    }
+}
+
+small {
+    color: $secondary-text;
+}
