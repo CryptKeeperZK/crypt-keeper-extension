@@ -42,7 +42,7 @@ export default function Header(): ReactElement {
                             <Jazzicon diameter={32} seed={jsNumberForAddress(account)} />
                         </Menuable>
                     ) : (
-                        <div onClick={connectMetamask}>
+                        <div title="Connect to Metamask" onClick={connectMetamask}>
                             <Icon
                                 fontAwesome={classNames({
                                     'fas fa-plug': !web3Connecting
