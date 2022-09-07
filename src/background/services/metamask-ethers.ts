@@ -1,7 +1,7 @@
 import pushMessage from "@src/util/pushMessage";
 import createMetaMaskProvider from "@dimensiondev/metamask-extension-provider";
 import { ethers } from "ethers";
-import { setAccount, setChainId, setNetwork, setWeb3Connecting } from "@src/ui/ducks/web3";
+import { setAccount, setBalance, setChainId, setNetwork, setWeb3Connecting } from "@src/ui/ducks/web3";
 import { WalletInfo } from "@src/types";
 
 declare type Ethers = typeof import("ethers");
@@ -36,7 +36,9 @@ export default class MetamaskServiceEthers {
 
       this.metamaskProvider.on("accountsChanged", async ([account]) => {
         console.log("4. Inside MetamaskServiceEthers ensure 5 accountsChanged: ", account);
+        const balance = await this.getAccountBalance(account);
         await pushMessage(setAccount(account));
+        await pushMessage(setBalance(balance));
       });
 
       this.metamaskProvider.on("chainChanged", async () => {
@@ -94,6 +96,7 @@ export default class MetamaskServiceEthers {
         const connectionDetails: WalletInfo = await this.requestConnection();
 
         await pushMessage(setAccount(connectionDetails.account));
+        await pushMessage(setBalance(connectionDetails.balance));
         await pushMessage(setNetwork(connectionDetails.networkName));
         await pushMessage(setChainId(connectionDetails.chainId));
         console.log("4. Inside MetamaskServiceEthers connectMetamask 8");
@@ -114,12 +117,11 @@ export default class MetamaskServiceEthers {
     console.log("4. Inside MetamaskServiceEthers requestAccounts 5");
     const signer = await this.ethersProvider.getSigner();
     const account = await signer.getAddress();
-    const balance = await this.ethersProvider.getBalance(account);
-    const balanceInEth = ethers.utils.formatEther(balance);
+    const balance = await this.getAccountBalance(account);
 
     console.log("4. Inside MetamaskServiceEthers requestAccounts 6 signer[] address: ", account);
     console.log("4. Inside MetamaskServiceEthers requestAccounts 6 signer[]: ", signer);
-    console.log("4. Inside MetamaskServiceEthers requestAccounts 6 signer[] balance: ", balanceInEth);
+    console.log("4. Inside MetamaskServiceEthers requestAccounts 6 signer[] balance: ", balance);
 
     const network = await this.ethersProvider.getNetwork();
 
@@ -135,9 +137,21 @@ export default class MetamaskServiceEthers {
 
     return {
       account,
-      balance: balanceInEth,
+      balance,
       networkName,
       chainId,
     };
   };
+
+  getAccountBalance = async (account: string): Promise<number | string> => {
+    const balance = await this.ethersProvider.getBalance(account);
+    const balanceInEthString = ethers.utils.formatEther(balance);
+    const balanceInEth = ethers.utils.parseEther(balanceInEthString).toNumber().toFixed(4);
+
+    return balanceInEth;
+  };
+
+  // TOOD: implemment an updateMessage
+  // updateMessages =async (params:type) => {
+  // }
 }
