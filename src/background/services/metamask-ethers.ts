@@ -3,14 +3,12 @@ import createMetaMaskProvider from "@dimensiondev/metamask-extension-provider";
 import { ethers } from "ethers";
 import { setAccount, setChainId, setNetwork, setWeb3Connecting } from "@src/ui/ducks/web3";
 import { WalletInfo } from "@src/types";
-import Web3 from 'web3'
 
 declare type Ethers = typeof import("ethers");
 
 export default class MetamaskServiceEthers {
   metamaskProvider?: any;
   ethersProvider?: any;
-  web3?: Web3 | any
 
   constructor() {
     this.ensure();
@@ -28,8 +26,7 @@ export default class MetamaskServiceEthers {
       console.log("4. Inside MetamaskServiceEthers ensure 3");
       if (!this.ethersProvider) {
         console.log("4. Inside MetamaskServiceEthers ensure 4");
-        this.web3 = new Web3(this.metamaskProvider)
-        this.ethersProvider = new ethers.providers.Web3Provider(this.web3);
+        this.ethersProvider = new ethers.providers.Web3Provider(this.metamaskProvider);
       }
 
       this.metamaskProvider.on("error", (e: any) => {
@@ -76,24 +73,9 @@ export default class MetamaskServiceEthers {
     }
 
     if (this.metamaskProvider?.selectedAddress) {
-      const signer = await this.ethersProvider.getSigner();
-      console.log("4. Inside MetamaskServiceEthers getWalletInfo 4 signer address: ", signer.address);
+      const connectionDetails: WalletInfo = await this.requestConnection();
 
-      const network = await this.ethersProvider.getNetwork();
-      console.log("4. Inside MetamaskServiceEthers getWalletInfo 5 network: ", network.name);
-
-      const networkName = network.name;
-      const chainId = network.chainId;
-
-      if (!signer) {
-        throw new Error("No accounts found");
-      }
-
-      return {
-        account: signer.address,
-        networkType: networkName,
-        chainId,
-      };
+      return connectionDetails;
     }
 
     return null;
@@ -109,27 +91,11 @@ export default class MetamaskServiceEthers {
       await this.ensure();
       console.log("4. Inside MetamaskServiceEthers connectMetamask 4");
       if (this.ethersProvider) {
-        console.log("4. Inside MetamaskServiceEthers connectMetamask 5");
+        const connectionDetails: WalletInfo = await this.requestConnection();
 
-        const signer = await this.ethersProvider.getSigner();
-        console.log("4. Inside MetamaskServiceEthers connectMetamask 6 signer address: ", signer.address);
-
-        // TODO: remove repeated code.
-        const network = await this.ethersProvider.getNetwork();
-
-        const networkName = network.name;
-        const chainId = network.chainId;
-
-        console.log("4. Inside MetamaskServiceEthers connectMetamask 7 networkName: ", networkName);
-        console.log("4. Inside MetamaskServiceEthers connectMetamask 8 chainId: ", chainId);
-
-        if (!signer) {
-          throw new Error("No accounts found");
-        }
-
-        await pushMessage(setAccount(signer.address));
-        await pushMessage(setNetwork(networkName));
-        await pushMessage(setChainId(chainId));
+        await pushMessage(setAccount(connectionDetails.account));
+        await pushMessage(setNetwork(connectionDetails.networkName));
+        await pushMessage(setChainId(connectionDetails.chainId));
         console.log("4. Inside MetamaskServiceEthers connectMetamask 8");
       }
 
@@ -139,5 +105,39 @@ export default class MetamaskServiceEthers {
       await pushMessage(setWeb3Connecting(false));
       throw e;
     }
+  };
+
+  requestConnection = async (): Promise<WalletInfo> => {
+    console.log("4. Inside MetamaskServiceEthers requestAccounts 4 eth_requestAccounts before");
+    await this.ethersProvider.send("eth_requestAccounts", []);
+
+    console.log("4. Inside MetamaskServiceEthers requestAccounts 5");
+    const signer = await this.ethersProvider.getSigner();
+    const account = await signer.getAddress();
+    const balance = await this.ethersProvider.getBalance(account);
+    const balanceInEth = ethers.utils.formatEther(balance);
+
+    console.log("4. Inside MetamaskServiceEthers requestAccounts 6 signer[] address: ", account);
+    console.log("4. Inside MetamaskServiceEthers requestAccounts 6 signer[]: ", signer);
+    console.log("4. Inside MetamaskServiceEthers requestAccounts 6 signer[] balance: ", balanceInEth);
+
+    const network = await this.ethersProvider.getNetwork();
+
+    const networkName = network.name;
+    const chainId = network.chainId;
+
+    console.log("4. Inside MetamaskServiceEthers requestAccounts 7 networkName: ", networkName);
+    console.log("4. Inside MetamaskServiceEthers requestAccounts 8 chainId: ", chainId);
+
+    if (!signer) {
+      throw new Error("No accounts found");
+    }
+
+    return {
+      account,
+      balance: balanceInEth,
+      networkName,
+      chainId,
+    };
   };
 }
