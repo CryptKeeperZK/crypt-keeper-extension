@@ -6,7 +6,8 @@ import { RLNFullProof } from '@zk-kit/protocols'
 import Handler from './controllers/handler'
 import LockService from './services/lock'
 import IdentityService from './services/identity'
-import MetamaskService from './services/metamask'
+import MetamaskServiceWeb3 from './services/metamask-web3'
+import MetamaskServiceEthers from './services/metamask-ethers';
 import ZkValidator from './services/zk-validator'
 import RequestManager from './controllers/request-manager'
 import SemaphoreService from './services/protocols/semaphore'
@@ -16,10 +17,14 @@ import ApprovalService from './services/approval'
 import ZkIdentityWrapper from './identity-decorater'
 import identityFactory from './identity-factory'
 import BrowserUtils from './controllers/browser-utils'
+import { ethers } from 'ethers'
+
+declare type Ethers = typeof import("ethers");
 
 export default class ZkKepperController extends Handler {
     private identityService: IdentityService
-    private metamaskService: MetamaskService
+    private metamaskServiceWeb3: MetamaskServiceWeb3
+    private metamaskServiceEthers: MetamaskServiceEthers
     private zkValidator: ZkValidator
     private requestManager: RequestManager
     private semaphoreService: SemaphoreService
@@ -28,12 +33,14 @@ export default class ZkKepperController extends Handler {
     constructor() {
         super()
         this.identityService = new IdentityService()
-        this.metamaskService = new MetamaskService()
+        this.metamaskServiceWeb3 = new MetamaskServiceWeb3()
+        this.metamaskServiceEthers = new MetamaskServiceEthers()
         this.zkValidator = new ZkValidator()
         this.requestManager = new RequestManager()
         this.semaphoreService = new SemaphoreService()
         this.rlnService = new RLNService()
         this.approvalService = new ApprovalService()
+        console.log("Inside ZkKepperController");
     }
 
     initialize = async (): Promise<ZkKepperController> => {
@@ -41,7 +48,7 @@ export default class ZkKepperController extends Handler {
         this.add(
             RPCAction.UNLOCK,
             LockService.unlock,
-            this.metamaskService.ensure,
+            this.metamaskServiceEthers.ensure,
             this.identityService.unlock,
             this.approvalService.unlock,
             LockService.onUnlocked
@@ -67,9 +74,10 @@ export default class ZkKepperController extends Handler {
         this.add(RPCAction.GET_PENDING_REQUESTS, LockService.ensure, this.requestManager.getRequests)
         this.add(RPCAction.FINALIZE_REQUEST, LockService.ensure, this.requestManager.finalizeRequest)
 
+        console.log("3. Inside ZkKepperController() class");
         // web3
-        this.add(RPCAction.CONNECT_METAMASK, LockService.ensure, this.metamaskService.connectMetamask)
-        this.add(RPCAction.GET_WALLET_INFO, this.metamaskService.getWalletInfo)
+        this.add(RPCAction.CONNECT_METAMASK, LockService.ensure, this.metamaskServiceEthers.connectMetamask)
+        this.add(RPCAction.GET_WALLET_INFO, this.metamaskServiceEthers.getWalletInfo)
 
         // lock
         this.add(RPCAction.SETUP_PASSWORD, (payload: string) => LockService.setupPassword(payload))
@@ -78,7 +86,7 @@ export default class ZkKepperController extends Handler {
         this.add(
             RPCAction.CREATE_IDENTITY,
             LockService.ensure,
-            this.metamaskService.ensure,
+            this.metamaskServiceEthers.ensure,
             async (payload: NewIdentityRequest) => {
                 try {
                     const { strategy, options } = payload
@@ -91,9 +99,9 @@ export default class ZkKepperController extends Handler {
                     }
 
                     if (strategy === 'interrep') {
-                        const web3: Web3 = await this.metamaskService.getWeb3()
-                        const walletInfo: WalletInfo | null = await this.metamaskService.getWalletInfo()
-                        config.web3 = web3
+                        const ethers: Ethers = await this.metamaskServiceEthers.getWeb3()
+                        const walletInfo: WalletInfo | null = await this.metamaskServiceEthers.getWalletInfo()
+                        config.web3 = ethers
                         config.walletInfo = walletInfo
                     }
 
@@ -217,7 +225,7 @@ export default class ZkKepperController extends Handler {
 
         this.add(RPCAction.CLOSE_POPUP, async () => BrowserUtils.closePopup())
 
-        this.add(RPCAction.CREATE_IDENTITY_REQ, LockService.ensure, this.metamaskService.ensure, async () => {
+        this.add(RPCAction.CREATE_IDENTITY_REQ, LockService.ensure, this.metamaskServiceEthers.ensure, async () => {
             const res: any = await this.requestManager.newRequest(PendingRequestType.CREATE_IDENTITY, { origin })
 
             const { provider, options } = res
