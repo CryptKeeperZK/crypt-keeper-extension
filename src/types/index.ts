@@ -9,8 +9,15 @@ export type Request = {
 
 export type WalletInfo = {
     account: string
-    networkType: string
+    balance: number | string
+    networkName: string // TODO: use `NetworkDetails` instead
     chainId: number
+}  
+
+export type NetworkDetails = {
+    chainId: number
+    ensAddress: string
+    name: string
 }
 
 export type CreateInterrepIdentityMetadata = {
