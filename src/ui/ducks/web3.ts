@@ -5,6 +5,7 @@ import { Dispatch } from 'redux'
 import postMessage from '@src/util/postMessage'
 import RPCAction from '@src/util/constants'
 import ChainsJSON from '@src/static/chains.json'
+import { WalletInfo } from '@src/types'
 
 type ChainInfo = {
     chainId: number
@@ -35,6 +36,7 @@ enum ActionTypes {
     SET_LOADING = 'web3/setLoading',
     SET_CONNECTING = 'web3/setConnecting',
     SET_ACCOUNT = 'web3/setAccount',
+    SET_BALANCE = 'web3/setBalance',
     SET_NETWORK = 'web3/setNetwork',
     SET_CHAIN_ID = 'web3/setChainId'
 }
@@ -48,7 +50,8 @@ type Action<payload> = {
 
 type State = {
     account: string
-    networkType: string
+    networkName: string
+    balance: number | string
     chainId: number
     loading: boolean
     connecting: boolean
@@ -56,7 +59,8 @@ type State = {
 
 const initialState: State = {
     account: '',
-    networkType: '',
+    balance: '',
+    networkName: '',
     chainId: -1,
     loading: false,
     connecting: false
@@ -72,6 +76,11 @@ export const setAccount = (account: string): Action<string> => ({
     payload: account
 })
 
+export const setBalance = (balance: number | string): Action<number | string> => ({
+    type: ActionTypes.SET_BALANCE,
+    payload: balance
+})
+
 export const setNetwork = (network: string): Action<string> => ({
     type: ActionTypes.SET_NETWORK,
     payload: network
@@ -83,11 +92,12 @@ export const setChainId = (chainId: number): Action<number> => ({
 })
 
 export const fetchWalletInfo = () => async (dispatch: Dispatch) => {
-    const info = await postMessage({ method: RPCAction.GET_WALLET_INFO })
+    const info: WalletInfo = await postMessage({ method: RPCAction.GET_WALLET_INFO })
 
     if (info) {
         dispatch(setAccount(info.account))
-        dispatch(setNetwork(info.networkType))
+        dispatch(setBalance(info.balance))
+        dispatch(setNetwork(info.networkName))
         dispatch(setChainId(info.chainId))
     }
 }
@@ -100,10 +110,15 @@ export default function web3(state = initialState, action: Action<any>): State {
                 ...state,
                 account: action.payload
             }
+        case ActionTypes.SET_BALANCE:
+            return {
+                ...state,
+                balance: action.payload
+            }
         case ActionTypes.SET_NETWORK:
             return {
                 ...state,
-                networkType: action.payload
+                networkName: action.payload
             }
         case ActionTypes.SET_CHAIN_ID:
             return {
@@ -123,6 +138,8 @@ export default function web3(state = initialState, action: Action<any>): State {
 export const useWeb3Connecting = () => useSelector((state: AppRootState) => state.web3.connecting, deepEqual)
 
 export const useAccount = () => useSelector((state: AppRootState) => state.web3.account, deepEqual)
+
+export const useBalance = () => useSelector((state: AppRootState) => state.web3.balance, deepEqual)
 
 export const useNetwork = (): ChainInfo | null => useSelector((state: AppRootState) => {
         const chainInfo = chainsMap[state.web3.chainId]
