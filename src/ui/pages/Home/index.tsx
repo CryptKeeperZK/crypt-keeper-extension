@@ -2,7 +2,7 @@ import React, { ReactElement, useCallback, useEffect, useRef, useState } from 'r
 import { useDispatch } from 'react-redux'
 import postMessage from '@src/util/postMessage'
 import RPCAction from '@src/util/constants'
-import { fetchWalletInfo, useNetwork } from '@src/ui/ducks/web3'
+import { fetchWalletInfo, useAccount, useBalance, useNetwork } from '@src/ui/ducks/web3'
 import Icon from '@src/ui/components/Icon'
 import {
     fetchIdentities,
@@ -14,7 +14,7 @@ import Header from '@src/ui/components/Header'
 import classNames from 'classnames'
 import { browser } from 'webextension-polyfill-ts'
 import './home.scss'
-import {ellipsify}  from '@src/util/account'
+import {ellipsify, sliceAddress}  from '@src/util/account'
 import CreateIdentityModal from '@src/ui/components/CreateIdentityModal'
 import ConnectionModal from '@src/ui/components/ConnectionModal'
 
@@ -53,8 +53,10 @@ export default function Home(): ReactElement {
     )
 }
 
-var HomeInfo = function(): ReactElement {
+const HomeInfo = function(): ReactElement {
     const network = useNetwork()
+    const balance = useBalance()
+    const account = useAccount()
     const [connected, setConnected] = useState(false)
     const [showingModal, showModal] = useState(false)
 
@@ -103,10 +105,11 @@ var HomeInfo = function(): ReactElement {
                     <div className="text-xs home__connection-button__text">
                         {connected ? 'Connected' : 'Not Connected'}
                     </div>
+                    {account && <div className="text-sm home__account-button">{sliceAddress(account)}</div>}
                 </div>
                 <div>
                     <div className="text-3xl font-semibold">
-                        {network ? `0.0000 ${network.nativeCurrency.symbol}` : '-'}
+                        {network ? `${balance} ${network.nativeCurrency.symbol}` : '-'}
                     </div>
                 </div>
             </div>

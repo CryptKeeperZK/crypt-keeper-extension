@@ -33,6 +33,15 @@
         }
     }
 
+    &__account-button {
+        padding: 0.5rem 0.75rem;
+        background-color: $bg-black;
+        color: $gray-300;
+        font-weight: 600;
+        margin-right: 0.5rem;
+        justify-content: center;
+    }
+
     &__connection-button {
         @extend %row-nowrap;
         align-items: center;

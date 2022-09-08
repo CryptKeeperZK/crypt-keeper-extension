@@ -19,7 +19,7 @@ export default function Header(): ReactElement {
         await postMessage({ method: RPCAction.CONNECT_METAMASK })
     }, [])
 
-    const disconnect = useCallback(async () => {
+    const lock = useCallback(async () => {
         await postMessage({ method: RPCAction.LOCK })
     }, [])
 
@@ -34,15 +34,15 @@ export default function Header(): ReactElement {
                             className="flex user-menu"
                             items={[
                                 {
-                                    label: 'Logout',
-                                    onClick: disconnect
+                                    label: 'Lock',
+                                    onClick: lock
                                 }
                             ]}
                         >
                             <Jazzicon diameter={32} seed={jsNumberForAddress(account)} />
                         </Menuable>
                     ) : (
-                        <div onClick={connectMetamask}>
+                        <div title="Connect to Metamask" onClick={connectMetamask}>
                             <Icon
                                 fontAwesome={classNames({
                                     'fas fa-plug': !web3Connecting
