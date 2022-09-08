@@ -2,7 +2,7 @@ import pushMessage from "@src/util/pushMessage";
 import createMetaMaskProvider from "@dimensiondev/metamask-extension-provider";
 import { ethers } from "ethers";
 import { setAccount, setBalance, setChainId, setNetwork, setWeb3Connecting } from "@src/ui/ducks/web3";
-import { WalletInfo } from "@src/types";
+import { NetworkDetails, WalletInfo } from "@src/types";
 
 declare type Ethers = typeof import("ethers");
 
@@ -11,7 +11,36 @@ export default class MetamaskServiceEthers {
   ethersProvider?: any;
 
   constructor() {
-    this.ensure();
+    this.ensure()
+      .then(() => {
+        this.metamaskProvider.on("error", (e: any) => {
+          console.log("4. Inside MetamaskServiceEthers ensure 5 error: ", e);
+          throw e;
+        });
+
+        console.log("4. Inside MetamaskServiceEthers ensure 5 accountsChanged before");
+        this.metamaskProvider.on("accountsChanged", async (account: string[]) => {
+          console.log("4. Inside MetamaskServiceEthers ensure 5 accountsChanged: ", account);
+          const balance = await this.getAccountBalance(account[0]);
+          await pushMessage(setAccount(account[0]));
+          await pushMessage(setBalance(balance));
+        });
+
+        this.metamaskProvider.on("chainChanged", async () => {
+          console.log("4. Inside MetamaskServiceEthers ensure 6 chainChanged");
+
+          const networkDetails: NetworkDetails = await this.getNetworkDetails();
+          const networkName = networkDetails.name;
+          const chainId = networkDetails.chainId;
+
+          console.log("4. Inside MetamaskServiceEthers ensure 7");
+          if (networkName) await pushMessage(setNetwork(networkName));
+          if (chainId) await pushMessage(setChainId(chainId));
+        });
+      })
+      .catch(e => {
+        throw new Error(e);
+      });
   }
 
   ensure = async (payload: any = null) => {
@@ -26,32 +55,8 @@ export default class MetamaskServiceEthers {
       console.log("4. Inside MetamaskServiceEthers ensure 3");
       if (!this.ethersProvider) {
         console.log("4. Inside MetamaskServiceEthers ensure 4");
-        this.ethersProvider = new ethers.providers.Web3Provider(this.metamaskProvider);
+        this.ethersProvider = new ethers.providers.Web3Provider(this.metamaskProvider, "any");
       }
-
-      this.metamaskProvider.on("error", (e: any) => {
-        console.log("4. Inside MetamaskServiceEthers ensure 5 error: ", e);
-        throw e;
-      });
-
-      this.metamaskProvider.on("accountsChanged", async ([account]) => {
-        console.log("4. Inside MetamaskServiceEthers ensure 5 accountsChanged: ", account);
-        const balance = await this.getAccountBalance(account);
-        await pushMessage(setAccount(account));
-        await pushMessage(setBalance(balance));
-      });
-
-      this.metamaskProvider.on("chainChanged", async () => {
-        console.log("4. Inside MetamaskServiceEthers ensure 6 chainChanged");
-        const network = await this.ethersProvider?.getNetwork();
-
-        const networkName = network.name;
-        const chainId = network.chainId;
-
-        console.log("4. Inside MetamaskServiceEthers ensure 7");
-        if (networkName) await pushMessage(setNetwork(networkName));
-        if (chainId) await pushMessage(setChainId(chainId));
-      });
     }
 
     console.log("4. Inside MetamaskServiceEthers ensure8");
@@ -75,34 +80,62 @@ export default class MetamaskServiceEthers {
     }
 
     if (this.metamaskProvider?.selectedAddress) {
-      const connectionDetails: WalletInfo = await this.requestConnection();
+      const connectionDetails: WalletInfo = await this._requestConnection();
 
-      return connectionDetails;
+      return {
+        account: connectionDetails.account,
+        balance: connectionDetails.balance,
+        networkName: connectionDetails.networkName,
+        chainId: connectionDetails.chainId,
+      };
     }
 
     return null;
   };
 
-  connectMetamask = async () => {
+  getAccountBalance = async (account: string): Promise<number | string> => {
+    const balance = await this.ethersProvider.getBalance(account);
+    const balanceInEthString = ethers.utils.formatEther(balance);
+    const balanceInEth = Number(balanceInEthString).toFixed(4);
+
+    console.log("4. Inside MetamaskServiceEthers requestAccounts 7 balanceInEthString: ", balanceInEthString);
+    console.log("4. Inside MetamaskServiceEthers requestAccounts 7 balanceInEth: ", balanceInEth);
+
+    return balanceInEth;
+  };
+
+  getNetworkDetails = async (): Promise<NetworkDetails> => {
+    const network = await this.ethersProvider.getNetwork();
+
+    const chainId = network.chainId;
+    const ensAddress = network.ensAddress;
+    const name = network.name;
+
+    return {
+      chainId,
+      ensAddress,
+      name,
+    };
+  };
+
+  connectMetamask = async (account: string | null = null): Promise<WalletInfo> => {
+    let connectionDetails: WalletInfo;
     console.log("4. Inside MetamaskServiceEthers connectMetamask 1");
     await pushMessage(setWeb3Connecting(true));
     console.log("4. Inside MetamaskServiceEthers connectMetamask 2");
 
     try {
       console.log("4. Inside MetamaskServiceEthers connectMetamask 3");
-      await this.ensure();
-      console.log("4. Inside MetamaskServiceEthers connectMetamask 4");
-      if (this.ethersProvider) {
-        const connectionDetails: WalletInfo = await this.requestConnection();
 
-        await pushMessage(setAccount(connectionDetails.account));
-        await pushMessage(setBalance(connectionDetails.balance));
-        await pushMessage(setNetwork(connectionDetails.networkName));
-        await pushMessage(setChainId(connectionDetails.chainId));
-        console.log("4. Inside MetamaskServiceEthers connectMetamask 8");
-      }
+      connectionDetails = await this._requestConnection();
 
+      await pushMessage(setAccount(connectionDetails.account));
+      await pushMessage(setBalance(connectionDetails.balance));
+      await pushMessage(setNetwork(connectionDetails.networkName));
+      await pushMessage(setChainId(connectionDetails.chainId));
       await pushMessage(setWeb3Connecting(false));
+      console.log("4. Inside MetamaskServiceEthers connectMetamask 8");
+      return connectionDetails;
     } catch (e) {
       console.log(`4. Inside MetamaskServiceEthers connectMetamask ERROR ${e}`);
       await pushMessage(setWeb3Connecting(false));
@@ -110,45 +143,42 @@ export default class MetamaskServiceEthers {
     }
   };
 
-  requestConnection = async (): Promise<WalletInfo> => {
-    console.log("4. Inside MetamaskServiceEthers requestAccounts 4 eth_requestAccounts before");
-    await this.ethersProvider.send("eth_requestAccounts", []);
+  private _requestConnection = async (): Promise<WalletInfo> => {
+    await this.ensure();
 
-    console.log("4. Inside MetamaskServiceEthers requestAccounts 5");
-    const signer = await this.ethersProvider.getSigner();
-    const account = await signer.getAddress();
-    const balance = await this.getAccountBalance(account);
+    if (this.ethersProvider) {
+      console.log("4. Inside MetamaskServiceEthers requestAccounts 4 eth_requestAccounts before");
+      await this.ethersProvider.send("eth_requestAccounts", []);
+      console.log("4. Inside MetamaskServiceEthers requestAccounts 5 eth_requestAccounts after");
 
-    console.log("4. Inside MetamaskServiceEthers requestAccounts 6 signer[] address: ", account);
-    console.log("4. Inside MetamaskServiceEthers requestAccounts 6 signer[]: ", signer);
-    console.log("4. Inside MetamaskServiceEthers requestAccounts 6 signer[] balance: ", balance);
+      const signer = await this.ethersProvider.getSigner();
+      const account = await signer.getAddress();
+      const balance = await this.getAccountBalance(account);
 
-    const network = await this.ethersProvider.getNetwork();
+      console.log("4. Inside MetamaskServiceEthers requestAccounts 6 signer[] address: ", account);
+      console.log("4. Inside MetamaskServiceEthers requestAccounts 6 signer[]: ", signer);
+      console.log("4. Inside MetamaskServiceEthers requestAccounts 6 signer[] balance: ", balance);
 
-    const networkName = network.name;
-    const chainId = network.chainId;
+      const networkDetails: NetworkDetails = await this.getNetworkDetails();
+      const networkName = networkDetails.name;
+      const chainId = networkDetails.chainId;
 
-    console.log("4. Inside MetamaskServiceEthers requestAccounts 7 networkName: ", networkName);
-    console.log("4. Inside MetamaskServiceEthers requestAccounts 8 chainId: ", chainId);
+      console.log("4. Inside MetamaskServiceEthers requestAccounts 7 networkName: ", networkName);
+      console.log("4. Inside MetamaskServiceEthers requestAccounts 8 chainId: ", chainId);
 
-    if (!signer) {
-      throw new Error("No accounts found");
+      if (!signer) {
+        throw new Error("No accounts found");
+      }
+
+      return {
+        account,
+        balance,
+        networkName,
+        chainId,
+      };
+    } else {
+      throw new Error("this.ethersProvider is not defined yet!");
     }
-
-    return {
-      account,
-      balance,
-      networkName,
-      chainId,
-    };
-  };
-
-  getAccountBalance = async (account: string): Promise<number | string> => {
-    const balance = await this.ethersProvider.getBalance(account);
-    const balanceInEthString = ethers.utils.formatEther(balance);
-    const balanceInEth = ethers.utils.parseEther(balanceInEthString).toNumber().toFixed(4);
-
-    return balanceInEth;
   };
 
   // TOOD: implemment an updateMessage
