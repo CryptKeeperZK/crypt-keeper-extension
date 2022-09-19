@@ -170,6 +170,7 @@ var IdentityList = function(): ReactElement {
     const identities = useIdentities()
     const selected = useSelectedIdentity()
     const dispatch = useDispatch()
+    const account = useAccount();
     const selectIdentity = useCallback(async (identityCommitment: string) => {
         dispatch(setActiveIdentity(identityCommitment))
     }, [])
@@ -203,13 +204,19 @@ var IdentityList = function(): ReactElement {
                     <Icon className="identity-row__menu-icon" fontAwesome="fas fa-ellipsis-h" />
                 </div>
             ))}
-            <div
-                className="create-identity-row flex flex-row items-center justify-center p-4 cursor-pointer text-gray-600"
+            {account ? <div
+                className="create-identity-row__active flex flex-row items-center justify-center p-4 cursor-pointer text-gray-600"
                 onClick={() => showModal(true)}
             >
                 <Icon fontAwesome="fas fa-plus" size={1} className="mr-2" />
                 <div>Add Identity</div>
-            </div>
+            </div> : <div
+                className="create-identity-row__not-active flex flex-row items-center justify-center p-4 cursor-pointer text-gray-600"
+            >
+                <Icon fontAwesome="fas fa-plus" size={1} className="mr-2" />
+                <div>Add Identity</div>
+            </div>}
+            
         </>
     )
 }

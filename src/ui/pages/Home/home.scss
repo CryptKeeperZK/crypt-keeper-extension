@@ -146,11 +146,19 @@
 }
 
 .create-identity-row {
-    &:hover {
-        color: $gray-300;
+    &__active {
+        &:hover {
+            color: $gray-300;
+    
+            .icon {
+                color: $primary-green;
+            }
+        }
+    }
 
-        .icon {
-            color: $primary-green;
+    &__not-active {
+        &:disabled {
+            color: $gray-600;
         }
     }
 }
