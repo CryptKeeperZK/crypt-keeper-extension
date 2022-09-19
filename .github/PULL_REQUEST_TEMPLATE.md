@@ -57,3 +57,5 @@ How should reviewers and QA manually test your changes? For instance:
 
 - [ ] Manual testing complete & passed
 - [ ] "Extension QA Board" label has been applied
+
+> PR template source from [github.com/MetaMask](https://github.com/MetaMask)
