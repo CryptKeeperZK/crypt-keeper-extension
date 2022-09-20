@@ -17,6 +17,7 @@ app.initialize().then(async () => {
     }
   });
 
+  // TODO: change to BrowserUtils 
   browser.runtime.onInstalled.addListener(async ({ reason }) => {
     console.log("Inside browser.runtime.connect().onInstalled");
     if (reason === "install") {
