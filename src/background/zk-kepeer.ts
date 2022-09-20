@@ -6,7 +6,6 @@ import { RLNFullProof } from '@zk-kit/protocols'
 import Handler from './controllers/handler'
 import LockService from './services/lock'
 import IdentityService from './services/identity'
-import MetamaskServiceWeb3 from './services/metamask-web3'
 import MetamaskServiceEthers from './services/metamask-ethers';
 import ZkValidator from './services/zk-validator'
 import RequestManager from './controllers/request-manager'
@@ -23,7 +22,6 @@ declare type Ethers = typeof import("ethers");
 
 export default class ZkKepperController extends Handler {
     private identityService: IdentityService
-    private metamaskServiceWeb3: MetamaskServiceWeb3
     private metamaskServiceEthers: MetamaskServiceEthers
     private zkValidator: ZkValidator
     private requestManager: RequestManager
@@ -33,7 +31,6 @@ export default class ZkKepperController extends Handler {
     constructor() {
         super()
         this.identityService = new IdentityService()
-        this.metamaskServiceWeb3 = new MetamaskServiceWeb3()
         this.metamaskServiceEthers = new MetamaskServiceEthers()
         this.zkValidator = new ZkValidator()
         this.requestManager = new RequestManager()

@@ -3,6 +3,7 @@ import pushMessage from '@src/util/pushMessage'
 import { setStatus } from '@src/ui/ducks/app'
 import { browser } from 'webextension-polyfill-ts'
 import SimpleStorage from './simple-storage'
+import browserUtils from '../controllers/browser-utils'
 
 const passwordKey: string = '@password@'
 
@@ -92,9 +93,11 @@ class LockService extends SimpleStorage {
         const status = await this.getStatus()
         await pushMessage(setStatus(status))
         const tabs = await browser.tabs.query({ active: true })
-        for (const tab of tabs) {
-            await browser.tabs.sendMessage(tab.id as number, setStatus(status))
-        }
+        browserUtils.activatedTabs(async () => {
+            for (const tab of tabs) {
+                await browserUtils.sendMessageTabs(tab.id as number, setStatus(status));
+            } 
+        });
         return true
     }
 

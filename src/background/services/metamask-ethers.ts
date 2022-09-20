@@ -13,11 +13,6 @@ export default class MetamaskServiceEthers {
   constructor() {
     this.ensure()
       .then(() => {
-        this.metamaskProvider.on("error", (e: any) => {
-          console.log("4. Inside MetamaskServiceEthers ensure 5 error: ", e);
-          throw e;
-        });
-
         console.log("4. Inside MetamaskServiceEthers ensure 5 accountsChanged before");
         this.metamaskProvider.on("accountsChanged", async (account: string[]) => {
           console.log("4. Inside MetamaskServiceEthers ensure 5 accountsChanged: ", account);
@@ -36,6 +31,19 @@ export default class MetamaskServiceEthers {
           console.log("4. Inside MetamaskServiceEthers ensure 7");
           if (networkName) await pushMessage(setNetwork(networkName));
           if (chainId) await pushMessage(setChainId(chainId));
+        });
+
+        this.metamaskProvider.on("error", (e: any) => {
+          console.log("4. Inside MetamaskServiceEthers ensure 5 error: ", e);
+          throw e;
+        });
+
+        this.metamaskProvider.on("connect", () => {
+          console.log("4. Inside MetamaskServiceEthers ensure connect");
+        });
+        
+        this.metamaskProvider.on("disconnect", () => {
+          console.log("4. Inside MetamaskServiceEthers ensure disconnect");
         });
       })
       .catch(e => {
@@ -148,7 +156,13 @@ export default class MetamaskServiceEthers {
 
     if (this.ethersProvider) {
       console.log("4. Inside MetamaskServiceEthers requestAccounts 4 eth_requestAccounts before");
-      await this.ethersProvider.send("eth_requestAccounts", []);
+      
+      try {
+        await this.ethersProvider.send("eth_requestAccounts", []);
+      } catch (error) {
+        throw new Error("Errro in requesting accounts");
+      }
+
       console.log("4. Inside MetamaskServiceEthers requestAccounts 5 eth_requestAccounts after");
 
       const signer = await this.ethersProvider.getSigner();
