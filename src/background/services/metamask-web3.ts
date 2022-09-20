@@ -71,6 +71,7 @@ export default class MetamaskServiceWeb3 {
             }
 
             return {
+                signer: null,
                 account: accounts[0],
                 balance,
                 networkName,

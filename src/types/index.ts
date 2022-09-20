@@ -8,6 +8,7 @@ export type Request = {
 }
 
 export type WalletInfo = {
+    signer: any
     account: string
     balance: number | string
     networkName: string // TODO: use `NetworkDetails` instead

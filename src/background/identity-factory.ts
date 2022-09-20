@@ -4,19 +4,27 @@ import createIdentity from '@interep/identity'
 import checkParameter from '@src/util/checkParameter'
 import ZkIdentityDecorater from './identity-decorater'
 
+declare type Ethers = typeof import("ethers");
+
 const createInterrepIdentity = async (config: any): Promise<ZkIdentityDecorater> => {
     checkParameter(config, 'config', 'object')
 
-    const { web2Provider, nonce = 0, name, web3, walletInfo } = config
+    const { web2Provider, nonce = 0, name, ethers, walletInfo } = config
 
     checkParameter(name, 'name', 'string')
     checkParameter(web2Provider, 'provider', 'string')
-    checkParameter(web3, 'web3', 'object')
+    console.log("createInterrepIdentity: 1")
+    checkParameter(ethers, 'web3', 'object')
+    console.log("createInterrepIdentity: 2")
     checkParameter(walletInfo, 'walletInfo', 'object')
 
-    const sign = (message: string) => web3.eth.personal.sign(message, walletInfo?.account)
+    console.log("createInterrepIdentity: 3")
 
+    const sign = async (message: string) => await walletInfo.signer.signMessage(message);
+
+    console.log("createInterrepIdentity: 4")
     const identity: ZkIdentity = await createIdentity(sign, web2Provider, nonce)
+    console.log("createInterrepIdentity: 5")
     const metadata: IdentityMetadata = {
         account: walletInfo.account,
         name,

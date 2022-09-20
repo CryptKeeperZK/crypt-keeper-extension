@@ -78,9 +78,6 @@ export default class MetamaskServiceEthers {
   };
 
   getWalletInfo = async (): Promise<WalletInfo | null> => {
-    console.log("4. Inside MetamaskServiceEthers getWalletInfo 1");
-    await this.ensure();
-
     console.log("4. Inside MetamaskServiceEthers getWalletInfo 2");
     if (!this.ethersProvider) {
       console.log("4. Inside MetamaskServiceEthers getWalletInfo 3");
@@ -91,6 +88,7 @@ export default class MetamaskServiceEthers {
       const connectionDetails: WalletInfo = await this._requestConnection();
 
       return {
+        signer: connectionDetails.signer,
         account: connectionDetails.account,
         balance: connectionDetails.balance,
         networkName: connectionDetails.networkName,
@@ -185,6 +183,7 @@ export default class MetamaskServiceEthers {
       }
 
       return {
+        signer,
         account,
         balance,
         networkName,

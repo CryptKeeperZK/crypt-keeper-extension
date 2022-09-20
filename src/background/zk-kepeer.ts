@@ -96,13 +96,17 @@ export default class ZkKepperController extends Handler {
                     }
 
                     if (strategy === 'interrep') {
+                        console.log("CREATE_IDENTITY: 1")
                         const ethers: Ethers = await this.metamaskServiceEthers.getWeb3()
+                        console.log("CREATE_IDENTITY: 2")
                         const walletInfo: WalletInfo | null = await this.metamaskServiceEthers.getWalletInfo()
-                        config.web3 = ethers
+                        config.ethers = ethers
                         config.walletInfo = walletInfo
+                        console.log("CREATE_IDENTITY: 3")
                     }
 
                     const identity: ZkIdentityWrapper | undefined = await identityFactory(strategy, config)
+                    console.log("CREATE_IDENTITY: 4")
 
                     if (!identity) {
                         throw new Error('Identity not created, make sure to check strategy')
@@ -112,6 +116,7 @@ export default class ZkKepperController extends Handler {
 
                     return true
                 } catch (error: any) {
+                    console.log("CREATE_IDENTITY: Error")
                     throw new Error(error.message)
                 }
             }
