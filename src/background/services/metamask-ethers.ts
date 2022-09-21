@@ -2,7 +2,7 @@ import pushMessage from "@src/util/pushMessage";
 import createMetaMaskProvider from "@dimensiondev/metamask-extension-provider";
 import { ethers } from "ethers";
 import { setAccount, setBalance, setChainId, setNetwork, setWeb3Connecting } from "@src/ui/ducks/web3";
-import { NetworkDetails, WalletInfo } from "@src/types";
+import { NetworkDetails, WalletInfo, WalletInfoBackgound } from "@src/types";
 
 declare type Ethers = typeof import("ethers");
 
@@ -77,7 +77,7 @@ export default class MetamaskServiceEthers {
     return this.ethersProvider;
   };
 
-  getWalletInfo = async (): Promise<WalletInfo | null> => {
+  getWalletInfo = async (isBackgound: boolean = false): Promise<WalletInfoBackgound | WalletInfo | null> => {
     console.log("4. Inside MetamaskServiceEthers getWalletInfo 2");
     if (!this.ethersProvider) {
       console.log("4. Inside MetamaskServiceEthers getWalletInfo 3");
@@ -85,16 +85,21 @@ export default class MetamaskServiceEthers {
     }
 
     if (this.metamaskProvider?.selectedAddress) {
-      const connectionDetails: WalletInfo = await this._requestConnection();
+      const connectionDetailsBackground: WalletInfoBackgound = await this._requestConnection();
 
-      return {
-        signer: connectionDetails.signer,
-        account: connectionDetails.account,
-        balance: connectionDetails.balance,
-        networkName: connectionDetails.networkName,
-        chainId: connectionDetails.chainId,
-      };
-    }
+      if(isBackgound) {
+        console.log("4. Inside MetamaskServiceEthers getWalletInfo 4 bacground", connectionDetailsBackground);
+        return connectionDetailsBackground;
+      } else {
+        console.log("4. Inside MetamaskServiceEthers getWalletInfo 4 frontend", connectionDetailsBackground);
+        return {
+          account: connectionDetailsBackground.account,
+          balance: connectionDetailsBackground.balance,
+          networkName: connectionDetailsBackground.networkName,
+          chainId: connectionDetailsBackground.chainId
+        }
+      }
+   }
 
     return null;
   };
@@ -149,14 +154,15 @@ export default class MetamaskServiceEthers {
     }
   };
 
-  private _requestConnection = async (): Promise<WalletInfo> => {
+  private _requestConnection = async (): Promise<WalletInfoBackgound> => {
     await this.ensure();
 
     if (this.ethersProvider) {
       console.log("4. Inside MetamaskServiceEthers requestAccounts 4 eth_requestAccounts before");
       
       try {
-        await this.ethersProvider.send("eth_requestAccounts", []);
+        const res = await this.ethersProvider.send("eth_requestAccounts", []);
+        console.log("4. Inside MetamaskServiceEthers requestAccounts 4 eth_requestAccounts response: ", res);
       } catch (error) {
         throw new Error("Errro in requesting accounts");
       }

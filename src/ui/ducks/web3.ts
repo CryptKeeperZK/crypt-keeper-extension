@@ -93,14 +93,14 @@ export const setChainId = (chainId: number): Action<number> => ({
 
 export const fetchWalletInfo = () => async (dispatch: Dispatch) => {
     // TODO: getWalletInfo seem to be buggy
-    const info: WalletInfo = await postMessage({ method: RPCAction.CONNECT_METAMASK })
+    const info: WalletInfo = await postMessage({ method: RPCAction.GET_WALLET_INFO })
 
-    // if (info) {
-    //     dispatch(setAccount(info.account))
-    //     dispatch(setBalance(info.balance))
-    //     dispatch(setNetwork(info.networkName))
-    //     dispatch(setChainId(info.chainId))
-    // }
+    if (info) {
+        dispatch(setAccount(info.account))
+        dispatch(setBalance(info.balance))
+        dispatch(setNetwork(info.networkName))
+        dispatch(setChainId(info.chainId))
+    }
 }
 
 // eslint-disable-next-line @typescript-eslint/default-param-last

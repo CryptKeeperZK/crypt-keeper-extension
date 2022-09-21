@@ -1,5 +1,5 @@
 import RPCAction from '@src/util/constants'
-import { PendingRequestType, NewIdentityRequest, WalletInfo } from '@src/types'
+import { PendingRequestType, NewIdentityRequest, WalletInfo, WalletInfoBackgound } from '@src/types'
 import Web3 from 'web3'
 import { bigintToHex } from 'bigint-conversion'
 import { RLNFullProof } from '@zk-kit/protocols'
@@ -99,14 +99,14 @@ export default class ZkKepperController extends Handler {
                         console.log("CREATE_IDENTITY: 1")
                         const ethers: Ethers = await this.metamaskServiceEthers.getWeb3()
                         console.log("CREATE_IDENTITY: 2")
-                        const walletInfo: WalletInfo | null = await this.metamaskServiceEthers.getWalletInfo()
+                        const walletInfo: WalletInfoBackgound | WalletInfo | null  = await this.metamaskServiceEthers.getWalletInfo(true)
                         config.ethers = ethers
                         config.walletInfo = walletInfo
                         console.log("CREATE_IDENTITY: 3")
                     }
 
                     const identity: ZkIdentityWrapper | undefined = await identityFactory(strategy, config)
-                    console.log("CREATE_IDENTITY: 4")
+                    console.log("CREATE_IDENTITY: 4", identity);
 
                     if (!identity) {
                         throw new Error('Identity not created, make sure to check strategy')
@@ -116,7 +116,7 @@ export default class ZkKepperController extends Handler {
 
                     return true
                 } catch (error: any) {
-                    console.log("CREATE_IDENTITY: Error")
+                    console.log("CREATE_IDENTITY: Error", error);
                     throw new Error(error.message)
                 }
             }

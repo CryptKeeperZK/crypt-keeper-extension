@@ -1,3 +1,4 @@
+import { JsonRpcSigner } from '@ethersproject/providers'
 import { MerkleProof } from '@zk-kit/protocols'
 
 export type Request = {
@@ -8,12 +9,15 @@ export type Request = {
 }
 
 export type WalletInfo = {
-    signer: any
     account: string
     balance: number | string
     networkName: string // TODO: use `NetworkDetails` instead
     chainId: number
 }  
+
+export interface WalletInfoBackgound extends WalletInfo {
+    signer: JsonRpcSigner
+}
 
 export type NetworkDetails = {
     chainId: number

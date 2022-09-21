@@ -10,7 +10,7 @@ class BrowserUtils {
             
             try {
                 // TODO: Check either internalLogout() or logout()
-                await LockService.internalLogout();
+                //await LockService.internalLogout();
                 console.log("Inside removeWindow onRemove locked");
                 if (this.cached?.id === windowId) {
                     this.cached = null
