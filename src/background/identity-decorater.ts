@@ -16,6 +16,11 @@ export default class ZkIdentityDecorater {
         return idCommitment
     }
 
+    setIdentityMetadataName = (name: string): IdentityMetadata => {
+        this.metadata.name = name;
+        return this.metadata;
+    }
+
     serialize = (): string => {
         const serialized = {
             secret: this.zkIdentity.serializeIdentity(),

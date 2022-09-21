@@ -73,11 +73,23 @@ export default class IdentityService extends SimpleStorage {
         }
     }
 
+    setIdentityName = (commitment: string, name: string): IdentityMetadata | null => {
+        const id = this.identities.get(commitment);
+        if(id) {
+            const metadata = id.setIdentityMetadataName(name);
+            return metadata;
+        } else {
+            console.log("setIdentityName id not exist")
+            return null;
+        }
+    }
+
     getActiveidentity = async (): Promise<ZkIdentityDecorater | undefined> => this.activeIdentity
 
     getIdentityCommitments = async () => {
         const commitments: string[] = []
         for (const key of this.identities.keys()) {
+            console.log("getIdentityCOmmitments: ", key);
             commitments.push(key)
         }
         return commitments
@@ -85,8 +97,11 @@ export default class IdentityService extends SimpleStorage {
 
     getIdentities = async (): Promise<{ commitment: string; metadata: IdentityMetadata }[]> => {
         const commitments = await this.getIdentityCommitments()
+        console.log("getIdentities: ", commitments);
         return commitments.map((commitment) => {
             const id = this.identities.get(commitment)
+            console.log("getIdentities: commitments", commitments);
+            console.log("getIdentities: metadata", id!.metadata);
             return {
                 commitment,
                 metadata: id!.metadata
@@ -106,11 +121,16 @@ export default class IdentityService extends SimpleStorage {
         }
 
         const newValue: string[] = [...existingIdentites, newIdentity.serialize()]
+        console.log("IdentityService identity value", newValue);
         const ciphertext: string = await LockService.encrypt(JSON.stringify(newValue))
+        console.log("IdentityService ciphertext value", ciphertext);
 
         await this.set(ciphertext)
+        console.log("IdentityService ciphertext value 1");
         await this.refresh()
+        console.log("IdentityService ciphertext value 2");
         await this.setActiveIdentity(identityCommitment)
+        console.log("IdentityService ciphertext value 3");
         return true
     }
 

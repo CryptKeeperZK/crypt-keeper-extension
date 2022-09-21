@@ -16,12 +16,12 @@ type Props = {
 export default function Dropdown(props: Props): ReactElement {
     const { label, errorMessage, className, ...selectProps } = props
     return (
-        <div className={classNames('dropdown', className)}>
+        <div className={classNames('dropdown')}>
             {label && <div className="dropdown__label">{label}</div>}
             <div className="dropdown__group">
-                <select {...selectProps}>
+                <select className="dropdown__select" {...selectProps}>
                     {props.options.map(({ value, label }) => (
-                        <option key={value} value={value}>
+                        <option className="dropdown__option" key={value} value={value}>
                             {label || value}
                         </option>
                     ))}

@@ -56,6 +56,16 @@ export const setActiveIdentity = (identityCommitment: string) => async (dispatch
     })
 }
 
+export const setIdentityName = (identityCommitment: string, name: string) => async (dispatch: Dispatch) => {
+    if (!identityCommitment) {
+        throw new Error('Identity Commitment not provided!')
+    }
+    return postMessage({
+        method: RPCAction.SET_ACTIVE_IDENTITY,
+        payload: identityCommitment
+    })
+}
+
 export const setSelected = (identityCommitment: string) => ({
     type: ActionType.SET_SELECTED,
     payload: identityCommitment
