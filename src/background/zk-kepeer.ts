@@ -1,5 +1,5 @@
 import RPCAction from '@src/util/constants'
-import { PendingRequestType, NewIdentityRequest, WalletInfo, WalletInfoBackgound } from '@src/types'
+import { PendingRequestType, NewIdentityRequest, WalletInfo, WalletInfoBackgound, IdentityName } from '@src/types'
 import Web3 from 'web3'
 import { bigintToHex } from 'bigint-conversion'
 import { RLNFullProof } from '@zk-kit/protocols'
@@ -125,6 +125,8 @@ export default class ZkKepperController extends Handler {
         this.add(RPCAction.GET_COMMITMENTS, LockService.ensure, this.identityService.getIdentityCommitments)
         this.add(RPCAction.GET_IDENTITIES, LockService.ensure, this.identityService.getIdentities)
         this.add(RPCAction.SET_ACTIVE_IDENTITY, LockService.ensure, this.identityService.setActiveIdentity)
+        this.add(RPCAction.SET_IDENTITY_NAME, LockService.ensure, (payload: IdentityName) => this.identityService.setIdentityName(payload))
+        this.add(RPCAction.DELETE_IDENTITY, LockService.ensure, (payload: IdentityName) => this.identityService.deleteIdentity(payload))
         this.add(RPCAction.GET_ACTIVE_IDENTITY, LockService.ensure, async () => {
             const identity = await this.identityService.getActiveidentity()
             if (!identity) {

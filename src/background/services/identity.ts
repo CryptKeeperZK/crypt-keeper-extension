@@ -2,7 +2,7 @@ import { bigintToHex } from 'bigint-conversion'
 import pushMessage from '@src/util/pushMessage'
 import { setIdentities, setSelected } from '@src/ui/ducks/identities'
 import { browser } from 'webextension-polyfill-ts'
-import { IdentityMetadata } from '@src/types'
+import { IdentityMetadata, IdentityName } from '@src/types'
 import SimpleStorage from './simple-storage'
 import LockService from './lock'
 import ZkIdentityDecorater from '../identity-decorater'
@@ -73,8 +73,12 @@ export default class IdentityService extends SimpleStorage {
         }
     }
 
-    setIdentityName = (commitment: string, name: string): IdentityMetadata | null => {
-        const id = this.identities.get(commitment);
+    setIdentityName = (payload: IdentityName): IdentityMetadata | null => {
+        console.log("payload", payload)
+        const {identityCommitment, name} = payload;
+        console.log("payload commitment", identityCommitment)
+        console.log("payload name", name)
+        const id = this.identities.get(identityCommitment);
         if(id) {
             const metadata = id.setIdentityMetadataName(name);
             return metadata;
@@ -83,6 +87,18 @@ export default class IdentityService extends SimpleStorage {
             return null;
         }
     }
+
+    deleteIdentity = (payload: any): boolean => {
+        const {identityCommitment} = payload;
+        const id = this.identities.get(identityCommitment);
+        if(id) {
+            console.log("deleteIdentity id deleted")
+            return this.identities.delete(identityCommitment);
+        } else {
+            console.log("deleteIdentity id is not deleted")
+            return false;
+        }
+    } 
 
     getActiveidentity = async (): Promise<ZkIdentityDecorater | undefined> => this.activeIdentity
 
@@ -136,3 +152,5 @@ export default class IdentityService extends SimpleStorage {
 
     getNumOfIdentites = (): number => this.identities.size
 }
+
+

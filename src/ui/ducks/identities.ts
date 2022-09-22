@@ -57,12 +57,29 @@ export const setActiveIdentity = (identityCommitment: string) => async (dispatch
 }
 
 export const setIdentityName = (identityCommitment: string, name: string) => async (dispatch: Dispatch) => {
+    console.log("Inside setIdentityName")
     if (!identityCommitment) {
         throw new Error('Identity Commitment not provided!')
     }
     return postMessage({
-        method: RPCAction.SET_ACTIVE_IDENTITY,
-        payload: identityCommitment
+        method: RPCAction.SET_IDENTITY_NAME,
+        payload: {
+            identityCommitment, 
+            name
+        }
+    })
+}
+
+export const deleteIdentity = (identityCommitment: string) =>async (dispatch: Dispatch) => {
+    console.log("Inside deleteIdentity")
+    if (!identityCommitment) {
+        throw new Error('Identity Commitment not provided!')
+    }
+    return postMessage({
+        method: RPCAction.DELETE_IDENTITY,
+        payload: {
+            identityCommitment, 
+        }
     })
 }
 

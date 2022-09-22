@@ -93,6 +93,11 @@ export type IdentityMetadata = {
     provider: string
 }
 
+export type IdentityName = {
+    identityCommitment: string
+    name: string
+}
+
 export type SerializedIdentity = {
     metadata: IdentityMetadata
     secret: string
