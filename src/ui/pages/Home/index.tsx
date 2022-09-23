@@ -5,7 +5,7 @@ import RPCAction from "@src/util/constants";
 import { fetchWalletInfo, useAccount, useBalance, useNetwork } from "@src/ui/ducks/web3";
 import Icon from "@src/ui/components/Icon";
 import {
-    deleteIdentity,
+  deleteIdentity,
   fetchIdentities,
   setActiveIdentity,
   setIdentityName,
@@ -170,6 +170,11 @@ var IdentityList = function (): ReactElement {
   const selected = useSelectedIdentity();
   const dispatch = useDispatch();
   const account = useAccount();
+
+  const [showingModal, setShowModal] = useState(false);
+  const [renameInput, setRenameInput] = useState(false);
+  const [nameInput, setNameInput] = useState("Null");
+
   const selectIdentity = useCallback(async (identityCommitment: string) => {
     dispatch(setActiveIdentity(identityCommitment));
   }, []);
@@ -181,7 +186,13 @@ var IdentityList = function (): ReactElement {
     console.log("");
     await dispatch(deleteIdentity(identityCommitment));
   }, []);
-  const [showingModal, showModal] = useState(false);
+
+  const handleNameInput = (event: any) => {
+    console.log("Key press")
+    const value = event.target.value;
+    setNameInput(value);
+    console.log(value)
+  };
 
   useEffect(() => {
     dispatch(fetchIdentities());
@@ -189,44 +200,62 @@ var IdentityList = function (): ReactElement {
 
   return (
     <>
-      {showingModal && <CreateIdentityModal onClose={() => showModal(false)} />}
-      {identities.map(({ commitment, metadata }, i) => (
-        <div className="p-4 identity-row" key={commitment}>
-          <Icon
-            className={classNames("identity-row__select-icon", {
-              "identity-row__select-icon--selected": selected.commitment === commitment,
-            })}
-            fontAwesome="fas fa-check"
-            onClick={() => selectIdentity(commitment)}
-          />
-          <div className="flex flex-col flex-grow">
-            <div className="flex flex-row items-center text-lg font-semibold">
-              {`${metadata.name}`}
-              <span className="text-xs py-1 px-2 ml-2 rounded-full bg-gray-500 text-gray-800">{metadata.provider}</span>
+      {showingModal && <CreateIdentityModal onClose={() => setShowModal(false)} />}
+      {identities.map(({ commitment, metadata }, i) => {
+        return (
+          <div className="p-4 identity-row" key={commitment}>
+            <Icon
+              className={classNames("identity-row__select-icon", {
+                "identity-row__select-icon--selected": selected.commitment === commitment,
+              })}
+              fontAwesome="fas fa-check"
+              onClick={() => selectIdentity(commitment)}
+            />
+            <div className="flex flex-col flex-grow">
+              {renameInput ? (
+                <div className="flex flex-row items-center text-lg font-semibold">
+                  <input
+                    className="identity-row__input-field"
+                    type="text"
+                    //value={nameInput}
+                    onChange={handleNameInput}
+                  />
+                  <Icon className="identity-row__select-icon--selected mr-2" fontAwesome="fa-solid fa-check" size={1} />
+                </div>
+              ) : (
+                <div className="flex flex-row items-center text-lg font-semibold">
+                  {`${metadata.name}`}
+                  <span className="text-xs py-1 px-2 ml-2 rounded-full bg-gray-500 text-gray-800">
+                    {metadata.provider}
+                  </span>
+                </div>
+              )}
+              <div className="text-base text-gray-500">{ellipsify(commitment)}</div>
             </div>
-            <div className="text-base text-gray-500">{ellipsify(commitment)}</div>
+            <Menuable
+              className="flex user-menu"
+              items={[
+                {
+                  label: "Rename",
+                  onClick: () => {
+                    setRenameInput(true)
+                  },
+                },
+                {
+                  label: "Delete",
+                  onClick: () => deleteIdentityButton(commitment),
+                },
+              ]}
+            >
+              <Icon className="identity-row__menu-icon" fontAwesome="fas fa-ellipsis-h" />
+            </Menuable>
           </div>
-          <Menuable
-            className="flex user-menu"
-            items={[
-              {
-                label: "Rename",
-                onClick: () => changeIdentityNameButton(commitment, "Isk 2"),
-              },
-              {
-                label: "Delete",
-                onClick: () => deleteIdentityButton(commitment),
-              },
-            ]}
-          >
-            <Icon className="identity-row__menu-icon" fontAwesome="fas fa-ellipsis-h" />
-          </Menuable>
-        </div>
-      ))}
+        );
+      })}
       {account ? (
         <div
           className="create-identity-row__active flex flex-row items-center justify-center p-4 cursor-pointer text-gray-600"
-          onClick={() => showModal(true)}
+          onClick={() => setShowModal(true)}
         >
           <Icon fontAwesome="fas fa-plus" size={1} className="mr-2" />
           <div>Add Identity</div>
