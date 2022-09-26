@@ -171,16 +171,22 @@ var IdentityList = function (): ReactElement {
   const dispatch = useDispatch();
   const account = useAccount();
 
-  const [showingModal, setShowModal] = useState(false);
-  const [renameInput, setRenameInput] = useState(false);
-  const [nameInput, setNameInput] = useState("Null");
+  const [showingModal, setShowModal] = useState<boolean>(false);
+  const [renameInput, setRenameInput] = useState<Map<string, boolean>>(new Map());
+  const [nameInput, setNameInput] = useState<string>();
+
+  const updateSetRenameMap = (key, value) => {
+    setRenameInput(map => new Map(map.set(key, value)));
+  };
 
   const selectIdentity = useCallback(async (identityCommitment: string) => {
     dispatch(setActiveIdentity(identityCommitment));
   }, []);
-  const changeIdentityNameButton = useCallback(async (identityCommitment: string, name: string) => {
-    console.log("setIdentityName identityCommitment", identityCommitment);
-    await dispatch(setIdentityName(identityCommitment, name));
+  const changeIdentityNameButton = useCallback(async (identityCommitment: string, name: string | undefined) => {
+    if (name) {
+      await dispatch(setIdentityName(identityCommitment, name));
+      updateSetRenameMap(identityCommitment, false);
+    }
   }, []);
   const deleteIdentityButton = useCallback(async (identityCommitment: string) => {
     console.log("");
@@ -188,15 +194,15 @@ var IdentityList = function (): ReactElement {
   }, []);
 
   const handleNameInput = (event: any) => {
-    console.log("Key press")
+    console.log("Key press");
     const value = event.target.value;
     setNameInput(value);
-    console.log(value)
+    console.log(value);
   };
 
   useEffect(() => {
     dispatch(fetchIdentities());
-  }, []);
+  }, [renameInput]);
 
   return (
     <>
@@ -212,15 +218,20 @@ var IdentityList = function (): ReactElement {
               onClick={() => selectIdentity(commitment)}
             />
             <div className="flex flex-col flex-grow">
-              {renameInput ? (
+              {renameInput?.get(commitment) ? (
                 <div className="flex flex-row items-center text-lg font-semibold">
                   <input
                     className="identity-row__input-field"
                     type="text"
-                    //value={nameInput}
+                    value={nameInput}
                     onChange={handleNameInput}
                   />
-                  <Icon className="identity-row__select-icon--selected mr-2" fontAwesome="fa-solid fa-check" size={1} />
+                  <Icon
+                    className="identity-row__select-icon--selected mr-2"
+                    fontAwesome="fa-solid fa-check"
+                    size={1}
+                    onClick={() => changeIdentityNameButton(commitment, nameInput)}
+                  />
                 </div>
               ) : (
                 <div className="flex flex-row items-center text-lg font-semibold">
@@ -238,7 +249,9 @@ var IdentityList = function (): ReactElement {
                 {
                   label: "Rename",
                   onClick: () => {
-                    setRenameInput(true)
+                    setNameInput(metadata.name);
+                    updateSetRenameMap(commitment, true);
+                    console.log("Actie", renameInput?.get(commitment));
                   },
                 },
                 {
