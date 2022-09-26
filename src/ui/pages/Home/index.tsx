@@ -174,6 +174,7 @@ var IdentityList = function (): ReactElement {
   const [showingModal, setShowModal] = useState<boolean>(false);
   const [renameInput, setRenameInput] = useState<Map<string, boolean>>(new Map());
   const [nameInput, setNameInput] = useState<string>();
+  const [deleteIdentityState, setDeleteIdentityState] = useState(false);
 
   const updateSetRenameMap = (key, value) => {
     setRenameInput(map => new Map(map.set(key, value)));
@@ -189,20 +190,28 @@ var IdentityList = function (): ReactElement {
     }
   }, []);
   const deleteIdentityButton = useCallback(async (identityCommitment: string) => {
-    console.log("");
     await dispatch(deleteIdentity(identityCommitment));
+    setDeleteIdentityState(true);
   }, []);
 
   const handleNameInput = (event: any) => {
-    console.log("Key press");
     const value = event.target.value;
     setNameInput(value);
-    console.log(value);
+  };
+
+  const handleKeypress = (e: any, commitment: string, name: string | undefined) => {
+    console.log("handleKeypress", e.key)
+    if (e.key === "Enter") {
+      if (name) {
+        changeIdentityNameButton(commitment, name);3
+      }
+    }
   };
 
   useEffect(() => {
     dispatch(fetchIdentities());
-  }, [renameInput]);
+    setDeleteIdentityState(false);
+  }, [renameInput, deleteIdentityState]);
 
   return (
     <>
@@ -231,6 +240,8 @@ var IdentityList = function (): ReactElement {
                     fontAwesome="fa-solid fa-check"
                     size={1}
                     onClick={() => changeIdentityNameButton(commitment, nameInput)}
+                    // TODO: support Enter press for renaming
+                    //onKeyPress={changeIdentityNameButton}
                   />
                 </div>
               ) : (
@@ -251,7 +262,6 @@ var IdentityList = function (): ReactElement {
                   onClick: () => {
                     setNameInput(metadata.name);
                     updateSetRenameMap(commitment, true);
-                    console.log("Actie", renameInput?.get(commitment));
                   },
                 },
                 {
