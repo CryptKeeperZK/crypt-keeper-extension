@@ -1,7 +1,7 @@
 {
-    "name": "zk-keeper",
+    "name": "crypt-keeper-extension",
     "version": "1.0.0",
-    "description": "ZK-Keeper, zero knowledge identity management and proof generation tool",
+    "description": "Crypt-Keeper Extension, zero knowledge identity management and proof generation tool",
     "main": "index.js",
     "scripts": {
         "build": "NODE_ENV=production webpack --config webpack.prod.js",
@@ -31,9 +31,9 @@
     "author": "Privacy and Scaling explorations team",
     "license": "MIT",
     "bugs": {
-        "url": "https://github.com/appliedzkp/zk-keeper"
+        "url": "https://github.com/privacy-scaling-explorations/crypt-keeper-extension"
     },
-    "homepage": "https://github.com/appliedzkp/zk-keeper",
+    "homepage": "https://github.com/privacy-scaling-explorations/crypt-keeper-extension",
     "devDependencies": {
         "@babel/core": "^7.15.5",
         "@babel/plugin-proposal-export-namespace-from": "^7.14.5",

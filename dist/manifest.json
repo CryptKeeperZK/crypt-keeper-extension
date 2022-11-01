@@ -1,10 +1,10 @@
 {
     "manifest_version": 2,
-    "name": "ZK-KEEPER",
+    "name": "Crypt-KEEPER",
     "description": "Extension that stores credentials and creates semaphore proofs",
     "version": "1.0.0",
     "browser_action": {
-        "default_icon": "icon-16.png",
+        "default_icon": "logo.png",
         "default_popup": "popup.html"
     },
     "background": {
