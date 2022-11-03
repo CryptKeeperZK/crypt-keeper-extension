@@ -3,6 +3,7 @@
   "name": "CryptKeeper",
   "description": "Extension that stores credentials and creates semaphore proofs",
   "version": "1.0.0",
+  "minimum_chrome_version": "93",
   "action": {
     "default_icon": "logo.png",
     "default_popup": "popup.html"
@@ -27,6 +28,8 @@
     "extension_pages": "script-src 'self'; object-src 'self'; worker-src 'self'"
   },
   "permissions": [
+    "scripting",
+    "clipboardWrite",
     "tabs",
     "activeTab",
     "notifications",
@@ -44,7 +47,7 @@
   "web_accessible_resources": [
     {
       "resources": ["js/injected.js"],
-      "matches": ["<all_urls>"]
+      "matches": ["*://*/*"]
     }
   ]
 }
