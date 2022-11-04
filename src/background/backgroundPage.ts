@@ -1,3 +1,5 @@
+// TODO: importing scripts better using importScritps() check MM 
+import 'subworkers'; 
 import { browser } from "webextension-polyfill-ts";
 import { Request } from "@src/types";
 import ZkKepperController from "./zk-kepeer";
