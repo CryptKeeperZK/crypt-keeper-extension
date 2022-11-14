@@ -2,7 +2,7 @@
 /* eslint-disable react/function-component-definition */
 import React, { ReactElement, ReactNode, useEffect, useState } from 'react'
 import './popup.scss'
-import { Redirect, Route, Switch } from 'react-router'
+import { Redirect, Route, Routes } from 'react-router'
 import Home from '@src/ui/pages/Home'
 import { useRequestsPending, fetchRequestPendingStatus } from '@src/ui/ducks/requests'
 import { fetchStatus, useAppStatus } from '@src/ui/ducks/app'
@@ -49,14 +49,14 @@ export default function Popup(): ReactElement {
         return <ConfirmRequestModal />
     } else {
         content = (
-            <Switch>
+            <Routes>
                 <Route path="/">
                     <Home />
                 </Route>
                 <Route>
                     <Redirect to="/" />
                 </Route>
-            </Switch>
+            </Routes>
         )
     }
 
