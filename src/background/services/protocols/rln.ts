@@ -37,7 +37,6 @@ export default class RLNService {
                 merkleProof = generateMerkleProof(
                     proofArtifacts.depth,
                     BigInt(0),
-                    proofArtifacts.leavesPerNode,
                     leaves,
                     identityCommitment
                 )
