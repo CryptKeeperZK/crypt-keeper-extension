@@ -70,6 +70,9 @@ module.exports = {
             '@src': path.resolve(__dirname, 'src/'),
             buffer: 'buffer'
         },
+        // modulesDirectories: [
+        //     'node_modules'
+        // ],
         fallback: {
             browserify: require.resolve('browserify'),
             stream: require.resolve('stream-browserify'),
@@ -79,8 +82,11 @@ module.exports = {
             http: require.resolve('stream-http'),
             https: require.resolve('https-browserify'),
             fs: false,
-            assert: false
+            assert: false,
+            zlib: false,
+            constants: false
         }
     },
     externals: /^(worker_threads)$/
 }
+
