@@ -1,5 +1,4 @@
 import React, { ReactElement, useCallback, useEffect, useRef, useState } from "react";
-import { useDispatch } from "react-redux";
 import postMessage from "@src/util/postMessage";
 import RPCAction from "@src/util/constants";
 import { fetchWalletInfo, useAccount, useBalance, useNetwork } from "@src/ui/ducks/web3";
@@ -20,9 +19,10 @@ import { ellipsify, sliceAddress } from "@src/util/account";
 import CreateIdentityModal from "@src/ui/components/CreateIdentityModal";
 import ConnectionModal from "@src/ui/components/ConnectionModal";
 import Menuable from "@src/ui/components/Menuable";
+import { useAppDispatch } from "@src/ui/ducks/hooks";
 
 export default function Home(): ReactElement {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const scrollRef = useRef<HTMLDivElement>(null);
   const [fixedTabs, fixTabs] = useState(false);
 
@@ -168,7 +168,7 @@ var HomeList = function (): ReactElement {
 var IdentityList = function (): ReactElement {
   const identities = useIdentities();
   const selected = useSelectedIdentity();
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const account = useAccount();
 
   const [showingModal, setShowModal] = useState<boolean>(false);

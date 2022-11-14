@@ -1,10 +1,10 @@
 import React, { ReactElement, useCallback, useState } from 'react'
-import { useDispatch } from 'react-redux'
 import { createIdentity } from '@src/ui/ducks/identities'
 import FullModal, { FullModalContent, FullModalFooter, FullModalHeader } from '@src/ui/components/FullModal'
 import Dropdown from '@src/ui/components/Dropdown'
 import Input from '@src/ui/components/Input'
 import Button from '@src/ui/components/Button'
+import { useAppDispatch } from '@src/ui/ducks/hooks'
 
 export default function CreateIdentityModal(props: { onClose: () => void }): ReactElement {
     const [nonce, setNonce] = useState(0)
@@ -12,7 +12,7 @@ export default function CreateIdentityModal(props: { onClose: () => void }): Rea
     const [web2Provider, setWeb2Provider] = useState<'Twitter' | 'Github' | 'Reddit'>('Twitter')
     const [error, setError] = useState('')
     const [loading, setLoading] = useState(false)
-    const dispatch = useDispatch()
+    const dispatch = useAppDispatch()
 
     const create = useCallback(async () => {
         setLoading(true)

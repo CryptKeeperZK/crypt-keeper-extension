@@ -1,5 +1,4 @@
 import React, { ReactElement, useCallback, useEffect, useState } from 'react'
-import { useDispatch } from 'react-redux'
 import FullModal, { FullModalContent, FullModalFooter, FullModalHeader } from '@src/ui/components/FullModal'
 import Button, { ButtonType } from '@src/ui/components/Button'
 import { useRequestsPending } from '@src/ui/ducks/requests'
@@ -18,7 +17,6 @@ export default function ConfirmRequestModal(): ReactElement {
     const pendingRequests = useRequestsPending()
     const [error, setError] = useState('')
     const [loading, setLoading] = useState(false)
-    const dispatch = useDispatch()
     const [activeIndex, setActiveIndex] = useState(0)
     const pendingRequest = pendingRequests[activeIndex]
 

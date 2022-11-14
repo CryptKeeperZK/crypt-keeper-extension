@@ -5,15 +5,15 @@ import './popup.scss'
 import { Redirect, Route, Switch } from 'react-router'
 import Home from '@src/ui/pages/Home'
 import { useRequestsPending, fetchRequestPendingStatus } from '@src/ui/ducks/requests'
-import { useDispatch } from 'react-redux'
 import { fetchStatus, useAppStatus } from '@src/ui/ducks/app'
 import Onboarding from '@src/ui/pages/Onboarding'
 import Login from '@src/ui/pages/Login'
 import ConfirmRequestModal from '@src/ui/components/ConfirmRequestModal'
+import { useAppDispatch } from '@src/ui/ducks/hooks'
 
 export default function Popup(): ReactElement {
     const pendingRequests = useRequestsPending()
-    const dispatch = useDispatch()
+    const dispatch = useAppDispatch()
     const [loading, setLoading] = useState(true)
     const { initialized, unlocked } = useAppStatus()
 
