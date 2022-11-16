@@ -1,12 +1,10 @@
 import {
     Semaphore,
-    MerkleProof,
     SemaphoreFullProof,
     SemaphoreSolidityProof,
-    SemaphorePublicSignals,
     generateMerkleProof
-} from '@zk-kit/protocols'
-import { ZkIdentity } from '@zk-kit/identity'
+} from '@zk-kit/protocols',
+import { MerkleProof } from '@zk-kit/incremental-merkle-tree';
 import { bigintToHex, hexToBigint } from 'bigint-conversion'
 import axios, { AxiosResponse } from 'axios'
 import { MerkleProofArtifacts } from '@src/types'

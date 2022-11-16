@@ -2,7 +2,7 @@
 
 import { MerkleProofArtifacts } from '@src/types'
 import RPCAction from '@src/util/constants'
-import { MerkleProof } from '@zk-kit/protocols'
+import { MerkleProof } from '@zk-kit/incremental-merkle-tree'
 
 export type IRequest = {
     method: string

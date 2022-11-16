@@ -1,5 +1,5 @@
 import { JsonRpcSigner } from '@ethersproject/providers'
-import { MerkleProof } from '@zk-kit/protocols'
+import { MerkleProof } from '@zk-kit/incremental-merkle-tree'
 
 export type Request = {
     method: string

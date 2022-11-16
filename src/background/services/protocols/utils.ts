@@ -1,5 +1,5 @@
 import { hexToBigint } from 'bigint-conversion'
-import { MerkleProof } from '@zk-kit/protocols'
+import { MerkleProof } from '@zk-kit/incremental-merkle-tree'
 //import * as ciromlibjs from 'circomlibjs'
 // eslint-disable-next-line import/prefer-default-export
 export function deserializeMerkleProof(merkleProof): MerkleProof {

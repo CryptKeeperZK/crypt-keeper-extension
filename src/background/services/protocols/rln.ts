@@ -1,5 +1,4 @@
 import { RLN, MerkleProof, RLNFullProof, generateMerkleProof } from '@zk-kit/protocols'
-import { ZkIdentity } from '@zk-kit/identity'
 import { bigintToHex, hexToBigint } from 'bigint-conversion'
 import axios, { AxiosResponse } from 'axios'
 import { MerkleProofArtifacts } from '@src/types'

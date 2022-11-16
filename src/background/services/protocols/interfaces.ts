@@ -1,4 +1,5 @@
-import { MerkleProof, SemaphoreFullProof, SemaphoreSolidityProof } from '@zk-kit/protocols'
+import { SemaphoreFullProof, SemaphoreSolidityProof } from '@zk-kit/protocols'
+import { MerkleProof } from '@zk-kit/incremental-merkle-tree';
 import { MerkleProofArtifacts } from '@src/types'
 
 export enum Protocol {
