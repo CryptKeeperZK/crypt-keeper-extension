@@ -1,6 +1,5 @@
 import RPCAction from '@src/util/constants'
 import { PendingRequestType, NewIdentityRequest, WalletInfo, WalletInfoBackgound, IdentityName } from '@src/types'
-import Web3 from 'web3'
 import { bigintToHex } from 'bigint-conversion'
 import { RLNFullProof } from '@zk-kit/protocols'
 import Handler from './controllers/handler'
@@ -16,7 +15,6 @@ import ApprovalService from './services/approval'
 import ZkIdentityWrapper from './identity-decorater'
 import identityFactory from './identity-factory'
 import BrowserUtils from './controllers/browser-utils'
-import { ethers } from 'ethers'
 
 declare type Ethers = typeof import("ethers");
 

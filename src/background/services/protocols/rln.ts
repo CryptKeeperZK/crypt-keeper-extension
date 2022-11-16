@@ -5,10 +5,11 @@ import axios, { AxiosResponse } from 'axios'
 import { MerkleProofArtifacts } from '@src/types'
 import { RLNProofRequest } from './interfaces'
 import { deserializeMerkleProof } from './utils'
+import { Identity } from "@semaphore-protocol/identity";
 
 export default class RLNService {
     // eslint-disable-next-line class-methods-use-this
-    async genProof(identity: ZkIdentity, request: RLNProofRequest): Promise<RLNFullProof> {
+    async genProof(identity: Identity, request: RLNProofRequest): Promise<RLNFullProof> {
         try {
             const {
                 circuitFilePath,
@@ -21,8 +22,8 @@ export default class RLNService {
             } = request
             let merkleProof: MerkleProof
 
-            const identitySecretHash: bigint = identity.getSecretHash()
-            const identityCommitment = identity.genIdentityCommitment()
+            //const identitySecretHash: bigint = identity.getSecretHash()
+            const identityCommitment = identity.generateCommitment()
             const identityCommitmentHex = bigintToHex(identityCommitment)
             const rlnIdentifierBigInt = hexToBigint(rlnIdentifier)
             if (merkleStorageAddress) {
@@ -43,7 +44,7 @@ export default class RLNService {
             }
 
             const witness = RLN.genWitness(
-                identitySecretHash,
+                identityCommitment,
                 merkleProof,
                 externalNullifier,
                 signal,

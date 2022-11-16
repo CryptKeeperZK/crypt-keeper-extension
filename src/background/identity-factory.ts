@@ -1,5 +1,5 @@
 import { IdentityMetadata } from '@src/types'
-import { ZkIdentity } from '@zk-kit/identity'
+import { Identity } from "@semaphore-protocol/identity";
 import createIdentity from '@interep/identity'
 import checkParameter from '@src/util/checkParameter'
 import ZkIdentityDecorater from './identity-decorater'
@@ -23,7 +23,7 @@ const createInterrepIdentity = async (config: any): Promise<ZkIdentityDecorater>
     const sign = async (message: string) => await walletInfo.signer.signMessage(message);
 
     console.log("createInterrepIdentity: 4")
-    const identity: ZkIdentity = await createIdentity(sign, web2Provider, nonce)
+    const identity: Identity = await createIdentity(sign, web2Provider, nonce)
     console.log("createInterrepIdentity: 5")
     const metadata: IdentityMetadata = {
         account: walletInfo.account,
@@ -40,7 +40,7 @@ const createRandomIdentity = (config: any): ZkIdentityDecorater => {
 
     checkParameter(name, 'name', 'string')
 
-    const identity: ZkIdentity = new ZkIdentity()
+    const identity: Identity = new Identity()
     const metadata: IdentityMetadata = {
         account: '',
         name: config.name,

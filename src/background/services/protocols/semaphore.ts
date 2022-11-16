@@ -12,10 +12,11 @@ import axios, { AxiosResponse } from 'axios'
 import { MerkleProofArtifacts } from '@src/types'
 import { SemaphoreProof, SemaphoreProofRequest } from './interfaces'
 import { deserializeMerkleProof } from './utils'
+import { Identity } from "@semaphore-protocol/identity";
 
 export default class SemaphoreService {
     // eslint-disable-next-line class-methods-use-this
-    async genProof(identity: ZkIdentity, request: SemaphoreProofRequest): Promise<SemaphoreProof> {
+    async genProof(identity: Identity, request: SemaphoreProofRequest): Promise<SemaphoreProof> {
         try {
             const {
                 circuitFilePath,
@@ -27,7 +28,7 @@ export default class SemaphoreService {
                 merkleProof: _merkleProof
             } = request
             let merkleProof: MerkleProof
-            const identityCommitment = identity.genIdentityCommitment()
+            const identityCommitment = identity.generateCommitment()
             const identityCommitmentHex = bigintToHex(identityCommitment)
 
             if (_merkleProof) {
