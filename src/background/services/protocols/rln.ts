@@ -1,10 +1,11 @@
-import { RLN, MerkleProof, RLNFullProof, generateMerkleProof } from '@zk-kit/protocols'
+import { MerkleProof } from '@zk-kit/incremental-merkle-tree';
+import { Identity } from "@semaphore-protocol/identity";
+import { RLN, RLNFullProof  } from 'rlnjs';
 import { bigintToHex, hexToBigint } from 'bigint-conversion'
 import axios, { AxiosResponse } from 'axios'
 import { MerkleProofArtifacts } from '@src/types'
 import { RLNProofRequest } from './interfaces'
-import { deserializeMerkleProof } from './utils'
-import { Identity } from "@semaphore-protocol/identity";
+import { deserializeMerkleProof, generateMerkleProoof } from './utils'
 
 export default class RLNService {
     // eslint-disable-next-line class-methods-use-this
@@ -33,13 +34,9 @@ export default class RLNService {
                 merkleProof = deserializeMerkleProof(response.data.merkleProof)
             } else {
                 const proofArtifacts = merkleProofArtifacts as MerkleProofArtifacts
-                const leaves = proofArtifacts.leaves.map((leaf) => hexToBigint(leaf))
-                merkleProof = generateMerkleProof(
-                    proofArtifacts.depth,
-                    BigInt(0),
-                    leaves,
-                    identityCommitment
-                )
+                //const leaves = proofArtifacts.leaves.map((leaf) => hexToBigint(leaf))
+
+                merkleProof = generateMerkleProoof(proofArtifacts.depth, identityCommitment);
             }
 
             const witness = RLN.genWitness(

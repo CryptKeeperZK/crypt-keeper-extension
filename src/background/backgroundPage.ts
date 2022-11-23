@@ -2,11 +2,11 @@
 import 'subworkers'; 
 import { browser } from "webextension-polyfill-ts";
 import { Request } from "@src/types";
-import ZkKepperController from "./zk-kepeer";
+import ZkKeeperController from "./zk-keeper";
 import RPCAction from "@src/util/constants";
 
 // TODO consider adding inTest env
-const app: ZkKepperController = new ZkKepperController();
+const app: ZkKeeperController = new ZkKeeperController();
 
 try {
   // TODO: just added to check the difference in testing

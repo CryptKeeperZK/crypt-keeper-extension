@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import ReactDOM from "react-dom";
-import { genExternalNullifier, RLN } from "@zk-kit/protocols";
+import { genExternalNullifier, RLN } from "rlnjs";
 import { bigintToHex } from "bigint-conversion";
-import { ZkIdentity } from "@zk-kit/identity";
+import { Identity } from "@semaphore-protocol/identity";
 
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -27,7 +27,7 @@ enum MerkleProofType {
 const genMockIdentityCommitments = (): string[] => {
   let identityCommitments: string[] = [];
   for (let i = 0; i < 10; i++) {
-    const mockIdentity = new ZkIdentity();
+    const mockIdentity = new Identity();
     let idCommitment = bigintToHex(mockIdentity.genIdentityCommitment());
 
     identityCommitments.push(idCommitment);

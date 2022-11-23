@@ -1,14 +1,11 @@
-import {
-    generateMerkleProof
-} from '@zk-kit/protocols';
 import { generateProof, FullProof, packToSolidityProof, SolidityProof } from '@semaphore-protocol/proof';
 import { Identity } from "@semaphore-protocol/identity";
 import { MerkleProof } from '@zk-kit/incremental-merkle-tree';
-import { bigintToHex, hexToBigint } from 'bigint-conversion'
+import { bigintToHex } from 'bigint-conversion'
 import axios, { AxiosResponse } from 'axios'
 import { MerkleProofArtifacts } from '@src/types'
 import { SemaphoreProof, SemaphoreProofRequest } from './interfaces'
-import { deserializeMerkleProof } from './utils'
+import { deserializeMerkleProof, generateMerkleProoof } from './utils'
 
 export default class SemaphoreService {
     // eslint-disable-next-line class-methods-use-this
@@ -38,19 +35,9 @@ export default class SemaphoreService {
             } else {
                 const proofArtifacts = merkleProofArtifacts as MerkleProofArtifacts
 
-                const leaves = proofArtifacts.leaves.map((leaf) => hexToBigint(leaf))
+                //const leaves = proofArtifacts.leaves.map((leaf) => hexToBigint(leaf))
 
-                // 1. Create a tree
-                // const tree = createTree(proofArtifacts.depth, )
-
-                // 2. Create a proof
-                // TODO: replace `generateMerkleProof()` with `incrementalMerkleTree.createProof()` 
-                merkleProof = generateMerkleProof(
-                    proofArtifacts.depth,
-                    BigInt(0),
-                    leaves,
-                    identityCommitment
-                )
+                merkleProof = generateMerkleProoof(proofArtifacts.depth, identityCommitment);
             }
 
             // TODO: do we need to leave `SnarkArtifacts` param as undefinded?

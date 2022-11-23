@@ -1,7 +1,7 @@
 import RPCAction from '@src/util/constants'
 import { PendingRequestType, NewIdentityRequest, WalletInfo, WalletInfoBackgound, IdentityName } from '@src/types'
 import { bigintToHex } from 'bigint-conversion'
-import { RLNFullProof } from '@zk-kit/protocols'
+import { RLNFullProof } from 'rlnjs'
 import Handler from './controllers/handler'
 import LockService from './services/lock'
 import IdentityService from './services/identity'
@@ -18,7 +18,7 @@ import BrowserUtils from './controllers/browser-utils'
 
 declare type Ethers = typeof import("ethers");
 
-export default class ZkKepperController extends Handler {
+export default class ZkKeeperController extends Handler {
     private identityService: IdentityService
     private metamaskServiceEthers: MetamaskServiceEthers
     private zkValidator: ZkValidator
@@ -38,7 +38,7 @@ export default class ZkKepperController extends Handler {
         console.log("Inside ZkKepperController");
     }
 
-    initialize = async (): Promise<ZkKepperController> => {
+    initialize = async (): Promise<ZkKeeperController> => {
         // common
         this.add(
             RPCAction.UNLOCK,

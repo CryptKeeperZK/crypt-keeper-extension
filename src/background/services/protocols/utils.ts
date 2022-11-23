@@ -1,6 +1,7 @@
 import { hexToBigint } from 'bigint-conversion'
-import { MerkleProof } from '@zk-kit/incremental-merkle-tree'
-//import * as ciromlibjs from 'circomlibjs'
+import { MerkleProof } from "@zk-kit/incremental-merkle-tree"
+import { Group, Member } from '@semaphore-protocol/group'
+
 // eslint-disable-next-line import/prefer-default-export
 export function deserializeMerkleProof(merkleProof): MerkleProof {
     const deserialized = {} as MerkleProof
@@ -13,4 +14,13 @@ export function deserializeMerkleProof(merkleProof): MerkleProof {
     return deserialized
 }
 
-//export const poseidonHash = (data: Array<bigint>): bigint => ciromlibjs.poseidon(data)
+//export const poseidonHash = (data: Array<bigint>): bigint => poseidon(data)
+
+
+export function generateMerkleProoof(treeDepth: number, member: Member): MerkleProof {
+  const group = new Group(treeDepth);
+
+  const identityIndex = group.indexOf(member);
+
+  return group.generateProofOfMembership(identityIndex);
+}

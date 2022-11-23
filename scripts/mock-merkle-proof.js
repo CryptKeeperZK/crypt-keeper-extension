@@ -1,7 +1,7 @@
 // eslint-disable-next-line import/no-extraneous-dependencies
 const express = require('express')
-const { generateMerkleProof } = require('@zk-kit/protocols')
-const { ZkIdentity } = require('@zk-kit/identity')
+const { generateMerkleProof } = require('../src/background/services/protocols/utils')
+const { Identity } = require("@semaphore-protocol/identity");
 const { bigintToHex, hexToBigint } = require('bigint-conversion')
 
 const DEPTH_RLN = 15
@@ -22,24 +22,29 @@ const serializeMerkleProof = (merkleProof) => {
 }
 
 const generateMerkleProofRLN = (identityCommitments, identityCommitment) => {
-    return generateMerkleProof(DEPTH_RLN, ZERO_VALUE, NUMBER_OF_LEAVES_RLN, identityCommitments, identityCommitment)
+    return generateMerkleProof(DEPTH_RLN, identityCommitment);
+
+    // return generateMerkleProof(DEPTH_RLN, ZERO_VALUE, NUMBER_OF_LEAVES_RLN, identityCommitments, identityCommitment)
 }
 
 const generateMerkleProofSemaphore = (identityCommitments, identityCommitment) => {
-    return generateMerkleProof(
-        DEPTH_SEMAPHORE,
-        ZERO_VALUE,
-        NUMBER_OF_LEAVES_SEMAPHORE,
-        identityCommitments,
-        identityCommitment
-    )
+    
+    return generateMerkleProof(DEPTH_SEMAPHORE, identityCommitment);
+
+    // return generateMerkleProof(
+    //     DEPTH_SEMAPHORE,
+    //     ZERO_VALUE,
+    //     NUMBER_OF_LEAVES_SEMAPHORE,
+    //     identityCommitments,
+    //     identityCommitment
+    // )
 }
 
 const identityCommitments = []
 
 // eslint-disable-next-line no-plusplus
 for (let i = 0; i < 2; i++) {
-    const mockIdentity = new ZkIdentity()
+    const mockIdentity = new Identity()
     identityCommitments.push(mockIdentity.genIdentityCommitment())
 }
 
