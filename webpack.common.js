@@ -70,9 +70,6 @@ module.exports = {
             '@src': path.resolve(__dirname, 'src/'),
             buffer: 'buffer'
         },
-        // modulesDirectories: [
-        //     'node_modules'
-        // ],
         fallback: {
             browserify: require.resolve('browserify'),
             stream: require.resolve('stream-browserify'),
