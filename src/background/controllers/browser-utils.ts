@@ -26,7 +26,7 @@ class BrowserUtils {
 
   removeWindow = (callback: any) => {
     // TODO: Converted from browser. to chrome. solved the error
-    chrome.windows.onRemoved.addListener(callback);
+    browser.windows.onRemoved.addListener(callback);
   };
 
   createWindow = async (options: any) => browser.windows.create(options);
