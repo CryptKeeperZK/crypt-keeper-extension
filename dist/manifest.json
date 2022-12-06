@@ -9,7 +9,7 @@
     "default_popup": "popup.html"
   },
   "background": {
-    "service_worker": "js/backgroundPage.js"
+    "service_worker": "js/backgroundPage.js"  
   },
   "content_scripts": [
     {
@@ -33,6 +33,7 @@
     "tabs",
     "activeTab",
     "notifications",
+    "nativeMessaging",
     "webRequest",
     "proxy",
     "storage",
