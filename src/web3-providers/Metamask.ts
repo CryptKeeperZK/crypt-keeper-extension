@@ -1,7 +1,7 @@
 import pushMessage from "@src/util/pushMessage";
 import createMetaMaskProvider, { MetaMaskInpageProvider } from "@dimensiondev/metamask-extension-provider";
 import { setAccount, setBalance, setChainId, setNetwork, setWeb3Connecting } from "@src/ui/ducks/web3";
-import EthersProvider from "./EthersProivder";
+import { EthersProvider } from "./EthersProivder";
 import { ExternalProvider, JsonRpcSigner, Network, Web3Provider } from "@ethersproject/providers";
 import { WalletInfoBackgound } from "@src/types";
 
@@ -12,7 +12,7 @@ export class MetaMaskProviderService {
   constructor() {
     this._metamaskProvider = createMetaMaskProvider();
     this._ethersProivder = new EthersProvider(this._metamaskProvider);
-    
+
     // TODO: Remove `any` type
     // this._metamaskProvider.on("accountsChanged", async (account: any) => {
     //   console.log("Inside MetaMaskProvider accountsChanged: ", account);
@@ -51,10 +51,23 @@ export class MetaMaskProviderService {
   }
 
   get getEthersProvider(): EthersProvider {
-    return this._ethersProivder
+    return this._ethersProivder;
   }
 
   public async connectMetaMask(): Promise<WalletInfoBackgound> {
-    return await this._ethersProivder.getWalletInfo();
+    return await this._ethersProivder.connectWallet();
+  }
+
+  public async getWalletInfo(): Promise<WalletInfoBackgound | null> {
+    if (this._metamaskProvider?.selectedAddress) {
+      console.log(`MetaMaskProviderService ${this._metamaskProvider?.selectedAddress}`);
+      return await this._ethersProivder.getWalletInfo();
+    }
+
+    return null;
+  }
+
+  public async getSignature(signer: JsonRpcSigner, message: string): Promise<string> {
+    return await this._ethersProivder.getSignature(signer, message);
   }
 }

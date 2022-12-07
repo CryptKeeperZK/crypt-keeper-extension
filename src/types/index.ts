@@ -40,7 +40,8 @@ export type CreateIdentityStrategy = 'interrep' | 'random'
 
 export type NewIdentityRequest = {
     strategy: CreateIdentityStrategy
-    options: any
+    walletInfo: WalletInfoBackgound
+    options: any,
 }
 
 export type MerkleProofArtifacts = {
@@ -106,4 +107,18 @@ export type SerializedIdentity = {
 export enum ZkProofType {
     SEMAPHORE,
     RLN
+}
+
+export type MessageAction = {
+    method: string
+    payload?: any
+    error?: boolean
+    meta?: any
+}
+
+export type ReduxAction = {
+    type: string
+    payload?: any
+    error?: boolean
+    meta?: any
 }

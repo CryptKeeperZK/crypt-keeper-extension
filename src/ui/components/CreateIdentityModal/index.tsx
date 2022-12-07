@@ -5,6 +5,7 @@ import Dropdown from '@src/ui/components/Dropdown'
 import Input from '@src/ui/components/Input'
 import Button from '@src/ui/components/Button'
 import { useAppDispatch } from '@src/ui/ducks/hooks'
+import { useMetaMaskWalletInfo } from '@src/ui/services/MetamaskService'
 
 export default function CreateIdentityModal(props: { onClose: () => void }): ReactElement {
     const [nonce, setNonce] = useState(0)
@@ -28,7 +29,12 @@ export default function CreateIdentityModal(props: { onClose: () => void }): Rea
                 options = {}
             }
 
-            await dispatch(createIdentity(provider, options))
+            const walletInfo = await useMetaMaskWalletInfo();
+
+            if (walletInfo) {
+                await dispatch(createIdentity(provider, walletInfo, options))
+            }
+
             props.onClose()
         } catch (e: any) {
             setError(e.message)

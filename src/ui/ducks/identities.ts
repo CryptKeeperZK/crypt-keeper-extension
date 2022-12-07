@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-shadow */
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { IdentityMetadata } from '@src/types'
+import { IdentityMetadata, WalletInfoBackgound } from '@src/types'
 import postMessage from '@src/util/postMessage'
 import RPCAction from '@src/util/constants'
 import { useSelector } from 'react-redux'
@@ -36,12 +36,13 @@ const initialState: State = {
     selected: ''
 }
 
-export const createIdentity = (strategy: string, options: any) => async (dispatch: AppDispatch) =>
+export const createIdentity = (strategy: string, walletInfo: WalletInfoBackgound, options: any,) => async (dispatch: AppDispatch) =>
     postMessage({
         method: RPCAction.CREATE_IDENTITY,
         payload: {
             strategy,
-            options
+            walletInfo,
+            options,
         }
     })
 

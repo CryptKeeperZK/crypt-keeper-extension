@@ -1,7 +1,7 @@
 import React, { ReactElement, useCallback, useEffect, useRef, useState } from "react";
 import postMessage from "@src/util/postMessage";
 import RPCAction from "@src/util/constants";
-import { fetchWalletInfo, useAccount, useBalance, useNetwork } from "@src/ui/ducks/web3";
+import { useAccount, useBalance, useNetwork } from "@src/ui/ducks/web3";
 import Icon from "@src/ui/components/Icon";
 import {
   deleteIdentity,
@@ -20,6 +20,7 @@ import CreateIdentityModal from "@src/ui/components/CreateIdentityModal";
 import ConnectionModal from "@src/ui/components/ConnectionModal";
 import Menuable from "@src/ui/components/Menuable";
 import { useAppDispatch } from "@src/ui/ducks/hooks";
+import { useMetaMaskConnect, useMetaMaskWalletInfo } from "@src/ui/services/MetamaskService";
 
 export default function Home(): ReactElement {
   const dispatch = useAppDispatch();
@@ -27,8 +28,11 @@ export default function Home(): ReactElement {
   const [fixedTabs, fixTabs] = useState(false);
 
   useEffect(() => {
-    dispatch(fetchIdentities());
-    dispatch(fetchWalletInfo());
+    (async () => {
+      dispatch(fetchIdentities());
+      await useMetaMaskConnect();
+      await useMetaMaskWalletInfo();
+    })();
   }, []);
 
   const onScroll = useCallback(async () => {
@@ -200,10 +204,11 @@ var IdentityList = function (): ReactElement {
   };
 
   const handleKeypress = (e: any, commitment: string, name: string | undefined) => {
-    console.log("handleKeypress", e.key)
+    console.log("handleKeypress", e.key);
     if (e.key === "Enter") {
       if (name) {
-        changeIdentityNameButton(commitment, name);3
+        changeIdentityNameButton(commitment, name);
+        3;
       }
     }
   };

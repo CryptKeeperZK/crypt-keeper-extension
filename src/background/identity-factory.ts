@@ -9,13 +9,10 @@ declare type Ethers = typeof import("ethers");
 const createInterrepIdentity = async (config: any): Promise<ZkIdentityDecorater> => {
     checkParameter(config, 'config', 'object')
 
-    const { web2Provider, nonce = 0, name, ethers, walletInfo } = config
+    const { web2Provider, nonce = 0, name, walletInfo } = config
 
     checkParameter(name, 'name', 'string')
     checkParameter(web2Provider, 'provider', 'string')
-    console.log("createInterrepIdentity: 1")
-    checkParameter(ethers, 'web3', 'object')
-    console.log("createInterrepIdentity: 2")
     checkParameter(walletInfo, 'walletInfo', 'object')
 
     console.log("createInterrepIdentity: 3")
