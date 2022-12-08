@@ -11,6 +11,7 @@ import classNames from 'classnames'
 import Menuable from '@src/ui/components/Menuable'
 import { MetaMaskProviderService } from '@src/web3-providers/Metamask'
 import { useAppDispatch } from '@src/ui/ducks/hooks'
+import { useMetaMaskConnect } from '@src/ui/services/useMetaMask'
 
 export default function Header(): ReactElement {
     const dispatch = useAppDispatch()
@@ -19,55 +20,9 @@ export default function Header(): ReactElement {
     const web3Connecting = useWeb3Connecting()
 
     const connectMetamask = useCallback(async () => {
-        dispatch(setWeb3Connecting(true));
         console.log("Inside connectMetamask button");
-
-        const metamaskProviderService = new MetaMaskProviderService();
-        const metamaskProvider = metamaskProviderService.getMetamaskProvider;
-        const ethersProivder = metamaskProviderService.getEthersProvider;
-
-        // Connect to MetaMask
-        const walletInfo = await metamaskProviderService.connectMetaMask();
-
-        dispatch(setAccount(walletInfo.account));
-        dispatch(setBalance(walletInfo.balance));
-        dispatch(setNetwork(walletInfo.networkName));
-        dispatch(setChainId(walletInfo.chainId));
-
-        // TODO: better to move them to the MetaMaskProviderService
-        metamaskProvider.on("accountsChanged", async (account: any) => {
-            console.log("Inside MetaMaskProvider accountsChanged: ", account);
-            const balance = await ethersProivder.getAccountBalance(account[0]);
-            dispatch(setAccount(account[0]));
-            dispatch(setBalance(balance));
-          });
-      
-        metamaskProvider.on("chainChanged", async () => {
-            console.log("Inside MetaMaskProvider chainChanged");
-        
-            const networkDetails = await ethersProivder.getNetworkDetails();
-            const networkName = networkDetails.name;
-            const chainId = networkDetails.chainId;
-        
-            if (networkName) dispatch(setNetwork(networkName));
-            if (chainId) dispatch(setChainId(chainId));
-        });
-    
-        metamaskProvider.on("error", (e: any) => {
-            console.log("Inside MetaMaskProvider  error: ", e);
-            throw e;
-        });
-    
-        metamaskProvider.on("connect", () => {
-            console.log("Inside MetaMaskProvider  connect");
-        });
-    
-        metamaskProvider.on("disconnect", () => {
-            console.log("Inside MetaMaskProvider  disconnect");
-        });
-
-        setWeb3Connecting(false)
-    }, [account, network, web3Connecting]);
+        await useMetaMaskConnect();
+    }, []);
 
     const lock = useCallback(async () => {
         await postMessage({ method: RPCAction.LOCK })

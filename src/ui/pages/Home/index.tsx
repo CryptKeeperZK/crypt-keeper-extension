@@ -20,7 +20,7 @@ import CreateIdentityModal from "@src/ui/components/CreateIdentityModal";
 import ConnectionModal from "@src/ui/components/ConnectionModal";
 import Menuable from "@src/ui/components/Menuable";
 import { useAppDispatch } from "@src/ui/ducks/hooks";
-import { useMetaMaskConnect, useMetaMaskWalletInfo } from "@src/ui/services/MetamaskService";
+import { useMetaMaskConnect, useMetaMaskWalletInfo } from "@src/ui/services/useMetaMask";
 
 export default function Home(): ReactElement {
   const dispatch = useAppDispatch();
@@ -253,7 +253,7 @@ var IdentityList = function (): ReactElement {
                 <div className="flex flex-row items-center text-lg font-semibold">
                   {`${metadata.name}`}
                   <span className="text-xs py-1 px-2 ml-2 rounded-full bg-gray-500 text-gray-800">
-                    {metadata.provider}
+                    {metadata.web2Provider}
                   </span>
                 </div>
               )}
