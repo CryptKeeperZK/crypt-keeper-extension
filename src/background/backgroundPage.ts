@@ -6,6 +6,7 @@ import importAllScripts from "./shared/importScripts.js"
 self.addEventListener('install', importAllScripts);
 
 /*
+ * @src MetaMask extension workaround
  * A keepalive message listener to prevent Service Worker getting shut down due to inactivity.
  * UI sends the message periodically, in a setInterval.
  * Chrome will revive the service worker if it was shut down, whenever a new message is sent, but only if a listener was defined here.
@@ -29,13 +30,73 @@ import { Request } from "@src/types";
 import ZkKeeperController from "./zk-keeper";
 import { isManifestV3 } from './shared/checkManifestV3';
 import log from 'loglevel';
+import { checkForLastErrorAndLog } from "./shared/checForLastError";
 
 log.setDefaultLevel(process.env.CRYPTKEEPER_DEBUG ? 'debug' : 'info');
+
+/**
+ * @src MetaMask extension workaround
+ * Sends a message to the dapp(s) content script to signal it can connect to MetaMask background as
+ * the backend is not active. It is required to re-connect dapps after service worker re-activates.
+ * For non-dapp pages, the message will be sent and ignored.
+ */
+ const ONE_SECOND_IN_MILLISECONDS = 1_000;
+ // Timeout for initializing phishing warning page.
+ const PHISHING_WARNING_PAGE_TIMEOUT = ONE_SECOND_IN_MILLISECONDS;
+ 
+ const ACK_KEEP_ALIVE_MESSAGE = 'ACK_KEEP_ALIVE_MESSAGE';
+ const WORKER_KEEP_ALIVE_MESSAGE = 'WORKER_KEEP_ALIVE_MESSAGE';
+
+ const sendReadyMessageToTabs = async () => {
+  const tabs = await browser.tabs
+    .query({
+      /**
+       * Only query tabs that our extension can run in. To do this, we query for all URLs that our
+       * extension can inject scripts in, which is by using the "<all_urls>" value and __without__
+       * the "tabs" manifest permission. If we included the "tabs" permission, this would also fetch
+       * URLs that we'd not be able to inject in, e.g. chrome://pages, chrome://extension, which
+       * is not what we'd want.
+       *
+       * You might be wondering, how does the "url" param work without the "tabs" permission?
+       *
+       * @see {@link https://bugs.chromium.org/p/chromium/issues/detail?id=661311#c1}
+       *  "If the extension has access to inject scripts into Tab, then we can return the url
+       *   of Tab (because the extension could just inject a script to message the location.href)."
+       */
+      url: '<all_urls>',
+      windowType: 'normal',
+    })
+    .then((result) => {
+      checkForLastErrorAndLog();
+      return result;
+    })
+    .catch(() => {
+      checkForLastErrorAndLog();
+    });
+
+  /** @todo we should only sendMessage to dapp tabs, not all tabs. */
+  // for (const tab of tabs) {
+  //   browser.tabs
+  //     .sendMessage(tab.id, {
+  //       name: EXTENSION_MESSAGES.READY,
+  //     })
+  //     .then(() => {
+  //       checkForLastErrorAndLog();
+  //     })
+  //     .catch(() => {
+  //       // An error may happen if the contentscript is blocked from loading,
+  //       // and thus there is no runtime.onMessage handler to listen to the message.
+  //       checkForLastErrorAndLog();
+  //     });
+  // }
+};
+
 
 // TODO consider adding inTest env
 const initApp = async (remotePort?: Runtime.Port) => {
   browser.runtime.onConnect.removeListener(initApp);
   await initialize(remotePort);
+  await sendReadyMessageToTabs();
   log.info('CryptKeeper initialization complete.');
 }
 
@@ -51,7 +112,7 @@ async function initialize (remotePort?: Runtime.Port) {
       console.log(`initialize remotePort`, remotePort);
       const app: ZkKeeperController = new ZkKeeperController();
 
-      app.initialize().then(async () => {
+      app.initialize().then(() => {
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         browser.runtime.onMessage.addListener(async (request: Request,_) => {
           try {
@@ -60,6 +121,13 @@ async function initialize (remotePort?: Runtime.Port) {
             return [null, res];
           } catch (e: any) {
             return [e.message, null];
+          }
+        });
+        
+        remotePort.onMessage.addListener((message: any) => {
+          console.log(`remotePort.onMessage: ${message}`);
+          if (message.name === WORKER_KEEP_ALIVE_MESSAGE) {
+            remotePort.postMessage({ name: ACK_KEEP_ALIVE_MESSAGE });
           }
         });
         //browser.runtime.onMessage.addListener();
