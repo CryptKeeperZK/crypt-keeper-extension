@@ -26,7 +26,7 @@ export type NetworkDetails = {
 }
 
 export type CreateInterrepIdentityMetadata = {
-    web2Provider: 'Twitter' | 'Reddit' | 'Github'
+    web2Provider: CreateIdentityWeb2Provider
     nonce?: number
     name?: string
 }
@@ -36,12 +36,21 @@ export type CreateRandomIdentityMetadata = {
 }
 
 export type CreateIdentityMetadata = CreateInterrepIdentityMetadata | CreateRandomIdentityMetadata
+
 export type CreateIdentityStrategy = 'interrep' | 'random'
+export type CreateIdentityWeb2Provider = 'twitter' | 'github' | 'reddit';
+
+export type CreateIdentityOptions = {
+    nonce?: number
+    web2Provider?: CreateIdentityWeb2Provider
+    account?: string
+    name?: string
+}
 
 export type NewIdentityRequest = {
     strategy: CreateIdentityStrategy
-    walletInfo: WalletInfoBackgound
-    options: any,
+    messageSignature: string
+    options: CreateIdentityOptions
 }
 
 export type MerkleProofArtifacts = {
@@ -91,7 +100,7 @@ export type ApprovalAction = {
 export type IdentityMetadata = {
     account: string
     name: string
-    provider: string
+    web2Provider: CreateIdentityStrategy
 }
 
 export type IdentityName = {
