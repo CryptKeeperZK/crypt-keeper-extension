@@ -29,9 +29,13 @@ export default function Home(): ReactElement {
 
   useEffect(() => {
     (async () => {
-      dispatch(fetchIdentities());
-      await useMetaMaskConnect();
-      await useMetaMaskWalletInfo();
+      try {
+        await useMetaMaskConnect();
+        await useMetaMaskWalletInfo();
+        dispatch(fetchIdentities());
+      } catch (error) {
+        throw new Error(`Error in connecting to MetaMask`);
+      }
     })();
   }, []);
 
@@ -120,7 +124,7 @@ const HomeInfo = function (): ReactElement {
   );
 };
 
-var HomeList = function (): ReactElement {
+const HomeList = function (): ReactElement {
   const [selectedTab, selectTab] = useState<"identities" | "activity">("identities");
 
   return (
@@ -169,7 +173,7 @@ var HomeList = function (): ReactElement {
   );
 };
 
-var IdentityList = function (): ReactElement {
+const IdentityList = function (): ReactElement {
   const identities = useIdentities();
   const selected = useSelectedIdentity();
   const dispatch = useAppDispatch();
@@ -216,7 +220,7 @@ var IdentityList = function (): ReactElement {
   useEffect(() => {
     dispatch(fetchIdentities());
     setDeleteIdentityState(false);
-  }, [renameInput, deleteIdentityState]);
+  }, [renameInput, deleteIdentityState, identities]);
 
   return (
     <>
@@ -298,6 +302,6 @@ var IdentityList = function (): ReactElement {
   );
 };
 
-var ActivityList = function (): ReactElement {
+const ActivityList = function (): ReactElement {
   return <div />;
 };

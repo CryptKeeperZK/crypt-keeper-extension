@@ -83,7 +83,7 @@ export default class ZkKeeperController extends Handler {
                     const { strategy, messageSignature, options } = payload
                     if (!strategy) throw new Error('strategy not provided')
 
-                    const numOfIdentites = this.identityService.getNumOfIdentites()
+                    const numOfIdentites = await this.identityService.getNumOfIdentites()
                     const config: any = {
                         ...options,
                         name: options?.name || `Account # ${numOfIdentites}`
@@ -115,8 +115,8 @@ export default class ZkKeeperController extends Handler {
         this.add(RPCAction.GET_COMMITMENTS, LockService.ensure, this.identityService.getIdentityCommitments)
         this.add(RPCAction.GET_IDENTITIES, LockService.ensure, this.identityService.getIdentities)
         this.add(RPCAction.SET_ACTIVE_IDENTITY, LockService.ensure, this.identityService.setActiveIdentity)
-        this.add(RPCAction.SET_IDENTITY_NAME, LockService.ensure, (payload: IdentityName) => this.identityService.setIdentityName(payload))
-        this.add(RPCAction.DELETE_IDENTITY, LockService.ensure, (payload: IdentityName) => this.identityService.deleteIdentity(payload))
+        this.add(RPCAction.SET_IDENTITY_NAME, LockService.ensure, async (payload: IdentityName) => await this.identityService.setIdentityName(payload))
+        this.add(RPCAction.DELETE_IDENTITY, LockService.ensure, async (payload: IdentityName) => await this.identityService.deleteIdentity(payload))
         this.add(RPCAction.GET_ACTIVE_IDENTITY, LockService.ensure, async () => {
             const identity = await this.identityService.getActiveidentity()
             if (!identity) {
