@@ -99,7 +99,7 @@ export default class IdentityService extends SimpleStorage {
         }
     }
 
-    setIdentityName = async (payload: IdentityName): Promise<IdentityMetadata | null> => {
+    setIdentityName = async (payload: IdentityName): Promise<boolean> => {
         const identities = await this.getIdentitiesFromStore();
 
         console.log("payload", payload)
@@ -108,11 +108,15 @@ export default class IdentityService extends SimpleStorage {
         console.log("payload name", name)
         const id = identities.get(identityCommitment);
         if(id) {
-            const metadata = ZkIdentityDecorater.genFromSerialized(id).setIdentityMetadataName(name);
-            return metadata;
+            const identity = ZkIdentityDecorater.genFromSerialized(id);
+            identity.setIdentityMetadataName(name);
+            identities.set(identityCommitment, identity.serialize());
+            await this.identitiesStore.set(Object.fromEntries(identities));
+            pushMessage(setIdentities(await this.getIdentities()))
+            return true;
         } else {
             console.log("setIdentityName id not exist")
-            return null;
+            return false;
         }
     }
 
