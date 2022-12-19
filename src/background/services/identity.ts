@@ -12,15 +12,15 @@ const DB_KEY = '@@IDS-t1@@'
 const IDENTITY_KEY = 'IDS'
 
 export default class IdentityService extends SimpleStorage {
-    identities: Map<string, ZkIdentityDecorater>
+    identities: Map<string, string>
     activeIdentity?: ZkIdentityDecorater
-    identitiesStore: SimpleStorage2;
+    identitiesStore: SimpleStorage;
 
     constructor() {
         super(DB_KEY);
         this.identities = new Map();
         this.activeIdentity = undefined;
-        this.identitiesStore = new SimpleStorage2(IDENTITY_KEY);
+        this.identitiesStore = new SimpleStorage(IDENTITY_KEY);
         console.log(`IdentityService constructor identities`, this.identities);
         console.log(`IdentityService constructor typeof identities`, typeof this.identities);
     }
@@ -61,8 +61,11 @@ export default class IdentityService extends SimpleStorage {
             const identity: ZkIdentityDecorater = ZkIdentityDecorater.genFromSerialized(value as string)
             const identityCommitment: bigint = identity.genIdentityCommitment()
             console.log(`IdentityService loadInMemory identities before`, identities);
-            identities.set(bigintToHex(identityCommitment), identity)
+            identities.set(bigintToHex(identityCommitment), identity.serialize())
             console.log(`IdentityService loadInMemory identities after`, identities);
+            console.log(`IdentityService loadInMemory Object.fromEntries(identities)`, Object.fromEntries(identities));
+            console.log(`IdentityService loadInMemory JSON.stringify(identities)`, JSON.stringify(identities));
+            console.log(`IdentityService loadInMemory JSON.parse(identities)`, JSON.parse(JSON.stringify(identities)));
             try {
                 // @src https://stackoverflow.com/a/67380395/13072332
                 await this.identitiesStore.set(Object.fromEntries(identities));
@@ -78,14 +81,14 @@ export default class IdentityService extends SimpleStorage {
         if (!identities.size) return
 
         const firstKey: string = identities.keys().next().value
-        this.activeIdentity = identities.get(firstKey)
+        this.activeIdentity = ZkIdentityDecorater.genFromSerialized(identities.get(firstKey)!);
     }
 
     setActiveIdentity = async (identityCommitment: string) => {
         const identities = await this.getIdentitiesFromStore();
         
         if (identities.has(identityCommitment)) {
-            this.activeIdentity = identities.get(identityCommitment)
+            this.activeIdentity = ZkIdentityDecorater.genFromSerialized(identities.get(identityCommitment)!);
             pushMessage(setSelected(identityCommitment))
             const tabs = await browser.tabs.query({ active: true })
             for (const tab of tabs) {
@@ -105,7 +108,7 @@ export default class IdentityService extends SimpleStorage {
         console.log("payload name", name)
         const id = identities.get(identityCommitment);
         if(id) {
-            const metadata = id.setIdentityMetadataName(name);
+            const metadata = ZkIdentityDecorater.genFromSerialized(id).setIdentityMetadataName(name);
             return metadata;
         } else {
             console.log("setIdentityName id not exist")
@@ -120,7 +123,10 @@ export default class IdentityService extends SimpleStorage {
         const id = identities.get(identityCommitment);
         if(id) {
             console.log("deleteIdentity id deleted")
-            return identities.delete(identityCommitment);
+            identities.delete(identityCommitment);
+            await this.identitiesStore.set(Object.fromEntries(identities));
+            pushMessage(setIdentities(await this.getIdentities()))
+            return true;
         } else {
             console.log("deleteIdentity id is not deleted")
             return false;
@@ -136,25 +142,30 @@ export default class IdentityService extends SimpleStorage {
             console.log("getIdentityCOmmitments: ", key);
             commitments.push(key)
         }
-        return commitments
+        return {commitments, identities}
     }
 
-    getIdentities = async (): Promise<{ commitment: string; metadata: IdentityMetadata }[]> => {
-        const commitments = await this.getIdentityCommitments()
+    getIdentities = async (): Promise<({ commitment: string; metadata: IdentityMetadata })[]> => {
+        const { commitments, identities } = await this.getIdentityCommitments()
         console.log("IdentityService getIdentities: ", commitments);
-        const identities = await this.getIdentitiesFromStore();
-        return commitments.map((commitment) => {
-            const id = identities.get(commitment)
+        
+        return commitments.filter(commitment => {
+            if (typeof identities.get(commitment) != undefined) return commitment;
+        }).map(commitment => {
+            const serializedIdentity = identities.get(commitment) as string;
+            const identity = ZkIdentityDecorater.genFromSerialized(serializedIdentity);
             console.log("getIdentities: commitments", commitments);
-            console.log("getIdentities: metadata", id!.metadata);
+            console.log("getIdentities: metadata", identity!.metadata);
             return {
                 commitment,
-                metadata: id!.metadata
+                metadata: identity!.metadata
             }
-        })
+        });
     }
 
     insert = async (newIdentity: ZkIdentityDecorater): Promise<boolean> => {
+        console.log(`IdentityService insert newIdentity`, newIdentity);
+        console.log(`IdentityService insert typeof newIdentity`, typeof newIdentity);
         const identities = await this.getIdentitiesFromStore();
         console.log(`IdentityService insert identities:`, identities);
         console.log(`IdentityService insert type identities: ${typeof identities}`);
@@ -164,8 +175,10 @@ export default class IdentityService extends SimpleStorage {
         if (existing) return false
 
         const existingIdentites: string[] = []
-        for (const identity of identities.values()) {
-            existingIdentites.push(identity.serialize())
+        for (const serializedIdentity of identities.values()) {
+            console.log(`IdentityService insert identity:`, serializedIdentity);
+            console.log(`IdentityService insert type identity:`, typeof serializedIdentity);
+            existingIdentites.push(serializedIdentity)
         }
 
         const newValue: string[] = [...existingIdentites, newIdentity.serialize()]
@@ -186,15 +199,15 @@ export default class IdentityService extends SimpleStorage {
         return identities.size
     }
 
-    public async getIdentitiesFromStore(): Promise<Map<string, ZkIdentityDecorater>> {
+    public async getIdentitiesFromStore(): Promise<Map<string, string>> {
         const identitesObj = await this.identitiesStore.get();
 
         if (identitesObj) {
             console.log(`IdentityService getIdentitiesFromStore EXIST identitesObj`, identitesObj);
-            return new Map(Object.entries(identitesObj)) as Map<string, ZkIdentityDecorater>;
+            return new Map(Object.entries(identitesObj));
         } else {
             console.log(`IdentityService getIdentitiesFromStore NEW identitesObj`, identitesObj);
-            return new Map() as Map<string, ZkIdentityDecorater>;
+            return new Map() as Map<string, string>;
         }
     }
 }
