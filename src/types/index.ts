@@ -97,6 +97,11 @@ export type ApprovalAction = {
     action: 'add' | 'remove'
 }
 
+export type ZkIdentity = {
+    identityMetadata: IdentityMetadata,
+    
+}
+
 export type IdentityMetadata = {
     account: string
     name: string

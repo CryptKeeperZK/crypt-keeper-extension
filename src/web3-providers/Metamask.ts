@@ -54,11 +54,11 @@ export class MetaMaskProviderService {
     return this._ethersProivder;
   }
 
-  public async connectMetaMask(): Promise<WalletInfoBackgound> {
+  async connectMetaMask(): Promise<WalletInfoBackgound> {
     return await this._ethersProivder.connectWallet();
   }
 
-  public async getWalletInfo(): Promise<WalletInfoBackgound | null> {
+  async getWalletInfo(): Promise<WalletInfoBackgound | null> {
     if (this._metamaskProvider?.selectedAddress) {
       console.log(`MetaMaskProviderService ${this._metamaskProvider?.selectedAddress}`);
       return await this._ethersProivder.getWalletInfo();
@@ -67,7 +67,7 @@ export class MetaMaskProviderService {
     return null;
   }
 
-  public async getSignature(signer: JsonRpcSigner, message: string): Promise<string> {
+  async getSignature(signer: JsonRpcSigner, message: string): Promise<string> {
     return await this._ethersProivder.getSignature(signer, message);
   }
 }

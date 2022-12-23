@@ -3,7 +3,6 @@ import { JsonRpcSigner, Network, Web3Provider } from "@ethersproject/providers";
 import { WalletInfoBackgound } from "@src/types";
 import { EthereumMethodType } from "./types";
 
-
 export class EthersProvider {
   private _ethersProvider: Web3Provider;
 
@@ -15,7 +14,7 @@ export class EthersProvider {
     return this._ethersProvider;
   }
 
-  public async getWalletInfo(): Promise<WalletInfoBackgound> {
+  async getWalletInfo(): Promise<WalletInfoBackgound> {
     const signer = await this.getSigner();
     const signerAddress = await signer.getAddress();
     const network = await this.getNetworkDetails();
@@ -30,7 +29,7 @@ export class EthersProvider {
     };
   }
 
-  public async connectWallet(): Promise<WalletInfoBackgound> {
+  async connectWallet(): Promise<WalletInfoBackgound> {
     await this.getAccounts();
     const signer = await this.getSigner();
     const signerAddress = await signer.getAddress();
@@ -46,15 +45,15 @@ export class EthersProvider {
     };
   }
 
-  public async getSigner(): Promise<JsonRpcSigner> {
+  async getSigner(): Promise<JsonRpcSigner> {
     return this._ethersProvider.getSigner();
   }
 
-  public async getAccounts(): Promise<String[]> {
+  async getAccounts(): Promise<String[]> {
     return await this._ethersProvider.send(EthereumMethodType.ETH_REQUEST_ACCOUNTS, []);
   }
 
-  public async getAccountBalance(account: string): Promise<string> {
+  async getAccountBalance(account: string): Promise<string> {
     const balance = await this._ethersProvider.getBalance(account);
     const balanceInEthString = ethers.utils.formatEther(balance);
     const balanceInEth = Number(balanceInEthString).toFixed(4);
@@ -62,11 +61,11 @@ export class EthersProvider {
     return balanceInEth;
   }
 
-  public async getNetworkDetails(): Promise<Network> {
+  async getNetworkDetails(): Promise<Network> {
     return await this._ethersProvider.getNetwork();
   }
 
-  public async getSignature(signer: JsonRpcSigner, message: string): Promise<string>{
+  async getSignature(signer: JsonRpcSigner, message: string): Promise<string>{
     return await signer.signMessage(message);
   }
 }

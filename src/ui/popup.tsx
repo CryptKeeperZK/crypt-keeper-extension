@@ -57,7 +57,6 @@ browser.tabs.query({ active: true, currentWindow: true }).then(() => {
         }
       
         const keepAliveInterval = setInterval(() => {
-          console.log(`UI keepAliveInterval`)
           browser.runtime.sendMessage({ name: WORKER_KEEP_ALIVE_MESSAGE });
       
           if (extensionPort) {

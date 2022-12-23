@@ -3,7 +3,6 @@ import { SerializedIdentity, IdentityMetadata } from '@src/types'
 
 export default class ZkIdentityDecorater {
     public zkIdentity: Identity
-
     public metadata: IdentityMetadata
 
     constructor(zkIdentity: Identity, metadata: IdentityMetadata) {

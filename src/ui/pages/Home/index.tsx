@@ -30,8 +30,8 @@ export default function Home(): ReactElement {
   useEffect(() => {
     (async () => {
       try {
-        await useMetaMaskConnect();
-        await useMetaMaskWalletInfo();
+        //await useMetaMaskConnect();
+        //await useMetaMaskWalletInfo();
         dispatch(fetchIdentities());
       } catch (error) {
         throw new Error(`Error in connecting to MetaMask`);
