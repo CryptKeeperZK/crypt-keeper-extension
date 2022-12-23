@@ -13,6 +13,7 @@ export interface SemaphoreProofRequest {
     signal: string
     merkleStorageAddress?: string
     circuitFilePath: string
+    verificationKey: string
     zkeyFilePath: string
     merkleProofArtifacts?: MerkleProofArtifacts
     merkleProof?: MerkleProof

@@ -1,6 +1,6 @@
 import { MerkleProof } from '@zk-kit/incremental-merkle-tree';
 import { Identity } from "@semaphore-protocol/identity";
-import { RLN, RLNFullProof  } from 'rlnjs';
+import { RLN,  RLNFullProof  } from 'rlnjs/src';
 import { bigintToHex, hexToBigint } from 'bigint-conversion'
 import axios, { AxiosResponse } from 'axios'
 import { MerkleProofArtifacts } from '@src/types'
@@ -14,6 +14,7 @@ export default class RLNService {
             const {
                 circuitFilePath,
                 zkeyFilePath,
+                verificationKey,
                 merkleStorageAddress,
                 externalNullifier,
                 signal,
@@ -22,8 +23,9 @@ export default class RLNService {
             } = request
             let merkleProof: MerkleProof
 
-            //const identitySecretHash: bigint = identity.getSecretHash()
-            const identityCommitment = identity.generateCommitment()
+            const rln = new RLN(circuitFilePath, zkeyFilePath, verificationKey);
+
+            const identityCommitment = identity.getCommitment()
             const identityCommitmentHex = bigintToHex(identityCommitment)
             const rlnIdentifierBigInt = hexToBigint(rlnIdentifier)
             if (merkleStorageAddress) {
@@ -39,14 +41,7 @@ export default class RLNService {
                 merkleProof = generateMerkleProoof(proofArtifacts.depth, identityCommitment);
             }
 
-            const witness = RLN.genWitness(
-                identityCommitment,
-                merkleProof,
-                externalNullifier,
-                signal,
-                rlnIdentifierBigInt
-            )
-            const fullProof: RLNFullProof = await RLN.genProof(witness, circuitFilePath, zkeyFilePath)
+            const fullProof: RLNFullProof = await rln.genProof(signal, merkleProof, externalNullifier)
             return fullProof
         } catch (e) {
             throw new Error(`Error while generating RLN proof: ${e}`)

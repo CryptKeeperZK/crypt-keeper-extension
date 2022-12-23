@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import ReactDOM from "react-dom";
-import { genExternalNullifier, RLN } from "rlnjs";
+import { RLN } from "rlnjs/src";
 import { bigintToHex } from "bigint-conversion";
 import { Identity } from "@semaphore-protocol/identity";
 
@@ -15,6 +15,7 @@ const semaphorePath = {
 const rlnPath = {
   circuitFilePath: "http://localhost:8095/rln/rln.wasm",
   zkeyFilePath: "http://localhost:8095/rln/rln_final.zkey",
+  verificationKey: "http://localhost:8095/rln/verification_key.json"
 };
 
 const merkleStorageAddress = "http://localhost:8090/merkleProof";
@@ -28,7 +29,7 @@ const genMockIdentityCommitments = (): string[] => {
   let identityCommitments: string[] = [];
   for (let i = 0; i < 10; i++) {
     const mockIdentity = new Identity();
-    let idCommitment = bigintToHex(mockIdentity.genIdentityCommitment());
+    let idCommitment = bigintToHex(mockIdentity.getCommitment());
 
     identityCommitments.push(idCommitment);
   }
@@ -44,7 +45,7 @@ function NoActiveIDCommitment() {
 }
 
 function App() {
-  const [client, setClient] = useState(null);
+  const [client, setClient] = useState();
   const [isLocked, setIsLocked] = useState(true);
   const [identityCommitment, setIdentityCommitment] = useState("");
   const mockIdentityCommitments: string[] = genMockIdentityCommitments();
@@ -101,7 +102,7 @@ function App() {
   const genRLNProof = async (proofType: MerkleProofType = MerkleProofType.STORAGE_ADDRESS) => {
     const externalNullifier = genExternalNullifier("voting-1");
     const signal = "0x111";
-    const rlnIdentifier = RLN.genIdentifier();
+    const rlnIdentifier = RLN._genIdentifier();
     const rlnIdentifierHex = bigintToHex(rlnIdentifier);
 
     let storageAddressOrArtifacts: any = `${merkleStorageAddress}/RLN`;
@@ -120,6 +121,7 @@ function App() {
 
     let circuitPath = rlnPath.circuitFilePath;
     let zkeyFilePath = rlnPath.zkeyFilePath;
+    let verificationKey = rlnPath.verificationKey;
 
     let toastId;
     try {
