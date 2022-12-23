@@ -1,5 +1,5 @@
 import pushMessage from "@src/util/pushMessage";
-import createMetaMaskProvider from "@dimensiondev/metamask-extension-provider";
+import createMetaMaskProvider, { MetaMaskInpageProvider } from "@dimensiondev/metamask-extension-provider";
 import { ethers } from "ethers";
 import { setAccount, setBalance, setChainId, setNetwork, setWeb3Connecting } from "@src/ui/ducks/web3";
 import { NetworkDetails, WalletInfo, WalletInfoBackgound } from "@src/types";
@@ -10,53 +10,60 @@ export default class MetamaskServiceEthers {
   metamaskProvider?: any;
   ethersProvider?: any;
 
-  constructor() {
-    this.ensure()
-      .then(() => {
-        console.log("4. Inside MetamaskServiceEthers ensure 5 accountsChanged before");
-        this.metamaskProvider.on("accountsChanged", async (account: string[]) => {
-          console.log("4. Inside MetamaskServiceEthers ensure 5 accountsChanged: ", account);
-          const balance = await this.getAccountBalance(account[0]);
-          await pushMessage(setAccount(account[0]));
-          await pushMessage(setBalance(balance));
-        });
+  constructor(metamaskProviderPayload?: MetaMaskInpageProvider) {
+    if (metamaskProviderPayload) {
+      this.ensure(metamaskProviderPayload)
+      // .then(() => {
+      //   console.log("4. Inside MetamaskServiceEthers ensure 5 accountsChanged before");
+      //   this.metamaskProvider.on("accountsChanged", async (account: string[]) => {
+      //     console.log("4. Inside MetamaskServiceEthers ensure 5 accountsChanged: ", account);
+      //     const balance = await this.getAccountBalance(account[0]);
+      //     await pushMessage(setAccount(account[0]));
+      //     await pushMessage(setBalance(balance));
+      //   });
 
-        this.metamaskProvider.on("chainChanged", async () => {
-          console.log("4. Inside MetamaskServiceEthers ensure 6 chainChanged");
+      //   this.metamaskProvider.on("chainChanged", async () => {
+      //     console.log("4. Inside MetamaskServiceEthers ensure 6 chainChanged");
 
-          const networkDetails: NetworkDetails = await this.getNetworkDetails();
-          const networkName = networkDetails.name;
-          const chainId = networkDetails.chainId;
+      //     const networkDetails: NetworkDetails = await this.getNetworkDetails();
+      //     const networkName = networkDetails.name;
+      //     const chainId = networkDetails.chainId;
 
-          console.log("4. Inside MetamaskServiceEthers ensure 7");
-          if (networkName) await pushMessage(setNetwork(networkName));
-          if (chainId) await pushMessage(setChainId(chainId));
-        });
+      //     console.log("4. Inside MetamaskServiceEthers ensure 7");
+      //     if (networkName) await pushMessage(setNetwork(networkName));
+      //     if (chainId) await pushMessage(setChainId(chainId));
+      //   });
 
-        this.metamaskProvider.on("error", (e: any) => {
-          console.log("4. Inside MetamaskServiceEthers ensure 5 error: ", e);
-          throw e;
-        });
+      //   this.metamaskProvider.on("error", (e: any) => {
+      //     console.log("4. Inside MetamaskServiceEthers ensure 5 error: ", e);
+      //     throw e;
+      //   });
 
-        this.metamaskProvider.on("connect", () => {
-          console.log("4. Inside MetamaskServiceEthers ensure connect");
-        });
+      //   this.metamaskProvider.on("connect", () => {
+      //     console.log("4. Inside MetamaskServiceEthers ensure connect");
+      //   });
         
-        this.metamaskProvider.on("disconnect", () => {
-          console.log("4. Inside MetamaskServiceEthers ensure disconnect");
-        });
-      })
-      .catch(e => {
-        throw new Error(e);
-      });
+      //   this.metamaskProvider.on("disconnect", () => {import LocalMessageDuplexStream from 'post-message-stream';
+      //     console.log("4. Inside MetamaskServiceEthers ensure disconnect");
+      //   });
+      // })
+      // .catch(e => {
+      //   throw new Error(e);
+      // });
+    }           
   }
 
-  ensure = async (payload: any = null) => {
-    console.log("4. Inside MetamaskServiceEthers ensure 1");
+  ensure = async (metamaskProviderPayload?: MetaMaskInpageProvider) => {
+    console.log("4. Inside MetamaskServiceEthers ensure 1 metamaskProviderPayload", metamaskProviderPayload);
 
     if (!this.metamaskProvider) {
       console.log("4. Inside MetamaskServiceEthers ensure 2");
-      this.metamaskProvider = await createMetaMaskProvider();
+      try {
+        this.metamaskProvider = metamaskProviderPayload;
+      } catch (e: any) {
+          console.log("Stopped here!!!!!", e);
+          throw new Error(e);
+      }
     }
 
     if (this.metamaskProvider) {
@@ -69,7 +76,7 @@ export default class MetamaskServiceEthers {
 
     console.log("4. Inside MetamaskServiceEthers ensure8");
 
-    return payload;
+    return metamaskProviderPayload;
   };
 
   getWeb3 = async (): Promise<Ethers> => {

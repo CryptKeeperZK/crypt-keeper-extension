@@ -67,8 +67,10 @@ export default class IdentityService extends SimpleStorage {
             console.log(`IdentityService loadInMemory JSON.stringify(identities)`, JSON.stringify(identities));
             console.log(`IdentityService loadInMemory JSON.parse(identities)`, JSON.parse(JSON.stringify(identities)));
             try {
+                const serializedIdentities = JSON.stringify(Array.from(identities.entries()));
+                const cipertext = await LockService.encrypt(serializedIdentities);
                 // @src https://stackoverflow.com/a/67380395/13072332
-                await this.identitiesStore.set(Object.fromEntries(identities));
+                await this.identitiesStore.set(cipertext);
             } catch (error) {
                 throw new Error(`Error in storing ${error}`)
             }
@@ -204,13 +206,18 @@ export default class IdentityService extends SimpleStorage {
     }
 
     public async getIdentitiesFromStore(): Promise<Map<string, string>> {
-        const identitesObj = await this.identitiesStore.get();
+        const cipertext = await this.identitiesStore.get();
 
-        if (identitesObj) {
-            console.log(`IdentityService getIdentitiesFromStore EXIST identitesObj`, identitesObj);
-            return new Map(Object.entries(identitesObj));
+        console.log(`IdentityService getIdentitiesFromStore EXIST cipertext`, cipertext);
+
+        if (cipertext) {
+            const identitesDecrepted = await LockService.decrypt(cipertext);
+            console.log(`IdentityService getIdentitiesFromStore EXIST identitesDecrepted`, identitesDecrepted);
+            const identitiesParsed = JSON.parse(identitesDecrepted);
+            console.log(`IdentityService getIdentitiesFromStore EXIST identitiesParsed`, identitiesParsed);
+            return new Map(identitiesParsed);
         } else {
-            console.log(`IdentityService getIdentitiesFromStore NEW identitesObj`, identitesObj);
+            console.log(`IdentityService getIdentitiesFromStore NEW identitesObj`, cipertext);
             return new Map() as Map<string, string>;
         }
     }
