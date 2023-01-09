@@ -53,7 +53,7 @@ export default class MetamaskServiceWeb3 {
         return this.web3
     }
 
-    getWalletInfo = async (): Promise<WalletInfo | null> => {
+    getWalletInfo = async (): Promise<any | WalletInfo | null> => {
         await this.ensure()
 
         if (!this.web3) {
@@ -71,6 +71,7 @@ export default class MetamaskServiceWeb3 {
             }
 
             return {
+                signer: null,
                 account: accounts[0],
                 balance,
                 networkName,

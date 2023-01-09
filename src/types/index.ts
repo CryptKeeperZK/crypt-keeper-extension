@@ -1,4 +1,5 @@
-import { MerkleProof } from '@zk-kit/protocols'
+import { JsonRpcSigner } from '@ethersproject/providers'
+import { MerkleProof } from '@zk-kit/incremental-merkle-tree'
 
 export type Request = {
     method: string
@@ -14,6 +15,10 @@ export type WalletInfo = {
     chainId: number
 }  
 
+export interface WalletInfoBackgound extends WalletInfo {
+    signer: JsonRpcSigner
+}
+
 export type NetworkDetails = {
     chainId: number
     ensAddress: string
@@ -21,7 +26,7 @@ export type NetworkDetails = {
 }
 
 export type CreateInterrepIdentityMetadata = {
-    web2Provider: 'Twitter' | 'Reddit' | 'Github'
+    web2Provider: CreateIdentityWeb2Provider
     nonce?: number
     name?: string
 }
@@ -31,11 +36,21 @@ export type CreateRandomIdentityMetadata = {
 }
 
 export type CreateIdentityMetadata = CreateInterrepIdentityMetadata | CreateRandomIdentityMetadata
+
 export type CreateIdentityStrategy = 'interrep' | 'random'
+export type CreateIdentityWeb2Provider = 'twitter' | 'github' | 'reddit';
+
+export type CreateIdentityOptions = {
+    nonce?: number
+    web2Provider?: CreateIdentityWeb2Provider
+    account?: string
+    name?: string
+}
 
 export type NewIdentityRequest = {
     strategy: CreateIdentityStrategy
-    options: any
+    messageSignature: string
+    options: CreateIdentityOptions
 }
 
 export type MerkleProofArtifacts = {
@@ -82,10 +97,20 @@ export type ApprovalAction = {
     action: 'add' | 'remove'
 }
 
+export type ZkIdentity = {
+    identityMetadata: IdentityMetadata,
+    
+}
+
 export type IdentityMetadata = {
     account: string
     name: string
-    provider: string
+    web2Provider: CreateIdentityStrategy
+}
+
+export type IdentityName = {
+    identityCommitment: string
+    name: string
 }
 
 export type SerializedIdentity = {
@@ -96,4 +121,18 @@ export type SerializedIdentity = {
 export enum ZkProofType {
     SEMAPHORE,
     RLN
+}
+
+export type MessageAction = {
+    method: string
+    payload?: any
+    error?: boolean
+    meta?: any
+}
+
+export type ReduxAction = {
+    type: string
+    payload?: any
+    error?: boolean
+    meta?: any
 }

@@ -1,6 +1,6 @@
 # Description (WIP)
 
-ZK-Keeper is a browser plugin which enables Zero knowledge identity management and proof generation.
+CryptKeeper is a browser extension which enables Zero knowledge identity management and proof generation.
 Currently it supports operations for Semaphore and RLN gadgets.
 
 This plugin is still in development phase.

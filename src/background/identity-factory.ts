@@ -1,26 +1,26 @@
 import { IdentityMetadata } from '@src/types'
-import { ZkIdentity } from '@zk-kit/identity'
+import { Identity } from "@semaphore-protocol/identity";
 import createIdentity from '@interep/identity'
 import checkParameter from '@src/util/checkParameter'
 import ZkIdentityDecorater from './identity-decorater'
-
-const createInterrepIdentity = async (config: any): Promise<ZkIdentityDecorater> => {
+ 
+async function createInterrepIdentity(config: any): Promise<ZkIdentityDecorater> {
     checkParameter(config, 'config', 'object')
 
-    const { web2Provider, nonce = 0, name, web3, walletInfo } = config
+    const { web2Provider, nonce = 0, name, messageSignature, account } = config
 
     checkParameter(name, 'name', 'string')
     checkParameter(web2Provider, 'provider', 'string')
-    checkParameter(web3, 'web3', 'object')
-    checkParameter(walletInfo, 'walletInfo', 'object')
+    checkParameter(messageSignature, 'messageSignature', 'string')
 
-    const sign = (message: string) => web3.eth.personal.sign(message, walletInfo?.account)
+    console.log("createInterrepIdentity: 4")
+    const identity: Identity = new Identity(messageSignature);
 
-    const identity: ZkIdentity = await createIdentity(sign, web2Provider, nonce)
+    console.log("createInterrepIdentity: 5")
     const metadata: IdentityMetadata = {
-        account: walletInfo.account,
+        account,
         name,
-        provider: 'interrep'
+        web2Provider
     }
 
     return new ZkIdentityDecorater(identity, metadata)
@@ -28,15 +28,15 @@ const createInterrepIdentity = async (config: any): Promise<ZkIdentityDecorater>
 
 const createRandomIdentity = (config: any): ZkIdentityDecorater => {
     checkParameter(config, 'config', 'object')
-    const { name } = config
+    const { web2Provider, name } = config
 
     checkParameter(name, 'name', 'string')
 
-    const identity: ZkIdentity = new ZkIdentity()
+    const identity: Identity = new Identity()
     const metadata: IdentityMetadata = {
         account: '',
-        name: config.name,
-        provider: 'random'
+        name,
+        web2Provider,
     }
 
     return new ZkIdentityDecorater(identity, metadata)

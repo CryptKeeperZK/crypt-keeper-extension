@@ -1,41 +1,52 @@
 import React, { ReactElement, useCallback, useState } from 'react'
-import { useDispatch } from 'react-redux'
 import { createIdentity } from '@src/ui/ducks/identities'
 import FullModal, { FullModalContent, FullModalFooter, FullModalHeader } from '@src/ui/components/FullModal'
 import Dropdown from '@src/ui/components/Dropdown'
 import Input from '@src/ui/components/Input'
 import Button from '@src/ui/components/Button'
+import { useAppDispatch } from '@src/ui/ducks/hooks'
+import { useMetaMaskWalletInfo } from '@src/ui/services/useMetaMask'
+import { CreateIdentityWeb2Provider, CreateIdentityStrategy, CreateIdentityOptions } from '@src/types'
+import { useIdentityFactory } from '@src/ui/services/useIdentityFactory'
 
 export default function CreateIdentityModal(props: { onClose: () => void }): ReactElement {
     const [nonce, setNonce] = useState(0)
-    const [identityType, setIdentityType] = useState<'InterRep' | 'Random'>('InterRep')
-    const [web2Provider, setWeb2Provider] = useState<'Twitter' | 'Github' | 'Reddit'>('Twitter')
+    const [identityStrategyType, setIdentityStrategyType] = useState<CreateIdentityStrategy>('interrep')
+    const [web2Provider, setWeb2Provider] = useState<CreateIdentityWeb2Provider>('twitter')
     const [error, setError] = useState('')
     const [loading, setLoading] = useState(false)
-    const dispatch = useDispatch()
+    const dispatch = useAppDispatch()
 
     const create = useCallback(async () => {
         setLoading(true)
         try {
-            let options: any = {
+            const walletInfo = await useMetaMaskWalletInfo()
+
+            let options: CreateIdentityOptions = {
                 nonce,
-                web2Provider
+                web2Provider,
+                account: walletInfo?.account
             }
             let provider = 'interrep'
 
-            if (identityType === 'Random') {
+            if (identityStrategyType === 'random') {
                 provider = 'random'
                 options = {}
             }
 
-            await dispatch(createIdentity(provider, options))
+            const messageSignature = await useIdentityFactory(web2Provider, nonce);
+
+            if (messageSignature) {
+                await dispatch(createIdentity(provider, messageSignature, options));
+            }
+
             props.onClose()
         } catch (e: any) {
             setError(e.message)
         } finally {
             setLoading(false)
         }
-    }, [nonce, web2Provider, identityType])
+    }, [nonce, web2Provider, identityStrategyType])
 
     return (
         <FullModal onClose={props.onClose}>
@@ -44,18 +55,18 @@ export default function CreateIdentityModal(props: { onClose: () => void }): Rea
                 <Dropdown
                     className="my-2"
                     label="Identity type"
-                    options={[{ value: 'InterRep' }, { value: 'Random' }]}
+                    options={[{ value: 'interrep' }, { value: 'random' }]}
                     onChange={(e) => {
-                        setIdentityType(e.target.value as any)
+                        setIdentityStrategyType(e.target.value as any)
                     }}
-                    value={identityType}
+                    value={identityStrategyType}
                 />
-                {identityType === 'InterRep' && (
+                {identityStrategyType === 'interrep' && (
                     <>
                         <Dropdown
                             className="my-2"
                             label="Web2 Provider"
-                            options={[{ value: 'Twitter' }, { value: 'Reddit' }, { value: 'Github' }]}
+                            options={[{ value: 'twitter' }, { value: 'reddit' }, { value: 'github' }]}
                             onChange={(e) => {
                                 setWeb2Provider(e.target.value as any)
                             }}

@@ -1,53 +1,54 @@
 {
-    "manifest_version": 2,
-    "name": "ZK-KEEPER",
-    "description": "Extension that stores credentials and creates semaphore proofs",
-    "version": "1.0.0",
-    "browser_action": {
-        "default_icon": "icon-16.png",
-        "default_popup": "popup.html"
-    },
-    "background": {
-        "scripts": [
-            "js/backgroundPage.js"
-        ],
-        "persistent": true
-    },
-    "content_scripts": [
-        {
-            "matches": [
-                "file://*/*",
-                "http://*/*",
-                "https://*/*"
-            ],
-            "js": [
-                "js/content.js"
-            ],
-            "run_at": "document_start",
-            "all_frames": true
-        }
-    ],
-    "icons": {
-        "16": "icon-16.png",
-        "48": "icon-48.png",
-        "128": "icon-128.png"
-    },
-    "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'; worker-src 'self' data:",
-    "permissions": [
-        "tabs",
-        "activeTab",
-        "notifications",
-        "http://*/",
-        "https://*/",
-        "fileSystem",
-        "webRequest",
-        "webRequestBlocking",
-        "proxy",
-        "storage",
-        "unlimitedStorage",
-        "<all_urls>"
-    ],
-    "web_accessible_resources": [
-        "js/injected.js"
-    ]
+  "manifest_version": 3,
+  "name": "CryptKeeper",
+  "description": "Extension that stores credentials and creates semaphore proofs",
+  "version": "1.0.0",
+  "minimum_chrome_version": "93",
+  "action": {
+    "default_icon": "logo.png",
+    "default_popup": "popup.html"
+  },
+  "background": {
+    "service_worker": "js/backgroundPage.js"  
+  },
+  "content_scripts": [
+    {
+      "matches": ["file://*/*", "http://*/*", "https://*/*"],
+      "js": ["js/content.js"],
+      "run_at": "document_start",
+      "all_frames": true
+    }
+  ],
+  "icons": {
+    "16": "icon-16.png",
+    "48": "icon-48.png",
+    "128": "icon-128.png"
+  },
+  "content_security_policy": {
+    "extension_page":"script-src 'self' 'wasm-unsafe-eval'; object-src 'self'" 
+  },
+  "permissions": [
+    "scripting",
+    "clipboardWrite",
+    "tabs",
+    "activeTab",
+    "notifications",
+    "nativeMessaging",
+    "webRequest",
+    "proxy",
+    "storage",
+    "unlimitedStorage",
+    "alarms"
+  ],
+  "host_permissions": [
+    "http://*/",
+    "https://*/",
+    "<all_urls>"
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": ["js/injected.js"],
+      "matches": ["*://*/*"]
+    }
+  ]
 }

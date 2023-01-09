@@ -3,6 +3,7 @@ import pushMessage from '@src/util/pushMessage'
 import { setStatus } from '@src/ui/ducks/app'
 import { browser } from 'webextension-polyfill-ts'
 import SimpleStorage from './simple-storage'
+import browserUtils from '../controllers/browser-utils'
 
 const passwordKey: string = '@password@'
 
@@ -86,15 +87,29 @@ class LockService extends SimpleStorage {
         return true
     }
 
-    logout = async (): Promise<boolean> => {
+
+    internalLogout = async () => {
         this.isUnlocked = false
         this.password = undefined
         const status = await this.getStatus()
         await pushMessage(setStatus(status))
+        return status
+    }
+
+    logout = async (): Promise<boolean> => {
+        const status = await this.internalLogout();
+        console.log("logout 1")
         const tabs = await browser.tabs.query({ active: true })
-        for (const tab of tabs) {
-            await browser.tabs.sendMessage(tab.id as number, setStatus(status))
-        }
+        console.log("logout 2", tabs)
+        browserUtils.activatedTabs(async () => {
+            for (const tab of tabs) {
+                try {
+                    await browserUtils.sendMessageTabs(tab.id as number, setStatus(status));
+                } catch (error) {
+                    console.log("Lock error: ", error);
+                }
+            } 
+        });
         return true
     }
 

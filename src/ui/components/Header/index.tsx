@@ -2,22 +2,27 @@ import React, { ReactElement, useCallback } from 'react'
 import Icon from '@src/ui/components/Icon'
 import LogoSVG from '@src/static/icons/logo.svg'
 import LoaderSVG from '@src/static/icons/loader.svg'
-import { useAccount, useNetwork, useWeb3Connecting } from '@src/ui/ducks/web3'
+import { setAccount, setBalance, setChainId, setNetwork, setWeb3Connecting, useAccount, useNetwork, useWeb3Connecting } from '@src/ui/ducks/web3'
 import postMessage from '@src/util/postMessage'
 import RPCAction from '@src/util/constants'
 import Jazzicon, { jsNumberForAddress } from 'react-jazzicon'
 import './header.scss'
 import classNames from 'classnames'
 import Menuable from '@src/ui/components/Menuable'
+import { MetaMaskProviderService } from '@src/web3-providers/Metamask'
+import { useAppDispatch } from '@src/ui/ducks/hooks'
+import { useMetaMaskConnect } from '@src/ui/services/useMetaMask'
 
 export default function Header(): ReactElement {
+    const dispatch = useAppDispatch()
     const network = useNetwork()
     const account = useAccount()
     const web3Connecting = useWeb3Connecting()
 
     const connectMetamask = useCallback(async () => {
-        await postMessage({ method: RPCAction.CONNECT_METAMASK })
-    }, [])
+        console.log("Inside connectMetamask button");
+        await useMetaMaskConnect();
+    }, []);
 
     const lock = useCallback(async () => {
         await postMessage({ method: RPCAction.LOCK })

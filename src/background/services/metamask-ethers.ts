@@ -1,8 +1,8 @@
 import pushMessage from "@src/util/pushMessage";
-import createMetaMaskProvider from "@dimensiondev/metamask-extension-provider";
+import createMetaMaskProvider, { MetaMaskInpageProvider } from "@dimensiondev/metamask-extension-provider";
 import { ethers } from "ethers";
 import { setAccount, setBalance, setChainId, setNetwork, setWeb3Connecting } from "@src/ui/ducks/web3";
-import { NetworkDetails, WalletInfo } from "@src/types";
+import { NetworkDetails, WalletInfo, WalletInfoBackgound } from "@src/types";
 
 declare type Ethers = typeof import("ethers");
 
@@ -10,45 +10,60 @@ export default class MetamaskServiceEthers {
   metamaskProvider?: any;
   ethersProvider?: any;
 
-  constructor() {
-    this.ensure()
-      .then(() => {
-        this.metamaskProvider.on("error", (e: any) => {
-          console.log("4. Inside MetamaskServiceEthers ensure 5 error: ", e);
-          throw e;
-        });
+  constructor(metamaskProviderPayload?: MetaMaskInpageProvider) {
+    if (metamaskProviderPayload) {
+      this.ensure(metamaskProviderPayload)
+      // .then(() => {
+      //   console.log("4. Inside MetamaskServiceEthers ensure 5 accountsChanged before");
+      //   this.metamaskProvider.on("accountsChanged", async (account: string[]) => {
+      //     console.log("4. Inside MetamaskServiceEthers ensure 5 accountsChanged: ", account);
+      //     const balance = await this.getAccountBalance(account[0]);
+      //     await pushMessage(setAccount(account[0]));
+      //     await pushMessage(setBalance(balance));
+      //   });
 
-        console.log("4. Inside MetamaskServiceEthers ensure 5 accountsChanged before");
-        this.metamaskProvider.on("accountsChanged", async (account: string[]) => {
-          console.log("4. Inside MetamaskServiceEthers ensure 5 accountsChanged: ", account);
-          const balance = await this.getAccountBalance(account[0]);
-          await pushMessage(setAccount(account[0]));
-          await pushMessage(setBalance(balance));
-        });
+      //   this.metamaskProvider.on("chainChanged", async () => {
+      //     console.log("4. Inside MetamaskServiceEthers ensure 6 chainChanged");
 
-        this.metamaskProvider.on("chainChanged", async () => {
-          console.log("4. Inside MetamaskServiceEthers ensure 6 chainChanged");
+      //     const networkDetails: NetworkDetails = await this.getNetworkDetails();
+      //     const networkName = networkDetails.name;
+      //     const chainId = networkDetails.chainId;
 
-          const networkDetails: NetworkDetails = await this.getNetworkDetails();
-          const networkName = networkDetails.name;
-          const chainId = networkDetails.chainId;
+      //     console.log("4. Inside MetamaskServiceEthers ensure 7");
+      //     if (networkName) await pushMessage(setNetwork(networkName));
+      //     if (chainId) await pushMessage(setChainId(chainId));
+      //   });
 
-          console.log("4. Inside MetamaskServiceEthers ensure 7");
-          if (networkName) await pushMessage(setNetwork(networkName));
-          if (chainId) await pushMessage(setChainId(chainId));
-        });
-      })
-      .catch(e => {
-        throw new Error(e);
-      });
+      //   this.metamaskProvider.on("error", (e: any) => {
+      //     console.log("4. Inside MetamaskServiceEthers ensure 5 error: ", e);
+      //     throw e;
+      //   });
+
+      //   this.metamaskProvider.on("connect", () => {
+      //     console.log("4. Inside MetamaskServiceEthers ensure connect");
+      //   });
+        
+      //   this.metamaskProvider.on("disconnect", () => {import LocalMessageDuplexStream from 'post-message-stream';
+      //     console.log("4. Inside MetamaskServiceEthers ensure disconnect");
+      //   });
+      // })
+      // .catch(e => {
+      //   throw new Error(e);
+      // });
+    }           
   }
 
-  ensure = async (payload: any = null) => {
-    console.log("4. Inside MetamaskServiceEthers ensure 1");
+  ensure = async (metamaskProviderPayload?: MetaMaskInpageProvider) => {
+    console.log("4. Inside MetamaskServiceEthers ensure 1 metamaskProviderPayload", metamaskProviderPayload);
 
     if (!this.metamaskProvider) {
       console.log("4. Inside MetamaskServiceEthers ensure 2");
-      this.metamaskProvider = await createMetaMaskProvider();
+      try {
+        this.metamaskProvider = metamaskProviderPayload;
+      } catch (e: any) {
+          console.log("Stopped here!!!!!", e);
+          throw new Error(e);
+      }
     }
 
     if (this.metamaskProvider) {
@@ -61,7 +76,7 @@ export default class MetamaskServiceEthers {
 
     console.log("4. Inside MetamaskServiceEthers ensure8");
 
-    return payload;
+    return metamaskProviderPayload;
   };
 
   getWeb3 = async (): Promise<Ethers> => {
@@ -69,10 +84,7 @@ export default class MetamaskServiceEthers {
     return this.ethersProvider;
   };
 
-  getWalletInfo = async (): Promise<WalletInfo | null> => {
-    console.log("4. Inside MetamaskServiceEthers getWalletInfo 1");
-    await this.ensure();
-
+  getWalletInfo = async (isBackgound: boolean = false): Promise<WalletInfoBackgound | WalletInfo | null> => {
     console.log("4. Inside MetamaskServiceEthers getWalletInfo 2");
     if (!this.ethersProvider) {
       console.log("4. Inside MetamaskServiceEthers getWalletInfo 3");
@@ -80,15 +92,21 @@ export default class MetamaskServiceEthers {
     }
 
     if (this.metamaskProvider?.selectedAddress) {
-      const connectionDetails: WalletInfo = await this._requestConnection();
+      const connectionDetailsBackground: WalletInfoBackgound = await this._requestConnection();
 
-      return {
-        account: connectionDetails.account,
-        balance: connectionDetails.balance,
-        networkName: connectionDetails.networkName,
-        chainId: connectionDetails.chainId,
-      };
-    }
+      if(isBackgound) {
+        console.log("4. Inside MetamaskServiceEthers getWalletInfo 4 bacground", connectionDetailsBackground);
+        return connectionDetailsBackground;
+      } else {
+        console.log("4. Inside MetamaskServiceEthers getWalletInfo 4 frontend", connectionDetailsBackground);
+        return {
+          account: connectionDetailsBackground.account,
+          balance: connectionDetailsBackground.balance,
+          networkName: connectionDetailsBackground.networkName,
+          chainId: connectionDetailsBackground.chainId
+        }
+      }
+   }
 
     return null;
   };
@@ -143,12 +161,19 @@ export default class MetamaskServiceEthers {
     }
   };
 
-  private _requestConnection = async (): Promise<WalletInfo> => {
+  private _requestConnection = async (): Promise<WalletInfoBackgound> => {
     await this.ensure();
 
     if (this.ethersProvider) {
       console.log("4. Inside MetamaskServiceEthers requestAccounts 4 eth_requestAccounts before");
-      await this.ethersProvider.send("eth_requestAccounts", []);
+      
+      try {
+        const res = await this.ethersProvider.send("eth_requestAccounts", []);
+        console.log("4. Inside MetamaskServiceEthers requestAccounts 4 eth_requestAccounts response: ", res);
+      } catch (error) {
+        throw new Error("Errro in requesting accounts");
+      }
+
       console.log("4. Inside MetamaskServiceEthers requestAccounts 5 eth_requestAccounts after");
 
       const signer = await this.ethersProvider.getSigner();
@@ -171,6 +196,7 @@ export default class MetamaskServiceEthers {
       }
 
       return {
+        signer,
         account,
         balance,
         networkName,

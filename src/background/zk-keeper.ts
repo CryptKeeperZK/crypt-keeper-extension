@@ -1,54 +1,46 @@
 import RPCAction from '@src/util/constants'
-import { PendingRequestType, NewIdentityRequest, WalletInfo } from '@src/types'
-import Web3 from 'web3'
+import { PendingRequestType, NewIdentityRequest, WalletInfo, WalletInfoBackgound, IdentityName } from '@src/types'
 import { bigintToHex } from 'bigint-conversion'
-import { RLNFullProof } from '@zk-kit/protocols'
+//import { RLNFullProof } from 'rlnjs'
 import Handler from './controllers/handler'
 import LockService from './services/lock'
 import IdentityService from './services/identity'
-import MetamaskServiceWeb3 from './services/metamask-web3'
 import MetamaskServiceEthers from './services/metamask-ethers';
 import ZkValidator from './services/zk-validator'
 import RequestManager from './controllers/request-manager'
 import SemaphoreService from './services/protocols/semaphore'
-import RLNService from './services/protocols/rln'
+//import RLNService from './services/protocols/rln'
 import { RLNProofRequest, SemaphoreProof, SemaphoreProofRequest } from './services/protocols/interfaces'
 import ApprovalService from './services/approval'
 import ZkIdentityWrapper from './identity-decorater'
 import identityFactory from './identity-factory'
 import BrowserUtils from './controllers/browser-utils'
-import { ethers } from 'ethers'
-
 declare type Ethers = typeof import("ethers");
 
-export default class ZkKepperController extends Handler {
+export default class ZkKeeperController extends Handler {
     private identityService: IdentityService
-    private metamaskServiceWeb3: MetamaskServiceWeb3
-    private metamaskServiceEthers: MetamaskServiceEthers
     private zkValidator: ZkValidator
     private requestManager: RequestManager
     private semaphoreService: SemaphoreService
-    private rlnService: RLNService
+    //private rlnService: RLNService
     private approvalService: ApprovalService
     constructor() {
         super()
         this.identityService = new IdentityService()
-        this.metamaskServiceWeb3 = new MetamaskServiceWeb3()
-        this.metamaskServiceEthers = new MetamaskServiceEthers()
         this.zkValidator = new ZkValidator()
         this.requestManager = new RequestManager()
         this.semaphoreService = new SemaphoreService()
-        this.rlnService = new RLNService()
+        //this.rlnService = new RLNService()
         this.approvalService = new ApprovalService()
         console.log("Inside ZkKepperController");
     }
 
-    initialize = async (): Promise<ZkKepperController> => {
+    initialize = async (): Promise<ZkKeeperController> => {
         // common
         this.add(
             RPCAction.UNLOCK,
             LockService.unlock,
-            this.metamaskServiceEthers.ensure,
+            //this.metamaskServiceEthers.ensure,
             this.identityService.unlock,
             this.approvalService.unlock,
             LockService.onUnlocked
@@ -76,8 +68,8 @@ export default class ZkKepperController extends Handler {
 
         console.log("3. Inside ZkKepperController() class");
         // web3
-        this.add(RPCAction.CONNECT_METAMASK, LockService.ensure, this.metamaskServiceEthers.connectMetamask)
-        this.add(RPCAction.GET_WALLET_INFO, this.metamaskServiceEthers.getWalletInfo)
+        //this.add(RPCAction.CONNECT_METAMASK, LockService.ensure, this.metamaskServiceEthers.connectMetamask)
+        //this.add(RPCAction.GET_WALLET_INFO, this.metamaskServiceEthers.getWalletInfo)
 
         // lock
         this.add(RPCAction.SETUP_PASSWORD, (payload: string) => LockService.setupPassword(payload))
@@ -86,26 +78,25 @@ export default class ZkKepperController extends Handler {
         this.add(
             RPCAction.CREATE_IDENTITY,
             LockService.ensure,
-            this.metamaskServiceEthers.ensure,
             async (payload: NewIdentityRequest) => {
                 try {
-                    const { strategy, options } = payload
+                    const { strategy, messageSignature, options } = payload
                     if (!strategy) throw new Error('strategy not provided')
 
-                    const numOfIdentites = this.identityService.getNumOfIdentites()
+                    const numOfIdentites = await this.identityService.getNumOfIdentites()
                     const config: any = {
                         ...options,
                         name: options?.name || `Account # ${numOfIdentites}`
                     }
 
                     if (strategy === 'interrep') {
-                        const ethers: Ethers = await this.metamaskServiceEthers.getWeb3()
-                        const walletInfo: WalletInfo | null = await this.metamaskServiceEthers.getWalletInfo()
-                        config.web3 = ethers
-                        config.walletInfo = walletInfo
+                        console.log("CREATE_IDENTITY: 1")
+                        config.messageSignature = messageSignature;
+                        console.log("CREATE_IDENTITY: 2")
                     }
 
                     const identity: ZkIdentityWrapper | undefined = await identityFactory(strategy, config)
+                    console.log("CREATE_IDENTITY: 4", identity);
 
                     if (!identity) {
                         throw new Error('Identity not created, make sure to check strategy')
@@ -115,6 +106,7 @@ export default class ZkKepperController extends Handler {
 
                     return true
                 } catch (error: any) {
+                    console.log("CREATE_IDENTITY: Error", error);
                     throw new Error(error.message)
                 }
             }
@@ -123,6 +115,8 @@ export default class ZkKepperController extends Handler {
         this.add(RPCAction.GET_COMMITMENTS, LockService.ensure, this.identityService.getIdentityCommitments)
         this.add(RPCAction.GET_IDENTITIES, LockService.ensure, this.identityService.getIdentities)
         this.add(RPCAction.SET_ACTIVE_IDENTITY, LockService.ensure, this.identityService.setActiveIdentity)
+        this.add(RPCAction.SET_IDENTITY_NAME, LockService.ensure, async (payload: IdentityName) => await this.identityService.setIdentityName(payload))
+        this.add(RPCAction.DELETE_IDENTITY, LockService.ensure, async (payload: IdentityName) => await this.identityService.deleteIdentity(payload))
         this.add(RPCAction.GET_ACTIVE_IDENTITY, LockService.ensure, async () => {
             const identity = await this.identityService.getActiveidentity()
             if (!identity) {
@@ -181,8 +175,8 @@ export default class ZkKepperController extends Handler {
                 const identity: ZkIdentityWrapper | undefined = await this.identityService.getActiveidentity()
                 if (!identity) throw new Error('active identity not found')
 
-                const proof: RLNFullProof = await this.rlnService.genProof(identity.zkIdentity, payload)
-                return proof
+                //const proof: RLNFullProof = await this.rlnService.genProof(identity.zkIdentity, payload)
+                //return proof
             }
         )
 
@@ -225,19 +219,19 @@ export default class ZkKepperController extends Handler {
 
         this.add(RPCAction.CLOSE_POPUP, async () => BrowserUtils.closePopup())
 
-        this.add(RPCAction.CREATE_IDENTITY_REQ, LockService.ensure, this.metamaskServiceEthers.ensure, async () => {
-            const res: any = await this.requestManager.newRequest(PendingRequestType.CREATE_IDENTITY, { origin })
+        // this.add(RPCAction.CREATE_IDENTITY_REQ, LockService.ensure, this.metamaskServiceEthers.ensure, async () => {
+        //     const res: any = await this.requestManager.newRequest(PendingRequestType.CREATE_IDENTITY, { origin })
 
-            const { provider, options } = res
+        //     const { provider, options } = res
 
-            return this.handle({
-                method: RPCAction.CREATE_IDENTITY,
-                payload: {
-                    strategy: provider,
-                    options
-                }
-            })
-        })
+        //     return this.handle({
+        //         method: RPCAction.CREATE_IDENTITY,
+        //         payload: {
+        //             strategy: provider,
+        //             options
+        //         }
+        //     })
+        // })
 
         // dev
         this.add(RPCAction.CLEAR_APPROVED_HOSTS, this.approvalService.empty)
