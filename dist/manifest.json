@@ -5,7 +5,6 @@
   "version": "1.0.0",
   "minimum_chrome_version": "93",
   "action": {
-    "default_icon": "logo.png",
     "default_popup": "popup.html"
   },
   "background": {
