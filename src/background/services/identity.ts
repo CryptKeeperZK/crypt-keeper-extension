@@ -205,16 +205,21 @@ export default class IdentityService extends SimpleStorage {
         return identities.size
     }
 
-    public async getIdentitiesFromStore(): Promise<Map<string, string>> {
+    async getIdentitiesFromStore(): Promise<Map<string, string>> {
         const cipertext = await this.identitiesStore.get();
 
-        console.log(`IdentityService getIdentitiesFromStore EXIST cipertext`, cipertext);
+        console.log(`IdentityService getIdentitiesFromStore EXIST cipertext 1`, cipertext);
+        console.log(`IdentityService getIdentitiesFromStore EXIST cipertext 2`, typeof cipertext);
+        console.log(`IdentityService getIdentitiesFromStore EXIST cipertext 3`, JSON.stringify(cipertext));
 
         if (cipertext) {
             const identitesDecrepted = await LockService.decrypt(cipertext);
-            console.log(`IdentityService getIdentitiesFromStore EXIST identitesDecrepted`, identitesDecrepted);
+            console.log(`IdentityService getIdentitiesFromStore EXIST identitesDecrepted 1` + identitesDecrepted);
+            console.log(typeof identitesDecrepted)
+            console.log(identitesDecrepted)
+            console.log(`IdentityService getIdentitiesFromStore EXIST identitesDecrepted 2`);
             const identitiesParsed = JSON.parse(identitesDecrepted);
-            console.log(`IdentityService getIdentitiesFromStore EXIST identitiesParsed`, identitiesParsed);
+            console.log(`IdentityService getIdentitiesFromStore EXIST identitiesParsed` + identitiesParsed);
             return new Map(identitiesParsed);
         } else {
             console.log(`IdentityService getIdentitiesFromStore NEW identitesObj`, cipertext);

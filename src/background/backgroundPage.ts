@@ -124,12 +124,12 @@ async function initialize (remotePort?: Runtime.Port) {
           }
         });
         
-        remotePort.onMessage.addListener((message: any) => {
-          console.log(`remotePort.onMessage: ${message}`);
-          if (message.name === WORKER_KEEP_ALIVE_MESSAGE) {
-            remotePort.postMessage({ name: ACK_KEEP_ALIVE_MESSAGE });
-          }
-        });
+        // remotePort.onMessage.addListener((message: any) => {
+        //   console.log(`remotePort.onMessage: ${message}`);
+        //   if (message.name === WORKER_KEEP_ALIVE_MESSAGE) {
+        //     remotePort.postMessage({ name: ACK_KEEP_ALIVE_MESSAGE });
+        //   }
+        // });
         //browser.runtime.onMessage.addListener();
     
         // TODO: change to BrowserUtils
