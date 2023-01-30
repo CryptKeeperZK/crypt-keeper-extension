@@ -41,7 +41,7 @@ export default function Onboarding(): ReactElement {
       <div className="flex flex-col items-center flex-grow p-8 onboarding__content">
         <Icon url={LogoSVG} />
         <div className="text-lg pt-8">
-          <b>Thanks for using ZKeeper!</b>
+          <b>Thanks for using CryptKeeper!</b>
         </div>
         <div className="text-base">To continue, please setup a password</div>
         <div className="py-8 w-full">

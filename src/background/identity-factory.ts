@@ -3,6 +3,7 @@ import { Identity } from "@semaphore-protocol/identity";
 import createIdentity from '@interep/identity'
 import checkParameter from '@src/util/checkParameter'
 import ZkIdentityDecorater from './identity-decorater'
+import log from 'loglevel';
  
 async function createInterrepIdentity(config: any): Promise<ZkIdentityDecorater> {
     checkParameter(config, 'config', 'object')
@@ -13,10 +14,10 @@ async function createInterrepIdentity(config: any): Promise<ZkIdentityDecorater>
     checkParameter(web2Provider, 'provider', 'string')
     checkParameter(messageSignature, 'messageSignature', 'string')
 
-    console.log("createInterrepIdentity: 4")
+    log.debug("createInterrepIdentity: 4")
     const identity: Identity = new Identity(messageSignature);
 
-    console.log("createInterrepIdentity: 5")
+    log.debug("createInterrepIdentity: 5")
     const metadata: IdentityMetadata = {
         account,
         name,

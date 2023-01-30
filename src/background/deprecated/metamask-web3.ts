@@ -3,6 +3,7 @@ import createMetaMaskProvider from '@dimensiondev/metamask-extension-provider'
 import Web3 from 'web3'
 import { setAccount, setChainId, setNetwork, setWeb3Connecting } from '@src/ui/ducks/web3'
 import { WalletInfo } from '@src/types'
+import log from 'loglevel'
 
 export default class MetamaskServiceWeb3 {
     provider?: any
@@ -13,37 +14,37 @@ export default class MetamaskServiceWeb3 {
     }
 
     ensure = async (payload: any = null) => {
-        console.log("4. Inside MetamaskServiceWeb3 ensure 1");
+        log.debug("4. Inside MetamaskServiceWeb3 ensure 1");
 
         if (!this.provider) {
-            console.log("4. Inside MetamaskServiceWeb3 ensure 2");
+            log.debug("4. Inside MetamaskServiceWeb3 ensure 2");
             this.provider = await createMetaMaskProvider()
         }
 
         if (this.provider) {
-            console.log("4. Inside MetamaskServiceWeb3 ensure 3");
+            log.debug("4. Inside MetamaskServiceWeb3 ensure 3");
             if (!this.web3) {
-                console.log("4. Inside MetamaskServiceWeb3 ensure 4");
+                log.debug("4. Inside MetamaskServiceWeb3 ensure 4");
                 this.web3 = new Web3(this.provider)
             }
 
             this.provider.on('accountsChanged', async ([account]) => {
-                console.log("4. Inside MetamaskServiceWeb3 ensure 5 accountsChanged", account);
+                log.debug("4. Inside MetamaskServiceWeb3 ensure 5 accountsChanged", account);
                 await pushMessage(setAccount(account))
             })
 
             this.provider.on('chainChanged', async () => {
-                console.log("4. Inside MetamaskServiceWeb3 ensure 6");
+                log.debug("4. Inside MetamaskServiceWeb3 ensure 6");
                 const networkType = await this.web3?.eth.net.getNetworkType()
                 const chainId = await this.web3?.eth.getChainId()
 
-                console.log("4. Inside MetamaskServiceWeb3 ensure 7");
+                log.debug("4. Inside MetamaskServiceWeb3 ensure 7");
                 if (networkType) await pushMessage(setNetwork(networkType))
                 if (chainId) await pushMessage(setChainId(chainId))
             })
         }
 
-        console.log("4. Inside MetamaskServiceWeb3 ensure8");
+        log.debug("4. Inside MetamaskServiceWeb3 ensure8");
 
         return payload
     }
@@ -83,22 +84,22 @@ export default class MetamaskServiceWeb3 {
     }
 
     connectMetamask = async () => {
-        console.log("4. Inside MetamaskServiceWeb3 connectMetamask 1");
+        log.debug("4. Inside MetamaskServiceWeb3 connectMetamask 1");
         await pushMessage(setWeb3Connecting(true))
-        console.log("4. Inside MetamaskServiceWeb3 connectMetamask 2");
+        log.debug("4. Inside MetamaskServiceWeb3 connectMetamask 2");
 
         try {
-            console.log("4. Inside MetamaskServiceWeb3 connectMetamask 3");
+            log.debug("4. Inside MetamaskServiceWeb3 connectMetamask 3");
             await this.ensure()
-            console.log("4. Inside MetamaskServiceWeb3 connectMetamask 4");
+            log.debug("4. Inside MetamaskServiceWeb3 connectMetamask 4");
             if (this.web3) {
-                console.log("4. Inside MetamaskServiceWeb3 connectMetamask 5");
+                log.debug("4. Inside MetamaskServiceWeb3 connectMetamask 5");
                 const accounts = await this.web3.eth.requestAccounts()
-                console.log("4. Inside MetamaskServiceWeb3 connectMetamask 6 ", accounts[0]);
+                log.debug("4. Inside MetamaskServiceWeb3 connectMetamask 6 ", accounts[0]);
                 const networkType = await this.web3.eth.net.getNetworkType()
-                console.log("4. Inside MetamaskServiceWeb3 connectMetamask 7 ", networkType);
+                log.debug("4. Inside MetamaskServiceWeb3 connectMetamask 7 ", networkType);
                 const chainId = await this.web3.eth.getChainId()
-                console.log("4. Inside MetamaskServiceWeb3 connectMetamask 8 ", chainId);
+                log.debug("4. Inside MetamaskServiceWeb3 connectMetamask 8 ", chainId);
 
                 if (!accounts.length) {
                     throw new Error('No accounts found')
@@ -107,13 +108,13 @@ export default class MetamaskServiceWeb3 {
                 await pushMessage(setAccount(accounts[0]))
                 await pushMessage(setNetwork(networkType))
                 await pushMessage(setChainId(chainId))
-                console.log(`4. Inside MetamaskServiceWeb3 connectMetamask Account ${accounts[0]}`);
-                console.log("4. Inside MetamaskServiceWeb3 connectMetamask 8");
+                log.debug(`4. Inside MetamaskServiceWeb3 connectMetamask Account ${accounts[0]}`);
+                log.debug("4. Inside MetamaskServiceWeb3 connectMetamask 8");
             }
 
             await pushMessage(setWeb3Connecting(false))
         } catch (e) {
-            console.log(`4. Inside MetamaskServiceWeb3 connectMetamask ERROR ${e}`);
+            log.debug(`4. Inside MetamaskServiceWeb3 connectMetamask ERROR ${e}`);
             await pushMessage(setWeb3Connecting(false))
             throw e
         }

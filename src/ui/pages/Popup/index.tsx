@@ -10,6 +10,7 @@ import Onboarding from '@src/ui/pages/Onboarding'
 import Login from '@src/ui/pages/Login'
 import ConfirmRequestModal from '@src/ui/components/ConfirmRequestModal'
 import { useAppDispatch } from '@src/ui/ducks/hooks'
+import log from 'loglevel'
 
 export default function Popup(): ReactElement {
     const pendingRequests = useRequestsPending()

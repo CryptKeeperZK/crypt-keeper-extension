@@ -4,6 +4,7 @@
 import React, { Component, KeyboardEventHandler, MouseEventHandler } from "react";
 import c from "classnames";
 import "./icon.scss";
+import log from "loglevel";
 
 type Props = {
   url?: string;
@@ -28,7 +29,7 @@ export default class Icon extends Component<Props> {
     } = this.props;
 
     const handleKeypress = (event: any) => {
-      console.log("handleKeypress", event.key);
+      log.debug("handleKeypress", event.key);
       if (event.key === "Enter") {
         onKeyPressfunction;
       }

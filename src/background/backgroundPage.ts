@@ -32,7 +32,9 @@ import { isManifestV3 } from './shared/checkManifestV3';
 import log from 'loglevel';
 import { checkForLastErrorAndLog } from "./shared/checForLastError";
 
-log.setDefaultLevel(process.env.CRYPTKEEPER_DEBUG ? 'debug' : 'info');
+globalThis.CRYPTKEEPER_DEBUG = false;
+
+log.setDefaultLevel(globalThis.CRYPTKEEPER_DEBUG ? 'debug' : 'info');
 
 /**
  * @src MetaMask extension workaround
@@ -91,13 +93,12 @@ log.setDefaultLevel(process.env.CRYPTKEEPER_DEBUG ? 'debug' : 'info');
   // }
 };
 
-
 // TODO consider adding inTest env
 const initApp = async (remotePort?: Runtime.Port) => {
   browser.runtime.onConnect.removeListener(initApp);
   await initialize(remotePort);
   await sendReadyMessageToTabs();
-  log.info('CryptKeeper initialization complete.');
+  log.debug('CryptKeeper initialization complete.');
 }
 
 if (isManifestV3) {
@@ -108,15 +109,15 @@ if (isManifestV3) {
 
 async function initialize (remotePort?: Runtime.Port) {
   if (remotePort) {
-    try {
-      console.log(`initialize remotePort`, remotePort);
+    try {``
+      log.debug(`initialize remotePort`, remotePort);
       const app: ZkKeeperController = new ZkKeeperController();
 
       app.initialize().then(() => {
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         browser.runtime.onMessage.addListener(async (request: Request,_) => {
           try {
-            console.log("Background 1: request: ", request)
+            log.debug("Background 1: request: ", request)
             const res = await app.handle(request);
             return [null, res];
           } catch (e: any) {
@@ -125,7 +126,7 @@ async function initialize (remotePort?: Runtime.Port) {
         });
         
         // remotePort.onMessage.addListener((message: any) => {
-        //   console.log(`remotePort.onMessage: ${message}`);
+        //   log.debug(`remotePort.onMessage: ${message}`);
         //   if (message.name === WORKER_KEEP_ALIVE_MESSAGE) {
         //     remotePort.postMessage({ name: ACK_KEEP_ALIVE_MESSAGE });
         //   }
@@ -135,7 +136,7 @@ async function initialize (remotePort?: Runtime.Port) {
         // TODO: change to BrowserUtils
         // TODO: open a setup page in the installation of the extension (one-time use)
         // browser.runtime.onInstalled.addListener(async ({ reason }) => {
-        //   console.log("Inside browser.runtime.connect().onInstalled");
+        //   log.debug("Inside browser.runtime.connect().onInstalled");
         //   if (reason === "install") {
         //     // TODO open html where password will be interested
         //     // browser.tabs.create({

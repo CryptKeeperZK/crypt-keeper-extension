@@ -65,10 +65,10 @@ app.post('/merkleProof/:type', (req, res) => {
             : generateMerkleProofSemaphore(identityCommitments, identityCommitment)
 
     const serializedMerkleProof = serializeMerkleProof(merkleProof)
-    console.log('Sending proof with root: ', serializedMerkleProof.root)
+    log.debug('Sending proof with root: ', serializedMerkleProof.root)
     res.send({ merkleProof: serializedMerkleProof })
 })
 
 app.listen(8090, () => {
-    console.log('Merkle service is listening')
+    log.debug('Merkle service is listening')
 })

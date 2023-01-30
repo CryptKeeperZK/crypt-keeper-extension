@@ -7,6 +7,7 @@ import SimpleStorage from './simple-storage'
 import SimpleStorage2 from './simple-storage copy'
 import LockService from './lock'
 import ZkIdentityDecorater from '../identity-decorater'
+import log from 'loglevel'
 
 const DB_KEY = '@@IDS-t1@@'
 const IDENTITY_KEY = 'IDS'
@@ -21,8 +22,8 @@ export default class IdentityService extends SimpleStorage {
         this.identities = new Map();
         this.activeIdentity = undefined;
         this.identitiesStore = new SimpleStorage(IDENTITY_KEY);
-        console.log(`IdentityService constructor identities`, this.identities);
-        console.log(`IdentityService constructor typeof identities`, typeof this.identities);
+        log.debug(`IdentityService constructor identities`, this.identities);
+        log.debug(`IdentityService constructor typeof identities`, typeof this.identities);
     }
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -60,12 +61,12 @@ export default class IdentityService extends SimpleStorage {
         Object.entries(decrypted || {}).forEach(async ([_, value]) => {
             const identity: ZkIdentityDecorater = ZkIdentityDecorater.genFromSerialized(value as string)
             const identityCommitment: bigint = identity.genIdentityCommitment()
-            console.log(`IdentityService loadInMemory identities before`, identities);
+            log.debug(`IdentityService loadInMemory identities before`, identities);
             identities.set(bigintToHex(identityCommitment), identity.serialize())
-            console.log(`IdentityService loadInMemory identities after`, identities);
-            console.log(`IdentityService loadInMemory Object.fromEntries(identities)`, Object.fromEntries(identities));
-            console.log(`IdentityService loadInMemory JSON.stringify(identities)`, JSON.stringify(identities));
-            console.log(`IdentityService loadInMemory JSON.parse(identities)`, JSON.parse(JSON.stringify(identities)));
+            log.debug(`IdentityService loadInMemory identities after`, identities);
+            log.debug(`IdentityService loadInMemory Object.fromEntries(identities)`, Object.fromEntries(identities));
+            log.debug(`IdentityService loadInMemory JSON.stringify(identities)`, JSON.stringify(identities));
+            log.debug(`IdentityService loadInMemory JSON.parse(identities)`, JSON.parse(JSON.stringify(identities)));
             try {
                 const serializedIdentities = JSON.stringify(Array.from(identities.entries()));
                 const cipertext = await LockService.encrypt(serializedIdentities);
@@ -94,9 +95,9 @@ export default class IdentityService extends SimpleStorage {
             pushMessage(setSelected(identityCommitment))
             const tabs = await browser.tabs.query({ active: true })
             for (const tab of tabs) {
-                console.log("Inside setActiveIdentity 1")
+                log.debug("Inside setActiveIdentity 1")
                 await browser.tabs.sendMessage(tab.id as number, setSelected(identityCommitment))
-                console.log("Inside setActiveIdentity 2")
+                log.debug("Inside setActiveIdentity 2")
             }
         }
     }
@@ -104,10 +105,10 @@ export default class IdentityService extends SimpleStorage {
     setIdentityName = async (payload: IdentityName): Promise<boolean> => {
         const identities = await this.getIdentitiesFromStore();
 
-        console.log("payload", payload)
+        log.debug("payload", payload)
         const {identityCommitment, name} = payload;
-        console.log("payload commitment", identityCommitment)
-        console.log("payload name", name)
+        log.debug("payload commitment", identityCommitment)
+        log.debug("payload name", name)
         const id = identities.get(identityCommitment);
         if(id) {
             const identity = ZkIdentityDecorater.genFromSerialized(id);
@@ -117,7 +118,7 @@ export default class IdentityService extends SimpleStorage {
             pushMessage(setIdentities(await this.getIdentities()))
             return true;
         } else {
-            console.log("setIdentityName id not exist")
+            log.debug("setIdentityName id not exist")
             return false;
         }
     }
@@ -128,13 +129,13 @@ export default class IdentityService extends SimpleStorage {
         const {identityCommitment} = payload;
         const id = identities.get(identityCommitment);
         if(id) {
-            console.log("deleteIdentity id deleted")
+            log.debug("deleteIdentity id deleted")
             identities.delete(identityCommitment);
             await this.identitiesStore.set(Object.fromEntries(identities));
             pushMessage(setIdentities(await this.getIdentities()))
             return true;
         } else {
-            console.log("deleteIdentity id is not deleted")
+            log.debug("deleteIdentity id is not deleted")
             return false;
         }
     } 
@@ -145,7 +146,7 @@ export default class IdentityService extends SimpleStorage {
         const commitments: string[] = []
         const identities = await this.getIdentitiesFromStore();
         for (const key of identities.keys()) {
-            console.log("getIdentityCOmmitments: ", key);
+            log.debug("getIdentityCOmmitments: ", key);
             commitments.push(key)
         }
         return {commitments, identities}
@@ -153,15 +154,15 @@ export default class IdentityService extends SimpleStorage {
 
     getIdentities = async (): Promise<({ commitment: string; metadata: IdentityMetadata })[]> => {
         const { commitments, identities } = await this.getIdentityCommitments()
-        console.log("IdentityService getIdentities: ", commitments);
+        log.debug("IdentityService getIdentities: ", commitments);
         
         return commitments.filter(commitment => {
             if (typeof identities.get(commitment) != undefined) return commitment;
         }).map(commitment => {
             const serializedIdentity = identities.get(commitment) as string;
             const identity = ZkIdentityDecorater.genFromSerialized(serializedIdentity);
-            console.log("getIdentities: commitments", commitments);
-            console.log("getIdentities: metadata", identity!.metadata);
+            log.debug("getIdentities: commitments", commitments);
+            log.debug("getIdentities: metadata", identity!.metadata);
             return {
                 commitment,
                 metadata: identity!.metadata
@@ -170,11 +171,11 @@ export default class IdentityService extends SimpleStorage {
     }
 
     insert = async (newIdentity: ZkIdentityDecorater): Promise<boolean> => {
-        console.log(`IdentityService insert newIdentity`, newIdentity);
-        console.log(`IdentityService insert typeof newIdentity`, typeof newIdentity);
+        log.debug(`IdentityService insert newIdentity`, newIdentity);
+        log.debug(`IdentityService insert typeof newIdentity`, typeof newIdentity);
         const identities = await this.getIdentitiesFromStore();
-        console.log(`IdentityService insert identities:`, identities);
-        console.log(`IdentityService insert type identities: ${typeof identities}`);
+        log.debug(`IdentityService insert identities:`, identities);
+        log.debug(`IdentityService insert type identities: ${typeof identities}`);
         const identityCommitment: string = bigintToHex(newIdentity.genIdentityCommitment())
         const existing: boolean = identities.has(identityCommitment)
 
@@ -182,21 +183,21 @@ export default class IdentityService extends SimpleStorage {
 
         const existingIdentites: string[] = []
         for (const serializedIdentity of identities.values()) {
-            console.log(`IdentityService insert identity:`, serializedIdentity);
-            console.log(`IdentityService insert type identity:`, typeof serializedIdentity);
+            log.debug(`IdentityService insert identity:`, serializedIdentity);
+            log.debug(`IdentityService insert type identity:`, typeof serializedIdentity);
             existingIdentites.push(serializedIdentity)
         }
 
         const newValue: string[] = [...existingIdentites, newIdentity.serialize()]
         const ciphertext: string = await LockService.encrypt(JSON.stringify(newValue))
-        console.log("IdentityService ciphertext value", ciphertext);
+        log.debug("IdentityService ciphertext value", ciphertext);
 
         await this.set(ciphertext)
-        console.log("IdentityService ciphertext value 1");
+        log.debug("IdentityService ciphertext value 1");
         await this.refresh()
-        console.log("IdentityService ciphertext value 2");
+        log.debug("IdentityService ciphertext value 2");
         await this.setActiveIdentity(identityCommitment)
-        console.log("IdentityService ciphertext value 3");
+        log.debug("IdentityService ciphertext value 3");
         return true
     }
 
@@ -208,21 +209,21 @@ export default class IdentityService extends SimpleStorage {
     async getIdentitiesFromStore(): Promise<Map<string, string>> {
         const cipertext = await this.identitiesStore.get();
 
-        console.log(`IdentityService getIdentitiesFromStore EXIST cipertext 1`, cipertext);
-        console.log(`IdentityService getIdentitiesFromStore EXIST cipertext 2`, typeof cipertext);
-        console.log(`IdentityService getIdentitiesFromStore EXIST cipertext 3`, JSON.stringify(cipertext));
+        log.debug(`IdentityService getIdentitiesFromStore EXIST cipertext 1`, cipertext);
+        log.debug(`IdentityService getIdentitiesFromStore EXIST cipertext 2`, typeof cipertext);
+        log.debug(`IdentityService getIdentitiesFromStore EXIST cipertext 3`, JSON.stringify(cipertext));
 
         if (cipertext) {
             const identitesDecrepted = await LockService.decrypt(cipertext);
-            console.log(`IdentityService getIdentitiesFromStore EXIST identitesDecrepted 1` + identitesDecrepted);
-            console.log(typeof identitesDecrepted)
-            console.log(identitesDecrepted)
-            console.log(`IdentityService getIdentitiesFromStore EXIST identitesDecrepted 2`);
+            log.debug(`IdentityService getIdentitiesFromStore EXIST identitesDecrepted 1` + identitesDecrepted);
+            log.debug(typeof identitesDecrepted)
+            log.debug(identitesDecrepted)
+            log.debug(`IdentityService getIdentitiesFromStore EXIST identitesDecrepted 2`);
             const identitiesParsed = JSON.parse(identitesDecrepted);
-            console.log(`IdentityService getIdentitiesFromStore EXIST identitiesParsed` + identitiesParsed);
+            log.debug(`IdentityService getIdentitiesFromStore EXIST identitiesParsed` + identitiesParsed);
             return new Map(identitiesParsed);
         } else {
-            console.log(`IdentityService getIdentitiesFromStore NEW identitesObj`, cipertext);
+            log.debug(`IdentityService getIdentitiesFromStore NEW identitesObj`, cipertext);
             return new Map() as Map<string, string>;
         }
     }

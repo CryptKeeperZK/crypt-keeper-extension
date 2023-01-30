@@ -6,6 +6,11 @@ import { Provider } from 'react-redux'
 import { store } from '@src/ui/store/configureAppStore'
 import { HashRouter } from 'react-router-dom'
 import { isManifestV3 } from '@src/background/shared/checkManifestV3';
+import log from 'loglevel';
+
+globalThis.CRYPTKEEPER_UI_DEBUG = false;
+
+log.setDefaultLevel(globalThis.CRYPTKEEPER_UI_DEBUG ? 'debug' : 'info');
 
 /*
  * @src MetaMask Extension workaround
@@ -14,8 +19,6 @@ import { isManifestV3 } from '@src/background/shared/checkManifestV3';
  * if service worker is inactive it is reactivated and script re-loaded
  * Time has been kept to 1000ms but can be reduced for even faster re-activation of service worker
  */
-
-
 let extensionPort: Runtime.Port;
 
 // let lastMessageReceivedTimestamp = Date.now();
@@ -84,4 +87,5 @@ browser.tabs.query({ active: true, currentWindow: true }).then(() => {
             </HashRouter>
         </Provider>
     );
+    log.debug('CryptKeeper UI initialization complete.');
 });

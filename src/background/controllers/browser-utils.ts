@@ -1,3 +1,4 @@
+import log from "loglevel";
 import { browser } from "webextension-polyfill-ts";
 import LockService from "../services/lock";
 
@@ -6,18 +7,18 @@ class BrowserUtils {
 
   constructor() {
     this.removeWindow((windowId: any) => {
-      console.log("Inside removeWindow onRemove");
+      log.debug("Inside removeWindow onRemove");
 
       try {
         // TODO: Check either internalLogout() or logout()
         //await LockService.internalLogout();
-        console.log("Inside removeWindow onRemove locked");
+        log.debug("Inside removeWindow onRemove locked");
         if (this.cached?.id === windowId) {
           this.cached = null;
-          console.log("Inside removeWindow onRemove cleaned");
+          log.debug("Inside removeWindow onRemove cleaned");
         }
       } catch (error) {
-        console.log("Inside removeWindow onRemove error", error);
+        log.debug("Inside removeWindow onRemove error", error);
       }
     });
   }

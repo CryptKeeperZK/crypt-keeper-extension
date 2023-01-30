@@ -15,7 +15,7 @@ import ApprovalService from './services/approval'
 import ZkIdentityWrapper from './identity-decorater'
 import identityFactory from './identity-factory'
 import BrowserUtils from './controllers/browser-utils'
-declare type Ethers = typeof import("ethers");
+import log from 'loglevel';
 
 export default class ZkKeeperController extends Handler {
     private identityService: IdentityService
@@ -32,7 +32,7 @@ export default class ZkKeeperController extends Handler {
         this.semaphoreService = new SemaphoreService()
         //this.rlnService = new RLNService()
         this.approvalService = new ApprovalService()
-        console.log("Inside ZkKepperController");
+        log.debug("Inside ZkKepperController");
     }
 
     initialize = async (): Promise<ZkKeeperController> => {
@@ -66,7 +66,7 @@ export default class ZkKeeperController extends Handler {
         this.add(RPCAction.GET_PENDING_REQUESTS, LockService.ensure, this.requestManager.getRequests)
         this.add(RPCAction.FINALIZE_REQUEST, LockService.ensure, this.requestManager.finalizeRequest)
 
-        console.log("3. Inside ZkKepperController() class");
+        log.debug("3. Inside ZkKepperController() class");
         // web3
         //this.add(RPCAction.CONNECT_METAMASK, LockService.ensure, this.metamaskServiceEthers.connectMetamask)
         //this.add(RPCAction.GET_WALLET_INFO, this.metamaskServiceEthers.getWalletInfo)
@@ -90,13 +90,13 @@ export default class ZkKeeperController extends Handler {
                     }
 
                     if (strategy === 'interrep') {
-                        console.log("CREATE_IDENTITY: 1")
+                        log.debug("CREATE_IDENTITY: 1")
                         config.messageSignature = messageSignature;
-                        console.log("CREATE_IDENTITY: 2")
+                        log.debug("CREATE_IDENTITY: 2")
                     }
 
                     const identity: ZkIdentityWrapper | undefined = await identityFactory(strategy, config)
-                    console.log("CREATE_IDENTITY: 4", identity);
+                    log.debug("CREATE_IDENTITY: 4", identity);
 
                     if (!identity) {
                         throw new Error('Identity not created, make sure to check strategy')
@@ -106,7 +106,7 @@ export default class ZkKeeperController extends Handler {
 
                     return true
                 } catch (error: any) {
-                    console.log("CREATE_IDENTITY: Error", error);
+                    log.debug("CREATE_IDENTITY: Error", error);
                     throw new Error(error.message)
                 }
             }

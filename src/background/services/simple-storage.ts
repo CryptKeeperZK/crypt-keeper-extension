@@ -1,3 +1,4 @@
+import log from 'loglevel';
 import { browser } from 'webextension-polyfill-ts'
 
 export default class SimpleStorage {
@@ -7,7 +8,7 @@ export default class SimpleStorage {
         this.key = key;
         browser.storage.onChanged.addListener((changes, namespace) => {
             for (let [key, { oldValue, newValue }] of Object.entries(changes)) {
-                console.log(
+                log.debug(
                     `Storage key "${key}" in namespace "${namespace}" changed.`,
                     `Old value was "${oldValue}", new value is "${newValue}".`
                 );
