@@ -113,7 +113,7 @@ if (isManifestV3) {
 
 async function initialize (remotePort?: Runtime.Port) {
   if (true) {
-    try {``
+    try {
       log.debug(`initialize remotePort`, remotePort);
       const app: ZkKeeperController = new ZkKeeperController();
 
