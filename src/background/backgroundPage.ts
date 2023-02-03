@@ -3,7 +3,9 @@ import importAllScripts from "./shared/importScripts.js"
 
 // Ref: https://stackoverflow.com/questions/66406672/chrome-extension-mv3-modularize-service-worker-js-file
 // eslint-disable-next-line no-undef
-self.addEventListener('install', importAllScripts);
+self.addEventListener('install', () => {
+  importAllScripts();
+});
 
 /*
  * @src MetaMask extension workaround
@@ -102,13 +104,15 @@ const initApp = async (remotePort?: Runtime.Port) => {
 }
 
 if (isManifestV3) {
-  browser.runtime.onConnect.addListener(initApp);
+  // browser.runtime.onConnect.addListener(initApp);
+  browser.runtime.onInstalled.addListener(() => initApp());
+  // initApp();
 } else {
   initialize().catch(log.error);   
 }
 
 async function initialize (remotePort?: Runtime.Port) {
-  if (remotePort) {
+  if (true) {
     try {
       log.debug(`initialize remotePort`, remotePort);
       const app: ZkKeeperController = new ZkKeeperController();
@@ -119,6 +123,7 @@ async function initialize (remotePort?: Runtime.Port) {
           try {
             log.debug("Background 1: request: ", request)
             const res = await app.handle(request);
+            console.log('Background 1: response: ', res);
             return [null, res];
           } catch (e: any) {
             return [e.message, null];
