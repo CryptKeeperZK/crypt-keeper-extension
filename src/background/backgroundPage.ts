@@ -32,7 +32,7 @@ import { isManifestV3 } from './shared/checkManifestV3';
 import log from 'loglevel';
 import { checkForLastErrorAndLog } from "./shared/checForLastError";
 
-globalThis.CRYPTKEEPER_DEBUG = false;
+globalThis.CRYPTKEEPER_DEBUG = true;
 
 log.setDefaultLevel(globalThis.CRYPTKEEPER_DEBUG ? 'debug' : 'info');
 
@@ -109,7 +109,7 @@ if (isManifestV3) {
 
 async function initialize (remotePort?: Runtime.Port) {
   if (remotePort) {
-    try {``
+    try {
       log.debug(`initialize remotePort`, remotePort);
       const app: ZkKeeperController = new ZkKeeperController();
 

@@ -6,6 +6,7 @@ import axios, { AxiosResponse } from 'axios'
 import { MerkleProofArtifacts } from '@src/types'
 import { SemaphoreProof, SemaphoreProofRequest } from './interfaces'
 import { deserializeMerkleProof, generateMerkleProoof } from './utils'
+import log from 'loglevel';
 
 export default class SemaphoreService {
     // eslint-disable-next-line class-methods-use-this
@@ -47,6 +48,10 @@ export default class SemaphoreService {
             });
 
             const solidityProof: SolidityProof = packToSolidityProof(fullProof.proof)
+
+            log.debug("Generating Semaphore Identity has done successfully.");
+            log.debug("- Full Proof:", fullProof);
+            log.debug("- Semaphore Solidity proof:", solidityProof);
 
             return {
                 fullProof,
