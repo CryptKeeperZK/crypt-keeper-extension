@@ -6,8 +6,8 @@
     "scripts": {
         "build": "NODE_ENV=production webpack --config webpack.prod.js && npm run clean-background-prod",
         "dev": "NODE_ENV=development webpack --config webpack.dev.js && npm run clean-background-dev",
-        "clean-background-dev": "source scripts/clean-dev.sh",
-        "clean-background-prod": "source scripts/clean-prod.sh",
+        "clean-background-dev": "./scripts/clean-dev.sh",
+        "clean-background-prod": "./scripts/clean-prod.sh",
         "serve": "./scripts/serve.sh",
         "merkle": "node scripts/mock-merkle-proof.js",
         "test": "jest",

@@ -56,7 +56,7 @@ export class MetaMaskProviderService {
   }
 
   async connectMetaMask(): Promise<WalletInfoBackgound> {
-    return await this._ethersProivder.connectWallet();
+    return this._ethersProivder.connectWallet();
   }
 
   async getWalletInfo(): Promise<WalletInfoBackgound | null> {

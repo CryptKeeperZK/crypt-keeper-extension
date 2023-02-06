@@ -3,79 +3,93 @@ import { MetaMaskInpageProvider } from "@dimensiondev/metamask-extension-provide
 import { WalletInfoBackgound } from "@src/types";
 import { EthersProvider, MetaMaskProviderService } from "@src/web3-providers";
 import log from "loglevel";
+import { useCallback, useEffect } from "react";
 import { setAccount, setBalance, setChainId, setNetwork, setWeb3Connecting } from "../ducks/web3";
 import { useReduxDispatch } from "./ReduxConnector";
 
-let metamaskProviderService: MetaMaskProviderService | null = null;
-let metamaskProvider: MetaMaskInpageProvider | null = null;
-let ethersProivder: EthersProvider | null = null;
+let metamaskProviderService: MetaMaskProviderService | null = new MetaMaskProviderService();
+let metamaskProvider: MetaMaskInpageProvider | null = metamaskProviderService.getMetamaskProvider;
+let ethersProivder: EthersProvider | null = metamaskProviderService.getEthersProvider;
 
 export function useMetaMaskService() {
-  if (!metamaskProvider) {
-    if (!ethersProivder) {
-      metamaskProviderService = new MetaMaskProviderService();
-      metamaskProvider = metamaskProviderService.getMetamaskProvider;
-      ethersProivder = metamaskProviderService.getEthersProvider;
-    }
+  if (!metamaskProvider && !ethersProivder) {
+    metamaskProviderService = new MetaMaskProviderService();
+    metamaskProvider = metamaskProviderService.getMetamaskProvider;
+    ethersProivder = metamaskProviderService.getEthersProvider;
   }
 }
 
 export async function useMetaMaskConnect() {
   useReduxDispatch(setWeb3Connecting(true));
 
-  useMetaMaskService();
+  // useMetaMaskService();
+
   try {
     await metamaskProviderService?.connectMetaMask();
     await useMetaMaskWalletInfo();
 
     useMetaMaskEvents();
-
-    useReduxDispatch(setWeb3Connecting(false));
   } catch (error) {
     throw new Error(`Error in connecting to metamask ${error}`);
+  } finally {
+    useReduxDispatch(setWeb3Connecting(false));
   }
 }
 
 export function useMetaMaskEvents(): void {
-  metamaskProvider?.on("accountsChanged", async (account: any) => {
-    log.debug("Inside MetaMaskProvider accountsChanged: ", account);
-    if (ethersProivder) {
-      const balance = await ethersProivder.getAccountBalance(account[0]);
-      useReduxDispatch(setAccount(account[0]));
-      useReduxDispatch(setBalance(balance));
-    }
-  });
+  const handleAccountChange = useCallback(
+    async (accounts: any) => {
+      log.debug("Inside MetaMaskProvider accountsChanged: ", accounts);
+      if (ethersProivder) {
+        const balance = await ethersProivder.getAccountBalance(accounts[0] as string);
+        useReduxDispatch(setAccount(accounts[0] as string));
+        useReduxDispatch(setBalance(balance));
+      }
+    },
+    [ethersProivder],
+  );
 
-  metamaskProvider?.on("chainChanged", async () => {
+  const handleChainChange = useCallback(async () => {
     log.debug("Inside MetaMaskProvider chainChanged");
 
     if (ethersProivder) {
-      const networkDetails = await ethersProivder.getNetworkDetails();
-      const networkName = networkDetails.name;
-      const chainId = networkDetails.chainId;
+      const { name: networkName, chainId } = await ethersProivder.getNetworkDetails();
 
-      if (networkName) useReduxDispatch(setNetwork(networkName));
-      if (chainId) useReduxDispatch(setChainId(chainId));
+      if (networkName) {
+        useReduxDispatch(setNetwork(networkName));
+      }
+
+      if (chainId) {
+        useReduxDispatch(setChainId(chainId));
+      }
     }
-  });
+  }, [ethersProivder]);
 
-  metamaskProvider?.on("error", (e: any) => {
+  const handleError = useCallback((e: unknown) => {
     log.debug("Inside MetaMaskProvider  error: ", e);
-    throw e;
-  });
+    throw e as Error;
+  }, []);
 
-  metamaskProvider?.on("connect", () => {
+  const handleConnect = useCallback(() => {
     log.debug("Inside MetaMaskProvider  connect");
-  });
+  }, []);
 
-  metamaskProvider?.on("disconnect", () => {
+  const handleDisconnect = useCallback(() => {
     log.debug("Inside MetaMaskProvider  disconnect");
-  });
+  }, []);
+
+  useEffect(() => {
+    metamaskProvider?.on("accountsChanged", handleAccountChange);
+    metamaskProvider?.on("chainChanged", handleChainChange);
+    metamaskProvider?.on("error", handleError);
+    metamaskProvider?.on("connect", handleConnect);
+    metamaskProvider?.on("disconnect", handleDisconnect);
+  }, [metamaskProvider, handleAccountChange, handleChainChange, handleError, handleConnect, handleDisconnect]);
 }
 
 export async function useMetaMaskWalletInfo(): Promise<WalletInfoBackgound | null> {
   if (metamaskProviderService) {
-    log.debug(`useMetaMaskWalletInfo 1`)
+    log.debug(`useMetaMaskWalletInfo 1`);
     const walletInfo = await metamaskProviderService.getWalletInfo();
     log.debug(`useMetaMaskWalletInfo 1 walletInfo ${walletInfo}`);
     if (walletInfo) {
@@ -95,15 +109,6 @@ export async function useMetaMaskWalletInfo(): Promise<WalletInfoBackgound | nul
 
 export async function useMetaMaskSignature(message: string): Promise<string | null> {
   const walletInfo = await useMetaMaskWalletInfo();
-  
-  if (walletInfo) {
-    const signer = walletInfo.signer;
-    if (metamaskProviderService) {
-      return await metamaskProviderService?.getSignature(signer, message); 
-    }
 
-    return null;
-  }
-
-  return null;
-} 
+  return walletInfo ? metamaskProviderService?.getSignature(walletInfo.signer, message) ?? null : null;
+}
