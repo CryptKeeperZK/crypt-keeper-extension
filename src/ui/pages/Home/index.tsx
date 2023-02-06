@@ -20,7 +20,7 @@ import CreateIdentityModal from "@src/ui/components/CreateIdentityModal";
 import ConnectionModal from "@src/ui/components/ConnectionModal";
 import Menuable from "@src/ui/components/Menuable";
 import { useAppDispatch } from "@src/ui/ducks/hooks";
-import { useMetaMaskConnect, useMetaMaskWalletInfo } from "@src/ui/services/useMetaMask";
+import { useMetaMaskConnect } from "@src/ui/services/useMetaMask";
 import log from "loglevel";
 
 export default function Home(): ReactElement {
@@ -28,11 +28,11 @@ export default function Home(): ReactElement {
   const scrollRef = useRef<HTMLDivElement>(null);
   const [fixedTabs, fixTabs] = useState(false);
 
+  useMetaMaskConnect();
+
   useEffect(() => {
     (async () => {
       try {
-        //await useMetaMaskConnect();
-        //await useMetaMaskWalletInfo();
         dispatch(fetchIdentities());
       } catch (error) {
         throw new Error(`Error in connecting to MetaMask`);

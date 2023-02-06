@@ -1,91 +1,91 @@
 @import '../../../util/variables';
 
 .dropdown {
-    @extend %regular-font;
-    outline: none;
-    background-color: black;
-    //border: none;
-    width: 100%;
-    color: $white;
-    font-family: 'Open Sans', -apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif;
-    overflow-y: auto;
+  @extend %regular-font;
+  outline: none;
+  background-color: black;
+  //border: none;
+  width: 100%;
+  color: $white;
+  font-family: 'Open Sans', -apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif;
+  overflow-y: auto;
   //padding: 1rem 0rem 1rem 0rem;
-    border-radius: 6px;
-    border: 1px solid var(--color-gray);
-    background-clip: padding-box;
+  border-radius: 6px;
+  border: 1px solid var(--color-gray);
+  background-clip: padding-box;
 
-    top: 100%;
+  top: 100%;
   right: 0;
   //position: absolute;
   z-index: 10;
   min-width: 300px;
   margin-top: 1rem;
 
-    &__label {
-        @extend %small-font;
-        color: $label-text;
-        padding: 0 0.5rem 0.25rem;
-        cursor: default;
+  &__label {
+    @extend %small-font;
+    color: $label-text;
+    padding: 0 0.5rem 0.25rem;
+    cursor: default;
+  }
+
+  &__group {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    text-decoration: none;
+    background-color: black;
+    // padding: 0.8rem 0 0.8rem 2rem;
+    // margin-top: 0.2rem;
+    // margin-bottom: 0.2rem;
+    border-radius: 0 50px 50px 0;
+    cursor: pointer;
+
+    // select {
+    //     flex: 1 1 auto;
+    //     background-color: black;
+    //     outline: none;
+    //     cursor: pointer;
+    // }
+  }
+
+  &__select {
+
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    text-decoration: none;
+    color: white;
+    padding: 0.8rem 0 0.8rem 2rem;
+    margin-top: 0.2rem;
+    margin-bottom: 0.2rem;
+    border-radius: 0 50px 50px 0;
+
+    flex: 1 1 auto;
+    background-color: black;
+    outline: none;
+    cursor: pointer;
+  }
+
+  &__option {
+    @extend %row-nowrap;
+    color: white;
+    font-weight: 300;
+    margin-left: 1rem;
+    margin-right: 1rem;
+
+    // TODO: fixing the hover part
+    &:hover {
+      cursor: progress !important;
+      color: #17bf63;
+      background-color: rgba(79, 192, 141, 0.1);
     }
+  }
 
-    &__group {
-        display: flex;
-        align-items: center;
-        justify-content: flex-start;
-        text-decoration: none;
-        background-color: black;
-        // padding: 0.8rem 0 0.8rem 2rem;
-        // margin-top: 0.2rem;
-        // margin-bottom: 0.2rem;
-        border-radius: 0 50px 50px 0;
-        cursor: pointer;
-
-        // select {
-        //     flex: 1 1 auto;
-        //     background-color: black;
-        //     outline: none;
-        //     cursor: pointer;
-        // }
-    }
-
-    &__select {
-
-        display: flex;
-        align-items: center;
-        justify-content: flex-start;
-        text-decoration: none;
-        color: white ;
-        padding: 0.8rem 0 0.8rem 2rem;
-        margin-top: 0.2rem;
-        margin-bottom: 0.2rem;
-        border-radius: 0 50px 50px 0;
-
-        flex: 1 1 auto;
-        background-color: black;
-        outline: none;
-        cursor: pointer;
-    }
-
-    &__option {
-        @extend %row-nowrap;
-        color: white;
-        font-weight: 300;
-        margin-left: 1rem;
-        margin-right: 1rem;
-
-        // TODO: fixing the hover part
-        &:hover {
-            cursor: progress !important;
-            color: #17bf63;
-            background-color: rgba(79, 192, 141, 0.1);
-        }
-    }
-
-    &__error-message {
-        @extend %small-font;
-        color: $error-red;
-        padding: 0.25rem 0.5rem 0;
-    }
+  &__error-message {
+    @extend %small-font;
+    color: $error-red;
+    padding: 0.25rem 0.5rem 0;
+  }
 }
 
 // Dropdown Menu Animation
@@ -94,6 +94,7 @@
 .dropdown-leave-active {
   transition: all 1s;
 }
+
 .dropdown-enter,
 .dropdown-leave-to {
   opacity: 0;
