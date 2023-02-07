@@ -1,5 +1,6 @@
 import SimpleStorage from './simple-storage'
 import LockService from './lock'
+import log from 'loglevel'
 
 const DB_KEY = '@APPROVED@'
 
@@ -94,7 +95,7 @@ export default class ApprovalService extends SimpleStorage {
 
     remove = async (payload: any) => {
         const { host }: { host: string } = payload
-        console.log(payload)
+        log.debug(payload)
         if (!host) throw new Error('No address provided')
 
         const index: number = this.allowedHosts.indexOf(host)

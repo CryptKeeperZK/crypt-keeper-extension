@@ -21,6 +21,7 @@ import ConnectionModal from "@src/ui/components/ConnectionModal";
 import Menuable from "@src/ui/components/Menuable";
 import { useAppDispatch } from "@src/ui/ducks/hooks";
 import { useMetaMaskConnect, useMetaMaskWalletInfo } from "@src/ui/services/useMetaMask";
+import log from "loglevel";
 
 export default function Home(): ReactElement {
   const dispatch = useAppDispatch();
@@ -208,7 +209,7 @@ const IdentityList = function (): ReactElement {
   };
 
   const handleKeypress = (e: any, commitment: string, name: string | undefined) => {
-    console.log("handleKeypress", e.key);
+    log.debug("handleKeypress", e.key);
     if (e.key === "Enter") {
       if (name) {
         changeIdentityNameButton(commitment, name);

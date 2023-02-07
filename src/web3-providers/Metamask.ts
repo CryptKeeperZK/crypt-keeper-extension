@@ -4,6 +4,7 @@ import { setAccount, setBalance, setChainId, setNetwork, setWeb3Connecting } fro
 import { EthersProvider } from "./EthersProivder";
 import { ExternalProvider, JsonRpcSigner, Network, Web3Provider } from "@ethersproject/providers";
 import { WalletInfoBackgound } from "@src/types";
+import log from "loglevel";
 
 export class MetaMaskProviderService {
   private _metamaskProvider: MetaMaskInpageProvider;
@@ -15,14 +16,14 @@ export class MetaMaskProviderService {
 
     // TODO: Remove `any` type
     // this._metamaskProvider.on("accountsChanged", async (account: any) => {
-    //   console.log("Inside MetaMaskProvider accountsChanged: ", account);
+    //   log.debug("Inside MetaMaskProvider accountsChanged: ", account);
     //   const balance = await this._ethersProivder.getAccountBalance(account[0]);
     //   await pushMessage(setAccount(account[0]));
     //   await pushMessage(setBalance(balance));
     // });
 
     // this._metamaskProvider.on("chainChanged", async () => {
-    //   console.log("Inside MetaMaskProvider chainChanged");
+    //   log.debug("Inside MetaMaskProvider chainChanged");
 
     //   const networkDetails = await this._ethersProivder.getNetworkDetails();
     //   const networkName = networkDetails.name;
@@ -33,16 +34,16 @@ export class MetaMaskProviderService {
     // });
 
     // this._metamaskProvider.on("error", (e: any) => {
-    //   console.log("Inside MetaMaskProvider  error: ", e);
+    //   log.debug("Inside MetaMaskProvider  error: ", e);
     //   throw e;
     // });
 
     // this._metamaskProvider.on("connect", () => {
-    //   console.log("Inside MetaMaskProvider  connect");
+    //   log.debug("Inside MetaMaskProvider  connect");
     // });
 
     // this._metamaskProvider.on("disconnect", () => {
-    //   console.log("Inside MetaMaskProvider  disconnect");
+    //   log.debug("Inside MetaMaskProvider  disconnect");
     // });
   }
 
@@ -60,7 +61,7 @@ export class MetaMaskProviderService {
 
   async getWalletInfo(): Promise<WalletInfoBackgound | null> {
     if (this._metamaskProvider?.selectedAddress) {
-      console.log(`MetaMaskProviderService ${this._metamaskProvider?.selectedAddress}`);
+      log.debug(`MetaMaskProviderService ${this._metamaskProvider?.selectedAddress}`);
       return await this._ethersProivder.getWalletInfo();
     }
 

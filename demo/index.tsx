@@ -6,6 +6,7 @@ import { Identity } from "@semaphore-protocol/identity";
 
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import log from "loglevel";
 
 const semaphorePath = {
   circuitFilePath: "http://localhost:8095/semaphore/semaphore.wasm",
@@ -83,7 +84,7 @@ function App() {
         storageAddressOrArtifacts,
       );
 
-      console.log(`Semaphore proof generated successfully! \n
+      log.debug(`Semaphore proof generated successfully! \n
             - Public Signals: 
             \t ${JSON.stringify(proof.fullProof.publicSignals, null, 1)}
             - fullProof: 
@@ -91,7 +92,7 @@ function App() {
         `);
       toast(`Semaphore proof generated successfully!`, { type: "success" });
     } catch (e) {
-      console.log("ERROR", e);
+      log.debug("ERROR", e);
       toast("Error while generating Semaphore proof!", { type: "error" });
       console.error(e);
     }
@@ -141,7 +142,7 @@ function App() {
         rlnIdentifierHex,
       );
 
-      console.log(`RLN proof generated successfully! \n
+      log.debug(`RLN proof generated successfully! \n
             - Public Signals: 
             \t ${JSON.stringify(proof.publicSignals, null, 1)}
             - fullProof: 
@@ -149,7 +150,7 @@ function App() {
         `);
       toast(`RLN proof generated successfully! ${proof}`, { type: "success" });
     } catch (e) {
-      console.log("ERROR", e);
+      log.debug("ERROR", e);
       toast("Error while generating RLN proof!", { type: "error" });
       console.error(e);
     }

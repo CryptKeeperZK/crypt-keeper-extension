@@ -12,6 +12,7 @@ import Menuable from '@src/ui/components/Menuable'
 import { MetaMaskProviderService } from '@src/web3-providers/Metamask'
 import { useAppDispatch } from '@src/ui/ducks/hooks'
 import { useMetaMaskConnect } from '@src/ui/services/useMetaMask'
+import log from 'loglevel'
 
 export default function Header(): ReactElement {
     const dispatch = useAppDispatch()
@@ -20,7 +21,7 @@ export default function Header(): ReactElement {
     const web3Connecting = useWeb3Connecting()
 
     const connectMetamask = useCallback(async () => {
-        console.log("Inside connectMetamask button");
+        log.debug("Inside connectMetamask button");
         await useMetaMaskConnect();
     }, []);
 

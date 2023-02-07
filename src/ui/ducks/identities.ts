@@ -6,6 +6,7 @@ import RPCAction from '@src/util/constants'
 import { useSelector } from 'react-redux'
 import { AppDispatch, AppRootState } from '@src/ui/store/configureAppStore'
 import deepEqual from 'fast-deep-equal'
+import log from 'loglevel'
 
 export enum ActionType {
     SET_COMMITMENTS = 'app/identities/setCommitments',
@@ -57,7 +58,7 @@ export const setActiveIdentity = (identityCommitment: string) => async (dispatch
 }
 
 export const setIdentityName = (identityCommitment: string, name: string) => async (dispatch: AppDispatch) => {
-    console.log("Inside setIdentityName")
+    log.debug("Inside setIdentityName")
     if (!identityCommitment) {
         throw new Error('Identity Commitment not provided!')
     }
@@ -71,7 +72,7 @@ export const setIdentityName = (identityCommitment: string, name: string) => asy
 }
 
 export const deleteIdentity = (identityCommitment: string) =>async (dispatch: AppDispatch) => {
-    console.log("Inside deleteIdentity")
+    log.debug("Inside deleteIdentity")
     if (!identityCommitment) {
         throw new Error('Identity Commitment not provided!')
     }

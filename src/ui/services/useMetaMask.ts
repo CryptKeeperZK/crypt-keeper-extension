@@ -2,6 +2,7 @@
 import { MetaMaskInpageProvider } from "@dimensiondev/metamask-extension-provider";
 import { WalletInfoBackgound } from "@src/types";
 import { EthersProvider, MetaMaskProviderService } from "@src/web3-providers";
+import log from "loglevel";
 import { setAccount, setBalance, setChainId, setNetwork, setWeb3Connecting } from "../ducks/web3";
 import { useReduxDispatch } from "./ReduxConnector";
 
@@ -37,7 +38,7 @@ export async function useMetaMaskConnect() {
 
 export function useMetaMaskEvents(): void {
   metamaskProvider?.on("accountsChanged", async (account: any) => {
-    console.log("Inside MetaMaskProvider accountsChanged: ", account);
+    log.debug("Inside MetaMaskProvider accountsChanged: ", account);
     if (ethersProivder) {
       const balance = await ethersProivder.getAccountBalance(account[0]);
       useReduxDispatch(setAccount(account[0]));
@@ -46,7 +47,7 @@ export function useMetaMaskEvents(): void {
   });
 
   metamaskProvider?.on("chainChanged", async () => {
-    console.log("Inside MetaMaskProvider chainChanged");
+    log.debug("Inside MetaMaskProvider chainChanged");
 
     if (ethersProivder) {
       const networkDetails = await ethersProivder.getNetworkDetails();
@@ -59,24 +60,24 @@ export function useMetaMaskEvents(): void {
   });
 
   metamaskProvider?.on("error", (e: any) => {
-    console.log("Inside MetaMaskProvider  error: ", e);
+    log.debug("Inside MetaMaskProvider  error: ", e);
     throw e;
   });
 
   metamaskProvider?.on("connect", () => {
-    console.log("Inside MetaMaskProvider  connect");
+    log.debug("Inside MetaMaskProvider  connect");
   });
 
   metamaskProvider?.on("disconnect", () => {
-    console.log("Inside MetaMaskProvider  disconnect");
+    log.debug("Inside MetaMaskProvider  disconnect");
   });
 }
 
 export async function useMetaMaskWalletInfo(): Promise<WalletInfoBackgound | null> {
   if (metamaskProviderService) {
-    console.log(`useMetaMaskWalletInfo 1`)
+    log.debug(`useMetaMaskWalletInfo 1`)
     const walletInfo = await metamaskProviderService.getWalletInfo();
-    console.log(`useMetaMaskWalletInfo 1 walletInfo ${walletInfo}`);
+    log.debug(`useMetaMaskWalletInfo 1 walletInfo ${walletInfo}`);
     if (walletInfo) {
       useReduxDispatch(setAccount(walletInfo.account));
       useReduxDispatch(setBalance(walletInfo.balance));
@@ -87,7 +88,7 @@ export async function useMetaMaskWalletInfo(): Promise<WalletInfoBackgound | nul
     return walletInfo;
   }
 
-  console.log(`useMetaMaskWalletInfo metamaskProviderService ${metamaskProviderService}`);
+  log.debug(`useMetaMaskWalletInfo metamaskProviderService ${metamaskProviderService}`);
 
   return null;
 }

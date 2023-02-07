@@ -3,6 +3,7 @@
 import { MerkleProofArtifacts } from '@src/types'
 import RPCAction from '@src/util/constants'
 import { MerkleProof } from '@zk-kit/incremental-merkle-tree'
+import log from 'loglevel'
 
 export type IRequest = {
     method: string
@@ -223,7 +224,7 @@ async function connect() {
         }
     } catch (err) {
         // eslint-disable-next-line no-console
-        console.log('Err: ', err)
+        log.debug('Err: ', err)
         result = null
     }
 

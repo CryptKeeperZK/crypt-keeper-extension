@@ -1,4 +1,6 @@
 import "./init-globals";
+import log from 'loglevel';
+
 // Source: https://github.com/MetaMask/metamask-extension/blob/develop/app/scripts/app-init.js
 /* global chrome */
 // This file is used only for manifest version 3
@@ -19,7 +21,7 @@ function tryImport(fileNames) {
     try {
       importScripts(fileNames);
     } catch (e) {
-      console.error("Error in executing importScripts()", e);
+      log.error("Error in executing importScripts()", e);
     }
 
     const endTime = new Date().getTime();
@@ -65,7 +67,7 @@ export default function importAllScripts() {
   const endImportScriptsTime = Date.now();
 
   // for performance metrics/reference
-  console.log(
+  log.debug(
     `SCRIPTS IMPORT COMPLETE in Seconds: ${
       (Date.now() - startImportScriptsTime) / 1000
     }`,
@@ -73,7 +75,7 @@ export default function importAllScripts() {
 
   // In testMode load time logs are output to console
   if (testMode) {
-    console.log(
+    log.debug(
       `Time for each import: ${JSON.stringify(
         {
           name: 'Total',
