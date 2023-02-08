@@ -1,6 +1,6 @@
 // Singleton initialization
 import { MetaMaskInpageProvider } from "@dimensiondev/metamask-extension-provider";
-import { WalletInfoBackgound } from "@src/types";
+import { WalletInfoBackground } from "@src/types";
 import { EthersProvider, MetaMaskProviderService } from "@src/web3-providers";
 import log from "loglevel";
 import { useCallback, useEffect } from "react";
@@ -77,7 +77,7 @@ export function useMetaMaskEvents(): void {
   }, [metamaskProvider, handleAccountChange, handleChainChange, handleError, handleConnect, handleDisconnect]);
 }
 
-export async function useMetaMaskWalletInfo(): Promise<WalletInfoBackgound | null> {
+export async function useMetaMaskWalletInfo(): Promise<WalletInfoBackground | null> {
   if (metamaskProviderService) {
     log.debug("useMetaMaskWalletInfo 1");
     const walletInfo = await metamaskProviderService.getWalletInfo();

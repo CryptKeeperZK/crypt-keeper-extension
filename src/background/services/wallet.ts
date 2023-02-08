@@ -1,12 +1,11 @@
-import { WalletInfoBackgound } from "@src/types";
 import SimpleStorage from "./simple-storage";
 
-const key: string = '@wallet@'
+const key = "@wallet@";
 
 class WalletService extends SimpleStorage {
-    //private wallet: WalletInfoBackgound;
+  //private wallet: WalletInfoBackgound;
 
-    constructor() {
-        super(key);
-    }
+  constructor() {
+    super(key);
+  }
 }

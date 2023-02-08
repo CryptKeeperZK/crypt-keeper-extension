@@ -1,9 +1,7 @@
-import pushMessage from "@src/util/pushMessage";
 import createMetaMaskProvider, { MetaMaskInpageProvider } from "@dimensiondev/metamask-extension-provider";
-import { setAccount, setBalance, setChainId, setNetwork, setWeb3Connecting } from "@src/ui/ducks/web3";
 import { EthersProvider } from "./EthersProivder";
-import { ExternalProvider, JsonRpcSigner, Network, Web3Provider } from "@ethersproject/providers";
-import { WalletInfoBackgound } from "@src/types";
+import { JsonRpcSigner } from "@ethersproject/providers";
+import { WalletInfoBackground } from "@src/types";
 import log from "loglevel";
 
 export class MetaMaskProviderService {
@@ -55,11 +53,11 @@ export class MetaMaskProviderService {
     return this._ethersProivder;
   }
 
-  async connectMetaMask(): Promise<WalletInfoBackgound> {
+  async connectMetaMask(): Promise<WalletInfoBackground> {
     return this._ethersProivder.connectWallet();
   }
 
-  async getWalletInfo(): Promise<WalletInfoBackgound | null> {
+  async getWalletInfo(): Promise<WalletInfoBackground | null> {
     if (this._metamaskProvider?.selectedAddress) {
       log.debug(`MetaMaskProviderService ${this._metamaskProvider?.selectedAddress}`);
       return await this._ethersProivder.getWalletInfo();

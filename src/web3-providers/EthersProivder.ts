@@ -1,6 +1,6 @@
 import { ethers } from "ethers";
 import { JsonRpcSigner, Network, Web3Provider } from "@ethersproject/providers";
-import { WalletInfoBackgound } from "@src/types";
+import { WalletInfoBackground } from "@src/types";
 import { EthereumMethodType } from "./types";
 
 export class EthersProvider {
@@ -14,7 +14,7 @@ export class EthersProvider {
     return this._ethersProvider;
   }
 
-  async getWalletInfo(): Promise<WalletInfoBackgound> {
+  async getWalletInfo(): Promise<WalletInfoBackground> {
     const signer = await this.getSigner();
     const signerAddress = await signer.getAddress();
     const network = await this.getNetworkDetails();
@@ -29,7 +29,7 @@ export class EthersProvider {
     };
   }
 
-  async connectWallet(): Promise<WalletInfoBackgound> {
+  async connectWallet(): Promise<WalletInfoBackground> {
     await this.getAccounts();
     const signer = await this.getSigner();
     const signerAddress = await signer.getAddress();
@@ -49,7 +49,7 @@ export class EthersProvider {
     return this._ethersProvider.getSigner();
   }
 
-  async getAccounts(): Promise<String[]> {
+  async getAccounts(): Promise<string[]> {
     return await this._ethersProvider.send(EthereumMethodType.ETH_REQUEST_ACCOUNTS, []);
   }
 
@@ -65,7 +65,7 @@ export class EthersProvider {
     return await this._ethersProvider.getNetwork();
   }
 
-  async getSignature(signer: JsonRpcSigner, message: string): Promise<string>{
+  async getSignature(signer: JsonRpcSigner, message: string): Promise<string> {
     return await signer.signMessage(message);
   }
 }

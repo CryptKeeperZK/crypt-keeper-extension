@@ -16,7 +16,7 @@ import classNames from "classnames";
 import { browser } from "webextension-polyfill-ts";
 import "./home.scss";
 import { ellipsify, sliceAddress } from "@src/util/account";
-import CreateIdentityModal from "@src/ui/components/CreateIdentityModal";
+import { CreateIdentityModal } from "@src/ui/components/CreateIdentityModal";
 import ConnectionModal from "@src/ui/components/ConnectionModal";
 import Menuable from "@src/ui/components/Menuable";
 import { useAppDispatch } from "@src/ui/ducks/hooks";
@@ -35,7 +35,7 @@ export default function Home(): ReactElement {
       try {
         dispatch(fetchIdentities());
       } catch (error) {
-        throw new Error(`Error in connecting to MetaMask`);
+        throw new Error("Error in connecting to MetaMask");
       }
     })();
   }, []);
@@ -192,12 +192,14 @@ const IdentityList = function (): ReactElement {
   const selectIdentity = useCallback(async (identityCommitment: string) => {
     dispatch(setActiveIdentity(identityCommitment));
   }, []);
+
   const changeIdentityNameButton = useCallback(async (identityCommitment: string, name: string | undefined) => {
     if (name) {
       await dispatch(setIdentityName(identityCommitment, name));
       updateSetRenameMap(identityCommitment, false);
     }
   }, []);
+
   const deleteIdentityButton = useCallback(async (identityCommitment: string) => {
     await dispatch(deleteIdentity(identityCommitment));
     setDeleteIdentityState(true);
@@ -225,7 +227,7 @@ const IdentityList = function (): ReactElement {
   return (
     <>
       {showingModal && <CreateIdentityModal onClose={() => setShowModal(false)} />}
-      {identities.map(({ commitment, metadata }, i) => {
+      {identities.map(({ commitment, metadata }) => {
         return (
           <div className="p-4 identity-row" key={commitment}>
             <Icon
@@ -257,7 +259,7 @@ const IdentityList = function (): ReactElement {
                 <div className="flex flex-row items-center text-lg font-semibold">
                   {`${metadata.name}`}
                   <span className="text-xs py-1 px-2 ml-2 rounded-full bg-gray-500 text-gray-800">
-                    {metadata.web2Provider}
+                    {metadata.web2Provider || "random"}
                   </span>
                 </div>
               )}

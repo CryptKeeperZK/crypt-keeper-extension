@@ -1,171 +1,172 @@
 /* eslint-disable @typescript-eslint/no-shadow */
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { CreateIdentityOptions, IdentityMetadata, WalletInfoBackgound } from '@src/types'
-import postMessage from '@src/util/postMessage'
-import RPCAction from '@src/util/constants'
-import { useSelector } from 'react-redux'
-import { AppDispatch, AppRootState } from '@src/ui/store/configureAppStore'
-import deepEqual from 'fast-deep-equal'
-import log from 'loglevel'
+import { CreateIdentityOptions, IdentityMetadata, WalletInfoBackground } from "@src/types";
+import postMessage from "@src/util/postMessage";
+import RPCAction from "@src/util/constants";
+import { useSelector } from "react-redux";
+import { AppDispatch, AppRootState } from "@src/ui/store/configureAppStore";
+import deepEqual from "fast-deep-equal";
+import log from "loglevel";
 
 export enum ActionType {
-    SET_COMMITMENTS = 'app/identities/setCommitments',
-    SET_SELECTED = 'app/identities/setSelected',
-    SET_REQUEST_PENDING = 'app/identities/setRequestPending'
+  SET_COMMITMENTS = "app/identities/setCommitments",
+  SET_SELECTED = "app/identities/setSelected",
+  SET_REQUEST_PENDING = "app/identities/setRequestPending",
 }
 
 type Action<payload> = {
-    type: ActionType
-    payload?: payload
-    meta?: any
-    error?: boolean
-}
+  type: ActionType;
+  payload?: payload;
+  meta?: any;
+  error?: boolean;
+};
 
 type State = {
-    identityCommitments: string[]
-    identityMap: {
-        [commitment: string]: IdentityMetadata
-    }
-    requestPending: boolean
-    selected: string
-}
+  identityCommitments: string[];
+  identityMap: {
+    [commitment: string]: IdentityMetadata;
+  };
+  requestPending: boolean;
+  selected: string;
+};
 
 const initialState: State = {
-    identityCommitments: [],
-    identityMap: {},
-    requestPending: false,
-    selected: ''
-}
+  identityCommitments: [],
+  identityMap: {},
+  requestPending: false,
+  selected: "",
+};
 
-export const createIdentity = (strategy: string, messageSignature: string, options: CreateIdentityOptions) => async (dispatch: AppDispatch) =>
+export const createIdentity =
+  (strategy: string, messageSignature: string, options: CreateIdentityOptions) => async (dispatch: AppDispatch) =>
     postMessage({
-        method: RPCAction.CREATE_IDENTITY,
-        payload: {
-            strategy,
-            messageSignature,
-            options,
-        }
-    })
+      method: RPCAction.CREATE_IDENTITY,
+      payload: {
+        strategy,
+        messageSignature,
+        options,
+      },
+    });
 
 export const setActiveIdentity = (identityCommitment: string) => async (dispatch: AppDispatch) => {
-    if (!identityCommitment) {
-        throw new Error('Identity Commitment not provided!')
-    }
-    return postMessage({
-        method: RPCAction.SET_ACTIVE_IDENTITY,
-        payload: identityCommitment
-    })
-}
+  if (!identityCommitment) {
+    throw new Error("Identity Commitment not provided!");
+  }
+  return postMessage({
+    method: RPCAction.SET_ACTIVE_IDENTITY,
+    payload: identityCommitment,
+  });
+};
 
 export const setIdentityName = (identityCommitment: string, name: string) => async (dispatch: AppDispatch) => {
-    log.debug("Inside setIdentityName")
-    if (!identityCommitment) {
-        throw new Error('Identity Commitment not provided!')
-    }
-    return postMessage({
-        method: RPCAction.SET_IDENTITY_NAME,
-        payload: {
-            identityCommitment, 
-            name
-        }
-    })
-}
+  log.debug("Inside setIdentityName");
+  if (!identityCommitment) {
+    throw new Error("Identity Commitment not provided!");
+  }
+  return postMessage({
+    method: RPCAction.SET_IDENTITY_NAME,
+    payload: {
+      identityCommitment,
+      name,
+    },
+  });
+};
 
-export const deleteIdentity = (identityCommitment: string) =>async (dispatch: AppDispatch) => {
-    log.debug("Inside deleteIdentity")
-    if (!identityCommitment) {
-        throw new Error('Identity Commitment not provided!')
-    }
-    return postMessage({
-        method: RPCAction.DELETE_IDENTITY,
-        payload: {
-            identityCommitment, 
-        }
-    })
-}
+export const deleteIdentity = (identityCommitment: string) => async (dispatch: AppDispatch) => {
+  log.debug("Inside deleteIdentity");
+  if (!identityCommitment) {
+    throw new Error("Identity Commitment not provided!");
+  }
+  return postMessage({
+    method: RPCAction.DELETE_IDENTITY,
+    payload: {
+      identityCommitment,
+    },
+  });
+};
 
 export const setSelected = (identityCommitment: string) => ({
-    type: ActionType.SET_SELECTED,
-    payload: identityCommitment
-})
+  type: ActionType.SET_SELECTED,
+  payload: identityCommitment,
+});
 
 export const setIdentities = (
-    identities: { commitment: string; metadata: IdentityMetadata }[]
+  identities: { commitment: string; metadata: IdentityMetadata }[],
 ): Action<{ commitment: string; metadata: IdentityMetadata }[]> => ({
-    type: ActionType.SET_COMMITMENTS,
-    payload: identities
-})
+  type: ActionType.SET_COMMITMENTS,
+  payload: identities,
+});
 
 export const setIdentityRequestPending = (requestPending: boolean): Action<boolean> => ({
-    type: ActionType.SET_REQUEST_PENDING,
-    payload: requestPending
-})
+  type: ActionType.SET_REQUEST_PENDING,
+  payload: requestPending,
+});
 
 export const fetchIdentities = () => async (dispatch: AppDispatch) => {
-    const identities = await postMessage({ method: RPCAction.GET_IDENTITIES })
-    const selected = await postMessage({ method: RPCAction.GET_ACTIVE_IDENTITY })
-    dispatch(setIdentities(identities))
-    dispatch(setSelected(selected))
-}
+  const identities = await postMessage({ method: RPCAction.GET_IDENTITIES });
+  const selected = await postMessage({ method: RPCAction.GET_ACTIVE_IDENTITY });
+  dispatch(setIdentities(identities));
+  dispatch(setSelected(selected));
+};
 
 // eslint-disable-next-line @typescript-eslint/default-param-last
 export default function identities(state = initialState, action: Action<any>): State {
-    switch (action.type) {
-        case ActionType.SET_COMMITMENTS:
-            return reduceSetIdentities(state, action)
-        case ActionType.SET_SELECTED:
-            return {
-                ...state,
-                selected: action.payload
-            }
-        case ActionType.SET_REQUEST_PENDING:
-            return {
-                ...state,
-                requestPending: action.payload
-            }
-        default:
-            return state
-    }
+  switch (action.type) {
+    case ActionType.SET_COMMITMENTS:
+      return reduceSetIdentities(state, action);
+    case ActionType.SET_SELECTED:
+      return {
+        ...state,
+        selected: action.payload,
+      };
+    case ActionType.SET_REQUEST_PENDING:
+      return {
+        ...state,
+        requestPending: action.payload,
+      };
+    default:
+      return state;
+  }
 }
 
 function reduceSetIdentities(
-    state: State,
-    action: Action<{ commitment: string; metadata: IdentityMetadata }[]>
+  state: State,
+  action: Action<{ commitment: string; metadata: IdentityMetadata }[]>,
 ): State {
-    const identityCommitments: string[] = []
-    const identityMap = {}
+  const identityCommitments: string[] = [];
+  const identityMap = {};
 
-    if (action.payload) {
-        for (const id of action.payload) {
-            identityMap[id.commitment] = id.metadata
-            identityCommitments.push(id.commitment)
-        }
+  if (action.payload) {
+    for (const id of action.payload) {
+      identityMap[id.commitment] = id.metadata;
+      identityCommitments.push(id.commitment);
     }
+  }
 
-    return {
-        ...state,
-        identityMap,
-        identityCommitments
-    }
+  return {
+    ...state,
+    identityMap,
+    identityCommitments,
+  };
 }
 
 export const useIdentities = () =>
-    useSelector((state: AppRootState) => {
-        const { identityMap, identityCommitments } = state.identities
-        return identityCommitments.map((commitment) => ({
-                commitment,
-                metadata: identityMap[commitment]
-            }))
-    }, deepEqual)
+  useSelector((state: AppRootState) => {
+    const { identityMap, identityCommitments } = state.identities;
+    return identityCommitments.map(commitment => ({
+      commitment,
+      metadata: identityMap[commitment],
+    }));
+  }, deepEqual);
 
 export const useSelectedIdentity = () =>
-    useSelector((state: AppRootState) => {
-        const { identityMap, selected } = state.identities
-        return {
-            commitment: selected,
-            metadata: identityMap[selected]
-        }
-    }, deepEqual)
+  useSelector((state: AppRootState) => {
+    const { identityMap, selected } = state.identities;
+    return {
+      commitment: selected,
+      metadata: identityMap[selected],
+    };
+  }, deepEqual);
 
 export const useIdentityRequestPending = () =>
-    useSelector((state: AppRootState) => state.identities.requestPending, deepEqual)
+  useSelector((state: AppRootState) => state.identities.requestPending, deepEqual);

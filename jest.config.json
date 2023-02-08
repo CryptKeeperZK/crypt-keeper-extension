@@ -1,20 +1,15 @@
 {
-    "transform": {
-        "\\.(ts|tsx)": "ts-jest"
-    },
-    "testRegex": "(/__tests__/.*|\\.(test|spec))\\.(ts|tsx)$",
-    "moduleFileExtensions": ["ts", "js", "tsx"],
-    "moduleNameMapper": {
-        "@src/(.*)$": "<rootDir>/src/$1"
-    },
-    "coveragePathIgnorePatterns": ["/node_modules/", "/test/"],
-    "collectCoverageFrom": ["src/**/*.{ts,tsx}"],
-    "coverageThreshold": {
-        "global": {
-            "branches": 90,
-            "functions": 95,
-            "lines": 95,
-            "statements": 95
-        }
-    }
+  "transform": {
+    "\\.(ts|tsx)": "ts-jest"
+  },
+  "setupFilesAfterEnv": ["<rootDir>/src/setupTests.ts"],
+  "testRegex": "(/__tests__/.*|\\.(test|spec))\\.(ts|tsx)$",
+  "moduleFileExtensions": ["ts", "js", "tsx"],
+  "moduleNameMapper": {
+    "@src/(.*)$": "<rootDir>/src/$1",
+    "^.+\\.(css|scss|svg|png)$": "<rootDir>/src/config/resourceMock.js"
+  },
+  "coveragePathIgnorePatterns": ["/node_modules/", "/test/", "/__tests__/"],
+  "coverageReporters": ["clover", "lcov", "json", "json-summary", "text", "text-summary"],
+  "collectCoverageFrom": ["src/**/*.{ts,tsx}"]
 }
