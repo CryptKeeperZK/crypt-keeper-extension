@@ -7,22 +7,12 @@ import { useCallback, useEffect } from "react";
 import { setAccount, setBalance, setChainId, setNetwork, setWeb3Connecting } from "../ducks/web3";
 import { useReduxDispatch } from "./ReduxConnector";
 
-let metamaskProviderService: MetaMaskProviderService | null = new MetaMaskProviderService();
-let metamaskProvider: MetaMaskInpageProvider | null = metamaskProviderService.getMetamaskProvider;
-let ethersProivder: EthersProvider | null = metamaskProviderService.getEthersProvider;
-
-export function useMetaMaskService() {
-  if (!metamaskProvider && !ethersProivder) {
-    metamaskProviderService = new MetaMaskProviderService();
-    metamaskProvider = metamaskProviderService.getMetamaskProvider;
-    ethersProivder = metamaskProviderService.getEthersProvider;
-  }
-}
+const metamaskProviderService: MetaMaskProviderService = new MetaMaskProviderService();
+const metamaskProvider: MetaMaskInpageProvider = metamaskProviderService.getMetamaskProvider;
+const ethersProivder: EthersProvider = metamaskProviderService.getEthersProvider;
 
 export async function useMetaMaskConnect() {
   useReduxDispatch(setWeb3Connecting(true));
-
-  // useMetaMaskService();
 
   try {
     await metamaskProviderService?.connectMetaMask();
@@ -89,7 +79,7 @@ export function useMetaMaskEvents(): void {
 
 export async function useMetaMaskWalletInfo(): Promise<WalletInfoBackgound | null> {
   if (metamaskProviderService) {
-    log.debug(`useMetaMaskWalletInfo 1`);
+    log.debug("useMetaMaskWalletInfo 1");
     const walletInfo = await metamaskProviderService.getWalletInfo();
     log.debug(`useMetaMaskWalletInfo 1 walletInfo ${walletInfo}`);
     if (walletInfo) {

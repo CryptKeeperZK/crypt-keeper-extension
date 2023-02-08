@@ -34,7 +34,7 @@ export default function CreateIdentityModal(props: { onClose: () => void }): Rea
         options = {};
       }
 
-      const messageSignature = await useIdentityFactory(web2Provider, nonce);
+      const messageSignature = await useIdentityFactory(web2Provider, nonce, walletInfo);
 
       if (messageSignature) {
         await dispatch(createIdentity(provider, messageSignature, options));
