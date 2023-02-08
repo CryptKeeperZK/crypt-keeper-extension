@@ -27,7 +27,7 @@ Proof generation is enabled in two ways:
 1. `npm run dev`
 2. `npm run merkle`
 3. `npm run serve`
-4. `cd demo && npm run demo`
+4. `cd demo && npm run start`
 
 To run the demo and generate proofs, you additionally need the circuit files for Semaphore and RLN. For compatible Semaphore and RLN zk files you can use the following [link](https://drive.google.com/file/d/1Yi14jwly70VwMSuqJrPCc3j15MWeE7mc/view?usp=sharing).
 Please extract the files into a directory named `zkeyFiles` at the root of this repository.
