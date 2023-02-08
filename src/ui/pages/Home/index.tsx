@@ -219,7 +219,6 @@ const IdentityList = function (): ReactElement {
   };
 
   useEffect(() => {
-    dispatch(fetchIdentities());
     setDeleteIdentityState(false);
   }, [renameInput, deleteIdentityState, identities]);
 
