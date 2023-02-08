@@ -1,3 +1,5 @@
+import { DeferredPromise } from "@src/types";
+
 /**
  * @src Metamask extension
  * A deferred Promise.
@@ -16,10 +18,10 @@
  *
  * @returns {DeferredPromise} A deferred Promise.
  */
-export function deferredPromise() {
+export function deferredPromise<T>(): DeferredPromise<T> {
   let resolve;
   let reject;
-  const promise = new Promise((innerResolve, innerReject) => {
+  const promise: Promise<T> = new Promise((innerResolve, innerReject) => {
     resolve = innerResolve;
     reject = innerReject;
   });

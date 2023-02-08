@@ -4,13 +4,13 @@ import { browser } from "webextension-polyfill-ts";
 import { Request } from "@src/types";
 import ZkKeeperController from "./zk-keeper";
 import log from "loglevel";
-import { deferredPromise } from "./shared/utils";
+import { deferredPromise } from "@src/background/shared/utils";
 
 globalThis.CRYPTKEEPER_DEBUG = true;
 
 log.setDefaultLevel(globalThis.CRYPTKEEPER_DEBUG ? "debug" : "info");
 
-const { promise: isInitialized, resolve: resolveInitialization, reject: rejectInitialization } = deferredPromise();
+const { promise: isInitialized, resolve: resolveInitialization, reject: rejectInitialization } = deferredPromise<any>();
 
 browser.runtime.onInstalled.addListener(async args => {
   log.debug("CryptKeeper onInstalled Event, initializing...");

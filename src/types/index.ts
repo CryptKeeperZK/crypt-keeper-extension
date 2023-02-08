@@ -136,3 +136,10 @@ export type ReduxAction = {
     error?: boolean
     meta?: any
 }
+
+export interface DeferredPromise<T> {
+    promise: Promise<T>;
+    resolve: T;
+    reject: any;
+}
+  
