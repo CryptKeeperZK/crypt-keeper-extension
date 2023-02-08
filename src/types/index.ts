@@ -15,7 +15,7 @@ export type WalletInfo = {
   chainId: number;
 };
 
-export interface WalletInfoBackgound extends WalletInfo {
+export interface WalletInfoBackground extends WalletInfo {
   signer: JsonRpcSigner;
 }
 
@@ -26,7 +26,7 @@ export type NetworkDetails = {
 };
 
 export type CreateInterrepIdentityMetadata = {
-  web2Provider: CreateIdentityWeb2Provider;
+  web2Provider: IdentityWeb2Provider;
   nonce?: number;
   name?: string;
 };
@@ -37,18 +37,18 @@ export type CreateRandomIdentityMetadata = {
 
 export type CreateIdentityMetadata = CreateInterrepIdentityMetadata | CreateRandomIdentityMetadata;
 
-export type CreateIdentityStrategy = "interrep" | "random";
-export type CreateIdentityWeb2Provider = "twitter" | "github" | "reddit";
+export type IdentityStrategy = "interrep" | "random";
+export type IdentityWeb2Provider = "twitter" | "github" | "reddit";
 
 export type CreateIdentityOptions = {
   nonce?: number;
-  web2Provider?: CreateIdentityWeb2Provider;
+  web2Provider?: IdentityWeb2Provider;
   account?: string;
   name?: string;
 };
 
 export type NewIdentityRequest = {
-  strategy: CreateIdentityStrategy;
+  strategy: IdentityStrategy;
   messageSignature: string;
   options: CreateIdentityOptions;
 };
@@ -104,7 +104,7 @@ export type ZkIdentity = {
 export type IdentityMetadata = {
   account: string;
   name: string;
-  web2Provider: CreateIdentityStrategy;
+  web2Provider: IdentityStrategy;
 };
 
 export type IdentityName = {

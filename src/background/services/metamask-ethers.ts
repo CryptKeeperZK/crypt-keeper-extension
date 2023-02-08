@@ -1,8 +1,8 @@
 import pushMessage from "@src/util/pushMessage";
-import createMetaMaskProvider, { MetaMaskInpageProvider } from "@dimensiondev/metamask-extension-provider";
+import { MetaMaskInpageProvider } from "@dimensiondev/metamask-extension-provider";
 import { ethers } from "ethers";
 import { setAccount, setBalance, setChainId, setNetwork, setWeb3Connecting } from "@src/ui/ducks/web3";
-import { NetworkDetails, WalletInfo, WalletInfoBackgound } from "@src/types";
+import { NetworkDetails, WalletInfo, WalletInfoBackground } from "@src/types";
 import log from "loglevel";
 
 declare type Ethers = typeof import("ethers");
@@ -13,7 +13,7 @@ export default class MetamaskServiceEthers {
 
   constructor(metamaskProviderPayload?: MetaMaskInpageProvider) {
     if (metamaskProviderPayload) {
-      this.ensure(metamaskProviderPayload)
+      this.ensure(metamaskProviderPayload);
       // .then(() => {
       //   log.debug("4. Inside MetamaskServiceEthers ensure 5 accountsChanged before");
       //   this.metamaskProvider.on("accountsChanged", async (account: string[]) => {
@@ -43,7 +43,7 @@ export default class MetamaskServiceEthers {
       //   this.metamaskProvider.on("connect", () => {
       //     log.debug("4. Inside MetamaskServiceEthers ensure connect");
       //   });
-        
+
       //   this.metamaskProvider.on("disconnect", () => {import LocalMessageDuplexStream from 'post-message-stream';
       //     log.debug("4. Inside MetamaskServiceEthers ensure disconnect");
       //   });
@@ -51,7 +51,7 @@ export default class MetamaskServiceEthers {
       // .catch(e => {
       //   throw new Error(e);
       // });
-    }           
+    }
   }
 
   ensure = async (metamaskProviderPayload?: MetaMaskInpageProvider) => {
@@ -62,8 +62,8 @@ export default class MetamaskServiceEthers {
       try {
         this.metamaskProvider = metamaskProviderPayload;
       } catch (e: any) {
-          log.debug("Stopped here!!!!!", e);
-          throw new Error(e);
+        log.debug("Stopped here!!!!!", e);
+        throw new Error(e);
       }
     }
 
@@ -81,11 +81,11 @@ export default class MetamaskServiceEthers {
   };
 
   getWeb3 = async (): Promise<Ethers> => {
-    if (!this.ethersProvider) throw new Error(`Ethers is not initialized`);
+    if (!this.ethersProvider) throw new Error("Ethers is not initialized");
     return this.ethersProvider;
   };
 
-  getWalletInfo = async (isBackgound: boolean = false): Promise<WalletInfoBackgound | WalletInfo | null> => {
+  getWalletInfo = async (isBackgound = false): Promise<WalletInfoBackground | WalletInfo | null> => {
     log.debug("4. Inside MetamaskServiceEthers getWalletInfo 2");
     if (!this.ethersProvider) {
       log.debug("4. Inside MetamaskServiceEthers getWalletInfo 3");
@@ -93,9 +93,9 @@ export default class MetamaskServiceEthers {
     }
 
     if (this.metamaskProvider?.selectedAddress) {
-      const connectionDetailsBackground: WalletInfoBackgound = await this._requestConnection();
+      const connectionDetailsBackground: WalletInfoBackground = await this._requestConnection();
 
-      if(isBackgound) {
+      if (isBackgound) {
         log.debug("4. Inside MetamaskServiceEthers getWalletInfo 4 bacground", connectionDetailsBackground);
         return connectionDetailsBackground;
       } else {
@@ -104,10 +104,10 @@ export default class MetamaskServiceEthers {
           account: connectionDetailsBackground.account,
           balance: connectionDetailsBackground.balance,
           networkName: connectionDetailsBackground.networkName,
-          chainId: connectionDetailsBackground.chainId
-        }
+          chainId: connectionDetailsBackground.chainId,
+        };
       }
-   }
+    }
 
     return null;
   };
@@ -162,12 +162,12 @@ export default class MetamaskServiceEthers {
     }
   };
 
-  private _requestConnection = async (): Promise<WalletInfoBackgound> => {
+  private _requestConnection = async (): Promise<WalletInfoBackground> => {
     await this.ensure();
 
     if (this.ethersProvider) {
       log.debug("4. Inside MetamaskServiceEthers requestAccounts 4 eth_requestAccounts before");
-      
+
       try {
         const res = await this.ethersProvider.send("eth_requestAccounts", []);
         log.debug("4. Inside MetamaskServiceEthers requestAccounts 4 eth_requestAccounts response: ", res);
