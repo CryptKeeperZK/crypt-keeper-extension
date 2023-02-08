@@ -10,15 +10,19 @@ globalThis.CRYPTKEEPER_DEBUG = true;
 
 log.setDefaultLevel(globalThis.CRYPTKEEPER_DEBUG ? "debug" : "info");
 
-const { promise: isInitialized, resolve: resolveInitialization, reject: rejectInitialization } = deferredPromise<any>();
+const {
+  promise: isInitialized,
+  resolve: resolveInitialization,
+  reject: rejectInitialization,
+} = deferredPromise<unknown>();
 
-browser.runtime.onInstalled.addListener(async args => {
+browser.runtime.onInstalled.addListener(async () => {
   log.debug("CryptKeeper onInstalled Event, initializing...");
   await isInitialized;
   log.debug("CryptKeeper onInstalled Event, initializing completed...");
 });
 
-browser.runtime.onConnect.addListener(async args => {
+browser.runtime.onConnect.addListener(async () => {
   log.debug("CryptKeeper onConnect Event, initializing...");
   await isInitialized;
   log.debug("CryptKeeper onConnect Event, initializing completed...");
@@ -46,8 +50,8 @@ async function initialize() {
       });
     });
     log.debug("CryptKeeper initialization complete.");
-    resolveInitialization();
+    resolveInitialization?.(true);
   } catch (error) {
-    rejectInitialization(error);
+    rejectInitialization?.(error);
   }
 }

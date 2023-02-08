@@ -19,11 +19,13 @@ import { DeferredPromise } from "@src/types";
  * @returns {DeferredPromise} A deferred Promise.
  */
 export function deferredPromise<T>(): DeferredPromise<T> {
-  let resolve;
-  let reject;
+  let resolve: DeferredPromise<T>["resolve"];
+  let reject: DeferredPromise<T>["reject"];
+
   const promise: Promise<T> = new Promise((innerResolve, innerReject) => {
     resolve = innerResolve;
     reject = innerReject;
   });
+
   return { promise, resolve, reject };
 }
