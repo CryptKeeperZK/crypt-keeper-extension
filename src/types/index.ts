@@ -139,7 +139,7 @@ export type ReduxAction = {
 
 export interface DeferredPromise<T> {
     promise: Promise<T>;
-    resolve: T;
-    reject: any;
+    resolve: (arg: T) => void;
+    reject: (err: Error) => void;
 }
   
