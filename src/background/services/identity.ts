@@ -12,17 +12,20 @@ import LockService from "./lock";
 
 const DB_KEY = "@@IDS-t1@@";
 const IDENTITY_KEY = "IDS";
+const ACTIVE_IDENTITY_KEY = "AIDS";
 
 export default class IdentityService extends SimpleStorage {
   identities: Map<string, string>;
   activeIdentity?: ZkIdentityDecorater;
   identitiesStore: SimpleStorage;
+  activeIdentityStore: SimpleStorage;
 
   constructor() {
     super(DB_KEY);
     this.identities = new Map();
     this.activeIdentity = undefined;
     this.identitiesStore = new SimpleStorage(IDENTITY_KEY);
+    this.activeIdentityStore = new SimpleStorage(ACTIVE_IDENTITY_KEY);
     log.debug("IdentityService constructor identities", this.identities);
     log.debug("IdentityService constructor typeof identities", typeof this.identities);
   }
@@ -92,6 +95,7 @@ export default class IdentityService extends SimpleStorage {
     const identities = await this.getIdentitiesFromStore();
 
     if (identities.has(identityCommitment)) {
+      await this.activeIdentityStore.set(identityCommitment as string);
       this.activeIdentity = ZkIdentityDecorater.genFromSerialized(identities.get(identityCommitment) as string);
       pushMessage(setSelected(identityCommitment));
       const tabs = await browser.tabs.query({ active: true });
@@ -149,7 +153,16 @@ export default class IdentityService extends SimpleStorage {
     }
   };
 
-  getActiveidentity = async (): Promise<ZkIdentityDecorater | undefined> => this.activeIdentity;
+  getActiveidentity = async (): Promise<ZkIdentityDecorater | undefined> => {
+    const acitveIdentityCommitment = await this.activeIdentityStore.get();
+    const identities = await this.getIdentitiesFromStore();
+
+    if (identities.has(acitveIdentityCommitment)) {
+      return this.activeIdentity = ZkIdentityDecorater.genFromSerialized(identities.get(acitveIdentityCommitment) as string);
+    } else {
+      log.error("IdentityService cannot find Identity commitment");
+    }
+  };
 
   getIdentityCommitments = async () => {
     const commitments: string[] = [];
