@@ -95,7 +95,8 @@ export default class IdentityService extends SimpleStorage {
     const identities = await this.getIdentitiesFromStore();
 
     if (identities.has(identityCommitment)) {
-      await this.activeIdentityStore.set(identityCommitment as string);
+      const identityCommitmentCipher = await LockService.encrypt(identityCommitment);
+      await this.activeIdentityStore.set(identityCommitmentCipher as string);
       this.activeIdentity = ZkIdentityDecorater.genFromSerialized(identities.get(identityCommitment) as string);
       pushMessage(setSelected(identityCommitment));
       const tabs = await browser.tabs.query({ active: true });
@@ -154,7 +155,8 @@ export default class IdentityService extends SimpleStorage {
   };
 
   getActiveidentity = async (): Promise<ZkIdentityDecorater | undefined> => {
-    const acitveIdentityCommitment = await this.activeIdentityStore.get();
+    const acitveIdentityCommitmentCipher = await this.activeIdentityStore.get();
+    const acitveIdentityCommitment = await LockService.decrypt(acitveIdentityCommitmentCipher);
     const identities = await this.getIdentitiesFromStore();
 
     if (identities.has(acitveIdentityCommitment)) {
