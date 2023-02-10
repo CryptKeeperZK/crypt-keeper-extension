@@ -178,7 +178,7 @@ function ConnectionApprovalModal(props: {
   return (
     <FullModal className="confirm-modal" onClose={() => null}>
       <FullModalHeader>
-        Connect with ZK Keeper
+        Connect with CryptKeeper
         {props.len > 1 && <div className="flex-grow flex flex-row justify-end">{`1 of ${props.len}`}</div>}
       </FullModalHeader>
       <FullModalContent className="flex flex-col items-center">
