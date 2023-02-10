@@ -190,8 +190,9 @@ export default class ZkKeeperController extends Handler {
 
       const { unlocked } = await LockService.getStatus();
 
+      await BrowserUtils.openPopup();
+      
       if (!unlocked) {
-        await BrowserUtils.openPopup();
         await LockService.awaitUnlock();
       }
 
