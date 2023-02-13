@@ -4,15 +4,14 @@
  * these dependencies are not available to service worker in MV3.
  */
 
-// eslint-disable-next-line import/unambiguous
-const keys = ['XMLHttpRequest'];
+const keys = ["XMLHttpRequest"];
 
-keys.forEach((key) => {
+keys.forEach(key => {
   if (!Reflect.has(globalThis, key)) {
     globalThis[key] = undefined;
   }
 });
 
-if (!Reflect.has(globalThis, 'window')) {
+if (!Reflect.has(globalThis, "window")) {
   globalThis.window = globalThis;
 }

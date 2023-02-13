@@ -30,5 +30,5 @@ export function generateMerkleProof({ treeDepth, member, members }: IGenerateMer
 
   const identityIndex = group.indexOf(member);
 
-  return group.generateProofOfMembership(identityIndex);
+  return group.generateMerkleProof(identityIndex);
 }

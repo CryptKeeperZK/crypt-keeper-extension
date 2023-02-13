@@ -1,24 +1,24 @@
 {
-    "compilerOptions": {
-        "baseUrl": "./",
-        "paths": {
-            "@src/*": ["src/*"]
-        },
-        "target": "ES2020",
-        "module": "commonjs",
-        "moduleResolution": "node",
-        "rootDir": "./src",
-        "outDir": "dist/js",
-        "strict": true,
-        "sourceMap": true,
-        "jsx": "react",
-        "esModuleInterop": true,
-        "lib": ["es2020", "dom"],
-        "experimentalDecorators": true,
-        "allowSyntheticDefaultImports": true,
-        "resolveJsonModule": true,
-        "noImplicitAny": false,
-        "strictPropertyInitialization": false
+  "compilerOptions": {
+    "baseUrl": "./",
+    "paths": {
+      "@src/*": ["src/*"]
     },
-    "include": ["src"]
+    "target": "ES2020",
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "rootDir": "./src",
+    "outDir": "dist/js",
+    "strict": true,
+    "sourceMap": true,
+    "jsx": "react",
+    "esModuleInterop": true,
+    "lib": ["es2020", "dom", "webworker"],
+    "experimentalDecorators": true,
+    "allowSyntheticDefaultImports": true,
+    "resolveJsonModule": true,
+    "noImplicitAny": false,
+    "strictPropertyInitialization": false
+  },
+  "include": ["src"]
 }

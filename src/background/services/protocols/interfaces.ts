@@ -1,29 +1,28 @@
-import { FullProof, SolidityProof } from '@semaphore-protocol/proof';
-import { MerkleProof } from '@zk-kit/incremental-merkle-tree';
-import { MerkleProofArtifacts } from '@src/types';
+import { FullProof } from "@semaphore-protocol/proof";
+import { MerkleProof } from "@zk-kit/incremental-merkle-tree";
+import { MerkleProofArtifacts } from "@src/types";
 
 export enum Protocol {
-    SEMAPHORE,
-    RLN,
-    NRLN
+  SEMAPHORE,
+  RLN,
+  NRLN,
 }
 
 export interface SemaphoreProofRequest {
-    externalNullifier: string
-    signal: string
-    merkleStorageAddress?: string
-    circuitFilePath: string
-    verificationKey: string
-    zkeyFilePath: string
-    merkleProofArtifacts?: MerkleProofArtifacts
-    merkleProof?: MerkleProof
+  externalNullifier: string;
+  signal: string;
+  merkleStorageAddress?: string;
+  circuitFilePath: string;
+  verificationKey: string;
+  zkeyFilePath: string;
+  merkleProofArtifacts?: MerkleProofArtifacts;
+  merkleProof?: MerkleProof;
 }
 
 export interface RLNProofRequest extends SemaphoreProofRequest {
-    rlnIdentifier: string
+  rlnIdentifier: string;
 }
 
 export interface SemaphoreProof {
-    fullProof: FullProof
-    solidityProof: SolidityProof
+  fullProof: FullProof;
 }
