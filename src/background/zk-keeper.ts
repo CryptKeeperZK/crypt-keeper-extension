@@ -160,7 +160,7 @@ export default class ZkKeeperController extends Handler {
 
           await BrowserUtils.closePopup();
 
-          const proof: SemaphoreProof = await this.semaphoreService.genProof(identity.zkIdentity, payload);
+          const proof: SemaphoreProof = await this.semaphoreService.genProof(identity, payload);
 
           return proof;
         } catch (err) {

@@ -2,7 +2,6 @@ import { MerkleProof } from "@zk-kit/incremental-merkle-tree";
 import { Identity } from "@semaphore-protocol/identity";
 import { RLN, RLNFullProof } from "rlnjs/src";
 import { bigintToHex, hexToBigint } from "bigint-conversion";
-import axios, { AxiosResponse } from "axios";
 import { MerkleProofArtifacts } from "@src/types";
 import { RLNProofRequest } from "./interfaces";
 import { deserializeMerkleProof, generateMerkleProof } from "./utils";
@@ -29,16 +28,20 @@ export default class RLNService {
       const identityCommitmentHex = bigintToHex(identityCommitment);
       const rlnIdentifierBigInt = hexToBigint(rlnIdentifier);
       if (merkleStorageAddress) {
-        const response: AxiosResponse = await axios.post(merkleStorageAddress, {
-          identityCommitment: identityCommitmentHex,
-        });
+        const response = await fetch(merkleStorageAddress, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            identityCommitment: identityCommitmentHex,
+          }),
+        }).then(res => res.json());
 
         merkleProof = deserializeMerkleProof(response.data.merkleProof);
       } else {
         const proofArtifacts = merkleProofArtifacts as MerkleProofArtifacts;
         //const leaves = proofArtifacts.leaves.map((leaf) => hexToBigint(leaf))
 
-        merkleProof = generateMerkleProof(proofArtifacts.depth, identityCommitment);
+        merkleProof = generateMerkleProof({ treeDepth: proofArtifacts.depth, member: identityCommitment });
       }
 
       const fullProof: RLNFullProof = await rln.genProof(signal, merkleProof, externalNullifier);

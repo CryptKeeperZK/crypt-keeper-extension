@@ -1,5 +1,5 @@
-import "./appInit";
 import "subworkers";
+import "./appInit";
 import { browser } from "webextension-polyfill-ts";
 import { Request } from "@src/types";
 import ZkKeeperController from "./zk-keeper";

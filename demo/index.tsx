@@ -7,6 +7,7 @@ import { Identity } from "@semaphore-protocol/identity";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import log from "loglevel";
+import { genExternalNullifier } from "rlnjs/src/utils";
 
 const semaphorePath = {
   circuitFilePath: "http://localhost:8095/semaphore/semaphore.wasm",
@@ -76,7 +77,7 @@ function App() {
         pauseOnHover: false,
       });
 
-      const proof = await client.semaphoreProof(
+      const proof = await client?.semaphoreProof(
         externalNullifier,
         signal,
         semaphorePath.circuitFilePath,
@@ -133,7 +134,7 @@ function App() {
         pauseOnHover: false,
       });
 
-      const proof = await client.rlnProof(
+      const proof = await client?.rlnProof(
         externalNullifier,
         signal,
         circuitPath,
@@ -158,7 +159,7 @@ function App() {
   };
 
   const getIdentityCommitment = async () => {
-    const idCommitment = await client.getActiveIdentity();
+    const idCommitment = await client?.getActiveIdentity();
     toast(`Getting Identity Commitment successfully! ${idCommitment}`, { type: "success" });
     setIdentityCommitment(idCommitment);
   };
@@ -169,16 +170,16 @@ function App() {
 
       if (client) {
         await getIdentityCommitment();
-        await client.on("identityChanged", idCommitment => {
+        await client?.on("identityChanged", idCommitment => {
           setIdentityCommitment(idCommitment);
         });
 
-        await client.on("logout", async () => {
+        await client?.on("logout", async () => {
           setIdentityCommitment("");
           setIsLocked(true);
         });
 
-        await client.on("login", async () => {
+        await client?.on("login", async () => {
           setIsLocked(false);
           await getIdentityCommitment();
         });
@@ -215,12 +216,12 @@ function App() {
           <hr />
           <div>
             <h2>RLN</h2>
-            <button onClick={() => genRLNProof(MerkleProofType.STORAGE_ADDRESS)}>
+            <button disabled onClick={() => genRLNProof(MerkleProofType.STORAGE_ADDRESS)}>
               Generate proof from Merkle proof storage address
             </button>{" "}
             <br />
             <br />
-            <button onClick={() => genRLNProof(MerkleProofType.ARTIFACTS)}>
+            <button disabled onClick={() => genRLNProof(MerkleProofType.ARTIFACTS)}>
               Generate proof from Merkle proof artifacts
             </button>
           </div>
