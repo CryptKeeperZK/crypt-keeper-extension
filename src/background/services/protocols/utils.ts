@@ -2,8 +2,7 @@ import { hexToBigint } from "bigint-conversion";
 import { MerkleProof } from "@zk-kit/incremental-merkle-tree";
 import { Group, Member } from "@semaphore-protocol/group";
 
-// eslint-disable-next-line import/prefer-default-export
-export function deserializeMerkleProof(merkleProof): MerkleProof {
+export function deserializeMerkleProof(merkleProof: MerkleProof): MerkleProof {
   const deserialized = {} as MerkleProof;
   deserialized.root = hexToBigint(merkleProof.root);
   deserialized.siblings = merkleProof.siblings.map(siblings =>
@@ -16,8 +15,18 @@ export function deserializeMerkleProof(merkleProof): MerkleProof {
 
 //export const poseidonHash = (data: Array<bigint>): bigint => poseidon(data)
 
-export function generateMerkleProof(treeDepth: number, member: Member): MerkleProof {
+export interface IGenerateMerkelProofArgs {
+  treeDepth: number;
+  member: Member;
+  members?: Member[];
+}
+
+export function generateMerkleProof({ treeDepth, member, members }: IGenerateMerkelProofArgs): MerkleProof {
   const group = new Group(treeDepth);
+
+  if (members) {
+    group.addMembers(members);
+  }
 
   const identityIndex = group.indexOf(member);
 

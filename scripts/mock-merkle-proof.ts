@@ -9,10 +9,7 @@ import log from "loglevel";
 import { generateMerkleProof } from "../src/background/services/protocols/utils";
 
 const DEPTH_RLN = 15;
-const NUMBER_OF_LEAVES_RLN = 2;
 const DEPTH_SEMAPHORE = 20;
-const NUMBER_OF_LEAVES_SEMAPHORE = 2;
-const ZERO_VALUE = BigInt(0);
 
 const serializeMerkleProof = (merkleProof: MerkleProof) => {
   const serialized: Partial<MerkleProof> = {};
@@ -26,26 +23,15 @@ const serializeMerkleProof = (merkleProof: MerkleProof) => {
 };
 
 const generateMerkleProofRLN = (_identityCommitments: Member[], identityCommitment: Member) => {
-  return generateMerkleProof(DEPTH_RLN, identityCommitment);
-
-  // return generateMerkleProof(DEPTH_RLN, ZERO_VALUE, NUMBER_OF_LEAVES_RLN, identityCommitments, identityCommitment)
+  return generateMerkleProof({ treeDepth: DEPTH_RLN, member: identityCommitment, members: _identityCommitments });
 };
 
 const generateMerkleProofSemaphore = (_identityCommitments: Member[], identityCommitment: Member) => {
-  return generateMerkleProof(DEPTH_SEMAPHORE, identityCommitment);
-
-  // return generateMerkleProof(
-  //     DEPTH_SEMAPHORE,
-  //     ZERO_VALUE,
-  //     NUMBER_OF_LEAVES_SEMAPHORE,
-  //     identityCommitments,
-  //     identityCommitment
-  // )
+  return generateMerkleProof({ treeDepth: DEPTH_SEMAPHORE, member: identityCommitment, members: _identityCommitments });
 };
 
 const identityCommitments: Member[] = [];
 
-// eslint-disable-next-line no-plusplus
 for (let i = 0; i < 2; i++) {
   const mockIdentity = new Identity();
   identityCommitments.push(mockIdentity.generateCommitment());
@@ -62,14 +48,20 @@ app.post("/merkleProof/:type", (req, res) => {
   if (!identityCommitments.includes(identityCommitment)) {
     identityCommitments.push(identityCommitment);
   }
-  const merkleProof =
-    type === "RLN"
-      ? generateMerkleProofRLN(identityCommitments, identityCommitment)
-      : generateMerkleProofSemaphore(identityCommitments, identityCommitment);
 
-  const serializedMerkleProof = serializeMerkleProof(merkleProof);
-  log.debug("Sending proof with root: ", serializedMerkleProof.root);
-  res.send({ merkleProof: serializedMerkleProof });
+  try {
+    const merkleProof =
+      type === "RLN"
+        ? generateMerkleProofRLN(identityCommitments, identityCommitment)
+        : generateMerkleProofSemaphore(identityCommitments, identityCommitment);
+
+    const serializedMerkleProof = serializeMerkleProof(merkleProof);
+    log.debug("Sending proof with root: ", serializedMerkleProof.root);
+    res.send({ data: { merkleProof: serializedMerkleProof } });
+  } catch (error) {
+    log.debug("Merkle proof error", error);
+    res.status(400).send({ error: "can't generate proof" });
+  }
 });
 
 app.listen(8090, () => {
