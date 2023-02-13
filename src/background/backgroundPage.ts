@@ -1,4 +1,5 @@
-import "subworkers";
+import "./shared/subworkers";
+import "./shared/init-globals";
 import "./appInit";
 import { browser } from "webextension-polyfill-ts";
 import { Request } from "@src/types";
@@ -6,7 +7,7 @@ import ZkKeeperController from "./zk-keeper";
 import log from "loglevel";
 import { deferredPromise } from "@src/background/shared/utils";
 
-globalThis.CRYPTKEEPER_DEBUG = true;
+globalThis.CRYPTKEEPER_DEBUG = false;
 
 log.setDefaultLevel(globalThis.CRYPTKEEPER_DEBUG ? "debug" : "info");
 

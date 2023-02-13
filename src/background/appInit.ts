@@ -1,11 +1,11 @@
 // @src Metamask https://github.com/MetaMask/metamask-extension/blob/develop/app/scripts/app-init.js
 
-// TODO: importing scripts better using importScritps() check MM 
-import importAllScripts from "./shared/importScripts.js"
+// TODO: importing scripts better using importScritps() check MM
+import importAllScripts from "./shared/importScripts.js";
 
 // Ref: https://stackoverflow.com/questions/66406672/chrome-extension-mv3-modularize-service-worker-js-file
 // eslint-disable-next-line no-undef
-self.addEventListener('install', () => {
+self.addEventListener("install", () => {
   importAllScripts();
 });
 
@@ -25,5 +25,6 @@ chrome.runtime.onMessage.addListener(() => {
 });
 
 chrome.runtime.onStartup.addListener(() => {
+  importAllScripts();
   globalThis.isFirstTimeProfileLoaded = true;
 });

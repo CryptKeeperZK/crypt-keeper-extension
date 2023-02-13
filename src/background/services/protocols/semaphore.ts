@@ -1,4 +1,4 @@
-import { generateProof, packToSolidityProof } from "@semaphore-protocol/proof";
+import { generateProof } from "@semaphore-protocol/proof";
 import { MerkleProof } from "@zk-kit/incremental-merkle-tree";
 import { bigintToHex } from "bigint-conversion";
 import { MerkleProofArtifacts } from "@src/types";
@@ -50,15 +50,11 @@ export default class SemaphoreService {
         zkeyFilePath: zkeyFilePath,
       });
 
-      const solidityProof = packToSolidityProof(fullProof.proof);
-
       log.debug("Generating Semaphore Identity has done successfully.");
       log.debug("- Full Proof:", fullProof);
-      log.debug("- Semaphore Solidity proof:", solidityProof);
 
       return {
         fullProof,
-        solidityProof,
       };
     } catch (e) {
       throw new Error(`Error while generating semaphore proof: ${e}`);
