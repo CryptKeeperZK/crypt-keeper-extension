@@ -9,7 +9,7 @@ import ZkValidator from "./services/zk-validator";
 import RequestManager from "./controllers/request-manager";
 import SemaphoreService from "./services/protocols/semaphore";
 //import RLNService from './services/protocols/rln'
-import { RLNProofRequest, SemaphoreProof, SemaphoreProofRequest } from "./services/protocols/interfaces";
+import { RLNProofRequest, SemaphoreProofRequest } from "./services/protocols/interfaces";
 import ApprovalService from "./services/approval";
 import ZkIdentityWrapper from "./identity-decorater";
 import identityFactory from "./identity-factory";
@@ -160,9 +160,7 @@ export default class ZkKeeperController extends Handler {
 
           await BrowserUtils.closePopup();
 
-          const proof: SemaphoreProof = await this.semaphoreService.genProof(identity, payload);
-
-          return proof;
+          return this.semaphoreService.genProof(identity, payload);
         } catch (err) {
           await BrowserUtils.closePopup();
           throw err;
@@ -191,7 +189,7 @@ export default class ZkKeeperController extends Handler {
       const { unlocked } = await LockService.getStatus();
 
       await BrowserUtils.openPopup();
-      
+
       if (!unlocked) {
         await LockService.awaitUnlock();
       }

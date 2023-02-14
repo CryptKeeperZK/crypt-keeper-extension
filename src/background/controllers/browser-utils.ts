@@ -1,6 +1,5 @@
 import log from "loglevel";
 import { browser } from "webextension-polyfill-ts";
-import LockService from "../services/lock";
 
 class BrowserUtils {
   cached: any | null;
