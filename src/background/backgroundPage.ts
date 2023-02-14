@@ -1,4 +1,4 @@
-import "./shared/subworkers";
+import "subworkers";
 import "./shared/init-globals";
 import "./appInit";
 import { browser } from "webextension-polyfill-ts";
