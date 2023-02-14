@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import ReactDOM from "react-dom";
 import { RLN } from "rlnjs/src";
 import { bigintToHex } from "bigint-conversion";
@@ -17,7 +17,7 @@ const semaphorePath = {
 const rlnPath = {
   circuitFilePath: "http://localhost:8095/rln/rln.wasm",
   zkeyFilePath: "http://localhost:8095/rln/rln_final.zkey",
-  verificationKey: "http://localhost:8095/rln/verification_key.json"
+  verificationKey: "http://localhost:8095/rln/verification_key.json",
 };
 
 const merkleStorageAddress = "http://localhost:8090/merkleProof";
@@ -38,8 +38,16 @@ const genMockIdentityCommitments = (): string[] => {
   return identityCommitments;
 };
 
-function NotConnected() {
-  return <div>Please connect to Crypt-Keeper to continue.</div>;
+interface INotConnectedProps {
+  onClick: () => void;
+}
+
+function NotConnected({ onClick }: INotConnectedProps) {
+  return (
+    <div>
+      Please connect to Crypt-Keeper to continue. <button onClick={onClick}>Connect</button>
+    </div>
+  );
 }
 
 function NoActiveIDCommitment() {
@@ -158,18 +166,19 @@ function App() {
     toast.dismiss(toastId);
   };
 
-  const getIdentityCommitment = async () => {
+  const getIdentityCommitment = useCallback(async () => {
     const idCommitment = await client?.getActiveIdentity();
     toast(`Getting Identity Commitment successfully! ${idCommitment}`, { type: "success" });
     setIdentityCommitment(idCommitment);
-  };
+  }, [client, setIdentityCommitment]);
 
   useEffect(() => {
     (async function IIFE() {
-      initClient();
+      await initClient();
 
       if (client) {
         await getIdentityCommitment();
+
         await client?.on("identityChanged", idCommitment => {
           setIdentityCommitment(idCommitment);
         });
@@ -185,63 +194,69 @@ function App() {
         });
       }
     })();
-  }, [client]);
+  }, [client, getIdentityCommitment, setIdentityCommitment, setIsLocked]);
 
-  const initClient = async () => {
+  const initClient = useCallback(async () => {
     const { zkpr } = window as any;
+
+    if (!zkpr) {
+      log.warn("zkpr is not defined");
+      return;
+    }
+
     const client = await zkpr.connect();
     setClient(client);
     setIsLocked(false);
-  };
+  }, [setClient, setIsLocked]);
+
+  if (!client || isLocked) {
+    return <NotConnected onClick={initClient} />;
+  }
+
+  if (!identityCommitment) {
+    return <NoActiveIDCommitment />;
+  }
 
   return (
     <div>
-      {!client || isLocked ? (
-        <NotConnected />
-      ) : identityCommitment === "" || identityCommitment === null ? (
-        <NoActiveIDCommitment />
-      ) : (
-        <div>
-          <div>
-            <h2>Semaphore</h2>
-            <button onClick={() => genSemaphoreProof(MerkleProofType.STORAGE_ADDRESS)}>
-              Generate proof from Merkle proof storage address
-            </button>{" "}
-            <br />
-            <br />
-            <button onClick={() => genSemaphoreProof(MerkleProofType.ARTIFACTS)}>
-              Generate proof from Merkle proof artifacts
-            </button>
-          </div>
-          <hr />
-          <div>
-            <h2>RLN</h2>
-            <button disabled onClick={() => genRLNProof(MerkleProofType.STORAGE_ADDRESS)}>
-              Generate proof from Merkle proof storage address
-            </button>{" "}
-            <br />
-            <br />
-            <button disabled onClick={() => genRLNProof(MerkleProofType.ARTIFACTS)}>
-              Generate proof from Merkle proof artifacts
-            </button>
-          </div>
+      <div>
+        <h2>Semaphore</h2>
+        <button onClick={() => genSemaphoreProof(MerkleProofType.STORAGE_ADDRESS)}>
+          Generate proof from Merkle proof storage address
+        </button>{" "}
+        <br />
+        <br />
+        <button disabled onClick={() => genSemaphoreProof(MerkleProofType.ARTIFACTS)}>
+          Generate proof from Merkle proof artifacts
+        </button>
+      </div>
+      <hr />
+      <div>
+        <h2>RLN</h2>
+        <button disabled onClick={() => genRLNProof(MerkleProofType.STORAGE_ADDRESS)}>
+          Generate proof from Merkle proof storage address
+        </button>{" "}
+        <br />
+        <br />
+        <button disabled onClick={() => genRLNProof(MerkleProofType.ARTIFACTS)}>
+          Generate proof from Merkle proof artifacts
+        </button>
+      </div>
 
-          <hr />
-          <div>
-            <h2>Get identity commitment</h2>
-            <button onClick={() => getIdentityCommitment()}>Get</button> <br />
-            <br />
-          </div>
+      <hr />
+      <div>
+        <h2>Get identity commitment</h2>
+        <button onClick={() => getIdentityCommitment()}>Get</button> <br />
+        <br />
+      </div>
 
-          <hr />
-          <div>
-            <h2>Identity commitment for active identity:</h2>
-            <p>{identityCommitment}</p>
-          </div>
+      <hr />
+      <div>
+        <h2>Identity commitment for active identity:</h2>
+        <p>{identityCommitment}</p>
+      </div>
 
-          <ToastContainer newestOnTop={true} />
-        </div>
-      )}
+      <ToastContainer newestOnTop={true} />
     </div>
   );
 }
