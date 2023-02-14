@@ -49,7 +49,7 @@ export default function importAllScripts() {
   const startImportScriptsTime = Date.now();
 
   // Import all required resources
-  tryImport([browser.runtime.getURL("js/init-globals.js")]);
+  // tryImport([browser.runtime.getURL("js/init-globals.js")]);
 
   // for performance metrics/reference
   log.debug(`SCRIPTS IMPORT COMPLETE in Seconds: ${(Date.now() - startImportScriptsTime) / 1000}`);
