@@ -1,4 +1,8 @@
 // eslint-disable-next-line import/no-extraneous-dependencies
+import { decode } from "js-base64";
+if (!global.atob) {
+  global.atob = decode;
+}
 import express from "express";
 import { Identity } from "@semaphore-protocol/identity";
 import { Member } from "@semaphore-protocol/group";
@@ -34,7 +38,7 @@ const identityCommitments: Member[] = [];
 
 for (let i = 0; i < 2; i++) {
   const mockIdentity = new Identity();
-  identityCommitments.push(mockIdentity.generateCommitment());
+  identityCommitments.push(mockIdentity.getCommitment());
 }
 
 const app = express();

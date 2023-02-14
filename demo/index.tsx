@@ -7,7 +7,7 @@ import { Identity } from "@semaphore-protocol/identity";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import log from "loglevel";
-import { genExternalNullifier } from "rlnjs/src/utils";
+import { genExternalNullifier } from "rlnjs/src";
 
 const semaphorePath = {
   circuitFilePath: "http://localhost:8095/semaphore/semaphore.wasm",
