@@ -1,5 +1,6 @@
 // eslint-disable-next-line import/no-extraneous-dependencies
 import express from "express";
+import cors from "cors";
 import { Identity } from "@semaphore-protocol/identity";
 import { Member } from "@semaphore-protocol/group";
 import { bigintToHex, hexToBigint } from "bigint-conversion";
@@ -47,6 +48,7 @@ for (let i = 0; i < 2; i++) {
 
 const app = express();
 app.use(express.json());
+app.use(cors());
 
 app.post("/merkleProof/:type", (req, res) => {
   let type = req.params.type;
