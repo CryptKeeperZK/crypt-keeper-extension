@@ -7,7 +7,8 @@
     "dependencies": {
         "react": "^17.0.2",
         "react-dom": "^17.0.2",
-        "react-toastify": "^8.1.0"
+        "react-toastify": "^8.1.0",
+        "rlnjs": "github:Rate-Limiting-Nullifier/rlnjs"
     },
     "devDependencies": {
         "@types/react": "^17.0.18",
