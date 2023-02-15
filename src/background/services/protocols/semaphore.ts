@@ -38,9 +38,11 @@ export default class SemaphoreService {
       } else {
         const proofArtifacts = merkleProofArtifacts as MerkleProofArtifacts;
 
-        //const leaves = proofArtifacts.leaves.map((leaf) => hexToBigint(leaf))
-
-        merkleProof = generateMerkleProof({ treeDepth: proofArtifacts.depth, member: identityCommitment });
+        merkleProof = generateMerkleProof({
+          treeDepth: proofArtifacts.depth,
+          member: identityCommitment,
+          members: [identityCommitment],
+        });
       }
 
       // TODO: do we need to leave `SnarkArtifacts` param as undefinded?

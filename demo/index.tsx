@@ -226,7 +226,7 @@ function App() {
         </button>{" "}
         <br />
         <br />
-        <button disabled onClick={() => genSemaphoreProof(MerkleProofType.ARTIFACTS)}>
+        <button onClick={() => genSemaphoreProof(MerkleProofType.ARTIFACTS)}>
           Generate proof from Merkle proof artifacts
         </button>
       </div>
