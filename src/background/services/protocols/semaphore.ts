@@ -8,7 +8,6 @@ import log from "loglevel";
 import ZkIdentityDecorater from "@src/background/identity-decorater";
 
 export default class SemaphoreService {
-  // eslint-disable-next-line class-methods-use-this
   async genProof(identity: ZkIdentityDecorater, request: SemaphoreProofRequest): Promise<SemaphoreProof> {
     try {
       const {

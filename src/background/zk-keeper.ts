@@ -125,14 +125,14 @@ export default class ZkKeeperController extends Handler {
       if (!identity) {
         return null;
       }
-      const identityCommitment: bigint = identity.genIdentityCommitment();
+      const identityCommitment = identity.genIdentityCommitment();
       const identityCommitmentHex = bigintToHex(identityCommitment);
       return identityCommitmentHex;
     });
 
     // protocols
     this.add(
-      RPCAction.SEMAPHORE_PROOF,
+      RPCAction.PREPARE_SEMAPHORE_PROOF_REQUEST,
       LockService.ensure,
       this.zkValidator.validateZkInputs,
       async (payload: SemaphoreProofRequest, meta: any) => {
@@ -158,12 +158,12 @@ export default class ZkKeeperController extends Handler {
             });
           }
 
-          await BrowserUtils.closePopup();
-
-          return this.semaphoreService.genProof(identity, payload);
+          return { identity: identity.serialize(), payload };
         } catch (err) {
-          await BrowserUtils.closePopup();
           throw err;
+        } finally {
+          // TODO: maybe we need to keep popup open and show generation progress
+          await BrowserUtils.closePopup();
         }
       },
     );

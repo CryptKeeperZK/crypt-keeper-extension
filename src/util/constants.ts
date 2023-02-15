@@ -18,7 +18,7 @@ enum RPCAction {
   GET_REQUEST_PENDING_STATUS = "rpc/identity/getRequestPendingStatus",
   FINALIZE_REQUEST = "rpc/requests/finalize",
   GET_PENDING_REQUESTS = "rpc/requests/get",
-  SEMAPHORE_PROOF = "rpc/protocols/semaphore/genProof",
+  PREPARE_SEMAPHORE_PROOF_REQUEST = "rpc/protocols/semaphore/prepareProofRequest",
   RLN_PROOF = "rpc/protocols/rln/genProof",
   NRLN_PROOF = "rpc/protocols/nrln/genProof",
   DUMMY_REQUEST = "rpc/protocols/semaphore/dummyReuqest",

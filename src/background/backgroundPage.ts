@@ -35,11 +35,10 @@ initialize().catch((e: any) => {
 
 async function initialize() {
   try {
-    const app: ZkKeeperController = new ZkKeeperController();
+    const app = new ZkKeeperController();
 
     app.initialize().then(() => {
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      browser.runtime.onMessage.addListener(async (request: Request, _) => {
+      browser.runtime.onMessage.addListener(async (request: Request) => {
         try {
           log.debug("Background: request: ", request);
           const response = await app.handle(request);
