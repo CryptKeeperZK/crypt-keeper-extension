@@ -1,4 +1,6 @@
 // eslint-disable-next-line import/no-extraneous-dependencies
+import "./globals";
+
 import express from "express";
 import cors from "cors";
 import { Identity } from "@semaphore-protocol/identity";
@@ -11,14 +13,6 @@ import { generateMerkleProof } from "../src/background/services/protocols/utils"
 
 const DEPTH_RLN = 15;
 const DEPTH_SEMAPHORE = 20;
-
-if (!global.atob) {
-  global.atob = (str: string) => Buffer.from(str, "base64").toString("binary");
-}
-
-if (!global.btoa) {
-  global.btoa = (str: string) => Buffer.from(str, "binary").toString("base64");
-}
 
 const serializeMerkleProof = (merkleProof: MerkleProof) => {
   const serialized: Partial<MerkleProof> = {};
@@ -75,5 +69,6 @@ app.post("/merkleProof/:type", (req, res) => {
 });
 
 app.listen(8090, () => {
+  console.log(btoa(atob("")));
   log.debug("Merkle service is listening");
 });
