@@ -44,7 +44,7 @@ export default class RLNService {
         merkleProof = generateMerkleProof({ treeDepth: proofArtifacts.depth, member: identityCommitment });
       }
 
-      const fullProof: RLNFullProof = await rln.genProof(signal, merkleProof, externalNullifier);
+      const fullProof: RLNFullProof = await rln.generateProof(signal, merkleProof, externalNullifier);
       return fullProof;
     } catch (e) {
       throw new Error(`Error while generating RLN proof: ${e}`);
