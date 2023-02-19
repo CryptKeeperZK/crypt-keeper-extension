@@ -1,9 +1,11 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
 
-import { MerkleProofArtifacts } from "@src/types";
-import RPCAction from "@src/util/constants";
 import { MerkleProof } from "@zk-kit/incremental-merkle-tree";
 import log from "loglevel";
+
+import { MerkleProofArtifacts } from "@src/types";
+import RPCAction from "@src/util/constants";
+import { ISemaphoreGenerateArgs, SemaphoreProofGenerator } from "./proof";
 
 export type IRequest = {
   method: string;
@@ -96,8 +98,8 @@ async function semaphoreProof(
   const merkleStorageAddress =
     typeof merkleProofArtifactsOrStorageAddress === "string" ? merkleProofArtifactsOrStorageAddress : undefined;
 
-  return post({
-    method: RPCAction.SEMAPHORE_PROOF,
+  const request = await post({
+    method: RPCAction.PREPARE_SEMAPHORE_PROOF_REQUEST,
     payload: {
       externalNullifier,
       signal,
@@ -108,6 +110,8 @@ async function semaphoreProof(
       merkleProof,
     },
   });
+
+  return SemaphoreProofGenerator.getInstance().generate(request as ISemaphoreGenerateArgs);
 }
 
 async function rlnProof(

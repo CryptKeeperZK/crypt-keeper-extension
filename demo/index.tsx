@@ -1,13 +1,12 @@
 import React, { useState, useEffect, useCallback } from "react";
 import ReactDOM from "react-dom";
-import { RLN } from "rlnjs/src";
+import { RLN, genExternalNullifier } from "rlnjs";
 import { bigintToHex } from "bigint-conversion";
 import { Identity } from "@semaphore-protocol/identity";
 
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import log from "loglevel";
-import { genExternalNullifier } from "rlnjs/src/utils";
 
 const semaphorePath = {
   circuitFilePath: "http://localhost:8095/semaphore/semaphore.wasm",
@@ -93,15 +92,9 @@ function App() {
         storageAddressOrArtifacts,
       );
 
-      log.debug(`Semaphore proof generated successfully! \n
-            - Public Signals: 
-            \t ${JSON.stringify(proof.fullProof.publicSignals, null, 1)}
-            - fullProof: 
-            \t ${JSON.stringify(proof.fullProof.proof, null, 1)}
-        `);
+      console.log("Semaphore proof generated successfully!", proof);
       toast(`Semaphore proof generated successfully!`, { type: "success" });
     } catch (e) {
-      log.debug("ERROR", e);
       toast("Error while generating Semaphore proof!", { type: "error" });
       console.error(e);
     }
@@ -151,15 +144,9 @@ function App() {
         rlnIdentifierHex,
       );
 
-      log.debug(`RLN proof generated successfully! \n
-            - Public Signals: 
-            \t ${JSON.stringify(proof.publicSignals, null, 1)}
-            - fullProof: 
-            \t ${JSON.stringify(proof.proof, null, 1)}
-        `);
-      toast(`RLN proof generated successfully! ${proof}`, { type: "success" });
+      console.log("RLN proof generated successfully!", proof);
+      toast("RLN proof generated successfully!", { type: "success" });
     } catch (e) {
-      log.debug("ERROR", e);
       toast("Error while generating RLN proof!", { type: "error" });
       console.error(e);
     }
@@ -226,19 +213,19 @@ function App() {
         </button>{" "}
         <br />
         <br />
-        <button disabled onClick={() => genSemaphoreProof(MerkleProofType.ARTIFACTS)}>
+        <button onClick={() => genSemaphoreProof(MerkleProofType.ARTIFACTS)}>
           Generate proof from Merkle proof artifacts
         </button>
       </div>
       <hr />
       <div>
         <h2>RLN</h2>
-        <button disabled onClick={() => genRLNProof(MerkleProofType.STORAGE_ADDRESS)}>
+        <button onClick={() => genRLNProof(MerkleProofType.STORAGE_ADDRESS)}>
           Generate proof from Merkle proof storage address
         </button>{" "}
         <br />
         <br />
-        <button disabled onClick={() => genRLNProof(MerkleProofType.ARTIFACTS)}>
+        <button onClick={() => genRLNProof(MerkleProofType.ARTIFACTS)}>
           Generate proof from Merkle proof artifacts
         </button>
       </div>

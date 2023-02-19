@@ -8,7 +8,6 @@ import log from "loglevel";
 import ZkIdentityDecorater from "@src/background/identity-decorater";
 
 export default class SemaphoreService {
-  // eslint-disable-next-line class-methods-use-this
   async genProof(identity: ZkIdentityDecorater, request: SemaphoreProofRequest): Promise<SemaphoreProof> {
     try {
       const {
@@ -39,9 +38,11 @@ export default class SemaphoreService {
       } else {
         const proofArtifacts = merkleProofArtifacts as MerkleProofArtifacts;
 
-        //const leaves = proofArtifacts.leaves.map((leaf) => hexToBigint(leaf))
-
-        merkleProof = generateMerkleProof({ treeDepth: proofArtifacts.depth, member: identityCommitment });
+        merkleProof = generateMerkleProof({
+          treeDepth: proofArtifacts.depth,
+          member: identityCommitment,
+          members: [identityCommitment],
+        });
       }
 
       // TODO: do we need to leave `SnarkArtifacts` param as undefinded?

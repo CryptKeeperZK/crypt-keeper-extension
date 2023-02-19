@@ -69,6 +69,5 @@ app.post("/merkleProof/:type", (req, res) => {
 });
 
 app.listen(8090, () => {
-  console.log(btoa(atob("")));
   log.debug("Merkle service is listening");
 });
