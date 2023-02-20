@@ -49,17 +49,17 @@ module.exports = {
         test: /\.tsx?$/,
         use: "ts-loader",
       },
-      // TODO: string-replace-loader has issues with new webpack version
-      // {
-      //     test: /ejs\.js$/,
-      //     loader: 'string-replace-loader',
-      //     options: {
-      //         search: "(new Function('return this;'))().Promise",
-      //         replace: "(function() { return this ? this : typeof self !== 'undefined' ? self : undefined})() || Function('return this')()",
-      //         flags: 'g',
-      //         strict: true
-      //     }
-      // },
+      {
+        test: /backgroundPage\.js$/,
+        loader: "string-replace-loader",
+        options: {
+          search: "exports.promiseImpl = (new Function('return this;'))().Promise;",
+          replace:
+            "exports.promiseImpl = (function() { return this ? this : typeof self !== 'undefined' ? self : undefined})() || Function('return this')();",
+          flags: "g",
+          strict: true,
+        },
+      },
       {
         exclude: /node_modules/,
         test: /\.scss$/,
