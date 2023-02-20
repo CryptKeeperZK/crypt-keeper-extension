@@ -115,15 +115,9 @@ export default class ZkKeeperController extends Handler {
       async (payload: IdentityName) => await this.identityService.deleteIdentity(payload),
     );
     this.add(RPCAction.GET_ACTIVE_IDENTITY, LockService.ensure, async () => {
-      const identity = await this.identityService.getActiveidentity();
+      const identity = await this.identityService.getActiveIdentity();
 
-      if (!identity) {
-        return null;
-      }
-
-      const identityCommitment = identity.genIdentityCommitment();
-      const identityCommitmentHex = bigintToHex(identityCommitment);
-      return identityCommitmentHex;
+      return identity ? bigintToHex(identity.genIdentityCommitment()) : null;
     });
 
     // protocols
@@ -140,7 +134,7 @@ export default class ZkKeeperController extends Handler {
           await LockService.awaitUnlock();
         }
 
-        const identity = await this.identityService.getActiveidentity();
+        const identity = await this.identityService.getActiveIdentity();
         const approved = this.approvalService.isApproved(meta.origin);
         const permission = await this.approvalService.getPermission(meta.origin);
 
@@ -169,7 +163,7 @@ export default class ZkKeeperController extends Handler {
       LockService.ensure,
       this.zkValidator.validateZkInputs,
       async (payload: RLNProofRequest) => {
-        const identity: ZkIdentityWrapper | undefined = await this.identityService.getActiveidentity();
+        const identity = await this.identityService.getActiveIdentity();
 
         if (!identity) throw new Error("active identity not found");
 

@@ -156,6 +156,11 @@ function App() {
 
   const getIdentityCommitment = useCallback(async () => {
     const idCommitment = await client?.getActiveIdentity();
+
+    if (!idCommitment) {
+      return;
+    }
+
     toast(`Getting Identity Commitment successfully! ${idCommitment}`, { type: "success" });
     setIdentityCommitment(idCommitment);
   }, [client, setIdentityCommitment]);
@@ -194,7 +199,7 @@ function App() {
     if (!client) {
       initClient();
     }
-  }, [Boolean(client), initClient]);
+  }, [client, initClient]);
 
   useEffect(() => {
     if (!client) {

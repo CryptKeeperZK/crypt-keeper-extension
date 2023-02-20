@@ -155,7 +155,7 @@ export default class IdentityService extends SimpleStorage {
     }
   };
 
-  getActiveidentity = async (): Promise<ZkIdentityDecorater | undefined> => {
+  getActiveIdentity = async (): Promise<ZkIdentityDecorater | undefined> => {
     const acitveIdentityCommitmentCipher = await this.activeIdentityStore.get();
 
     if (!acitveIdentityCommitmentCipher) {
