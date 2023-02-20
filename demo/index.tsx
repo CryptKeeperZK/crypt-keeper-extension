@@ -10,7 +10,7 @@ import log from "loglevel";
 
 const semaphorePath = {
   circuitFilePath: "http://localhost:8095/semaphore/semaphore.wasm",
-  zkeyFilePath: "http://localhost:8095/semaphore/semaphore_final.zkey",
+  zkeyFilePath: "http://localhost:8095/semaphore/semaphore.zkey",
 };
 
 const rlnPath = {

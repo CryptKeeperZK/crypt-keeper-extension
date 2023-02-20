@@ -36,8 +36,8 @@ export default class RequestManager extends EventEmitter2 {
   };
 
   newRequest = async (type: PendingRequestType, payload?: any) => {
-    const id: string = await this.addToQueue(type, payload);
     const popup = await BrowserUtils.openPopup();
+    const id: string = await this.addToQueue(type, payload);
 
     return new Promise((resolve, reject) => {
       const onPopupClose = (windowId: number) => {
