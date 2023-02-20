@@ -159,30 +159,6 @@ function App() {
     setIdentityCommitment(idCommitment);
   }, [client, setIdentityCommitment]);
 
-  useEffect(() => {
-    (async function IIFE() {
-      await initClient();
-
-      if (client) {
-        await getIdentityCommitment();
-
-        await client?.on("identityChanged", idCommitment => {
-          setIdentityCommitment(idCommitment);
-        });
-
-        await client?.on("logout", async () => {
-          setIdentityCommitment("");
-          setIsLocked(true);
-        });
-
-        await client?.on("login", async () => {
-          setIsLocked(false);
-          await getIdentityCommitment();
-        });
-      }
-    })();
-  }, [client, getIdentityCommitment, setIdentityCommitment, setIsLocked]);
-
   const initClient = useCallback(async () => {
     const { zkpr } = window as any;
 
@@ -195,6 +171,46 @@ function App() {
     setClient(client);
     setIsLocked(false);
   }, [setClient, setIsLocked]);
+
+  const onIdentityChanged = useCallback(
+    (idCommitment: string) => {
+      setIdentityCommitment(idCommitment);
+    },
+    [setIdentityCommitment],
+  );
+
+  const onLogin = useCallback(() => {
+    setIsLocked(false);
+    getIdentityCommitment();
+  }, [setIsLocked, getIdentityCommitment]);
+
+  const onLogout = useCallback(() => {
+    setIdentityCommitment("");
+    setIsLocked(true);
+  }, [setIdentityCommitment, setIsLocked]);
+
+  useEffect(() => {
+    if (!client) {
+      initClient();
+    }
+  }, [Boolean(client), initClient]);
+
+  useEffect(() => {
+    if (!client) {
+      return undefined;
+    }
+    getIdentityCommitment();
+
+    client?.on("login", onLogin);
+    client?.on("identityChanged", onIdentityChanged);
+    client?.on("logout", onLogout);
+
+    return () => {
+      client?.off("login", onLogin);
+      client?.off("identityChanged", onIdentityChanged);
+      client?.off("logout", onLogout);
+    };
+  }, [Boolean(client), onLogout, onIdentityChanged, onLogin]);
 
   if (!client || isLocked) {
     return <NotConnected onClick={initClient} />;

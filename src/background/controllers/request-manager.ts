@@ -32,12 +32,13 @@ export default class RequestManager extends EventEmitter2 {
     const id = `${nonce++}`;
     this.pendingRequests.push({ id, type, payload });
     await pushMessage(setPendingRequest(this.pendingRequests));
+
     return id;
   };
 
   newRequest = async (type: PendingRequestType, payload?: any) => {
     const popup = await BrowserUtils.openPopup();
-    const id: string = await this.addToQueue(type, payload);
+    const id = await this.addToQueue(type, payload);
 
     return new Promise((resolve, reject) => {
       const onPopupClose = (windowId: number) => {
@@ -56,7 +57,6 @@ export default class RequestManager extends EventEmitter2 {
             resolve(action.data);
             return;
           case "reject":
-            // eslint-disable-next-line prefer-promise-reject-errors
             reject(new Error("user rejected."));
             return;
           default:

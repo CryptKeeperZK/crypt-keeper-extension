@@ -19,7 +19,7 @@ enum RPCAction {
   FINALIZE_REQUEST = "rpc/requests/finalize",
   GET_PENDING_REQUESTS = "rpc/requests/get",
   PREPARE_SEMAPHORE_PROOF_REQUEST = "rpc/protocols/semaphore/prepareProofRequest",
-  RLN_PROOF = "rpc/protocols/rln/genProof",
+  PREPARE_RLN_PROOF_REQUEST = "rpc/protocols/rln/prepareProofRequest",
   NRLN_PROOF = "rpc/protocols/nrln/genProof",
   DUMMY_REQUEST = "rpc/protocols/semaphore/dummyReuqest",
   REQUEST_ADD_REMOVE_APPROVAL = "rpc/hosts/request",

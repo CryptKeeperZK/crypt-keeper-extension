@@ -32,7 +32,7 @@ export default function Onboarding(): ReactElement {
 
   const handleKeypress = (e: any) => {
     if (e.key === "Enter") {
-        createPassword();
+      createPassword();
     }
   };
 
@@ -45,7 +45,14 @@ export default function Onboarding(): ReactElement {
         </div>
         <div className="text-base">To continue, please setup a password</div>
         <div className="py-8 w-full">
-          <Input className="mb-4" type="password" label="Password" value={pw} onChange={e => setPW(e.target.value)} />
+          <Input
+            autoFocus
+            className="mb-4"
+            type="password"
+            label="Password"
+            value={pw}
+            onChange={e => setPW(e.target.value)}
+          />
           <Input
             label="Confirm Password"
             type="password"

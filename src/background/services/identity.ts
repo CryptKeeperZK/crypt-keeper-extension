@@ -99,6 +99,7 @@ export default class IdentityService extends SimpleStorage {
       await this.activeIdentityStore.set(identityCommitmentCipher as string);
       this.activeIdentity = ZkIdentityDecorater.genFromSerialized(identities.get(identityCommitment) as string);
       pushMessage(setSelected(identityCommitment));
+
       const tabs = await browser.tabs.query({ active: true });
       for (const tab of tabs) {
         log.debug("Inside setActiveIdentity 1");
@@ -156,14 +157,22 @@ export default class IdentityService extends SimpleStorage {
 
   getActiveidentity = async (): Promise<ZkIdentityDecorater | undefined> => {
     const acitveIdentityCommitmentCipher = await this.activeIdentityStore.get();
+
+    if (!acitveIdentityCommitmentCipher) {
+      return undefined;
+    }
+
     const acitveIdentityCommitment = await LockService.decrypt(acitveIdentityCommitmentCipher);
     const identities = await this.getIdentitiesFromStore();
 
     if (identities.has(acitveIdentityCommitment)) {
-      return this.activeIdentity = ZkIdentityDecorater.genFromSerialized(identities.get(acitveIdentityCommitment) as string);
-    } else {
-      log.error("IdentityService cannot find Identity commitment");
+      this.activeIdentity = ZkIdentityDecorater.genFromSerialized(identities.get(acitveIdentityCommitment) as string);
+
+      return this.activeIdentity;
     }
+
+    log.error("IdentityService cannot find Identity commitment");
+    return undefined;
   };
 
   getIdentityCommitments = async () => {

@@ -1,14 +1,13 @@
 import { MerkleProof } from "@zk-kit/incremental-merkle-tree";
-import { Identity } from "@semaphore-protocol/identity";
-import { RLN, RLNFullProof } from "rlnjs/src";
-import { bigintToHex, hexToBigint } from "bigint-conversion";
+import { RLN, RLNFullProof } from "rlnjs";
+import { bigintToHex } from "bigint-conversion";
 import { MerkleProofArtifacts } from "@src/types";
+import ZkIdentityDecorater from "@src/background/identity-decorater";
 import { RLNProofRequest } from "./interfaces";
 import { deserializeMerkleProof, generateMerkleProof } from "./utils";
 
 export default class RLNService {
-  // eslint-disable-next-line class-methods-use-this
-  async genProof(identity: Identity, request: RLNProofRequest): Promise<RLNFullProof> {
+  async genProof(identity: ZkIdentityDecorater, request: RLNProofRequest): Promise<RLNFullProof> {
     try {
       const {
         circuitFilePath,
@@ -18,15 +17,14 @@ export default class RLNService {
         externalNullifier,
         signal,
         merkleProofArtifacts,
-        rlnIdentifier,
       } = request;
       let merkleProof: MerkleProof;
 
       const rln = new RLN(circuitFilePath, zkeyFilePath, verificationKey);
 
-      const identityCommitment = identity.getCommitment();
+      const identityCommitment = identity.genIdentityCommitment();
       const identityCommitmentHex = bigintToHex(identityCommitment);
-      const rlnIdentifierBigInt = hexToBigint(rlnIdentifier);
+
       if (merkleStorageAddress) {
         const response = await fetch(merkleStorageAddress, {
           method: "POST",
@@ -39,13 +37,15 @@ export default class RLNService {
         merkleProof = deserializeMerkleProof(response.data.merkleProof);
       } else {
         const proofArtifacts = merkleProofArtifacts as MerkleProofArtifacts;
-        //const leaves = proofArtifacts.leaves.map((leaf) => hexToBigint(leaf))
 
-        merkleProof = generateMerkleProof({ treeDepth: proofArtifacts.depth, member: identityCommitment });
+        merkleProof = generateMerkleProof({
+          treeDepth: proofArtifacts.depth,
+          member: identityCommitment,
+          members: [identityCommitment],
+        });
       }
 
-      const fullProof: RLNFullProof = await rln.generateProof(signal, merkleProof, externalNullifier);
-      return fullProof;
+      return rln.generateProof(signal, merkleProof, externalNullifier);
     } catch (e) {
       throw new Error(`Error while generating RLN proof: ${e}`);
     }

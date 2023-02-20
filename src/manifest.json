@@ -9,7 +9,7 @@
     "default_popup": "popup.html"
   },
   "background": {
-    "service_worker": "js/backgroundPage.js"  
+    "service_worker": "js/backgroundPage.js"
   },
   "content_scripts": [
     {
@@ -27,15 +27,8 @@
   "content_security_policy": {
     "extension_pages": "script-src 'self' 'wasm-unsafe-eval'; object-src 'self';"
   },
-  "permissions": [
-    "clipboardWrite",
-    "activeTab", 
-    "storage"
-  ],
-  "host_permissions": [
-    "http://*/",
-    "https://*/"
-  ],
+  "permissions": ["clipboardWrite", "activeTab", "storage"],
+  "host_permissions": ["http://*/", "https://*/"],
   "web_accessible_resources": [
     {
       "resources": ["js/injected.js"],

@@ -33,7 +33,7 @@ class BrowserUtils {
 
   openPopup = async () => {
     if (this.cached) {
-      this.focusWindow(this.cached.id);
+      await this.focusWindow(this.cached.id);
       return this.cached;
     }
 
@@ -55,6 +55,7 @@ class BrowserUtils {
   closePopup = async () => {
     if (this.cached) {
       browser.windows.remove(this.cached.id);
+      this.cached = null;
     }
   };
 
