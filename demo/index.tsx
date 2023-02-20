@@ -11,11 +11,12 @@ import log from "loglevel";
 const semaphorePath = {
   circuitFilePath: "http://localhost:8095/semaphore/semaphore.wasm",
   zkeyFilePath: "http://localhost:8095/semaphore/semaphore.zkey",
+  verificationKey: "http://localhost:8095/semaphore/verification_key.json",
 };
 
 const rlnPath = {
   circuitFilePath: "http://localhost:8095/rln/rln.wasm",
-  zkeyFilePath: "http://localhost:8095/rln/rln_final.zkey",
+  zkeyFilePath: "http://localhost:8095/rln/rln.zkey",
   verificationKey: "http://localhost:8095/rln/verification_key.json",
 };
 
