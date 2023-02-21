@@ -1,18 +1,22 @@
 {
   "compilerOptions": {
     "baseUrl": "./",
+    "rootDir": "./",
     "paths": {
       "@src/*": ["src/*"]
     },
     "target": "ES2020",
     "module": "commonjs",
     "moduleResolution": "node",
-    "rootDir": "./src",
     "outDir": "dist/js",
     "strict": true,
     "sourceMap": true,
-    "jsx": "react",
+    "jsx": "react-jsx",
+    "skipLibCheck": true,
     "esModuleInterop": true,
+    "isolatedModules": true,
+    "forceConsistentCasingInFileNames": true,
+    "noFallthroughCasesInSwitch": true,
     "lib": ["es2020", "dom", "webworker"],
     "experimentalDecorators": true,
     "allowSyntheticDefaultImports": true,
@@ -20,5 +24,6 @@
     "noImplicitAny": false,
     "strictPropertyInitialization": false
   },
-  "include": ["src"]
+  "include": ["src", "demo"],
+  "exclude": ["node_modules", "coverage", "dist"]
 }

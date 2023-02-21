@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import React, { useState, useEffect, useCallback } from "react";
 import ReactDOM from "react-dom";
 import { RLN, genExternalNullifier } from "rlnjs";
@@ -7,6 +8,8 @@ import { Identity } from "@semaphore-protocol/identity";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import log from "loglevel";
+
+import type { Client } from "@src/contentscripts/injected";
 
 const SERVER_URL = "http://localhost:8090";
 
@@ -29,11 +32,19 @@ enum MerkleProofType {
   ARTIFACTS,
 }
 
+declare global {
+  interface Window {
+    zkpr: {
+      connect: () => Promise<Client | null>;
+    };
+  }
+}
+
 const genMockIdentityCommitments = (): string[] => {
-  let identityCommitments: string[] = [];
+  const identityCommitments: string[] = [];
   for (let i = 0; i < 10; i++) {
     const mockIdentity = new Identity();
-    let idCommitment = bigintToHex(mockIdentity.getCommitment());
+    const idCommitment = bigintToHex(mockIdentity.getCommitment());
 
     identityCommitments.push(idCommitment);
   }
@@ -57,7 +68,7 @@ function NoActiveIDCommitment() {
 }
 
 function App() {
-  const [client, setClient] = useState();
+  const [client, setClient] = useState<Client | null>(null);
   const [isLocked, setIsLocked] = useState(true);
   const [identityCommitment, setIdentityCommitment] = useState("");
   const mockIdentityCommitments: string[] = genMockIdentityCommitments();
@@ -96,7 +107,7 @@ function App() {
       );
 
       console.log("Semaphore proof generated successfully!", proof);
-      toast(`Semaphore proof generated successfully!`, { type: "success" });
+      toast("Semaphore proof generated successfully!", { type: "success" });
     } catch (e) {
       toast("Error while generating Semaphore proof!", { type: "error" });
       console.error(e);
@@ -125,13 +136,11 @@ function App() {
       };
     }
 
-    let circuitPath = rlnPath.circuitFilePath;
-    let zkeyFilePath = rlnPath.zkeyFilePath;
-    let verificationKey = rlnPath.verificationKey;
+    const circuitPath = rlnPath.circuitFilePath;
+    const zkeyFilePath = rlnPath.zkeyFilePath;
 
-    let toastId;
     try {
-      toastId = toast("Generating RLN proof...", {
+      const toastId = toast("Generating RLN proof...", {
         type: "info",
         hideProgressBar: true,
         closeOnClick: true,
@@ -149,11 +158,11 @@ function App() {
 
       console.log("RLN proof generated successfully!", proof);
       toast("RLN proof generated successfully!", { type: "success" });
+      toast.dismiss(toastId);
     } catch (e) {
       toast("Error while generating RLN proof!", { type: "error" });
       console.error(e);
     }
-    toast.dismiss(toastId);
   };
 
   const getIdentityCommitment = useCallback(async () => {
@@ -168,7 +177,7 @@ function App() {
   }, [client, setIdentityCommitment]);
 
   const initClient = useCallback(async () => {
-    const { zkpr } = window as any;
+    const { zkpr } = window;
 
     if (!zkpr) {
       log.warn("zkpr is not defined");
@@ -181,8 +190,8 @@ function App() {
   }, [setClient, setIsLocked]);
 
   const onIdentityChanged = useCallback(
-    (idCommitment: string) => {
-      setIdentityCommitment(idCommitment);
+    (idCommitment: unknown) => {
+      setIdentityCommitment(idCommitment as string);
     },
     [setIdentityCommitment],
   );

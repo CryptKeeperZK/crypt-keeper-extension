@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-/* eslint-disable import/no-extraneous-dependencies */
 const webpack = require("webpack");
 const path = require("path");
 const CopyPlugin = require("copy-webpack-plugin");
@@ -111,5 +109,4 @@ module.exports = {
       constants: false,
     },
   },
-  externals: /^(worker_threads)$/,
 };
