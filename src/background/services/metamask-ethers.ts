@@ -137,7 +137,7 @@ export default class MetamaskServiceEthers {
     };
   };
 
-  connectMetamask = async (account: string | null = null): Promise<WalletInfo> => {
+  connectMetamask = async (): Promise<WalletInfo> => {
     let connectionDetails: WalletInfo;
     log.debug("4. Inside MetamaskServiceEthers connectMetamask 1");
     await pushMessage(setWeb3Connecting(true));
@@ -208,7 +208,7 @@ export default class MetamaskServiceEthers {
     }
   };
 
-  // TOOD: implemment an updateMessage
+  // TOOD: implement an updateMessage
   // updateMessages =async (params:type) => {
   // }
 }

@@ -1,73 +1,73 @@
-@import './src/util/variables';
+@import "./src/util/variables";
 
 .input {
-    @extend %regular-font;
-    padding: 0.5rem 0.5rem;
-    outline: none;
-    background-color: transparent;
-    border: none;
-    width: calc(100% - 2rem);
-    color: $primary-text;
-    font-family: 'Open Sans', -apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif;
+  @extend %regular-font;
+  padding: 0.5rem 0.5rem;
+  outline: none;
+  background-color: transparent;
+  border: none;
+  width: calc(100% - 2rem);
+  color: $primary-text;
+  font-family: "Open Sans", -apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif;
 
-    &--full-width {
-        width: 100%;
-    }
+  &--full-width {
+    width: 100%;
+  }
 
-    &::placeholder {
-        color: rgba($white, 0.2);
-    }
+  &::placeholder {
+    color: rgba($white, 0.2);
+  }
 
-    &:disabled {
-        cursor: default;
-    }
+  &:disabled {
+    cursor: default;
+  }
 }
 
 .input-group {
-    @extend %col-nowrap;
+  @extend %col-nowrap;
 
-    &__label {
-        @extend %small-font;
-        color: $label-text;
-        padding: 0 0.5rem 0.25rem;
-        cursor: default;
+  &__label {
+    @extend %small-font;
+    color: $label-text;
+    padding: 0 0.5rem 0.25rem;
+    cursor: default;
+  }
+
+  &__error-message {
+    @extend %small-font;
+    color: $error-red;
+    padding: 0.25rem 0.5rem 0;
+  }
+
+  &__group {
+    @extend %row-nowrap;
+    background-color: lighten($black, 15);
+    border-bottom: 1px solid transparent;
+    border-radius: 0.125rem;
+
+    &:focus-within {
+      background-color: $gray-900;
+      border-bottom: 1px solid $primary-green;
     }
 
-    &__error-message {
-        @extend %small-font;
-        color: $error-red;
-        padding: 0.25rem 0.5rem 0;
+    .icon {
+      opacity: 0.1;
+      transition: opacity 150ms ease-in-out;
+      margin-right: 0.75rem;
+
+      &:hover {
+        opacity: 0.2;
+      }
+
+      &:active {
+        opacity: 0.3;
+      }
     }
-
-    &__group {
-        @extend %row-nowrap;
-        background-color: lighten($black, 15);
-        border-bottom: 1px solid transparent;
-        border-radius: 0.125rem;
-
-        &:focus-within {
-            background-color: $gray-900;
-            border-bottom: 1px solid $primary-green;
-        }
-
-        .icon {
-            opacity: 0.1;
-            transition: opacity 150ms ease-in-out;
-            margin-right: 0.75rem;
-
-            &:hover {
-                opacity: 0.2;
-            }
-
-            &:active {
-                opacity: 0.3;
-            }
-        }
-    }
+  }
 }
 
-input[type='number']::-webkit-inner-spin-button,
-input[type='number']::-webkit-outer-spin-button {
-    -webkit-appearance: none;
-    margin: 0;
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
 }

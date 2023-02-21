@@ -1,97 +1,97 @@
-@import './src/util/variables';
+@import "./src/util/variables";
 
 .button {
-    @extend %regular-font;
-    @extend %bold;
-    @extend %row-nowrap;
-    align-items: center;
-    width: fit-content;
-    cursor: pointer;
-    padding: 0.5rem 1rem;
-    border-radius: 0.25rem;
-    border: none;
-    user-select: none;
-    outline: none;
-    position: relative;
-    height: 2.375rem;
+  @extend %regular-font;
+  @extend %bold;
+  @extend %row-nowrap;
+  align-items: center;
+  width: fit-content;
+  cursor: pointer;
+  padding: 0.5rem 1rem;
+  border-radius: 0.25rem;
+  border: none;
+  user-select: none;
+  outline: none;
+  position: relative;
+  height: 2.375rem;
+  font-weight: 600;
+
+  .icon {
+    margin-right: 0.5rem;
+  }
+
+  &__loader {
+    width: 2rem;
+    height: 2rem;
+  }
+
+  &--small {
+    padding: 0.25rem 0.75rem;
+    height: auto;
+  }
+
+  &--tiny {
+    font-size: 0.6875rem;
+    padding: 0.125rem 0.25rem;
     font-weight: 600;
-
-    .icon {
-        margin-right: 0.5rem;
-    }
-
-    &__loader {
-        width: 2rem;
-        height: 2rem;
-    }
-
-    &--small {
-        padding: 0.25rem 0.75rem;
-        height: auto;
-    }
-
-    &--tiny {
-        font-size: 0.6875rem;
-        padding: 0.125rem 0.25rem;
-        font-weight: 600;
-        height: auto;
-    }
+    height: auto;
+  }
 }
 
 .button--primary {
-    background-color: $primary-green;
-    color: $black;
-    border: 2px solid $primary-green;
-    transition: background-color 150ms ease-in-out;
+  background-color: $primary-green;
+  color: $black;
+  border: 2px solid $primary-green;
+  transition: background-color 150ms ease-in-out;
 
-    &:hover {
-        background-color: lighten($primary-green, 5);
-        border: 2px solid lighten($primary-green, 5);
-    }
+  &:hover {
+    background-color: lighten($primary-green, 5);
+    border: 2px solid lighten($primary-green, 5);
+  }
 
+  &:active {
+    background-color: darken($primary-green, 5);
+    border: 2px solid darken($primary-green, 5);
+  }
+
+  &:disabled {
+    &:hover,
     &:active {
-        background-color: darken($primary-green, 5);
-        border: 2px solid darken($primary-green, 5);
+      background-color: $primary-green;
+      color: $black;
+      border: 2px solid $primary-green;
     }
-
-    &:disabled {
-        &:hover,
-        &:active {
-            background-color: $primary-green;
-            color: $black;
-            border: 2px solid $primary-green;
-        }
-    }
+  }
 }
 
 .button--secondary {
-    box-sizing: border-box;
-    background-color: transparent;
-    color: $primary-green;
-    border: 2px solid $primary-green;
-    transition: background-color 150ms ease-in-out, color 150ms ease-in-out;
+  box-sizing: border-box;
+  background-color: transparent;
+  color: $primary-green;
+  border: 2px solid $primary-green;
+  transition: background-color 150ms ease-in-out, color 150ms ease-in-out;
 
-    &:hover {
-        background-color: rgba($primary-green, 0.5);
-        color: $white;
-    }
+  &:hover {
+    background-color: rgba($primary-green, 0.5);
+    color: $white;
+  }
 
+  &:active {
+    background-color: rgba($primary-green, 8);
+    color: $white;
+  }
+
+  &:disabled {
+    &:hover,
     &:active {
-        background-color: rgba($primary-green, 8);
-        color: $white;
+      background-color: transparent;
+      color: $primary-green;
+      border: 2px solid $primary-green;
     }
-
-    &:disabled {
-        &:hover,
-        &:active {
-            background-color: transparent;
-            color: $primary-green;
-            border: 2px solid $primary-green;
-        }
-    }
+  }
 }
 
 .button:disabled {
-    opacity: 0.5;
-    cursor: default;
+  opacity: 0.5;
+  cursor: default;
 }

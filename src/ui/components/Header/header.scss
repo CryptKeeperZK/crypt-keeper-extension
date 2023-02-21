@@ -1,42 +1,42 @@
-@import '../../../util/variables';
+@import "../../../util/variables";
 
 .header {
-    border-bottom: 1px solid $gray-800;
-    flex: 0 0 auto;
+  border-bottom: 1px solid $gray-800;
+  flex: 0 0 auto;
 
-    &__network-type {
-        padding: 0.5rem 0.75rem;
-        background-color: $gray-800;
-        color: $gray-200;
-        font-weight: 600;
-        margin-right: 0.5rem;
+  &__network-type {
+    padding: 0.5rem 0.75rem;
+    background-color: $gray-800;
+    color: $gray-200;
+    font-weight: 600;
+    margin-right: 0.5rem;
+  }
+
+  &__account-icon {
+    @extend %row-nowrap;
+    align-items: center;
+    justify-content: center;
+    height: 2.375rem;
+    width: 2.375rem;
+    border-radius: 50%;
+    border: 3px solid $gray-600;
+    cursor: pointer;
+
+    &:hover {
+      border-color: $gray-300;
     }
 
-    &__account-icon {
-        @extend %row-nowrap;
-        align-items: center;
-        justify-content: center;
-        height: 2.375rem;
-        width: 2.375rem;
-        border-radius: 50%;
-        border: 3px solid $gray-600;
-        cursor: pointer;
-
-        &:hover {
-            border-color: $gray-300;
-        }
-
-        .paper {
-            flex: 0 0 auto;
-        }
+    .paper {
+      flex: 0 0 auto;
     }
+  }
 }
 
 .user-menu {
-    .menuable {
-        &__menu {
-            right: 0;
-            left: auto;
-        }
+  .menuable {
+    &__menu {
+      right: 0;
+      left: auto;
     }
+  }
 }
