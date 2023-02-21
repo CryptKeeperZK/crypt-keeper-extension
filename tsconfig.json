@@ -24,6 +24,6 @@
     "noImplicitAny": false,
     "strictPropertyInitialization": false
   },
-  "include": ["src", "demo"],
+  "include": ["src"],
   "exclude": ["node_modules", "coverage", "dist"]
 }

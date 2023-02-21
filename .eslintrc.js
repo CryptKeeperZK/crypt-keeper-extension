@@ -11,7 +11,7 @@ module.exports = {
     node: true,
     jest: true,
   },
-  ignorePatterns: [".eslintrc.js", "webpack.*.js"],
+  ignorePatterns: [".eslintrc.js", "webpack.*.js", "demo/index.tsx"],
   rules: {
     //"semi": [2, "always"],
     "no-console": "warn",
