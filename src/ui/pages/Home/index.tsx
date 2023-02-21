@@ -139,14 +139,14 @@ const HomeList = function (): ReactElement {
         >
           Identities
         </div>
-        <div
+        {/* <div
           className={classNames("home__list__header__tab", {
             "home__list__header__tab--selected": selectedTab === "activity",
           })}
           onClick={() => selectTab("activity")}
         >
           Activity
-        </div>
+        </div> */}
       </div>
       <div className="home__list__fix-header">
         <div
@@ -157,14 +157,14 @@ const HomeList = function (): ReactElement {
         >
           Identities
         </div>
-        <div
+        {/* <div
           className={classNames("home__list__header__tab", {
             "home__list__header__tab--selected": selectedTab === "activity",
           })}
           onClick={() => selectTab("activity")}
         >
           Activity
-        </div>
+        </div> */}
       </div>
       <div className="home__list__content">
         {selectedTab === "identities" ? <IdentityList /> : null}
