@@ -1,16 +1,16 @@
 .confirm-modal {
-    @media only screen and (min-width: 358px) {
-        min-height: 36rem;
-    }
+  @media only screen and (min-width: 358px) {
+    min-height: 36rem;
+  }
 }
 
 .semaphore-proof__file {
-    font-size: 0.75rem;
-    margin: 0.5rem;
+  font-size: 0.75rem;
+  margin: 0.5rem;
 
-    .icon {
-        font-size: 1rem !important;
-        cursor: pointer;
-        margin-top: 0.25rem;
-    }
+  .icon {
+    font-size: 1rem !important;
+    cursor: pointer;
+    margin-top: 0.25rem;
+  }
 }

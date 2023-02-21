@@ -1,12 +1,12 @@
-@import '../../../util/variables';
+@import "../../../util/variables";
 
 .login {
-    color: $primary-green;
+  color: $primary-green;
 
-    &__content {
-        .icon {
-            width: 8rem !important;
-            height: 8rem !important;
-        }
+  &__content {
+    .icon {
+      width: 8rem !important;
+      height: 8rem !important;
     }
+  }
 }

@@ -3,7 +3,6 @@ import pushMessage from "@src/util/pushMessage";
 import { setStatus } from "@src/ui/ducks/app";
 import { browser } from "webextension-polyfill-ts";
 import SimpleStorage from "./simple-storage";
-import browserUtils from "../controllers/browser-utils";
 import log from "loglevel";
 
 const passwordKey = "@password@";

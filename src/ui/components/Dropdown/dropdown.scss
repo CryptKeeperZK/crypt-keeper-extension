@@ -1,4 +1,4 @@
-@import '../../../util/variables';
+@import "../../../util/variables";
 
 .dropdown {
   @extend %regular-font;
@@ -7,7 +7,7 @@
   //border: none;
   width: 100%;
   color: $white;
-  font-family: 'Open Sans', -apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif;
+  font-family: "Open Sans", -apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif;
   overflow-y: auto;
   //padding: 1rem 0rem 1rem 0rem;
   border-radius: 6px;
@@ -49,7 +49,6 @@
   }
 
   &__select {
-
     display: flex;
     align-items: center;
     justify-content: flex-start;

@@ -17,8 +17,7 @@ export default function ConfirmRequestModal(): ReactElement {
   const pendingRequests = useRequestsPending();
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-  const [activeIndex, setActiveIndex] = useState(0);
-  const pendingRequest = pendingRequests[activeIndex];
+  const [pendingRequest] = pendingRequests;
 
   const reject = useCallback(
     async (err?: any) => {
