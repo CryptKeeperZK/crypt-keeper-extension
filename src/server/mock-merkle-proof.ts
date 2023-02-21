@@ -1,7 +1,7 @@
-// eslint-disable-next-line import/no-extraneous-dependencies
 import "./globals";
 
 import express from "express";
+import path from "path";
 import cors from "cors";
 import { Identity } from "@semaphore-protocol/identity";
 import { Member } from "@semaphore-protocol/group";
@@ -9,7 +9,7 @@ import { bigintToHex, hexToBigint } from "bigint-conversion";
 import { MerkleProof } from "@zk-kit/incremental-merkle-tree";
 import log from "loglevel";
 
-import { generateMerkleProof } from "../src/background/services/protocols/utils";
+import { generateMerkleProof } from "../background/services/protocols/utils";
 
 const DEPTH_RLN = 15;
 const DEPTH_SEMAPHORE = 20;
@@ -43,9 +43,10 @@ for (let i = 0; i < 2; i++) {
 const app = express();
 app.use(express.json());
 app.use(cors());
+app.use("/zkeyFiles", express.static(path.join(__dirname, "../../zkeyFiles")));
 
 app.post("/merkleProof/:type", (req, res) => {
-  let type = req.params.type;
+  const { type } = req.params;
   let { identityCommitment } = req.body;
   identityCommitment = hexToBigint(identityCommitment);
 
