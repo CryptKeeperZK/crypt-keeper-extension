@@ -1,7 +1,7 @@
 import React, { ChangeEventHandler, ReactElement } from "react";
 import c from "classnames";
-import Icon from "@src/ui/components/Icon";
 import "./index.scss";
+import Icon from "@src/ui/components/Icon";
 
 type Props = {
   checked: boolean;

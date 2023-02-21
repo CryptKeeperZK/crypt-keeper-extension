@@ -1,6 +1,6 @@
 import React, { InputHTMLAttributes, ReactElement } from "react";
-import classNames from "classnames";
 import "./dropdown.scss";
+import classNames from "classnames";
 
 type Props = {
   label?: string;
@@ -9,9 +9,9 @@ type Props = {
 } & InputHTMLAttributes<HTMLSelectElement>;
 
 export default function Dropdown(props: Props): ReactElement {
-  const { label, errorMessage, ...selectProps } = props;
+  const { label, errorMessage, className, ...selectProps } = props;
   return (
-    <div className={classNames("dropdown")}>
+    <div className={classNames("dropdown", className)}>
       {label && <div className="dropdown__label">{label}</div>}
       <div className="dropdown__group">
         <select className="dropdown__select" {...selectProps}>
