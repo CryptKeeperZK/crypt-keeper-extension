@@ -8,19 +8,21 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import log from "loglevel";
 
+const SERVER_URL = "http://localhost:8090";
+
 const semaphorePath = {
-  circuitFilePath: "http://localhost:8095/semaphore/semaphore.wasm",
-  zkeyFilePath: "http://localhost:8095/semaphore/semaphore.zkey",
-  verificationKey: "http://localhost:8095/semaphore/verification_key.json",
+  circuitFilePath: `${SERVER_URL}/zkeyFiles/semaphore/semaphore.wasm`,
+  zkeyFilePath: `${SERVER_URL}/zkeyFiles/semaphore/semaphore.zkey`,
+  verificationKey: `${SERVER_URL}/zkeyFiles/semaphore/verification_key.json`,
 };
 
 const rlnPath = {
-  circuitFilePath: "http://localhost:8095/rln/rln.wasm",
-  zkeyFilePath: "http://localhost:8095/rln/rln.zkey",
-  verificationKey: "http://localhost:8095/rln/verification_key.json",
+  circuitFilePath: `${SERVER_URL}/zkeyFiles/rln/rln.wasm`,
+  zkeyFilePath: `${SERVER_URL}/zkeyFiles/rln/rln.zkey`,
+  verificationKey: `${SERVER_URL}/zkeyFiles/rln/verification_key.json`,
 };
 
-const merkleStorageAddress = "http://localhost:8090/merkleProof";
+const merkleStorageAddress = `${SERVER_URL}/merkleProof`;
 
 enum MerkleProofType {
   STORAGE_ADDRESS,
