@@ -5,7 +5,7 @@ import log from "loglevel";
 
 import { MerkleProofArtifacts } from "@src/types";
 import RPCAction from "@src/util/constants";
-import { ISemaphoreGenerateArgs, SemaphoreProofGenerator } from "./proof";
+import { IRlnGenerateArgs, ISemaphoreGenerateArgs, RlnProofGenerator, SemaphoreProofGenerator } from "./proof";
 
 export type IRequest = {
   method: string;
@@ -126,8 +126,9 @@ async function rlnProof(
     typeof merkleProofArtifactsOrStorageAddress === "string" ? undefined : merkleProofArtifactsOrStorageAddress;
   const merkleStorageAddress =
     typeof merkleProofArtifactsOrStorageAddress === "string" ? merkleProofArtifactsOrStorageAddress : undefined;
-  return post({
-    method: RPCAction.RLN_PROOF,
+
+  const request = await post({
+    method: RPCAction.PREPARE_RLN_PROOF_REQUEST,
     payload: {
       externalNullifier,
       signal,
@@ -138,6 +139,8 @@ async function rlnProof(
       rlnIdentifier,
     },
   });
+
+  return RlnProofGenerator.getInstance().generate(request as IRlnGenerateArgs);
 }
 
 // dev-only
@@ -283,6 +286,7 @@ window.addEventListener("message", event => {
       emit("identityChanged", res);
       return;
     }
+
     if (data.nonce === "logout") {
       const [, res] = data.payload;
       emit("logout", res);

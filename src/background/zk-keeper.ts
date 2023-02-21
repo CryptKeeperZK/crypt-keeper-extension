@@ -1,14 +1,11 @@
 import RPCAction from "@src/util/constants";
 import { PendingRequestType, NewIdentityRequest, IdentityName } from "@src/types";
 import { bigintToHex } from "bigint-conversion";
-//import { RLNFullProof } from 'rlnjs'
 import Handler from "./controllers/handler";
 import LockService from "./services/lock";
 import IdentityService from "./services/identity";
 import ZkValidator from "./services/zk-validator";
 import RequestManager from "./controllers/request-manager";
-import SemaphoreService from "./services/protocols/semaphore";
-//import RLNService from './services/protocols/rln'
 import { RLNProofRequest, SemaphoreProofRequest } from "./services/protocols/interfaces";
 import ApprovalService from "./services/approval";
 import ZkIdentityWrapper from "./identity-decorater";
@@ -20,16 +17,13 @@ export default class ZkKeeperController extends Handler {
   private identityService: IdentityService;
   private zkValidator: ZkValidator;
   private requestManager: RequestManager;
-  private semaphoreService: SemaphoreService;
-  //private rlnService: RLNService
   private approvalService: ApprovalService;
+
   constructor() {
     super();
     this.identityService = new IdentityService();
     this.zkValidator = new ZkValidator();
     this.requestManager = new RequestManager();
-    this.semaphoreService = new SemaphoreService();
-    //this.rlnService = new RLNService()
     this.approvalService = new ApprovalService();
     log.debug("Inside ZkKepperController");
   }
@@ -121,13 +115,9 @@ export default class ZkKeeperController extends Handler {
       async (payload: IdentityName) => await this.identityService.deleteIdentity(payload),
     );
     this.add(RPCAction.GET_ACTIVE_IDENTITY, LockService.ensure, async () => {
-      const identity = await this.identityService.getActiveidentity();
-      if (!identity) {
-        return null;
-      }
-      const identityCommitment = identity.genIdentityCommitment();
-      const identityCommitmentHex = bigintToHex(identityCommitment);
-      return identityCommitmentHex;
+      const identity = await this.identityService.getActiveIdentity();
+
+      return identity ? bigintToHex(identity.genIdentityCommitment()) : null;
     });
 
     // protocols
@@ -143,15 +133,15 @@ export default class ZkKeeperController extends Handler {
           await LockService.awaitUnlock();
         }
 
-        const identity: ZkIdentityWrapper | undefined = await this.identityService.getActiveidentity();
-        const approved: boolean = await this.approvalService.isApproved(meta.origin);
-        const perm: any = await this.approvalService.getPermission(meta.origin);
+        const identity = await this.identityService.getActiveIdentity();
+        const approved = this.approvalService.isApproved(meta.origin);
+        const permission = await this.approvalService.getPermission(meta.origin);
 
         if (!identity) throw new Error("active identity not found");
         if (!approved) throw new Error(`${meta.origin} is not approved`);
 
         try {
-          if (!perm.noApproval) {
+          if (!permission.noApproval) {
             await this.requestManager.newRequest(PendingRequestType.SEMAPHORE_PROOF, {
               ...payload,
               origin: meta.origin,
@@ -162,22 +152,21 @@ export default class ZkKeeperController extends Handler {
         } catch (err) {
           throw err;
         } finally {
-          // TODO: maybe we need to keep popup open and show generation progress
           await BrowserUtils.closePopup();
         }
       },
     );
 
     this.add(
-      RPCAction.RLN_PROOF,
+      RPCAction.PREPARE_RLN_PROOF_REQUEST,
       LockService.ensure,
       this.zkValidator.validateZkInputs,
       async (payload: RLNProofRequest) => {
-        const identity: ZkIdentityWrapper | undefined = await this.identityService.getActiveidentity();
+        const identity = await this.identityService.getActiveIdentity();
+
         if (!identity) throw new Error("active identity not found");
 
-        //const proof: RLNFullProof = await this.rlnService.genProof(identity.zkIdentity, payload)
-        //return proof
+        return { identity: identity.serialize(), payload };
       },
     );
 
@@ -193,9 +182,9 @@ export default class ZkKeeperController extends Handler {
         await LockService.awaitUnlock();
       }
 
-      const includes: boolean = await this.approvalService.isApproved(origin);
+      const isApproved = this.approvalService.isApproved(origin);
 
-      if (includes) return true;
+      if (isApproved) return true;
 
       try {
         await this.requestManager.newRequest(PendingRequestType.INJECT, { origin });

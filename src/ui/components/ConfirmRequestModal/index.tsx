@@ -154,7 +154,7 @@ function ConnectionApprovalModal(props: {
   useEffect(() => {
     (async () => {
       if (origin) {
-        const data = await getLinkPreview(origin);
+        const data = await getLinkPreview(origin).catch(() => undefined);
         const [favicon] = data?.favicons || [];
         setFaviconUrl(favicon);
       }
@@ -384,7 +384,7 @@ function ProofModal(props: {
   useEffect(() => {
     (async () => {
       if (origin) {
-        const data = await getLinkPreview(origin);
+        const data = await getLinkPreview(origin).catch(() => undefined);
         const [favicon] = data?.favicons || [];
         setFaviconUrl(favicon);
       }
@@ -428,9 +428,11 @@ function ProofModal(props: {
             )}
           </div>
         </div>
-        <Input className="w-full mb-2" label="External Nullifier" value={externalNullifier} />
-        <Input className="w-full mb-2" label="Signal" value={signal} />
+
+        <Input readOnly className="w-full mb-2" label="External Nullifier" defaultValue={externalNullifier} />
+        <Input readOnly className="w-full mb-2" label="Signal" defaultValue={signal} />
       </FullModalContent>
+
       {props.error && <div className="text-xs text-red-500 text-center pb-1">{props.error}</div>}
       <FullModalFooter>
         <Button btnType={ButtonType.secondary} onClick={props.reject} loading={props.loading}>

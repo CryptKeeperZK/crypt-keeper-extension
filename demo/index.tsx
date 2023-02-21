@@ -8,18 +8,21 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import log from "loglevel";
 
+const SERVER_URL = "http://localhost:8090";
+
 const semaphorePath = {
-  circuitFilePath: "http://localhost:8095/semaphore/semaphore.wasm",
-  zkeyFilePath: "http://localhost:8095/semaphore/semaphore.zkey",
+  circuitFilePath: `${SERVER_URL}/zkeyFiles/semaphore/semaphore.wasm`,
+  zkeyFilePath: `${SERVER_URL}/zkeyFiles/semaphore/semaphore.zkey`,
+  verificationKey: `${SERVER_URL}/zkeyFiles/semaphore/verification_key.json`,
 };
 
 const rlnPath = {
-  circuitFilePath: "http://localhost:8095/rln/rln.wasm",
-  zkeyFilePath: "http://localhost:8095/rln/rln_final.zkey",
-  verificationKey: "http://localhost:8095/rln/verification_key.json",
+  circuitFilePath: `${SERVER_URL}/zkeyFiles/rln/rln.wasm`,
+  zkeyFilePath: `${SERVER_URL}/zkeyFiles/rln/rln.zkey`,
+  verificationKey: `${SERVER_URL}/zkeyFiles/rln/verification_key.json`,
 };
 
-const merkleStorageAddress = "http://localhost:8090/merkleProof";
+const merkleStorageAddress = `${SERVER_URL}/merkleProof`;
 
 enum MerkleProofType {
   STORAGE_ADDRESS,
@@ -155,33 +158,14 @@ function App() {
 
   const getIdentityCommitment = useCallback(async () => {
     const idCommitment = await client?.getActiveIdentity();
+
+    if (!idCommitment) {
+      return;
+    }
+
     toast(`Getting Identity Commitment successfully! ${idCommitment}`, { type: "success" });
     setIdentityCommitment(idCommitment);
   }, [client, setIdentityCommitment]);
-
-  useEffect(() => {
-    (async function IIFE() {
-      await initClient();
-
-      if (client) {
-        await getIdentityCommitment();
-
-        await client?.on("identityChanged", idCommitment => {
-          setIdentityCommitment(idCommitment);
-        });
-
-        await client?.on("logout", async () => {
-          setIdentityCommitment("");
-          setIsLocked(true);
-        });
-
-        await client?.on("login", async () => {
-          setIsLocked(false);
-          await getIdentityCommitment();
-        });
-      }
-    })();
-  }, [client, getIdentityCommitment, setIdentityCommitment, setIsLocked]);
 
   const initClient = useCallback(async () => {
     const { zkpr } = window as any;
@@ -195,6 +179,46 @@ function App() {
     setClient(client);
     setIsLocked(false);
   }, [setClient, setIsLocked]);
+
+  const onIdentityChanged = useCallback(
+    (idCommitment: string) => {
+      setIdentityCommitment(idCommitment);
+    },
+    [setIdentityCommitment],
+  );
+
+  const onLogin = useCallback(() => {
+    setIsLocked(false);
+    getIdentityCommitment();
+  }, [setIsLocked, getIdentityCommitment]);
+
+  const onLogout = useCallback(() => {
+    setIdentityCommitment("");
+    setIsLocked(true);
+  }, [setIdentityCommitment, setIsLocked]);
+
+  useEffect(() => {
+    if (!client) {
+      initClient();
+    }
+  }, [client, initClient]);
+
+  useEffect(() => {
+    if (!client) {
+      return undefined;
+    }
+    getIdentityCommitment();
+
+    client?.on("login", onLogin);
+    client?.on("identityChanged", onIdentityChanged);
+    client?.on("logout", onLogout);
+
+    return () => {
+      client?.off("login", onLogin);
+      client?.off("identityChanged", onIdentityChanged);
+      client?.off("logout", onLogout);
+    };
+  }, [Boolean(client), onLogout, onIdentityChanged, onLogin]);
 
   if (!client || isLocked) {
     return <NotConnected onClick={initClient} />;

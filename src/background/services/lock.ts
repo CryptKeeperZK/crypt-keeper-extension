@@ -17,6 +17,7 @@ class LockService extends SimpleStorage {
   constructor() {
     super(passwordKey);
     this.isUnlocked = false;
+    this.unlockCB = undefined;
     this.password = undefined;
     this.passwordChecker = "Password is correct";
   }
@@ -28,7 +29,6 @@ class LockService extends SimpleStorage {
     const ciphertext: string = CryptoJS.AES.encrypt(this.passwordChecker, password).toString();
     await this.set(ciphertext);
     await this.unlock(password);
-    await pushMessage(setStatus(await this.getStatus()));
   };
 
   getStatus = async () => {
@@ -85,12 +85,16 @@ class LockService extends SimpleStorage {
     for (const tab of tabs) {
       await browser.tabs.sendMessage(tab.id as number, setStatus(status));
     }
+
+    this.onUnlocked();
+
     return true;
   };
 
   internalLogout = async () => {
     this.isUnlocked = false;
     this.password = undefined;
+    this.unlockCB = undefined;
     const status = await this.getStatus();
     await pushMessage(setStatus(status));
     return status;
@@ -101,15 +105,11 @@ class LockService extends SimpleStorage {
     log.debug("logout 1");
     const tabs = await browser.tabs.query({ active: true });
     log.debug("logout 2", tabs);
-    browserUtils.activatedTabs(async () => {
-      for (const tab of tabs) {
-        try {
-          await browserUtils.sendMessageTabs(tab.id as number, setStatus(status));
-        } catch (error) {
-          log.debug("Lock error: ", error);
-        }
-      }
-    });
+
+    for (const tab of tabs) {
+      await browser.tabs.sendMessage(tab.id as number, setStatus(status));
+    }
+
     return true;
   };
 
