@@ -128,9 +128,8 @@ export default class ZkKeeperController extends Handler {
       async (payload: SemaphoreProofRequest, meta: any) => {
         const { unlocked } = await LockService.getStatus();
 
-        await BrowserUtils.openPopup();
-
         if (!unlocked) {
+          await BrowserUtils.openPopup();
           await LockService.awaitUnlock();
         }
 
