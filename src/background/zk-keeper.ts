@@ -161,12 +161,28 @@ export default class ZkKeeperController extends Handler {
       RPCAction.PREPARE_RLN_PROOF_REQUEST,
       LockService.ensure,
       this.zkValidator.validateZkInputs,
-      async (payload: RLNProofRequest) => {
+      async (payload: RLNProofRequest, meta: any) => {
         const identity = await this.identityService.getActiveIdentity();
+        const approved = this.approvalService.isApproved(meta.origin);
+        const permission = await this.approvalService.getPermission(meta.origin);
 
         if (!identity) throw new Error("active identity not found");
+        if (!approved) throw new Error(`${meta.origin} is not approved`);
 
-        return { identity: identity.serialize(), payload };
+        try {
+          if (!permission.noApproval) {
+            await this.requestManager.newRequest(PendingRequestType.RLN_PROOF, {
+              ...payload,
+              origin: meta.origin,
+            });
+          }
+
+          return { identity: identity.serialize(), payload };
+        } catch (err) {
+          throw err;
+        } finally {
+          await BrowserUtils.closePopup();
+        }
       },
     );
 

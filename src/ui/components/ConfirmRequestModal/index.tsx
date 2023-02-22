@@ -80,6 +80,7 @@ export default function ConfirmRequestModal(): ReactElement {
         />
       );
     case PendingRequestType.SEMAPHORE_PROOF:
+    case PendingRequestType.RLN_PROOF:
       return (
         <ProofModal
           len={pendingRequests.length}
@@ -367,16 +368,24 @@ function DefaultApprovalModal(props: {
   );
 }
 
-function ProofModal(props: {
+interface ProofModalProps {
   len: number;
   reject: () => void;
   accept: () => void;
   loading: boolean;
   error: string;
-  pendingRequest: PendingRequest;
-}) {
+  pendingRequest?: PendingRequest;
+}
+
+const PROOF_MODAL_TITLES = {
+  [PendingRequestType.SEMAPHORE_PROOF]: "Generate Semaphore Proof",
+  [PendingRequestType.RLN_PROOF]: "Generate RLN Proof",
+};
+
+function ProofModal({ pendingRequest, len, reject, accept, loading, error }: ProofModalProps) {
   const { circuitFilePath, externalNullifier, merkleProof, signal, zkeyFilePath, origin } =
-    props.pendingRequest?.payload || {};
+    pendingRequest?.payload || {};
+  const operation = PROOF_MODAL_TITLES[pendingRequest?.type ?? ""] || "Generate proof";
 
   const [faviconUrl, setFaviconUrl] = useState("");
 
@@ -393,8 +402,8 @@ function ProofModal(props: {
   return (
     <FullModal className="confirm-modal" onClose={() => null}>
       <FullModalHeader>
-        Generate Semaphore Proof
-        {props.len > 1 && <div className="flex-grow flex flex-row justify-end">{`1 of ${props.len}`}</div>}
+        {operation}
+        {len > 1 && <div className="flex-grow flex flex-row justify-end">{`1 of ${len}`}</div>}
       </FullModalHeader>
       <FullModalContent className="flex flex-col items-center">
         <div className="w-16 h-16 rounded-full my-6 border border-gray-800 p-2 flex-shrink-0">
@@ -432,12 +441,12 @@ function ProofModal(props: {
         <Input readOnly className="w-full mb-2" label="Signal" defaultValue={signal} />
       </FullModalContent>
 
-      {props.error && <div className="text-xs text-red-500 text-center pb-1">{props.error}</div>}
+      {error && <div className="text-xs text-red-500 text-center pb-1">{error}</div>}
       <FullModalFooter>
-        <Button btnType={ButtonType.secondary} onClick={props.reject} loading={props.loading}>
+        <Button btnType={ButtonType.secondary} onClick={reject} loading={loading}>
           Reject
         </Button>
-        <Button className="ml-2" onClick={props.accept} loading={props.loading}>
+        <Button className="ml-2" onClick={accept} loading={loading}>
           Approve
         </Button>
       </FullModalFooter>
