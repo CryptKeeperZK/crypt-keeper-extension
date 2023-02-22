@@ -32,7 +32,7 @@ async function getIdentityCommitments() {
 async function getActiveIdentity() {
   return post({
     method: RPCAction.GET_ACTIVE_IDENTITY,
-  });
+  }) as Promise<string>;
 }
 
 async function getHostPermissions(host: string) {
@@ -215,13 +215,15 @@ const client = {
   createDummyRequest,
 };
 
+export type Client = typeof client;
+
 /**
  * Connect to Extension
  * @returns injected client
  */
 // eslint-disable-next-line consistent-return
-async function connect() {
-  let result;
+async function connect(): Promise<Client | null> {
+  let result: Client | null = null;
   try {
     const approved = await tryInject(window.location.origin);
 
@@ -243,7 +245,7 @@ async function connect() {
 declare global {
   interface Window {
     zkpr: {
-      connect: () => any;
+      connect: () => Promise<Client | null>;
     };
   }
 }

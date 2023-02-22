@@ -1,18 +1,18 @@
 {
-    "name": "crypt-keeper-demo",
-    "version": "0.1.0",
-    "scripts": {
-        "start": "parcel serve --open --no-cache index.html"
-    },
-    "dependencies": {
-        "react": "^17.0.2",
-        "react-dom": "^17.0.2",
-        "react-toastify": "^8.1.0",
-        "rlnjs": "github:Rate-Limiting-Nullifier/rlnjs"
-    },
-    "devDependencies": {
-        "@types/react": "^17.0.18",
-        "@types/react-dom": "^17.0.9",
-        "parcel": "^2.0.0-rc.0"
-    }
+  "name": "crypt-keeper-demo",
+  "version": "0.1.0",
+  "scripts": {
+    "start": "parcel serve --open --no-cache index.html"
+  },
+  "dependencies": {
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2",
+    "react-toastify": "^8.1.0",
+    "rlnjs": "github:Rate-Limiting-Nullifier/rlnjs"
+  },
+  "devDependencies": {
+    "@types/react": "^17.0.18",
+    "@types/react-dom": "^17.0.9",
+    "parcel": "^2.0.0-rc.0"
+  }
 }

@@ -11,14 +11,11 @@ module.exports = {
     node: true,
     jest: true,
   },
-  ignorePatterns: [".eslintrc.js"],
+  ignorePatterns: [".eslintrc.js", "webpack.*.js", "demo/index.tsx"],
   rules: {
     //"semi": [2, "always"],
     "no-console": "warn",
-    "quotes": [
-        "error",
-        "double"
-    ],
+    quotes: ["error", "double"],
     "@typescript-eslint/interface-name-prefix": "off",
     "@typescript-eslint/explicit-function-return-type": "off",
     "@typescript-eslint/explicit-module-boundary-types": "off",

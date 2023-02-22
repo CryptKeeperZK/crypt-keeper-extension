@@ -2,8 +2,6 @@
 
 ### Last updated January 17, 2023
 
-
-
 This privacy notice for CryptKeeper ("Company," "we," "us," or "our"), describes how and why we might collect, store, use, and/or share ("process") your information when you use our services ("Services"), such as when you:
 
 - Download and use our mobile application (CryptKeeper), or any other application of ours that links to this privacy notice.
@@ -11,7 +9,6 @@ This privacy notice for CryptKeeper ("Company," "we," "us," or "our"), describes
 - Engage with us in other related ways, including any sales, marketing, or events
 
 Questions or concerns? Reading this privacy notice will help you understand your privacy rights and choices. If you do not agree with our policies and practices, please do not use our Services. If you still have any questions or concerns, please contact us at `isk.extensions@gmail.com`.
-
 
 # SUMMARY OF KEY POINTS
 
@@ -35,7 +32,6 @@ How do you exercise your rights? The easiest way to exercise your rights is by f
 
 Want to learn more about what CryptKeeper does with any information we collect? Click here to review the notice in full.
 
-
 # TABLE OF CONTENTS
 
 1. WHAT INFORMATION DO WE COLLECT?
@@ -53,7 +49,6 @@ Want to learn more about what CryptKeeper does with any information we collect? 
 13. DO WE MAKE UPDATES TO THIS NOTICE?
 14. HOW CAN YOU CONTACT US ABOUT THIS NOTICE?
 15. HOW CAN YOU REVIEW, UPDATE, OR DELETE THE DATA WE COLLECT FROM YOU?
-
 
 # 1. WHAT INFORMATION DO WE COLLECT?
 
@@ -88,7 +83,6 @@ We process your personal information for a variety of reasons, depending on how 
 
 - To save or protect an individual's vital interest. We may process your information when necessary to save or protect an individual’s vital interest, such as to prevent harm.
 
-
 # 3. WHAT LEGAL BASES DO WE RELY ON TO PROCESS YOUR INFORMATION?
 
 In Short: We only process your personal information when we believe it is necessary and we have a valid legal reason (i.e., legal basis) to do so under applicable law, like with your consent, to comply with laws, to provide you with services to enter into or fulfill our contractual obligations, to protect your rights, or to fulfill our legitimate business interests.
@@ -102,7 +96,6 @@ The General Data Protection Regulation (GDPR) and UK GDPR require us to explain 
 - Legal Obligations. We may process your information where we believe it is necessary for compliance with our legal obligations, such as to cooperate with a law enforcement body or regulatory agency, exercise or defend our legal rights, or disclose your information as evidence in litigation in which we are involved.
 
 - Vital Interests. We may process your information where we believe it is necessary to protect your vital interests or the vital interests of a third party, such as situations involving potential threats to the safety of any person.
-
 
 <ins>If you are located in Canada, this section applies to you.</ins>
 
@@ -132,7 +125,6 @@ In some exceptional cases, we may be legally permitted under applicable law to p
 
 - If the information is publicly available and is specified by the regulations
 
-
 # 4. WHEN AND WITH WHOM DO WE SHARE YOUR PERSONAL INFORMATION?
 
 In Short: We may share information in specific situations described in this section and/or with the following third parties.
@@ -140,7 +132,6 @@ In Short: We may share information in specific situations described in this sect
 We may need to share your personal information in the following situations:
 
 - Business Transfers. We may share or transfer your information in connection with, or during negotiations of, any merger, sale of company assets, financing, or acquisition of all or a portion of our business to another company.
-
 
 # 5. DO WE USE COOKIES AND OTHER TRACKING TECHNOLOGIES?
 
@@ -183,7 +174,7 @@ In Short: In some regions, such as the European Economic Area (EEA), United King
 In some regions (like the EEA, UK, and Canada), you have certain rights under applicable data protection laws. These may include the right (i) to request access and obtain a copy of your personal information, (ii) to request rectification or erasure; (iii) to restrict the processing of your personal information; and (iv) if applicable, to data portability. In certain circumstances, you may also have the right to object to the processing of your personal information. You can make such a request by contacting us by using the contact details provided in the section "HOW CAN YOU CONTACT US ABOUT THIS NOTICE?" below.
 
 We will consider and act upon any request in accordance with applicable data protection laws.
- 
+
 If you are located in the EEA or UK and you believe we are unlawfully processing your personal information, you also have the right to complain to your local data protection supervisory authority. You can find their contact details here: https://ec.europa.eu/justice/data-protection/bodies/authorities/index_en.htm.
 
 If you are located in Switzerland, the contact details for the data protection authorities are available here: https://www.edoeb.admin.ch/edoeb/en/home.html.
@@ -224,22 +215,20 @@ What categories of personal information do we collect?
 
 We have collected the following categories of personal information in the past twelve (12) months:
 
-| Category | Examples  | Collected  |
-| ------- | --- | --- |
-| A. Identifiers | Contact details, such as real name, alias, postal address, telephone or mobile contact number, unique personal identifier, online identifier, Internet Protocol address, email address, and account name | NO |
-| B. Personal information categories listed in the California Customer Records statute | Name, contact information, education, employment, employment history, and financial information | NO |
-| C. Protected classification characteristics under California or federal law | Gender and date of birth | NO |
-| D. Commercial information | Transaction information, purchase history, financial details, and payment information | NO |
-| E. Biometric information | Fingerprints and voiceprints | NO |
-| F. Internet or other similar network activity | Browsing history, search history, online behavior, interest data, and interactions with our and other websites, applications, systems, and advertisements | NO |
-| G. Geolocation data | Device location | NO |
-| H. Audio, electronic, visual, thermal, olfactory, or similar information | Images and audio, video or call recordings created in connection with our business activities | NO |
-| I. Professional or employment-related information | Business contact details in order to provide you our Services at a business level or job title, work history, and professional qualifications if you apply for a job with us | NO |
-| J. Education Information | Student records and directory information | NO |
-| K. Inferences drawn from other personal information | Inferences drawn from any of the collected personal information listed above to create a profile or summary about, for example, an individual’s preferences and characteristics | NO |
-| L. Sensitive Personal Information | Account login information | YES |
-
-
+| Category                                                                             | Examples                                                                                                                                                                                                 | Collected |
+| ------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------- |
+| A. Identifiers                                                                       | Contact details, such as real name, alias, postal address, telephone or mobile contact number, unique personal identifier, online identifier, Internet Protocol address, email address, and account name | NO        |
+| B. Personal information categories listed in the California Customer Records statute | Name, contact information, education, employment, employment history, and financial information                                                                                                          | NO        |
+| C. Protected classification characteristics under California or federal law          | Gender and date of birth                                                                                                                                                                                 | NO        |
+| D. Commercial information                                                            | Transaction information, purchase history, financial details, and payment information                                                                                                                    | NO        |
+| E. Biometric information                                                             | Fingerprints and voiceprints                                                                                                                                                                             | NO        |
+| F. Internet or other similar network activity                                        | Browsing history, search history, online behavior, interest data, and interactions with our and other websites, applications, systems, and advertisements                                                | NO        |
+| G. Geolocation data                                                                  | Device location                                                                                                                                                                                          | NO        |
+| H. Audio, electronic, visual, thermal, olfactory, or similar information             | Images and audio, video or call recordings created in connection with our business activities                                                                                                            | NO        |
+| I. Professional or employment-related information                                    | Business contact details in order to provide you our Services at a business level or job title, work history, and professional qualifications if you apply for a job with us                             | NO        |
+| J. Education Information                                                             | Student records and directory information                                                                                                                                                                | NO        |
+| K. Inferences drawn from other personal information                                  | Inferences drawn from any of the collected personal information listed above to create a profile or summary about, for example, an individual’s preferences and characteristics                          | NO        |
+| L. Sensitive Personal Information                                                    | Account login information                                                                                                                                                                                | YES       |
 
 We will use and retain the collected personal information as needed to provide the Services or for:
 
@@ -359,10 +348,11 @@ We may update this privacy notice from time to time. The updated version will be
 
 If you have questions or comments about this notice, you may email us at `isk.extensions@gmail.com` or by post to:
 
-
 CryptKeeper
-__________
-----------
+
+---
+
+---
 
 # 15. HOW CAN YOU REVIEW, UPDATE, OR DELETE THE DATA WE COLLECT FROM YOU?
 

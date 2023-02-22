@@ -6,6 +6,7 @@ Currently it supports operations for Semaphore and RLN gadgets.
 This plugin is still in development phase.
 
 The following features are supported currently:
+
 - Identity secret and Identity commitment generation
 - Semaphore ZK-Proof generation
 - RLN ZK-Proof generation
@@ -13,6 +14,7 @@ The following features are supported currently:
 The plugin uses the [zk-kit library](https://github.com/appliedzkp/zk-kit).
 
 Proof generation is enabled in two ways:
+
 - by providing merkle witness directly
 - by providing a secure service address from which the merkle witness should be obtained
 
