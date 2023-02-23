@@ -88,7 +88,6 @@
     "@semaphore-protocol/identity": "^3.0.0",
     "@semaphore-protocol/proof": "^3.0.0",
     "@zk-kit/incremental-merkle-tree": "^1.0.0",
-    "@zk-kit/protocols": "^1.11.1",
     "bigint-conversion": "^2.3.0",
     "classnames": "^2.3.2",
     "copy-to-clipboard": "^3.3.2",
