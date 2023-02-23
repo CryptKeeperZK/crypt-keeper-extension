@@ -6,7 +6,6 @@
   "scripts": {
     "build": "NODE_ENV=production webpack --config webpack.prod.js",
     "dev": "NODE_ENV=development webpack --config webpack.dev.js",
-    "dev:debug": "NODE_ENV=development webpack --config webpack.dev.js",
     "merkle": "ts-node src/server/mock-merkle-proof.ts",
     "test": "jest",
     "test:coverage": "jest --coverage",
