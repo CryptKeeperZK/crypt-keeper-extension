@@ -82,16 +82,15 @@ module.exports = {
     extensions: [".ts", ".tsx", ".js", ".png", ".svg"],
     alias: {
       "@src": path.resolve(__dirname, "src/"),
+      // snarkjs uses ejs which has unsafe-eval function constructor
+      ejs: path.resolve(__dirname, "src/config/ejsMock.js"),
       buffer: "buffer",
     },
     fallback: {
-      browserify: require.resolve("browserify"),
       stream: require.resolve("stream-browserify"),
-      path: require.resolve("path-browserify"),
       crypto: require.resolve("crypto-browserify"),
-      os: require.resolve("os-browserify/browser"),
-      http: require.resolve("stream-http"),
-      https: require.resolve("https-browserify"),
+      path: false,
+      os: false,
       fs: false,
       assert: false,
       zlib: false,
