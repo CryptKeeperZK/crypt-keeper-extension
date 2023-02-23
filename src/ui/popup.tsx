@@ -1,15 +1,15 @@
 import * as React from "react";
 import ReactDOM from "react-dom/client";
 import { browser } from "webextension-polyfill-ts";
-import Popup from "@src/ui/pages/Popup";
-import { Provider } from "react-redux";
-import { store } from "@src/ui/store/configureAppStore";
 import { HashRouter } from "react-router-dom";
+import { Provider } from "react-redux";
 import log from "loglevel";
 
-globalThis.CRYPTKEEPER_DEBUG = process.env.CRYPTKEEPER_DEBUG === "true";
+import Popup from "@src/ui/pages/Popup";
+import { store } from "@src/ui/store/configureAppStore";
+import { isDebugMode } from "@src/config/env";
 
-log.setDefaultLevel(globalThis.CRYPTKEEPER_DEBUG ? "debug" : "info");
+log.setDefaultLevel(isDebugMode() ? "debug" : "info");
 
 browser.runtime.onMessage.addListener(action => {
   if (action?.type) {

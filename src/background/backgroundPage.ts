@@ -6,10 +6,9 @@ import { Request } from "@src/types";
 import ZkKeeperController from "./zk-keeper";
 import log from "loglevel";
 import { deferredPromise } from "@src/background/shared/utils";
+import { isDebugMode } from "@src/config/env";
 
-globalThis.CRYPTKEEPER_DEBUG = process.env.CRYPTKEEPER_DEBUG === "true";
-
-log.setDefaultLevel(globalThis.CRYPTKEEPER_DEBUG ? "debug" : "info");
+log.setDefaultLevel(isDebugMode() ? "debug" : "info");
 
 const {
   promise: isInitialized,

@@ -86,7 +86,7 @@ module.exports = {
     alias: {
       "@src": path.resolve(__dirname, "src/"),
       // snarkjs uses ejs which has unsafe-eval function constructor
-      ejs: path.resolve(__dirname, "src/config/ejsMock.js"),
+      ejs: path.resolve(__dirname, "src/config/mock/ejsMock.js"),
       buffer: "buffer",
     },
     fallback: {
