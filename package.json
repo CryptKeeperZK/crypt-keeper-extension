@@ -6,6 +6,7 @@
   "scripts": {
     "build": "NODE_ENV=production webpack --config webpack.prod.js",
     "dev": "NODE_ENV=development webpack --config webpack.dev.js",
+    "dev:debug": "NODE_ENV=development webpack --config webpack.dev.js",
     "merkle": "ts-node src/server/mock-merkle-proof.ts",
     "test": "jest",
     "test:coverage": "jest --coverage",
@@ -58,6 +59,7 @@
     "cors": "^2.8.5",
     "css-loader": "^6.7.2",
     "cz-conventional-changelog": "^3.3.0",
+    "dotenv": "^16.0.3",
     "eslint": "^8.27.0",
     "eslint-plugin-prettier": "^4.2.1",
     "eslint-plugin-react": "^7.32.2",

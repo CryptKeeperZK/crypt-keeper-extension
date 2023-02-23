@@ -7,7 +7,7 @@ import ZkKeeperController from "./zk-keeper";
 import log from "loglevel";
 import { deferredPromise } from "@src/background/shared/utils";
 
-globalThis.CRYPTKEEPER_DEBUG = false;
+globalThis.CRYPTKEEPER_DEBUG = process.env.CRYPTKEEPER_DEBUG === "true";
 
 log.setDefaultLevel(globalThis.CRYPTKEEPER_DEBUG ? "debug" : "info");
 

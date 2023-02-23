@@ -2,8 +2,11 @@ const webpack = require("webpack");
 const path = require("path");
 const CopyPlugin = require("copy-webpack-plugin");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
+const dotenv = require("dotenv");
 
-const envPlugin = new webpack.EnvironmentPlugin(["NODE_ENV"]);
+dotenv.config({ path: "./.env" });
+
+const envPlugin = new webpack.EnvironmentPlugin(["NODE_ENV", "CRYPTKEEPER_DEBUG"]);
 
 module.exports = {
   entry: {
