@@ -7,7 +7,9 @@ import { store } from "@src/ui/store/configureAppStore";
 import { HashRouter } from "react-router-dom";
 import log from "loglevel";
 
-log.setDefaultLevel(globalThis.CRYPTKEEPER_UI_DEBUG ? "debug" : "info");
+globalThis.CRYPTKEEPER_DEBUG = process.env.CRYPTKEEPER_DEBUG === "true";
+
+log.setDefaultLevel(globalThis.CRYPTKEEPER_DEBUG ? "debug" : "info");
 
 browser.runtime.onMessage.addListener(action => {
   if (action?.type) {

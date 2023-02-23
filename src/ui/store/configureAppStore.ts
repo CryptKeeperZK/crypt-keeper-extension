@@ -18,7 +18,7 @@ export type AppRootState = ReturnType<typeof rootReducer>;
 function configureAppStore() {
   return createStore(
     rootReducer,
-    globalThis.CRYPTKEEPER_UI_DEBUG
+    globalThis.CRYPTKEEPER_DEBUG
       ? applyMiddleware(
           thunk,
           createLogger({
