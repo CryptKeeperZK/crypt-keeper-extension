@@ -12,6 +12,7 @@ import ZkIdentityWrapper from "./identity-decorater";
 import identityFactory from "./identity-factory";
 import BrowserUtils from "./controllers/browser-utils";
 import log from "loglevel";
+import { browser } from "webextension-polyfill-ts";
 
 export default class ZkKeeperController extends Handler {
   private identityService: IdentityService;
@@ -125,8 +126,14 @@ export default class ZkKeeperController extends Handler {
       RPCAction.PREPARE_SEMAPHORE_PROOF_REQUEST,
       LockService.ensure,
       this.zkValidator.validateZkInputs,
-      async (payload: SemaphoreProofRequest, meta: any) => {
+      async (payload, meta: any) => {
         const { unlocked } = await LockService.getStatus();
+
+        const semaphorePath = {
+          circuitFilePath: browser.runtime.getURL("js/zkeyFiles/semaphore/semaphore.wasm"),
+          zkeyFilePath: browser.runtime.getURL("js/zkeyFiles/semaphore/semaphore.zkey"),
+          verificationKey: browser.runtime.getURL("js/zkeyFiles/semaphore/erification_key.json"),
+        };
 
         if (!unlocked) {
           await BrowserUtils.openPopup();
@@ -148,6 +155,12 @@ export default class ZkKeeperController extends Handler {
             });
           }
 
+          payload = {
+            ...payload,
+            circuitFilePath: semaphorePath.circuitFilePath,
+            zkeyFilePath: semaphorePath.zkeyFilePath
+          }
+
           return { identity: identity.serialize(), payload };
         } catch (err) {
           throw err;
@@ -166,6 +179,12 @@ export default class ZkKeeperController extends Handler {
         const approved = this.approvalService.isApproved(meta.origin);
         const permission = await this.approvalService.getPermission(meta.origin);
 
+        const rlnPath = {
+          circuitFilePath: browser.runtime.getURL("js/zkeyFiles//rln/rln.wasm"),
+          zkeyFilePath: browser.runtime.getURL("js/zkeyFiles/rln/rln.zkey"),
+          verificationKey: browser.runtime.getURL("js/zkeyFiles/rln/verification_key.json"),
+        };
+
         if (!identity) throw new Error("active identity not found");
         if (!approved) throw new Error(`${meta.origin} is not approved`);
 
@@ -175,6 +194,12 @@ export default class ZkKeeperController extends Handler {
               ...payload,
               origin: meta.origin,
             });
+          }
+
+          payload = {
+            ...payload,
+            circuitFilePath: rlnPath.circuitFilePath,
+            zkeyFilePath: rlnPath.zkeyFilePath
           }
 
           return { identity: identity.serialize(), payload };

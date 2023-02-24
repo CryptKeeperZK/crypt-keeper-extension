@@ -3,10 +3,7 @@ import { ZkInputs } from "@src/types";
 export default class ZkValidator {
   // eslint-disable-next-line class-methods-use-this
   validateZkInputs(payload: Required<ZkInputs>) {
-    const { circuitFilePath, zkeyFilePath, merkleProofArtifacts, merkleProof } = payload;
-
-    if (!circuitFilePath) throw new Error("circuitFilePath not provided");
-    if (!zkeyFilePath) throw new Error("zkeyFilePath not provided");
+    const { merkleProofArtifacts, merkleProof } = payload;
 
     if (merkleProof) {
       if (!merkleProof.root) throw new Error("invalid merkleProof.root value");
