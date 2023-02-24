@@ -84,6 +84,8 @@
   },
   "dependencies": {
     "@dimensiondev/metamask-extension-provider": "https://github.com/DimensionDev/extension-provider/tarball/master",
+    "@ethersproject/providers": "^5.7.2",
+    "@ethersproject/units": "^5.7.0",
     "@interep/identity": "^0.3.0",
     "@semaphore-protocol/group": "^3.0.0",
     "@semaphore-protocol/identity": "^3.0.0",
@@ -93,6 +95,7 @@
     "@web3-react/types": "^8.0.21-beta.0",
     "@zk-kit/incremental-merkle-tree": "^1.0.0",
     "bigint-conversion": "^2.3.0",
+    "bignumber.js": "^9.1.1",
     "classnames": "^2.3.2",
     "copy-to-clipboard": "^3.3.2",
     "crypto-js": "^4.1.1",
