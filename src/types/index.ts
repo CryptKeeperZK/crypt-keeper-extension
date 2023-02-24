@@ -1,4 +1,3 @@
-import { JsonRpcSigner } from "@ethersproject/providers";
 import { MerkleProof } from "@zk-kit/incremental-merkle-tree";
 
 export type Request = {
@@ -7,35 +6,6 @@ export type Request = {
   error?: boolean;
   meta?: any;
 };
-
-export type WalletInfo = {
-  account: string;
-  balance: number | string;
-  networkName: string; // TODO: use `NetworkDetails` instead
-  chainId: number;
-};
-
-export interface WalletInfoBackground extends WalletInfo {
-  signer: JsonRpcSigner;
-}
-
-export type NetworkDetails = {
-  chainId: number;
-  ensAddress: string;
-  name: string;
-};
-
-export type CreateInterrepIdentityMetadata = {
-  web2Provider: IdentityWeb2Provider;
-  nonce?: number;
-  name?: string;
-};
-
-export type CreateRandomIdentityMetadata = {
-  name?: string;
-};
-
-export type CreateIdentityMetadata = CreateInterrepIdentityMetadata | CreateRandomIdentityMetadata;
 
 export type IdentityStrategy = "interrep" | "random";
 export type IdentityWeb2Provider = "twitter" | "github" | "reddit";
@@ -84,20 +54,6 @@ export type RequestResolutionAction<data> = {
   id: string;
   status: "accept" | "reject";
   data?: data;
-};
-
-export type FinalizedRequest = {
-  id: string;
-  action: boolean;
-};
-
-export type ApprovalAction = {
-  host: string;
-  action: "add" | "remove";
-};
-
-export type ZkIdentity = {
-  identityMetadata: IdentityMetadata;
 };
 
 export type IdentityMetadata = {

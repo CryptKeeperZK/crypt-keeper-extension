@@ -1,4 +1,5 @@
 import * as React from "react";
+import createMetaMaskProvider from "@dimensiondev/metamask-extension-provider";
 import ReactDOM from "react-dom/client";
 import { browser } from "webextension-polyfill-ts";
 import { HashRouter } from "react-router-dom";
@@ -8,8 +9,12 @@ import log from "loglevel";
 import Popup from "@src/ui/pages/Popup";
 import { store } from "@src/ui/store/configureAppStore";
 import { isDebugMode } from "@src/config/env";
+import { Web3ReactProvider } from "@web3-react/core";
+import { connectors } from "@src/connectors";
 
 log.setDefaultLevel(isDebugMode() ? "debug" : "info");
+
+window.ethereum = createMetaMaskProvider();
 
 browser.runtime.onMessage.addListener(action => {
   if (action?.type) {
@@ -24,7 +29,9 @@ browser.tabs.query({ active: true, currentWindow: true }).then(() => {
   root.render(
     <Provider store={store}>
       <HashRouter>
-        <Popup />
+        <Web3ReactProvider connectors={connectors}>
+          <Popup />
+        </Web3ReactProvider>
       </HashRouter>
     </Provider>,
   );

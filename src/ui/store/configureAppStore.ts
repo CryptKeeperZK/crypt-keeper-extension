@@ -1,14 +1,12 @@
 import { AnyAction, applyMiddleware, combineReducers, createStore } from "redux";
 import { createLogger } from "redux-logger";
-import thunk, { ThunkAction, ThunkDispatch } from "redux-thunk";
-import web3 from "@src/ui/ducks/web3";
+import thunk, { ThunkDispatch } from "redux-thunk";
 import identities from "@src/ui/ducks/identities";
 import requests from "@src/ui/ducks/requests";
 import app from "@src/ui/ducks/app";
 import { isDebugMode } from "@src/config/env";
 
 const rootReducer = combineReducers({
-  web3,
   identities,
   requests,
   app,
@@ -40,5 +38,3 @@ export type AppDispatch = typeof store.dispatch;
 export type ReduxState = ReturnType<typeof rootReducer>;
 
 export type TypedDispatch = ThunkDispatch<ReadyState, any, AnyAction>;
-
-export type TypedThunk<ReturnType = void> = ThunkAction<ReturnType, ReduxState, unknown, AnyAction>;

@@ -1,24 +1,26 @@
-import { IdentityStrategy, IdentityWeb2Provider, WalletInfoBackground } from "@src/types";
+import type { JsonRpcSigner } from "@ethersproject/providers";
 
-export interface IUseIdentityFactoryArgs {
+import { IdentityStrategy, IdentityWeb2Provider } from "@src/types";
+
+export interface ISignIdentityMessageArgs {
   identityStrategyType: IdentityStrategy;
+  signer?: JsonRpcSigner;
   web2Provider?: IdentityWeb2Provider;
   nonce?: number;
-  walletInfo: WalletInfoBackground | null;
 }
 
-export async function useIdentityFactory({
+export async function signIdentityMessage({
   web2Provider,
-  walletInfo,
+  signer,
   nonce,
   identityStrategyType,
-}: IUseIdentityFactoryArgs): Promise<string | undefined> {
+}: ISignIdentityMessageArgs): Promise<string | undefined> {
   const message =
     identityStrategyType === "interrep"
       ? getMessageTemplate(web2Provider as string, nonce)
       : getMessageTemplate(identityStrategyType);
 
-  return walletInfo?.signer.signMessage(message);
+  return signer?.signMessage(message);
 }
 
 function getMessageTemplate(type: string, nonce?: number): string {

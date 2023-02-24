@@ -2,9 +2,9 @@ import { ChangeEvent, useCallback, useState } from "react";
 
 import { useAppDispatch } from "@src/ui/ducks/hooks";
 import { createIdentity } from "@src/ui/ducks/identities";
-import { useIdentityFactory } from "@src/ui/services/useIdentityFactory";
-import { useMetaMaskWalletInfo } from "@src/ui/services/useMetaMask";
+import { signIdentityMessage } from "@src/ui/services/identity";
 import { IdentityStrategy, IdentityWeb2Provider } from "@src/types";
+import { useWallet } from "@src/ui/hooks/wallet";
 
 export interface IUseCreateIdentityModalArgs {
   onClose: () => void;
@@ -29,6 +29,7 @@ export const useCreateIdentityModal = ({ onClose }: IUseCreateIdentityModalArgs)
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const dispatch = useAppDispatch();
+  const { address, provider } = useWallet();
 
   const onSelectIdentityType = useCallback(
     (event: ChangeEvent<HTMLSelectElement>) => {
@@ -53,14 +54,16 @@ export const useCreateIdentityModal = ({ onClose }: IUseCreateIdentityModalArgs)
     setIsLoading(true);
 
     try {
-      const walletInfo = await useMetaMaskWalletInfo();
-
-      const options = identityStrategyType !== "random" ? { nonce, web2Provider, account: walletInfo?.account } : {};
-      const provider = identityStrategyType;
-      const messageSignature = await useIdentityFactory({ web2Provider, nonce, walletInfo, identityStrategyType });
+      const options = identityStrategyType !== "random" ? { nonce, web2Provider, account: address } : {};
+      const messageSignature = await signIdentityMessage({
+        web2Provider,
+        nonce,
+        signer: provider?.getSigner(),
+        identityStrategyType,
+      });
 
       if (messageSignature) {
-        await dispatch(createIdentity(provider, messageSignature, options));
+        await dispatch(createIdentity(identityStrategyType, messageSignature, options));
       }
 
       onClose();
@@ -69,7 +72,7 @@ export const useCreateIdentityModal = ({ onClose }: IUseCreateIdentityModalArgs)
     } finally {
       setIsLoading(false);
     }
-  }, [nonce, web2Provider, identityStrategyType]);
+  }, [nonce, web2Provider, identityStrategyType, address, provider]);
 
   return {
     isLoading,

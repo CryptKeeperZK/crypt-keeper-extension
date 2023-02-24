@@ -4,7 +4,7 @@ import { browser } from "webextension-polyfill-ts";
 export default class SimpleStorage {
   private key: string;
 
-  constructor(key) {
+  constructor(key: string) {
     this.key = key;
     browser.storage.onChanged.addListener((changes, namespace) => {
       for (const [key, { oldValue, newValue }] of Object.entries(changes)) {
@@ -21,7 +21,7 @@ export default class SimpleStorage {
     return content ? content[this.key] : null;
   };
 
-  set = async value => browser.storage.sync.set({ [this.key]: value });
+  set = async (value: unknown) => browser.storage.sync.set({ [this.key]: value });
 
   clear = async () => browser.storage.sync.remove(this.key);
 }

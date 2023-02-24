@@ -34,7 +34,6 @@ export default class ZkKeeperController extends Handler {
     this.add(
       RPCAction.UNLOCK,
       LockService.unlock,
-      //this.metamaskServiceEthers.ensure,
       this.identityService.unlock,
       this.approvalService.unlock,
       LockService.onUnlocked,
@@ -61,9 +60,6 @@ export default class ZkKeeperController extends Handler {
     this.add(RPCAction.FINALIZE_REQUEST, LockService.ensure, this.requestManager.finalizeRequest);
 
     log.debug("3. Inside ZkKepperController() class");
-    // web3
-    //this.add(RPCAction.CONNECT_METAMASK, LockService.ensure, this.metamaskServiceEthers.connectMetamask)
-    //this.add(RPCAction.GET_WALLET_INFO, this.metamaskServiceEthers.getWalletInfo)
 
     // lock
     this.add(RPCAction.SETUP_PASSWORD, (payload: string) => LockService.setupPassword(payload));
@@ -253,20 +249,6 @@ export default class ZkKeeperController extends Handler {
     });
 
     this.add(RPCAction.CLOSE_POPUP, async () => BrowserUtils.closePopup());
-
-    // this.add(RPCAction.CREATE_IDENTITY_REQ, LockService.ensure, this.metamaskServiceEthers.ensure, async () => {
-    //     const res: any = await this.requestManager.newRequest(PendingRequestType.CREATE_IDENTITY, { origin })
-
-    //     const { provider, options } = res
-
-    //     return this.handle({
-    //         method: RPCAction.CREATE_IDENTITY,
-    //         payload: {
-    //             strategy: provider,
-    //             options
-    //         }
-    //     })
-    // })
 
     // dev
     this.add(RPCAction.CLEAR_APPROVED_HOSTS, this.approvalService.empty);
