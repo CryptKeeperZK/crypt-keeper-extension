@@ -6,7 +6,14 @@ const dotenv = require("dotenv");
 
 dotenv.config({ path: "./.env" });
 
-const envPlugin = new webpack.EnvironmentPlugin(["NODE_ENV", "CRYPTKEEPER_DEBUG"]);
+const envPlugin = new webpack.EnvironmentPlugin({
+  NODE_ENV: "development",
+  CRYPTKEEPER_DEBUG: false,
+  INFURA_API_KEY: "",
+  ALCHEMY_API_KEY: "",
+  FREIGHT_TRUST_NETWORK: "",
+  PULSECHAIN_API_KEY: "",
+});
 
 module.exports = {
   entry: {
