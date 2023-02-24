@@ -57,6 +57,3 @@ tsout/
 .env
 .zip
 demo/.parcel-cache
-
-# ZK
-zkeyFiles/
