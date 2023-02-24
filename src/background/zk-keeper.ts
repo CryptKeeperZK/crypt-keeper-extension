@@ -126,7 +126,7 @@ export default class ZkKeeperController extends Handler {
       RPCAction.PREPARE_SEMAPHORE_PROOF_REQUEST,
       LockService.ensure,
       this.zkValidator.validateZkInputs,
-      async (payload, meta: any) => {
+      async (payload: SemaphoreProofRequest, meta: any) => {
         const { unlocked } = await LockService.getStatus();
 
         const semaphorePath = {
