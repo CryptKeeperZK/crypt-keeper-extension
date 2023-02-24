@@ -5,6 +5,7 @@ import web3 from "@src/ui/ducks/web3";
 import identities from "@src/ui/ducks/identities";
 import requests from "@src/ui/ducks/requests";
 import app from "@src/ui/ducks/app";
+import { isDebugMode } from "@src/config/env";
 
 const rootReducer = combineReducers({
   web3,
@@ -18,7 +19,7 @@ export type AppRootState = ReturnType<typeof rootReducer>;
 function configureAppStore() {
   return createStore(
     rootReducer,
-    globalThis.CRYPTKEEPER_UI_DEBUG
+    isDebugMode()
       ? applyMiddleware(
           thunk,
           createLogger({

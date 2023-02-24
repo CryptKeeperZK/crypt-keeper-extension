@@ -2,8 +2,11 @@ const webpack = require("webpack");
 const path = require("path");
 const CopyPlugin = require("copy-webpack-plugin");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
+const dotenv = require("dotenv");
 
-const envPlugin = new webpack.EnvironmentPlugin(["NODE_ENV"]);
+dotenv.config({ path: "./.env" });
+
+const envPlugin = new webpack.EnvironmentPlugin(["NODE_ENV", "CRYPTKEEPER_DEBUG"]);
 
 module.exports = {
   entry: {
@@ -83,7 +86,7 @@ module.exports = {
     alias: {
       "@src": path.resolve(__dirname, "src/"),
       // snarkjs uses ejs which has unsafe-eval function constructor
-      ejs: path.resolve(__dirname, "src/config/ejsMock.js"),
+      ejs: path.resolve(__dirname, "src/config/mock/ejsMock.js"),
       buffer: "buffer",
     },
     fallback: {
