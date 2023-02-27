@@ -41,6 +41,7 @@ module.exports = {
           from: path.join(__dirname, "./src/manifest.json"),
           to: path.join(__dirname, "./dist/manifest.json"),
         },
+        { from: path.join(__dirname, "./zkeyFiles"), to: path.join(__dirname, "./dist/js/zkeyFiles") },
       ],
     }),
     new HtmlWebpackPlugin({

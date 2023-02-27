@@ -88,8 +88,6 @@ async function createDummyRequest() {
 async function semaphoreProof(
   externalNullifier: string,
   signal: string,
-  circuitFilePath: string,
-  zkeyFilePath: string,
   merkleProofArtifactsOrStorageAddress: string | MerkleProofArtifacts,
   merkleProof?: MerkleProof,
 ) {
@@ -104,8 +102,6 @@ async function semaphoreProof(
       externalNullifier,
       signal,
       merkleStorageAddress,
-      circuitFilePath,
-      zkeyFilePath,
       merkleProofArtifacts,
       merkleProof,
     },
@@ -117,8 +113,6 @@ async function semaphoreProof(
 async function rlnProof(
   externalNullifier: string,
   signal: string,
-  circuitFilePath: string,
-  zkeyFilePath: string,
   merkleProofArtifactsOrStorageAddress: string | MerkleProofArtifacts,
   rlnIdentifier: string,
 ) {
@@ -133,8 +127,6 @@ async function rlnProof(
       externalNullifier,
       signal,
       merkleStorageAddress,
-      circuitFilePath,
-      zkeyFilePath,
       merkleProofArtifacts,
       rlnIdentifier,
     },

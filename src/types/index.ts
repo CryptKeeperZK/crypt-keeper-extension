@@ -60,8 +60,6 @@ export type MerkleProofArtifacts = {
 };
 
 export type ZkInputs = {
-  circuitFilePath: string;
-  zkeyFilePath: string;
   merkleStorageAddress?: string;
   merkleProofArtifacts?: MerkleProofArtifacts;
   merkleProof?: MerkleProof;

@@ -33,6 +33,10 @@
     {
       "resources": ["js/injected.js"],
       "matches": ["*://*/*"]
+    },
+    {
+      "resources": ["js/zkeyFiles/*"],
+      "matches": ["*://*/*"]
     }
   ]
 }

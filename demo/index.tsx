@@ -13,18 +13,6 @@ import type { Client } from "../src/contentscripts/injected";
 
 const SERVER_URL = "http://localhost:8090";
 
-const semaphorePath = {
-  circuitFilePath: `${SERVER_URL}/zkeyFiles/semaphore/semaphore.wasm`,
-  zkeyFilePath: `${SERVER_URL}/zkeyFiles/semaphore/semaphore.zkey`,
-  verificationKey: `${SERVER_URL}/zkeyFiles/semaphore/verification_key.json`,
-};
-
-const rlnPath = {
-  circuitFilePath: `${SERVER_URL}/zkeyFiles/rln/rln.wasm`,
-  zkeyFilePath: `${SERVER_URL}/zkeyFiles/rln/rln.zkey`,
-  verificationKey: `${SERVER_URL}/zkeyFiles/rln/verification_key.json`,
-};
-
 const merkleStorageAddress = `${SERVER_URL}/merkleProof`;
 
 enum MerkleProofType {
@@ -98,13 +86,7 @@ function App() {
         pauseOnHover: false,
       });
 
-      const proof = await client?.semaphoreProof(
-        externalNullifier,
-        signal,
-        semaphorePath.circuitFilePath,
-        semaphorePath.zkeyFilePath,
-        storageAddressOrArtifacts,
-      );
+      const proof = await client?.semaphoreProof(externalNullifier, signal, storageAddressOrArtifacts);
 
       console.log("Semaphore proof generated successfully!", proof);
       toast("Semaphore proof generated successfully!", { type: "success" });
@@ -136,9 +118,6 @@ function App() {
       };
     }
 
-    const circuitPath = rlnPath.circuitFilePath;
-    const zkeyFilePath = rlnPath.zkeyFilePath;
-
     try {
       const toastId = toast("Generating RLN proof...", {
         type: "info",
@@ -147,14 +126,7 @@ function App() {
         pauseOnHover: false,
       });
 
-      const proof = await client?.rlnProof(
-        externalNullifier,
-        signal,
-        circuitPath,
-        zkeyFilePath,
-        storageAddressOrArtifacts,
-        rlnIdentifierHex,
-      );
+      const proof = await client?.rlnProof(externalNullifier, signal, storageAddressOrArtifacts, rlnIdentifierHex);
 
       console.log("RLN proof generated successfully!", proof);
       toast("RLN proof generated successfully!", { type: "success" });
