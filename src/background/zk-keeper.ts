@@ -152,8 +152,8 @@ export default class ZkKeeperController extends Handler {
             ...payload,
             circuitFilePath: semaphorePath.circuitFilePath,
             zkeyFilePath: semaphorePath.zkeyFilePath,
-            verificationKey: semaphorePath.verificationKey
-          }
+            verificationKey: semaphorePath.verificationKey,
+          };
 
           if (!permission.noApproval) {
             await this.requestManager.newRequest(PendingRequestType.SEMAPHORE_PROOF, {
@@ -194,8 +194,8 @@ export default class ZkKeeperController extends Handler {
             ...payload,
             circuitFilePath: rlnPath.circuitFilePath,
             zkeyFilePath: rlnPath.zkeyFilePath,
-            verificationKey: rlnPath.verificationKey
-          }
+            verificationKey: rlnPath.verificationKey,
+          };
 
           if (!permission.noApproval) {
             await this.requestManager.newRequest(PendingRequestType.RLN_PROOF, {

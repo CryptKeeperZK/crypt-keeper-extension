@@ -86,11 +86,7 @@ function App() {
         pauseOnHover: false,
       });
 
-      const proof = await client?.semaphoreProof(
-        externalNullifier,
-        signal,
-        storageAddressOrArtifacts,
-      );
+      const proof = await client?.semaphoreProof(externalNullifier, signal, storageAddressOrArtifacts);
 
       console.log("Semaphore proof generated successfully!", proof);
       toast("Semaphore proof generated successfully!", { type: "success" });
@@ -130,12 +126,7 @@ function App() {
         pauseOnHover: false,
       });
 
-      const proof = await client?.rlnProof(
-        externalNullifier,
-        signal,
-        storageAddressOrArtifacts,
-        rlnIdentifierHex,
-      );
+      const proof = await client?.rlnProof(externalNullifier, signal, storageAddressOrArtifacts, rlnIdentifierHex);
 
       console.log("RLN proof generated successfully!", proof);
       toast("RLN proof generated successfully!", { type: "success" });
