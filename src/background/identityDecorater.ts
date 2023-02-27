@@ -11,8 +11,7 @@ export default class ZkIdentityDecorater {
   }
 
   genIdentityCommitment = (): bigint => {
-    const idCommitment = this.zkIdentity.getCommitment();
-    return idCommitment;
+    return this.zkIdentity.getCommitment();
   };
 
   setIdentityMetadataName = (name: string): IdentityMetadata => {
