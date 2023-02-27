@@ -383,7 +383,7 @@ const PROOF_MODAL_TITLES = {
 };
 
 function ProofModal({ pendingRequest, len, reject, accept, loading, error }: ProofModalProps) {
-  const { circuitFilePath, externalNullifier, merkleProof, signal, zkeyFilePath, origin } =
+  const { circuitFilePath, externalNullifier, merkleProof, signal, zkeyFilePath, origin, verificationKey } =
     pendingRequest?.payload || {};
   const operation = PROOF_MODAL_TITLES[pendingRequest?.type ?? ""] || "Generate proof";
 
@@ -428,13 +428,18 @@ function ProofModal({ pendingRequest, len, reject, accept, loading, error }: Pro
             <Icon fontAwesome="fas fa-link" onClick={() => window.open(zkeyFilePath, "_blank")} />
           </div>
           <div className="semaphore-proof__file">
+            <div className="semaphore-proof__file__title">Verification</div>
+            <Icon fontAwesome="fas fa-link" onClick={() => window.open(verificationKey, "_blank")} />
+          </div>
+          {/* TODO: check Merkle output */}
+          {/* <div className="semaphore-proof__file">
             <div className="semaphore-proof__file__title">Merkle</div>
             {typeof merkleProof === "string" ? (
               <Icon fontAwesome="fas fa-link" onClick={() => window.open(merkleProof, "_blank")} />
             ) : (
               <Icon fontAwesome="fas fa-copy" onClick={() => copy(JSON.stringify(merkleProof))} />
             )}
-          </div>
+          </div> */}
         </div>
 
         <Input readOnly className="w-full mb-2" label="External Nullifier" defaultValue={externalNullifier} />

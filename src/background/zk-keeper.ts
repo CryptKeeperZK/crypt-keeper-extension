@@ -132,7 +132,7 @@ export default class ZkKeeperController extends Handler {
         const semaphorePath = {
           circuitFilePath: browser.runtime.getURL("js/zkeyFiles/semaphore/semaphore.wasm"),
           zkeyFilePath: browser.runtime.getURL("js/zkeyFiles/semaphore/semaphore.zkey"),
-          verificationKey: browser.runtime.getURL("js/zkeyFiles/semaphore/erification_key.json"),
+          verificationKey: browser.runtime.getURL("js/zkeyFiles/semaphore/semaphore.json"),
         };
 
         if (!unlocked) {
@@ -148,17 +148,18 @@ export default class ZkKeeperController extends Handler {
         if (!approved) throw new Error(`${meta.origin} is not approved`);
 
         try {
+          payload = {
+            ...payload,
+            circuitFilePath: semaphorePath.circuitFilePath,
+            zkeyFilePath: semaphorePath.zkeyFilePath,
+            verificationKey: semaphorePath.verificationKey
+          }
+
           if (!permission.noApproval) {
             await this.requestManager.newRequest(PendingRequestType.SEMAPHORE_PROOF, {
               ...payload,
               origin: meta.origin,
             });
-          }
-
-          payload = {
-            ...payload,
-            circuitFilePath: semaphorePath.circuitFilePath,
-            zkeyFilePath: semaphorePath.zkeyFilePath
           }
 
           return { identity: identity.serialize(), payload };
@@ -182,24 +183,25 @@ export default class ZkKeeperController extends Handler {
         const rlnPath = {
           circuitFilePath: browser.runtime.getURL("js/zkeyFiles//rln/rln.wasm"),
           zkeyFilePath: browser.runtime.getURL("js/zkeyFiles/rln/rln.zkey"),
-          verificationKey: browser.runtime.getURL("js/zkeyFiles/rln/verification_key.json"),
+          verificationKey: browser.runtime.getURL("js/zkeyFiles/rln/rln.json"),
         };
 
         if (!identity) throw new Error("active identity not found");
         if (!approved) throw new Error(`${meta.origin} is not approved`);
 
         try {
+          payload = {
+            ...payload,
+            circuitFilePath: rlnPath.circuitFilePath,
+            zkeyFilePath: rlnPath.zkeyFilePath,
+            verificationKey: rlnPath.verificationKey
+          }
+
           if (!permission.noApproval) {
             await this.requestManager.newRequest(PendingRequestType.RLN_PROOF, {
               ...payload,
               origin: meta.origin,
             });
-          }
-
-          payload = {
-            ...payload,
-            circuitFilePath: rlnPath.circuitFilePath,
-            zkeyFilePath: rlnPath.zkeyFilePath
           }
 
           return { identity: identity.serialize(), payload };
