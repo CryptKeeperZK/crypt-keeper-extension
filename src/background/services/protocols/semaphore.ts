@@ -1,11 +1,12 @@
 import { generateProof } from "@semaphore-protocol/proof";
 import { MerkleProof } from "@zk-kit/incremental-merkle-tree";
 import { bigintToHex } from "bigint-conversion";
+
+import ZkIdentityDecorater from "@src/background/identityDecorater";
 import { MerkleProofArtifacts } from "@src/types";
+
 import { SemaphoreProof, SemaphoreProofRequest } from "./interfaces";
 import { deserializeMerkleProof, generateMerkleProof } from "./utils";
-import log from "loglevel";
-import ZkIdentityDecorater from "@src/background/identityDecorater";
 
 export default class SemaphoreService {
   async genProof(identity: ZkIdentityDecorater, request: SemaphoreProofRequest): Promise<SemaphoreProof> {
@@ -51,12 +52,7 @@ export default class SemaphoreService {
         zkeyFilePath: zkeyFilePath,
       });
 
-      log.debug("Generating Semaphore Identity has done successfully.");
-      log.debug("- Full Proof:", fullProof);
-
-      return {
-        fullProof,
-      };
+      return { fullProof };
     } catch (e) {
       throw new Error(`Error while generating semaphore proof: ${e}`);
     }
