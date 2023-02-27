@@ -1,7 +1,7 @@
 import { useSelector } from "react-redux";
 import deepEqual from "fast-deep-equal";
 import { AppRootState } from "@src/ui/store/configureAppStore";
-import ChainsJSON from "@src/static/chains.json";
+import { getChains } from "@src/config/rpc";
 
 type ChainInfo = {
   chainId: number;
@@ -14,19 +14,6 @@ type ChainInfo = {
   };
   shortName: string;
 };
-
-export const chainsMap = ChainsJSON.reduce(
-  (
-    map: {
-      [id: number]: ChainInfo;
-    },
-    chainInfo: ChainInfo,
-  ) => {
-    map[chainInfo.chainId] = chainInfo;
-    return map;
-  },
-  {},
-);
 
 enum ActionTypes {
   SET_LOADING = "web3/setLoading",
@@ -140,10 +127,9 @@ export const useAccount = () => useSelector((state: AppRootState) => state.web3.
 
 export const useBalance = () => useSelector((state: AppRootState) => state.web3.balance, deepEqual);
 
+const chains = getChains();
+
 export const useNetwork = (): ChainInfo | null =>
-  useSelector((state: AppRootState) => {
-    const chainInfo = chainsMap[state.web3.chainId];
-    return chainInfo || null;
-  }, deepEqual);
+  useSelector((state: AppRootState) => chains[state.web3.chainId] || null, deepEqual);
 
 export const useChainId = () => useSelector((state: AppRootState) => state.web3.chainId, deepEqual);
