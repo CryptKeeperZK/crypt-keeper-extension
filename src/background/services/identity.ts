@@ -12,7 +12,7 @@ import LockService from "./lock";
 
 const DB_KEY = "@@IDS-t1@@";
 const IDENTITY_KEY = "IDS";
-const ACTIVE_IDENTITY_KEY = "AIDS";
+const ACTIVE_IDENTITY_KEY = /* Pool is closed due to */ "AIDS";
 
 export default class IdentityService extends SimpleStorage {
   identities: Map<string, string>;
@@ -32,7 +32,7 @@ export default class IdentityService extends SimpleStorage {
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   unlock = async (_: any) => {
-    const encryptedContent = await this.get();
+    const encryptedContent = await this.get<string>();
     if (!encryptedContent) return true;
 
     const decrypted = await LockService.decrypt(encryptedContent);
@@ -44,7 +44,7 @@ export default class IdentityService extends SimpleStorage {
   };
 
   refresh = async () => {
-    const encryptedContent = await this.get();
+    const encryptedContent = await this.get<string>();
     if (!encryptedContent) return;
 
     const decrypted = await LockService.decrypt(encryptedContent);
@@ -156,7 +156,7 @@ export default class IdentityService extends SimpleStorage {
   };
 
   getActiveIdentity = async (): Promise<ZkIdentityDecorater | undefined> => {
-    const acitveIdentityCommitmentCipher = await this.activeIdentityStore.get();
+    const acitveIdentityCommitmentCipher = await this.activeIdentityStore.get<string>();
 
     if (!acitveIdentityCommitmentCipher) {
       return undefined;
@@ -245,7 +245,7 @@ export default class IdentityService extends SimpleStorage {
   };
 
   async getIdentitiesFromStore(): Promise<Map<string, string>> {
-    const cipertext = await this.identitiesStore.get();
+    const cipertext = await this.identitiesStore.get<string>();
 
     log.debug("IdentityService getIdentitiesFromStore EXIST cipertext 1", cipertext);
     log.debug("IdentityService getIdentitiesFromStore EXIST cipertext 2", typeof cipertext);
