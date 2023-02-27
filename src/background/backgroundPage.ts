@@ -1,9 +1,9 @@
 import "subworkers";
-import "./shared/init-globals";
+import "./shared/initGlobals";
 import "./appInit";
 import { browser } from "webextension-polyfill-ts";
 import { Request } from "@src/types";
-import ZkKeeperController from "./zk-keeper";
+import ZkKeeperController from "./zkKeeper";
 import log from "loglevel";
 import { deferredPromise } from "@src/background/shared/utils";
 import { isDebugMode } from "@src/config/env";

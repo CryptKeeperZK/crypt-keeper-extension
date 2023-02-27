@@ -1,6 +1,6 @@
 import log from "loglevel";
 
-import SimpleStorage from "./simple-storage";
+import SimpleStorage from "./simpleStorage";
 import LockService from "./lock";
 
 const DB_KEY = "@APPROVED@";

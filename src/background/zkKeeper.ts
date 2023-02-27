@@ -4,12 +4,12 @@ import { bigintToHex } from "bigint-conversion";
 import Handler from "./controllers/handler";
 import LockService from "./services/lock";
 import IdentityService from "./services/identity";
-import ZkValidator from "./services/zk-validator";
-import RequestManager from "./controllers/request-manager";
+import ZkValidator from "./services/zkValidator";
+import RequestManager from "./controllers/requestManager";
 import { RLNProofRequest, SemaphoreProofRequest } from "./services/protocols/interfaces";
 import ApprovalService from "./services/approval";
 import identityFactory from "./identityFactory";
-import BrowserUtils from "./controllers/browser-utils";
+import BrowserUtils from "./controllers/browserUtils";
 import log from "loglevel";
 import { browser } from "webextension-polyfill-ts";
 

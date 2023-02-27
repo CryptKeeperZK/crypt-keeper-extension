@@ -7,7 +7,7 @@ import pushMessage from "@src/util/pushMessage";
 import { IdentityMetadata, IdentityName } from "@src/types";
 
 import ZkIdentityDecorater from "../identityDecorater";
-import SimpleStorage from "./simple-storage";
+import SimpleStorage from "./simpleStorage";
 import LockService from "./lock";
 
 const DB_KEY = "@@IDS-t1@@";

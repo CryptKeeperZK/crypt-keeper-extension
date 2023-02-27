@@ -9,7 +9,7 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import log from "loglevel";
 
-import type { Client } from "../src/contentscripts/injected";
+import type { Client } from "../src/contentScripts/injected";
 
 const SERVER_URL = "http://localhost:8090";
 

@@ -9,7 +9,6 @@ import "./confirm-modal.scss";
 import Input from "@src/ui/components/Input";
 import Dropdown from "@src/ui/components/Dropdown";
 import Icon from "@src/ui/components/Icon";
-import copy from "copy-to-clipboard";
 import Checkbox from "@src/ui/components/Checkbox";
 import { getLinkPreview } from "link-preview-js";
 
@@ -383,7 +382,7 @@ const PROOF_MODAL_TITLES = {
 };
 
 function ProofModal({ pendingRequest, len, reject, accept, loading, error }: ProofModalProps) {
-  const { circuitFilePath, externalNullifier, merkleProof, signal, zkeyFilePath, origin, verificationKey } =
+  const { circuitFilePath, externalNullifier, signal, zkeyFilePath, origin, verificationKey } =
     pendingRequest?.payload || {};
   const operation = PROOF_MODAL_TITLES[pendingRequest?.type ?? ""] || "Generate proof";
 
