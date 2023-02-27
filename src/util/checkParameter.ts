@@ -1,5 +1,5 @@
 export default function checkParameter(
-  value: any,
+  value: unknown,
   name: string,
   type: "boolean" | "number" | "string" | "object" | "function",
 ) {

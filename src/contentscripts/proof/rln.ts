@@ -1,4 +1,4 @@
-import ZkIdentityDecorater from "@src/background/identity-decorater";
+import ZkIdentityDecorater from "@src/background/identityDecorater";
 import RLNService from "@src/background/services/protocols/rln";
 
 import type { RLNFullProof } from "rlnjs";

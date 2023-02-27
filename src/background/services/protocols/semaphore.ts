@@ -5,7 +5,7 @@ import { MerkleProofArtifacts } from "@src/types";
 import { SemaphoreProof, SemaphoreProofRequest } from "./interfaces";
 import { deserializeMerkleProof, generateMerkleProof } from "./utils";
 import log from "loglevel";
-import ZkIdentityDecorater from "@src/background/identity-decorater";
+import ZkIdentityDecorater from "@src/background/identityDecorater";
 
 export default class SemaphoreService {
   async genProof(identity: ZkIdentityDecorater, request: SemaphoreProofRequest): Promise<SemaphoreProof> {

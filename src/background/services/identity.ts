@@ -6,7 +6,7 @@ import { setIdentities, setSelected } from "@src/ui/ducks/identities";
 import pushMessage from "@src/util/pushMessage";
 import { IdentityMetadata, IdentityName } from "@src/types";
 
-import ZkIdentityDecorater from "../identity-decorater";
+import ZkIdentityDecorater from "../identityDecorater";
 import SimpleStorage from "./simple-storage";
 import LockService from "./lock";
 

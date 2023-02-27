@@ -2,7 +2,7 @@ import { MerkleProof } from "@zk-kit/incremental-merkle-tree";
 import { RLN, RLNFullProof } from "rlnjs";
 import { bigintToHex } from "bigint-conversion";
 import { MerkleProofArtifacts } from "@src/types";
-import ZkIdentityDecorater from "@src/background/identity-decorater";
+import ZkIdentityDecorater from "@src/background/identityDecorater";
 import { RLNProofRequest } from "./interfaces";
 import { deserializeMerkleProof, generateMerkleProof } from "./utils";
 
