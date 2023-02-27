@@ -1,4 +1,5 @@
 import "@testing-library/jest-dom";
+import "isomorphic-fetch";
 
 jest.mock("loglevel", () => ({
   info: jest.fn(),
