@@ -1,12 +1,9 @@
-import { MerkleProof } from "@zk-kit/incremental-merkle-tree";
 import { RLN, RLNFullProof } from "rlnjs";
-import { bigintToHex } from "bigint-conversion";
 
 import ZkIdentityDecorater from "@src/background/identityDecorater";
 
 import { RLNProofRequest } from "./interfaces";
-import { deserializeMerkleProof, generateMerkleProof } from "./utils";
-import { MerkleProofArtifacts } from "@src/types";
+import { getMerkleProof } from "./utils";
 
 export default class RLNService {
   async genProof(
@@ -19,6 +16,7 @@ export default class RLNService {
       externalNullifier,
       signal,
       merkleProofArtifacts,
+      merkleProof: providerMerkleProof,
     }: RLNProofRequest,
   ): Promise<RLNFullProof> {
     try {
@@ -26,32 +24,16 @@ export default class RLNService {
 
       const identityCommitment = identity.genIdentityCommitment();
 
-      const merkleProof = merkleStorageAddress
-        ? await this.getRemoteMerkleProof(merkleStorageAddress, bigintToHex(identityCommitment))
-        : generateMerkleProof({
-            treeDepth: (merkleProofArtifacts as MerkleProofArtifacts).depth,
-            member: identityCommitment,
-            members: [identityCommitment],
-          });
+      const merkleProof = await getMerkleProof({
+        identityCommitment,
+        merkleProofArtifacts,
+        merkleStorageAddress,
+        providerMerkleProof,
+      });
 
       return rln.generateProof(signal, merkleProof, externalNullifier);
     } catch (e) {
       throw new Error(`Error while generating RLN proof: ${e}`);
     }
-  }
-
-  private async getRemoteMerkleProof(
-    merkleStorageAddress: string,
-    identityCommitmentHex: string,
-  ): Promise<MerkleProof> {
-    return fetch(merkleStorageAddress, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        identityCommitment: identityCommitmentHex,
-      }),
-    })
-      .then(res => res.json())
-      .then(response => deserializeMerkleProof(response.data.merkleProof));
   }
 }
