@@ -1,7 +1,6 @@
 import React, { ReactElement, useCallback, useEffect, useRef, useState } from "react";
 import postMessage from "@src/util/postMessage";
 import RPCAction from "@src/util/constants";
-import { useAccount, useBalance, useNetwork } from "@src/ui/ducks/web3";
 import Icon from "@src/ui/components/Icon";
 import {
   deleteIdentity,
@@ -20,14 +19,18 @@ import { CreateIdentityModal } from "@src/ui/components/CreateIdentityModal";
 import ConnectionModal from "@src/ui/components/ConnectionModal";
 import Menuable from "@src/ui/components/Menuable";
 import { useAppDispatch } from "@src/ui/ducks/hooks";
-import { useMetaMaskConnect } from "@src/ui/services/useMetaMask";
+import { metamask } from "@src/connectors";
+import { useWallet } from "@src/ui/hooks/wallet";
+import { DEFAULT_ROUND } from "@src/config/const";
 
 export default function Home(): ReactElement {
   const dispatch = useAppDispatch();
   const scrollRef = useRef<HTMLDivElement>(null);
   const [fixedTabs, fixTabs] = useState(false);
 
-  useMetaMaskConnect();
+  useEffect(() => {
+    metamask.connectEagerly();
+  }, []);
 
   useEffect(() => {
     (async () => {
@@ -65,11 +68,10 @@ export default function Home(): ReactElement {
 }
 
 const HomeInfo = function (): ReactElement {
-  const network = useNetwork();
-  const balance = useBalance();
-  const account = useAccount();
   const [connected, setConnected] = useState(false);
   const [showingModal, showModal] = useState(false);
+
+  const { address, chain, balance } = useWallet();
 
   useEffect(() => {
     (async () => {
@@ -114,10 +116,12 @@ const HomeInfo = function (): ReactElement {
             })}
           />
           <div className="text-xs home__connection-button__text">{connected ? "Connected" : "Not Connected"}</div>
-          {account && <div className="text-sm home__account-button">{sliceAddress(account)}</div>}
+          {address && <div className="text-sm home__account-button">{sliceAddress(address)}</div>}
         </div>
         <div>
-          <div className="text-3xl font-semibold">{network ? `${balance} ${network.nativeCurrency.symbol}` : "-"}</div>
+          <div className="text-3xl font-semibold">
+            {chain ? `${balance?.toFormat(DEFAULT_ROUND) ?? ""} ${chain.nativeCurrency.symbol}` : "-"}
+          </div>
         </div>
       </div>
     </>
@@ -177,7 +181,7 @@ const IdentityList = function (): ReactElement {
   const identities = useIdentities();
   const selected = useSelectedIdentity();
   const dispatch = useAppDispatch();
-  const account = useAccount();
+  const { address } = useWallet();
 
   const [showingModal, setShowModal] = useState<boolean>(false);
   const [renameInput, setRenameInput] = useState<Map<string, boolean>>(new Map());
@@ -275,7 +279,7 @@ const IdentityList = function (): ReactElement {
           </div>
         );
       })}
-      {account ? (
+      {address ? (
         <div
           className="create-identity-row__active flex flex-row items-center justify-center p-4 cursor-pointer text-gray-600"
           onClick={() => setShowModal(true)}

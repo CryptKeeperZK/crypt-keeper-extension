@@ -6,40 +6,32 @@ import { act, renderHook } from "@testing-library/react";
 
 import { useAppDispatch } from "@src/ui/ducks/hooks";
 import { createIdentity } from "@src/ui/ducks/identities";
-import { useIdentityFactory } from "@src/ui/services/useIdentityFactory";
-import { useMetaMaskWalletInfo } from "@src/ui/services/useMetaMask";
+import { signIdentityMessage } from "@src/ui/services/identity";
 
 import { IUseCreateIdentityModalArgs, useCreateIdentityModal } from "../useCreateIdentityModal";
-import { WalletInfoBackground } from "@src/types";
 import { ChangeEvent } from "react";
+import { useWallet } from "@src/ui/hooks/wallet";
+import { defaultWalletHookData } from "@src/config/mock/wallet";
 
 jest.mock("@src/ui/ducks/hooks", (): unknown => ({
   useAppDispatch: jest.fn(),
 }));
 
-jest.mock("@src/ui/services/useIdentityFactory", (): unknown => ({
-  useIdentityFactory: jest.fn(),
-}));
-
-jest.mock("@src/ui/services/useMetaMask", (): unknown => ({
-  useMetaMaskWalletInfo: jest.fn(),
+jest.mock("@src/ui/services/identity", (): unknown => ({
+  signIdentityMessage: jest.fn(),
 }));
 
 jest.mock("@src/ui/ducks/identities", (): unknown => ({
   createIdentity: jest.fn(),
 }));
 
+jest.mock("@src/ui/hooks/wallet", (): unknown => ({
+  useWallet: jest.fn(),
+}));
+
 describe("ui/components/CreateIdentityModal/useCreateIdentityModal", () => {
   const defaultHookProps: IUseCreateIdentityModalArgs = {
     onClose: jest.fn(),
-  };
-
-  const mockWalletInfo: WalletInfoBackground = {
-    account: "0x",
-    balance: 0,
-    networkName: "mainnet",
-    chainId: 1,
-    signer: {} as unknown as WalletInfoBackground["signer"],
   };
 
   const mockSignedMessage = "signed-message";
@@ -49,11 +41,11 @@ describe("ui/components/CreateIdentityModal/useCreateIdentityModal", () => {
   beforeEach(() => {
     (useAppDispatch as jest.Mock).mockReturnValue(mockDispatch);
 
-    (useMetaMaskWalletInfo as jest.Mock).mockReturnValue(mockWalletInfo);
-
-    (useIdentityFactory as jest.Mock).mockReturnValue(mockSignedMessage);
+    (signIdentityMessage as jest.Mock).mockReturnValue(mockSignedMessage);
 
     (createIdentity as jest.Mock).mockReturnValue(true);
+
+    (useWallet as jest.Mock).mockReturnValue(defaultWalletHookData);
   });
 
   afterEach(() => {
@@ -113,8 +105,7 @@ describe("ui/components/CreateIdentityModal/useCreateIdentityModal", () => {
       return Promise.resolve();
     });
 
-    expect(useMetaMaskWalletInfo).toBeCalledTimes(1);
-    expect(useIdentityFactory).toBeCalledTimes(1);
+    expect(signIdentityMessage).toBeCalledTimes(1);
     expect(mockDispatch).toBeCalledTimes(1);
     expect(createIdentity).toBeCalledTimes(1);
     expect(createIdentity).toBeCalledWith("random", mockSignedMessage, {});

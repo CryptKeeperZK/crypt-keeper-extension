@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-shadow */
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { CreateIdentityOptions, IdentityMetadata, WalletInfoBackground } from "@src/types";
+import { CreateIdentityOptions, IdentityMetadata } from "@src/types";
 import postMessage from "@src/util/postMessage";
 import RPCAction from "@src/util/constants";
 import { useSelector } from "react-redux";
