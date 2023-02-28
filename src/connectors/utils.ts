@@ -3,9 +3,15 @@ import type { Connector } from "@web3-react/types";
 
 import { MockConnector } from "./mock";
 
-export function getConnectorName(connector: Connector): string {
-  if (connector instanceof MetaMask) return "MetaMask";
-  if (connector instanceof MockConnector) return "Mock";
+export enum ConnectorNames {
+  METAMASK = "MetaMask",
+  MOCK = "Mock",
+  UNKNOWN = "Unknown",
+}
 
-  return "Unknown";
+export function getConnectorName(connector: Connector): ConnectorNames {
+  if (connector instanceof MetaMask) return ConnectorNames.METAMASK;
+  if (connector instanceof MockConnector) return ConnectorNames.MOCK;
+
+  return ConnectorNames.UNKNOWN;
 }
