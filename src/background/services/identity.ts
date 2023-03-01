@@ -11,8 +11,8 @@ import SimpleStorage from "./simpleStorage";
 import LockService from "./lock";
 
 const DB_KEY = "@@IDS-t1@@";
-const IDENTITY_KEY = "IDS";
-const ACTIVE_IDENTITY_KEY = /* Pool is closed due to */ "AIDS";
+const IDENTITY_KEY = "@@ID@@";
+const ACTIVE_IDENTITY_KEY = "@@AID@@";
 
 export default class IdentityService extends SimpleStorage {
   identities: Map<string, string>;
