@@ -6,13 +6,13 @@ import { setIdentities, setSelected } from "@src/ui/ducks/identities";
 import pushMessage from "@src/util/pushMessage";
 import { IdentityMetadata, IdentityName } from "@src/types";
 
-import ZkIdentityDecorater from "../identity-decorater";
-import SimpleStorage from "./simple-storage";
+import ZkIdentityDecorater from "../identityDecorater";
+import SimpleStorage from "./simpleStorage";
 import LockService from "./lock";
 
 const DB_KEY = "@@IDS-t1@@";
-const IDENTITY_KEY = "IDS";
-const ACTIVE_IDENTITY_KEY = "AIDS";
+const IDENTITY_KEY = "@@ID@@";
+const ACTIVE_IDENTITY_KEY = "@@AID@@";
 
 export default class IdentityService extends SimpleStorage {
   identities: Map<string, string>;
@@ -32,7 +32,7 @@ export default class IdentityService extends SimpleStorage {
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   unlock = async (_: any) => {
-    const encryptedContent = await this.get();
+    const encryptedContent = await this.get<string>();
     if (!encryptedContent) return true;
 
     const decrypted = await LockService.decrypt(encryptedContent);
@@ -44,7 +44,7 @@ export default class IdentityService extends SimpleStorage {
   };
 
   refresh = async () => {
-    const encryptedContent = await this.get();
+    const encryptedContent = await this.get<string>();
     if (!encryptedContent) return;
 
     const decrypted = await LockService.decrypt(encryptedContent);
@@ -156,7 +156,7 @@ export default class IdentityService extends SimpleStorage {
   };
 
   getActiveIdentity = async (): Promise<ZkIdentityDecorater | undefined> => {
-    const acitveIdentityCommitmentCipher = await this.activeIdentityStore.get();
+    const acitveIdentityCommitmentCipher = await this.activeIdentityStore.get<string>();
 
     if (!acitveIdentityCommitmentCipher) {
       return undefined;
@@ -245,7 +245,7 @@ export default class IdentityService extends SimpleStorage {
   };
 
   async getIdentitiesFromStore(): Promise<Map<string, string>> {
-    const cipertext = await this.identitiesStore.get();
+    const cipertext = await this.identitiesStore.get<string>();
 
     log.debug("IdentityService getIdentitiesFromStore EXIST cipertext 1", cipertext);
     log.debug("IdentityService getIdentitiesFromStore EXIST cipertext 2", typeof cipertext);

@@ -4,13 +4,12 @@ import { bigintToHex } from "bigint-conversion";
 import Handler from "./controllers/handler";
 import LockService from "./services/lock";
 import IdentityService from "./services/identity";
-import ZkValidator from "./services/zk-validator";
-import RequestManager from "./controllers/request-manager";
+import ZkValidator from "./services/zkValidator";
+import RequestManager from "./controllers/requestManager";
 import { RLNProofRequest, SemaphoreProofRequest } from "./services/protocols/interfaces";
 import ApprovalService from "./services/approval";
-import ZkIdentityWrapper from "./identity-decorater";
-import identityFactory from "./identity-factory";
-import BrowserUtils from "./controllers/browser-utils";
+import identityFactory from "./identityFactory";
+import BrowserUtils from "./controllers/browserUtils";
 import log from "loglevel";
 import { browser } from "webextension-polyfill-ts";
 
@@ -68,22 +67,20 @@ export default class ZkKeeperController extends Handler {
     this.add(RPCAction.CREATE_IDENTITY, LockService.ensure, async (payload: NewIdentityRequest) => {
       try {
         const { strategy, messageSignature, options } = payload;
-        if (!strategy) throw new Error("strategy not provided");
-
-        const numOfIdentites = await this.identityService.getNumOfIdentites();
-        const config: any = {
-          ...options,
-          name: options?.name || `Account # ${numOfIdentites}`,
-        };
-
-        if (strategy === "interrep") {
-          log.debug("CREATE_IDENTITY: 1");
-          config.messageSignature = messageSignature;
-          log.debug("CREATE_IDENTITY: 2");
+        if (!strategy) {
+          throw new Error("strategy not provided");
         }
 
-        const identity: ZkIdentityWrapper | undefined = await identityFactory(strategy, config);
-        log.debug("CREATE_IDENTITY: 4", identity);
+        const numOfIdentites = await this.identityService.getNumOfIdentites();
+        const config = {
+          ...options,
+          account: options.account ?? "",
+          identityStrategy: strategy,
+          name: options?.name || `Account # ${numOfIdentites}`,
+          messageSignature: strategy === "interrep" ? messageSignature : undefined,
+        };
+
+        const identity = await identityFactory(strategy, config);
 
         if (!identity) {
           throw new Error("Identity not created, make sure to check strategy");

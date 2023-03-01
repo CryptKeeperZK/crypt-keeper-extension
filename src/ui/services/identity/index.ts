@@ -1,6 +1,6 @@
 import type { JsonRpcSigner } from "@ethersproject/providers";
 
-import { IdentityStrategy, IdentityWeb2Provider } from "@src/types";
+import type { IdentityStrategy, IdentityWeb2Provider } from "@src/types";
 
 export interface ISignIdentityMessageArgs {
   identityStrategyType: IdentityStrategy;

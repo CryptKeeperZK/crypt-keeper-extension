@@ -1,19 +1,19 @@
-import { hexToBigint } from "bigint-conversion";
+import { bigintToHex, hexToBigint } from "bigint-conversion";
 import { MerkleProof } from "@zk-kit/incremental-merkle-tree";
 import { Group, Member } from "@semaphore-protocol/group";
 
-export function deserializeMerkleProof(merkleProof: MerkleProof): MerkleProof {
-  const deserialized = {} as MerkleProof;
-  deserialized.root = hexToBigint(merkleProof.root);
-  deserialized.siblings = merkleProof.siblings.map(siblings =>
-    Array.isArray(siblings) ? siblings.map(element => hexToBigint(element)) : hexToBigint(siblings),
-  );
-  deserialized.pathIndices = merkleProof.pathIndices;
-  deserialized.leaf = hexToBigint(merkleProof.leaf);
-  return deserialized;
-}
+import { MerkleProofArtifacts } from "@src/types";
 
-//export const poseidonHash = (data: Array<bigint>): bigint => poseidon(data)
+export function deserializeMerkleProof(merkleProof: MerkleProof): MerkleProof {
+  return {
+    root: hexToBigint(merkleProof.root),
+    siblings: merkleProof.siblings.map(siblings =>
+      Array.isArray(siblings) ? siblings.map(element => hexToBigint(element)) : hexToBigint(siblings),
+    ),
+    pathIndices: merkleProof.pathIndices,
+    leaf: hexToBigint(merkleProof.leaf),
+  };
+}
 
 export interface IGenerateMerkelProofArgs {
   treeDepth: number;
@@ -28,7 +28,43 @@ export function generateMerkleProof({ treeDepth, member, members }: IGenerateMer
     group.addMembers(members);
   }
 
-  const identityIndex = group.indexOf(member);
+  return group.generateMerkleProof(group.indexOf(member));
+}
 
-  return group.generateMerkleProof(identityIndex);
+export interface IGetMerkleProof {
+  identityCommitment: bigint;
+  merkleStorageAddress?: string;
+  merkleProofArtifacts?: MerkleProofArtifacts;
+  providerMerkleProof?: MerkleProof;
+}
+
+export async function getMerkleProof({
+  identityCommitment,
+  merkleStorageAddress,
+  merkleProofArtifacts,
+  providerMerkleProof,
+}: IGetMerkleProof): Promise<MerkleProof> {
+  if (providerMerkleProof) {
+    return providerMerkleProof;
+  }
+
+  return merkleStorageAddress
+    ? await getRemoteMerkleProof(merkleStorageAddress, bigintToHex(identityCommitment))
+    : generateMerkleProof({
+        treeDepth: (merkleProofArtifacts as MerkleProofArtifacts).depth,
+        member: identityCommitment,
+        members: [identityCommitment],
+      });
+}
+
+function getRemoteMerkleProof(merkleStorageAddress: string, identityCommitmentHex: string): Promise<MerkleProof> {
+  return fetch(merkleStorageAddress, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      identityCommitment: identityCommitmentHex,
+    }),
+  })
+    .then(res => res.json())
+    .then(response => deserializeMerkleProof(response.data.merkleProof));
 }

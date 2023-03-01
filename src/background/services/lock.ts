@@ -2,7 +2,7 @@ import CryptoJS from "crypto-js";
 import pushMessage from "@src/util/pushMessage";
 import { setStatus } from "@src/ui/ducks/app";
 import { browser } from "webextension-polyfill-ts";
-import SimpleStorage from "./simple-storage";
+import SimpleStorage from "./simpleStorage";
 import log from "loglevel";
 
 const passwordKey = "@password@";

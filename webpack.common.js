@@ -17,8 +17,8 @@ const envPlugin = new webpack.EnvironmentPlugin({
 
 module.exports = {
   entry: {
-    injected: path.join(__dirname, "src/contentscripts/injected.ts"),
-    content: path.join(__dirname, "src/contentscripts/index.ts"),
+    injected: path.join(__dirname, "src/contentScripts/injected.ts"),
+    content: path.join(__dirname, "src/contentScripts/index.ts"),
     backgroundPage: path.join(__dirname, "src/background/backgroundPage.ts"),
     popup: path.join(__dirname, "src/ui/popup.tsx"),
   },

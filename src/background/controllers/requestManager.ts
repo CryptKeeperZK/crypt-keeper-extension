@@ -3,7 +3,7 @@ import { EventEmitter2 } from "eventemitter2";
 import { PendingRequest, PendingRequestType, RequestResolutionAction } from "@src/types";
 import { setPendingRequest } from "@src/ui/ducks/requests";
 import { browser } from "webextension-polyfill-ts";
-import BrowserUtils from "./browser-utils";
+import BrowserUtils from "./browserUtils";
 
 let nonce = 0;
 

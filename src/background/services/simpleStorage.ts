@@ -6,6 +6,7 @@ export default class SimpleStorage {
 
   constructor(key: string) {
     this.key = key;
+
     browser.storage.onChanged.addListener((changes, namespace) => {
       for (const [key, { oldValue, newValue }] of Object.entries(changes)) {
         log.debug(
@@ -16,12 +17,16 @@ export default class SimpleStorage {
     });
   }
 
-  get = async (): Promise<any | null> => {
+  get = async <T>(): Promise<T | null> => {
     const content = await browser.storage.sync.get(this.key);
-    return content ? content[this.key] : null;
+    return content?.[this.key] ?? null;
   };
 
-  set = async (value: unknown) => browser.storage.sync.set({ [this.key]: value });
+  set = async <T>(value: T): Promise<void> => {
+    browser.storage.sync.set({ [this.key]: value });
+  };
 
-  clear = async () => browser.storage.sync.remove(this.key);
+  clear = async (): Promise<void> => {
+    browser.storage.sync.remove(this.key);
+  };
 }

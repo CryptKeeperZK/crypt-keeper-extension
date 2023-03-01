@@ -35,23 +35,6 @@ export const fetchRequestPendingStatus = () => async (dispatch: Dispatch) => {
   dispatch(setPendingRequest(pendingRequests));
 };
 
-/**
- *  NOTE: This pattern that return a function(dispatch, getState) is called a Thunk
- *  You don't need to use a thunk unless you want to dispatch an action after async requests
- *  When calling a thunk, you must dispatch it, e.g.:
- *
- *  dispatch(finalizeRequest('0', 'dummy'));
- */
-// export const finalizeRequest = (id: string, action: RequestResolutionAction) => async (dispatch: Dispatch) => {
-//     return postMessage({
-//         method: RPCAction.FINALIZE_REQUEST,
-//         payload: {
-//             id,
-//             action,
-//         },
-//     });
-// }
-
 export default function requests(state = initialState, action: Action<any>): State {
   switch (action.type) {
     case ActionType.SET_PENDING_REQUESTS:

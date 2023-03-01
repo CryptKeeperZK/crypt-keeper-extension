@@ -1,4 +1,4 @@
-import ZkIdentityDecorater from "@src/background/identity-decorater";
+import ZkIdentityDecorater from "@src/background/identityDecorater";
 import SemaphoreService from "@src/background/services/protocols/semaphore";
 
 import type { SemaphoreProof, SemaphoreProofRequest } from "@src/background/services/protocols/interfaces";

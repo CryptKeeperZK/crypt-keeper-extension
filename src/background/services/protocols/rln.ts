@@ -1,49 +1,35 @@
-import { MerkleProof } from "@zk-kit/incremental-merkle-tree";
 import { RLN, RLNFullProof } from "rlnjs";
-import { bigintToHex } from "bigint-conversion";
-import { MerkleProofArtifacts } from "@src/types";
-import ZkIdentityDecorater from "@src/background/identity-decorater";
+
+import ZkIdentityDecorater from "@src/background/identityDecorater";
+
 import { RLNProofRequest } from "./interfaces";
-import { deserializeMerkleProof, generateMerkleProof } from "./utils";
+import { getMerkleProof } from "./utils";
 
 export default class RLNService {
-  async genProof(identity: ZkIdentityDecorater, request: RLNProofRequest): Promise<RLNFullProof> {
+  async genProof(
+    identity: ZkIdentityDecorater,
+    {
+      circuitFilePath,
+      zkeyFilePath,
+      verificationKey,
+      merkleStorageAddress,
+      externalNullifier,
+      signal,
+      merkleProofArtifacts,
+      merkleProof: providerMerkleProof,
+    }: RLNProofRequest,
+  ): Promise<RLNFullProof> {
     try {
-      const {
-        circuitFilePath,
-        zkeyFilePath,
-        verificationKey,
-        merkleStorageAddress,
-        externalNullifier,
-        signal,
-        merkleProofArtifacts,
-      } = request;
-      let merkleProof: MerkleProof;
-
       const rln = new RLN(circuitFilePath, zkeyFilePath, verificationKey);
 
       const identityCommitment = identity.genIdentityCommitment();
-      const identityCommitmentHex = bigintToHex(identityCommitment);
 
-      if (merkleStorageAddress) {
-        const response = await fetch(merkleStorageAddress, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            identityCommitment: identityCommitmentHex,
-          }),
-        }).then(res => res.json());
-
-        merkleProof = deserializeMerkleProof(response.data.merkleProof);
-      } else {
-        const proofArtifacts = merkleProofArtifacts as MerkleProofArtifacts;
-
-        merkleProof = generateMerkleProof({
-          treeDepth: proofArtifacts.depth,
-          member: identityCommitment,
-          members: [identityCommitment],
-        });
-      }
+      const merkleProof = await getMerkleProof({
+        identityCommitment,
+        merkleProofArtifacts,
+        merkleStorageAddress,
+        providerMerkleProof,
+      });
 
       return rln.generateProof(signal, merkleProof, externalNullifier);
     } catch (e) {

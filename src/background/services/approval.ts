@@ -1,12 +1,12 @@
 import log from "loglevel";
 
-import SimpleStorage from "./simple-storage";
+import SimpleStorage from "./simpleStorage";
 import LockService from "./lock";
 
 const DB_KEY = "@APPROVED@";
 
 export default class ApprovalService extends SimpleStorage {
-  private allowedHosts: Array<string>;
+  private allowedHosts: string[];
 
   permissions: SimpleStorage;
 
@@ -21,25 +21,24 @@ export default class ApprovalService extends SimpleStorage {
   isApproved = (origin: string): boolean => this.allowedHosts.includes(origin);
 
   unlock = async (): Promise<boolean> => {
-    const encrypedArray: Array<string> = await this.get();
+    const encrypedArray = await this.get<string[]>();
+
     if (!encrypedArray) return true;
 
-    const promises: Array<Promise<string>> = encrypedArray.map((cipertext: string) => LockService.decrypt(cipertext));
+    this.allowedHosts = await Promise.all(encrypedArray.map((cipertext: string) => LockService.decrypt(cipertext)));
 
-    this.allowedHosts = await Promise.all(promises);
     return true;
   };
 
   refresh = async () => {
-    const encrypedArray: Array<string> = await this.get();
+    const encrypedArray = await this.get<string[]>();
+
     if (!encrypedArray) {
       this.allowedHosts = [];
       return;
     }
 
-    const promises: Array<Promise<string>> = encrypedArray.map((cipertext: string) => LockService.decrypt(cipertext));
-
-    this.allowedHosts = await Promise.all(promises);
+    this.allowedHosts = await Promise.all(encrypedArray.map((cipertext: string) => LockService.decrypt(cipertext)));
   };
 
   getPermission = async (host: string) => {

@@ -59,7 +59,8 @@ export type RequestResolutionAction<data> = {
 export type IdentityMetadata = {
   account: string;
   name: string;
-  web2Provider: IdentityStrategy;
+  identityStrategy: IdentityStrategy;
+  web2Provider?: IdentityWeb2Provider;
 };
 
 export type IdentityName = {

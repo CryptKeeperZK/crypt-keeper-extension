@@ -20,22 +20,23 @@ type PropertyLastErrorType = browser.Runtime.PropertyLastErrorType;
  * "
  *
  * @see {@link https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/runtime/lastError}
- * @returns {PropertyLastErrorType|undefined}
  */
 export function checkForLastError(): PropertyLastErrorType | undefined {
   const { lastError } = browser.runtime;
+
   if (!lastError) {
     return undefined;
   }
+
   // if it quacks like an Error, its an Error
   if (lastError.message) {
     return lastError;
   }
+
   // repair incomplete error object (eg chromium v77)
   return new Error(lastError.message);
 }
 
-/** @returns {PropertyLastErrorType|undefined} */
 export function checkForLastErrorAndLog(): PropertyLastErrorType | undefined {
   const error = checkForLastError();
 
@@ -46,7 +47,6 @@ export function checkForLastErrorAndLog(): PropertyLastErrorType | undefined {
   return error;
 }
 
-/** @returns {PropertyLastErrorType|undefined} */
 export function checkForLastErrorAndWarn(): PropertyLastErrorType | undefined {
   const error = checkForLastError();
 

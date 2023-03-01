@@ -11,8 +11,7 @@ export default class ZkIdentityDecorater {
   }
 
   genIdentityCommitment = (): bigint => {
-    const idCommitment = this.zkIdentity.getCommitment();
-    return idCommitment;
+    return this.zkIdentity.getCommitment();
   };
 
   setIdentityMetadataName = (name: string): IdentityMetadata => {
@@ -21,21 +20,23 @@ export default class ZkIdentityDecorater {
   };
 
   serialize = (): string => {
-    const serialized = {
+    return JSON.stringify({
       secret: this.zkIdentity.toString(),
       metadata: this.metadata,
-    };
-
-    return JSON.stringify(serialized);
+    });
   };
 
   static genFromSerialized = (serialized: string): ZkIdentityDecorater => {
     const data: SerializedIdentity = JSON.parse(serialized);
-    if (!data.metadata) throw new Error("Metadata missing");
-    if (!data.secret) throw new Error("Secret missing");
 
-    // TODO overload zkIdentity function to work both with array and string
-    const zkIdentity = new Identity(data.secret);
-    return new ZkIdentityDecorater(zkIdentity, data.metadata);
+    if (!data.metadata) {
+      throw new Error("Metadata missing");
+    }
+
+    if (!data.secret) {
+      throw new Error("Secret missing");
+    }
+
+    return new ZkIdentityDecorater(new Identity(data.secret), data.metadata);
   };
 }
