@@ -48,27 +48,22 @@ export default class IdentityService {
   setDefaultIdentity = async () => {
     const identities = await this.getIdentitiesFromStore();
 
-    if (!identities.size) return;
+    if (!identities.size) {
+      await this.clearActiveIdentity();
+      return;
+    }
 
     const { value: firstKey } = identities.keys().next();
-    this.activeIdentity = ZkIdentityDecorater.genFromSerialized(identities.get(firstKey) as string);
+
+    await this.setActiveIdentity(firstKey);
   };
 
   setActiveIdentity = async (identityCommitment: string) => {
     const identities = await this.getIdentitiesFromStore();
 
     if (identities.has(identityCommitment)) {
-      const identityCommitmentCipher = await LockService.encrypt(identityCommitment);
-      await this.activeIdentityStore.set(identityCommitmentCipher as string);
       this.activeIdentity = ZkIdentityDecorater.genFromSerialized(identities.get(identityCommitment) as string);
-      pushMessage(setSelected(identityCommitment));
-
-      const tabs = await browser.tabs.query({ active: true });
-      for (const tab of tabs) {
-        log.debug("Inside setActiveIdentity 1");
-        await browser.tabs.sendMessage(tab.id as number, setSelected(identityCommitment));
-        log.debug("Inside setActiveIdentity 2");
-      }
+      await this.saveActiveIdentity(identityCommitment);
     }
   };
 
@@ -110,12 +105,45 @@ export default class IdentityService {
       const serializedIdentities = JSON.stringify(Array.from(identities.entries()));
       const cipertext = await LockService.encrypt(serializedIdentities);
       await this.identitiesStore.set(cipertext);
+      await this.setDefaultIdentity();
       await pushMessage(setIdentities(await this.getIdentities()));
 
       return true;
     } else {
       log.debug("deleteIdentity id is not deleted");
       return false;
+    }
+  };
+
+  deleteAllIdentities = async () => {
+    const identities = await this.getIdentitiesFromStore();
+
+    if (!identities.size) {
+      return;
+    }
+
+    await this.identitiesStore.clear();
+    await this.clearActiveIdentity();
+    await pushMessage(setIdentities([]));
+  };
+
+  private clearActiveIdentity = async () => {
+    if (!this.activeIdentity) {
+      return;
+    }
+
+    this.activeIdentity = undefined;
+    await this.saveActiveIdentity("");
+  };
+
+  private saveActiveIdentity = async (commitment: string) => {
+    const identityCommitmentCipher = await LockService.encrypt(commitment);
+    await this.activeIdentityStore.set(identityCommitmentCipher);
+    await pushMessage(setSelected(commitment));
+
+    const tabs = await browser.tabs.query({ active: true });
+    for (const tab of tabs) {
+      await browser.tabs.sendMessage(tab.id as number, setSelected(commitment));
     }
   };
 
@@ -135,7 +163,6 @@ export default class IdentityService {
       return this.activeIdentity;
     }
 
-    log.error("IdentityService cannot find Identity commitment");
     return undefined;
   };
 

@@ -85,6 +85,12 @@ export const deleteIdentity = (identityCommitment: string) => async (dispatch: A
   });
 };
 
+export const deleteAllIdentities = () => async (dispatch: AppDispatch) => {
+  return postMessage({
+    method: RPCAction.DELETE_ALL_IDENTITIES,
+  });
+};
+
 export const setSelected = (identityCommitment: string) => ({
   type: ActionType.SET_SELECTED,
   payload: identityCommitment,
