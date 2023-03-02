@@ -8,6 +8,8 @@ const keys = ["XMLHttpRequest"];
 
 keys.forEach(key => {
   if (!Reflect.has(globalThis, key)) {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
     globalThis[key] = undefined;
   }
 });

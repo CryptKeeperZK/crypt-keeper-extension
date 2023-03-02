@@ -376,7 +376,9 @@ interface ProofModalProps {
   pendingRequest?: PendingRequest;
 }
 
-const PROOF_MODAL_TITLES = {
+type ProofType = PendingRequestType.SEMAPHORE_PROOF | PendingRequestType.RLN_PROOF;
+
+const PROOF_MODAL_TITLES: Record<ProofType, string> = {
   [PendingRequestType.SEMAPHORE_PROOF]: "Generate Semaphore Proof",
   [PendingRequestType.RLN_PROOF]: "Generate RLN Proof",
 };
@@ -384,7 +386,7 @@ const PROOF_MODAL_TITLES = {
 function ProofModal({ pendingRequest, len, reject, accept, loading, error }: ProofModalProps) {
   const { circuitFilePath, externalNullifier, signal, zkeyFilePath, origin, verificationKey } =
     pendingRequest?.payload || {};
-  const operation = PROOF_MODAL_TITLES[pendingRequest?.type ?? ""] || "Generate proof";
+  const operation = PROOF_MODAL_TITLES[pendingRequest?.type as ProofType] || "Generate proof";
 
   const [faviconUrl, setFaviconUrl] = useState("");
 

@@ -29,7 +29,7 @@ export function CreateIdentityModal({ onClose }: ICreateIdentityModalProps): JSX
   } = useCreateIdentityModal({ onClose });
 
   return (
-    <FullModal onClose={onClose}>
+    <FullModal data-testid="create-identity-modal" onClose={onClose}>
       <FullModalHeader onClose={onClose}>Create Identity</FullModalHeader>
 
       <FullModalContent>

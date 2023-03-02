@@ -134,7 +134,7 @@ function reduceSetIdentities(
   action: Action<{ commitment: string; metadata: IdentityMetadata }[]>,
 ): State {
   const identityCommitments: string[] = [];
-  const identityMap = {};
+  const identityMap: Record<string, IdentityMetadata> = {};
 
   if (action.payload) {
     for (const id of action.payload) {
