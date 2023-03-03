@@ -22,7 +22,7 @@ enum MerkleProofType {
 
 declare global {
   interface Window {
-    zkpr: {
+    zkpr?: {
       connect: () => Promise<Client | null>;
     };
   }
@@ -149,16 +149,12 @@ function App() {
   }, [client, setIdentityCommitment]);
 
   const initClient = useCallback(async () => {
-    const { zkpr } = window;
+    const client = await window.zkpr?.connect();
 
-    if (!zkpr) {
-      log.warn("zkpr is not defined");
-      return;
+    if (client) {
+      setClient(client);
+      setIsLocked(false);
     }
-
-    const client = await zkpr.connect();
-    setClient(client);
-    setIsLocked(false);
   }, [setClient, setIsLocked]);
 
   const onIdentityChanged = useCallback(
@@ -181,13 +177,9 @@ function App() {
   useEffect(() => {
     if (!client) {
       initClient();
-    }
-  }, [client, initClient]);
-
-  useEffect(() => {
-    if (!client) {
       return undefined;
     }
+
     getIdentityCommitment();
 
     client?.on("login", onLogin);

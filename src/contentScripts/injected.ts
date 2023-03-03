@@ -236,7 +236,7 @@ async function connect(): Promise<Client | null> {
 
 declare global {
   interface Window {
-    zkpr: {
+    zkpr?: {
       connect: () => Promise<Client | null>;
     };
   }
