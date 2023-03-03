@@ -18,6 +18,10 @@ jest.mock("webextension-polyfill-ts", (): unknown => {
 
   return {
     browser: {
+      tabs: {
+        query: jest.fn(),
+        sendMessage: jest.fn(),
+      },
       storage: {
         sync: {
           get: jest.fn(),
