@@ -1,118 +1,82 @@
-import log from "loglevel";
-
 import SimpleStorage from "./simpleStorage";
 import LockService from "./lock";
 
-const DB_KEY = "@APPROVED@";
+const APPPROVALS_DB_KEY = "@APPROVED@";
 
-export default class ApprovalService extends SimpleStorage {
-  private allowedHosts: string[];
+interface HostPermission {
+  noApproval: boolean;
+}
 
-  permissions: SimpleStorage;
+export default class ApprovalService {
+  private allowedHosts: Map<string, { noApproval: boolean }>;
+  private approvals: SimpleStorage;
 
   constructor() {
-    super(DB_KEY);
-    this.allowedHosts = [];
-    this.permissions = new SimpleStorage("@HOST_PERMISSIONS@");
+    this.allowedHosts = new Map();
+    this.approvals = new SimpleStorage(APPPROVALS_DB_KEY);
   }
 
-  getAllowedHosts = () => this.allowedHosts;
+  public getAllowedHosts = (): string[] =>
+    [...this.allowedHosts.entries()].filter(([, isApproved]) => isApproved).map(([key]) => key);
 
-  isApproved = (origin: string): boolean => this.allowedHosts.includes(origin);
+  public isApproved = (origin: string): boolean => this.allowedHosts.has(origin);
 
-  unlock = async (): Promise<boolean> => {
-    const encrypedArray = await this.get<string[]>();
+  public canSkipApprove = (origin: string): boolean => Boolean(this.allowedHosts.get(origin)?.noApproval);
 
-    if (!encrypedArray) return true;
+  public unlock = async (): Promise<boolean> => {
+    const encryped = await this.approvals.get<string>();
 
-    this.allowedHosts = await Promise.all(encrypedArray.map((cipertext: string) => LockService.decrypt(cipertext)));
+    if (encryped) {
+      const decrypted = await LockService.decrypt(encryped);
+      this.allowedHosts = new Map(JSON.parse(decrypted));
+    }
 
     return true;
   };
 
-  refresh = async () => {
-    const encrypedArray = await this.get<string[]>();
+  public getPermission = async (host: string): Promise<HostPermission> => {
+    return {
+      noApproval: Boolean(this.allowedHosts.get(host)?.noApproval),
+    };
+  };
 
-    if (!encrypedArray) {
-      this.allowedHosts = [];
+  public setPermission = async (host: string, { noApproval }: HostPermission): Promise<HostPermission> => {
+    this.allowedHosts.set(host, { noApproval });
+    await this.saveApprovals();
+
+    return { noApproval };
+  };
+
+  public add = async ({ host, noApproval }: { host: string; noApproval: boolean }): Promise<void> => {
+    if (this.allowedHosts.get(host)) {
       return;
     }
 
-    this.allowedHosts = await Promise.all(encrypedArray.map((cipertext: string) => LockService.decrypt(cipertext)));
+    this.allowedHosts.set(host, { noApproval });
+    await this.saveApprovals();
   };
 
-  getPermission = async (host: string) => {
-    const store = await this.permissions.get<Record<string, { noApproval: boolean }>>();
-    const permission = store?.[host];
+  public remove = async ({ host }: { host: string }): Promise<void> => {
+    if (!this.allowedHosts.has(host)) {
+      return;
+    }
 
-    return {
-      noApproval: Boolean(permission?.noApproval),
-    };
-  };
-
-  setPermission = async (
-    host: string,
-    permission: {
-      noApproval: boolean;
-    },
-  ) => {
-    const { noApproval } = permission;
-    const existing = await this.getPermission(host);
-    const newPer = {
-      ...existing,
-      noApproval,
-    };
-
-    const store = await this.permissions.get();
-    await this.permissions.set({
-      ...(store || {}),
-      [host]: newPer,
-    });
-    return newPer;
-  };
-
-  add = async (payload: { host: string; noApproval?: boolean }) => {
-    const { host } = payload;
-
-    if (!host) throw new Error("No host provided");
-
-    if (this.allowedHosts.includes(host)) return;
-
-    this.allowedHosts.push(host);
-
-    const promises: Array<Promise<string>> = this.allowedHosts.map((allowedHost: string) =>
-      LockService.encrypt(allowedHost),
-    );
-
-    const newValue: Array<string> = await Promise.all(promises);
-
-    await this.set(newValue);
-    await this.refresh();
-  };
-
-  remove = async (payload: any) => {
-    const { host }: { host: string } = payload;
-    log.debug(payload);
-    if (!host) throw new Error("No address provided");
-
-    const index: number = this.allowedHosts.indexOf(host);
-    if (index === -1) return;
-
-    this.allowedHosts = [...this.allowedHosts.slice(0, index), ...this.allowedHosts.slice(index + 1)];
-
-    const promises: Array<Promise<string>> = this.allowedHosts.map((allowedHost: string) =>
-      LockService.encrypt(allowedHost),
-    );
-
-    const newValue: Array<string> = await Promise.all(promises);
-    await this.set(newValue);
-    await this.refresh();
+    this.allowedHosts.delete(host);
+    await this.saveApprovals();
   };
 
   /** dev only */
-  empty = async (): Promise<any> => {
-    if (!(process.env.NODE_ENV === "development" || process.env.NODE_ENV === "test")) return;
-    await this.clear();
-    await this.refresh();
+  public clear = async (): Promise<void> => {
+    if (!["development", "test"].includes(process.env.NODE_ENV as string)) {
+      return;
+    }
+
+    this.allowedHosts.clear();
+    await this.approvals.clear();
   };
+
+  private async saveApprovals(): Promise<void> {
+    const newApprovals = await LockService.encrypt(JSON.stringify(this.allowedHosts));
+    await this.approvals.set(newApprovals);
+  }
 }

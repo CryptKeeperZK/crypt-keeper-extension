@@ -151,17 +151,22 @@ async function openPopup() {
   });
 }
 
-async function tryInject(origin: string) {
+interface Approvals {
+  isApproved: boolean;
+  canSkipApprove: boolean;
+}
+
+async function tryInject(origin: string): Promise<Approvals> {
   return post({
     method: RPCAction.TRY_INJECT,
     payload: { origin },
-  });
+  }) as Promise<Approvals>;
 }
 
-async function addHost(host: string) {
+async function addHost(host: string, noApproval: boolean) {
   return post({
     method: RPCAction.APPROVE_HOST,
-    payload: { host },
+    payload: { host, noApproval },
   });
 }
 
@@ -217,10 +222,10 @@ export type Client = typeof client;
 async function connect(): Promise<Client | null> {
   let result: Client | null = null;
   try {
-    const approved = await tryInject(window.location.origin);
+    const { isApproved, canSkipApprove } = await tryInject(window.location.origin);
 
-    if (approved) {
-      await addHost(window.location.origin);
+    if (isApproved) {
+      await addHost(window.location.origin, canSkipApprove);
       result = client;
     }
   } catch (err) {

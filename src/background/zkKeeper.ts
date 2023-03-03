@@ -221,36 +221,41 @@ export default class ZkKeeperController extends Handler {
       }
 
       const isApproved = this.approvalService.isApproved(origin);
+      const canSkipApprove = this.approvalService.canSkipApprove(origin);
 
-      if (isApproved) return true;
+      if (isApproved) return { isApproved, canSkipApprove };
 
       try {
         await this.requestManager.newRequest(PendingRequestType.INJECT, { origin });
-        return true;
+        return { isApproved: true, canSkipApprove: false };
       } catch (e) {
         log.error(e);
-        return false;
+        return { isApproved: false, canSkipApprove: false };
       }
     });
-    this.add(RPCAction.APPROVE_HOST, LockService.ensure, async (payload: any) => {
+    this.add(RPCAction.APPROVE_HOST, LockService.ensure, async (payload: { host: string; noApproval: boolean }) => {
       this.approvalService.add(payload);
     });
     this.add(RPCAction.IS_HOST_APPROVED, LockService.ensure, this.approvalService.isApproved);
     this.add(RPCAction.REMOVE_HOST, LockService.ensure, this.approvalService.remove);
 
-    this.add(RPCAction.GET_HOST_PERMISSIONS, LockService.ensure, async (payload: any) =>
+    this.add(RPCAction.GET_HOST_PERMISSIONS, LockService.ensure, async (payload: string) =>
       this.approvalService.getPermission(payload),
     );
 
-    this.add(RPCAction.SET_HOST_PERMISSIONS, LockService.ensure, async (payload: any) => {
-      const { host, ...permissions } = payload;
-      return this.approvalService.setPermission(host, permissions);
-    });
+    this.add(
+      RPCAction.SET_HOST_PERMISSIONS,
+      LockService.ensure,
+      async (payload: { host: string; noApproval: boolean }) => {
+        const { host, ...permissions } = payload;
+        return this.approvalService.setPermission(host, permissions);
+      },
+    );
 
     this.add(RPCAction.CLOSE_POPUP, async () => BrowserUtils.closePopup());
 
     // dev
-    this.add(RPCAction.CLEAR_APPROVED_HOSTS, this.approvalService.empty);
+    this.add(RPCAction.CLEAR_APPROVED_HOSTS, this.approvalService.clear);
     this.add(RPCAction.DUMMY_REQUEST, async () =>
       this.requestManager.newRequest(PendingRequestType.DUMMY, "hello from dummy"),
     );
