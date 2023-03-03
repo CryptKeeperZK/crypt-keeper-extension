@@ -11,14 +11,14 @@ export type ModalProps = {
 };
 
 export default function Modal(props: ModalProps): ReactElement {
-  const { className = "", onClose, children } = props;
+  const { className = "", onClose, children, ...rest } = props;
 
   modalRoot = document.querySelector("#modal");
 
   if (!modalRoot) return <></>;
 
   return ReactDOM.createPortal(
-    <div className="modal__overlay" onClick={onClose}>
+    <div {...rest} className="modal__overlay" onClick={onClose}>
       <div className={`modal__wrapper ${className}`} onClick={e => e.stopPropagation()}>
         {children}
       </div>

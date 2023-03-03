@@ -58,7 +58,7 @@ class LockService extends SimpleStorage {
   unlock = async (password: string): Promise<boolean> => {
     if (this.isUnlocked) return true;
 
-    const ciphertext = await this.get();
+    const ciphertext = await this.get<string>();
 
     if (!ciphertext) {
       throw new Error("Something badly gone wrong (reinstallation probably required)");
@@ -122,12 +122,12 @@ class LockService extends SimpleStorage {
 
   encrypt = async (payload: string): Promise<string> => {
     await this.ensure();
-    return CryptoJS.AES.encrypt(payload, this.password).toString();
+    return CryptoJS.AES.encrypt(payload, this.password as string).toString();
   };
 
   decrypt = async (ciphertext: string): Promise<string> => {
     await this.ensure();
-    const bytes = CryptoJS.AES.decrypt(ciphertext, this.password);
+    const bytes = CryptoJS.AES.decrypt(ciphertext, this.password as string);
     return bytes.toString(CryptoJS.enc.Utf8);
   };
 }

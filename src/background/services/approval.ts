@@ -42,11 +42,11 @@ export default class ApprovalService extends SimpleStorage {
   };
 
   getPermission = async (host: string) => {
-    const store = await this.permissions.get();
-    const permission = store?.[host] ?? false;
+    const store = await this.permissions.get<Record<string, { noApproval: boolean }>>();
+    const permission = store?.[host];
 
     return {
-      noApproval: !!permission?.noApproval,
+      noApproval: Boolean(permission?.noApproval),
     };
   };
 

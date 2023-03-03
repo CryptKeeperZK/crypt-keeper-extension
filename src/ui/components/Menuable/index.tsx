@@ -58,7 +58,7 @@ export default function Menuable(props: MenuableProps): ReactElement {
   }, [onClose]);
 
   const goBack = useCallback(
-    e => {
+    (e: MouseEvent) => {
       e.stopPropagation();
       const newPath = [...path];
       newPath.pop();
@@ -68,16 +68,17 @@ export default function Menuable(props: MenuableProps): ReactElement {
   );
 
   const onItemClick = useCallback(
-    (e, item, i) => {
+    (e: MouseEvent, item: ItemProps, i: number) => {
       e.stopPropagation();
       if (item.disabled) return;
       if (item.children) {
         setPath([...path, i]);
       } else if (item.onClick) {
         item.onClick(e, () => setPath([]));
+        onClose();
       }
     },
-    [path],
+    [path, onClose, setPath],
   );
 
   let { items } = props;
@@ -92,6 +93,7 @@ export default function Menuable(props: MenuableProps): ReactElement {
 
   return (
     <div
+      data-testid="menu"
       className={classNames(
         "menuable",
         {

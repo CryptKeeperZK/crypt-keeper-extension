@@ -14,10 +14,11 @@ type Props = {
 
 export default class Icon extends Component<Props> {
   render() {
-    const { url, size = 0.75, className = "", disabled, fontAwesome, onClick } = this.props;
+    const { url, size = 0.75, className = "", disabled, fontAwesome, onClick, ...rest } = this.props;
 
     return (
       <div
+        {...rest}
         className={c("icon", className, {
           "icon--disabled": disabled,
           "icon--clickable": onClick,

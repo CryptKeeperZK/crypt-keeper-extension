@@ -59,7 +59,7 @@ class BrowserUtils {
     }
   };
 
-  focusWindow = windowId => browser.windows.update(windowId, { focused: true });
+  focusWindow = (windowId: number) => browser.windows.update(windowId, { focused: true });
 
   getAllWindows = () => browser.windows.getAll();
 

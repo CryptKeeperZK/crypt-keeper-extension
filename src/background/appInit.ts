@@ -3,6 +3,11 @@
 // TODO: importing scripts better using importScritps() check MM
 import importAllScripts from "./shared/importScripts";
 
+declare global {
+  // eslint-disable-next-line no-var
+  var isFirstTimeProfileLoaded: boolean | undefined;
+}
+
 // Ref: https://stackoverflow.com/questions/66406672/chrome-extension-mv3-modularize-service-worker-js-file
 self.addEventListener("install", () => {
   importAllScripts();

@@ -1,27 +1,18 @@
-import React, { ReactElement, useCallback, useEffect, useRef, useState } from "react";
+import { ReactElement, useCallback, useEffect, useRef, useState } from "react";
 import postMessage from "@src/util/postMessage";
 import RPCAction from "@src/util/constants";
-import Icon from "@src/ui/components/Icon";
-import {
-  deleteIdentity,
-  fetchIdentities,
-  setActiveIdentity,
-  setIdentityName,
-  useIdentities,
-  useSelectedIdentity,
-} from "@src/ui/ducks/identities";
+import { fetchIdentities } from "@src/ui/ducks/identities";
 import Header from "@src/ui/components/Header";
 import classNames from "classnames";
 import { browser } from "webextension-polyfill-ts";
 import "./home.scss";
-import { ellipsify, sliceAddress } from "@src/util/account";
-import { CreateIdentityModal } from "@src/ui/components/CreateIdentityModal";
+import { sliceAddress } from "@src/util/account";
 import ConnectionModal from "@src/ui/components/ConnectionModal";
-import Menuable from "@src/ui/components/Menuable";
 import { useAppDispatch } from "@src/ui/ducks/hooks";
 import { metamask } from "@src/connectors";
 import { useWallet } from "@src/ui/hooks/wallet";
 import { DEFAULT_ROUND } from "@src/config/const";
+import { IdentityList } from "./components";
 
 export default function Home(): ReactElement {
   const dispatch = useAppDispatch();
@@ -171,132 +162,8 @@ const HomeList = function (): ReactElement {
       </div>
       <div className="home__list__content">
         {selectedTab === "identities" ? <IdentityList /> : null}
-        {selectedTab === "activity" ? <ActivityList /> : null}
+        {/* {selectedTab === "activity" ? <ActivityList /> : null} */}
       </div>
     </div>
   );
-};
-
-const IdentityList = function (): ReactElement {
-  const identities = useIdentities();
-  const selected = useSelectedIdentity();
-  const dispatch = useAppDispatch();
-  const { address } = useWallet();
-
-  const [showingModal, setShowModal] = useState<boolean>(false);
-  const [renameInput, setRenameInput] = useState<Map<string, boolean>>(new Map());
-  const [nameInput, setNameInput] = useState<string>();
-  const [deleteIdentityState, setDeleteIdentityState] = useState(false);
-
-  const updateSetRenameMap = (key, value) => {
-    setRenameInput(map => new Map(map.set(key, value)));
-  };
-
-  const selectIdentity = useCallback(async (identityCommitment: string) => {
-    dispatch(setActiveIdentity(identityCommitment));
-  }, []);
-
-  const changeIdentityNameButton = useCallback(async (identityCommitment: string, name: string | undefined) => {
-    if (name) {
-      await dispatch(setIdentityName(identityCommitment, name));
-      updateSetRenameMap(identityCommitment, false);
-    }
-  }, []);
-
-  const deleteIdentityButton = useCallback(async (identityCommitment: string) => {
-    await dispatch(deleteIdentity(identityCommitment));
-    setDeleteIdentityState(true);
-  }, []);
-
-  const handleNameInput = (event: any) => {
-    const value = event.target.value;
-    setNameInput(value);
-  };
-
-  useEffect(() => {
-    setDeleteIdentityState(false);
-  }, [renameInput, deleteIdentityState, identities]);
-
-  return (
-    <>
-      {showingModal && <CreateIdentityModal onClose={() => setShowModal(false)} />}
-      {identities.map(({ commitment, metadata }) => {
-        return (
-          <div className="p-4 identity-row" key={commitment}>
-            <Icon
-              className={classNames("identity-row__select-icon", {
-                "identity-row__select-icon--selected": selected.commitment === commitment,
-              })}
-              fontAwesome="fas fa-check"
-              onClick={() => selectIdentity(commitment)}
-            />
-            <div className="flex flex-col flex-grow">
-              {renameInput?.get(commitment) ? (
-                <div className="flex flex-row items-center text-lg font-semibold">
-                  <input
-                    className="identity-row__input-field"
-                    type="text"
-                    value={nameInput}
-                    onChange={handleNameInput}
-                  />
-                  <Icon
-                    className="identity-row__select-icon--selected mr-2"
-                    fontAwesome="fa-solid fa-check"
-                    size={1}
-                    onClick={() => changeIdentityNameButton(commitment, nameInput)}
-                    // TODO: support Enter press for renaming
-                    //onKeyPress={changeIdentityNameButton}
-                  />
-                </div>
-              ) : (
-                <div className="flex flex-row items-center text-lg font-semibold">
-                  {`${metadata.name}`}
-                  <span className="text-xs py-1 px-2 ml-2 rounded-full bg-gray-500 text-gray-800">
-                    {metadata.web2Provider || "random"}
-                  </span>
-                </div>
-              )}
-              <div className="text-base text-gray-500">{ellipsify(commitment)}</div>
-            </div>
-            <Menuable
-              className="flex user-menu"
-              items={[
-                {
-                  label: "Rename",
-                  onClick: () => {
-                    setNameInput(metadata.name);
-                    updateSetRenameMap(commitment, true);
-                  },
-                },
-                {
-                  label: "Delete",
-                  onClick: () => deleteIdentityButton(commitment),
-                },
-              ]}
-            >
-              <Icon className="identity-row__menu-icon" fontAwesome="fas fa-ellipsis-h" />
-            </Menuable>
-          </div>
-        );
-      })}
-      {address ? (
-        <div
-          className="create-identity-row__active flex flex-row items-center justify-center p-4 cursor-pointer text-gray-600"
-          onClick={() => setShowModal(true)}
-        >
-          <Icon fontAwesome="fas fa-plus" size={1} className="mr-2" />
-          <div>Add Identity</div>
-        </div>
-      ) : (
-        <div className="create-identity-row__not-active flex flex-row items-center justify-center p-4 cursor-pointer text-gray-600">
-          <Icon fontAwesome="fas fa-plus" size={1} className="mr-2" />
-          <div>Add Identity</div>
-        </div>
-      )}
-    </>
-  );
-};
-
-const ActivityList = function (): ReactElement {
-  return <div />;
 };

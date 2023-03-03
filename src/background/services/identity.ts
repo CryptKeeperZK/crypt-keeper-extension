@@ -10,18 +10,16 @@ import ZkIdentityDecorater from "../identityDecorater";
 import SimpleStorage from "./simpleStorage";
 import LockService from "./lock";
 
-const DB_KEY = "@@IDS-t1@@";
 const IDENTITY_KEY = "@@ID@@";
 const ACTIVE_IDENTITY_KEY = "@@AID@@";
 
-export default class IdentityService extends SimpleStorage {
+export default class IdentityService {
   identities: Map<string, string>;
   activeIdentity?: ZkIdentityDecorater;
   identitiesStore: SimpleStorage;
   activeIdentityStore: SimpleStorage;
 
   constructor() {
-    super(DB_KEY);
     this.identities = new Map();
     this.activeIdentity = undefined;
     this.identitiesStore = new SimpleStorage(IDENTITY_KEY);
@@ -30,56 +28,21 @@ export default class IdentityService extends SimpleStorage {
     log.debug("IdentityService constructor typeof identities", typeof this.identities);
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  unlock = async (_: any) => {
-    const encryptedContent = await this.get<string>();
-    if (!encryptedContent) return true;
-
-    const decrypted = await LockService.decrypt(encryptedContent);
-    await this.loadInMemory(JSON.parse(decrypted));
+  unlock = async () => {
     await this.setDefaultIdentity();
+    await pushMessage(setIdentities(await this.getIdentities()));
 
-    pushMessage(setIdentities(await this.getIdentities()));
     return true;
   };
 
   refresh = async () => {
-    const encryptedContent = await this.get<string>();
-    if (!encryptedContent) return;
-
-    const decrypted = await LockService.decrypt(encryptedContent);
-    await this.loadInMemory(JSON.parse(decrypted));
     // if the first identity just added, set it to active
     const identities = await this.getIdentitiesFromStore();
     if (identities.size === 1) {
       await this.setDefaultIdentity();
     }
 
-    pushMessage(setIdentities(await this.getIdentities()));
-  };
-
-  loadInMemory = async (decrypted: any) => {
-    const identities = await this.getIdentitiesFromStore();
-
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    Object.entries(decrypted || {}).forEach(async ([_, value]) => {
-      const identity: ZkIdentityDecorater = ZkIdentityDecorater.genFromSerialized(value as string);
-      const identityCommitment: bigint = identity.genIdentityCommitment();
-      log.debug("IdentityService loadInMemory identities before", identities);
-      identities.set(bigintToHex(identityCommitment), identity.serialize());
-      log.debug("IdentityService loadInMemory identities after", identities);
-      log.debug("IdentityService loadInMemory Object.fromEntries(identities)", Object.fromEntries(identities));
-      log.debug("IdentityService loadInMemory JSON.stringify(identities)", JSON.stringify(identities));
-      log.debug("IdentityService loadInMemory JSON.parse(identities)", JSON.parse(JSON.stringify(identities)));
-      try {
-        const serializedIdentities = JSON.stringify(Array.from(identities.entries()));
-        const cipertext = await LockService.encrypt(serializedIdentities);
-        // @src https://stackoverflow.com/a/67380395/13072332
-        await this.identitiesStore.set(cipertext);
-      } catch (error) {
-        throw new Error(`Error in storing ${error}`);
-      }
-    });
+    await pushMessage(setIdentities(await this.getIdentities()));
   };
 
   setDefaultIdentity = async () => {
@@ -122,11 +85,12 @@ export default class IdentityService extends SimpleStorage {
       const identity = ZkIdentityDecorater.genFromSerialized(id);
       identity.setIdentityMetadataName(name);
       identities.set(identityCommitment, identity.serialize());
+
       const serializedIdentities = JSON.stringify(Array.from(identities.entries()));
       const cipertext = await LockService.encrypt(serializedIdentities);
-
       await this.identitiesStore.set(cipertext);
-      pushMessage(setIdentities(await this.getIdentities()));
+      await pushMessage(setIdentities(await this.getIdentities()));
+
       return true;
     } else {
       log.debug("setIdentityName id not exist");
@@ -145,9 +109,9 @@ export default class IdentityService extends SimpleStorage {
 
       const serializedIdentities = JSON.stringify(Array.from(identities.entries()));
       const cipertext = await LockService.encrypt(serializedIdentities);
-
       await this.identitiesStore.set(cipertext);
-      pushMessage(setIdentities(await this.getIdentities()));
+      await pushMessage(setIdentities(await this.getIdentities()));
+
       return true;
     } else {
       log.debug("deleteIdentity id is not deleted");
@@ -212,25 +176,18 @@ export default class IdentityService extends SimpleStorage {
     const identities = await this.getIdentitiesFromStore();
     log.debug("IdentityService insert identities:", identities);
     log.debug(`IdentityService insert type identities: ${typeof identities}`);
-    const identityCommitment: string = bigintToHex(newIdentity.genIdentityCommitment());
-    const existing: boolean = identities.has(identityCommitment);
+    const identityCommitment = bigintToHex(newIdentity.genIdentityCommitment());
+    const existing = identities.has(identityCommitment);
 
     if (existing) {
       return false;
     }
 
-    const existingIdentites: string[] = [];
-    for (const serializedIdentity of identities.values()) {
-      log.debug("IdentityService insert identity:", serializedIdentity);
-      log.debug("IdentityService insert type identity:", typeof serializedIdentity);
-      existingIdentites.push(serializedIdentity);
-    }
+    identities.set(identityCommitment, newIdentity.serialize());
+    const serializedIdentities = JSON.stringify(Array.from(identities.entries()));
+    const cipertext = await LockService.encrypt(serializedIdentities);
+    await this.identitiesStore.set(cipertext);
 
-    const newValue: string[] = [...existingIdentites, newIdentity.serialize()];
-    const ciphertext: string = await LockService.encrypt(JSON.stringify(newValue));
-    log.debug("IdentityService ciphertext value", ciphertext);
-
-    await this.set(ciphertext);
     log.debug("IdentityService ciphertext value 1");
     await this.refresh();
     log.debug("IdentityService ciphertext value 2");
