@@ -1,7 +1,7 @@
 import React from "react";
 
 import Button from "@src/ui/components/Button";
-import Dropdown from "@src/ui/components/Dropdown";
+import Dropdown, { Option } from "@src/ui/components/Dropdown";
 import FullModal, { FullModalContent, FullModalFooter, FullModalHeader } from "@src/ui/components/FullModal";
 import Input from "@src/ui/components/Input";
 
@@ -11,9 +11,8 @@ export interface ICreateIdentityModalProps {
   onClose: () => void;
 }
 
-const WEB2_PROVIDER_OPTIONS = [{ value: "twitter" }, { value: "reddit" }, { value: "github" }];
-
-const IDENTITY_TYPES = [{ value: "interrep" }, { value: "random" }];
+const WEB2_PROVIDER_OPTIONS: readonly Option[] = [{ value: "Twitter", label: "Twitter" }, { value: "Reddit", label: "Reddit" }, { value: "Github", label: "Github" }];
+const IDENTITY_TYPES: readonly Option[] = [{ value: "InterRep", label: "InterRep" }, { value: "Random", label: "Random" }];
 
 export function CreateIdentityModal({ onClose }: ICreateIdentityModalProps): JSX.Element {
   const {

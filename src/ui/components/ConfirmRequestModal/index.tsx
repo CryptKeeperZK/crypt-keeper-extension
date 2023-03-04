@@ -7,10 +7,11 @@ import RPCAction from "@src/util/constants";
 import postMessage from "@src/util/postMessage";
 import "./confirm-modal.scss";
 import Input from "@src/ui/components/Input";
-import Dropdown from "@src/ui/components/Dropdown";
+import Dropdown, { Option } from "@src/ui/components/Dropdown";
 import Icon from "@src/ui/components/Icon";
 import Checkbox from "@src/ui/components/Checkbox";
 import { getLinkPreview } from "link-preview-js";
+import LoaderSVG from "@src/static/icons/loader.svg";
 
 export default function ConfirmRequestModal(): ReactElement {
   const pendingRequests = useRequestsPending();
@@ -286,6 +287,9 @@ function CreateIdentityApprovalModal(props: {
     });
   }, [nonce, web2Provider, identityType, props.accept]);
 
+  const WEB2_PROVIDER_OPTIONS: readonly Option[] = [{ value: "Twitter", label: "Twitter" }, { value: "Reddit", label: "Reddit" }, { value: "Github", label: "Github" }];
+  const IDENTITY_TYPES: readonly Option[] = [{ value: "InterRep", label: "InterRep" }, { value: "Random", label: "Random" }];
+
   return (
     <FullModal className="confirm-modal" onClose={() => null}>
       <FullModalHeader>
@@ -296,7 +300,7 @@ function CreateIdentityApprovalModal(props: {
         <Dropdown
           className="my-2"
           label="Identity type"
-          options={[{ value: "InterRep" }, { value: "Random" }]}
+          options={IDENTITY_TYPES}
           onChange={e => {
             setIdentityType(e.target.value as any);
           }}
@@ -307,7 +311,7 @@ function CreateIdentityApprovalModal(props: {
             <Dropdown
               className="my-2"
               label="Web2 Provider"
-              options={[{ value: "Twitter" }, { value: "Reddit" }, { value: "Github" }]}
+              options={WEB2_PROVIDER_OPTIONS}
               onChange={e => {
                 setWeb2Provider(e.target.value as any);
               }}

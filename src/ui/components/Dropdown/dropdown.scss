@@ -48,17 +48,26 @@
     // }
   }
 
-  &__select {
+  &__container {
+    display: flex;
+    justify-content: flex-start;
+    text-decoration: none;
+    padding: 0.8rem 0 0.8rem 2rem;
+    margin-top: 0.2rem;
+    margin-bottom: 0.2rem;
+    flex: 1 1 auto;
+    cursor: pointer;
+  }
+  
+  &__control {
     display: flex;
     align-items: center;
     justify-content: flex-start;
     text-decoration: none;
     color: white;
-    padding: 0.8rem 0 0.8rem 2rem;
     margin-top: 0.2rem;
     margin-bottom: 0.2rem;
-    border-radius: 0 50px 50px 0;
-
+    border-width: 0;
     flex: 1 1 auto;
     background-color: black;
     outline: none;
