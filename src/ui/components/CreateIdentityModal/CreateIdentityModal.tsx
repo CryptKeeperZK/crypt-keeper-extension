@@ -11,8 +11,8 @@ export interface ICreateIdentityModalProps {
   onClose: () => void;
 }
 
-const WEB2_PROVIDER_OPTIONS: readonly Option[] = [{ value: "Twitter", label: "Twitter" }, { value: "Reddit", label: "Reddit" }, { value: "Github", label: "Github" }];
-const IDENTITY_TYPES: readonly Option[] = [{ value: "InterRep", label: "InterRep" }, { value: "Random", label: "Random" }];
+const WEB2_PROVIDER_OPTIONS: readonly Option[] = [{ value: "Twitter", label: " Twitter", icon: "fa-brands fa-twitter" }, { value: "Reddit", label: " Reddit", icon: "fa-brands fa-reddit" }, { value: "Github", label: " Github", icon: "fa-brands fa-github" }];
+const IDENTITY_TYPES: readonly Option[] = [{ value: "InterRep", label: " InterRep", icon: null }, { value: "Random", label: " Random", icon: null }];
 
 export function CreateIdentityModal({ onClose }: ICreateIdentityModalProps): JSX.Element {
   const {

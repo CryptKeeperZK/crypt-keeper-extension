@@ -11,6 +11,8 @@ import { store } from "@src/ui/store/configureAppStore";
 import { isDebugMode } from "@src/config/env";
 import { Web3ReactProvider } from "@web3-react/core";
 import { connectors } from "@src/connectors";
+import { library } from '@fortawesome/fontawesome-svg-core'
+import { faTwitter, faGithub, faReddit } from '@fortawesome/free-brands-svg-icons';
 
 log.setDefaultLevel(isDebugMode() ? "debug" : "info");
 
@@ -26,6 +28,9 @@ browser.tabs.query({ active: true, currentWindow: true }).then(() => {
   browser.runtime.connect();
 
   const root = ReactDOM.createRoot(document.getElementById("popup") as HTMLElement);
+
+  library.add(faTwitter, faGithub, faReddit);
+
   root.render(
     <Provider store={store}>
       <HashRouter>

@@ -1,19 +1,13 @@
-import React, { InputHTMLAttributes, ReactElement } from "react";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import Select, { GroupBase, Options, OptionsOrGroups } from "react-select";
-import {
-  IconLookup,
-  IconDefinition,
-  findIconDefinition
-} from '@fortawesome/fontawesome-svg-core'
-import { fas, faCoffee } from '@fortawesome/free-solid-svg-icons';
-import "./dropdown.scss";
+import { InputHTMLAttributes, ReactElement, useEffect } from "react";
+import Select from "react-select";
 import classNames from "classnames";
-import Icon from "../Icon";
+import { IconOption } from "./components/IconOption";
+import "./dropdown.scss";
 
 export type Option = {
   readonly value: string;
   readonly label: string;
+  readonly icon: string | null;
 }
 
 type Props = {
@@ -30,17 +24,12 @@ export default function Dropdown(props: Props): ReactElement {
       <div className="dropdown__group">
         <Select
           classNamePrefix="dropdown"
+          className="dropdown__container"
           closeMenuOnSelect={true}
           placeholder={"Choose"}
           options={props.options}
+          components={{ Option: IconOption }}
         />
-        {/* <select className="dropdown__select" {...selectProps}>
-          {props.options.map(({ value, label }) => (
-            <option className="dropdown__option" key={value}>
-              <Icon fontAwesome="fas fa-tools" size={1.5} className="text-gray-700" /> {label || value}
-            </option>
-          ))}
-        </select> */}
       </div>
       {errorMessage && <div className="dropdown__error-message">{errorMessage}</div>}
     </div>
