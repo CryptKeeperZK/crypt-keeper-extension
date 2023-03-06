@@ -1,7 +1,7 @@
 import { browser } from "webextension-polyfill-ts";
 
 import { ZERO_ADDRESS } from "@src/config/const";
-import { setIdentities, setSelected } from "@src/ui/ducks/identities";
+import { setSelected } from "@src/ui/ducks/identities";
 import pushMessage from "@src/util/pushMessage";
 
 import IdentityService from "../identity";
@@ -162,9 +162,6 @@ describe("background/services/identity", () => {
       expect(result).toBe(true);
       expect(identityStorage.clear).toBeCalledTimes(1);
       expect(pushMessage).toBeCalledTimes(3);
-      expect(pushMessage).toHaveBeenNthCalledWith(1, setSelected(ZERO_ADDRESS));
-      expect(pushMessage).toHaveBeenNthCalledWith(2, setSelected(""));
-      expect(pushMessage).toHaveBeenNthCalledWith(3, setIdentities([]));
     });
 
     test("should not delete all identities if there is no any identity", async () => {

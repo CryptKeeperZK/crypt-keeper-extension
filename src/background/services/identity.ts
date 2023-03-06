@@ -85,9 +85,7 @@ export default class IdentityService {
       return false;
     }
 
-    await this.identitiesStore.clear();
-    await this.clearActiveIdentity();
-    await pushMessage(setIdentities([]));
+    await Promise.all([pushMessage(setIdentities([])), this.clearActiveIdentity(), this.identitiesStore.clear()]);
 
     return true;
   };
