@@ -17,16 +17,16 @@ export default class SimpleStorage {
     });
   }
 
-  get = async <T>(): Promise<T | null> => {
+  public async get<T>(): Promise<T | null> {
     const content = await browser.storage.sync.get(this.key);
     return content?.[this.key] ?? null;
-  };
+  }
 
-  set = async <T>(value: T): Promise<void> => {
+  public async set<T>(value: T): Promise<void> {
     browser.storage.sync.set({ [this.key]: value });
-  };
+  }
 
-  clear = async (): Promise<void> => {
+  public async clear(): Promise<void> {
     browser.storage.sync.remove(this.key);
-  };
+  }
 }

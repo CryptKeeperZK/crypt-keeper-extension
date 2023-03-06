@@ -103,11 +103,13 @@ export default class ZkKeeperController extends Handler {
       LockService.ensure,
       async (payload: IdentityName) => await this.identityService.setIdentityName(payload),
     );
-    this.add(
-      RPCAction.DELETE_IDENTITY,
-      LockService.ensure,
-      async (payload: IdentityName) => await this.identityService.deleteIdentity(payload),
+
+    this.add(RPCAction.DELETE_IDENTITY, LockService.ensure, async (payload: IdentityName) =>
+      this.identityService.deleteIdentity(payload),
     );
+
+    this.add(RPCAction.DELETE_ALL_IDENTITIES, LockService.ensure, this.identityService.deleteAllIdentities);
+
     this.add(RPCAction.GET_ACTIVE_IDENTITY, LockService.ensure, async () => {
       const identity = await this.identityService.getActiveIdentity();
 

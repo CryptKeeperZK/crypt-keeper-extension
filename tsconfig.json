@@ -3,7 +3,7 @@
     "baseUrl": "./",
     "rootDir": "./",
     "paths": {
-      "@src/*": ["src/*"],
+      "@src/*": ["src/*"]
     },
     "typeRoots": ["./node_modules/@types", "./src/custom.d.ts"],
     "target": "ES2020",

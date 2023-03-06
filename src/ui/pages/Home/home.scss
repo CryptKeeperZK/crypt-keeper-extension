@@ -18,10 +18,6 @@
     }
 
     &--fixed-menu {
-      .home__list__header {
-        //display: none;
-      }
-
       .home__list__fix-header {
         display: flex;
         position: absolute;
@@ -84,7 +80,7 @@
 
       &__tab {
         @extend %row-nowrap;
-        justify-content: center;
+        justify-content: space-between;
         align-items: center;
         flex: 1 1 auto;
         cursor: pointer;

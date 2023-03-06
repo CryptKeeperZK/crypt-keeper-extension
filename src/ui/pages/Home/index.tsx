@@ -1,13 +1,15 @@
 import { ReactElement, useCallback, useEffect, useRef, useState } from "react";
 import postMessage from "@src/util/postMessage";
 import RPCAction from "@src/util/constants";
-import { fetchIdentities } from "@src/ui/ducks/identities";
+import { deleteAllIdentities, fetchIdentities } from "@src/ui/ducks/identities";
 import Header from "@src/ui/components/Header";
 import classNames from "classnames";
 import { browser } from "webextension-polyfill-ts";
 import "./home.scss";
 import { sliceAddress } from "@src/util/account";
 import ConnectionModal from "@src/ui/components/ConnectionModal";
+import Icon from "@src/ui/components/Icon";
+import Menuable from "@src/ui/components/Menuable";
 import { useAppDispatch } from "@src/ui/ducks/hooks";
 import { metamask } from "@src/connectors";
 import { useWallet } from "@src/ui/hooks/wallet";
@@ -120,7 +122,12 @@ const HomeInfo = function (): ReactElement {
 };
 
 const HomeList = function (): ReactElement {
+  const dispatch = useAppDispatch();
   const [selectedTab, selectTab] = useState<"identities" | "activity">("identities");
+
+  const onDeleteAllIdentities = useCallback(() => {
+    dispatch(deleteAllIdentities());
+  }, [dispatch]);
 
   return (
     <div className="home__list">
@@ -131,7 +138,11 @@ const HomeList = function (): ReactElement {
           })}
           onClick={() => selectTab("identities")}
         >
-          Identities
+          <span>Identities</span>
+
+          <Menuable className="flex user-menu" items={[{ label: "Delete all", onClick: onDeleteAllIdentities }]}>
+            <Icon className="identity-row__menu-icon" fontAwesome="fas fa-ellipsis-h" />
+          </Menuable>
         </div>
         {/* <div
           className={classNames("home__list__header__tab", {
