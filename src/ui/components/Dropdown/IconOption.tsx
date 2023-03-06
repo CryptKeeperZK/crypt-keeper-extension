@@ -1,15 +1,14 @@
-import { components, OptionProps } from "react-select";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { Option } from "@src/types";
+import { components, OptionProps } from "react-select";
 
-export const IconOption = (props: OptionProps<Option>): JSX.Element => {
-  const { Option } = components;
+import type { SelectOption } from "@src/types";
 
+export const IconOption = (props: OptionProps<SelectOption>): JSX.Element => {
   return (
-    <Option {...props}>
-      {props.data.icon ? <FontAwesomeIcon icon={props.data.icon} /> : <></>}
+    <components.Option {...props}>
+      {props.data.icon && <FontAwesomeIcon icon={props.data.icon} />}
       <span> </span>
       {props.data.label}
-    </Option>
+    </components.Option>
   );
 };

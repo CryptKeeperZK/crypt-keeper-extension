@@ -2,7 +2,7 @@ import React, { ReactElement, useCallback, useEffect, useState } from "react";
 import FullModal, { FullModalContent, FullModalFooter, FullModalHeader } from "@src/ui/components/FullModal";
 import Button, { ButtonType } from "@src/ui/components/Button";
 import { useRequestsPending } from "@src/ui/ducks/requests";
-import { PendingRequest, PendingRequestType, RequestResolutionAction } from "@src/types";
+import { PendingRequest, PendingRequestType, RequestResolutionAction, SelectOption } from "@src/types";
 import RPCAction from "@src/util/constants";
 import postMessage from "@src/util/postMessage";
 import "./confirm-modal.scss";
@@ -266,8 +266,8 @@ function CreateIdentityApprovalModal(props: {
   pendingRequest: PendingRequest;
 }) {
   const [nonce, setNonce] = useState(0);
-  const [identityType, setIdentityType] = useState<"InterRep" | "Random">("InterRep");
-  const [web2Provider, setWeb2Provider] = useState<"Twitter" | "Github" | "Reddit">("Twitter");
+  const [identityType, setIdentityType] = useState(IDENTITY_TYPES[0]);
+  const [web2Provider, setWeb2Provider] = useState(WEB2_PROVIDER_OPTIONS[0]);
 
   const create = useCallback(async () => {
     let options: any = {
@@ -276,7 +276,7 @@ function CreateIdentityApprovalModal(props: {
     };
     let provider = "interrep";
 
-    if (identityType === "Random") {
+    if (identityType.value === "random") {
       provider = "random";
       options = {};
     }
@@ -296,23 +296,25 @@ function CreateIdentityApprovalModal(props: {
       <FullModalContent>
         <Dropdown
           className="my-2"
+          id="identityType"
           label="Identity type"
           options={IDENTITY_TYPES}
-          onChange={e => {
-            setIdentityType(e.target.value as any);
-          }}
           value={identityType}
+          onChange={option => {
+            setIdentityType(option as SelectOption);
+          }}
         />
-        {identityType === "InterRep" && (
+        {identityType.value === "interrep" && (
           <>
             <Dropdown
               className="my-2"
+              id="web2Provider"
               label="Web2 Provider"
               options={WEB2_PROVIDER_OPTIONS}
-              onChange={e => {
-                setWeb2Provider(e.target.value as any);
-              }}
               value={web2Provider}
+              onChange={option => {
+                setWeb2Provider(option as SelectOption);
+              }}
             />
             <Input
               className="my-2"

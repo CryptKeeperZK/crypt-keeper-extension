@@ -1,32 +1,53 @@
-import { InputHTMLAttributes, ReactElement } from "react";
-import Select from "react-select";
 import classNames from "classnames";
+import Select, { Props as SelectProps } from "react-select";
+
+import { SelectOption } from "@src/types";
+
 import { IconOption } from "./IconOption";
-import { Option } from "@src/types";
 import "./dropdown.scss";
 
-export type DropdownProps = {
+export interface DropdownProps extends SelectProps<SelectOption> {
+  id: string;
   label?: string;
   errorMessage?: string;
-  options: readonly Option[];
-} & InputHTMLAttributes<HTMLSelectElement>;
+  options: readonly SelectOption[];
+}
 
-export function Dropdown(props: DropdownProps): ReactElement {
-  const { label, errorMessage, className } = props;
+export const Dropdown = ({
+  id,
+  defaultValue,
+  label,
+  errorMessage,
+  className,
+  options,
+  value,
+  ...rest
+}: DropdownProps): JSX.Element => {
   return (
     <div className={classNames("dropdown", className)}>
-      {label && <div className="dropdown__label">{label}</div>}
+      {label && (
+        <label htmlFor={`input-${id}`} className="dropdown__label">
+          {label}
+        </label>
+      )}
+
       <div className="dropdown__group">
         <Select
           classNamePrefix="dropdown"
           className="dropdown__container"
           closeMenuOnSelect={true}
-          placeholder={"Choose"}
-          options={props.options}
           components={{ Option: IconOption }}
+          defaultValue={defaultValue}
+          inputId={`input-${id}`}
+          id={id}
+          options={options}
+          placeholder="Choose"
+          value={value}
+          {...rest}
         />
       </div>
+
       {errorMessage && <div className="dropdown__error-message">{errorMessage}</div>}
     </div>
   );
-}
+};
