@@ -22,8 +22,10 @@ describe("ui/components/Dropdown", () => {
     });
 
     test("should render properly", async () => {
-        const web2ProviderLabel = await screen.findByTestId("Web2 Provider");
+        const web2ProviderLabel = await screen.findByText("Web2 Provider");
+        const selectPlaceholder = await screen.findByText("Choose");
 
         expect(web2ProviderLabel).toBeInTheDocument();
+        expect(selectPlaceholder).toBeInTheDocument();
     });
 });
