@@ -1,17 +1,17 @@
 import { InputHTMLAttributes, ReactElement } from "react";
 import Select from "react-select";
 import classNames from "classnames";
-import { IconOption } from "./components/IconOption";
+import { IconOption } from "./IconOption";
 import { Option } from "@src/types";
 import "./dropdown.scss";
 
-type Props = {
+export type DropdownProps = {
   label?: string;
   errorMessage?: string;
   options: readonly Option[];
 } & InputHTMLAttributes<HTMLSelectElement>;
 
-export default function Dropdown(props: Props): ReactElement {
+export function Dropdown(props: DropdownProps): ReactElement {
   const { label, errorMessage, className, ...selectProps } = props;
   return (
     <div className={classNames("dropdown", className)}>

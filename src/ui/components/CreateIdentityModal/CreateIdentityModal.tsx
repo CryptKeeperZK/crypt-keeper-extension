@@ -1,7 +1,7 @@
 import React from "react";
 
 import Button from "@src/ui/components/Button";
-import Dropdown from "@src/ui/components/Dropdown";
+import { Dropdown } from "@src/ui/components/Dropdown";
 import FullModal, { FullModalContent, FullModalFooter, FullModalHeader } from "@src/ui/components/FullModal";
 import Input from "@src/ui/components/Input";
 

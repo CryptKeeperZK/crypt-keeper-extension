@@ -7,7 +7,7 @@ import RPCAction from "@src/util/constants";
 import postMessage from "@src/util/postMessage";
 import "./confirm-modal.scss";
 import Input from "@src/ui/components/Input";
-import Dropdown from "@src/ui/components/Dropdown";
+import { Dropdown } from "@src/ui/components/Dropdown";
 import Icon from "@src/ui/components/Icon";
 import Checkbox from "@src/ui/components/Checkbox";
 import { getLinkPreview } from "link-preview-js";
