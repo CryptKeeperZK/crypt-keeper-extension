@@ -125,8 +125,8 @@ const HomeList = function (): ReactElement {
   const dispatch = useAppDispatch();
   const [selectedTab, selectTab] = useState<"identities" | "activity">("identities");
 
-  const onDeleteAllIdentities = useCallback(async () => {
-    await dispatch(deleteAllIdentities());
+  const onDeleteAllIdentities = useCallback(() => {
+    dispatch(deleteAllIdentities());
   }, [dispatch]);
 
   return (
