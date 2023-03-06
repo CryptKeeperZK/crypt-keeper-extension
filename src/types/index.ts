@@ -103,4 +103,4 @@ export type Option = {
   readonly value: string;
   readonly label: string;
   readonly icon: IconDefinition | null;
-}
+};

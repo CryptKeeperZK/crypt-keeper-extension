@@ -12,7 +12,7 @@ export type DropdownProps = {
 } & InputHTMLAttributes<HTMLSelectElement>;
 
 export function Dropdown(props: DropdownProps): ReactElement {
-  const { label, errorMessage, className, ...selectProps } = props;
+  const { label, errorMessage, className } = props;
   return (
     <div className={classNames("dropdown", className)}>
       {label && <div className="dropdown__label">{label}</div>}
