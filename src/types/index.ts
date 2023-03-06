@@ -1,3 +1,4 @@
+import { IconDefinition } from "@fortawesome/fontawesome-common-types";
 import { MerkleProof } from "@zk-kit/incremental-merkle-tree";
 
 export type Request = {
@@ -96,4 +97,10 @@ export interface DeferredPromise<T> {
   promise: Promise<T>;
   resolve?: (arg: T | PromiseLike<T>) => void;
   reject?: (reason?: unknown) => void;
+}
+
+export type Option = {
+  readonly value: string;
+  readonly label: string;
+  readonly icon: IconDefinition | null;
 }

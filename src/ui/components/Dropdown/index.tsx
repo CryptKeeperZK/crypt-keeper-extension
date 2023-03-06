@@ -1,14 +1,9 @@
-import { InputHTMLAttributes, ReactElement, useEffect } from "react";
+import { InputHTMLAttributes, ReactElement } from "react";
 import Select from "react-select";
 import classNames from "classnames";
 import { IconOption } from "./components/IconOption";
+import { Option } from "@src/types";
 import "./dropdown.scss";
-
-export type Option = {
-  readonly value: string;
-  readonly label: string;
-  readonly icon: string | null;
-}
 
 type Props = {
   label?: string;

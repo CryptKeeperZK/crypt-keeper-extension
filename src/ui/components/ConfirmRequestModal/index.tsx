@@ -7,10 +7,11 @@ import RPCAction from "@src/util/constants";
 import postMessage from "@src/util/postMessage";
 import "./confirm-modal.scss";
 import Input from "@src/ui/components/Input";
-import Dropdown, { Option } from "@src/ui/components/Dropdown";
+import Dropdown from "@src/ui/components/Dropdown";
 import Icon from "@src/ui/components/Icon";
 import Checkbox from "@src/ui/components/Checkbox";
 import { getLinkPreview } from "link-preview-js";
+import { IDENTITY_TYPES, WEB2_PROVIDER_OPTIONS } from "@src/constants";
 
 export default function ConfirmRequestModal(): ReactElement {
   const pendingRequests = useRequestsPending();
@@ -285,9 +286,6 @@ function CreateIdentityApprovalModal(props: {
       options,
     });
   }, [nonce, web2Provider, identityType, props.accept]);
-
-  const WEB2_PROVIDER_OPTIONS: readonly Option[] = [{ value: "Twitter", label: " Twitter", icon: "fa-brands fa-twitter" }, { value: "Reddit", label: " Reddit", icon: "fa-brands fa-reddit" }, { value: "Github", label: " Github", icon: "fa-brands fa-github" }];
-  const IDENTITY_TYPES: readonly Option[] = [{ value: "InterRep", label: " InterRep", icon: null }, { value: "Random", label: " Random", icon: null }];
 
   return (
     <FullModal className="confirm-modal" onClose={() => null}>

@@ -1,4 +1,3 @@
-import * as React from "react";
 import createMetaMaskProvider from "metamask-extension-provider";
 import ReactDOM from "react-dom/client";
 import { browser } from "webextension-polyfill-ts";
