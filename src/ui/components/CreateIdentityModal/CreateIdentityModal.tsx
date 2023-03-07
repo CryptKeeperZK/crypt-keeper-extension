@@ -1,19 +1,16 @@
 import React from "react";
 
 import Button from "@src/ui/components/Button";
-import Dropdown from "@src/ui/components/Dropdown";
+import { Dropdown } from "@src/ui/components/Dropdown";
 import FullModal, { FullModalContent, FullModalFooter, FullModalHeader } from "@src/ui/components/FullModal";
 import Input from "@src/ui/components/Input";
 
 import { useCreateIdentityModal } from "./useCreateIdentityModal";
+import { IDENTITY_TYPES, WEB2_PROVIDER_OPTIONS } from "@src/constants";
 
 export interface ICreateIdentityModalProps {
   onClose: () => void;
 }
-
-const WEB2_PROVIDER_OPTIONS = [{ value: "twitter" }, { value: "reddit" }, { value: "github" }];
-
-const IDENTITY_TYPES = [{ value: "interrep" }, { value: "random" }];
 
 export function CreateIdentityModal({ onClose }: ICreateIdentityModalProps): JSX.Element {
   const {
@@ -35,16 +32,20 @@ export function CreateIdentityModal({ onClose }: ICreateIdentityModalProps): JSX
       <FullModalContent>
         <Dropdown
           className="my-2"
+          defaultValue={IDENTITY_TYPES[0]}
+          id="identityType"
           label="Identity type"
           options={IDENTITY_TYPES}
           value={identityStrategyType}
           onChange={onSelectIdentityType}
         />
 
-        {identityStrategyType === "interrep" && (
+        {identityStrategyType.value === "interrep" && (
           <>
             <Dropdown
               className="my-2"
+              defaultValue={WEB2_PROVIDER_OPTIONS[0]}
+              id="web2Provider"
               label="Web2 Provider"
               options={WEB2_PROVIDER_OPTIONS}
               value={web2Provider}

@@ -12,6 +12,7 @@ import { IUseCreateIdentityModalArgs, useCreateIdentityModal } from "../useCreat
 import { ChangeEvent } from "react";
 import { useWallet } from "@src/ui/hooks/wallet";
 import { defaultWalletHookData } from "@src/config/mock/wallet";
+import { IDENTITY_TYPES, WEB2_PROVIDER_OPTIONS } from "@src/constants";
 
 jest.mock("@src/ui/ducks/hooks", (): unknown => ({
   useAppDispatch: jest.fn(),
@@ -57,8 +58,8 @@ describe("ui/components/CreateIdentityModal/useCreateIdentityModal", () => {
 
     expect(result.current.isLoading).toBe(false);
     expect(result.current.error).toBe("");
-    expect(result.current.identityStrategyType).toBe("interrep");
-    expect(result.current.web2Provider).toBe("twitter");
+    expect(result.current.identityStrategyType.value).toBe("interrep");
+    expect(result.current.web2Provider.value).toBe("twitter");
     expect(result.current.nonce).toBe(0);
   });
 
@@ -76,27 +77,30 @@ describe("ui/components/CreateIdentityModal/useCreateIdentityModal", () => {
     const { result } = renderHook(() => useCreateIdentityModal(defaultHookProps));
 
     act(() => {
-      result.current.onSelectWeb2Provider({ target: { value: "github" } } as ChangeEvent<HTMLSelectElement>);
+      result.current.onSelectWeb2Provider(WEB2_PROVIDER_OPTIONS[2], {
+        action: "select-option",
+        option: IDENTITY_TYPES[2],
+      });
     });
 
-    expect(result.current.web2Provider).toBe("github");
+    expect(result.current.web2Provider).toStrictEqual(WEB2_PROVIDER_OPTIONS[2]);
   });
 
   test("should update identity type properly", () => {
     const { result } = renderHook(() => useCreateIdentityModal(defaultHookProps));
 
     act(() => {
-      result.current.onSelectIdentityType({ target: { value: "random" } } as ChangeEvent<HTMLSelectElement>);
+      result.current.onSelectIdentityType(IDENTITY_TYPES[1], { action: "select-option", option: IDENTITY_TYPES[1] });
     });
 
-    expect(result.current.identityStrategyType).toBe("random");
+    expect(result.current.identityStrategyType).toStrictEqual(IDENTITY_TYPES[1]);
   });
 
   test("should create identity properly", async () => {
     const { result } = renderHook(() => useCreateIdentityModal(defaultHookProps));
 
     act(() => {
-      result.current.onSelectIdentityType({ target: { value: "random" } } as ChangeEvent<HTMLSelectElement>);
+      result.current.onSelectIdentityType(IDENTITY_TYPES[1], { action: "select-option", option: IDENTITY_TYPES[1] });
     });
 
     await act(async () => {

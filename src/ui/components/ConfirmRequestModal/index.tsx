@@ -2,15 +2,16 @@ import React, { ReactElement, useCallback, useEffect, useState } from "react";
 import FullModal, { FullModalContent, FullModalFooter, FullModalHeader } from "@src/ui/components/FullModal";
 import Button, { ButtonType } from "@src/ui/components/Button";
 import { useRequestsPending } from "@src/ui/ducks/requests";
-import { PendingRequest, PendingRequestType, RequestResolutionAction } from "@src/types";
+import { PendingRequest, PendingRequestType, RequestResolutionAction, SelectOption } from "@src/types";
 import RPCAction from "@src/util/constants";
 import postMessage from "@src/util/postMessage";
 import "./confirm-modal.scss";
 import Input from "@src/ui/components/Input";
-import Dropdown from "@src/ui/components/Dropdown";
+import { Dropdown } from "@src/ui/components/Dropdown";
 import Icon from "@src/ui/components/Icon";
 import Checkbox from "@src/ui/components/Checkbox";
 import { getLinkPreview } from "link-preview-js";
+import { IDENTITY_TYPES, WEB2_PROVIDER_OPTIONS } from "@src/constants";
 
 export default function ConfirmRequestModal(): ReactElement {
   const pendingRequests = useRequestsPending();
@@ -265,8 +266,8 @@ function CreateIdentityApprovalModal(props: {
   pendingRequest: PendingRequest;
 }) {
   const [nonce, setNonce] = useState(0);
-  const [identityType, setIdentityType] = useState<"InterRep" | "Random">("InterRep");
-  const [web2Provider, setWeb2Provider] = useState<"Twitter" | "Github" | "Reddit">("Twitter");
+  const [identityType, setIdentityType] = useState(IDENTITY_TYPES[0]);
+  const [web2Provider, setWeb2Provider] = useState(WEB2_PROVIDER_OPTIONS[0]);
 
   const create = useCallback(async () => {
     let options: any = {
@@ -275,7 +276,7 @@ function CreateIdentityApprovalModal(props: {
     };
     let provider = "interrep";
 
-    if (identityType === "Random") {
+    if (identityType.value === "random") {
       provider = "random";
       options = {};
     }
@@ -295,23 +296,25 @@ function CreateIdentityApprovalModal(props: {
       <FullModalContent>
         <Dropdown
           className="my-2"
+          id="identityType"
           label="Identity type"
-          options={[{ value: "InterRep" }, { value: "Random" }]}
-          onChange={e => {
-            setIdentityType(e.target.value as any);
-          }}
+          options={IDENTITY_TYPES}
           value={identityType}
+          onChange={option => {
+            setIdentityType(option as SelectOption);
+          }}
         />
-        {identityType === "InterRep" && (
+        {identityType.value === "interrep" && (
           <>
             <Dropdown
               className="my-2"
+              id="web2Provider"
               label="Web2 Provider"
-              options={[{ value: "Twitter" }, { value: "Reddit" }, { value: "Github" }]}
-              onChange={e => {
-                setWeb2Provider(e.target.value as any);
-              }}
+              options={WEB2_PROVIDER_OPTIONS}
               value={web2Provider}
+              onChange={option => {
+                setWeb2Provider(option as SelectOption);
+              }}
             />
             <Input
               className="my-2"

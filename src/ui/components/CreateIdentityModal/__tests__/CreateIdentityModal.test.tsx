@@ -6,6 +6,7 @@ import { render, screen } from "@testing-library/react";
 
 import { IUseCreateIdentityModalData, useCreateIdentityModal } from "../useCreateIdentityModal";
 import { CreateIdentityModal, ICreateIdentityModalProps } from "..";
+import { IDENTITY_TYPES, WEB2_PROVIDER_OPTIONS } from "@src/constants";
 
 jest.mock("../useCreateIdentityModal", (): unknown => ({
   useCreateIdentityModal: jest.fn(),
@@ -20,8 +21,8 @@ describe("ui/components/CreateIdentityModal", () => {
     isLoading: false,
     nonce: 0,
     error: "",
-    identityStrategyType: "random",
-    web2Provider: "twitter",
+    identityStrategyType: IDENTITY_TYPES[1],
+    web2Provider: WEB2_PROVIDER_OPTIONS[0],
     onSelectIdentityType: jest.fn(),
     onSelectWeb2Provider: jest.fn(),
     onChangeNonce: jest.fn(),
@@ -47,7 +48,7 @@ describe("ui/components/CreateIdentityModal", () => {
     render(<CreateIdentityModal {...defaultProps} />);
 
     const button = await screen.findByText("Create");
-    const identityType = await screen.findByText("random");
+    const identityType = await screen.findByText("Random");
 
     expect(button).toBeInTheDocument();
     expect(identityType).toBeInTheDocument();
@@ -57,15 +58,15 @@ describe("ui/components/CreateIdentityModal", () => {
     (useCreateIdentityModal as jest.Mock).mockReturnValue({
       ...defaultHookData,
       error: "error",
-      identityStrategyType: "interrep",
-      web2Provider: "github",
+      identityStrategyType: IDENTITY_TYPES[0],
+      web2Provider: WEB2_PROVIDER_OPTIONS[2],
     });
 
     render(<CreateIdentityModal {...defaultProps} />);
 
     const button = await screen.findByText("Create");
-    const provider = await screen.findByText("github");
-    const identityType = await screen.findByText("interrep");
+    const provider = await screen.findByText("Github");
+    const identityType = await screen.findByText("InterRep");
     const error = await screen.findByText("error");
 
     expect(button).toBeInTheDocument();
