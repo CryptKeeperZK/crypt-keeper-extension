@@ -4,6 +4,7 @@ import Select, { Props as SelectProps } from "react-select";
 import { SelectOption } from "@src/types";
 
 import { IconOption } from "./IconOption";
+import { IconSingleValue } from "./IconSingleValue";
 import "./dropdown.scss";
 
 export interface DropdownProps extends SelectProps<SelectOption> {
@@ -36,7 +37,7 @@ export const Dropdown = ({
           classNamePrefix="dropdown"
           className="dropdown__container"
           closeMenuOnSelect={true}
-          components={{ Option: IconOption }}
+          components={{ Option: IconOption, SingleValue: IconSingleValue }}
           defaultValue={defaultValue}
           inputId={`input-${id}`}
           id={id}
