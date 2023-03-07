@@ -2,48 +2,71 @@
  * @jest-environment jsdom
  */
 
-import { renderHook, waitFor } from "@testing-library/react";
+import { act, renderHook, waitFor } from "@testing-library/react";
 import { useWeb3React } from "@web3-react/core";
 
-import { metamask, metamaskHooks, ConnectorNames } from "@src/connectors";
+import { defaultWalletHookData } from "@src/config/mock/wallet";
+import { ConnectorNames, metamask } from "@src/connectors";
 import { mockConnector } from "@src/connectors/mock";
+import postMessage from "@src/util/postMessage";
 
 import { useWallet } from "..";
-import { defaultWalletHookData } from "@src/config/mock/wallet";
+import RPCAction from "@src/util/constants";
 
 jest.mock("@web3-react/core", (): unknown => ({
   ...jest.requireActual("@web3-react/core"),
   useWeb3React: jest.fn(),
 }));
 
-jest.mock("@src/connectors", (): unknown => ({
-  ...jest.requireActual("@src/connectors"),
-  metamaskHooks: { useChainId: jest.fn(), useAccount: jest.fn(), useProvider: jest.fn() },
-}));
+jest.mock("@src/util/postMessage");
 
 describe("ui/hooks/wallet", () => {
+  const defaultHooks = { usePriorityChainId: jest.fn(), usePriorityAccount: jest.fn(), usePriorityProvider: jest.fn() };
+
   beforeEach(() => {
     (defaultWalletHookData.provider?.getBalance as jest.Mock).mockResolvedValue(
       defaultWalletHookData.balance?.toString(10),
     );
 
     (useWeb3React as jest.Mock).mockReturnValue({
-      connector: metamask,
+      connector: mockConnector,
       provider: defaultWalletHookData.provider,
       isActive: true,
       isActivating: false,
+      hooks: defaultHooks,
     });
 
-    (metamaskHooks.useChainId as jest.Mock).mockReturnValue(1);
+    (defaultHooks.usePriorityChainId as jest.Mock).mockReturnValue(1);
 
-    (metamaskHooks.useAccount as jest.Mock).mockReturnValue(defaultWalletHookData.address);
+    (defaultHooks.usePriorityAccount as jest.Mock).mockReturnValue(defaultWalletHookData.address);
   });
 
   afterEach(() => {
     jest.resetAllMocks();
   });
 
+  test("should return connected data", async () => {
+    const { result } = renderHook(() => useWallet());
+
+    await waitFor(() => expect(result.current.balance).toBeDefined());
+
+    expect(result.current.isActive).toBe(true);
+    expect(result.current.chain).toStrictEqual(defaultWalletHookData.chain);
+    expect(result.current.address).toBe(defaultWalletHookData.address);
+    expect(result.current.connectorName).toBe(ConnectorNames.MOCK);
+    expect(result.current.connector).toBeDefined();
+    expect(result.current.provider).toBeDefined();
+  });
+
   test("should return connected metamask data", async () => {
+    (useWeb3React as jest.Mock).mockReturnValue({
+      connector: metamask,
+      provider: defaultWalletHookData.provider,
+      isActive: true,
+      isActivating: false,
+      hooks: defaultHooks,
+    });
+
     const { result } = renderHook(() => useWallet());
 
     await waitFor(() => expect(result.current.balance).toBeDefined());
@@ -54,24 +77,6 @@ describe("ui/hooks/wallet", () => {
     expect(result.current.connectorName).toBe(ConnectorNames.METAMASK);
     expect(result.current.connector).toBeDefined();
     expect(result.current.provider).toBeDefined();
-  });
-
-  test("should return mock connector data", () => {
-    (useWeb3React as jest.Mock).mockReturnValue({
-      connector: mockConnector,
-      isActive: true,
-      isActivating: false,
-    });
-
-    const { result } = renderHook(() => useWallet());
-
-    expect(result.current.isActive).toBe(true);
-    expect(result.current.isActivating).toBe(false);
-    expect(result.current.chain).toStrictEqual(defaultWalletHookData.chain);
-    expect(result.current.address).toBe(defaultWalletHookData.address);
-    expect(result.current.connectorName).toBe(ConnectorNames.MOCK);
-    expect(result.current.connector).toBeDefined();
-    expect(result.current.provider).toBeUndefined();
   });
 
   test("should return unknown connect data", () => {
@@ -90,5 +95,45 @@ describe("ui/hooks/wallet", () => {
     expect(result.current.connectorName).toBe(ConnectorNames.UNKNOWN);
     expect(result.current.connector).toBeUndefined();
     expect(result.current.provider).toBeUndefined();
+  });
+
+  test("should connect properly", async () => {
+    const activateSpy = jest.spyOn(mockConnector, "activate");
+    const { result } = renderHook(() => useWallet());
+
+    await act(async () => result.current.onConnect());
+
+    expect(activateSpy).toBeCalledTimes(1);
+    expect(postMessage).toBeCalledTimes(1);
+    expect(postMessage).toBeCalledWith({
+      method: RPCAction.SET_CONNECT_ACTION,
+      payload: { isDisconnectedPermanently: false },
+    });
+  });
+
+  test("should connect eagerly properly", async () => {
+    const connectEagerlySpy = jest.spyOn(mockConnector, "connectEagerly");
+    (postMessage as jest.Mock).mockReturnValue({ isDisconnectedPermanently: false });
+    const { result } = renderHook(() => useWallet());
+
+    await act(async () => result.current.onConnectEagerly());
+
+    expect(connectEagerlySpy).toBeCalledTimes(1);
+    expect(postMessage).toBeCalledTimes(1);
+    expect(postMessage).toBeCalledWith({ method: RPCAction.GET_CONNECT_ACTION });
+  });
+
+  test("should disconnect properly", async () => {
+    const resetStateSpy = jest.spyOn(mockConnector, "resetState");
+    const { result } = renderHook(() => useWallet());
+
+    await act(async () => result.current.onDisconnect());
+
+    expect(resetStateSpy).toBeCalledTimes(1);
+    expect(postMessage).toBeCalledTimes(1);
+    expect(postMessage).toBeCalledWith({
+      method: RPCAction.SET_CONNECT_ACTION,
+      payload: { isDisconnectedPermanently: true },
+    });
   });
 });

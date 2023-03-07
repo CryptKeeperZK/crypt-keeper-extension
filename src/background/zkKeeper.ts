@@ -8,16 +8,20 @@ import ZkValidator from "./services/zkValidator";
 import RequestManager from "./controllers/requestManager";
 import { RLNProofRequest, SemaphoreProofRequest } from "./services/protocols/interfaces";
 import ApprovalService from "./services/approval";
+import SimpleStorage from "./services/simpleStorage";
 import identityFactory from "./identityFactory";
 import BrowserUtils from "./controllers/browserUtils";
 import log from "loglevel";
 import { browser } from "webextension-polyfill-ts";
+
+const COMMON_STORAGE_KEY = "@@COMMON@@";
 
 export default class ZkKeeperController extends Handler {
   private identityService: IdentityService;
   private zkValidator: ZkValidator;
   private requestManager: RequestManager;
   private approvalService: ApprovalService;
+  private commonStorage: SimpleStorage;
 
   constructor() {
     super();
@@ -25,6 +29,7 @@ export default class ZkKeeperController extends Handler {
     this.zkValidator = new ZkValidator();
     this.requestManager = new RequestManager();
     this.approvalService = new ApprovalService();
+    this.commonStorage = new SimpleStorage(COMMON_STORAGE_KEY);
     log.debug("Inside ZkKepperController");
   }
 
@@ -253,6 +258,18 @@ export default class ZkKeeperController extends Handler {
     );
 
     this.add(RPCAction.CLOSE_POPUP, async () => BrowserUtils.closePopup());
+
+    this.add(
+      RPCAction.SET_CONNECT_ACTION,
+      LockService.ensure,
+      async (payload: { isDisconnectedPermanently: boolean }) => {
+        return this.commonStorage.set(payload);
+      },
+    );
+
+    this.add(RPCAction.GET_CONNECT_ACTION, LockService.ensure, async () => {
+      return this.commonStorage.get();
+    });
 
     // dev
     this.add(RPCAction.CLEAR_APPROVED_HOSTS, this.approvalService.clear);

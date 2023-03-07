@@ -30,6 +30,8 @@ enum RPCAction {
   SET_HOST_PERMISSIONS = "rpc/hosts/setHostPermissions",
   REMOVE_HOST = "rpc/hosts/remove",
   CLOSE_POPUP = "rpc/popup/close",
+  GET_CONNECT_ACTION = "rpc/wallet/get/connect",
+  SET_CONNECT_ACTION = "rpc/wallet/connect",
   // DEV RPCS
   CLEAR_APPROVED_HOSTS = "rpc/hosts/clear",
 }

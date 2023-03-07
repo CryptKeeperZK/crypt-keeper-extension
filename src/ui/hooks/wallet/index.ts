@@ -1,14 +1,14 @@
-import { useWeb3React, Web3ReactHooks } from "@web3-react/core";
+import { useWeb3React } from "@web3-react/core";
 import type { Connector } from "@web3-react/types";
 import type { Web3Provider } from "@ethersproject/providers";
 import BigNumber from "bignumber.js";
 import { formatUnits } from "@ethersproject/units";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
-import { ConnectorNames, metamaskHooks, getConnectorName } from "@src/connectors";
-import { createMockConnectorHooks } from "@src/connectors/mock";
+import { ConnectorNames, getConnectorName } from "@src/connectors";
 import { Chain, getChains } from "@src/config/rpc";
-import { ZERO_ADDRESS } from "@src/config/const";
+import RPCAction from "@src/util/constants";
+import postMessage from "@src/util/postMessage";
 
 export interface IUseWalletData {
   isActive: boolean;
@@ -19,27 +19,21 @@ export interface IUseWalletData {
   connectorName?: ConnectorNames;
   connector?: Connector;
   provider?: Web3Provider;
+  onConnect: () => void;
+  onConnectEagerly: () => void;
+  onDisconnect: () => void;
 }
-
-const connectorHandlers: Record<string, Web3ReactHooks | undefined> = {
-  [ConnectorNames.METAMASK.toLowerCase()]: metamaskHooks,
-  [ConnectorNames.MOCK.toLowerCase()]: createMockConnectorHooks({
-    chainId: 1,
-    accounts: [ZERO_ADDRESS],
-  }),
-  [ConnectorNames.UNKNOWN.toLowerCase()]: undefined,
-};
 
 export const useWallet = (): IUseWalletData => {
   const [balance, setBalance] = useState<BigNumber>();
-  const { connector, isActive, isActivating, provider } = useWeb3React();
+  const { connector, isActive, isActivating, provider, hooks } = useWeb3React();
   const connectorName = getConnectorName(connector);
 
-  const handlers = connectorHandlers[connectorName.toLowerCase()];
+  const handlers = hooks;
   const chains = getChains();
 
-  const chainId = handlers?.useChainId();
-  const address = handlers?.useAccount();
+  const chainId = handlers?.usePriorityChainId();
+  const address = handlers?.usePriorityAccount();
   const chain = chainId ? chains[chainId] : undefined;
   const decimals = chain?.nativeCurrency.decimals;
 
@@ -54,6 +48,26 @@ export const useWallet = (): IUseWalletData => {
       .then(value => setBalance(value));
   }, [address, chainId, provider, decimals, setBalance]);
 
+  const onConnect = useCallback(async () => {
+    await postMessage({ method: RPCAction.SET_CONNECT_ACTION, payload: { isDisconnectedPermanently: false } });
+    await connector.activate();
+  }, [connector]);
+
+  const onConnectEagerly = useCallback(async () => {
+    const response = await postMessage({ method: RPCAction.GET_CONNECT_ACTION });
+
+    if (!response?.isDisconnectedPermanently) {
+      await connector.connectEagerly?.();
+    }
+  }, [connector]);
+
+  const onDisconnect = useCallback(async () => {
+    await connector.deactivate?.();
+    await connector.resetState();
+
+    await postMessage({ method: RPCAction.SET_CONNECT_ACTION, payload: { isDisconnectedPermanently: true } });
+  }, [connector]);
+
   return {
     isActive,
     isActivating,
@@ -63,5 +77,8 @@ export const useWallet = (): IUseWalletData => {
     connectorName,
     connector,
     provider,
+    onConnect,
+    onConnectEagerly,
+    onDisconnect,
   };
 };
