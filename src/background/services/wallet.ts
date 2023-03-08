@@ -2,6 +2,10 @@ import SimpleStorage from "./simpleStorage";
 
 const WALLET_STORAGE_KEY = "@@WALLET@@";
 
+interface WalletConnectionData {
+  isDisconnectedPermanently: boolean;
+}
+
 export default class WalletService {
   private walletStorage: SimpleStorage;
 
@@ -9,11 +13,11 @@ export default class WalletService {
     this.walletStorage = new SimpleStorage(WALLET_STORAGE_KEY);
   }
 
-  public setConnection = async (payload: { isDisconnectedPermanently: boolean }) => {
+  public setConnection = async (payload: WalletConnectionData): Promise<void> => {
     return this.walletStorage.set(payload);
   };
 
-  public getConnection = async (): Promise<{ isDisconnectedPermanently: boolean } | null > => {
+  public getConnection = async (): Promise<WalletConnectionData | null> => {
     return this.walletStorage.get();
   };
 }
