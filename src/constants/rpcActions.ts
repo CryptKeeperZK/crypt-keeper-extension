@@ -1,4 +1,4 @@
-enum RPCAction {
+export enum RPCAction {
   UNLOCK = "rpc/unlock",
   LOCK = "rpc/lock",
   GET_STATUS = "rpc/getStatus",
@@ -30,8 +30,8 @@ enum RPCAction {
   SET_HOST_PERMISSIONS = "rpc/hosts/setHostPermissions",
   REMOVE_HOST = "rpc/hosts/remove",
   CLOSE_POPUP = "rpc/popup/close",
+  GET_CONNECT_WALLET = "rpc/wallet/get/connect",
+  SET_CONNECT_WALLET = "rpc/wallet/connect",
   // DEV RPCS
   CLEAR_APPROVED_HOSTS = "rpc/hosts/clear",
 }
-
-export default RPCAction;

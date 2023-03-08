@@ -4,7 +4,7 @@ import { browser } from "webextension-polyfill-ts";
 import Button, { ButtonType } from "@src/ui/components/Button";
 import Icon from "@src/ui/components/Icon";
 import postMessage from "@src/util/postMessage";
-import RPCAction from "@src/util/constants";
+import { RPCAction } from "@src/constants";
 import Checkbox from "@src/ui/components/Checkbox";
 import { getLinkPreview } from "link-preview-js";
 import { fetchApproval, setHostPermission, useAppDispatch, useApproves } from "@src/ui/ducks";

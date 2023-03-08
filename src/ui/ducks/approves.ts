@@ -1,6 +1,6 @@
 import { Action } from "@src/types";
 import postMessage from "@src/util/postMessage";
-import RPCAction from "@src/util/constants";
+import { RPCAction } from "@src/constants";
 import { useSelector } from "react-redux";
 import deepEqual from "fast-deep-equal";
 import { AppRootState } from "../store/configureAppStore";

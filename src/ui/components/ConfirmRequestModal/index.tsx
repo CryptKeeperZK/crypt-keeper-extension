@@ -1,7 +1,7 @@
 import { useCallback, useState } from "react";
 import { useRequestsPending } from "@src/ui/ducks/requests";
 import { PendingRequestType, RequestResolutionAction } from "@src/types";
-import RPCAction from "@src/util/constants";
+import { RPCAction } from "@src/constants";
 import postMessage from "@src/util/postMessage";
 import "./confirm-modal.scss";
 import { ConnectionApprovalModal } from "./components/ConnectionApprovalModal";

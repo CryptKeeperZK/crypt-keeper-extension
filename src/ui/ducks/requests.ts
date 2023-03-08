@@ -2,7 +2,7 @@ import { useSelector } from "react-redux";
 import { AppRootState } from "@src/ui/store/configureAppStore";
 import deepEqual from "fast-deep-equal";
 import { Action, PendingRequest } from "@src/types";
-import RPCAction from "@src/util/constants";
+import { RPCAction } from "@src/constants";
 import postMessage from "@src/util/postMessage";
 
 enum ActionType {
