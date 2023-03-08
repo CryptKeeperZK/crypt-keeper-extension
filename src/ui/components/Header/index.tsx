@@ -3,7 +3,7 @@ import { useCallback } from "react";
 import Jazzicon, { jsNumberForAddress } from "react-jazzicon";
 
 import Icon from "@src/ui/components/Icon";
-import RPCAction from "@src/util/constants";
+import { RPCAction } from "@src/constants";
 import logoSvg from "@src/static/icons/logo.svg";
 import loaderSvg from "@src/static/icons/loader.svg";
 import postMessage from "@src/util/postMessage";

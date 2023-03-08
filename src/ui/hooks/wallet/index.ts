@@ -7,7 +7,7 @@ import { useCallback, useEffect, useState } from "react";
 
 import { ConnectorNames, getConnectorName } from "@src/connectors";
 import { Chain, getChains } from "@src/config/rpc";
-import RPCAction from "@src/util/constants";
+import { RPCAction } from "@src/constants";
 import postMessage from "@src/util/postMessage";
 
 export interface IUseWalletData {
@@ -49,12 +49,12 @@ export const useWallet = (): IUseWalletData => {
   }, [address, chainId, provider, decimals, setBalance]);
 
   const onConnect = useCallback(async () => {
-    await postMessage({ method: RPCAction.SET_CONNECT_ACTION, payload: { isDisconnectedPermanently: false } });
+    await postMessage({ method: RPCAction.SET_CONNECT_WALLET, payload: { isDisconnectedPermanently: false } });
     await connector.activate();
   }, [connector]);
 
   const onConnectEagerly = useCallback(async () => {
-    const response = await postMessage({ method: RPCAction.GET_CONNECT_ACTION });
+    const response = await postMessage({ method: RPCAction.GET_CONNECT_WALLET });
 
     if (!response?.isDisconnectedPermanently) {
       await connector.connectEagerly?.();
@@ -65,7 +65,7 @@ export const useWallet = (): IUseWalletData => {
     await connector.deactivate?.();
     await connector.resetState();
 
-    await postMessage({ method: RPCAction.SET_CONNECT_ACTION, payload: { isDisconnectedPermanently: true } });
+    await postMessage({ method: RPCAction.SET_CONNECT_WALLET, payload: { isDisconnectedPermanently: true } });
   }, [connector]);
 
   return {

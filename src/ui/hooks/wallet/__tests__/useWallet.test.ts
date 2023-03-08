@@ -11,7 +11,7 @@ import { mockConnector } from "@src/connectors/mock";
 import postMessage from "@src/util/postMessage";
 
 import { useWallet } from "..";
-import RPCAction from "@src/util/constants";
+import { RPCAction } from "@src/constants";
 
 jest.mock("@web3-react/core", (): unknown => ({
   ...jest.requireActual("@web3-react/core"),
@@ -106,7 +106,7 @@ describe("ui/hooks/wallet", () => {
     expect(activateSpy).toBeCalledTimes(1);
     expect(postMessage).toBeCalledTimes(1);
     expect(postMessage).toBeCalledWith({
-      method: RPCAction.SET_CONNECT_ACTION,
+      method: RPCAction.SET_CONNECT_WALLET,
       payload: { isDisconnectedPermanently: false },
     });
   });
@@ -120,7 +120,7 @@ describe("ui/hooks/wallet", () => {
 
     expect(connectEagerlySpy).toBeCalledTimes(1);
     expect(postMessage).toBeCalledTimes(1);
-    expect(postMessage).toBeCalledWith({ method: RPCAction.GET_CONNECT_ACTION });
+    expect(postMessage).toBeCalledWith({ method: RPCAction.GET_CONNECT_WALLET });
   });
 
   test("should disconnect properly", async () => {
@@ -132,7 +132,7 @@ describe("ui/hooks/wallet", () => {
     expect(resetStateSpy).toBeCalledTimes(1);
     expect(postMessage).toBeCalledTimes(1);
     expect(postMessage).toBeCalledWith({
-      method: RPCAction.SET_CONNECT_ACTION,
+      method: RPCAction.SET_CONNECT_WALLET,
       payload: { isDisconnectedPermanently: true },
     });
   });

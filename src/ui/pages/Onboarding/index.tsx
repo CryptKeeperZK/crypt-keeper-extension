@@ -5,7 +5,7 @@ import Icon from "@src/ui/components/Icon";
 import LogoSVG from "@src/static/icons/logo.svg";
 import Input from "@src/ui/components/Input";
 import postMessage from "@src/util/postMessage";
-import RPCAction from "@src/util/constants";
+import { RPCAction } from "@src/constants";
 
 export default function Onboarding(): ReactElement {
   const [pw, setPW] = useState("");

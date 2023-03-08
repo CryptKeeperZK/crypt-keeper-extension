@@ -3,7 +3,7 @@ import { AppRootState } from "@src/ui/store/configureAppStore";
 import deepEqual from "fast-deep-equal";
 import { PendingRequest } from "@src/types";
 import { Dispatch } from "redux";
-import RPCAction from "@src/util/constants";
+import { RPCAction } from "@src/constants";
 import postMessage from "@src/util/postMessage";
 
 enum ActionType {

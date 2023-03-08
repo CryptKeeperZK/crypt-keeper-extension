@@ -1,5 +1,5 @@
 import { browser } from "webextension-polyfill-ts";
-import RPCAction from "@src/util/constants";
+import { RPCAction } from "@src/constants";
 import { PendingRequestType, NewIdentityRequest, IdentityName } from "@src/types";
 import { bigintToHex } from "bigint-conversion";
 import Handler from "./controllers/handler";
@@ -257,9 +257,9 @@ export default class ZkKeeperController extends Handler {
 
     this.add(RPCAction.CLOSE_POPUP, async () => BrowserUtils.closePopup());
 
-    this.add(RPCAction.SET_CONNECT_ACTION, LockService.ensure, this.walletService.setConnection);
+    this.add(RPCAction.SET_CONNECT_WALLET, LockService.ensure, this.walletService.setConnection);
 
-    this.add(RPCAction.GET_CONNECT_ACTION, LockService.ensure, this.walletService.getConnection);
+    this.add(RPCAction.GET_CONNECT_WALLET, LockService.ensure, this.walletService.getConnection);
 
     // dev
     this.add(RPCAction.CLEAR_APPROVED_HOSTS, this.approvalService.clear);

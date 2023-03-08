@@ -1,6 +1,6 @@
 import { ReactElement, useCallback, useEffect, useRef, useState } from "react";
 import postMessage from "@src/util/postMessage";
-import RPCAction from "@src/util/constants";
+import { RPCAction } from "@src/constants";
 import { deleteAllIdentities, fetchIdentities } from "@src/ui/ducks/identities";
 import Header from "@src/ui/components/Header";
 import classNames from "classnames";
