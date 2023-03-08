@@ -2,7 +2,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { CreateIdentityOptions, IdentityMetadata } from "@src/types";
 import postMessage from "@src/util/postMessage";
-import RPCAction from "@src/util/constants";
+import { RPCAction } from "@src/constants";
 import { useSelector } from "react-redux";
 import { AppDispatch, AppRootState } from "@src/ui/store/configureAppStore";
 import deepEqual from "fast-deep-equal";

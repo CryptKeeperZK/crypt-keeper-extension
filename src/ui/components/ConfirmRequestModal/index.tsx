@@ -3,7 +3,7 @@ import FullModal, { FullModalContent, FullModalFooter, FullModalHeader } from "@
 import Button, { ButtonType } from "@src/ui/components/Button";
 import { useRequestsPending } from "@src/ui/ducks/requests";
 import { PendingRequest, PendingRequestType, RequestResolutionAction, SelectOption } from "@src/types";
-import RPCAction from "@src/util/constants";
+import { RPCAction } from "@src/constants";
 import postMessage from "@src/util/postMessage";
 import "./confirm-modal.scss";
 import Input from "@src/ui/components/Input";

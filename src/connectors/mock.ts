@@ -5,6 +5,18 @@ export class MockConnector extends Connector {
   activate(): Promise<void> | void {
     return Promise.resolve();
   }
+
+  connectEagerly(): Promise<void> | void {
+    return Promise.resolve();
+  }
+
+  resetState(): Promise<void> | void {
+    return Promise.resolve();
+  }
+
+  deactivate(): Promise<void> | void {
+    return Promise.resolve();
+  }
 }
 
 export interface IMockConnectorHooksArgs {

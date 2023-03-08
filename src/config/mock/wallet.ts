@@ -20,4 +20,7 @@ export const defaultWalletHookData: IUseWalletData = {
     getSigner: jest.fn(),
     getBalance: jest.fn(),
   } as unknown as Web3Provider,
+  onConnect: jest.fn(),
+  onConnectEagerly: jest.fn(),
+  onDisconnect: jest.fn(),
 };

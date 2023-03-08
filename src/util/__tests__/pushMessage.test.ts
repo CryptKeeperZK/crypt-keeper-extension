@@ -1,6 +1,6 @@
 import { browser } from "webextension-polyfill-ts";
 
-import RPCAction from "../constants";
+import { RPCAction } from "@src/constants";
 import pushMessage from "../pushMessage";
 
 jest.mock("webextension-polyfill-ts", (): unknown => ({

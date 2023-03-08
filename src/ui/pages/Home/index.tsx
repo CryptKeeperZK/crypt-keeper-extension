@@ -1,6 +1,6 @@
 import { ReactElement, useCallback, useEffect, useRef, useState } from "react";
 import postMessage from "@src/util/postMessage";
-import RPCAction from "@src/util/constants";
+import { RPCAction } from "@src/constants";
 import { deleteAllIdentities, fetchIdentities } from "@src/ui/ducks/identities";
 import Header from "@src/ui/components/Header";
 import classNames from "classnames";
@@ -11,19 +11,20 @@ import ConnectionModal from "@src/ui/components/ConnectionModal";
 import Icon from "@src/ui/components/Icon";
 import Menuable from "@src/ui/components/Menuable";
 import { useAppDispatch } from "@src/ui/ducks/hooks";
-import { metamask } from "@src/connectors";
 import { useWallet } from "@src/ui/hooks/wallet";
 import { DEFAULT_ROUND } from "@src/config/const";
 import { IdentityList } from "./components";
 
 export default function Home(): ReactElement {
   const dispatch = useAppDispatch();
+  const { onConnectEagerly } = useWallet();
+
   const scrollRef = useRef<HTMLDivElement>(null);
   const [fixedTabs, fixTabs] = useState(false);
 
   useEffect(() => {
-    metamask.connectEagerly();
-  }, []);
+    onConnectEagerly();
+  }, [onConnectEagerly]);
 
   useEffect(() => {
     (async () => {

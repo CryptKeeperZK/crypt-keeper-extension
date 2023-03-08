@@ -11,3 +11,5 @@ export const IDENTITY_TYPES: readonly SelectOption[] = [
   { value: "interrep", label: "InterRep", icon: null },
   { value: "random", label: "Random", icon: null },
 ];
+
+export * from "./rpcActions";

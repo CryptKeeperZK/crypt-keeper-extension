@@ -1,4 +1,5 @@
-import RPCAction from "@src/util/constants";
+import { browser } from "webextension-polyfill-ts";
+import { RPCAction } from "@src/constants";
 import { PendingRequestType, NewIdentityRequest, IdentityName } from "@src/types";
 import { bigintToHex } from "bigint-conversion";
 import Handler from "./controllers/handler";
@@ -11,13 +12,14 @@ import ApprovalService from "./services/approval";
 import identityFactory from "./identityFactory";
 import BrowserUtils from "./controllers/browserUtils";
 import log from "loglevel";
-import { browser } from "webextension-polyfill-ts";
+import WalletService from "./services/wallet";
 
 export default class ZkKeeperController extends Handler {
   private identityService: IdentityService;
   private zkValidator: ZkValidator;
   private requestManager: RequestManager;
   private approvalService: ApprovalService;
+  private walletService: WalletService;
 
   constructor() {
     super();
@@ -25,6 +27,7 @@ export default class ZkKeeperController extends Handler {
     this.zkValidator = new ZkValidator();
     this.requestManager = new RequestManager();
     this.approvalService = new ApprovalService();
+    this.walletService = new WalletService();
     log.debug("Inside ZkKepperController");
   }
 
@@ -253,6 +256,10 @@ export default class ZkKeeperController extends Handler {
     );
 
     this.add(RPCAction.CLOSE_POPUP, async () => BrowserUtils.closePopup());
+
+    this.add(RPCAction.SET_CONNECT_WALLET, LockService.ensure, this.walletService.setConnection);
+
+    this.add(RPCAction.GET_CONNECT_WALLET, LockService.ensure, this.walletService.getConnection);
 
     // dev
     this.add(RPCAction.CLEAR_APPROVED_HOSTS, this.approvalService.clear);

@@ -4,7 +4,7 @@ import { MerkleProof } from "@zk-kit/incremental-merkle-tree";
 import log from "loglevel";
 
 import { MerkleProofArtifacts } from "@src/types";
-import RPCAction from "@src/util/constants";
+import { RPCAction } from "@src/constants";
 import { IRlnGenerateArgs, ISemaphoreGenerateArgs, RlnProofGenerator, SemaphoreProofGenerator } from "./proof";
 
 export type IRequest = {
