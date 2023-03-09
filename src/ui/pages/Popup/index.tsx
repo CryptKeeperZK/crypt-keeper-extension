@@ -1,6 +1,6 @@
 import React, { ReactElement, ReactNode, useEffect, useState } from "react";
 import "./popup.scss";
-import { Navigate, Route, Routes } from "react-router";
+import { Navigate, Route, Routes } from "react-router-dom";
 import Home from "@src/ui/pages/Home";
 import { useRequestsPending, fetchRequestPendingStatus } from "@src/ui/ducks/requests";
 import { fetchStatus, useAppStatus } from "@src/ui/ducks/app";
