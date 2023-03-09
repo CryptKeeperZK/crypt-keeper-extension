@@ -2,6 +2,8 @@ import LockService from "./lock";
 import pushMessage from "@src/util/pushMessage";
 import { setApproval } from "@src/ui/ducks";
 import SimpleStorage from "./simpleStorage";
+import pushMessage from "@src/util/pushMessage";
+import { setApproval } from "@src/ui/ducks";
 
 const APPPROVALS_DB_KEY = "@APPROVED@";
 

@@ -124,6 +124,7 @@ export default function ConfirmRequestModal(): JSX.Element {
   }
 }
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 
 function ConnectionApprovalModal(props: {
@@ -479,3 +480,5 @@ function ProofModal({ pendingRequest, len, reject, accept, loading, error }: Pro
   );
 }
 >>>>>>> f7dce11 (chore: prepare for new linter (#170))
+=======
+>>>>>>> febd2cb (feat: support long-lived connection between the background and the UI.)

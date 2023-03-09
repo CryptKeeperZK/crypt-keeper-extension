@@ -1,12 +1,8 @@
-
-import { browser, Runtime } from "webextension-polyfill-ts";
-import pushMessage, { messageSenderFactory } from "@src/util/pushMessage";
-import { setStatus } from "@src/ui/ducks/app";
 import log from "loglevel";
 
+import { browser, Runtime } from "webextension-polyfill-ts";
 import { RPCAction } from "@src/constants";
 import { PendingRequestType, NewIdentityRequest, IdentityName } from "@src/types";
-
 import BrowserUtils from "./controllers/browserUtils";
 import Handler from "./controllers/handler";
 import RequestManager from "./controllers/requestManager";
@@ -17,6 +13,8 @@ import LockService from "./services/lock";
 import { RLNProofRequest, SemaphoreProofRequest } from "./services/protocols/interfaces";
 import WalletService from "./services/wallet";
 import ZkValidator from "./services/zkValidator";
+import pushMessage, { messageSenderFactory } from "@src/util/pushMessage";
+import { setStatus } from "@src/ui/ducks/app";
 
 export default class ZkKeeperController extends Handler {
   private identityService: IdentityService;

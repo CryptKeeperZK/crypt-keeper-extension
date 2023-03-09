@@ -212,7 +212,8 @@ export default class IdentityService {
     await pushMessage(setSelected(commitment));
 
     const tabs = await browser.tabs.query({ active: true });
-    await Promise.all(tabs.map((tab) => browser.tabs.sendMessage(tab.id as number, setSelected(commitment))));
+    // TODO: change to pushMessage
+    await Promise.all(tabs.map(tab => browser.tabs.sendMessage(tab.id as number, setSelected(commitment))));
   };
 
   private getIdentitiesFromStore = async (): Promise<Map<string, string>> => {
