@@ -3,7 +3,7 @@ import "./globals";
 import express from "express";
 import cors from "cors";
 import { Identity } from "@semaphore-protocol/identity";
-import { Member } from "@semaphore-protocol/group";
+import { BigNumberish } from "@semaphore-protocol/group";
 import { bigintToHex, hexToBigint } from "bigint-conversion";
 import { MerkleProof } from "@zk-kit/incremental-merkle-tree";
 import log from "loglevel";
@@ -26,7 +26,7 @@ const serializeMerkleProof = (merkleProof: MerkleProof): MerkleProof => ({
   leaf: bigintToHex(merkleProof.leaf),
 });
 
-const identityCommitments: Member[] = [];
+const identityCommitments: BigNumberish[] = [];
 
 for (let i = 0; i < 2; i++) {
   const mockIdentity = new Identity();

@@ -1,6 +1,6 @@
 import { bigintToHex, hexToBigint } from "bigint-conversion";
 import { MerkleProof } from "@zk-kit/incremental-merkle-tree";
-import { Group, Member } from "@semaphore-protocol/group";
+import { Group, BigNumberish } from "@semaphore-protocol/group";
 
 import { MerkleProofArtifacts } from "@src/types";
 
@@ -17,8 +17,8 @@ export function deserializeMerkleProof(merkleProof: MerkleProof): MerkleProof {
 
 export interface IGenerateMerkelProofArgs {
   treeDepth: number;
-  member: Member;
-  members?: Member[];
+  member: BigNumberish;
+  members?: BigNumberish[];
 }
 
 export function generateMerkleProof({ treeDepth, member, members }: IGenerateMerkelProofArgs): MerkleProof {
