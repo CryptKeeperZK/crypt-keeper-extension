@@ -17,13 +17,13 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  build:
+  check:
     runs-on: ubuntu-22.04
     strategy:
       fail-fast: false
       matrix:
         node-version: [16, 18]
-        command: [prettier, lint, types, tests:coverage]
+        command: ["prettier", "lint", "types", "test:coverage"]
 
     steps:
       - uses: actions/checkout@v3
