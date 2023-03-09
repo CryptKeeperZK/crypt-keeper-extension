@@ -1,6 +1,4 @@
 import { ReactElement, useCallback, useEffect, useRef, useState } from "react";
-import postMessage from "@src/util/postMessage";
-import RPCAction from "@src/util/constants";
 import { deleteAllIdentities, fetchIdentities } from "@src/ui/ducks/identities";
 import Header from "@src/ui/components/Header";
 import classNames from "classnames";
@@ -15,6 +13,7 @@ import { metamask } from "@src/connectors";
 import { useWallet } from "@src/ui/hooks/wallet";
 import { DEFAULT_ROUND } from "@src/config/const";
 import { IdentityList } from "./components";
+import { fetchIsApproved, useApproves } from "@src/ui/ducks";
 
 export default function Home(): ReactElement {
   const dispatch = useAppDispatch();
@@ -61,10 +60,12 @@ export default function Home(): ReactElement {
 }
 
 const HomeInfo = function (): ReactElement {
-  const [connected, setConnected] = useState(false);
+  const dispatch = useAppDispatch();
   const [showingModal, showModal] = useState(false);
 
   const { address, chain, balance } = useWallet();
+
+  const { noApproval } = useApproves();
 
   useEffect(() => {
     (async () => {
@@ -73,21 +74,12 @@ const HomeInfo = function (): ReactElement {
   }, []);
 
   const refreshConnectionStatus = useCallback(async () => {
-    try {
-      const tabs = await browser.tabs.query({ active: true, lastFocusedWindow: true });
-      const [tab] = tabs || [];
+    const tabs = await browser.tabs.query({ active: true, lastFocusedWindow: true });
+    const [tab] = tabs || [];
 
-      if (tab?.url) {
-        const { origin } = new URL(tab.url);
-        const isHostApproved = await postMessage({
-          method: RPCAction.IS_HOST_APPROVED,
-          payload: origin,
-        });
-
-        setConnected(isHostApproved);
-      }
-    } catch (e) {
-      setConnected(false);
+    if (tab?.url) {
+      const { origin } = new URL(tab.url);
+      dispatch(fetchIsApproved(origin));
     }
   }, []);
 
@@ -99,16 +91,16 @@ const HomeInfo = function (): ReactElement {
       <div className="home__info">
         <div
           className={classNames("home__connection-button", {
-            "home__connection-button--connected": connected,
+            "home__connection-button--connected": noApproval,
           })}
-          onClick={connected ? () => showModal(true) : undefined}
+          onClick={noApproval ? () => showModal(true) : undefined}
         >
           <div
             className={classNames("home__connection-button__icon", {
-              "home__connection-button__icon--connected": connected,
+              "home__connection-button__icon--connected": noApproval,
             })}
           />
-          <div className="text-xs home__connection-button__text">{connected ? "Connected" : "Not Connected"}</div>
+          <div className="text-xs home__connection-button__text">{noApproval ? "Connected" : "Not Connected"}</div>
           {address && <div className="text-sm home__account-button">{sliceAddress(address)}</div>}
         </div>
         <div>

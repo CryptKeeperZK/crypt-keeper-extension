@@ -3,7 +3,7 @@ import { browser } from "webextension-polyfill-ts";
 
 import { setIdentities, setSelected } from "@src/ui/ducks/identities";
 import pushMessage from "@src/util/pushMessage";
-import { IdentityMetadata, IdentityName } from "@src/types";
+import { IdentityName } from "@src/types";
 
 import ZkIdentityDecorater from "../identityDecorater";
 import SimpleStorage from "./simpleStorage";
@@ -107,7 +107,9 @@ export default class IdentityService {
 
     this.activeIdentity = ZkIdentityDecorater.genFromSerialized(identity);
 
-    return this.activeIdentity;
+    pushMessage(
+      setSelected(this.activeIdentity ? bigintToHex(this.activeIdentity.genIdentityCommitment()) : undefined),
+    );
   };
 
   public getIdentityCommitments = async (): Promise<{ commitments: string[]; identities: Map<string, string> }> => {
@@ -121,10 +123,10 @@ export default class IdentityService {
     return { commitments, identities };
   };
 
-  public getIdentities = async (): Promise<{ commitment: string; metadata: IdentityMetadata }[]> => {
+  public getIdentities = async (): Promise<void> => {
     const { commitments, identities } = await this.getIdentityCommitments();
 
-    return commitments
+    const identitiesMapped = commitments
       .filter(commitment => identities.has(commitment))
       .map(commitment => {
         const serializedIdentity = identities.get(commitment) as string;
@@ -135,6 +137,8 @@ export default class IdentityService {
           metadata: identity?.metadata,
         };
       });
+
+    pushMessage(setIdentities(identitiesMapped));
   };
 
   public insert = async (newIdentity: ZkIdentityDecorater): Promise<boolean> => {
@@ -192,6 +196,7 @@ export default class IdentityService {
     await pushMessage(setSelected(commitment));
 
     const tabs = await browser.tabs.query({ active: true });
+    // TODO: change to pushMessage
     await Promise.all(tabs.map(tab => browser.tabs.sendMessage(tab.id as number, setSelected(commitment))));
   };
 
@@ -207,7 +212,6 @@ export default class IdentityService {
   };
 
   private refresh = async (): Promise<void> => {
-    const identities = await this.getIdentities();
-    await pushMessage(setIdentities(identities));
+    await this.getIdentities();
   };
 }

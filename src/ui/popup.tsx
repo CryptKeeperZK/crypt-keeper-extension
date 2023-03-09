@@ -12,19 +12,24 @@ import { Web3ReactProvider } from "@web3-react/core";
 import { connectors } from "@src/connectors";
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { faTwitter, faGithub, faReddit } from "@fortawesome/free-brands-svg-icons";
+import { messageSenderFactory } from "@src/util/postMessage";
 
 log.setDefaultLevel(isDebugMode() ? "debug" : "info");
 
 window.ethereum = createMetaMaskProvider();
 
-browser.runtime.onMessage.addListener(action => {
-  if (action?.type) {
-    store.dispatch(action);
-  }
-});
-
 browser.tabs.query({ active: true, currentWindow: true }).then(() => {
-  browser.runtime.connect();
+  const extensionPort = browser.runtime.connect(undefined, { name: "popup" });
+
+  extensionPort.onMessage.addListener(action => {
+    log.debug("Extension response");
+    log.debug(action);
+    if (action?.type) {
+      store.dispatch(action);
+    }
+  });
+
+  messageSenderFactory(extensionPort);
 
   const root = ReactDOM.createRoot(document.getElementById("popup") as HTMLElement);
 

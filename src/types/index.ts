@@ -8,6 +8,13 @@ export type Request = {
   meta?: any;
 };
 
+export type Action<ActionType, Payload> = {
+  type: ActionType;
+  payload?: Payload;
+  meta?: any;
+  error?: boolean;
+};
+
 export type IdentityStrategy = "interrep" | "random";
 export type IdentityWeb2Provider = "twitter" | "github" | "reddit";
 

@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-shadow */
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { CreateIdentityOptions, IdentityMetadata } from "@src/types";
+import { Action, CreateIdentityOptions, IdentityMetadata } from "@src/types";
 import postMessage from "@src/util/postMessage";
 import RPCAction from "@src/util/constants";
 import { useSelector } from "react-redux";
@@ -8,18 +8,11 @@ import { AppDispatch, AppRootState } from "@src/ui/store/configureAppStore";
 import deepEqual from "fast-deep-equal";
 import log from "loglevel";
 
-export enum ActionType {
+export enum IdentityActionType {
   SET_COMMITMENTS = "app/identities/setCommitments",
   SET_SELECTED = "app/identities/setSelected",
   SET_REQUEST_PENDING = "app/identities/setRequestPending",
 }
-
-type Action<payload> = {
-  type: ActionType;
-  payload?: payload;
-  meta?: any;
-  error?: boolean;
-};
 
 type State = {
   identityCommitments: string[];
@@ -91,41 +84,39 @@ export const deleteAllIdentities = () => async (dispatch: AppDispatch) => {
   });
 };
 
-export const setSelected = (identityCommitment: string) => ({
-  type: ActionType.SET_SELECTED,
+export const setSelected = (identityCommitment?: string) => ({
+  type: IdentityActionType.SET_SELECTED,
   payload: identityCommitment,
 });
 
 export const setIdentities = (
   identities: { commitment: string; metadata: IdentityMetadata }[],
-): Action<{ commitment: string; metadata: IdentityMetadata }[]> => ({
-  type: ActionType.SET_COMMITMENTS,
+): Action<IdentityActionType, { commitment: string; metadata: IdentityMetadata }[]> => ({
+  type: IdentityActionType.SET_COMMITMENTS,
   payload: identities,
 });
 
-export const setIdentityRequestPending = (requestPending: boolean): Action<boolean> => ({
-  type: ActionType.SET_REQUEST_PENDING,
+export const setIdentityRequestPending = (requestPending: boolean): Action<IdentityActionType, boolean> => ({
+  type: IdentityActionType.SET_REQUEST_PENDING,
   payload: requestPending,
 });
 
 export const fetchIdentities = () => async (dispatch: AppDispatch) => {
-  const identities = await postMessage({ method: RPCAction.GET_IDENTITIES });
-  const selected = await postMessage({ method: RPCAction.GET_ACTIVE_IDENTITY });
-  dispatch(setIdentities(identities));
-  dispatch(setSelected(selected));
+  postMessage({ method: RPCAction.GET_IDENTITIES });
+  postMessage({ method: RPCAction.GET_ACTIVE_IDENTITY });
 };
 
 // eslint-disable-next-line @typescript-eslint/default-param-last
-export default function identities(state = initialState, action: Action<any>): State {
+export default function identities(state = initialState, action: Action<IdentityActionType, any>): State {
   switch (action.type) {
-    case ActionType.SET_COMMITMENTS:
+    case IdentityActionType.SET_COMMITMENTS:
       return reduceSetIdentities(state, action);
-    case ActionType.SET_SELECTED:
+    case IdentityActionType.SET_SELECTED:
       return {
         ...state,
         selected: action.payload,
       };
-    case ActionType.SET_REQUEST_PENDING:
+    case IdentityActionType.SET_REQUEST_PENDING:
       return {
         ...state,
         requestPending: action.payload,
@@ -137,7 +128,7 @@ export default function identities(state = initialState, action: Action<any>): S
 
 function reduceSetIdentities(
   state: State,
-  action: Action<{ commitment: string; metadata: IdentityMetadata }[]>,
+  action: Action<IdentityActionType, { commitment: string; metadata: IdentityMetadata }[]>,
 ): State {
   const identityCommitments: string[] = [];
   const identityMap: Record<string, IdentityMetadata> = {};

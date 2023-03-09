@@ -4,12 +4,14 @@ import thunk, { ThunkDispatch } from "redux-thunk";
 import identities from "@src/ui/ducks/identities";
 import requests from "@src/ui/ducks/requests";
 import app from "@src/ui/ducks/app";
+import approves from "@src/ui/ducks/approves";
 import { isDebugMode } from "@src/config/env";
 
 const rootReducer = combineReducers({
   identities,
   requests,
   app,
+  approves,
 });
 
 export type AppRootState = ReturnType<typeof rootReducer>;

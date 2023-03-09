@@ -1,20 +1,13 @@
-import { Dispatch } from "redux";
 import postMessage from "@src/util/postMessage";
 import RPCAction from "@src/util/constants";
 import { useSelector } from "react-redux";
 import { AppRootState } from "@src/ui/store/configureAppStore";
 import deepEqual from "fast-deep-equal";
+import { Action } from "@src/types";
 
-export enum ActionType {
+export enum AppActionType {
   SET_STATUS = "app/setStatus",
 }
-
-type Action<payload> = {
-  type: ActionType;
-  payload?: payload;
-  meta?: any;
-  error?: boolean;
-};
 
 type State = {
   initialized: boolean;
@@ -29,22 +22,24 @@ const initialState: State = {
 export const setStatus = (status: {
   initialized: boolean;
   unlocked: boolean;
-}): Action<{
-  initialized: boolean;
-  unlocked: boolean;
-}> => ({
-  type: ActionType.SET_STATUS,
+}): Action<
+  AppActionType,
+  {
+    initialized: boolean;
+    unlocked: boolean;
+  }
+> => ({
+  type: AppActionType.SET_STATUS,
   payload: status,
 });
 
-export const fetchStatus = () => async (dispatch: Dispatch) => {
-  const status = await postMessage({ method: RPCAction.GET_STATUS });
-  dispatch(setStatus(status));
+export const fetchStatus = () => async () => {
+  postMessage({ method: RPCAction.GET_STATUS });
 };
 
-export default function app(state = initialState, action: Action<any>): State {
+export default function app(state = initialState, action: Action<AppActionType, any>): State {
   switch (action.type) {
-    case ActionType.SET_STATUS:
+    case AppActionType.SET_STATUS:
       return {
         ...state,
         initialized: action.payload.initialized,

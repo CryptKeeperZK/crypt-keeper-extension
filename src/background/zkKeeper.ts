@@ -1,6 +1,5 @@
 import RPCAction from "@src/util/constants";
 import { PendingRequestType, NewIdentityRequest, IdentityName } from "@src/types";
-import { bigintToHex } from "bigint-conversion";
 import Handler from "./controllers/handler";
 import LockService from "./services/lock";
 import IdentityService from "./services/identity";
@@ -11,7 +10,9 @@ import ApprovalService from "./services/approval";
 import identityFactory from "./identityFactory";
 import BrowserUtils from "./controllers/browserUtils";
 import log from "loglevel";
-import { browser } from "webextension-polyfill-ts";
+import { browser, Runtime } from "webextension-polyfill-ts";
+import pushMessage, { messageSenderFactory } from "@src/util/pushMessage";
+import { setStatus } from "@src/ui/ducks/app";
 
 export default class ZkKeeperController extends Handler {
   private identityService: IdentityService;
@@ -28,7 +29,10 @@ export default class ZkKeeperController extends Handler {
     log.debug("Inside ZkKepperController");
   }
 
-  initialize = async (): Promise<ZkKeeperController> => {
+  initialize = async (remotePort: Runtime.Port): Promise<ZkKeeperController> => {
+    // Initialize a singleton instance of MessageSender with remotePort
+    messageSenderFactory(remotePort);
+
     // common
     this.add(
       RPCAction.UNLOCK,
@@ -48,17 +52,12 @@ export default class ZkKeeperController extends Handler {
      */
     this.add(RPCAction.GET_STATUS, async () => {
       const { initialized, unlocked } = await LockService.getStatus();
-      return {
-        initialized,
-        unlocked,
-      };
+      pushMessage(setStatus({ initialized, unlocked }));
     });
 
     // requests
     this.add(RPCAction.GET_PENDING_REQUESTS, LockService.ensure, this.requestManager.getRequests);
     this.add(RPCAction.FINALIZE_REQUEST, LockService.ensure, this.requestManager.finalizeRequest);
-
-    log.debug("3. Inside ZkKepperController() class");
 
     // lock
     this.add(RPCAction.SETUP_PASSWORD, (payload: string) => LockService.setupPassword(payload));
@@ -110,11 +109,7 @@ export default class ZkKeeperController extends Handler {
 
     this.add(RPCAction.DELETE_ALL_IDENTITIES, LockService.ensure, this.identityService.deleteAllIdentities);
 
-    this.add(RPCAction.GET_ACTIVE_IDENTITY, LockService.ensure, async () => {
-      const identity = await this.identityService.getActiveIdentity();
-
-      return identity ? bigintToHex(identity.genIdentityCommitment()) : null;
-    });
+    this.add(RPCAction.GET_ACTIVE_IDENTITY, LockService.ensure, this.identityService.getActiveIdentity);
 
     // protocols
     this.add(
@@ -239,9 +234,7 @@ export default class ZkKeeperController extends Handler {
     this.add(RPCAction.IS_HOST_APPROVED, LockService.ensure, this.approvalService.isApproved);
     this.add(RPCAction.REMOVE_HOST, LockService.ensure, this.approvalService.remove);
 
-    this.add(RPCAction.GET_HOST_PERMISSIONS, LockService.ensure, async (payload: string) =>
-      this.approvalService.getPermission(payload),
-    );
+    this.add(RPCAction.GET_HOST_PERMISSIONS, LockService.ensure, this.approvalService.getPermission);
 
     this.add(
       RPCAction.SET_HOST_PERMISSIONS,

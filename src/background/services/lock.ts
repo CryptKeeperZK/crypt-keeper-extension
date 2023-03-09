@@ -82,6 +82,7 @@ class LockService extends SimpleStorage {
     await pushMessage(setStatus(status));
     const tabs = await browser.tabs.query({ active: true });
     for (const tab of tabs) {
+      // TODO: change to pushMessage
       await browser.tabs.sendMessage(tab.id as number, setStatus(status));
     }
 

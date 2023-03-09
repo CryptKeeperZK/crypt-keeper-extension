@@ -1,4 +1,4 @@
-# Description (WIP)
+# CryptKeeper Browser Extension
 
 CryptKeeper is a browser extension which enables Zero knowledge identity management and proof generation.
 Currently it supports operations for Semaphore and RLN gadgets.

@@ -7,6 +7,7 @@ import ZkKeeperController from "./zkKeeper";
 import log from "loglevel";
 import { deferredPromise } from "@src/background/shared/utils";
 import { isDebugMode } from "@src/config/env";
+import { Runtime } from "webextension-polyfill";
 
 log.setDefaultLevel(isDebugMode() ? "debug" : "info");
 
@@ -16,33 +17,22 @@ const {
   reject: rejectInitialization,
 } = deferredPromise<unknown>();
 
-browser.runtime.onInstalled.addListener(async () => {
-  log.debug("CryptKeeper onInstalled Event, initializing...");
-  await isInitialized;
-  log.debug("CryptKeeper onInstalled Event, initializing completed...");
-});
-
-browser.runtime.onConnect.addListener(async () => {
+browser.runtime.onConnect.addListener(async remotePort => {
   log.debug("CryptKeeper onConnect Event, initializing...");
+  await initialize(remotePort);
   await isInitialized;
   log.debug("CryptKeeper onConnect Event, initializing completed...");
 });
 
-initialize().catch((e: any) => {
-  log.error("CryptKeeper Initializaiton error.", e);
-});
-
-async function initialize() {
+async function initialize(remotePort: Runtime.Port) {
   try {
     const app = new ZkKeeperController();
 
-    app.initialize().then(() => {
-      browser.runtime.onMessage.addListener(async (request: Request) => {
+    app.initialize(remotePort).then(() => {
+      remotePort.onMessage.addListener(async (request: Request) => {
         try {
           log.debug("Background: request: ", request);
-          const response = await app.handle(request);
-          log.debug("Background: response: ", response);
-          return [null, response];
+          await app.handle(request);
         } catch (e: any) {
           return [e.message, null];
         }

@@ -1,5 +1,7 @@
 import SimpleStorage from "./simpleStorage";
 import LockService from "./lock";
+import pushMessage from "@src/util/pushMessage";
+import { setApproval } from "@src/ui/ducks";
 
 const APPPROVALS_DB_KEY = "@APPROVED@";
 
@@ -19,7 +21,16 @@ export default class ApprovalService {
   public getAllowedHosts = (): string[] =>
     [...this.allowedHosts.entries()].filter(([, isApproved]) => isApproved).map(([key]) => key);
 
-  public isApproved = (origin: string): boolean => this.allowedHosts.has(origin);
+  public isApproved = (host: string): boolean => {
+    pushMessage(
+      setApproval({
+        host,
+        noApproval: this.allowedHosts.has(origin),
+      }),
+    );
+
+    return this.allowedHosts.has(origin);
+  };
 
   public canSkipApprove = (origin: string): boolean => Boolean(this.allowedHosts.get(origin)?.noApproval);
 
@@ -35,16 +46,26 @@ export default class ApprovalService {
   };
 
   public getPermission = async (host: string): Promise<HostPermission> => {
-    return {
+    const noApproval = {
+      host,
       noApproval: Boolean(this.allowedHosts.get(host)?.noApproval),
     };
+
+    pushMessage(setApproval(noApproval));
+
+    return noApproval;
   };
 
-  public setPermission = async (host: string, { noApproval }: HostPermission): Promise<HostPermission> => {
+  public setPermission = async (host: string, { noApproval }: HostPermission) => {
     this.allowedHosts.set(host, { noApproval });
     await this.saveApprovals();
 
-    return { noApproval };
+    pushMessage(
+      setApproval({
+        host,
+        noApproval,
+      }),
+    );
   };
 
   public add = async ({ host, noApproval }: { host: string; noApproval: boolean }): Promise<void> => {

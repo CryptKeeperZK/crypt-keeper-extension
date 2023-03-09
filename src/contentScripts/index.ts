@@ -1,6 +1,6 @@
 import { browser } from "webextension-polyfill-ts";
-import { ActionType as IdentityActionType } from "@src/ui/ducks/identities";
-import { ActionType as AppActionType } from "@src/ui/ducks/app";
+import { IdentityActionType } from "@src/ui/ducks/identities";
+import { AppActionType } from "@src/ui/ducks/app";
 import log from "loglevel";
 
 (async function () {

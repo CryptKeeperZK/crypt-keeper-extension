@@ -7,11 +7,13 @@ import postMessage from "@src/util/postMessage";
 import RPCAction from "@src/util/constants";
 import Checkbox from "@src/ui/components/Checkbox";
 import { getLinkPreview } from "link-preview-js";
+import { fetchApproval, setHostPermission, useAppDispatch, useApproves } from "@src/ui/ducks";
 
 export default function ConnectionModal(props: { onClose: () => void; refreshConnectionStatus: () => void }) {
   const { onClose, refreshConnectionStatus } = props;
 
-  const [checked, setChecked] = useState(false);
+  const dispatch = useAppDispatch();
+  const { noApproval } = useApproves();
   const [url, setUrl] = useState<URL>();
   const [faviconUrl, setFaviconUrl] = useState("");
 
@@ -35,11 +37,7 @@ export default function ConnectionModal(props: { onClose: () => void; refreshCon
   useEffect(() => {
     (async () => {
       if (url?.origin) {
-        const res = await postMessage({
-          method: RPCAction.GET_HOST_PERMISSIONS,
-          payload: url?.origin,
-        });
-        setChecked(res?.noApproval);
+        dispatch(fetchApproval(origin));
       }
     })();
   }, [url]);
@@ -67,14 +65,12 @@ export default function ConnectionModal(props: { onClose: () => void; refreshCon
 
   const setApproval = useCallback(
     async (noApproval: boolean) => {
-      const res = await postMessage({
-        method: RPCAction.SET_HOST_PERMISSIONS,
-        payload: {
-          host: url?.origin,
+      dispatch(
+        setHostPermission({
+          host: origin,
           noApproval,
-        },
-      });
-      setChecked(res?.noApproval);
+        }),
+      );
     },
     [url?.origin],
   );
@@ -106,7 +102,7 @@ export default function ConnectionModal(props: { onClose: () => void; refreshCon
         <div className="flex flex-row items-start">
           <Checkbox
             className="mr-2 mt-2 flex-shrink-0"
-            checked={checked}
+            checked={noApproval}
             onChange={e => {
               setApproval(e.target.checked);
             }}
