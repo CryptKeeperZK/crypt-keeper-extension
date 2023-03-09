@@ -1,4 +1,4 @@
-import type { JsonRpcSigner } from "@ethersproject/providers";
+import type { JsonRpcSigner } from "ethers/types/providers";
 
 import { signIdentityMessage } from "..";
 

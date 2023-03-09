@@ -90,9 +90,6 @@
     "webpack-merge": "^5.8.0"
   },
   "dependencies": {
-    "@ethersproject/address": "^5.7.0",
-    "@ethersproject/providers": "^5.7.2",
-    "@ethersproject/units": "^5.7.0",
     "@fortawesome/fontawesome-common-types": "^6.3.0",
     "@fortawesome/fontawesome-svg-core": "^6.3.0",
     "@fortawesome/free-brands-svg-icons": "^6.3.0",

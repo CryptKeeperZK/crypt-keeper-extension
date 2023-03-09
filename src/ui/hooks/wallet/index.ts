@@ -1,8 +1,8 @@
 import { useWeb3React } from "@web3-react/core";
 import type { Connector } from "@web3-react/types";
-import type { Web3Provider } from "@ethersproject/providers";
+import { formatUnits } from "ethers";
+import type { BrowserProvider } from "ethers/types/providers";
 import BigNumber from "bignumber.js";
-import { formatUnits } from "@ethersproject/units";
 import { useCallback, useEffect, useState } from "react";
 
 import { ConnectorNames, getConnectorName } from "@src/connectors";
@@ -18,7 +18,7 @@ export interface IUseWalletData {
   chain?: Chain;
   connectorName?: ConnectorNames;
   connector?: Connector;
-  provider?: Web3Provider;
+  provider?: BrowserProvider;
   onConnect: () => void;
   onConnectEagerly: () => void;
   onDisconnect: () => void;
@@ -44,7 +44,7 @@ export const useWallet = (): IUseWalletData => {
 
     provider
       .getBalance(address)
-      .then(wei => new BigNumber(formatUnits(wei, decimals)))
+      .then(wei => new BigNumber(formatUnits(wei.toString(), decimals)))
       .then(value => setBalance(value));
   }, [address, chainId, provider, decimals, setBalance]);
 
@@ -76,7 +76,7 @@ export const useWallet = (): IUseWalletData => {
     chain,
     connectorName,
     connector,
-    provider,
+    provider: provider as unknown as BrowserProvider,
     onConnect,
     onConnectEagerly,
     onDisconnect,

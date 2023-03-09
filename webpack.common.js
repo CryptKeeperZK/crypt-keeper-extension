@@ -100,6 +100,10 @@ module.exports = {
     fallback: {
       stream: require.resolve("stream-browserify"),
       crypto: require.resolve("crypto-browserify"),
+      https: false,
+      http: false,
+      net: false,
+      tls: false,
       path: false,
       os: false,
       fs: false,
