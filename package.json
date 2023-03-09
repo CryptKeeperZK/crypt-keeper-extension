@@ -57,7 +57,7 @@
     "@typescript-eslint/eslint-plugin": "^5.54.1",
     "@typescript-eslint/parser": "^5.54.1",
     "browserify": "^17.0.0",
-    "commitizen": "^4.2.5",
+    "commitizen": "^4.3.0",
     "copy-webpack-plugin": "^11.0.0",
     "cors": "^2.8.5",
     "css-loader": "^6.7.3",
