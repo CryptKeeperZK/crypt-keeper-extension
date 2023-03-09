@@ -1,4 +1,4 @@
-import { isAddress } from "@ethersproject/address";
+import { isAddress } from "ethers";
 
 export const ellipsify = (text: string, start = 6, end = 4) => {
   if (text.length - end <= start) {

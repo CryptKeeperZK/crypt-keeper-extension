@@ -1,4 +1,4 @@
-import type { JsonRpcSigner } from "@ethersproject/providers";
+import type { JsonRpcSigner } from "ethers/types/providers";
 
 import type { IdentityStrategy, IdentityWeb2Provider } from "@src/types";
 
