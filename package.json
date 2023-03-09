@@ -128,7 +128,7 @@
     "redux-thunk": "^2.4.2",
     "rlnjs": "github:Rate-Limiting-Nullifier/rlnjs",
     "subworkers": "^1.0.1",
-    "webextension-polyfill-ts": "^0.20.0"
+    "webextension-polyfill-ts": "^0.26.0"
   },
   "config": {
     "commitizen": {
