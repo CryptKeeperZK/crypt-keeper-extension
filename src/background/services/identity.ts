@@ -3,6 +3,7 @@ import { browser } from "webextension-polyfill-ts";
 
 import { setIdentities, setSelected } from "@src/ui/ducks/identities";
 import pushMessage from "@src/util/pushMessage";
+import { ellipsify } from "@src/util/account";
 import { IdentityMetadata, IdentityName } from "@src/types";
 
 import ZkIdentityDecorater from "../identityDecorater";
@@ -156,7 +157,7 @@ export default class IdentityService {
     await this.notificationService.create({
       options: {
         title: "New identity has been created.",
-        message: `Identity commitment: ${identityCommitment}`,
+        message: `Identity commitment: ${ellipsify(identityCommitment)}`,
         iconUrl: browser.runtime.getURL("/logo.png"),
         type: "basic",
       },
