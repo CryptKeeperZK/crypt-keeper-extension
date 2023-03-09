@@ -123,7 +123,7 @@
     "react-redux": "^8.0.5",
     "react-router-dom": "^6.4.3",
     "react-select": "^5.7.0",
-    "redux": "^4.2.0",
+    "redux": "^4.2.1",
     "redux-logger": "^3.0.6",
     "redux-thunk": "^2.4.2",
     "rlnjs": "github:Rate-Limiting-Nullifier/rlnjs",
