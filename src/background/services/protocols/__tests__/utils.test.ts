@@ -1,6 +1,5 @@
 import { Identity } from "@semaphore-protocol/identity";
 import { MerkleProof } from "@zk-kit/incremental-merkle-tree";
-import nock from "nock";
 
 import { deserializeMerkleProof, generateMerkleProof, getMerkleProof } from "../utils";
 
@@ -56,13 +55,9 @@ describe("background/services/protocols/utils", () => {
   });
 
   test("should get merkle proof from remote host properly", async () => {
-    nock("http://localhost:3000")
-      .post("/merkle")
-      .reply(200, {
-        data: {
-          merkleProof: defaultDeserializedMerkleProof,
-        },
-      });
+    const fetchSpy = jest.spyOn(global, "fetch").mockResolvedValue({
+      json: () => Promise.resolve({ data: { merkleProof: defaultDeserializedMerkleProof } }),
+    } as Response);
 
     const identity = new Identity();
 
@@ -71,6 +66,7 @@ describe("background/services/protocols/utils", () => {
       merkleStorageAddress: "http://localhost:3000/merkle",
     });
 
+    expect(fetchSpy).toBeCalledTimes(1);
     expect(result).toStrictEqual(defaultMerkleProof);
   });
 
