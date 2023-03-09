@@ -1,4 +1,4 @@
-name: Build
+name: Check
 
 on:
   push:
@@ -17,13 +17,13 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  build:
+  check:
     runs-on: ubuntu-22.04
     strategy:
       fail-fast: false
       matrix:
         node-version: [16, 18]
-        env: [build, dev]
+        command: ["prettier", "lint", "types", "test:coverage"]
 
     steps:
       - uses: actions/checkout@v3
@@ -35,4 +35,4 @@ jobs:
 
       - run: npm install
 
-      - run: npm run ${{ matrix.env }}
+      - run: npm run ${{ matrix.command }}

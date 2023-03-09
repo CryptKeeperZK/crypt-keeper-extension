@@ -57,7 +57,7 @@ export async function getMerkleProof({
       });
 }
 
-function getRemoteMerkleProof(merkleStorageAddress: string, identityCommitmentHex: string): Promise<MerkleProof> {
+async function getRemoteMerkleProof(merkleStorageAddress: string, identityCommitmentHex: string): Promise<MerkleProof> {
   return fetch(merkleStorageAddress, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
