@@ -1,5 +1,5 @@
 import BigNumber from "bignumber.js";
-import type { Web3Provider } from "@ethersproject/providers";
+import type { BrowserProvider } from "ethers/types/providers";
 
 import type { IUseWalletData } from "@src/ui/hooks/wallet";
 
@@ -19,7 +19,7 @@ export const defaultWalletHookData: IUseWalletData = {
   provider: {
     getSigner: jest.fn(),
     getBalance: jest.fn(),
-  } as unknown as Web3Provider,
+  } as unknown as BrowserProvider,
   onConnect: jest.fn(),
   onConnectEagerly: jest.fn(),
   onDisconnect: jest.fn(),

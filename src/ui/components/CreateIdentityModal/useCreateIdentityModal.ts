@@ -60,11 +60,12 @@ export const useCreateIdentityModal = ({ onClose }: IUseCreateIdentityModalArgs)
         identityStrategyType.value !== "random"
           ? { nonce, web2Provider: web2Provider.value as IdentityWeb2Provider, account: address }
           : {};
+      const signer = await provider?.getSigner();
 
       const messageSignature = await signIdentityMessage({
         web2Provider: web2Provider.value as IdentityWeb2Provider,
         nonce,
-        signer: provider?.getSigner(),
+        signer,
         identityStrategyType: identityStrategyType.value as IdentityStrategy,
       });
 
