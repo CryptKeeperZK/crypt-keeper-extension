@@ -2,10 +2,7 @@ import ApprovalService from "../approval";
 import LockService from "../lock";
 import SimpleStorage from "../simpleStorage";
 
-jest.mock("../lock", (): unknown => ({
-  decrypt: jest.fn(),
-  encrypt: jest.fn(),
-}));
+jest.mock("../lock");
 
 jest.mock("../simpleStorage");
 
@@ -13,10 +10,16 @@ describe("background/services/approval", () => {
   const defaultHosts = ["https://localhost:3000"];
   const serializedApprovals = JSON.stringify([[defaultHosts[0], { noApproval: true }]]);
 
-  beforeEach(() => {
-    (LockService.decrypt as jest.Mock).mockResolvedValue(serializedApprovals);
+  const defaultLockService = {
+    encrypt: jest.fn(),
+    decrypt: jest.fn(),
+  };
 
-    (LockService.encrypt as jest.Mock).mockResolvedValue(serializedApprovals);
+  beforeEach(() => {
+    defaultLockService.encrypt.mockResolvedValue(serializedApprovals);
+    defaultLockService.decrypt.mockResolvedValue(serializedApprovals);
+
+    (LockService.getInstance as jest.Mock).mockReturnValue(defaultLockService);
   });
 
   afterEach(() => {
