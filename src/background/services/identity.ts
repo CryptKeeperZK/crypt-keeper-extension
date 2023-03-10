@@ -3,11 +3,13 @@ import { browser } from "webextension-polyfill-ts";
 
 import { setIdentities, setSelected } from "@src/ui/ducks/identities";
 import pushMessage from "@src/util/pushMessage";
+import { ellipsify } from "@src/util/account";
 import { IdentityName } from "@src/types";
 
 import ZkIdentityDecorater from "../identityDecorater";
 import SimpleStorage from "./simpleStorage";
 import LockService from "./lock";
+import NotificationService from "./notification";
 
 const IDENTITY_KEY = "@@ID@@";
 const ACTIVE_IDENTITY_KEY = "@@AID@@";
@@ -17,12 +19,14 @@ export default class IdentityService {
   private identitiesStore: SimpleStorage;
   private activeIdentityStore: SimpleStorage;
   private lockService: LockService;
+  private notificationService: NotificationService;
 
   constructor() {
     this.activeIdentity = undefined;
     this.identitiesStore = new SimpleStorage(IDENTITY_KEY);
     this.activeIdentityStore = new SimpleStorage(ACTIVE_IDENTITY_KEY);
     this.lockService = LockService.getInstance();
+    this.notificationService = NotificationService.getInstance();
   }
 
   public unlock = async (): Promise<boolean> => {
@@ -153,6 +157,15 @@ export default class IdentityService {
 
     identities.set(identityCommitment, newIdentity.serialize());
     await this.writeIdentities(identities);
+
+    await this.notificationService.create({
+      options: {
+        title: "New identity has been created.",
+        message: `Identity commitment: ${ellipsify(identityCommitment)}`,
+        iconUrl: browser.runtime.getURL("/logo.png"),
+        type: "basic",
+      },
+    });
 
     await this.setActiveIdentity(identityCommitment);
     await this.refresh();

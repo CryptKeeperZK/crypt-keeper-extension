@@ -12,7 +12,7 @@ jest.mock("loglevel", () => ({
 type Changes = Record<string, { oldValue: string | null; newValue: string | null }>;
 
 jest.mock("webextension-polyfill-ts", (): unknown => {
-  const listeners: ((changes: Changes, namespace: string) => void)[] = [];
+  const storageListeners: ((changes: Changes, namespace: string) => void)[] = [];
   const namespace = "namespace";
   const defaultChanges = { key: { oldValue: null, newValue: null } };
 
@@ -22,19 +22,29 @@ jest.mock("webextension-polyfill-ts", (): unknown => {
         query: jest.fn(),
         sendMessage: jest.fn(),
       },
+
+      runtime: {
+        getURL: jest.fn(),
+      },
+
+      notifications: {
+        create: jest.fn(),
+        clear: jest.fn(),
+      },
+
       storage: {
         sync: {
           get: jest.fn(),
           set: jest.fn().mockImplementation(() => {
-            listeners.forEach(listener => listener(defaultChanges, namespace));
+            storageListeners.forEach(listener => listener(defaultChanges, namespace));
           }),
           remove: jest.fn().mockImplementation(() => {
-            listeners.forEach(listener => listener(defaultChanges, namespace));
+            storageListeners.forEach(listener => listener(defaultChanges, namespace));
           }),
         },
         onChanged: {
           addListener: (fun: () => void) => {
-            listeners.push(fun);
+            storageListeners.push(fun);
           },
         },
       },
