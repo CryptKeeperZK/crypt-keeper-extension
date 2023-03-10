@@ -1,14 +1,17 @@
+import { bigintToHex } from "bigint-conversion";
+import { Identity } from "@semaphore-protocol/identity";
 import { browser } from "webextension-polyfill-ts";
 
+import ZkIdentityDecorater from "@src/background/identityDecorater";
 import { ZERO_ADDRESS } from "@src/config/const";
 import { setSelected } from "@src/ui/ducks/identities";
+import { ellipsify } from "@src/util/account";
 import pushMessage from "@src/util/pushMessage";
 
 import IdentityService from "../identity";
 import LockService from "../lock";
 import SimpleStorage from "../simpleStorage";
-import ZkIdentityDecorater from "@src/background/identityDecorater";
-import { Identity } from "@semaphore-protocol/identity";
+import NotificationService from "../notification";
 
 jest.mock("@src/util/pushMessage");
 
@@ -16,11 +19,16 @@ jest.mock("../lock");
 
 jest.mock("../simpleStorage");
 
+jest.mock("../notification");
+
 describe("background/services/identity", () => {
   const defaultTabs = [{ id: 1 }, { id: 2 }];
   const defaultIdentityCommitment = ZERO_ADDRESS;
   const defaultIdentities = [[defaultIdentityCommitment, JSON.stringify({ secret: "1234", metadata: {} })]];
   const serializedDefaultIdentities = JSON.stringify(defaultIdentities);
+  const mockNotificationService = {
+    create: jest.fn(),
+  };
 
   const defaultLockService = {
     decrypt: jest.fn(),
@@ -34,6 +42,8 @@ describe("background/services/identity", () => {
     (LockService.getInstance as jest.Mock).mockReturnValue(defaultLockService);
 
     (browser.tabs.query as jest.Mock).mockResolvedValue(defaultTabs);
+
+    (NotificationService.getInstance as jest.Mock).mockReturnValue(mockNotificationService);
   });
 
   afterEach(() => {
@@ -256,9 +266,11 @@ describe("background/services/identity", () => {
   describe("insert", () => {
     test("should insert identity properly", async () => {
       const service = new IdentityService();
+      const identity = new Identity();
+      const identityCommitment = bigintToHex(identity.getCommitment());
 
       const result = await service.insert(
-        new ZkIdentityDecorater(new Identity(), {
+        new ZkIdentityDecorater(identity, {
           account: ZERO_ADDRESS,
           name: "Name",
           identityStrategy: "random",
@@ -266,6 +278,15 @@ describe("background/services/identity", () => {
       );
 
       expect(result).toBe(true);
+      expect(mockNotificationService.create).toBeCalledTimes(1);
+      expect(mockNotificationService.create).toBeCalledWith({
+        options: {
+          title: "New identity has been created.",
+          message: `Identity commitment: ${ellipsify(identityCommitment)}`,
+          iconUrl: browser.runtime.getURL("/logo.png"),
+          type: "basic",
+        },
+      });
     });
 
     test("should not insert identity if there is the same identity in the store", async () => {
