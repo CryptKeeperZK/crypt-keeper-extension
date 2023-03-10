@@ -5,14 +5,14 @@
   overflow-x: hidden;
   overflow-y: auto;
 
-  @media only screen and (min-width: 358px) {
+  @media only screen and (min-width: 768px) {
     border: 1px solid $gray-700;
     max-width: 32rem;
     min-height: 24rem;
     max-height: 36rem;
   }
 
-  @media only screen and (max-width: 357px) {
+  @media only screen and (max-width: 767px) {
     margin: 0;
     width: 100vw;
     height: 100vh;
@@ -27,9 +27,6 @@
 
     &__content {
       @extend %row-nowrap;
-    }
-
-    &__action {
     }
   }
 
