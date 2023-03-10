@@ -1,4 +1,5 @@
 import { MetaMask, MetaMaskConstructorArgs } from "@web3-react/metamask";
+
 import type { Actions, Connector } from "@web3-react/types";
 
 import { getConnectorName, ConnectorNames } from "..";

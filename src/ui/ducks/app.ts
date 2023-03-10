@@ -26,29 +26,23 @@ const initialState: State = {
   unlocked: false,
 };
 
-export const setStatus = (status: {
-  initialized: boolean;
-  unlocked: boolean;
-}): Action<{
-  initialized: boolean;
-  unlocked: boolean;
-}> => ({
+export const setStatus = (status: State): Action<State> => ({
   type: ActionType.SET_STATUS,
   payload: status,
 });
 
 export const fetchStatus = () => async (dispatch: Dispatch) => {
-  const status = await postMessage({ method: RPCAction.GET_STATUS });
+  const status = await postMessage<State>({ method: RPCAction.GET_STATUS });
   dispatch(setStatus(status));
 };
 
-export default function app(state = initialState, action: Action<any>): State {
+export default function app(state = initialState, action: Action<State>): State {
   switch (action.type) {
     case ActionType.SET_STATUS:
       return {
         ...state,
-        initialized: action.payload.initialized,
-        unlocked: action.payload.unlocked,
+        initialized: action.payload?.initialized ?? false,
+        unlocked: action.payload?.unlocked ?? false,
       };
     default:
       return state;

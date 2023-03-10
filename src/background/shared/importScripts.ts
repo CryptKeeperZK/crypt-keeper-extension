@@ -6,7 +6,7 @@ import log from "loglevel";
 // Represents if importAllScripts has been run
 let scriptsLoadInitiated = false;
 
-export default function importAllScripts() {
+export default function importAllScripts(): void {
   // Bail if we've already imported scripts
   if (scriptsLoadInitiated) {
     return;

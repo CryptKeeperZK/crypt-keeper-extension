@@ -1,6 +1,8 @@
 import { Identity } from "@semaphore-protocol/identity";
+
 import { ZERO_ADDRESS } from "@src/config/const";
 import { IdentityMetadata } from "@src/types";
+
 import ZkIdentityDecorater from "../identityDecorater";
 
 describe("background/identityDecorater", () => {

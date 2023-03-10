@@ -1,16 +1,29 @@
 import log from "loglevel";
-import { browser } from "webextension-polyfill-ts";
+import { browser, Windows } from "webextension-polyfill-ts";
+
+interface CreateWindowArgs {
+  tabId?: number;
+  type: "popup";
+  focused: boolean;
+  width: number;
+  height: number;
+}
+
+interface CreateTabArgs {
+  url: string;
+  active: boolean;
+}
 
 class BrowserUtils {
-  cached: any | null;
+  private cached: Windows.Window | null = null;
 
   constructor() {
-    this.removeWindow((windowId: any) => {
+    this.removeWindow((windowId: number) => {
       log.debug("Inside removeWindow onRemove");
 
       try {
         // TODO: Check either internalLogout() or logout()
-        //await LockService.internalLogout();
+        // await LockService.internalLogout();
         log.debug("Inside removeWindow onRemove locked");
         if (this.cached?.id === windowId) {
           this.cached = null;
@@ -22,17 +35,17 @@ class BrowserUtils {
     });
   }
 
-  createTab = async (options: any) => browser.tabs.create(options);
+  createTab = async (options: CreateTabArgs) => browser.tabs.create(options);
 
-  removeWindow = (callback: any) => {
+  removeWindow = (callback: (windowId: number) => void) => {
     // TODO: Converted from browser. to chrome. solved the error
     browser.windows.onRemoved.addListener(callback);
   };
 
-  createWindow = async (options: any) => browser.windows.create(options);
+  createWindow = async (options: CreateWindowArgs) => browser.windows.create(options);
 
   openPopup = async () => {
-    if (this.cached) {
+    if (this.cached?.id) {
       await this.focusWindow(this.cached.id);
       return this.cached;
     }
@@ -53,8 +66,8 @@ class BrowserUtils {
   };
 
   closePopup = async () => {
-    if (this.cached) {
-      browser.windows.remove(this.cached.id);
+    if (this.cached?.id) {
+      await browser.windows.remove(this.cached.id);
       this.cached = null;
     }
   };
@@ -63,11 +76,11 @@ class BrowserUtils {
 
   getAllWindows = () => browser.windows.getAll();
 
-  activatedTabs = (callback: any) => {
+  activatedTabs = (callback: (info: unknown) => void) => {
     browser.tabs.onActivated.addListener(callback);
   };
 
-  sendMessageTabs = async (tabId: number, message: any) => {
+  sendMessageTabs = async (tabId: number, message: unknown) => {
     await browser.tabs.sendMessage(tabId, message);
   };
 }

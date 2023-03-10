@@ -1,8 +1,12 @@
-import { Request } from "@src/types";
+import { HandlerRequest } from "@src/types";
+
+// TODO: eslint fix any
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type HandlerType = (payload: any, meta?: any) => Promise<any> | any;
 
 type Chain = {
-  middlewares: Array<(payload: any, meta?: any) => Promise<any>>;
-  handler: (payload: any, meta?: any) => Promise<any>;
+  middlewares: Array<HandlerType>;
+  handler: HandlerType;
 };
 
 export default class Handler {
@@ -12,25 +16,26 @@ export default class Handler {
     this.handlers = new Map();
   }
 
-  add = (method: string, ...args: Array<(payload: any, meta?: any) => any>) => {
+  add = (method: string, ...args: Array<HandlerType>): void => {
     const handler = args[args.length - 1];
     const middlewares = args.slice(0, args.length - 1);
     this.handlers.set(method, { middlewares, handler });
   };
 
-  handle = async (request: Request): Promise<any> => {
+  handle = async (request: HandlerRequest): Promise<unknown> => {
     const { method } = request;
     const handler: Chain | undefined = this.handlers.get(method);
     if (!handler) throw new Error(`method: ${method} not detected`);
 
     const { meta } = request;
-    let payload = request.payload;
+    let { payload } = request;
 
+    // eslint-disable-next-line no-restricted-syntax
     for (const middleware of handler.middlewares) {
       // eslint-disable-next-line no-await-in-loop
       payload = await middleware(payload, meta);
     }
 
-    return handler.handler(payload, meta);
+    return handler.handler(payload, meta) as unknown;
   };
 }

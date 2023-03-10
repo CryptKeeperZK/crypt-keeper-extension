@@ -1,5 +1,5 @@
-import { getRpcUrls, getChainIds, getChains } from "../rpc";
 import { getApiKeys } from "../env";
+import { getRpcUrls, getChainIds, getChains } from "../rpc";
 
 jest.mock("../env", (): unknown => ({
   getApiKeys: jest.fn(),
@@ -23,9 +23,9 @@ describe("config/rpc", () => {
     const chainIds = getChainIds();
     const rpcUrls = getRpcUrls();
 
-    for (const chainId of chainIds) {
+    chainIds.forEach((chainId) => {
       expect(rpcUrls[chainId].length).not.toBe(0);
-    }
+    });
   });
 
   test("should handle case if there is no rpc for chain", () => {
@@ -35,12 +35,12 @@ describe("config/rpc", () => {
     const chains = getChains();
     const rpcUrls = getRpcUrls();
 
-    for (const chainId of chainIds) {
+    chainIds.forEach((chainId) => {
       if (rpcUrls[chainId]) {
         expect(rpcUrls[chainId].length).not.toBe(0);
       } else {
         expect(chains[chainId].rpc.length).toBe(0);
       }
-    }
+    });
   });
 });

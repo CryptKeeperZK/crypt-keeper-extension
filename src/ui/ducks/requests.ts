@@ -31,7 +31,7 @@ export const setPendingRequest = (pendingRequests: PendingRequest[]): Action<Pen
 });
 
 export const fetchRequestPendingStatus = () => async (dispatch: Dispatch) => {
-  const pendingRequests = await postMessage({ method: RPCAction.GET_PENDING_REQUESTS });
+  const pendingRequests = await postMessage<PendingRequest[]>({ method: RPCAction.GET_PENDING_REQUESTS });
   dispatch(setPendingRequest(pendingRequests));
 };
 

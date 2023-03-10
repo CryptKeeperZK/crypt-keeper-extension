@@ -1,12 +1,14 @@
-import "subworkers";
-import "./shared/initGlobals";
-import "./appInit";
-import { browser } from "webextension-polyfill-ts";
-import { Request } from "@src/types";
-import ZkKeeperController from "./zkKeeper";
 import log from "loglevel";
+import "subworkers";
+import { browser } from "webextension-polyfill-ts";
+
 import { deferredPromise } from "@src/background/shared/utils";
 import { isDebugMode } from "@src/config/env";
+import { HandlerRequest } from "@src/types";
+
+import "./appInit";
+import "./shared/initGlobals";
+import ZkKeeperController from "./zkKeeper";
 
 log.setDefaultLevel(isDebugMode() ? "debug" : "info");
 
@@ -28,29 +30,28 @@ browser.runtime.onConnect.addListener(async () => {
   log.debug("CryptKeeper onConnect Event, initializing completed...");
 });
 
-initialize().catch((e: any) => {
-  log.error("CryptKeeper Initializaiton error.", e);
-});
-
-async function initialize() {
+function initialize() {
   try {
     const app = new ZkKeeperController();
 
-    app.initialize().then(() => {
-      browser.runtime.onMessage.addListener(async (request: Request) => {
-        try {
-          log.debug("Background: request: ", request);
-          const response = await app.handle(request);
-          log.debug("Background: response: ", response);
-          return [null, response];
-        } catch (e: any) {
-          return [e.message, null];
-        }
-      });
+    app.initialize();
+
+    browser.runtime.onMessage.addListener(async (request: HandlerRequest) => {
+      try {
+        log.debug("Background: request: ", request);
+        const response = await app.handle(request);
+        log.debug("Background: response: ", response);
+        return [null, response];
+      } catch (e) {
+        return [(e as Error).message, null];
+      }
     });
+
     log.debug("CryptKeeper initialization complete.");
     resolveInitialization?.(true);
   } catch (error) {
     rejectInitialization?.(error);
   }
 }
+
+initialize();

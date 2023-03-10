@@ -1,12 +1,9 @@
-/* eslint-disable @typescript-eslint/no-shadow */
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import { CreateIdentityOptions, IdentityMetadata } from "@src/types";
 import postMessage from "@src/util/postMessage";
 import { RPCAction } from "@src/constants";
 import { useSelector } from "react-redux";
 import { AppDispatch, AppRootState } from "@src/ui/store/configureAppStore";
 import deepEqual from "fast-deep-equal";
-import log from "loglevel";
 
 export enum ActionType {
   SET_COMMITMENTS = "app/identities/setCommitments",
@@ -38,7 +35,7 @@ const initialState: State = {
 };
 
 export const createIdentity =
-  (strategy: string, messageSignature: string, options: CreateIdentityOptions) => async (dispatch: AppDispatch) =>
+  (strategy: string, messageSignature: string, options: CreateIdentityOptions) => async () =>
     postMessage({
       method: RPCAction.CREATE_IDENTITY,
       payload: {
@@ -48,21 +45,22 @@ export const createIdentity =
       },
     });
 
-export const setActiveIdentity = (identityCommitment: string) => async (dispatch: AppDispatch) => {
+export const setActiveIdentity = (identityCommitment: string) => async () => {
   if (!identityCommitment) {
     throw new Error("Identity Commitment not provided!");
   }
+
   return postMessage({
     method: RPCAction.SET_ACTIVE_IDENTITY,
     payload: identityCommitment,
   });
 };
 
-export const setIdentityName = (identityCommitment: string, name: string) => async (dispatch: AppDispatch) => {
-  log.debug("Inside setIdentityName");
+export const setIdentityName = (identityCommitment: string, name: string) => async () => {
   if (!identityCommitment) {
     throw new Error("Identity Commitment not provided!");
   }
+
   return postMessage({
     method: RPCAction.SET_IDENTITY_NAME,
     payload: {
@@ -72,11 +70,11 @@ export const setIdentityName = (identityCommitment: string, name: string) => asy
   });
 };
 
-export const deleteIdentity = (identityCommitment: string) => async (dispatch: AppDispatch) => {
-  log.debug("Inside deleteIdentity");
+export const deleteIdentity = (identityCommitment: string) => async () => {
   if (!identityCommitment) {
     throw new Error("Identity Commitment not provided!");
   }
+
   return postMessage({
     method: RPCAction.DELETE_IDENTITY,
     payload: {
@@ -85,7 +83,7 @@ export const deleteIdentity = (identityCommitment: string) => async (dispatch: A
   });
 };
 
-export const deleteAllIdentities = () => async (dispatch: AppDispatch) => {
+export const deleteAllIdentities = () => async () => {
   return postMessage({
     method: RPCAction.DELETE_ALL_IDENTITIES,
   });
@@ -96,9 +94,12 @@ export const setSelected = (identityCommitment: string) => ({
   payload: identityCommitment,
 });
 
-export const setIdentities = (
-  identities: { commitment: string; metadata: IdentityMetadata }[],
-): Action<{ commitment: string; metadata: IdentityMetadata }[]> => ({
+interface IdentityData {
+  commitment: string;
+  metadata: IdentityMetadata;
+}
+
+export const setIdentities = (identities: IdentityData[]): Action<IdentityData[]> => ({
   type: ActionType.SET_COMMITMENTS,
   payload: identities,
 });
@@ -109,8 +110,8 @@ export const setIdentityRequestPending = (requestPending: boolean): Action<boole
 });
 
 export const fetchIdentities = () => async (dispatch: AppDispatch) => {
-  const identities = await postMessage({ method: RPCAction.GET_IDENTITIES });
-  const selected = await postMessage({ method: RPCAction.GET_ACTIVE_IDENTITY });
+  const identities = await postMessage<IdentityData[]>({ method: RPCAction.GET_IDENTITIES });
+  const selected = await postMessage<string>({ method: RPCAction.GET_ACTIVE_IDENTITY });
   dispatch(setIdentities(identities));
   dispatch(setSelected(selected));
 };

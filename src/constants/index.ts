@@ -1,5 +1,6 @@
-import { SelectOption } from "@src/types";
 import { faTwitter, faGithub, faReddit } from "@fortawesome/free-brands-svg-icons";
+
+import { SelectOption } from "@src/types";
 
 export const WEB2_PROVIDER_OPTIONS: readonly SelectOption[] = [
   { value: "twitter", label: "Twitter", icon: faTwitter },

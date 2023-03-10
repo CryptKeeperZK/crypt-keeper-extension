@@ -22,7 +22,7 @@ declare module "rlnjs" {
   export class RLN {
     constructor(circuitFilePath: string, zkeyFilePath: string, verificationKey: string);
 
-    generateProof(signal: string, merkleProof: MerkleProof, externalNullifier: string);
+    generateProof(signal: string, merkleProof: MerkleProof, externalNullifier: string): Promise<RLNFullProof>;
   }
 
   export interface Proof {

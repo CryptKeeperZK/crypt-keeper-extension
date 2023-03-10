@@ -80,7 +80,7 @@ const HomeInfo = function (): ReactElement {
 
       if (tab?.url) {
         const { origin } = new URL(tab.url);
-        const isHostApproved = await postMessage({
+        const isHostApproved = await postMessage<boolean>({
           method: RPCAction.IS_HOST_APPROVED,
           payload: origin,
         });

@@ -2,6 +2,7 @@ import { Identity } from "@semaphore-protocol/identity";
 
 import { IdentityStrategy, IdentityWeb2Provider } from "@src/types";
 import checkParameter from "@src/util/checkParameter";
+
 import ZkIdentityDecorater from "./identityDecorater";
 
 interface ICreateIdentityArgs {
@@ -12,7 +13,7 @@ interface ICreateIdentityArgs {
   web2Provider?: IdentityWeb2Provider;
 }
 
-async function createInterrepIdentity(config: ICreateIdentityArgs): Promise<ZkIdentityDecorater> {
+function createInterrepIdentity(config: ICreateIdentityArgs): ZkIdentityDecorater {
   const { identityStrategy, web2Provider, name, messageSignature, account } = config;
 
   checkParameter(messageSignature, "messageSignature", "string");
@@ -45,9 +46,7 @@ const strategiesMap = {
   interrep: createInterrepIdentity,
 };
 
-const identityFactory = async (
-  strategy: keyof typeof strategiesMap,
-  config: ICreateIdentityArgs,
-): Promise<ZkIdentityDecorater> => strategiesMap[strategy](config);
+const identityFactory = (strategy: keyof typeof strategiesMap, config: ICreateIdentityArgs): ZkIdentityDecorater =>
+  strategiesMap[strategy](config);
 
 export default identityFactory;
