@@ -17,7 +17,7 @@ log.setDefaultLevel(isDebugMode() ? "debug" : "info");
 
 window.ethereum = createMetaMaskProvider();
 
-browser.runtime.onMessage.addListener(action => {
+browser.runtime.onMessage.addListener((action) => {
   if (action?.type) {
     store.dispatch(action);
   }

@@ -6,6 +6,8 @@ jest.mock("../lock");
 
 jest.mock("../simpleStorage");
 
+type MockStorage = { get: jest.Mock; set: jest.Mock; clear: jest.Mock };
+
 describe("background/services/approval", () => {
   const defaultHosts = ["https://localhost:3000"];
   const serializedApprovals = JSON.stringify([[defaultHosts[0], { noApproval: true }]]);
@@ -16,8 +18,8 @@ describe("background/services/approval", () => {
   };
 
   beforeEach(() => {
-    defaultLockService.encrypt.mockResolvedValue(serializedApprovals);
-    defaultLockService.decrypt.mockResolvedValue(serializedApprovals);
+    defaultLockService.encrypt.mockReturnValue(serializedApprovals);
+    defaultLockService.decrypt.mockReturnValue(serializedApprovals);
 
     (LockService.getInstance as jest.Mock).mockReturnValue(defaultLockService);
   });
@@ -29,7 +31,7 @@ describe("background/services/approval", () => {
   describe("clear", () => {
     test("should clear approved service properly", async () => {
       const service = new ApprovalService();
-      const [approvalStorage] = (SimpleStorage as jest.Mock).mock.instances;
+      const [approvalStorage] = (SimpleStorage as jest.Mock).mock.instances as [MockStorage];
       approvalStorage.get.mockReturnValue(defaultHosts);
 
       await service.unlock();
@@ -44,7 +46,7 @@ describe("background/services/approval", () => {
       process.env.NODE_ENV = "production";
 
       const service = new ApprovalService();
-      const [approvalStorage] = (SimpleStorage as jest.Mock).mock.instances;
+      const [approvalStorage] = (SimpleStorage as jest.Mock).mock.instances as [MockStorage];
       approvalStorage.get.mockReturnValue(defaultHosts);
 
       await service.clear();
@@ -69,7 +71,7 @@ describe("background/services/approval", () => {
 
     test("should unlock properly", async () => {
       const service = new ApprovalService();
-      const [approvalStorage] = (SimpleStorage as jest.Mock).mock.instances;
+      const [approvalStorage] = (SimpleStorage as jest.Mock).mock.instances as [MockStorage];
       approvalStorage.get.mockReturnValue(defaultHosts);
 
       const result = await service.unlock();
@@ -86,28 +88,28 @@ describe("background/services/approval", () => {
   describe("permissions", () => {
     test("should get permissions properly", async () => {
       const service = new ApprovalService();
-      const [approvalStorage] = (SimpleStorage as jest.Mock).mock.instances;
+      const [approvalStorage] = (SimpleStorage as jest.Mock).mock.instances as [MockStorage];
       approvalStorage.get.mockReturnValue(serializedApprovals);
 
       await service.unlock();
-      const result = await service.getPermission(defaultHosts[0]);
+      const result = service.getPermission(defaultHosts[0]);
 
       expect(result).toStrictEqual({ noApproval: true });
     });
 
-    test("should get permissions for unknown host", async () => {
+    test("should get permissions for unknown host", () => {
       const service = new ApprovalService();
-      const [approvalStorage] = (SimpleStorage as jest.Mock).mock.instances;
+      const [approvalStorage] = (SimpleStorage as jest.Mock).mock.instances as [MockStorage];
       approvalStorage.get.mockReturnValue(serializedApprovals);
 
-      const result = await service.getPermission("unknown");
+      const result = service.getPermission("unknown");
 
       expect(result).toStrictEqual({ noApproval: false });
     });
 
     test("should set permission", async () => {
       const service = new ApprovalService();
-      const [approvalStorage] = (SimpleStorage as jest.Mock).mock.instances;
+      const [approvalStorage] = (SimpleStorage as jest.Mock).mock.instances as [MockStorage];
       approvalStorage.get.mockReturnValue(serializedApprovals);
 
       const result = await service.setPermission(defaultHosts[0], { noApproval: true });
@@ -123,7 +125,7 @@ describe("background/services/approval", () => {
 
     test("should set permission for unknown host", async () => {
       const service = new ApprovalService();
-      const [approvalStorage] = (SimpleStorage as jest.Mock).mock.instances;
+      const [approvalStorage] = (SimpleStorage as jest.Mock).mock.instances as [MockStorage];
       approvalStorage.get.mockReturnValue(undefined);
 
       const result = await service.setPermission("unknown", { noApproval: false });
@@ -138,7 +140,7 @@ describe("background/services/approval", () => {
   describe("approvals", () => {
     test("should add new approval properly", async () => {
       const service = new ApprovalService();
-      const [approvalStorage] = (SimpleStorage as jest.Mock).mock.instances;
+      const [approvalStorage] = (SimpleStorage as jest.Mock).mock.instances as [MockStorage];
       approvalStorage.get.mockReturnValue(undefined);
 
       await service.add({ host: defaultHosts[0], noApproval: true });
@@ -151,7 +153,7 @@ describe("background/services/approval", () => {
 
     test("should not approve duplicated host after unlock", async () => {
       const service = new ApprovalService();
-      const [approvalStorage] = (SimpleStorage as jest.Mock).mock.instances;
+      const [approvalStorage] = (SimpleStorage as jest.Mock).mock.instances as [MockStorage];
       approvalStorage.get.mockReturnValue(serializedApprovals);
 
       await service.unlock();
@@ -164,7 +166,7 @@ describe("background/services/approval", () => {
 
     test("should remove approved host properly", async () => {
       const service = new ApprovalService();
-      const [approvalStorage] = (SimpleStorage as jest.Mock).mock.instances;
+      const [approvalStorage] = (SimpleStorage as jest.Mock).mock.instances as [MockStorage];
       approvalStorage.get.mockReturnValue(serializedApprovals);
 
       await service.unlock();
@@ -177,7 +179,7 @@ describe("background/services/approval", () => {
 
     test("should not remove if there's no such approved host", async () => {
       const service = new ApprovalService();
-      const [approvalStorage] = (SimpleStorage as jest.Mock).mock.instances;
+      const [approvalStorage] = (SimpleStorage as jest.Mock).mock.instances as [MockStorage];
       approvalStorage.get.mockReturnValue(serializedApprovals);
 
       await service.unlock();

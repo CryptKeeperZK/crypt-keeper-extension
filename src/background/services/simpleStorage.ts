@@ -8,25 +8,24 @@ export default class SimpleStorage {
     this.key = key;
 
     browser.storage.onChanged.addListener((changes, namespace) => {
-      for (const [key, { oldValue, newValue }] of Object.entries(changes)) {
-        log.debug(
-          `Storage key "${key}" in namespace "${namespace}" changed.`,
-          `Old value was "${oldValue}", new value is "${newValue}".`,
-        );
-      }
+      Object.entries(changes).forEach(([name, { oldValue, newValue }]) => {
+        log.debug(`Storage key "${name}" in namespace "${namespace}" changed.`);
+        log.debug("Old value: ", oldValue);
+        log.debug("New value: ", newValue);
+      });
     });
   }
 
   public async get<T>(): Promise<T | null> {
-    const content = await browser.storage.sync.get(this.key);
+    const content = (await browser.storage.sync.get(this.key)) as Record<string, T>;
     return content?.[this.key] ?? null;
   }
 
   public async set<T>(value: T): Promise<void> {
-    browser.storage.sync.set({ [this.key]: value });
+    await browser.storage.sync.set({ [this.key]: value });
   }
 
   public async clear(): Promise<void> {
-    browser.storage.sync.remove(this.key);
+    await browser.storage.sync.remove(this.key);
   }
 }

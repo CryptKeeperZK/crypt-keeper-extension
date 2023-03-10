@@ -1,5 +1,6 @@
 import { FullProof } from "@semaphore-protocol/proof";
 import { MerkleProof } from "@zk-kit/incremental-merkle-tree";
+
 import { MerkleProofArtifacts } from "@src/types";
 
 export interface SemaphoreProofRequest {

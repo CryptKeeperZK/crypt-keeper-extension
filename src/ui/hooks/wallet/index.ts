@@ -44,8 +44,8 @@ export const useWallet = (): IUseWalletData => {
 
     provider
       .getBalance(address)
-      .then(wei => new BigNumber(formatUnits(wei.toString(), decimals)))
-      .then(value => setBalance(value));
+      .then((wei) => new BigNumber(formatUnits(wei.toString(), decimals)))
+      .then((value) => setBalance(value));
   }, [address, chainId, provider, decimals, setBalance]);
 
   const onConnect = useCallback(async () => {

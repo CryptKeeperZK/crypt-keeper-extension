@@ -205,7 +205,7 @@ function ConnectionApprovalModal(props: {
           <Checkbox
             className="mr-2 mt-2 flex-shrink-0"
             checked={checked}
-            onChange={e => {
+            onChange={(e) => {
               setApproval(e.target.checked);
             }}
           />
@@ -300,7 +300,7 @@ function CreateIdentityApprovalModal(props: {
           label="Identity type"
           options={IDENTITY_TYPES}
           value={identityType}
-          onChange={option => {
+          onChange={(option) => {
             setIdentityType(option as SelectOption);
           }}
         />
@@ -312,7 +312,7 @@ function CreateIdentityApprovalModal(props: {
               label="Web2 Provider"
               options={WEB2_PROVIDER_OPTIONS}
               value={web2Provider}
-              onChange={option => {
+              onChange={(option) => {
                 setWeb2Provider(option as SelectOption);
               }}
             />
@@ -322,7 +322,7 @@ function CreateIdentityApprovalModal(props: {
               label="Nonce"
               step={1}
               defaultValue={nonce}
-              onChange={e => setNonce(Number(e.target.value))}
+              onChange={(e) => setNonce(Number(e.target.value))}
             />
           </>
         )}

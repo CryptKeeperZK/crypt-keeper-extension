@@ -51,13 +51,13 @@ export default function Onboarding(): ReactElement {
             type="password"
             label="Password"
             value={pw}
-            onChange={e => setPW(e.target.value)}
+            onChange={(e) => setPW(e.target.value)}
           />
           <Input
             label="Confirm Password"
             type="password"
             value={pw2}
-            onChange={e => setPW2(e.target.value)}
+            onChange={(e) => setPW2(e.target.value)}
             onKeyPress={handleKeypress}
           />
         </div>

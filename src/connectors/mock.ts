@@ -49,4 +49,4 @@ export const createMockConnectorHooks = ({
   useProvider: (): unknown | undefined => provider,
 });
 
-export const [mockConnector] = initializeConnector<MockConnector>(actions => new MockConnector(actions));
+export const [mockConnector] = initializeConnector<MockConnector>((actions) => new MockConnector(actions));

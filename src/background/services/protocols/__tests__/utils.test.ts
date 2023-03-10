@@ -36,8 +36,8 @@ describe("background/services/protocols/utils", () => {
       members: [identity.getCommitment()],
     });
 
-    expect(merkleProof.root.toString()).toBeDefined();
-    expect(merkleProof.leaf.toString()).toBeDefined();
+    expect(merkleProof.root).toBeDefined();
+    expect(merkleProof.leaf).toBeDefined();
     expect(merkleProof.pathIndices).not.toHaveLength(0);
     expect(merkleProof.siblings).not.toHaveLength(0);
   });

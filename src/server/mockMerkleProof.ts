@@ -19,8 +19,8 @@ app.use(cors());
 
 const serializeMerkleProof = (merkleProof: MerkleProof): MerkleProof => ({
   root: bigintToHex(merkleProof.root),
-  siblings: merkleProof.siblings.map(siblings =>
-    Array.isArray(siblings) ? siblings.map(element => bigintToHex(element)) : bigintToHex(siblings),
+  siblings: merkleProof.siblings.map((siblings) =>
+    Array.isArray(siblings) ? siblings.map((element) => bigintToHex(element)) : bigintToHex(siblings),
   ),
   pathIndices: merkleProof.pathIndices,
   leaf: bigintToHex(merkleProof.leaf),
