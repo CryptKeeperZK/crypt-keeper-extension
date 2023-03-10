@@ -10,10 +10,12 @@ interface HostPermission {
 export default class ApprovalService {
   private allowedHosts: Map<string, { noApproval: boolean }>;
   private approvals: SimpleStorage;
+  private lockService: LockService;
 
   constructor() {
     this.allowedHosts = new Map();
     this.approvals = new SimpleStorage(APPPROVALS_DB_KEY);
+    this.lockService = LockService.getInstance();
   }
 
   public getAllowedHosts = (): string[] =>
@@ -27,7 +29,7 @@ export default class ApprovalService {
     const encryped = await this.approvals.get<string>();
 
     if (encryped) {
-      const decrypted = await LockService.decrypt(encryped);
+      const decrypted = await this.lockService.decrypt(encryped);
       this.allowedHosts = new Map(JSON.parse(decrypted));
     }
 
@@ -76,7 +78,7 @@ export default class ApprovalService {
   };
 
   private async saveApprovals(): Promise<void> {
-    const newApprovals = await LockService.encrypt(JSON.stringify(this.allowedHosts));
+    const newApprovals = await this.lockService.encrypt(JSON.stringify(this.allowedHosts));
     await this.approvals.set(newApprovals);
   }
 }

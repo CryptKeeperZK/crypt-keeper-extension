@@ -1,64 +1,85 @@
 import CryptoJS from "crypto-js";
+import { browser } from "webextension-polyfill-ts";
+
 import pushMessage from "@src/util/pushMessage";
 import { setStatus } from "@src/ui/ducks/app";
-import { browser } from "webextension-polyfill-ts";
+
 import SimpleStorage from "./simpleStorage";
-import log from "loglevel";
 
-const passwordKey = "@password@";
+const PASSWORD_DB_KEY = "@password@";
 
-class LockService extends SimpleStorage {
+interface LockStatus {
+  initialized: boolean;
+  unlocked: boolean;
+}
+
+export default class LockService {
+  private static INSTANCE: LockService;
   private isUnlocked: boolean;
-  private password?: string;
   private passwordChecker: string;
-  private unlockCB?: any;
+  private passwordStorage: SimpleStorage;
+  private password?: string;
+  private unlockCB?: (value?: unknown) => void;
 
-  constructor() {
-    super(passwordKey);
+  private constructor() {
     this.isUnlocked = false;
-    this.unlockCB = undefined;
-    this.password = undefined;
     this.passwordChecker = "Password is correct";
+    this.passwordStorage = new SimpleStorage(PASSWORD_DB_KEY);
+    this.password = undefined;
+    this.unlockCB = undefined;
+  }
+
+  public static getInstance(): LockService {
+    if (!LockService.INSTANCE) {
+      LockService.INSTANCE = new LockService();
+    }
+
+    return LockService.INSTANCE;
   }
 
   /**
    *  This method is called when install event occurs
    */
-  setupPassword = async (password: string) => {
-    const ciphertext: string = CryptoJS.AES.encrypt(this.passwordChecker, password).toString();
-    await this.set(ciphertext);
+  public setupPassword = async (password: string): Promise<void> => {
+    const cipherText = CryptoJS.AES.encrypt(this.passwordChecker, password).toString();
+    await this.passwordStorage.set(cipherText);
     await this.unlock(password);
   };
 
-  getStatus = async () => {
-    const ciphertext = await this.get();
+  public getStatus = async (): Promise<LockStatus> => {
+    const cipherText = await this.passwordStorage.get();
 
     return {
-      initialized: !!ciphertext,
+      initialized: !!cipherText,
       unlocked: this.isUnlocked,
     };
   };
 
-  awaitUnlock = async () => {
-    if (this.isUnlocked) return;
+  public awaitUnlock = async (): Promise<unknown | undefined> => {
+    if (this.isUnlocked) {
+      return;
+    }
 
     return new Promise(resolve => {
       this.unlockCB = resolve;
     });
   };
 
-  onUnlocked = () => {
+  public onUnlocked = (): boolean => {
     if (this.unlockCB) {
       this.unlockCB();
       this.unlockCB = undefined;
     }
+
     return true;
   };
 
-  unlock = async (password: string): Promise<boolean> => {
-    if (this.isUnlocked) return true;
+  public unlock = async (password: string): Promise<boolean> => {
+    if (this.isUnlocked) {
+      return true;
+    }
 
-    const ciphertext = await this.get<string>();
+    const ciphertext = await this.passwordStorage.get<string>();
 
     if (!ciphertext) {
       throw new Error("Something badly gone wrong (reinstallation probably required)");
@@ -69,7 +90,7 @@ class LockService extends SimpleStorage {
     }
 
     const bytes = CryptoJS.AES.decrypt(ciphertext, password);
-    const retrievedPasswordChecker: string = bytes.toString(CryptoJS.enc.Utf8);
+    const retrievedPasswordChecker = bytes.toString(CryptoJS.enc.Utf8);
 
     if (retrievedPasswordChecker !== this.passwordChecker) {
       throw new Error("Incorrect password");
@@ -78,58 +99,60 @@ class LockService extends SimpleStorage {
     this.password = password;
     this.isUnlocked = true;
 
-    const status = await this.getStatus();
-    await pushMessage(setStatus(status));
-    const tabs = await browser.tabs.query({ active: true });
-    for (const tab of tabs) {
-      await browser.tabs.sendMessage(tab.id as number, setStatus(status));
-    }
-
+    await this.notifyStatusChange();
     this.onUnlocked();
 
     return true;
   };
 
-  internalLogout = async () => {
-    this.isUnlocked = false;
-    this.password = undefined;
-    this.unlockCB = undefined;
-    const status = await this.getStatus();
-    await pushMessage(setStatus(status));
-    return status;
-  };
-
-  logout = async (): Promise<boolean> => {
-    const status = await this.internalLogout();
-    log.debug("logout 1");
-    const tabs = await browser.tabs.query({ active: true });
-    log.debug("logout 2", tabs);
-
-    for (const tab of tabs) {
-      await browser.tabs.sendMessage(tab.id as number, setStatus(status));
-    }
+  public logout = async (): Promise<boolean> => {
+    await this.internalLogout();
 
     return true;
   };
 
-  ensure = async (payload: any = null) => {
+  public ensure = async (payload: unknown = null): Promise<unknown | null | false> => {
     if (!this.isUnlocked || !this.password) {
-      log.debug("state is locked!");
       return false;
     }
+
     return payload;
   };
 
-  encrypt = async (payload: string): Promise<string> => {
-    await this.ensure();
+  public encrypt = async (payload: string): Promise<string> => {
+    if (!this.password) {
+      throw new Error("Password is not provided");
+    }
+
     return CryptoJS.AES.encrypt(payload, this.password as string).toString();
   };
 
-  decrypt = async (ciphertext: string): Promise<string> => {
-    await this.ensure();
+  public decrypt = async (ciphertext: string): Promise<string> => {
+    if (!this.password) {
+      throw new Error("Password is not provided");
+    }
+
     const bytes = CryptoJS.AES.decrypt(ciphertext, this.password as string);
     return bytes.toString(CryptoJS.enc.Utf8);
   };
-}
 
-export default new LockService();
+  private internalLogout = async (): Promise<LockStatus> => {
+    this.isUnlocked = false;
+    this.password = undefined;
+    this.unlockCB = undefined;
+
+    return this.notifyStatusChange();
+  };
+
+  private notifyStatusChange = async (): Promise<LockStatus> => {
+    const status = await this.getStatus();
+    await pushMessage(setStatus(status));
+
+    const tabs = await browser.tabs.query({ active: true });
+    for (const tab of tabs) {
+      await browser.tabs.sendMessage(tab.id as number, setStatus(status));
+    }
+
+    return status;
+  };
+}

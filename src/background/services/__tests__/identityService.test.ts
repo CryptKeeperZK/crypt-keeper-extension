@@ -12,24 +12,26 @@ import { Identity } from "@semaphore-protocol/identity";
 
 jest.mock("@src/util/pushMessage");
 
-jest.mock("../lock", (): unknown => ({
-  decrypt: jest.fn(),
-  encrypt: jest.fn(),
-}));
+jest.mock("../lock");
 
 jest.mock("../simpleStorage");
 
 describe("background/services/identity", () => {
-  const service = new IdentityService();
   const defaultTabs = [{ id: 1 }, { id: 2 }];
   const defaultIdentityCommitment = ZERO_ADDRESS;
   const defaultIdentities = [[defaultIdentityCommitment, JSON.stringify({ secret: "1234", metadata: {} })]];
   const serializedDefaultIdentities = JSON.stringify(defaultIdentities);
 
-  beforeEach(() => {
-    (LockService.decrypt as jest.Mock).mockResolvedValue(serializedDefaultIdentities);
+  const defaultLockService = {
+    decrypt: jest.fn(),
+    encrypt: jest.fn(),
+  };
 
-    (LockService.encrypt as jest.Mock).mockResolvedValue(serializedDefaultIdentities);
+  beforeEach(() => {
+    defaultLockService.encrypt.mockResolvedValue(serializedDefaultIdentities);
+    defaultLockService.decrypt.mockResolvedValue(serializedDefaultIdentities);
+
+    (LockService.getInstance as jest.Mock).mockReturnValue(defaultLockService);
 
     (browser.tabs.query as jest.Mock).mockResolvedValue(defaultTabs);
   });
@@ -40,6 +42,7 @@ describe("background/services/identity", () => {
 
   describe("unlock", () => {
     test("should unlock properly and set active identity", async () => {
+      const service = new IdentityService();
       const [identityStorage] = (SimpleStorage as jest.Mock).mock.instances;
       identityStorage.get.mockReturnValue(serializedDefaultIdentities);
 
@@ -175,12 +178,12 @@ describe("background/services/identity", () => {
 
   describe("get active identity", () => {
     test("should get active identity properly", async () => {
-      const service = new IdentityService();
-
-      (LockService.decrypt as jest.Mock)
+      (defaultLockService.decrypt as jest.Mock)
         .mockResolvedValueOnce(ZERO_ADDRESS)
         .mockResolvedValue(serializedDefaultIdentities);
+      (LockService.getInstance as jest.Mock).mockReturnValue(defaultLockService);
 
+      const service = new IdentityService();
       const [identityStorage, activeIdentityStorage] = (SimpleStorage as jest.Mock).mock.instances;
       identityStorage.get.mockReturnValue(serializedDefaultIdentities);
       activeIdentityStorage.get.mockReturnValue(ZERO_ADDRESS);
@@ -199,9 +202,10 @@ describe("background/services/identity", () => {
     });
 
     test("should not get active identity if there is no any identity", async () => {
-      const service = new IdentityService();
+      (defaultLockService.decrypt as jest.Mock).mockResolvedValueOnce(ZERO_ADDRESS).mockResolvedValue(undefined);
+      (LockService.getInstance as jest.Mock).mockReturnValue(defaultLockService);
 
-      (LockService.decrypt as jest.Mock).mockResolvedValueOnce(ZERO_ADDRESS).mockResolvedValue(undefined);
+      const service = new IdentityService();
 
       const [identityStorage, activeIdentityStorage] = (SimpleStorage as jest.Mock).mock.instances;
       identityStorage.get.mockReturnValue(undefined);

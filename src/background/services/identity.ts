@@ -16,11 +16,13 @@ export default class IdentityService {
   private activeIdentity?: ZkIdentityDecorater;
   private identitiesStore: SimpleStorage;
   private activeIdentityStore: SimpleStorage;
+  private lockService: LockService;
 
   constructor() {
     this.activeIdentity = undefined;
     this.identitiesStore = new SimpleStorage(IDENTITY_KEY);
     this.activeIdentityStore = new SimpleStorage(ACTIVE_IDENTITY_KEY);
+    this.lockService = LockService.getInstance();
   }
 
   public unlock = async (): Promise<boolean> => {
@@ -97,7 +99,7 @@ export default class IdentityService {
       return undefined;
     }
 
-    const activeIdentityCommitment = await LockService.decrypt(acitveIdentityCommitmentCipher);
+    const activeIdentityCommitment = await this.lockService.decrypt(acitveIdentityCommitmentCipher);
     const identities = await this.getIdentitiesFromStore();
     const identity = identities.get(activeIdentityCommitment);
 
@@ -182,12 +184,12 @@ export default class IdentityService {
 
   private writeIdentities = async (identities: Map<string, string>): Promise<void> => {
     const serializedIdentities = JSON.stringify(Array.from(identities.entries()));
-    const cipherText = await LockService.encrypt(serializedIdentities);
+    const cipherText = await this.lockService.encrypt(serializedIdentities);
     await this.identitiesStore.set(cipherText);
   };
 
   private writeActiveIdentity = async (commitment: string): Promise<void> => {
-    const cipherText = await LockService.encrypt(commitment);
+    const cipherText = await this.lockService.encrypt(commitment);
     await this.activeIdentityStore.set(cipherText);
     await pushMessage(setSelected(commitment));
 
@@ -202,7 +204,7 @@ export default class IdentityService {
       return new Map();
     }
 
-    const identitesDecrypted = await LockService.decrypt(cipherText);
+    const identitesDecrypted = await this.lockService.decrypt(cipherText);
     return new Map(JSON.parse(identitesDecrypted));
   };
 

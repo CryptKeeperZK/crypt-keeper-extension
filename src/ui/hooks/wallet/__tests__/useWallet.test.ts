@@ -6,12 +6,12 @@ import { act, renderHook, waitFor } from "@testing-library/react";
 import { useWeb3React } from "@web3-react/core";
 
 import { defaultWalletHookData } from "@src/config/mock/wallet";
+import { RPCAction } from "@src/constants";
 import { ConnectorNames, metamask } from "@src/connectors";
 import { mockConnector } from "@src/connectors/mock";
 import postMessage from "@src/util/postMessage";
 
 import { useWallet } from "..";
-import { RPCAction } from "@src/constants";
 
 jest.mock("@web3-react/core", (): unknown => ({
   ...jest.requireActual("@web3-react/core"),
