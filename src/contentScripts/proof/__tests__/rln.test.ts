@@ -37,7 +37,7 @@ describe("contentScripts/proof/rln", () => {
 
   test("should generate proof properly", async () => {
     const rlnProofGenerator = RlnProofGenerator.getInstance();
-    const [rlnServiceInstance] = (RLNService as jest.Mock).mock.instances;
+    const [rlnServiceInstance] = (RLNService as jest.Mock).mock.instances as [{ genProof: jest.Mock }];
     rlnServiceInstance.genProof.mockResolvedValue(emptyFullProof);
 
     const result = await rlnProofGenerator.generate(defaultGenerateArgs);
