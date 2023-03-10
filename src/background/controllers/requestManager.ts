@@ -21,7 +21,7 @@ export default class RequestManager extends EventEmitter2 {
     const { id } = action;
     if (!id) throw new Error("id not provided");
     // TODO add some mutex lock just in case something strange occurs
-    this.pendingRequests = this.pendingRequests.filter(pendingRequest => pendingRequest.id !== id);
+    this.pendingRequests = this.pendingRequests.filter((pendingRequest) => pendingRequest.id !== id);
     this.emit(`${id}:finalized`, action);
     await pushMessage(setPendingRequest(this.pendingRequests));
     return true;
