@@ -42,7 +42,7 @@ export const IdentityItem = ({
   );
 
   const handleToggleRenaming = useCallback(() => {
-    setIsRenaming(value => !value);
+    setIsRenaming((value) => !value);
   }, [setIsRenaming]);
 
   const handleUpdateName = useCallback(

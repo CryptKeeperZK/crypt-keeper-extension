@@ -182,7 +182,7 @@ const on = (eventName: string, cb: (data: unknown) => void) => {
 
 const off = (eventName: string, cb: (data: unknown) => void) => {
   const bucket = EVENTS[eventName] || [];
-  EVENTS[eventName] = bucket.filter(callback => callback === cb);
+  EVENTS[eventName] = bucket.filter((callback) => callback === cb);
 };
 
 const emit = (eventName: string, payload?: any) => {
@@ -276,7 +276,7 @@ async function post(message: IRequest) {
   });
 }
 
-window.addEventListener("message", event => {
+window.addEventListener("message", (event) => {
   const { data } = event;
 
   if (data && data.target === "injected-injectedscript") {

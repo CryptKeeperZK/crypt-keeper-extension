@@ -1,11 +1,12 @@
+/* eslint-disable @typescript-eslint/unbound-method */
 import CryptoJS from "crypto-js";
 import { browser } from "webextension-polyfill-ts";
 
+import { setStatus } from "@src/ui/ducks/app";
 import pushMessage from "@src/util/pushMessage";
 
-import SimpleStorage from "../simpleStorage";
 import LockService from "../lock";
-import { setStatus } from "@src/ui/ducks/app";
+import SimpleStorage from "../simpleStorage";
 
 jest.mock("crypto-js", (): unknown => ({
   ...jest.requireActual("crypto-js"),
@@ -37,9 +38,9 @@ describe("background/services/lock", () => {
     (pushMessage as jest.Mock).mockReset();
     (browser.tabs.sendMessage as jest.Mock).mockReset();
 
-    for (const instance of (SimpleStorage as jest.Mock).mock.instances) {
+    (SimpleStorage as jest.Mock).mock.instances.forEach((instance: { get: jest.Mock }) => {
       instance.get.mockReturnValue(defaultPassword);
-    }
+    });
   });
 
   describe("ensure", () => {
@@ -62,23 +63,23 @@ describe("background/services/lock", () => {
     test("should encrypt properly", async () => {
       await lockService.unlock(defaultPassword);
 
-      const result = await lockService.encrypt(defaultPassword);
+      const result = lockService.encrypt(defaultPassword);
 
       expect(result).toStrictEqual(defaultPassword);
     });
 
-    test("should not encrypt if there is no password", async () => {
-      await expect(lockService.encrypt(defaultPassword)).rejects.toThrowError("Password is not provided");
+    test("should not encrypt if there is no password", () => {
+      expect(() => lockService.encrypt(defaultPassword)).toThrowError("Password is not provided");
     });
 
-    test("should not encrypt if there is no password", async () => {
-      await expect(lockService.decrypt(defaultPassword)).rejects.toThrowError("Password is not provided");
+    test("should not encrypt if there is no password", () => {
+      expect(() => lockService.decrypt(defaultPassword)).toThrowError("Password is not provided");
     });
 
     test("should decrypt properly", async () => {
       await lockService.unlock(defaultPassword);
 
-      const result = await lockService.decrypt(defaultPassword);
+      const result = lockService.decrypt(defaultPassword);
 
       expect(result).toStrictEqual(passwordChecker);
     });
@@ -137,9 +138,9 @@ describe("background/services/lock", () => {
     });
 
     test("should not unlock if there is no cipher text", async () => {
-      for (const instance of (SimpleStorage as jest.Mock).mock.instances) {
+      (SimpleStorage as jest.Mock).mock.instances.forEach((instance: { get: jest.Mock }) => {
         instance.get.mockReturnValue(undefined);
-      }
+      });
 
       await expect(lockService.unlock(defaultPassword)).rejects.toThrowError(
         "Something badly gone wrong (reinstallation probably required)",

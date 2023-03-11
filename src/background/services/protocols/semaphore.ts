@@ -7,35 +7,31 @@ import { getMerkleProof } from "./utils";
 
 export default class SemaphoreService {
   async genProof(identity: ZkIdentityDecorater, request: SemaphoreProofRequest): Promise<SemaphoreProof> {
-    try {
-      const {
-        circuitFilePath,
-        zkeyFilePath,
-        merkleStorageAddress,
-        externalNullifier,
-        signal,
-        merkleProofArtifacts,
-        merkleProof: providerMerkleProof,
-      } = request;
+    const {
+      circuitFilePath,
+      zkeyFilePath,
+      merkleStorageAddress,
+      externalNullifier,
+      signal,
+      merkleProofArtifacts,
+      merkleProof: providerMerkleProof,
+    } = request;
 
-      const identityCommitment = identity.genIdentityCommitment();
+    const identityCommitment = identity.genIdentityCommitment();
 
-      const merkleProof = await getMerkleProof({
-        identityCommitment,
-        merkleProofArtifacts,
-        merkleStorageAddress,
-        providerMerkleProof,
-      });
+    const merkleProof = await getMerkleProof({
+      identityCommitment,
+      merkleProofArtifacts,
+      merkleStorageAddress,
+      providerMerkleProof,
+    });
 
-      // TODO: do we need to leave `SnarkArtifacts` param as undefinded?
-      const fullProof = await generateProof(identity.zkIdentity, merkleProof, externalNullifier, signal, {
-        wasmFilePath: circuitFilePath,
-        zkeyFilePath: zkeyFilePath,
-      });
+    // TODO: do we need to leave `SnarkArtifacts` param as undefinded?
+    const fullProof = await generateProof(identity.zkIdentity, merkleProof, externalNullifier, signal, {
+      wasmFilePath: circuitFilePath,
+      zkeyFilePath,
+    });
 
-      return { fullProof };
-    } catch (e) {
-      throw new Error(`Error while generating semaphore proof: ${e}`);
-    }
+    return { fullProof };
   }
 }

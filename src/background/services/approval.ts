@@ -1,5 +1,5 @@
-import SimpleStorage from "./simpleStorage";
 import LockService from "./lock";
+import SimpleStorage from "./simpleStorage";
 
 const APPPROVALS_DB_KEY = "@APPROVED@";
 
@@ -8,8 +8,10 @@ interface HostPermission {
 }
 
 export default class ApprovalService {
-  private allowedHosts: Map<string, { noApproval: boolean }>;
+  private allowedHosts: Map<string, HostPermission>;
+
   private approvals: SimpleStorage;
+
   private lockService: LockService;
 
   constructor() {
@@ -21,26 +23,24 @@ export default class ApprovalService {
   public getAllowedHosts = (): string[] =>
     [...this.allowedHosts.entries()].filter(([, isApproved]) => isApproved).map(([key]) => key);
 
-  public isApproved = (origin: string): boolean => this.allowedHosts.has(origin);
+  public isApproved = (host: string): boolean => this.allowedHosts.has(host);
 
-  public canSkipApprove = (origin: string): boolean => Boolean(this.allowedHosts.get(origin)?.noApproval);
+  public canSkipApprove = (host: string): boolean => Boolean(this.allowedHosts.get(host)?.noApproval);
 
   public unlock = async (): Promise<boolean> => {
     const encryped = await this.approvals.get<string>();
 
     if (encryped) {
-      const decrypted = await this.lockService.decrypt(encryped);
-      this.allowedHosts = new Map(JSON.parse(decrypted));
+      const decrypted = this.lockService.decrypt(encryped);
+      this.allowedHosts = new Map(JSON.parse(decrypted) as Iterable<[string, HostPermission]>);
     }
 
     return true;
   };
 
-  public getPermission = async (host: string): Promise<HostPermission> => {
-    return {
-      noApproval: Boolean(this.allowedHosts.get(host)?.noApproval),
-    };
-  };
+  public getPermission = (host: string): HostPermission => ({
+    noApproval: Boolean(this.allowedHosts.get(host)?.noApproval),
+  });
 
   public setPermission = async (host: string, { noApproval }: HostPermission): Promise<HostPermission> => {
     this.allowedHosts.set(host, { noApproval });
@@ -78,7 +78,7 @@ export default class ApprovalService {
   };
 
   private async saveApprovals(): Promise<void> {
-    const newApprovals = await this.lockService.encrypt(JSON.stringify(this.allowedHosts));
+    const newApprovals = this.lockService.encrypt(JSON.stringify(this.allowedHosts));
     await this.approvals.set(newApprovals);
   }
 }

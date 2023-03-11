@@ -1,3 +1,4 @@
+import log from "loglevel";
 import { browser } from "webextension-polyfill-ts";
 
 export interface CreateNotificationArgs {
@@ -14,7 +15,7 @@ export default class NotificationService {
   private static INSTANCE: NotificationService;
 
   private constructor() {
-    //
+    log.debug("Notification service was initialized");
   }
 
   public static getInstance(): NotificationService {

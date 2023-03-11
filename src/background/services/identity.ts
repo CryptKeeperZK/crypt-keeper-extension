@@ -1,24 +1,29 @@
 import { bigintToHex } from "bigint-conversion";
 import { browser } from "webextension-polyfill-ts";
 
-import { setIdentities, setSelected } from "@src/ui/ducks/identities";
-import pushMessage from "@src/util/pushMessage";
-import { ellipsify } from "@src/util/account";
 import { IdentityMetadata, IdentityName } from "@src/types";
+import { setIdentities, setSelected } from "@src/ui/ducks/identities";
+import { ellipsify } from "@src/util/account";
+import pushMessage from "@src/util/pushMessage";
 
 import ZkIdentityDecorater from "../identityDecorater";
-import SimpleStorage from "./simpleStorage";
+
 import LockService from "./lock";
 import NotificationService from "./notification";
+import SimpleStorage from "./simpleStorage";
 
 const IDENTITY_KEY = "@@ID@@";
 const ACTIVE_IDENTITY_KEY = "@@AID@@";
 
 export default class IdentityService {
   private activeIdentity?: ZkIdentityDecorater;
+
   private identitiesStore: SimpleStorage;
+
   private activeIdentityStore: SimpleStorage;
+
   private lockService: LockService;
+
   private notificationService: NotificationService;
 
   constructor() {
@@ -103,7 +108,7 @@ export default class IdentityService {
       return undefined;
     }
 
-    const activeIdentityCommitment = await this.lockService.decrypt(acitveIdentityCommitmentCipher);
+    const activeIdentityCommitment = this.lockService.decrypt(acitveIdentityCommitmentCipher);
     const identities = await this.getIdentitiesFromStore();
     const identity = identities.get(activeIdentityCommitment);
 
@@ -117,12 +122,8 @@ export default class IdentityService {
   };
 
   public getIdentityCommitments = async (): Promise<{ commitments: string[]; identities: Map<string, string> }> => {
-    const commitments: string[] = [];
     const identities = await this.getIdentitiesFromStore();
-
-    for (const key of identities.keys()) {
-      commitments.push(key);
-    }
+    const commitments = [...identities.keys()];
 
     return { commitments, identities };
   };
@@ -131,8 +132,8 @@ export default class IdentityService {
     const { commitments, identities } = await this.getIdentityCommitments();
 
     return commitments
-      .filter(commitment => identities.has(commitment))
-      .map(commitment => {
+      .filter((commitment) => identities.has(commitment))
+      .map((commitment) => {
         const serializedIdentity = identities.get(commitment) as string;
         const identity = ZkIdentityDecorater.genFromSerialized(serializedIdentity);
 
@@ -182,8 +183,8 @@ export default class IdentityService {
       return;
     }
 
-    const { value: firstCommitment } = identities.keys().next();
-    await this.setActiveIdentity(firstCommitment);
+    const identity = identities.keys().next();
+    await this.setActiveIdentity(identity.value as string);
   };
 
   private clearActiveIdentity = async (): Promise<void> => {
@@ -197,17 +198,17 @@ export default class IdentityService {
 
   private writeIdentities = async (identities: Map<string, string>): Promise<void> => {
     const serializedIdentities = JSON.stringify(Array.from(identities.entries()));
-    const cipherText = await this.lockService.encrypt(serializedIdentities);
+    const cipherText = this.lockService.encrypt(serializedIdentities);
     await this.identitiesStore.set(cipherText);
   };
 
   private writeActiveIdentity = async (commitment: string): Promise<void> => {
-    const cipherText = await this.lockService.encrypt(commitment);
+    const cipherText = this.lockService.encrypt(commitment);
     await this.activeIdentityStore.set(cipherText);
     await pushMessage(setSelected(commitment));
 
     const tabs = await browser.tabs.query({ active: true });
-    await Promise.all(tabs.map(tab => browser.tabs.sendMessage(tab.id as number, setSelected(commitment))));
+    await Promise.all(tabs.map((tab) => browser.tabs.sendMessage(tab.id as number, setSelected(commitment))));
   };
 
   private getIdentitiesFromStore = async (): Promise<Map<string, string>> => {
@@ -217,8 +218,8 @@ export default class IdentityService {
       return new Map();
     }
 
-    const identitesDecrypted = await this.lockService.decrypt(cipherText);
-    return new Map(JSON.parse(identitesDecrypted));
+    const identitesDecrypted = this.lockService.decrypt(cipherText);
+    return new Map(JSON.parse(identitesDecrypted) as Iterable<readonly [string, string]>);
   };
 
   private refresh = async (): Promise<void> => {
