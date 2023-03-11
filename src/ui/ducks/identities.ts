@@ -150,7 +150,7 @@ function reduceSetIdentities(
 export const useIdentities = () =>
   useSelector((state: AppRootState) => {
     const { identityMap, identityCommitments } = state.identities;
-    return identityCommitments.map(commitment => ({
+    return identityCommitments.map((commitment) => ({
       commitment,
       metadata: identityMap[commitment],
     }));

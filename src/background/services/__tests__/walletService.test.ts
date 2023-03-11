@@ -1,11 +1,11 @@
-import WalletService from "../wallet";
 import SimpleStorage from "../simpleStorage";
+import WalletService from "../wallet";
 
 jest.mock("../simpleStorage");
 
 describe("background/services/wallet", () => {
   const service = new WalletService();
-  const [walletStorage] = (SimpleStorage as jest.Mock).mock.instances;
+  const [walletStorage] = (SimpleStorage as jest.Mock).mock.instances as [{ get: jest.Mock; set: jest.Mock }];
   const defaultStorageValue = { isDisconnectedPermanently: false };
 
   test("should get connection", async () => {

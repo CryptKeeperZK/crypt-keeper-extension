@@ -13,7 +13,7 @@ import log from "loglevel";
     container.insertBefore(scriptTag, container.children[0]);
     container.removeChild(scriptTag);
 
-    window.addEventListener("message", async event => {
+    window.addEventListener("message", async (event) => {
       const { data } = event;
       if (data && data.target === "injected-contentscript") {
         const res = await browser.runtime.sendMessage(data.message);
@@ -28,7 +28,7 @@ import log from "loglevel";
       }
     });
 
-    browser.runtime.onMessage.addListener(action => {
+    browser.runtime.onMessage.addListener((action) => {
       switch (action.type) {
         case IdentityActionType.SET_SELECTED:
           window.postMessage(

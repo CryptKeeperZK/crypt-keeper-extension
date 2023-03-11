@@ -1,8 +1,8 @@
 import CryptoJS from "crypto-js";
 import { browser } from "webextension-polyfill-ts";
 
-import pushMessage from "@src/util/pushMessage";
 import { setStatus } from "@src/ui/ducks/app";
+import pushMessage from "@src/util/pushMessage";
 
 import SimpleStorage from "./simpleStorage";
 
@@ -15,11 +15,16 @@ interface LockStatus {
 
 export default class LockService {
   private static INSTANCE: LockService;
+
   private isUnlocked: boolean;
+
   private passwordChecker: string;
+
   private passwordStorage: SimpleStorage;
+
   private password?: string;
-  private unlockCB?: (value?: unknown) => void;
+
+  private unlockCB?: () => void;
 
   private constructor() {
     this.isUnlocked = false;
@@ -57,11 +62,11 @@ export default class LockService {
 
   public awaitUnlock = async (): Promise<unknown | undefined> => {
     if (this.isUnlocked) {
-      return;
+      return undefined;
     }
 
-    return new Promise(resolve => {
-      this.unlockCB = resolve;
+    return new Promise((resolve) => {
+      this.unlockCB = () => resolve(undefined);
     });
   };
 
@@ -111,7 +116,7 @@ export default class LockService {
     return true;
   };
 
-  public ensure = async (payload: unknown = null): Promise<unknown | null | false> => {
+  public ensure = (payload: unknown = null): unknown | null | false => {
     if (!this.isUnlocked || !this.password) {
       return false;
     }
@@ -119,20 +124,20 @@ export default class LockService {
     return payload;
   };
 
-  public encrypt = async (payload: string): Promise<string> => {
+  public encrypt = (payload: string): string => {
     if (!this.password) {
       throw new Error("Password is not provided");
     }
 
-    return CryptoJS.AES.encrypt(payload, this.password as string).toString();
+    return CryptoJS.AES.encrypt(payload, this.password).toString();
   };
 
-  public decrypt = async (ciphertext: string): Promise<string> => {
+  public decrypt = (ciphertext: string): string => {
     if (!this.password) {
       throw new Error("Password is not provided");
     }
 
-    const bytes = CryptoJS.AES.decrypt(ciphertext, this.password as string);
+    const bytes = CryptoJS.AES.decrypt(ciphertext, this.password);
     return bytes.toString(CryptoJS.enc.Utf8);
   };
 
@@ -149,9 +154,8 @@ export default class LockService {
     await pushMessage(setStatus(status));
 
     const tabs = await browser.tabs.query({ active: true });
-    for (const tab of tabs) {
-      await browser.tabs.sendMessage(tab.id as number, setStatus(status));
-    }
+
+    await Promise.all(tabs.map((tab) => browser.tabs.sendMessage(tab.id as number, setStatus(status))));
 
     return status;
   };

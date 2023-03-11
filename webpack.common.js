@@ -1,8 +1,9 @@
-const webpack = require("webpack");
-const path = require("path");
 const CopyPlugin = require("copy-webpack-plugin");
-const HtmlWebpackPlugin = require("html-webpack-plugin");
 const dotenv = require("dotenv");
+const HtmlWebpackPlugin = require("html-webpack-plugin");
+const webpack = require("webpack");
+
+const path = require("path");
 
 dotenv.config({ path: "./.env" });
 

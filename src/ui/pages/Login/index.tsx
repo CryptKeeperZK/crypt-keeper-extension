@@ -54,7 +54,7 @@ const Login = function (): ReactElement {
             type="password"
             label="Password"
             value={pw}
-            onChange={e => setPW(e.target.value)}
+            onChange={(e) => setPW(e.target.value)}
             onKeyPress={handleKeypress}
             autoFocus
           />

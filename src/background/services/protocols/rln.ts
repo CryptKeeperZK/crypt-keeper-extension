@@ -19,21 +19,17 @@ export default class RLNService {
       merkleProof: providerMerkleProof,
     }: RLNProofRequest,
   ): Promise<RLNFullProof> {
-    try {
-      const rln = new RLN(circuitFilePath, zkeyFilePath, verificationKey);
+    const rln = new RLN(circuitFilePath, zkeyFilePath, verificationKey);
 
-      const identityCommitment = identity.genIdentityCommitment();
+    const identityCommitment = identity.genIdentityCommitment();
 
-      const merkleProof = await getMerkleProof({
-        identityCommitment,
-        merkleProofArtifacts,
-        merkleStorageAddress,
-        providerMerkleProof,
-      });
+    const merkleProof = await getMerkleProof({
+      identityCommitment,
+      merkleProofArtifacts,
+      merkleStorageAddress,
+      providerMerkleProof,
+    });
 
-      return rln.generateProof(signal, merkleProof, externalNullifier);
-    } catch (e) {
-      throw new Error(`Error while generating RLN proof: ${e}`);
-    }
+    return rln.generateProof(signal, merkleProof, externalNullifier) as Promise<RLNFullProof>;
   }
 }

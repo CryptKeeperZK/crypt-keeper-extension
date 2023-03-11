@@ -101,7 +101,7 @@ export default function Menuable(props: MenuableProps): ReactElement {
         },
         props.className,
       )}
-      onClick={e => {
+      onClick={(e) => {
         e.stopPropagation();
 
         if (isShowing) return onClose();
@@ -134,7 +134,7 @@ export default function Menuable(props: MenuableProps): ReactElement {
                 { "cursor-pointer": !item.disabled },
                 item.className,
               )}
-              onClick={e => onItemClick(e, item, i)}
+              onClick={(e) => onItemClick(e, item, i)}
             >
               {item.component ? (
                 item.component

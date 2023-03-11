@@ -1,17 +1,19 @@
-import { bigintToHex, hexToBigint } from "bigint-conversion";
-import { MerkleProof } from "@zk-kit/incremental-merkle-tree";
 import { Group, BigNumberish } from "@semaphore-protocol/group";
+import { MerkleProof } from "@zk-kit/incremental-merkle-tree";
+import { bigintToHex, hexToBigint } from "bigint-conversion";
 
 import { MerkleProofArtifacts } from "@src/types";
 
 export function deserializeMerkleProof(merkleProof: MerkleProof): MerkleProof {
   return {
-    root: hexToBigint(merkleProof.root),
-    siblings: merkleProof.siblings.map(siblings =>
-      Array.isArray(siblings) ? siblings.map(element => hexToBigint(element)) : hexToBigint(siblings),
+    root: hexToBigint(merkleProof.root as string),
+    siblings: merkleProof.siblings.map((siblings) =>
+      Array.isArray(siblings)
+        ? siblings.map((element) => hexToBigint(element as string))
+        : hexToBigint(siblings as string),
     ),
     pathIndices: merkleProof.pathIndices,
-    leaf: hexToBigint(merkleProof.leaf),
+    leaf: hexToBigint(merkleProof.leaf as string),
   };
 }
 
@@ -49,7 +51,7 @@ export async function getMerkleProof({
   }
 
   return merkleStorageAddress
-    ? await getRemoteMerkleProof(merkleStorageAddress, bigintToHex(identityCommitment))
+    ? getRemoteMerkleProof(merkleStorageAddress, bigintToHex(identityCommitment))
     : generateMerkleProof({
         treeDepth: (merkleProofArtifacts as MerkleProofArtifacts).depth,
         member: identityCommitment,
@@ -65,6 +67,6 @@ async function getRemoteMerkleProof(merkleStorageAddress: string, identityCommit
       identityCommitment: identityCommitmentHex,
     }),
   })
-    .then(res => res.json())
-    .then(response => deserializeMerkleProof(response.data.merkleProof));
+    .then((res) => res.json())
+    .then((response: { data: { merkleProof: MerkleProof } }) => deserializeMerkleProof(response.data.merkleProof));
 }

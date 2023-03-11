@@ -103,7 +103,7 @@ export default function ConnectionModal(props: { onClose: () => void; refreshCon
           <Checkbox
             className="mr-2 mt-2 flex-shrink-0"
             checked={noApproval}
-            onChange={e => {
+            onChange={(e) => {
               setApproval(e.target.checked);
             }}
           />

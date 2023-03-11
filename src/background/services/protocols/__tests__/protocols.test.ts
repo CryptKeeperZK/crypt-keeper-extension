@@ -1,5 +1,6 @@
 import { Identity } from "@semaphore-protocol/identity";
 import { generateProof } from "@semaphore-protocol/proof";
+import { MerkleProof } from "@zk-kit/incremental-merkle-tree";
 import { RLN } from "rlnjs";
 
 import ZkIdentityDecorater from "@src/background/identityDecorater";
@@ -7,10 +8,9 @@ import { ZERO_ADDRESS } from "@src/config/const";
 import { IdentityMetadata } from "@src/types";
 
 import { RLNProofRequest } from "../interfaces";
-import { getMerkleProof } from "../utils";
 import RLNService from "../rln";
 import SemaphoreService from "../semaphore";
-import { MerkleProof } from "@zk-kit/incremental-merkle-tree";
+import { getMerkleProof } from "../utils";
 
 jest.mock("rlnjs");
 
@@ -59,7 +59,7 @@ describe("background/services/protocols", () => {
       const rln = new RLNService();
 
       await rln.genProof(identityDecorater, { ...proofRequest, merkleStorageAddress: "http://localhost:3000/merkle" });
-      const [rlnInstance] = (RLN as jest.Mock).mock.instances;
+      const [rlnInstance] = (RLN as jest.Mock).mock.instances as [{ generateProof: jest.Mock }];
 
       expect(rlnInstance.generateProof).toBeCalledTimes(1);
       expect(rlnInstance.generateProof).toBeCalledWith(
@@ -79,7 +79,7 @@ describe("background/services/protocols", () => {
         merkleStorageAddress: "http://localhost:3000/merkle",
       });
 
-      await expect(promise).rejects.toThrowError("Error while generating RLN proof: Error: error");
+      await expect(promise).rejects.toThrowError("error");
     });
   });
 
@@ -111,7 +111,7 @@ describe("background/services/protocols", () => {
         merkleStorageAddress: "http://localhost:3000/merkle",
       });
 
-      await expect(promise).rejects.toThrowError("Error while generating semaphore proof: Error: error");
+      await expect(promise).rejects.toThrowError("error");
     });
   });
 });

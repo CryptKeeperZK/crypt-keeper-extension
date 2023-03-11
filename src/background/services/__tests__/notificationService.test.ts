@@ -1,4 +1,5 @@
 import { browser } from "webextension-polyfill-ts";
+
 import NotificationService, { CreateNotificationArgs } from "../notification";
 
 describe("background/services/notification", () => {

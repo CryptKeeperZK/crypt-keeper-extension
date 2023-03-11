@@ -1,5 +1,6 @@
-import { bigintToHex } from "bigint-conversion";
+/* eslint-disable @typescript-eslint/unbound-method */
 import { Identity } from "@semaphore-protocol/identity";
+import { bigintToHex } from "bigint-conversion";
 import { browser } from "webextension-polyfill-ts";
 
 import ZkIdentityDecorater from "@src/background/identityDecorater";
@@ -10,8 +11,8 @@ import pushMessage from "@src/util/pushMessage";
 
 import IdentityService from "../identity";
 import LockService from "../lock";
-import SimpleStorage from "../simpleStorage";
 import NotificationService from "../notification";
+import SimpleStorage from "../simpleStorage";
 
 jest.mock("@src/util/pushMessage");
 
@@ -20,6 +21,8 @@ jest.mock("../lock");
 jest.mock("../simpleStorage");
 
 jest.mock("../notification");
+
+type MockStorage = { get: jest.Mock; set: jest.Mock; clear: jest.Mock };
 
 describe("background/services/identity", () => {
   const defaultTabs = [{ id: 1 }, { id: 2 }];
@@ -36,8 +39,8 @@ describe("background/services/identity", () => {
   };
 
   beforeEach(() => {
-    defaultLockService.encrypt.mockResolvedValue(serializedDefaultIdentities);
-    defaultLockService.decrypt.mockResolvedValue(serializedDefaultIdentities);
+    defaultLockService.encrypt.mockReturnValue(serializedDefaultIdentities);
+    defaultLockService.decrypt.mockReturnValue(serializedDefaultIdentities);
 
     (LockService.getInstance as jest.Mock).mockReturnValue(defaultLockService);
 
@@ -53,7 +56,7 @@ describe("background/services/identity", () => {
   describe("unlock", () => {
     test("should unlock properly and set active identity", async () => {
       const service = new IdentityService();
-      const [identityStorage] = (SimpleStorage as jest.Mock).mock.instances;
+      const [identityStorage] = (SimpleStorage as jest.Mock).mock.instances as [MockStorage];
       identityStorage.get.mockReturnValue(serializedDefaultIdentities);
 
       const result = await service.unlock();
@@ -75,9 +78,9 @@ describe("background/services/identity", () => {
     test("should unlock properly with empty store", async () => {
       const service = new IdentityService();
 
-      for (const instance of (SimpleStorage as jest.Mock).mock.instances) {
+      (SimpleStorage as jest.Mock).mock.instances.forEach((instance: MockStorage) => {
         instance.get.mockReturnValue(undefined);
-      }
+      });
 
       const result = await service.unlock();
 
@@ -88,7 +91,7 @@ describe("background/services/identity", () => {
   describe("set active identity", () => {
     test("should set active identity properly", async () => {
       const service = new IdentityService();
-      const [identityStorage] = (SimpleStorage as jest.Mock).mock.instances;
+      const [identityStorage] = (SimpleStorage as jest.Mock).mock.instances as [MockStorage];
       identityStorage.get.mockReturnValue(serializedDefaultIdentities);
 
       const result = await service.setActiveIdentity(ZERO_ADDRESS);
@@ -110,9 +113,9 @@ describe("background/services/identity", () => {
     test("should not set active identity if there is no any saved identities", async () => {
       const service = new IdentityService();
 
-      for (const instance of (SimpleStorage as jest.Mock).mock.instances) {
+      (SimpleStorage as jest.Mock).mock.instances.forEach((instance: MockStorage) => {
         instance.get.mockReturnValue(undefined);
-      }
+      });
 
       const result = await service.setActiveIdentity(ZERO_ADDRESS);
 
@@ -125,7 +128,7 @@ describe("background/services/identity", () => {
   describe("set identity name", () => {
     test("should set identity name properly", async () => {
       const service = new IdentityService();
-      const [identityStorage] = (SimpleStorage as jest.Mock).mock.instances;
+      const [identityStorage] = (SimpleStorage as jest.Mock).mock.instances as [MockStorage];
       identityStorage.get.mockReturnValue(serializedDefaultIdentities);
 
       const result = await service.setIdentityName({ identityCommitment: ZERO_ADDRESS, name: "New name" });
@@ -145,7 +148,7 @@ describe("background/services/identity", () => {
   describe("delete identity", () => {
     test("should delete identity properly", async () => {
       const service = new IdentityService();
-      const [identityStorage] = (SimpleStorage as jest.Mock).mock.instances;
+      const [identityStorage] = (SimpleStorage as jest.Mock).mock.instances as [MockStorage];
       identityStorage.get.mockReturnValue(serializedDefaultIdentities);
 
       const result = await service.deleteIdentity({ identityCommitment: ZERO_ADDRESS });
@@ -165,7 +168,7 @@ describe("background/services/identity", () => {
   describe("delete all identities", () => {
     test("should delete all identities properly", async () => {
       const service = new IdentityService();
-      const [identityStorage] = (SimpleStorage as jest.Mock).mock.instances;
+      const [identityStorage] = (SimpleStorage as jest.Mock).mock.instances as [MockStorage];
       identityStorage.get.mockReturnValue(serializedDefaultIdentities);
 
       const isIdentitySet = await service.setActiveIdentity(ZERO_ADDRESS);
@@ -188,13 +191,14 @@ describe("background/services/identity", () => {
 
   describe("get active identity", () => {
     test("should get active identity properly", async () => {
-      (defaultLockService.decrypt as jest.Mock)
-        .mockResolvedValueOnce(ZERO_ADDRESS)
-        .mockResolvedValue(serializedDefaultIdentities);
+      defaultLockService.decrypt.mockReturnValueOnce(ZERO_ADDRESS).mockReturnValue(serializedDefaultIdentities);
       (LockService.getInstance as jest.Mock).mockReturnValue(defaultLockService);
 
       const service = new IdentityService();
-      const [identityStorage, activeIdentityStorage] = (SimpleStorage as jest.Mock).mock.instances;
+      const [identityStorage, activeIdentityStorage] = (SimpleStorage as jest.Mock).mock.instances as [
+        MockStorage,
+        MockStorage,
+      ];
       identityStorage.get.mockReturnValue(serializedDefaultIdentities);
       activeIdentityStorage.get.mockReturnValue(ZERO_ADDRESS);
 
@@ -212,12 +216,15 @@ describe("background/services/identity", () => {
     });
 
     test("should not get active identity if there is no any identity", async () => {
-      (defaultLockService.decrypt as jest.Mock).mockResolvedValueOnce(ZERO_ADDRESS).mockResolvedValue(undefined);
+      defaultLockService.decrypt.mockReturnValue(ZERO_ADDRESS).mockReturnValue(undefined);
       (LockService.getInstance as jest.Mock).mockReturnValue(defaultLockService);
 
       const service = new IdentityService();
 
-      const [identityStorage, activeIdentityStorage] = (SimpleStorage as jest.Mock).mock.instances;
+      const [identityStorage, activeIdentityStorage] = (SimpleStorage as jest.Mock).mock.instances as [
+        MockStorage,
+        MockStorage,
+      ];
       identityStorage.get.mockReturnValue(undefined);
       activeIdentityStorage.get.mockReturnValue(ZERO_ADDRESS);
 
@@ -231,7 +238,7 @@ describe("background/services/identity", () => {
     test("should get identity commitments properly", async () => {
       const service = new IdentityService();
 
-      const [identityStorage] = (SimpleStorage as jest.Mock).mock.instances;
+      const [identityStorage] = (SimpleStorage as jest.Mock).mock.instances as [MockStorage];
       identityStorage.get.mockReturnValue(serializedDefaultIdentities);
 
       const { commitments, identities } = await service.getIdentityCommitments();
@@ -243,7 +250,7 @@ describe("background/services/identity", () => {
     test("should get identities properly", async () => {
       const service = new IdentityService();
 
-      const [identityStorage] = (SimpleStorage as jest.Mock).mock.instances;
+      const [identityStorage] = (SimpleStorage as jest.Mock).mock.instances as [MockStorage];
       identityStorage.get.mockReturnValue(serializedDefaultIdentities);
 
       const identities = await service.getIdentities();
@@ -254,7 +261,7 @@ describe("background/services/identity", () => {
     test("should get number of identities properly", async () => {
       const service = new IdentityService();
 
-      const [identityStorage] = (SimpleStorage as jest.Mock).mock.instances;
+      const [identityStorage] = (SimpleStorage as jest.Mock).mock.instances as [MockStorage];
       identityStorage.get.mockReturnValue(serializedDefaultIdentities);
 
       const result = await service.getNumOfIdentites();
@@ -292,7 +299,7 @@ describe("background/services/identity", () => {
     test("should not insert identity if there is the same identity in the store", async () => {
       const service = new IdentityService();
 
-      const [identityStorage] = (SimpleStorage as jest.Mock).mock.instances;
+      const [identityStorage] = (SimpleStorage as jest.Mock).mock.instances as [MockStorage];
       identityStorage.get.mockReturnValue(serializedDefaultIdentities);
 
       const result = await service.insert(

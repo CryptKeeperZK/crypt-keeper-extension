@@ -36,10 +36,10 @@ jest.mock("webextension-polyfill-ts", (): unknown => {
         sync: {
           get: jest.fn(),
           set: jest.fn().mockImplementation(() => {
-            storageListeners.forEach(listener => listener(defaultChanges, namespace));
+            storageListeners.forEach((listener) => listener(defaultChanges, namespace));
           }),
           remove: jest.fn().mockImplementation(() => {
-            storageListeners.forEach(listener => listener(defaultChanges, namespace));
+            storageListeners.forEach((listener) => listener(defaultChanges, namespace));
           }),
         },
         onChanged: {
