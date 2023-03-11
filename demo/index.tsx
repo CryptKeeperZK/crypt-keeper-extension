@@ -1,13 +1,12 @@
 /* eslint-disable no-console */
 import React, { useState, useEffect, useCallback } from "react";
-import ReactDOM from "react-dom";
+import { createRoot } from "react-dom/client";
 import { RLN, genExternalNullifier } from "rlnjs";
 import { bigintToHex } from "bigint-conversion";
 import { Identity } from "@semaphore-protocol/identity";
 
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import log from "loglevel";
 
 import type { Client } from "../src/contentScripts/injected";
 
@@ -245,6 +244,7 @@ function App() {
   );
 }
 
-const root = document.getElementById("root");
+const container = document.getElementById("root");
+const root = createRoot(container as HTMLElement);
 
-ReactDOM.render(<App />, root);
+root.render(<App />);
