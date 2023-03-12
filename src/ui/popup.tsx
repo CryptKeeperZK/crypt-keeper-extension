@@ -21,7 +21,7 @@ window.ethereum = createMetaMaskProvider();
 browser.tabs.query({ active: true, currentWindow: true }).then(() => {
   const extensionPort = browser.runtime.connect(undefined, { name: "popup" });
 
-  extensionPort.onMessage.addListener(action => {
+  extensionPort.onMessage.addListener((action) => {
     log.debug("Extension response");
     log.debug(action);
     if (action?.type) {

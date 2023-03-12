@@ -18,7 +18,7 @@ const {
   reject: rejectInitialization,
 } = deferredPromise<unknown>();
 
-browser.runtime.onConnect.addListener(async remotePort => {
+browser.runtime.onConnect.addListener(async (remotePort) => {
   log.debug("CryptKeeper onConnect Event, initializing...");
   initialize(remotePort);
   await isInitialized;

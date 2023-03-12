@@ -49,7 +49,7 @@ export function CreateIdentityApprovalModal(props: {
           label="Identity type"
           options={IDENTITY_TYPES}
           value={identityType}
-          onChange={option => {
+          onChange={(option) => {
             setIdentityType(option as SelectOption);
           }}
         />
@@ -61,7 +61,7 @@ export function CreateIdentityApprovalModal(props: {
               label="Web2 Provider"
               options={WEB2_PROVIDER_OPTIONS}
               value={web2Provider}
-              onChange={option => {
+              onChange={(option) => {
                 setWeb2Provider(option as SelectOption);
               }}
             />
@@ -71,7 +71,7 @@ export function CreateIdentityApprovalModal(props: {
               label="Nonce"
               step={1}
               defaultValue={nonce}
-              onChange={e => setNonce(Number(e.target.value))}
+              onChange={(e) => setNonce(Number(e.target.value))}
             />
           </>
         )}

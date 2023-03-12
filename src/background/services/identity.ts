@@ -134,8 +134,8 @@ export default class IdentityService {
     const { commitments, identities } = await this.getIdentityCommitments();
 
     const identitiesMapped = commitments
-      .filter(commitment => identities.has(commitment))
-      .map(commitment => {
+      .filter((commitment) => identities.has(commitment))
+      .map((commitment) => {
         const serializedIdentity = identities.get(commitment) as string;
         const identity = ZkIdentityDecorater.genFromSerialized(serializedIdentity);
 
@@ -213,7 +213,7 @@ export default class IdentityService {
 
     const tabs = await browser.tabs.query({ active: true });
     // TODO: change to pushMessage
-    await Promise.all(tabs.map(tab => browser.tabs.sendMessage(tab.id as number, setSelected(commitment))));
+    await Promise.all(tabs.map((tab) => browser.tabs.sendMessage(tab.id as number, setSelected(commitment))));
   };
 
   private getIdentitiesFromStore = async (): Promise<Map<string, string>> => {
