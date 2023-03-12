@@ -1,5 +1,6 @@
 import { setWalletConnection } from "@src/ui/ducks/wallet";
 import pushMessage from "@src/util/pushMessage";
+
 import SimpleStorage from "./simpleStorage";
 
 const WALLET_STORAGE_KEY = "@@WALLET@@";
@@ -18,7 +19,7 @@ export default class WalletService {
   public setConnection = async (payload: WalletConnectionData): Promise<void> => {
     pushMessage(setWalletConnection(payload));
 
-    this.walletStorage.set(payload);
+    await this.walletStorage.set(payload);
   };
 
   public getConnection = async (): Promise<void> => {

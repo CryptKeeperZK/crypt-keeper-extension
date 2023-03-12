@@ -10,7 +10,7 @@ export enum WalletActionType {
 }
 
 type State = {
-  isDisconnectedPermanently: Boolean;
+  isDisconnectedPermanently: boolean;
 };
 
 const initialState: State = {
@@ -18,11 +18,11 @@ const initialState: State = {
 };
 
 export const setWalletConnection = (connection: {
-  isDisconnectedPermanently: Boolean;
+  isDisconnectedPermanently: boolean;
 }): Action<
   WalletActionType,
   {
-    isDisconnectedPermanently: Boolean;
+    isDisconnectedPermanently: boolean;
   }
 > => ({
   type: WalletActionType.SET_CONNECT_WALLET,
@@ -40,7 +40,7 @@ export default function wallets(
   action: Action<
     WalletActionType,
     {
-      isDisconnectedPermanently: Boolean;
+      isDisconnectedPermanently: boolean;
     }
   >,
 ): State {

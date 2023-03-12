@@ -1,9 +1,10 @@
+import { setApproval } from "@src/ui/ducks";
+import pushMessage from "@src/util/pushMessage";
+
 import LockService from "./lock";
 import pushMessage from "@src/util/pushMessage";
 import { setApproval } from "@src/ui/ducks";
 import SimpleStorage from "./simpleStorage";
-import pushMessage from "@src/util/pushMessage";
-import { setApproval } from "@src/ui/ducks";
 
 const APPPROVALS_DB_KEY = "@APPROVED@";
 
@@ -51,7 +52,7 @@ export default class ApprovalService {
     return true;
   };
 
-  public getPermission = async (host: string): Promise<HostPermission> => {
+  public getPermission = (host: string): HostPermission => {
     const noApproval = {
       host,
       noApproval: Boolean(this.allowedHosts.get(host)?.noApproval),
@@ -62,7 +63,7 @@ export default class ApprovalService {
     return noApproval;
   };
 
-  public setPermission = async (host: string, { noApproval }: HostPermission) => {
+  public setPermission = async (host: string, { noApproval }: HostPermission): Promise<void> => {
     this.allowedHosts.set(host, { noApproval });
     await this.saveApprovals();
 

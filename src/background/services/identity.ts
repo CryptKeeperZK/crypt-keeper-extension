@@ -121,6 +121,8 @@ export default class IdentityService {
     pushMessage(
       setSelected(this.activeIdentity ? bigintToHex(this.activeIdentity.genIdentityCommitment()) : undefined),
     );
+
+    return this.activeIdentity;
   };
 
   public getIdentityCommitments = async (): Promise<{ commitments: string[]; identities: Map<string, string> }> => {
