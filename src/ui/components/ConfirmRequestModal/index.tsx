@@ -1,5 +1,5 @@
 import { getLinkPreview } from "link-preview-js";
-import { useCallback, useEffect, useState } from "react";
+import { ChangeEvent, useCallback, useEffect, useState } from "react";
 
 import { RPCAction, IDENTITY_TYPES, WEB2_PROVIDER_OPTIONS } from "@src/constants";
 import {
@@ -33,6 +33,28 @@ const ConnectionApprovalModal = ({ len, pendingRequest, error, loading, accept, 
   const { payload } = pendingRequest;
   const host = (payload as { origin: string } | undefined)?.origin ?? "";
   const [checked, setChecked] = useState(false);
+  const [faviconUrl, setFaviconUrl] = useState("");
+
+  const handleAccept = useCallback(() => {
+    accept();
+  }, [accept]);
+
+  const handleReject = useCallback(() => {
+    reject();
+  }, [reject]);
+
+  const handleSetApproval = useCallback(
+    (event: ChangeEvent<HTMLInputElement>) => {
+      postMessage<{ noApproval: boolean }>({
+        method: RPCAction.SET_HOST_PERMISSIONS,
+        payload: {
+          host,
+          noApproval: event.target.checked,
+        },
+      }).then((res) => setChecked(res?.noApproval));
+    },
+    [host, setChecked],
+  );
 
   useEffect(() => {
     if (host) {
@@ -42,8 +64,6 @@ const ConnectionApprovalModal = ({ len, pendingRequest, error, loading, accept, 
       }).then((res) => setChecked(res?.noApproval));
     }
   }, [host, setChecked]);
-
-  const [faviconUrl, setFaviconUrl] = useState("");
 
   useEffect(() => {
     if (host) {
@@ -55,19 +75,6 @@ const ConnectionApprovalModal = ({ len, pendingRequest, error, loading, accept, 
         .catch(() => undefined);
     }
   }, [host, setFaviconUrl]);
-
-  const onSetApproval = useCallback(
-    (noApproval: boolean) => {
-      postMessage<{ noApproval: boolean }>({
-        method: RPCAction.SET_HOST_PERMISSIONS,
-        payload: {
-          host,
-          noApproval,
-        },
-      }).then((res) => setChecked(res?.noApproval));
-    },
-    [host, setChecked],
-  );
 
   return (
     <FullModal className="confirm-modal" onClose={() => null}>
@@ -99,13 +106,7 @@ const ConnectionApprovalModal = ({ len, pendingRequest, error, loading, accept, 
         <div className="font-bold mt-4">Permissions</div>
 
         <div className="flex flex-row items-start">
-          <Checkbox
-            checked={checked}
-            className="mr-2 mt-2 flex-shrink-0"
-            onChange={(e) => {
-              onSetApproval(e.target.checked);
-            }}
-          />
+          <Checkbox checked={checked} className="mr-2 mt-2 flex-shrink-0" onChange={handleSetApproval} />
 
           <div className="text-sm mt-2">Allow host to create proof without approvals</div>
         </div>
@@ -114,11 +115,11 @@ const ConnectionApprovalModal = ({ len, pendingRequest, error, loading, accept, 
       {error && <div className="text-xs text-red-500 text-center pb-1">{error}</div>}
 
       <FullModalFooter>
-        <Button buttonType={ButtonType.SECONDARY} loading={loading} onClick={reject}>
+        <Button buttonType={ButtonType.SECONDARY} loading={loading} onClick={handleReject}>
           Reject
         </Button>
 
-        <Button className="ml-2" loading={loading} onClick={accept}>
+        <Button className="ml-2" loading={loading} onClick={handleAccept}>
           Approve
         </Button>
       </FullModalFooter>
@@ -142,12 +143,16 @@ const CreateIdentityApprovalModal = ({ len, loading, error, accept, reject }: Cr
   const [identityType, setIdentityType] = useState(IDENTITY_TYPES[0]);
   const [web2Provider, setWeb2Provider] = useState(WEB2_PROVIDER_OPTIONS[0]);
 
-  const onApprove = useCallback(() => {
+  const handleApprove = useCallback(() => {
     const options = identityType.value !== "random" ? { nonce, web2Provider } : {};
     const provider = identityType.value as IdentityStrategy;
 
     accept({ provider, options });
   }, [nonce, web2Provider, identityType, accept]);
+
+  const handleReject = useCallback(() => {
+    reject();
+  }, [reject]);
 
   return (
     <FullModal className="confirm-modal" onClose={() => null}>
@@ -196,11 +201,11 @@ const CreateIdentityApprovalModal = ({ len, loading, error, accept, reject }: Cr
       {error && <div className="text-xs text-red-500 text-center pb-1">{error}</div>}
 
       <FullModalFooter>
-        <Button buttonType={ButtonType.SECONDARY} loading={loading} onClick={() => reject()}>
+        <Button buttonType={ButtonType.SECONDARY} loading={loading} onClick={handleReject}>
           Reject
         </Button>
 
-        <Button className="ml-2" loading={loading} onClick={onApprove}>
+        <Button className="ml-2" loading={loading} onClick={handleApprove}>
           Approve
         </Button>
       </FullModalFooter>
@@ -282,15 +287,24 @@ const ProofModal = ({ pendingRequest, len, reject, accept, loading, error }: Pro
 
   const [faviconUrl, setFaviconUrl] = useState("");
 
+  const handleAccept = useCallback(() => {
+    accept();
+  }, [accept]);
+
+  const handleReject = useCallback(() => {
+    reject();
+  }, [reject]);
+
   useEffect(() => {
-    (async () => {
-      if (host) {
-        const data = await getLinkPreview(host).catch(() => undefined);
-        const [favicon] = data?.favicons || [];
-        setFaviconUrl(favicon);
-      }
-    })();
-  }, [host]);
+    if (host) {
+      getLinkPreview(host)
+        .then((data) => {
+          const [favicon] = data?.favicons || [];
+          setFaviconUrl(favicon);
+        })
+        .catch(() => undefined);
+    }
+  }, [host, setFaviconUrl]);
 
   return (
     <FullModal className="confirm-modal" onClose={() => null}>
@@ -353,11 +367,11 @@ const ProofModal = ({ pendingRequest, len, reject, accept, loading, error }: Pro
       {error && <div className="text-xs text-red-500 text-center pb-1">{error}</div>}
 
       <FullModalFooter>
-        <Button buttonType={ButtonType.SECONDARY} loading={loading} onClick={reject}>
+        <Button buttonType={ButtonType.SECONDARY} loading={loading} onClick={handleReject}>
           Reject
         </Button>
 
-        <Button className="ml-2" loading={loading} onClick={accept}>
+        <Button className="ml-2" loading={loading} onClick={handleAccept}>
           Approve
         </Button>
       </FullModalFooter>
