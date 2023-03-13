@@ -6,7 +6,7 @@ import { RLNProofRequest } from "./interfaces";
 import { getMerkleProof } from "./utils";
 
 export default class RLNService {
-  async genProof(
+  public async genProof(
     identity: ZkIdentityDecorater,
     {
       circuitFilePath,

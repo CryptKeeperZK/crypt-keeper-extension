@@ -29,7 +29,7 @@ export default class ZkKeeperController extends Handler {
 
   private lockService: LockService;
 
-  constructor() {
+  public constructor() {
     super();
     this.identityService = new IdentityService();
     this.zkValidator = new ZkValidator();
@@ -40,7 +40,7 @@ export default class ZkKeeperController extends Handler {
     log.debug("Inside ZkKepperController");
   }
 
-  initialize = (): ZkKeeperController => {
+  public initialize = (): ZkKeeperController => {
     // common
     this.add(
       RPCAction.UNLOCK,

@@ -6,7 +6,7 @@ const prettierOptions = JSON.parse(prettierConfig);
 const isProduction = process.env.NODE_ENV === "production";
 
 module.exports = {
-  extends: ["airbnb", "prettier", "plugin:react/recommended"],
+  extends: ["airbnb", "prettier", "plugin:react/recommended", "plugin:import/recommended"],
   root: true,
   ignorePatterns: ["**/src/ui/components/ConfirmRequestModal/**"],
   env: {
@@ -16,7 +16,7 @@ module.exports = {
     jest: true,
     es2020: true,
   },
-  plugins: ["json", "prettier", "react-hooks"],
+  plugins: ["json", "prettier", "react-hooks", "unused-imports", "import"],
   parser: "@babel/eslint-parser",
   settings: {
     react: {
@@ -34,7 +34,7 @@ module.exports = {
     project: path.resolve("tsconfig.json"),
     sourceType: "module",
     typescript: true,
-    ecmaVersion: 2020,
+    ecmaVersion: 2022,
     experimentalDecorators: true,
     requireConfigFile: false,
     ecmaFeatures: {
@@ -45,6 +45,8 @@ module.exports = {
   },
   reportUnusedDisableDirectives: isProduction,
   rules: {
+    "import/no-cycle": ["error"],
+    "unused-imports/no-unused-imports": "error",
     "react/jsx-filename-extension": [
       "error",
       {
@@ -133,6 +135,7 @@ module.exports = {
         "plugin:@typescript-eslint/eslint-recommended",
         "plugin:@typescript-eslint/recommended",
         "plugin:@typescript-eslint/recommended-requiring-type-checking",
+        "plugin:import/typescript",
       ],
       plugins: ["@typescript-eslint", "prettier"],
       parserOptions: {
@@ -140,6 +143,7 @@ module.exports = {
         warnOnUnsupportedTypeScriptVersion: true,
       },
       rules: {
+        "@typescript-eslint/explicit-member-accessibility": ["error"],
         "@typescript-eslint/no-floating-promises": "off",
         "@typescript-eslint/no-explicit-any": "error",
         "@typescript-eslint/explicit-module-boundary-types": "error",

@@ -9,7 +9,7 @@ interface WalletConnectionData {
 export default class WalletService {
   private walletStorage: SimpleStorage;
 
-  constructor() {
+  public constructor() {
     this.walletStorage = new SimpleStorage(WALLET_STORAGE_KEY);
   }
 

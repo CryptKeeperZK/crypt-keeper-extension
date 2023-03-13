@@ -14,7 +14,7 @@ export default class ApprovalService {
 
   private lockService: LockService;
 
-  constructor() {
+  public constructor() {
     this.allowedHosts = new Map();
     this.approvals = new SimpleStorage(APPPROVALS_DB_KEY);
     this.lockService = LockService.getInstance();

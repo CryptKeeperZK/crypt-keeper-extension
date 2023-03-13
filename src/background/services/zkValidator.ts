@@ -1,7 +1,7 @@
 import { ZkInputs } from "@src/types";
 
 export default class ZkValidator {
-  validateZkInputs = (payload: Required<ZkInputs>): Required<ZkInputs> => {
+  public validateZkInputs = (payload: Required<ZkInputs>): Required<ZkInputs> => {
     const { merkleProofArtifacts, merkleProof } = payload;
 
     if (merkleProof) {
