@@ -54,7 +54,9 @@ export const useWallet = (): IUseWalletData => {
   }, [connector]);
 
   const onConnectEagerly = useCallback(async () => {
-    const response = await postMessage({ method: RPCAction.GET_CONNECT_WALLET });
+    const response = await postMessage<{ isDisconnectedPermanently: boolean }>({
+      method: RPCAction.GET_CONNECT_WALLET,
+    });
 
     if (!response?.isDisconnectedPermanently) {
       await connector.connectEagerly?.();

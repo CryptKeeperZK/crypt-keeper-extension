@@ -1,4 +1,5 @@
 import { ZERO_ADDRESS } from "@src/config/const";
+
 import { sliceAddress, ellipsify } from "../account";
 
 describe("util/account", () => {

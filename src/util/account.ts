@@ -1,6 +1,6 @@
 import { isAddress } from "ethers";
 
-export const ellipsify = (text: string, start = 6, end = 4) => {
+export const ellipsify = (text: string, start = 6, end = 4): string => {
   if (text.length - end <= start) {
     return text;
   }

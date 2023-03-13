@@ -1,11 +1,11 @@
 import type { IconDefinition } from "@fortawesome/fontawesome-common-types";
 import type { MerkleProof } from "@zk-kit/incremental-merkle-tree";
 
-export type Request = {
+export type HandlerRequest = {
   method: string;
-  payload?: any;
+  payload?: unknown;
   error?: boolean;
-  meta?: any;
+  meta?: unknown;
 };
 
 export type IdentityStrategy = "interrep" | "random";
@@ -48,7 +48,7 @@ export enum PendingRequestType {
 export type PendingRequest = {
   id: string;
   type: PendingRequestType;
-  payload?: any;
+  payload?: unknown;
 };
 
 export type RequestResolutionAction<data> = {
@@ -81,16 +81,16 @@ export enum ZkProofType {
 
 export type MessageAction = {
   method: string;
-  payload?: any;
+  payload?: unknown;
   error?: boolean;
-  meta?: any;
+  meta?: unknown;
 };
 
 export type ReduxAction = {
   type: string;
-  payload?: any;
+  payload?: unknown;
   error?: boolean;
-  meta?: any;
+  meta?: unknown;
 };
 
 export interface DeferredPromise<T> {

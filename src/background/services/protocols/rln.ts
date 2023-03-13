@@ -30,6 +30,6 @@ export default class RLNService {
       providerMerkleProof,
     });
 
-    return rln.generateProof(signal, merkleProof, externalNullifier) as Promise<RLNFullProof>;
+    return rln.generateProof(signal, merkleProof, externalNullifier);
   }
 }

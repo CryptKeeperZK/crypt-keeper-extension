@@ -1,8 +1,10 @@
-import pushMessage from "@src/util/pushMessage";
 import { EventEmitter2 } from "eventemitter2";
+import { browser } from "webextension-polyfill-ts";
+
 import { PendingRequest, PendingRequestType, RequestResolutionAction } from "@src/types";
 import { setPendingRequest } from "@src/ui/ducks/requests";
-import { browser } from "webextension-polyfill-ts";
+import pushMessage from "@src/util/pushMessage";
+
 import BrowserUtils from "./browserUtils";
 
 let nonce = 0;
@@ -17,7 +19,7 @@ export default class RequestManager extends EventEmitter2 {
 
   getRequests = (): PendingRequest[] => this.pendingRequests;
 
-  finalizeRequest = async (action: RequestResolutionAction<any>): Promise<boolean> => {
+  finalizeRequest = async (action: RequestResolutionAction<unknown>): Promise<boolean> => {
     const { id } = action;
     if (!id) throw new Error("id not provided");
     // TODO add some mutex lock just in case something strange occurs
@@ -27,7 +29,7 @@ export default class RequestManager extends EventEmitter2 {
     return true;
   };
 
-  addToQueue = async (type: PendingRequestType, payload?: any): Promise<string> => {
+  addToQueue = async (type: PendingRequestType, payload?: unknown): Promise<string> => {
     // eslint-disable-next-line no-plusplus
     const id = `${nonce++}`;
     this.pendingRequests.push({ id, type, payload });
@@ -36,7 +38,7 @@ export default class RequestManager extends EventEmitter2 {
     return id;
   };
 
-  newRequest = async (type: PendingRequestType, payload?: any) => {
+  newRequest = async (type: PendingRequestType, payload?: unknown): Promise<unknown> => {
     const popup = await BrowserUtils.openPopup();
     const id = await this.addToQueue(type, payload);
 
@@ -50,7 +52,7 @@ export default class RequestManager extends EventEmitter2 {
 
       browser.windows.onRemoved.addListener(onPopupClose);
 
-      this.once(`${id}:finalized`, (action: RequestResolutionAction<any>) => {
+      this.once(`${id}:finalized`, (action: RequestResolutionAction<unknown>) => {
         browser.windows.onRemoved.removeListener(onPopupClose);
         switch (action.status) {
           case "accept":
@@ -60,14 +62,9 @@ export default class RequestManager extends EventEmitter2 {
             reject(new Error("user rejected."));
             return;
           default:
-            reject(new Error(`action: ${action.status} not supproted`));
+            reject(new Error(`action: ${action.status as string} not supproted`));
         }
       });
     });
-  };
-
-  handlePopup = async () => {
-    const newPopup = await BrowserUtils.openPopup();
-    if (!newPopup?.id) throw new Error("Something went wrong in opening popup");
   };
 }

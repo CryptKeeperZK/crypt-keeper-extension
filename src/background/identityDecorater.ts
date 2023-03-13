@@ -1,8 +1,10 @@
 import { Identity } from "@semaphore-protocol/identity";
+
 import { SerializedIdentity, IdentityMetadata } from "@src/types";
 
 export default class ZkIdentityDecorater {
   public zkIdentity: Identity;
+
   public metadata: IdentityMetadata;
 
   constructor(zkIdentity: Identity, metadata: IdentityMetadata) {
@@ -10,24 +12,21 @@ export default class ZkIdentityDecorater {
     this.metadata = metadata;
   }
 
-  genIdentityCommitment = (): bigint => {
-    return this.zkIdentity.getCommitment();
-  };
+  genIdentityCommitment = (): bigint => this.zkIdentity.getCommitment();
 
   setIdentityMetadataName = (name: string): IdentityMetadata => {
     this.metadata.name = name;
     return this.metadata;
   };
 
-  serialize = (): string => {
-    return JSON.stringify({
+  serialize = (): string =>
+    JSON.stringify({
       secret: this.zkIdentity.toString(),
       metadata: this.metadata,
     });
-  };
 
   static genFromSerialized = (serialized: string): ZkIdentityDecorater => {
-    const data: SerializedIdentity = JSON.parse(serialized);
+    const data = JSON.parse(serialized) as SerializedIdentity;
 
     if (!data.metadata) {
       throw new Error("Metadata missing");

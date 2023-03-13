@@ -135,44 +135,46 @@ function ConnectionApprovalModal(props: {
   error: string;
   pendingRequest: PendingRequest;
 }) {
-  const origin = props.pendingRequest.payload?.origin;
+  const { payload } = props.pendingRequest;
+  const host = (payload as { origin: string } | undefined)?.origin;
   const [checked, setChecked] = useState(false);
+
   useEffect(() => {
     (async () => {
-      if (origin) {
-        const res = await postMessage({
+      if (host) {
+        const res = await postMessage<{ noApproval: boolean }>({
           method: RPCAction.GET_HOST_PERMISSIONS,
-          payload: origin,
+          payload: host,
         });
         setChecked(res?.noApproval);
       }
     })();
-  }, [origin]);
+  }, [host]);
 
   const [faviconUrl, setFaviconUrl] = useState("");
 
   useEffect(() => {
     (async () => {
-      if (origin) {
-        const data = await getLinkPreview(origin).catch(() => undefined);
+      if (host) {
+        const data = await getLinkPreview(host).catch(() => undefined);
         const [favicon] = data?.favicons || [];
         setFaviconUrl(favicon);
       }
     })();
-  }, [origin]);
+  }, [host]);
 
   const setApproval = useCallback(
     async (noApproval: boolean) => {
-      const res = await postMessage({
+      const res = await postMessage<{ noApproval: boolean }>({
         method: RPCAction.SET_HOST_PERMISSIONS,
         payload: {
-          host: origin,
+          host: host,
           noApproval,
         },
       });
       setChecked(res?.noApproval);
     },
-    [origin],
+    [host],
   );
 
   return (
@@ -193,9 +195,7 @@ function ConnectionApprovalModal(props: {
             }}
           />
         </div>
-        <div className="text-lg font-semibold mb-2 text-center">
-          {`${origin} would like to connect to your identity`}
-        </div>
+        <div className="text-lg font-semibold mb-2 text-center">{`${host} would like to connect to your identity`}</div>
         <div className="text-sm text-gray-500 text-center">
           This site is requesting access to view your current identity. Always make sure you trust the site you interact
           with.
@@ -242,7 +242,7 @@ function DummyApprovalModal(props: {
         {props.len > 1 && <div className="flex-grow flex flex-row justify-end">{`1 of ${props.len}`}</div>}
       </FullModalHeader>
       <FullModalContent className="flex flex-col">
-        <div className="text-sm font-semibold mb-2">{payload}</div>
+        <div className="text-sm font-semibold mb-2">{payload as string}</div>
       </FullModalContent>
       {props.error && <div className="text-xs text-red-500 text-center pb-1">{props.error}</div>}
       <FullModalFooter>
@@ -386,22 +386,39 @@ const PROOF_MODAL_TITLES: Record<ProofType, string> = {
   [PendingRequestType.RLN_PROOF]: "Generate RLN Proof",
 };
 
+interface ProofRequest {
+  externalNullifier: string;
+  signal: string;
+  merkleStorageAddress?: string;
+  circuitFilePath: string;
+  verificationKey: string;
+  zkeyFilePath: string;
+  origin: string;
+}
+
 function ProofModal({ pendingRequest, len, reject, accept, loading, error }: ProofModalProps) {
-  const { circuitFilePath, externalNullifier, signal, zkeyFilePath, origin, verificationKey } =
-    pendingRequest?.payload || {};
+  const { payload } = pendingRequest || {};
+  const {
+    circuitFilePath,
+    externalNullifier,
+    signal,
+    zkeyFilePath,
+    origin: host,
+    verificationKey,
+  } = (payload || {}) as Partial<ProofRequest>;
   const operation = PROOF_MODAL_TITLES[pendingRequest?.type as ProofType] || "Generate proof";
 
   const [faviconUrl, setFaviconUrl] = useState("");
 
   useEffect(() => {
     (async () => {
-      if (origin) {
-        const data = await getLinkPreview(origin).catch(() => undefined);
+      if (host) {
+        const data = await getLinkPreview(host).catch(() => undefined);
         const [favicon] = data?.favicons || [];
         setFaviconUrl(favicon);
       }
     })();
-  }, [origin]);
+  }, [host]);
 
   return (
     <FullModal className="confirm-modal" onClose={() => null}>
@@ -421,7 +438,7 @@ function ProofModal({ pendingRequest, len, reject, accept, loading, error }: Pro
             }}
           />
         </div>
-        <div className="text-lg font-semibold mb-2 text-center">{`${origin} is requesting a semaphore proof`}</div>
+        <div className="text-lg font-semibold mb-2 text-center">{`${host} is requesting a semaphore proof`}</div>
         <div className="semaphore-proof__files flex flex-row items-center mb-2">
           <div className="semaphore-proof__file">
             <div className="semaphore-proof__file__title">Circuit</div>

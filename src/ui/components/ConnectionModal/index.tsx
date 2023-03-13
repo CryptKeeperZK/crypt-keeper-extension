@@ -35,7 +35,7 @@ export default function ConnectionModal(props: { onClose: () => void; refreshCon
   useEffect(() => {
     (async () => {
       if (url?.origin) {
-        const res = await postMessage({
+        const res = await postMessage<{ noApproval: boolean }>({
           method: RPCAction.GET_HOST_PERMISSIONS,
           payload: url?.origin,
         });
@@ -67,7 +67,7 @@ export default function ConnectionModal(props: { onClose: () => void; refreshCon
 
   const setApproval = useCallback(
     async (noApproval: boolean) => {
-      const res = await postMessage({
+      const res = await postMessage<{ noApproval: boolean }>({
         method: RPCAction.SET_HOST_PERMISSIONS,
         payload: {
           host: url?.origin,
