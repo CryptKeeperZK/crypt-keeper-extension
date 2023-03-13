@@ -1,9 +1,10 @@
-import { CreateIdentityOptions, IdentityMetadata } from "@src/types";
-import postMessage from "@src/util/postMessage";
-import { RPCAction } from "@src/constants";
-import { useSelector } from "react-redux";
-import { AppDispatch, AppRootState } from "@src/ui/store/configureAppStore";
 import deepEqual from "fast-deep-equal";
+import { useSelector } from "react-redux";
+
+import { RPCAction } from "@src/constants";
+import { CreateIdentityOptions, IdentityMetadata } from "@src/types";
+import { AppDispatch, AppRootState } from "@src/ui/store/configureAppStore";
+import postMessage from "@src/util/postMessage";
 
 export enum ActionType {
   SET_COMMITMENTS = "app/identities/setCommitments",
@@ -14,7 +15,7 @@ export enum ActionType {
 type Action<payload> = {
   type: ActionType;
   payload?: payload;
-  meta?: any;
+  meta?: unknown;
   error?: boolean;
 };
 
@@ -35,7 +36,7 @@ const initialState: State = {
 };
 
 export const createIdentity =
-  (strategy: string, messageSignature: string, options: CreateIdentityOptions) => async () =>
+  (strategy: string, messageSignature: string, options: CreateIdentityOptions) => async (): Promise<boolean> =>
     postMessage({
       method: RPCAction.CREATE_IDENTITY,
       payload: {
@@ -45,7 +46,7 @@ export const createIdentity =
       },
     });
 
-export const setActiveIdentity = (identityCommitment: string) => async () => {
+export const setActiveIdentity = (identityCommitment: string) => async (): Promise<boolean> => {
   if (!identityCommitment) {
     throw new Error("Identity Commitment not provided!");
   }
@@ -56,7 +57,7 @@ export const setActiveIdentity = (identityCommitment: string) => async () => {
   });
 };
 
-export const setIdentityName = (identityCommitment: string, name: string) => async () => {
+export const setIdentityName = (identityCommitment: string, name: string) => async (): Promise<boolean> => {
   if (!identityCommitment) {
     throw new Error("Identity Commitment not provided!");
   }
@@ -70,7 +71,7 @@ export const setIdentityName = (identityCommitment: string, name: string) => asy
   });
 };
 
-export const deleteIdentity = (identityCommitment: string) => async () => {
+export const deleteIdentity = (identityCommitment: string) => async (): Promise<boolean> => {
   if (!identityCommitment) {
     throw new Error("Identity Commitment not provided!");
   }
@@ -83,13 +84,12 @@ export const deleteIdentity = (identityCommitment: string) => async () => {
   });
 };
 
-export const deleteAllIdentities = () => async () => {
-  return postMessage({
+export const deleteAllIdentities = () => async (): Promise<boolean> =>
+  postMessage({
     method: RPCAction.DELETE_ALL_IDENTITIES,
   });
-};
 
-export const setSelected = (identityCommitment: string) => ({
+export const setSelected = (identityCommitment: string): Action<string> => ({
   type: ActionType.SET_SELECTED,
   payload: identityCommitment,
 });
@@ -99,9 +99,9 @@ interface IdentityData {
   metadata: IdentityMetadata;
 }
 
-export const setIdentities = (identities: IdentityData[]): Action<IdentityData[]> => ({
+export const setIdentities = (payload: IdentityData[]): Action<IdentityData[]> => ({
   type: ActionType.SET_COMMITMENTS,
-  payload: identities,
+  payload,
 });
 
 export const setIdentityRequestPending = (requestPending: boolean): Action<boolean> => ({
@@ -109,46 +109,48 @@ export const setIdentityRequestPending = (requestPending: boolean): Action<boole
   payload: requestPending,
 });
 
-export const fetchIdentities = () => async (dispatch: AppDispatch) => {
-  const identities = await postMessage<IdentityData[]>({ method: RPCAction.GET_IDENTITIES });
-  const selected = await postMessage<string>({ method: RPCAction.GET_ACTIVE_IDENTITY });
-  dispatch(setIdentities(identities));
-  dispatch(setSelected(selected));
-};
+export const fetchIdentities =
+  () =>
+  async (dispatch: AppDispatch): Promise<void> => {
+    const data = await postMessage<IdentityData[]>({ method: RPCAction.GET_IDENTITIES });
+    const selected = await postMessage<string>({ method: RPCAction.GET_ACTIVE_IDENTITY });
+    dispatch(setIdentities(data));
+    dispatch(setSelected(selected));
+  };
 
-// eslint-disable-next-line @typescript-eslint/default-param-last
-export default function identities(state = initialState, action: Action<any>): State {
+// eslint-disable-next-line default-param-last
+export default function identities(state = initialState, action: Action<unknown>): State {
   switch (action.type) {
     case ActionType.SET_COMMITMENTS:
-      return reduceSetIdentities(state, action);
+      return reduceSetIdentities(state, action as Action<IdentityData[]>);
     case ActionType.SET_SELECTED:
       return {
         ...state,
-        selected: action.payload,
+        selected: action.payload as string,
       };
     case ActionType.SET_REQUEST_PENDING:
       return {
         ...state,
-        requestPending: action.payload,
+        requestPending: action.payload as boolean,
       };
     default:
       return state;
   }
 }
 
-function reduceSetIdentities(
-  state: State,
-  action: Action<{ commitment: string; metadata: IdentityMetadata }[]>,
-): State {
+interface IdentityData {
+  commitment: string;
+  metadata: IdentityMetadata;
+}
+
+function reduceSetIdentities(state: State, action: Action<IdentityData[]>): State {
   const identityCommitments: string[] = [];
   const identityMap: Record<string, IdentityMetadata> = {};
 
-  if (action.payload) {
-    for (const id of action.payload) {
-      identityMap[id.commitment] = id.metadata;
-      identityCommitments.push(id.commitment);
-    }
-  }
+  action.payload?.forEach((id) => {
+    identityMap[id.commitment] = id.metadata;
+    identityCommitments.push(id.commitment);
+  });
 
   return {
     ...state,
@@ -157,7 +159,7 @@ function reduceSetIdentities(
   };
 }
 
-export const useIdentities = () =>
+export const useIdentities = (): IdentityData[] =>
   useSelector((state: AppRootState) => {
     const { identityMap, identityCommitments } = state.identities;
     return identityCommitments.map((commitment) => ({
@@ -166,7 +168,7 @@ export const useIdentities = () =>
     }));
   }, deepEqual);
 
-export const useSelectedIdentity = () =>
+export const useSelectedIdentity = (): IdentityData =>
   useSelector((state: AppRootState) => {
     const { identityMap, selected } = state.identities;
     return {
@@ -175,5 +177,5 @@ export const useSelectedIdentity = () =>
     };
   }, deepEqual);
 
-export const useIdentityRequestPending = () =>
+export const useIdentityRequestPending = (): boolean =>
   useSelector((state: AppRootState) => state.identities.requestPending, deepEqual);

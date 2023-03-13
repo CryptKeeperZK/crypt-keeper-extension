@@ -1,16 +1,18 @@
-import React, { ReactElement, ReactNode, useEffect, useState } from "react";
-import "./popup.scss";
-import { Navigate, Route, Routes } from "react-router-dom";
-import Home from "@src/ui/pages/Home";
-import { useRequestsPending, fetchRequestPendingStatus } from "@src/ui/ducks/requests";
-import { fetchStatus, useAppStatus } from "@src/ui/ducks/app";
-import Onboarding from "@src/ui/pages/Onboarding";
-import Login from "@src/ui/pages/Login";
-import ConfirmRequestModal from "@src/ui/components/ConfirmRequestModal";
-import { useAppDispatch } from "@src/ui/ducks/hooks";
 import log from "loglevel";
+import { ReactNode, useEffect, useState } from "react";
+import { Navigate, Route, Routes } from "react-router-dom";
 
-export default function Popup(): ReactElement {
+import ConfirmRequestModal from "@src/ui/components/ConfirmRequestModal";
+import { fetchStatus, useAppStatus } from "@src/ui/ducks/app";
+import { useAppDispatch } from "@src/ui/ducks/hooks";
+import { useRequestsPending, fetchRequestPendingStatus } from "@src/ui/ducks/requests";
+import { Home } from "@src/ui/pages/Home";
+import Login from "@src/ui/pages/Login";
+import Onboarding from "@src/ui/pages/Onboarding";
+
+import "./popup.scss";
+
+const Popup = (): JSX.Element | null => {
   const pendingRequests = useRequestsPending();
   const dispatch = useAppDispatch();
   const [loading, setLoading] = useState(true);
@@ -35,7 +37,7 @@ export default function Popup(): ReactElement {
   }, [unlocked]);
 
   if (loading) {
-    return <></>;
+    return null;
   }
 
   let content: ReactNode;
@@ -49,11 +51,14 @@ export default function Popup(): ReactElement {
   } else {
     content = (
       <Routes>
-        <Route path="/" element={<Home />} />
+        <Route element={<Home />} path="/" />
+
         <Route element={<Navigate replace to="/" />} />
       </Routes>
     );
   }
 
   return <div className="popup">{content}</div>;
-}
+};
+
+export default Popup;

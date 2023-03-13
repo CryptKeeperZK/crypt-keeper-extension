@@ -1,17 +1,20 @@
 import classNames from "classnames";
-import { ChangeEvent, FormEvent, MouseEvent, useCallback, useState } from "react";
+import { ChangeEvent, FormEvent, MouseEvent as ReactMouseEvent, useCallback, useState } from "react";
 
 import { IdentityMetadata } from "@src/types";
 import Icon from "@src/ui/components/Icon";
+import Input from "@src/ui/components/Input";
 import Menuable from "@src/ui/components/Menuable";
 import { ellipsify } from "@src/util/account";
+
+import "./identityListItemStyles.scss";
 
 export interface IdentityItemProps {
   commitment: string;
   selected: string;
   metadata: IdentityMetadata;
   onDeleteIdentity: (commitment: string) => Promise<void>;
-  onSelectIdentity: (commitment: string) => Promise<void>;
+  onSelectIdentity: (commitment: string) => void;
   onUpdateIdentityName: (commitment: string, name: string) => Promise<void>;
 }
 
@@ -26,12 +29,12 @@ export const IdentityItem = ({
   const [name, setName] = useState(metadata.name);
   const [isRenaming, setIsRenaming] = useState(false);
 
-  const handleDeleteIdentity = useCallback(async () => {
-    await onDeleteIdentity(commitment);
+  const handleDeleteIdentity = useCallback(() => {
+    onDeleteIdentity(commitment);
   }, [commitment, onDeleteIdentity]);
 
-  const handleSelectIdentity = useCallback(async () => {
-    await onSelectIdentity(commitment);
+  const handleSelectIdentity = useCallback(() => {
+    onSelectIdentity(commitment);
   }, [commitment, onSelectIdentity]);
 
   const handleChangeName = useCallback(
@@ -46,21 +49,22 @@ export const IdentityItem = ({
   }, [setIsRenaming]);
 
   const handleUpdateName = useCallback(
-    async (event: FormEvent | MouseEvent) => {
+    (event: FormEvent | ReactMouseEvent) => {
       event.preventDefault();
-      await onUpdateIdentityName(commitment, name);
-      setIsRenaming(false);
+      onUpdateIdentityName(commitment, name).finally(() => {
+        setIsRenaming(false);
+      });
     },
     [commitment, name, onUpdateIdentityName],
   );
 
   return (
-    <div className="p-4 identity-row" key={commitment}>
+    <div key={commitment} className="p-4 identity-row">
       <Icon
-        data-testid={`identity-select-${commitment}`}
         className={classNames("identity-row__select-icon", {
           "identity-row__select-icon--selected": selected === commitment,
         })}
+        data-testid={`identity-select-${commitment}`}
         fontAwesome="fas fa-check"
         onClick={handleSelectIdentity}
       />
@@ -68,7 +72,7 @@ export const IdentityItem = ({
       <div className="flex flex-col flex-grow">
         {isRenaming ? (
           <form className="flex flex-row items-center text-lg font-semibold" onSubmit={handleUpdateName}>
-            <input
+            <Input
               autoFocus
               className="identity-row__input-field"
               type="text"
@@ -78,8 +82,8 @@ export const IdentityItem = ({
             />
 
             <Icon
-              data-testid={`identity-rename-${commitment}`}
               className="identity-row__select-icon--selected mr-2"
+              data-testid={`identity-rename-${commitment}`}
               fontAwesome="fa-solid fa-check"
               size={1}
               onClick={handleUpdateName}
@@ -94,6 +98,7 @@ export const IdentityItem = ({
             </span>
           </div>
         )}
+
         <div className="text-base text-gray-500">{ellipsify(commitment)}</div>
       </div>
 

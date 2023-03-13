@@ -6,9 +6,9 @@ import { act, render, screen, fireEvent } from "@testing-library/react";
 
 import { ZERO_ADDRESS } from "@src/config/const";
 
-import { IdentityItem, IdentityItemProps } from "../IdentityItem";
+import { IdentityItem, IdentityItemProps } from "../Item";
 
-describe("ui/pages/Home/components/IdentityList/IdentityItem", () => {
+describe("ui/pages/Home/components/IdentityList/Item", () => {
   const defaultProps: IdentityItemProps = {
     commitment: "1",
     selected: "0",
@@ -66,6 +66,8 @@ describe("ui/pages/Home/components/IdentityList/IdentityItem", () => {
   });
 
   test("should rename identity properly", async () => {
+    (defaultProps.onUpdateIdentityName as jest.Mock).mockResolvedValue(true);
+
     render(<IdentityItem {...defaultProps} />);
 
     const menu = await screen.findByTestId("menu");
@@ -78,7 +80,7 @@ describe("ui/pages/Home/components/IdentityList/IdentityItem", () => {
     fireEvent.change(input, { target: { value: "Account #1" } });
 
     const renameIcon = await screen.findByTestId(`identity-rename-${defaultProps.commitment}`);
-    await act(async () => renameIcon.click());
+    await act(async () => Promise.resolve(renameIcon.click()));
 
     expect(defaultProps.onUpdateIdentityName).toBeCalledTimes(1);
     expect(defaultProps.onUpdateIdentityName).toBeCalledWith(defaultProps.commitment, "Account #1");

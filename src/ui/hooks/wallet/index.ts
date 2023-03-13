@@ -1,14 +1,15 @@
 import { useWeb3React } from "@web3-react/core";
-import type { Connector } from "@web3-react/types";
-import { formatUnits } from "ethers";
-import type { BrowserProvider } from "ethers/types/providers";
 import BigNumber from "bignumber.js";
+import { formatUnits } from "ethers";
 import { useCallback, useEffect, useState } from "react";
 
-import { ConnectorNames, getConnectorName } from "@src/connectors";
 import { Chain, getChains } from "@src/config/rpc";
+import { ConnectorNames, getConnectorName } from "@src/connectors";
 import { RPCAction } from "@src/constants";
 import postMessage from "@src/util/postMessage";
+
+import type { Connector } from "@web3-react/types";
+import type { BrowserProvider } from "ethers/types/providers";
 
 export interface IUseWalletData {
   isActive: boolean;
@@ -19,9 +20,9 @@ export interface IUseWalletData {
   connectorName?: ConnectorNames;
   connector?: Connector;
   provider?: BrowserProvider;
-  onConnect: () => void;
-  onConnectEagerly: () => void;
-  onDisconnect: () => void;
+  onConnect: () => Promise<void>;
+  onConnectEagerly: () => Promise<void>;
+  onDisconnect: () => Promise<void>;
 }
 
 export const useWallet = (): IUseWalletData => {
@@ -39,7 +40,7 @@ export const useWallet = (): IUseWalletData => {
 
   useEffect(() => {
     if (!address || !provider) {
-      return undefined;
+      return;
     }
 
     provider

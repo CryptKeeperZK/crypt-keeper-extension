@@ -6,9 +6,9 @@ import { act, renderHook, waitFor } from "@testing-library/react";
 import { useWeb3React } from "@web3-react/core";
 
 import { defaultWalletHookData } from "@src/config/mock/wallet";
-import { RPCAction } from "@src/constants";
 import { ConnectorNames, metamask } from "@src/connectors";
 import { mockConnector } from "@src/connectors/mock";
+import { RPCAction } from "@src/constants";
 import postMessage from "@src/util/postMessage";
 
 import { useWallet } from "..";
@@ -36,9 +36,9 @@ describe("ui/hooks/wallet", () => {
       hooks: defaultHooks,
     });
 
-    (defaultHooks.usePriorityChainId as jest.Mock).mockReturnValue(1);
+    defaultHooks.usePriorityChainId.mockReturnValue(1);
 
-    (defaultHooks.usePriorityAccount as jest.Mock).mockReturnValue(defaultWalletHookData.address);
+    defaultHooks.usePriorityAccount.mockReturnValue(defaultWalletHookData.address);
   });
 
   afterEach(() => {

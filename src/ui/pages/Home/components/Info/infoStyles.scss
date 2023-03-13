@@ -1,0 +1,49 @@
+@import "@src/util/variables";
+
+.home__info {
+  @extend %col-nowrap;
+  padding: 0.5rem 1rem;
+
+  &__account-button {
+    padding: 0.5rem 0.75rem;
+    background-color: $bg-black;
+    color: $gray-300;
+    font-weight: 600;
+    margin-right: 0.5rem;
+    justify-content: center;
+  }
+
+  &__connection-button {
+    @extend %row-nowrap;
+    align-items: center;
+    width: fit-content;
+    padding: 0.25rem;
+    border-radius: 1rem;
+    margin: 0.5rem 0;
+
+    &--connected {
+      cursor: pointer;
+
+      &:hover {
+        background-color: $gray-800;
+      }
+    }
+
+    &__icon {
+      width: 0.5rem;
+      height: 0.5rem;
+      background-color: $gray-500;
+      border-radius: 50%;
+      margin: 0.25rem 0.5rem 0.25rem 0.25rem;
+
+      &--connected {
+        background-color: $success-green;
+      }
+    }
+
+    &__text {
+      color: $gray-300;
+      margin-right: 0.5rem;
+    }
+  }
+}

@@ -1,10 +1,12 @@
 import { AnyAction, applyMiddleware, combineReducers, createStore } from "redux";
 import { createLogger } from "redux-logger";
 import thunk, { ThunkDispatch } from "redux-thunk";
+
+import { isDebugMode } from "@src/config/env";
+import { ReduxAction } from "@src/types";
+import app from "@src/ui/ducks/app";
 import identities from "@src/ui/ducks/identities";
 import requests from "@src/ui/ducks/requests";
-import app from "@src/ui/ducks/app";
-import { isDebugMode } from "@src/config/env";
 
 const rootReducer = combineReducers({
   identities,
@@ -21,7 +23,7 @@ function configureAppStore() {
       ? applyMiddleware(
           thunk,
           createLogger({
-            collapsed: (getState, action = {}) => [""].includes(action.type),
+            collapsed: (getState, action: ReduxAction = { type: "" }) => [""].includes(action.type),
           }),
         )
       : applyMiddleware(thunk),
@@ -37,4 +39,4 @@ export type AppDispatch = typeof store.dispatch;
 
 export type ReduxState = ReturnType<typeof rootReducer>;
 
-export type TypedDispatch = ThunkDispatch<ReadyState, any, AnyAction>;
+export type TypedDispatch = ThunkDispatch<ReadyState, unknown, AnyAction>;

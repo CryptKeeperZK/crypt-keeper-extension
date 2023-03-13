@@ -80,7 +80,7 @@ export default function ConnectionModal(props: { onClose: () => void; refreshCon
   );
 
   return (
-    <FullModal onClose={onClose}>
+    <FullModal data-testid="connection-modal" onClose={onClose}>
       <FullModalHeader onClose={onClose}>
         {url?.protocol === "chrome-extension:" ? "Chrome Extension Page" : url?.host}
       </FullModalHeader>

@@ -1,9 +1,10 @@
-import { useSelector } from "react-redux";
-import { AppRootState } from "@src/ui/store/configureAppStore";
 import deepEqual from "fast-deep-equal";
-import { PendingRequest } from "@src/types";
+import { useSelector } from "react-redux";
 import { Dispatch } from "redux";
+
 import { RPCAction } from "@src/constants";
+import { PendingRequest } from "@src/types";
+import { AppRootState } from "@src/ui/store/configureAppStore";
 import postMessage from "@src/util/postMessage";
 
 enum ActionType {
@@ -13,7 +14,7 @@ enum ActionType {
 type Action<payload> = {
   type: ActionType;
   payload?: payload;
-  meta?: any;
+  meta?: unknown;
   error?: boolean;
 };
 
@@ -30,21 +31,25 @@ export const setPendingRequest = (pendingRequests: PendingRequest[]): Action<Pen
   payload: pendingRequests,
 });
 
-export const fetchRequestPendingStatus = () => async (dispatch: Dispatch) => {
-  const pendingRequests = await postMessage<PendingRequest[]>({ method: RPCAction.GET_PENDING_REQUESTS });
-  dispatch(setPendingRequest(pendingRequests));
-};
+export const fetchRequestPendingStatus =
+  () =>
+  async (dispatch: Dispatch): Promise<void> => {
+    const pendingRequests = await postMessage<PendingRequest[]>({ method: RPCAction.GET_PENDING_REQUESTS });
+    dispatch(setPendingRequest(pendingRequests));
+  };
 
-export default function requests(state = initialState, action: Action<any>): State {
+// eslint-disable-next-line default-param-last
+export default function requests(state = initialState, action: Action<PendingRequest[]>): State {
   switch (action.type) {
     case ActionType.SET_PENDING_REQUESTS:
       return {
         ...state,
-        pendingRequests: action.payload,
+        pendingRequests: action.payload ?? [],
       };
     default:
       return state;
   }
 }
 
-export const useRequestsPending = () => useSelector((state: AppRootState) => state.requests.pendingRequests, deepEqual);
+export const useRequestsPending = (): PendingRequest[] =>
+  useSelector((state: AppRootState) => state.requests.pendingRequests, deepEqual);

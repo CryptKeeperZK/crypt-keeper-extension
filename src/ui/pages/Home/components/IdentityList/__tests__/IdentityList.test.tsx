@@ -125,7 +125,7 @@ describe("ui/pages/Home/components/IdentityList", () => {
     fireEvent.change(input, { target: { value: "New name" } });
 
     const renameIcon = await screen.findByTestId(`identity-rename-${defaultIdentities[0].commitment}`);
-    await act(async () => renameIcon.click());
+    await act(async () => Promise.resolve(renameIcon.click()));
 
     expect(setIdentityName).toBeCalledTimes(1);
     expect(setIdentityName).toBeCalledWith(defaultIdentities[0].commitment, "New name");
@@ -150,13 +150,13 @@ describe("ui/pages/Home/components/IdentityList", () => {
     render(<IdentityList />);
 
     const createIdentityButton = await screen.findByTestId("create-new-identity");
-    await act(async () => createIdentityButton.click());
+    await act(async () => Promise.resolve(createIdentityButton.click()));
 
     const modal = await screen.findByTestId("create-identity-modal");
     expect(modal).toBeInTheDocument();
 
     const closeIcon = await screen.findByTestId("close-icon");
-    await act(async () => closeIcon.click());
+    await act(async () => Promise.resolve(closeIcon.click()));
 
     expect(screen.queryByTestId("create-identity-modal")).not.toBeInTheDocument();
   });
