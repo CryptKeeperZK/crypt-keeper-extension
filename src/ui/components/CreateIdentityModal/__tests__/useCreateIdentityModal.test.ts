@@ -3,16 +3,16 @@
  */
 
 import { act, renderHook } from "@testing-library/react";
+import { ChangeEvent } from "react";
 
+import { defaultWalletHookData } from "@src/config/mock/wallet";
+import { IDENTITY_TYPES, WEB2_PROVIDER_OPTIONS } from "@src/constants";
 import { useAppDispatch } from "@src/ui/ducks/hooks";
 import { createIdentity } from "@src/ui/ducks/identities";
+import { useWallet } from "@src/ui/hooks/wallet";
 import { signIdentityMessage } from "@src/ui/services/identity";
 
 import { IUseCreateIdentityModalArgs, useCreateIdentityModal } from "../useCreateIdentityModal";
-import { ChangeEvent } from "react";
-import { useWallet } from "@src/ui/hooks/wallet";
-import { defaultWalletHookData } from "@src/config/mock/wallet";
-import { IDENTITY_TYPES, WEB2_PROVIDER_OPTIONS } from "@src/constants";
 
 jest.mock("@src/ui/ducks/hooks", (): unknown => ({
   useAppDispatch: jest.fn(),

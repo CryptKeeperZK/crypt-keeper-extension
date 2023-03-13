@@ -1,15 +1,13 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import classNames from "classnames";
 import { components, SingleValueProps } from "react-select";
 
 import type { SelectOption } from "@src/types";
-import classNames from "classnames";
 
-export const IconSingleValue = (props: SingleValueProps<SelectOption>): JSX.Element => {
-  return (
-    <components.SingleValue {...props}>
-      {props.data.icon && <FontAwesomeIcon icon={props.data.icon} />}
+export const IconSingleValue = ({ data, ...rest }: SingleValueProps<SelectOption>): JSX.Element => (
+  <components.SingleValue {...rest} data={data}>
+    {data.icon && <FontAwesomeIcon icon={data.icon} />}
 
-      <span className={classNames("dropdown__value-label", props.data.icon && "ml-2")}>{props.data.label}</span>
-    </components.SingleValue>
-  );
-};
+    <span className={classNames("dropdown__value-label", data.icon && "ml-2")}>{data.label}</span>
+  </components.SingleValue>
+);

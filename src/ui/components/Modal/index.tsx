@@ -1,28 +1,35 @@
-import React, { MouseEventHandler, ReactElement, ReactNode } from "react";
+import { MouseEventHandler, ReactNode, useCallback } from "react";
 import ReactDOM from "react-dom";
+
 import "./modal.scss";
 
 let modalRoot: HTMLDivElement | null;
 
-export type ModalProps = {
-  onClose?: MouseEventHandler;
+export interface ModalProps {
   className?: string;
-  children?: ReactNode | ReactNode[];
-};
+  children: ReactNode | ReactNode[];
+  onClose: MouseEventHandler;
+}
 
-export default function Modal(props: ModalProps): ReactElement {
-  const { className = "", onClose, children, ...rest } = props;
-
+export const Modal = ({ className = "", onClose, children, ...rest }: ModalProps): JSX.Element | null => {
   modalRoot = document.querySelector("#modal");
 
-  if (!modalRoot) return <></>;
+  const onClick: MouseEventHandler = useCallback((e) => e.stopPropagation(), []);
+
+  if (!modalRoot) {
+    return null;
+  }
 
   return ReactDOM.createPortal(
     <div {...rest} className="modal__overlay" onClick={onClose}>
-      <div className={`modal__wrapper ${className}`} onClick={(e) => e.stopPropagation()}>
+      <div className={`modal__wrapper ${className}`} onClick={onClick}>
         {children}
       </div>
     </div>,
     modalRoot,
   );
-}
+};
+
+Modal.defaultProps = {
+  className: "",
+};

@@ -2,9 +2,9 @@ import { KeyboardEvent as ReactKeyboardEvent, useCallback, useState } from "reac
 
 import { RPCAction } from "@src/constants";
 import LogoSVG from "@src/static/icons/logo.svg";
-import Button, { ButtonType } from "@src/ui/components/Button";
-import Icon from "@src/ui/components/Icon";
-import Input from "@src/ui/components/Input";
+import { ButtonType, Button } from "@src/ui/components/Button";
+import { Icon } from "@src/ui/components/Icon";
+import { Input } from "@src/ui/components/Input";
 import postMessage from "@src/util/postMessage";
 
 import "./login.scss";
@@ -69,7 +69,7 @@ const Login = (): JSX.Element => {
       {error && <div className="text-red-500 text-sm text-center">{error}</div>}
 
       <div className="flex flex-row items-center justify-center flex-shrink p-8 login__footer">
-        <Button btnType={ButtonType.primary} disabled={!password} loading={loading} onClick={onLogin}>
+        <Button buttonType={ButtonType.PRIMARY} disabled={!password} loading={loading} onClick={onLogin}>
           Unlock
         </Button>
       </div>

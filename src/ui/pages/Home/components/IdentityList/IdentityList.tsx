@@ -2,7 +2,7 @@ import classNames from "classnames";
 import { useCallback, useState } from "react";
 
 import { CreateIdentityModal } from "@src/ui/components/CreateIdentityModal";
-import Icon from "@src/ui/components/Icon";
+import { Icon } from "@src/ui/components/Icon";
 import { useAppDispatch } from "@src/ui/ducks/hooks";
 import {
   deleteIdentity,

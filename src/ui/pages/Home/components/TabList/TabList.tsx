@@ -1,8 +1,8 @@
 import classNames from "classnames";
 import { ReactNode, Children, useState, useMemo } from "react";
 
-import Icon from "@src/ui/components/Icon";
-import Menuable from "@src/ui/components/Menuable";
+import { Icon } from "@src/ui/components/Icon";
+import { Menuable } from "@src/ui/components/Menuable";
 
 import "./tabListStyles.scss";
 

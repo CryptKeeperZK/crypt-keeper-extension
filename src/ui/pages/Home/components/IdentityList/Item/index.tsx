@@ -2,9 +2,9 @@ import classNames from "classnames";
 import { ChangeEvent, FormEvent, MouseEvent as ReactMouseEvent, useCallback, useState } from "react";
 
 import { IdentityMetadata } from "@src/types";
-import Icon from "@src/ui/components/Icon";
-import Input from "@src/ui/components/Input";
-import Menuable from "@src/ui/components/Menuable";
+import { Icon } from "@src/ui/components/Icon";
+import { Input } from "@src/ui/components/Input";
+import { Menuable } from "@src/ui/components/Menuable";
 import { ellipsify } from "@src/util/account";
 
 import "./identityListItemStyles.scss";

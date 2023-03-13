@@ -2,7 +2,7 @@ import log from "loglevel";
 import { ReactNode, useEffect, useState } from "react";
 import { Navigate, Route, Routes } from "react-router-dom";
 
-import ConfirmRequestModal from "@src/ui/components/ConfirmRequestModal";
+import { ConfirmRequestModal } from "@src/ui/components/ConfirmRequestModal";
 import { fetchStatus, useAppStatus } from "@src/ui/ducks/app";
 import { useAppDispatch } from "@src/ui/ducks/hooks";
 import { useRequestsPending, fetchRequestPendingStatus } from "@src/ui/ducks/requests";

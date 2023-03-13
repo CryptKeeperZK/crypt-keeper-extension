@@ -8,7 +8,7 @@ const isProduction = process.env.NODE_ENV === "production";
 module.exports = {
   extends: ["airbnb", "prettier", "plugin:react/recommended"],
   root: true,
-  ignorePatterns: ["**/src/ui/components/**"],
+  ignorePatterns: ["**/src/ui/components/ConfirmRequestModal/**"],
   env: {
     browser: true,
     node: true,
