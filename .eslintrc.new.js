@@ -7,7 +7,8 @@ const isProduction = process.env.NODE_ENV === "production";
 
 module.exports = {
   extends: ["airbnb", "prettier", "plugin:react/recommended"],
-  root: false,
+  root: true,
+  ignorePatterns: ["**/src/ui/**", "**/src/contentScripts/**"],
   env: {
     browser: true,
     node: true,
@@ -84,7 +85,14 @@ module.exports = {
     "import/no-extraneous-dependencies": [
       "error",
       {
-        devDependencies: ["**/*.test.ts", "**/*.test.tsx", "**/setupTests.ts", "webpack.**.js", "jest.config.js"],
+        devDependencies: [
+          "**/*.test.ts",
+          "**/*.test.tsx",
+          "**/setupTests.ts",
+          "webpack.**.js",
+          "**/server/mockMerkleProof.ts",
+          "jest.config.js",
+        ],
       },
     ],
     "no-debugger": isProduction ? "error" : "off",

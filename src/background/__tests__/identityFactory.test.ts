@@ -4,8 +4,8 @@ import ZkIdentityDecorater from "../identityDecorater";
 import identityFactory from "../identityFactory";
 
 describe("background/identityFactory", () => {
-  test("should create a random identity", async () => {
-    const identity1 = await identityFactory("random", {
+  test("should create a random identity", () => {
+    const identity1 = identityFactory("random", {
       name: "name",
       account: ZERO_ADDRESS,
       identityStrategy: "random",
@@ -16,8 +16,8 @@ describe("background/identityFactory", () => {
     expect(identity1.zkIdentity.getNullifier()).toEqual(identity2.zkIdentity.getNullifier());
   });
 
-  test("should create a twitter identity", async () => {
-    const identity1 = await identityFactory("interrep", {
+  test("should create a twitter identity", () => {
+    const identity1 = identityFactory("interrep", {
       name: "name",
       account: ZERO_ADDRESS,
       identityStrategy: "interrep",
@@ -30,7 +30,7 @@ describe("background/identityFactory", () => {
     expect(identity1.zkIdentity.getNullifier()).toEqual(identity2.zkIdentity.getNullifier());
   });
 
-  test("should not create an interrep identity without the required parameters", async () => {
+  test("should not create an interrep identity without the required parameters", () => {
     const fun = () =>
       identityFactory("interrep", {
         name: "name",
@@ -38,6 +38,6 @@ describe("background/identityFactory", () => {
         identityStrategy: "interrep",
       });
 
-    await expect(fun).rejects.toThrow();
+    expect(fun).toThrow();
   });
 });

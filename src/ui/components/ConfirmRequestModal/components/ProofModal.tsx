@@ -15,6 +15,16 @@ interface ProofModalProps {
   pendingRequest?: PendingRequest;
 }
 
+interface ProofRequest {
+  externalNullifier: string;
+  signal: string;
+  merkleStorageAddress?: string;
+  circuitFilePath: string;
+  verificationKey: string;
+  zkeyFilePath: string;
+  origin: string;
+}
+
 type ProofType = PendingRequestType.SEMAPHORE_PROOF | PendingRequestType.RLN_PROOF;
 
 const PROOF_MODAL_TITLES: Record<ProofType, string> = {
@@ -23,21 +33,28 @@ const PROOF_MODAL_TITLES: Record<ProofType, string> = {
 };
 
 export function ProofModal({ pendingRequest, len, reject, accept, loading, error }: ProofModalProps) {
-  const { circuitFilePath, externalNullifier, signal, zkeyFilePath, origin, verificationKey } =
-    pendingRequest?.payload || {};
+  const { payload } = pendingRequest || {};
+  const {
+    circuitFilePath,
+    externalNullifier,
+    signal,
+    zkeyFilePath,
+    origin: host,
+    verificationKey,
+  } = (payload || {}) as Partial<ProofRequest>;
   const operation = PROOF_MODAL_TITLES[pendingRequest?.type as ProofType] || "Generate proof";
 
   const [faviconUrl, setFaviconUrl] = useState("");
 
   useEffect(() => {
     (async () => {
-      if (origin) {
-        const data = await getLinkPreview(origin).catch(() => undefined);
+      if (host) {
+        const data = await getLinkPreview(host).catch(() => undefined);
         const [favicon] = data?.favicons || [];
         setFaviconUrl(favicon);
       }
     })();
-  }, [origin]);
+  }, [host]);
 
   return (
     <FullModal className="confirm-modal" onClose={() => null}>
@@ -57,7 +74,7 @@ export function ProofModal({ pendingRequest, len, reject, accept, loading, error
             }}
           />
         </div>
-        <div className="text-lg font-semibold mb-2 text-center">{`${origin} is requesting a semaphore proof`}</div>
+        <div className="text-lg font-semibold mb-2 text-center">{`${host} is requesting a semaphore proof`}</div>
         <div className="semaphore-proof__files flex flex-row items-center mb-2">
           <div className="semaphore-proof__file">
             <div className="semaphore-proof__file__title">Circuit</div>

@@ -1,18 +1,6 @@
-import { getChainsConfig } from "./chains";
+import { getChainsConfig, Chain } from "./chains";
 
-export interface Chain {
-  name: string;
-  shortName: string;
-  chainId: number;
-  networkId: number;
-  infoURL: string;
-  rpc: string[];
-  nativeCurrency: {
-    name: string;
-    symbol: string;
-    decimals: number;
-  };
-}
+export type { Chain };
 
 export function getChains(): Record<number, Chain> {
   const chainsConfig = getChainsConfig();

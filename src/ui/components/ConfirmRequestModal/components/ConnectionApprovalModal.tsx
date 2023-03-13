@@ -14,38 +14,39 @@ export function ConnectionApprovalModal(props: {
   error: string;
   pendingRequest: PendingRequest;
 }) {
-  const origin = props.pendingRequest.payload?.origin;
+  const { payload } = props.pendingRequest;
+  const host = (payload as { origin: string } | undefined)?.origin;
   const dispatch = useAppDispatch();
   const [faviconUrl, setFaviconUrl] = useState("");
   const { noApproval } = useApproves();
   useEffect(() => {
     (async () => {
-      if (origin) {
-        dispatch(fetchApproval(origin));
+      if (host) {
+        dispatch(fetchApproval(host));
       }
     })();
-  }, [origin]);
+  }, [host]);
 
   useEffect(() => {
     (async () => {
-      if (origin) {
-        const data = await getLinkPreview(origin).catch(() => undefined);
+      if (host) {
+        const data = await getLinkPreview(host).catch(() => undefined);
         const [favicon] = data?.favicons || [];
         setFaviconUrl(favicon);
       }
     })();
-  }, [origin]);
+  }, [host]);
 
   const setApproval = useCallback(
     async (noApproval: boolean) => {
       dispatch(
         setHostPermission({
-          host: origin,
+          host: host,
           noApproval,
         }),
       );
     },
-    [origin],
+    [host],
   );
 
   return (
@@ -67,7 +68,7 @@ export function ConnectionApprovalModal(props: {
           />
         </div>
         <div className="text-lg font-semibold mb-2 text-center">
-          {`${origin} would like to connect to your identity`}
+          {`${host} would like to connect to your identity`}
         </div>
         <div className="text-sm text-gray-500 text-center">
           This site is requesting access to view your current identity. Always make sure you trust the site you interact

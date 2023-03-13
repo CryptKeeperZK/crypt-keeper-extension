@@ -3,10 +3,10 @@
  * Utility Functions to support browser.runtime JavaScript API
  */
 
-import browser from "webextension-polyfill";
 import log from "loglevel";
+import { browser, Runtime } from "webextension-polyfill-ts";
 
-type PropertyLastErrorType = browser.Runtime.PropertyLastErrorType;
+type PropertyLastErrorType = Runtime.PropertyLastErrorType;
 
 /**
  * Returns an Error if extension.runtime.lastError is present

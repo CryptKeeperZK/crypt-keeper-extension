@@ -1,4 +1,5 @@
 import log from "loglevel";
+import { browser } from "webextension-polyfill-ts";
 
 import { ReduxAction } from "@src/types";
 import { Runtime } from "webextension-polyfill";
@@ -26,7 +27,7 @@ export function messageSenderFactory(remotePort: Runtime.Port) {
   Object.freeze(messageSender);
 }
 
-export default async function pushMessage(message: ReduxAction) {
+export default async function pushMessage(message: ReduxAction): Promise<void> {
   try {
     messageSender.send(message);
   } catch (error) {

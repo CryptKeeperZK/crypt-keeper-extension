@@ -1,6 +1,20 @@
 import { getApiKeys } from "./env";
 
-export function getChainsConfig() {
+export interface Chain {
+  name: string;
+  shortName: string;
+  chainId: number;
+  networkId: number;
+  infoURL: string;
+  rpc: string[];
+  nativeCurrency: {
+    name: string;
+    symbol: string;
+    decimals: number;
+  };
+}
+
+export function getChainsConfig(): Chain[] {
   const {
     infura: INFURA_API_KEY,
     alchemy: ALCHEMY_API_KEY,

@@ -42,8 +42,8 @@ export default function app(state = initialState, action: Action<AppActionType, 
     case AppActionType.SET_STATUS:
       return {
         ...state,
-        initialized: action.payload.initialized,
-        unlocked: action.payload.unlocked,
+        initialized: action.payload?.initialized ?? false,
+        unlocked: action.payload?.unlocked ?? false,
       };
     default:
       return state;

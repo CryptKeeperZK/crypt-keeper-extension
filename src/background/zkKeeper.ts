@@ -1,26 +1,34 @@
-import { RPCAction } from "@src/constants";
-import { PendingRequestType, NewIdentityRequest, IdentityName } from "@src/types";
-import Handler from "./controllers/handler";
-import LockService from "./services/lock";
-import IdentityService from "./services/identity";
-import ZkValidator from "./services/zkValidator";
-import RequestManager from "./controllers/requestManager";
-import { RLNProofRequest, SemaphoreProofRequest } from "./services/protocols/interfaces";
-import ApprovalService from "./services/approval";
-import identityFactory from "./identityFactory";
-import BrowserUtils from "./controllers/browserUtils";
-import log from "loglevel";
+
 import { browser, Runtime } from "webextension-polyfill-ts";
 import pushMessage, { messageSenderFactory } from "@src/util/pushMessage";
 import { setStatus } from "@src/ui/ducks/app";
+import log from "loglevel";
+
+import { RPCAction } from "@src/constants";
+import { PendingRequestType, NewIdentityRequest, IdentityName } from "@src/types";
+
+import BrowserUtils from "./controllers/browserUtils";
+import Handler from "./controllers/handler";
+import RequestManager from "./controllers/requestManager";
+import identityFactory from "./identityFactory";
+import ApprovalService from "./services/approval";
+import IdentityService from "./services/identity";
+import LockService from "./services/lock";
+import { RLNProofRequest, SemaphoreProofRequest } from "./services/protocols/interfaces";
 import WalletService from "./services/wallet";
+import ZkValidator from "./services/zkValidator";
 
 export default class ZkKeeperController extends Handler {
   private identityService: IdentityService;
+
   private zkValidator: ZkValidator;
+
   private requestManager: RequestManager;
+
   private approvalService: ApprovalService;
+
   private walletService: WalletService;
+
   private lockService: LockService;
 
   constructor() {
@@ -69,43 +77,37 @@ export default class ZkKeeperController extends Handler {
 
     // identites
     this.add(RPCAction.CREATE_IDENTITY, this.lockService.ensure, async (payload: NewIdentityRequest) => {
-      try {
-        const { strategy, messageSignature, options } = payload;
-        if (!strategy) {
-          throw new Error("strategy not provided");
-        }
+      const { strategy, messageSignature, options } = payload;
 
-        const numOfIdentites = await this.identityService.getNumOfIdentites();
-        const config = {
-          ...options,
-          account: options.account ?? "",
-          identityStrategy: strategy,
-          name: options?.name || `Account # ${numOfIdentites}`,
-          messageSignature: strategy === "interrep" ? messageSignature : undefined,
-        };
-
-        const identity = await identityFactory(strategy, config);
-
-        if (!identity) {
-          throw new Error("Identity not created, make sure to check strategy");
-        }
-
-        await this.identityService.insert(identity);
-
-        return true;
-      } catch (error: any) {
-        log.debug("CREATE_IDENTITY: Error", error);
-        throw new Error(error.message);
+      if (!strategy) {
+        throw new Error("strategy not provided");
       }
+
+      const numOfIdentites = await this.identityService.getNumOfIdentites();
+      const config = {
+        ...options,
+        account: options.account ?? "",
+        identityStrategy: strategy,
+        name: options?.name || `Account # ${numOfIdentites}`,
+        messageSignature: strategy === "interrep" ? messageSignature : undefined,
+      };
+
+      const identity = identityFactory(strategy, config);
+
+      if (!identity) {
+        throw new Error("Identity not created, make sure to check strategy");
+      }
+
+      await this.identityService.insert(identity);
+
+      return true;
     });
 
     this.add(RPCAction.GET_COMMITMENTS, this.lockService.ensure, this.identityService.getIdentityCommitments);
     this.add(RPCAction.GET_IDENTITIES, this.lockService.ensure, this.identityService.getIdentities);
     this.add(RPCAction.SET_ACTIVE_IDENTITY, this.lockService.ensure, this.identityService.setActiveIdentity);
-    this.add(
-      RPCAction.SET_IDENTITY_NAME,
-      this.lockService.ensure,
-      async (payload: IdentityName) => await this.identityService.setIdentityName(payload),
+    this.add(RPCAction.SET_IDENTITY_NAME, this.lockService.ensure, async (payload: IdentityName) =>
+      this.identityService.setIdentityName(payload),
     );
 
     this.add(RPCAction.DELETE_IDENTITY, this.lockService.ensure, async (payload: IdentityName) =>
@@ -121,7 +123,7 @@ export default class ZkKeeperController extends Handler {
       RPCAction.PREPARE_SEMAPHORE_PROOF_REQUEST,
       this.lockService.ensure,
       this.zkValidator.validateZkInputs,
-      async (payload: SemaphoreProofRequest, meta: any) => {
+      async (payload: SemaphoreProofRequest, meta: { origin: string }) => {
         const { unlocked } = await this.lockService.getStatus();
 
         const semaphorePath = {
@@ -137,13 +139,13 @@ export default class ZkKeeperController extends Handler {
 
         const identity = await this.identityService.getActiveIdentity();
         const approved = this.approvalService.isApproved(meta.origin);
-        const permission = await this.approvalService.getPermission(meta.origin);
+        const permission = this.approvalService.getPermission(meta.origin);
 
         if (!identity) throw new Error("active identity not found");
         if (!approved) throw new Error(`${meta.origin} is not approved`);
 
         try {
-          payload = {
+          const request = {
             ...payload,
             circuitFilePath: semaphorePath.circuitFilePath,
             zkeyFilePath: semaphorePath.zkeyFilePath,
@@ -152,14 +154,12 @@ export default class ZkKeeperController extends Handler {
 
           if (!permission.noApproval) {
             await this.requestManager.newRequest(PendingRequestType.SEMAPHORE_PROOF, {
-              ...payload,
+              ...request,
               origin: meta.origin,
             });
           }
 
-          return { identity: identity.serialize(), payload };
-        } catch (err) {
-          throw err;
+          return { identity: identity.serialize(), payload: request };
         } finally {
           await BrowserUtils.closePopup();
         }
@@ -170,10 +170,10 @@ export default class ZkKeeperController extends Handler {
       RPCAction.PREPARE_RLN_PROOF_REQUEST,
       this.lockService.ensure,
       this.zkValidator.validateZkInputs,
-      async (payload: RLNProofRequest, meta: any) => {
+      async (payload: RLNProofRequest, meta: { origin: string }) => {
         const identity = await this.identityService.getActiveIdentity();
         const approved = this.approvalService.isApproved(meta.origin);
-        const permission = await this.approvalService.getPermission(meta.origin);
+        const permission = this.approvalService.getPermission(meta.origin);
 
         const rlnPath = {
           circuitFilePath: browser.runtime.getURL("js/zkeyFiles//rln/rln.wasm"),
@@ -185,7 +185,7 @@ export default class ZkKeeperController extends Handler {
         if (!approved) throw new Error(`${meta.origin} is not approved`);
 
         try {
-          payload = {
+          const request = {
             ...payload,
             circuitFilePath: rlnPath.circuitFilePath,
             zkeyFilePath: rlnPath.zkeyFilePath,
@@ -194,14 +194,12 @@ export default class ZkKeeperController extends Handler {
 
           if (!permission.noApproval) {
             await this.requestManager.newRequest(PendingRequestType.RLN_PROOF, {
-              ...payload,
+              ...request,
               origin: meta.origin,
             });
           }
 
-          return { identity: identity.serialize(), payload };
-        } catch (err) {
-          throw err;
+          return { identity: identity.serialize(), payload: request };
         } finally {
           await BrowserUtils.closePopup();
         }
@@ -209,9 +207,9 @@ export default class ZkKeeperController extends Handler {
     );
 
     // injecting
-    this.add(RPCAction.TRY_INJECT, async (payload: any) => {
-      const { origin }: { origin: string } = payload;
-      if (!origin) throw new Error("Origin not provided");
+    this.add(RPCAction.TRY_INJECT, async (payload: { origin: string }) => {
+      const { origin: host } = payload;
+      if (!host) throw new Error("Origin not provided");
 
       const { unlocked } = await this.lockService.getStatus();
 
@@ -220,26 +218,22 @@ export default class ZkKeeperController extends Handler {
         await this.lockService.awaitUnlock();
       }
 
-      const isApproved = this.approvalService.isApproved(origin);
-      const canSkipApprove = this.approvalService.canSkipApprove(origin);
+      const isApproved = this.approvalService.isApproved(host);
+      const canSkipApprove = this.approvalService.canSkipApprove(host);
 
       if (isApproved) return { isApproved, canSkipApprove };
 
       try {
-        await this.requestManager.newRequest(PendingRequestType.INJECT, { origin });
+        await this.requestManager.newRequest(PendingRequestType.INJECT, { origin: host });
         return { isApproved: true, canSkipApprove: false };
       } catch (e) {
         log.error(e);
         return { isApproved: false, canSkipApprove: false };
       }
     });
-    this.add(
-      RPCAction.APPROVE_HOST,
-      this.lockService.ensure,
-      async (payload: { host: string; noApproval: boolean }) => {
-        this.approvalService.add(payload);
-      },
-    );
+    this.add(RPCAction.APPROVE_HOST, this.lockService.ensure, (payload: { host: string; noApproval: boolean }) => {
+      this.approvalService.add(payload);
+    });
     this.add(RPCAction.IS_HOST_APPROVED, this.lockService.ensure, this.approvalService.isApproved);
     this.add(RPCAction.REMOVE_HOST, this.lockService.ensure, this.approvalService.remove);
 
@@ -248,7 +242,7 @@ export default class ZkKeeperController extends Handler {
     this.add(
       RPCAction.SET_HOST_PERMISSIONS,
       this.lockService.ensure,
-      async (payload: { host: string; noApproval: boolean }) => {
+      (payload: { host: string; noApproval: boolean }) => {
         const { host, ...permissions } = payload;
         return this.approvalService.setPermission(host, permissions);
       },

@@ -1,8 +1,7 @@
 import { ZkInputs } from "@src/types";
 
 export default class ZkValidator {
-  // eslint-disable-next-line class-methods-use-this
-  validateZkInputs(payload: Required<ZkInputs>): Required<ZkInputs> {
+  validateZkInputs = (payload: Required<ZkInputs>): Required<ZkInputs> => {
     const { merkleProofArtifacts, merkleProof } = payload;
 
     if (merkleProof) {
@@ -18,5 +17,5 @@ export default class ZkValidator {
     }
 
     return payload;
-  }
+  };
 }

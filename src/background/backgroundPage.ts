@@ -1,13 +1,13 @@
-import "subworkers";
-import "./shared/initGlobals";
-import "./appInit";
-import { browser } from "webextension-polyfill-ts";
-import { Request } from "@src/types";
-import ZkKeeperController from "./zkKeeper";
 import log from "loglevel";
+import "subworkers";
+import { browser, Runtime } from "webextension-polyfill-ts";
+
 import { deferredPromise } from "@src/background/shared/utils";
 import { isDebugMode } from "@src/config/env";
-import { Runtime } from "webextension-polyfill";
+
+import "./appInit";
+import "./shared/initGlobals";
+import ZkKeeperController from "./zkKeeper";
 
 log.setDefaultLevel(isDebugMode() ? "debug" : "info");
 
@@ -38,6 +38,7 @@ async function initialize(remotePort: Runtime.Port) {
         }
       });
     });
+
     log.debug("CryptKeeper initialization complete.");
     resolveInitialization?.(true);
   } catch (error) {
