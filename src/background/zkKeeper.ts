@@ -262,9 +262,6 @@ export default class ZkKeeperController extends Handler {
 
     // dev
     this.add(RPCAction.CLEAR_APPROVED_HOSTS, this.approvalService.clear);
-    this.add(RPCAction.DUMMY_REQUEST, async () =>
-      this.requestManager.newRequest(PendingRequestType.DUMMY, "hello from dummy"),
-    );
 
     return this;
   };

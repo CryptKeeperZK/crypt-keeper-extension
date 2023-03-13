@@ -12,8 +12,6 @@
     "test:watch": "jest --watch",
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
     "lint:fix": "eslint . --ext .js,.jsx,.ts,.tsx --fix",
-    "lint-new": "eslint . --ext .js,.jsx,.ts,.tsx --config .eslintrc.new.js",
-    "lint-new:fix": "npm run lint-new -- --fix",
     "prettier": "prettier -c .",
     "prettier:fix": "prettier -w .",
     "types": "tsc -p tsconfig.json",

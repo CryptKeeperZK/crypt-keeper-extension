@@ -2,7 +2,13 @@ import { getLinkPreview } from "link-preview-js";
 import { useCallback, useEffect, useState } from "react";
 
 import { RPCAction, IDENTITY_TYPES, WEB2_PROVIDER_OPTIONS } from "@src/constants";
-import { PendingRequest, PendingRequestType, RequestResolutionAction, SelectOption } from "@src/types";
+import {
+  IdentityStrategy,
+  PendingRequest,
+  PendingRequestType,
+  RequestResolutionAction,
+  SelectOption,
+} from "@src/types";
 import { ButtonType, Button } from "@src/ui/components/Button";
 import { Checkbox } from "@src/ui/components/Checkbox";
 import { Dropdown } from "@src/ui/components/Dropdown";
@@ -14,175 +20,60 @@ import postMessage from "@src/util/postMessage";
 
 import "./confirm-modal.scss";
 
-export const ConfirmRequestModal = (): JSX.Element => {
-  const pendingRequests = useRequestsPending();
-  const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [pendingRequest] = pendingRequests;
-
-  const reject = useCallback(
-    async (err?: any) => {
-      setLoading(true);
-      try {
-        const id = pendingRequest?.id;
-        const req: RequestResolutionAction<undefined> = {
-          id,
-          status: "reject",
-          data: err,
-        };
-        await postMessage({
-          method: RPCAction.FINALIZE_REQUEST,
-          payload: req,
-        });
-      } catch (e: any) {
-        setError(e.message);
-      } finally {
-        setLoading(false);
-      }
-    },
-    [pendingRequest],
-  );
-
-  const approve = useCallback(
-    async (data?: any) => {
-      setLoading(true);
-      try {
-        const id = pendingRequest?.id;
-        const req: RequestResolutionAction<undefined> = {
-          id,
-          status: "accept",
-          data,
-        };
-        await postMessage({
-          method: RPCAction.FINALIZE_REQUEST,
-          payload: req,
-        });
-      } catch (e: any) {
-        setError(e.message);
-      } finally {
-        setLoading(false);
-      }
-    },
-    [pendingRequest],
-  );
-
-  if (!pendingRequest) return <></>;
-
-  switch (pendingRequest.type) {
-    case PendingRequestType.INJECT:
-      return (
-        <ConnectionApprovalModal
-          accept={() => approve()}
-          error={error}
-          len={pendingRequests.length}
-          loading={loading}
-          pendingRequest={pendingRequest}
-          reject={() => reject()}
-        />
-      );
-    case PendingRequestType.SEMAPHORE_PROOF:
-    case PendingRequestType.RLN_PROOF:
-      return (
-        <ProofModal
-          accept={() => approve()}
-          error={error}
-          len={pendingRequests.length}
-          loading={loading}
-          pendingRequest={pendingRequest}
-          reject={() => reject()}
-        />
-      );
-    case PendingRequestType.DUMMY:
-      return (
-        <DummyApprovalModal
-          accept={() => approve()}
-          error={error}
-          len={pendingRequests.length}
-          loading={loading}
-          pendingRequest={pendingRequest}
-          reject={() => reject()}
-        />
-      );
-    case PendingRequestType.CREATE_IDENTITY:
-      return (
-        <CreateIdentityApprovalModal
-          accept={approve}
-          error={error}
-          len={pendingRequests.length}
-          loading={loading}
-          pendingRequest={pendingRequest}
-          reject={reject}
-        />
-      );
-    default:
-      return (
-        <DefaultApprovalModal
-          accept={approve}
-          error={error}
-          len={pendingRequests.length}
-          loading={loading}
-          pendingRequest={pendingRequest}
-          reject={reject}
-        />
-      );
-  }
-};
-
-const ConnectionApprovalModal = (props: {
+interface ConnectionModalProps {
   len: number;
-  reject: () => void;
-  accept: () => void;
   loading: boolean;
   error: string;
   pendingRequest: PendingRequest;
-}) => {
-  const { payload } = props.pendingRequest;
-  const host = (payload as { origin: string } | undefined)?.origin;
+  accept: () => void;
+  reject: () => void;
+}
+
+const ConnectionApprovalModal = ({ len, pendingRequest, error, loading, accept, reject }: ConnectionModalProps) => {
+  const { payload } = pendingRequest;
+  const host = (payload as { origin: string } | undefined)?.origin ?? "";
   const [checked, setChecked] = useState(false);
 
   useEffect(() => {
-    (async () => {
-      if (host) {
-        const res = await postMessage<{ noApproval: boolean }>({
-          method: RPCAction.GET_HOST_PERMISSIONS,
-          payload: host,
-        });
-        setChecked(res?.noApproval);
-      }
-    })();
-  }, [host]);
+    if (host) {
+      postMessage<{ noApproval: boolean }>({
+        method: RPCAction.GET_HOST_PERMISSIONS,
+        payload: host,
+      }).then((res) => setChecked(res?.noApproval));
+    }
+  }, [host, setChecked]);
 
   const [faviconUrl, setFaviconUrl] = useState("");
 
   useEffect(() => {
-    (async () => {
-      if (host) {
-        const data = await getLinkPreview(host).catch(() => undefined);
-        const [favicon] = data?.favicons || [];
-        setFaviconUrl(favicon);
-      }
-    })();
-  }, [host]);
+    if (host) {
+      getLinkPreview(host)
+        .then((data) => {
+          const [favicon] = data.favicons;
+          setFaviconUrl(favicon);
+        })
+        .catch(() => undefined);
+    }
+  }, [host, setFaviconUrl]);
 
-  const setApproval = useCallback(
-    async (noApproval: boolean) => {
-      const res = await postMessage<{ noApproval: boolean }>({
+  const onSetApproval = useCallback(
+    (noApproval: boolean) => {
+      postMessage<{ noApproval: boolean }>({
         method: RPCAction.SET_HOST_PERMISSIONS,
         payload: {
           host,
           noApproval,
         },
-      });
-      setChecked(res?.noApproval);
+      }).then((res) => setChecked(res?.noApproval));
     },
-    [host],
+    [host, setChecked],
   );
 
   return (
     <FullModal className="confirm-modal" onClose={() => null}>
       <FullModalHeader>
         Connect with CryptKeeper
-        {props.len > 1 && <div className="flex-grow flex flex-row justify-end">{`1 of ${props.len}`}</div>}
+        {len > 1 && <div className="flex-grow flex flex-row justify-end">{`1 of ${len}`}</div>}
       </FullModalHeader>
 
       <FullModalContent className="flex flex-col items-center">
@@ -212,7 +103,7 @@ const ConnectionApprovalModal = (props: {
             checked={checked}
             className="mr-2 mt-2 flex-shrink-0"
             onChange={(e) => {
-              setApproval(e.target.checked);
+              onSetApproval(e.target.checked);
             }}
           />
 
@@ -220,14 +111,14 @@ const ConnectionApprovalModal = (props: {
         </div>
       </FullModalContent>
 
-      {props.error && <div className="text-xs text-red-500 text-center pb-1">{props.error}</div>}
+      {error && <div className="text-xs text-red-500 text-center pb-1">{error}</div>}
 
       <FullModalFooter>
-        <Button buttonType={ButtonType.SECONDARY} loading={props.loading} onClick={props.reject}>
+        <Button buttonType={ButtonType.SECONDARY} loading={loading} onClick={reject}>
           Reject
         </Button>
 
-        <Button className="ml-2" loading={props.loading} onClick={props.accept}>
+        <Button className="ml-2" loading={loading} onClick={accept}>
           Approve
         </Button>
       </FullModalFooter>
@@ -235,77 +126,34 @@ const ConnectionApprovalModal = (props: {
   );
 };
 
-const DummyApprovalModal = (props: {
+interface CreateIdentityApprovalModalProps {
   len: number;
-  reject: () => void;
-  accept: () => void;
   loading: boolean;
   error: string;
-  pendingRequest: PendingRequest;
-}) => {
-  const { payload } = props.pendingRequest;
+  accept: (data?: {
+    provider: IdentityStrategy;
+    options: Partial<{ nonce: number; web2Provider: SelectOption }>;
+  }) => void;
+  reject: (error?: Error) => void;
+}
 
-  return (
-    <FullModal className="confirm-modal" onClose={() => null}>
-      <FullModalHeader>
-        Dummy Request
-        {props.len > 1 && <div className="flex-grow flex flex-row justify-end">{`1 of ${props.len}`}</div>}
-      </FullModalHeader>
-
-      <FullModalContent className="flex flex-col">
-        <div className="text-sm font-semibold mb-2">{payload as string}</div>
-      </FullModalContent>
-
-      {props.error && <div className="text-xs text-red-500 text-center pb-1">{props.error}</div>}
-
-      <FullModalFooter>
-        <Button buttonType={ButtonType.SECONDARY} loading={props.loading} onClick={props.reject}>
-          Reject
-        </Button>
-
-        <Button className="ml-2" loading={props.loading} onClick={props.accept}>
-          Approve
-        </Button>
-      </FullModalFooter>
-    </FullModal>
-  );
-};
-
-const CreateIdentityApprovalModal = (props: {
-  len: number;
-  reject: (error?: any) => void;
-  accept: (data?: any) => void;
-  loading: boolean;
-  error: string;
-  pendingRequest: PendingRequest;
-}) => {
+const CreateIdentityApprovalModal = ({ len, loading, error, accept, reject }: CreateIdentityApprovalModalProps) => {
   const [nonce, setNonce] = useState(0);
   const [identityType, setIdentityType] = useState(IDENTITY_TYPES[0]);
   const [web2Provider, setWeb2Provider] = useState(WEB2_PROVIDER_OPTIONS[0]);
 
-  const create = useCallback(async () => {
-    let options: any = {
-      nonce,
-      web2Provider,
-    };
-    let provider = "interrep";
+  const onApprove = useCallback(() => {
+    const options = identityType.value !== "random" ? { nonce, web2Provider } : {};
+    const provider = identityType.value as IdentityStrategy;
 
-    if (identityType.value === "random") {
-      provider = "random";
-      options = {};
-    }
-
-    props.accept({
-      provider,
-      options,
-    });
-  }, [nonce, web2Provider, identityType, props.accept]);
+    accept({ provider, options });
+  }, [nonce, web2Provider, identityType, accept]);
 
   return (
     <FullModal className="confirm-modal" onClose={() => null}>
       <FullModalHeader>
         Create Identity
-        {props.len > 1 && <div className="flex-grow flex flex-row justify-end">{`1 of ${props.len}`}</div>}
+        {len > 1 && <div className="flex-grow flex flex-row justify-end">{`1 of ${len}`}</div>}
       </FullModalHeader>
 
       <FullModalContent>
@@ -345,14 +193,14 @@ const CreateIdentityApprovalModal = (props: {
         )}
       </FullModalContent>
 
-      {props.error && <div className="text-xs text-red-500 text-center pb-1">{props.error}</div>}
+      {error && <div className="text-xs text-red-500 text-center pb-1">{error}</div>}
 
       <FullModalFooter>
-        <Button buttonType={ButtonType.SECONDARY} loading={props.loading} onClick={() => props.reject()}>
+        <Button buttonType={ButtonType.SECONDARY} loading={loading} onClick={() => reject()}>
           Reject
         </Button>
 
-        <Button className="ml-2" loading={props.loading} onClick={create}>
+        <Button className="ml-2" loading={loading} onClick={onApprove}>
           Approve
         </Button>
       </FullModalFooter>
@@ -360,32 +208,34 @@ const CreateIdentityApprovalModal = (props: {
   );
 };
 
-const DefaultApprovalModal = (props: {
+interface DefaultApprovalModalProps {
   len: number;
-  reject: () => void;
-  accept: () => void;
   loading: boolean;
   error: string;
   pendingRequest: PendingRequest;
-}) => (
+  accept: () => void;
+  reject: () => void;
+}
+
+const DefaultApprovalModal = ({ len, loading, error, pendingRequest, accept, reject }: DefaultApprovalModalProps) => (
   <FullModal className="confirm-modal" onClose={() => null}>
     <FullModalHeader>
       Unhandled Request
-      {props.len > 1 && <div className="flex-grow flex flex-row justify-end">{`1 of ${props.len}`}</div>}
+      {len > 1 && <div className="flex-grow flex flex-row justify-end">{`1 of ${len}`}</div>}
     </FullModalHeader>
 
     <FullModalContent className="flex flex-col">
-      <div className="text-sm font-semibold mb-2 break-all">{JSON.stringify(props.pendingRequest)}</div>
+      <div className="text-sm font-semibold mb-2 break-all">{JSON.stringify(pendingRequest)}</div>
     </FullModalContent>
 
-    {props.error && <div className="text-xs text-red-500 text-center pb-1">{props.error}</div>}
+    {error && <div className="text-xs text-red-500 text-center pb-1">{error}</div>}
 
     <FullModalFooter>
-      <Button buttonType={ButtonType.SECONDARY} loading={props.loading} onClick={props.reject}>
+      <Button buttonType={ButtonType.SECONDARY} loading={loading} onClick={reject}>
         Reject
       </Button>
 
-      <Button disabled className="ml-2" loading={props.loading} onClick={props.accept}>
+      <Button disabled className="ml-2" loading={loading} onClick={accept}>
         Approve
       </Button>
     </FullModalFooter>
@@ -394,11 +244,11 @@ const DefaultApprovalModal = (props: {
 
 interface ProofModalProps {
   len: number;
-  reject: () => void;
-  accept: () => void;
   loading: boolean;
   error: string;
-  pendingRequest?: PendingRequest;
+  pendingRequest: PendingRequest;
+  accept: () => void;
+  reject: () => void;
 }
 
 type ProofType = PendingRequestType.SEMAPHORE_PROOF | PendingRequestType.RLN_PROOF;
@@ -419,13 +269,13 @@ interface ProofRequest {
 }
 
 const ProofModal = ({ pendingRequest, len, reject, accept, loading, error }: ProofModalProps) => {
-  const { payload } = pendingRequest || {};
+  const { payload } = pendingRequest;
   const {
     circuitFilePath,
     externalNullifier,
     signal,
     zkeyFilePath,
-    origin: host,
+    origin: host = "",
     verificationKey,
   } = (payload || {}) as Partial<ProofRequest>;
   const operation = PROOF_MODAL_TITLES[pendingRequest?.type as ProofType] || "Generate proof";
@@ -513,4 +363,100 @@ const ProofModal = ({ pendingRequest, len, reject, accept, loading, error }: Pro
       </FullModalFooter>
     </FullModal>
   );
+};
+
+export const ConfirmRequestModal = (): JSX.Element | null => {
+  const pendingRequests = useRequestsPending();
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [pendingRequest] = pendingRequests;
+
+  const reject = useCallback(
+    (err?: Error) => {
+      const req: RequestResolutionAction<Error | undefined> = {
+        id: pendingRequest?.id,
+        status: "reject",
+        data: err,
+      };
+
+      setLoading(true);
+      postMessage({
+        method: RPCAction.FINALIZE_REQUEST,
+        payload: req,
+      })
+        .catch((e: Error) => setError(e.message))
+        .finally(() => setLoading(false));
+    },
+    [pendingRequest, setLoading, setError],
+  );
+
+  const approve = useCallback(
+    (data?: unknown) => {
+      const req: RequestResolutionAction<unknown | undefined> = {
+        id: pendingRequest?.id,
+        status: "accept",
+        data,
+      };
+
+      setLoading(true);
+      postMessage({
+        method: RPCAction.FINALIZE_REQUEST,
+        payload: req,
+      })
+        .catch((e: Error) => setError(e.message))
+        .finally(() => setLoading(false));
+    },
+    [pendingRequest, setError, setLoading],
+  );
+
+  if (!pendingRequest) {
+    return null;
+  }
+
+  switch (pendingRequest.type) {
+    case PendingRequestType.INJECT:
+      return (
+        <ConnectionApprovalModal
+          accept={() => approve()}
+          error={error}
+          len={pendingRequests.length}
+          loading={loading}
+          pendingRequest={pendingRequest}
+          reject={() => reject()}
+        />
+      );
+    case PendingRequestType.SEMAPHORE_PROOF:
+    case PendingRequestType.RLN_PROOF:
+      return (
+        <ProofModal
+          accept={approve}
+          error={error}
+          len={pendingRequests.length}
+          loading={loading}
+          pendingRequest={pendingRequest}
+          reject={reject}
+        />
+      );
+    case PendingRequestType.CREATE_IDENTITY:
+      return (
+        <CreateIdentityApprovalModal
+          accept={approve}
+          error={error}
+          len={pendingRequests.length}
+          loading={loading}
+          reject={reject}
+        />
+      );
+    default:
+      return (
+        <DefaultApprovalModal
+          accept={approve}
+          error={error}
+          len={pendingRequests.length}
+          loading={loading}
+          pendingRequest={pendingRequest}
+          reject={reject}
+        />
+      );
+  }
 };

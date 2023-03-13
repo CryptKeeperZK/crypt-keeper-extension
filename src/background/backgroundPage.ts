@@ -18,12 +18,14 @@ const {
   reject: rejectInitialization,
 } = deferredPromise<unknown>();
 
+// eslint-disable-next-line @typescript-eslint/no-misused-promises
 browser.runtime.onInstalled.addListener(async () => {
   log.debug("CryptKeeper onInstalled Event, initializing...");
   await isInitialized;
   log.debug("CryptKeeper onInstalled Event, initializing completed...");
 });
 
+// eslint-disable-next-line @typescript-eslint/no-misused-promises
 browser.runtime.onConnect.addListener(async () => {
   log.debug("CryptKeeper onConnect Event, initializing...");
   await isInitialized;
