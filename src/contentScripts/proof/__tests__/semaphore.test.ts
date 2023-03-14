@@ -38,7 +38,7 @@ describe("contentScripts/proof/semaphore", () => {
 
   test("should generate proof properly", async () => {
     const semaphoreProofGenerator = SemaphoreProofGenerator.getInstance();
-    const [semaphoreServiceInstance] = (SemaphoreService as jest.Mock).mock.instances;
+    const [semaphoreServiceInstance] = (SemaphoreService as jest.Mock).mock.instances as [{ genProof: jest.Mock }];
     semaphoreServiceInstance.genProof.mockResolvedValue(emptyFullProof);
 
     const result = await semaphoreProofGenerator.generate(defaultGenerateArgs);

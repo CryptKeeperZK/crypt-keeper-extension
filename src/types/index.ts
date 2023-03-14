@@ -104,3 +104,10 @@ export type SelectOption = {
   readonly label: string;
   readonly icon: IconDefinition | null;
 };
+
+export interface InjectedMessageData<M = unknown, P = unknown> {
+  target: string;
+  nonce: string;
+  message: M;
+  payload: [string, P];
+}

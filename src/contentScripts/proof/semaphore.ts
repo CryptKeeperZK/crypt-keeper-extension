@@ -9,7 +9,7 @@ export interface ISemaphoreGenerateArgs {
 }
 
 export class SemaphoreProofGenerator {
-  private static INSTANCE?: SemaphoreProofGenerator;
+  private static INSTANCE: SemaphoreProofGenerator;
 
   private semaphoreService: SemaphoreService;
 
@@ -22,7 +22,7 @@ export class SemaphoreProofGenerator {
       SemaphoreProofGenerator.INSTANCE = new SemaphoreProofGenerator();
     }
 
-    return SemaphoreProofGenerator.INSTANCE as SemaphoreProofGenerator;
+    return SemaphoreProofGenerator.INSTANCE;
   }
 
   generate({ identity, payload }: ISemaphoreGenerateArgs): Promise<SemaphoreProof> {

@@ -1,17 +1,16 @@
-/* eslint-disable @typescript-eslint/no-use-before-define */
-
 import { MerkleProof } from "@zk-kit/incremental-merkle-tree";
 import log from "loglevel";
 
-import { MerkleProofArtifacts } from "@src/types";
 import { RPCAction } from "@src/constants";
+import { InjectedMessageData, MerkleProofArtifacts } from "@src/types";
+
 import { IRlnGenerateArgs, ISemaphoreGenerateArgs, RlnProofGenerator, SemaphoreProofGenerator } from "./proof";
 
 export type IRequest = {
   method: string;
-  payload?: any;
+  payload?: unknown;
   error?: boolean;
-  meta?: any;
+  meta?: Record<string, unknown>;
 };
 
 const promises: {
@@ -156,10 +155,10 @@ interface Approvals {
   canSkipApprove: boolean;
 }
 
-async function tryInject(origin: string): Promise<Approvals> {
+async function tryInject(host: string): Promise<Approvals> {
   return post({
     method: RPCAction.TRY_INJECT,
-    payload: { origin },
+    payload: { origin: host },
   }) as Promise<Approvals>;
 }
 
@@ -185,12 +184,10 @@ const off = (eventName: string, cb: (data: unknown) => void) => {
   EVENTS[eventName] = bucket.filter((callback) => callback === cb);
 };
 
-const emit = (eventName: string, payload?: any) => {
+const emit = (eventName: string, payload?: unknown) => {
   const bucket = EVENTS[eventName] || [];
 
-  for (const cb of bucket) {
-    cb(payload);
-  }
+  bucket.forEach((cb) => cb(payload));
 };
 
 /**
@@ -276,7 +273,7 @@ async function post(message: IRequest) {
   });
 }
 
-window.addEventListener("message", (event) => {
+window.addEventListener("message", (event: MessageEvent<InjectedMessageData>) => {
   const { data } = event;
 
   if (data && data.target === "injected-injectedscript") {
