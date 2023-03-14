@@ -3,32 +3,42 @@ import { IdentityActionType } from "@src/ui/ducks/identities";
 import { AppActionType } from "@src/ui/ducks/app";
 import log from "loglevel";
 
+function intjectScirpt() {
+  const url = browser.runtime.getURL("js/injected.js");
+  const container = document.head || document.documentElement;
+  const scriptTag = document.createElement("script");
+  scriptTag.src = url;
+  scriptTag.setAttribute("async", "false");
+  container.insertBefore(scriptTag, container.children[0]);
+  container.removeChild(scriptTag);
+}
+
 (async function () {
   try {
-    const url = browser.runtime.getURL("js/injected.js");
-    const container = document.head || document.documentElement;
-    const scriptTag = document.createElement("script");
-    scriptTag.src = url;
-    scriptTag.setAttribute("async", "false");
-    container.insertBefore(scriptTag, container.children[0]);
-    container.removeChild(scriptTag);
+    intjectScirpt();
+
+    const extensionPort = browser.runtime.connect(undefined, { name: "contentscript" });
 
     window.addEventListener("message", async (event) => {
+      console.log("window.addEventListener")
+      console.log(event)
       const { data } = event;
       if (data && data.target === "injected-contentscript") {
-        const res = await browser.runtime.sendMessage(data.message);
-        window.postMessage(
-          {
-            target: "injected-injectedscript",
-            payload: res,
-            nonce: data.nonce,
-          },
-          "*",
-        );
+        extensionPort.postMessage(data.message);
+        // window.postMessage(
+        //   {
+        //     target: "injected-injectedscript",
+        //     payload: res,
+        //     nonce: data.nonce,
+        //   },
+        //   "*",
+        // );
       }
     });
 
-    browser.runtime.onMessage.addListener((action) => {
+    extensionPort.onMessage.addListener((action) => {
+      console.log("extensionPort.onMessage")
+      console.log(action)
       switch (action.type) {
         case IdentityActionType.SET_SELECTED:
           window.postMessage(
