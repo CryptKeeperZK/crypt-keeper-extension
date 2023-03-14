@@ -1,5 +1,5 @@
 import { IDENTITY_TYPES, WEB2_PROVIDER_OPTIONS } from "@src/constants";
-import { PendingRequest, SelectOption } from "@src/types";
+import { SelectOption } from "@src/types";
 import { useCallback, useState } from "react";
 import Button, { ButtonType } from "../../Button";
 import { Dropdown } from "../../Dropdown";
@@ -12,7 +12,6 @@ export function CreateIdentityApprovalModal(props: {
   accept: (data?: any) => void;
   loading: boolean;
   error: string;
-  pendingRequest: PendingRequest;
 }) {
   const [nonce, setNonce] = useState(0);
   const [identityType, setIdentityType] = useState(IDENTITY_TYPES[0]);

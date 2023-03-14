@@ -1,3 +1,5 @@
+import { RLNProofRequest, SemaphoreProofRequest } from "@src/background/services/protocols/interfaces";
+
 import type { IconDefinition } from "@fortawesome/fontawesome-common-types";
 import type { MerkleProof } from "@zk-kit/incremental-merkle-tree";
 
@@ -52,10 +54,22 @@ export enum PendingRequestType {
   CREATE_IDENTITY,
 }
 
-export type PendingRequest = {
+export type PendingRequestOrigin = {
+  origin?: string;
+};
+
+export declare type PendingRequestPayloadOptions =
+  | string
+  | PendingRequestOrigin
+  | SemaphoreProofRequest
+  | RLNProofRequest;
+
+export declare type PendingRequestPayloadOption<PendingRequestPayloadOptions> = PendingRequestPayloadOptions;
+
+export type PendingRequest<PendingRequestPayloadOptions> = {
   id: string;
   type: PendingRequestType;
-  payload?: unknown;
+  payload: PendingRequestPayloadOption<PendingRequestPayloadOptions>;
 };
 
 export type RequestResolutionAction<data> = {

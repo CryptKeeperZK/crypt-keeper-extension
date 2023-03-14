@@ -1,4 +1,4 @@
-import { PendingRequest } from "@src/types";
+import { PendingRequest, PendingRequestOrigin } from "@src/types";
 import { fetchApproval, setHostPermission, useAppDispatch, useApproves } from "@src/ui/ducks";
 import { getLinkPreview } from "link-preview-js";
 import { useCallback, useEffect, useState } from "react";
@@ -12,10 +12,11 @@ export function ConnectionApprovalModal(props: {
   accept: () => void;
   loading: boolean;
   error: string;
-  pendingRequest: PendingRequest;
+  pendingRequest: PendingRequest<PendingRequestOrigin>;
 }) {
   const { payload } = props.pendingRequest;
   const host = (payload as { origin: string } | undefined)?.origin;
+  const origin = props.pendingRequest.payload?.origin ? props.pendingRequest.payload?.origin : "";
   const dispatch = useAppDispatch();
   const [faviconUrl, setFaviconUrl] = useState("");
   const { noApproval } = useApproves();

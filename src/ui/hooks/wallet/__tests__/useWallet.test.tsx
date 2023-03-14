@@ -12,6 +12,10 @@ import { mockConnector } from "@src/connectors/mock";
 import postMessage from "@src/util/postMessage";
 
 import { useWallet } from "..";
+import { store } from "@src/ui/store/configureAppStore";
+import { ReactNode } from "react";
+import { Provider } from "react-redux"
+import { Store } from "redux"
 
 jest.mock("@web3-react/core", (): unknown => ({
   ...jest.requireActual("@web3-react/core"),
@@ -20,10 +24,28 @@ jest.mock("@web3-react/core", (): unknown => ({
 
 jest.mock("@src/util/postMessage");
 
+type WrapperProvider = ({children} : {
+  children: ReactNode
+}) => JSX.Element
+
+interface ReduxProviderTypes {
+  children: ReactNode,
+  reduxStore: Store
+}
+
+const ReduxProvider = ({ children, reduxStore }: ReduxProviderTypes) => (
+  <Provider store={reduxStore}>{children}</Provider>
+)
+
 describe("ui/hooks/wallet", () => {
+  let wrapper: WrapperProvider
   const defaultHooks = { usePriorityChainId: jest.fn(), usePriorityAccount: jest.fn(), usePriorityProvider: jest.fn() };
 
   beforeEach(() => {
+    wrapper = ({ children }) => (
+      <ReduxProvider reduxStore={store}>{children}</ReduxProvider>
+    );
+  
     (defaultWalletHookData.provider?.getBalance as jest.Mock).mockResolvedValue(
       defaultWalletHookData.balance?.toString(10),
     );
@@ -46,7 +68,7 @@ describe("ui/hooks/wallet", () => {
   });
 
   test("should return connected data", async () => {
-    const { result } = renderHook(() => useWallet());
+    const { result } = renderHook(() => useWallet(), { wrapper });
 
     await waitFor(() => expect(result.current.balance).toBeDefined());
 
@@ -67,7 +89,7 @@ describe("ui/hooks/wallet", () => {
       hooks: defaultHooks,
     });
 
-    const { result } = renderHook(() => useWallet());
+    const { result } = renderHook(() => useWallet(), { wrapper });
 
     await waitFor(() => expect(result.current.balance).toBeDefined());
 
@@ -86,7 +108,7 @@ describe("ui/hooks/wallet", () => {
       isActivating: false,
     });
 
-    const { result } = renderHook(() => useWallet());
+    const { result } = renderHook(() => useWallet(), { wrapper });
 
     expect(result.current.isActive).toBe(false);
     expect(result.current.isActivating).toBe(false);
@@ -99,7 +121,7 @@ describe("ui/hooks/wallet", () => {
 
   test("should connect properly", async () => {
     const activateSpy = jest.spyOn(mockConnector, "activate");
-    const { result } = renderHook(() => useWallet());
+    const { result } = renderHook(() => useWallet(), { wrapper });
 
     await act(async () => result.current.onConnect());
 
@@ -114,7 +136,7 @@ describe("ui/hooks/wallet", () => {
   test("should connect eagerly properly", async () => {
     const connectEagerlySpy = jest.spyOn(mockConnector, "connectEagerly");
     (postMessage as jest.Mock).mockReturnValue({ isDisconnectedPermanently: false });
-    const { result } = renderHook(() => useWallet());
+    const { result } = renderHook(() => useWallet(), { wrapper });
 
     await act(async () => result.current.onConnectEagerly());
 
@@ -125,7 +147,7 @@ describe("ui/hooks/wallet", () => {
 
   test("should disconnect properly", async () => {
     const resetStateSpy = jest.spyOn(mockConnector, "resetState");
-    const { result } = renderHook(() => useWallet());
+    const { result } = renderHook(() => useWallet(), { wrapper });
 
     await act(async () => result.current.onDisconnect());
 

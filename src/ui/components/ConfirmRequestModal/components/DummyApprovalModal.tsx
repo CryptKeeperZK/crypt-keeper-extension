@@ -8,7 +8,7 @@ export function DummyApprovalModal(props: {
   accept: () => void;
   loading: boolean;
   error: string;
-  pendingRequest: PendingRequest;
+  pendingRequest: PendingRequest<string>;
 }) {
   const { payload } = props.pendingRequest;
 

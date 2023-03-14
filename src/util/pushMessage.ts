@@ -1,8 +1,8 @@
 import log from "loglevel";
+import { Runtime } from "webextension-polyfill";
 import { browser } from "webextension-polyfill-ts";
 
 import { ReduxAction } from "@src/types";
-import { Runtime } from "webextension-polyfill";
 
 let messageSender: MessageSender;
 

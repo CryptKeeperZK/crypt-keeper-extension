@@ -8,6 +8,7 @@ import { isDebugMode } from "@src/config/env";
 import "./appInit";
 import "./shared/initGlobals";
 import ZkKeeperController from "./zkKeeper";
+
 import { Runtime } from "webextension-polyfill";
 
 log.setDefaultLevel(isDebugMode() ? "debug" : "info");

@@ -1,7 +1,7 @@
 import { bigintToHex } from "bigint-conversion";
 import { browser } from "webextension-polyfill-ts";
 
-import { IdentityName } from "@src/types";
+import { IdentityMetadata, IdentityName } from "@src/types";
 import { setIdentities, setSelected } from "@src/ui/ducks/identities";
 import { ellipsify } from "@src/util/account";
 import pushMessage from "@src/util/pushMessage";
@@ -132,7 +132,10 @@ export default class IdentityService {
     return { commitments, identities };
   };
 
-  public getIdentities = async (): Promise<void> => {
+  public getIdentities = async (): Promise<{ 
+    commitment: string;
+    metadata: IdentityMetadata  
+  }[]> => {
     const { commitments, identities } = await this.getIdentityCommitments();
 
     const identitiesMapped = commitments
@@ -148,6 +151,8 @@ export default class IdentityService {
       });
 
     pushMessage(setIdentities(identitiesMapped));
+
+    return identitiesMapped;
   };
 
   public insert = async (newIdentity: ZkIdentityDecorater): Promise<boolean> => {

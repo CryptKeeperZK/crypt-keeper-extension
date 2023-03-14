@@ -8,7 +8,7 @@ export function DefaultApprovalModal(props: {
   accept: () => void;
   loading: boolean;
   error: string;
-  pendingRequest: PendingRequest;
+  pendingRequest: PendingRequest<string>;
 }) {
   return (
     <FullModal className="confirm-modal" onClose={() => null}>

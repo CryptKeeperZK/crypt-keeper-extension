@@ -1,3 +1,4 @@
+import { RLNProofRequest, SemaphoreProofRequest } from "@src/background/services/protocols/interfaces";
 import { PendingRequest, PendingRequestType } from "@src/types";
 import { getLinkPreview } from "link-preview-js";
 import { useState, useEffect } from "react";
@@ -12,7 +13,7 @@ interface ProofModalProps {
   accept: () => void;
   loading: boolean;
   error: string;
-  pendingRequest?: PendingRequest;
+  pendingRequest?: PendingRequest<SemaphoreProofRequest | RLNProofRequest>;
 }
 
 interface ProofRequest {

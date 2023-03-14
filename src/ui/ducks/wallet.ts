@@ -55,4 +55,5 @@ export default function wallets(
   }
 }
 
-export const useWallets = () => useSelector((state: AppRootState) => state.wallets, deepEqual);
+export const useWallets = () =>
+  useSelector((state: AppRootState) => state.wallets.isDisconnectedPermanently, deepEqual);

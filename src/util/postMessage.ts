@@ -1,8 +1,7 @@
-import type { MessageAction } from "@src/types";
-
 import log from "loglevel";
-
 import { Runtime } from "webextension-polyfill";
+
+import type { MessageAction } from "@src/types";
 
 let messageSender: MessageSender;
 

@@ -2,7 +2,7 @@ import { useSelector } from "react-redux";
 import { AppRootState } from "@src/ui/store/configureAppStore";
 import deepEqual from "fast-deep-equal";
 import { RPCAction } from "@src/constants";
-import { Action, PendingRequest } from "@src/types";
+import { Action, PendingRequest, PendingRequestPayloadOptions } from "@src/types";
 import postMessage from "@src/util/postMessage";
 
 enum ActionType {
@@ -10,14 +10,16 @@ enum ActionType {
 }
 
 type State = {
-  pendingRequests: PendingRequest[];
+  pendingRequests: PendingRequest<PendingRequestPayloadOptions>[];
 };
 
 const initialState: State = {
   pendingRequests: [],
 };
 
-export const setPendingRequest = (pendingRequests: PendingRequest[]): Action<ActionType, PendingRequest[]> => ({
+export const setPendingRequest = (
+  pendingRequests: PendingRequest<PendingRequestPayloadOptions>[],
+): Action<ActionType, PendingRequest<PendingRequestPayloadOptions>[]> => ({
   type: ActionType.SET_PENDING_REQUESTS,
   payload: pendingRequests,
 });

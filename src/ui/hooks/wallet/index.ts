@@ -30,7 +30,7 @@ export const useWallet = (): IUseWalletData => {
   const { connector, isActive, isActivating, provider, hooks } = useWeb3React();
   const connectorName = getConnectorName(connector);
 
-  const { isDisconnectedPermanently } = useWallets();
+  const isDisconnectedPermanently = useWallets();
 
   const handlers = hooks;
   const chains = getChains();

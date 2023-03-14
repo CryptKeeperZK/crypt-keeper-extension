@@ -1,9 +1,9 @@
 import { FullProof } from "@semaphore-protocol/proof";
 import { MerkleProof } from "@zk-kit/incremental-merkle-tree";
 
-import { MerkleProofArtifacts } from "@src/types";
+import { MerkleProofArtifacts, PendingRequestOrigin } from "@src/types";
 
-export interface SemaphoreProofRequest {
+export interface SemaphoreProofRequest extends PendingRequestOrigin {
   externalNullifier: string;
   signal: string;
   merkleStorageAddress?: string;

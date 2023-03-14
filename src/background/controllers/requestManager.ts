@@ -1,7 +1,13 @@
 import { EventEmitter2 } from "eventemitter2";
 import { browser } from "webextension-polyfill-ts";
 
-import { PendingRequest, PendingRequestType, RequestResolutionAction } from "@src/types";
+import {
+  PendingRequest,
+  PendingRequestPayloadOption,
+  PendingRequestPayloadOptions,
+  PendingRequestType,
+  RequestResolutionAction,
+} from "@src/types";
 import { setPendingRequest } from "@src/ui/ducks/requests";
 import pushMessage from "@src/util/pushMessage";
 
@@ -10,7 +16,7 @@ import BrowserUtils from "./browserUtils";
 let nonce = 0;
 
 export default class RequestManager extends EventEmitter2 {
-  private pendingRequests: Array<PendingRequest>;
+  private pendingRequests: Array<PendingRequest<PendingRequestPayloadOptions>>;
 
   constructor() {
     super();
@@ -19,7 +25,9 @@ export default class RequestManager extends EventEmitter2 {
 
   getRequests = () => pushMessage(setPendingRequest(this.pendingRequests));
 
-  finalizeRequest = async (action: RequestResolutionAction<unknown>): Promise<boolean> => {
+  finalizeRequest = async (
+    action: RequestResolutionAction<PendingRequestPayloadOption<PendingRequestPayloadOptions>>,
+  ): Promise<boolean> => {
     const { id } = action;
     if (!id) throw new Error("id not provided");
     // TODO add some mutex lock just in case something strange occurs
@@ -29,7 +37,10 @@ export default class RequestManager extends EventEmitter2 {
     return true;
   };
 
-  addToQueue = async (type: PendingRequestType, payload?: unknown): Promise<string> => {
+  addToQueue = async (
+    type: PendingRequestType,
+    payload: PendingRequestPayloadOption<PendingRequestPayloadOptions>,
+  ): Promise<string> => {
     // eslint-disable-next-line no-plusplus
     const id = `${nonce++}`;
     this.pendingRequests.push({ id, type, payload });
@@ -38,7 +49,10 @@ export default class RequestManager extends EventEmitter2 {
     return id;
   };
 
-  newRequest = async (type: PendingRequestType, payload?: unknown): Promise<unknown> => {
+  newRequest = async (
+    type: PendingRequestType,
+    payload: PendingRequestPayloadOption<PendingRequestPayloadOptions>,
+  ): Promise<unknown> => {
     const popup = await BrowserUtils.openPopup();
     const id = await this.addToQueue(type, payload);
 
