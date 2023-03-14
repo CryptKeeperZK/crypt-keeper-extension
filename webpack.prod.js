@@ -14,36 +14,43 @@ module.exports = merge(common, {
     minimizer: [
       new ImageMinimizerPlugin({
         minimizer: {
-          implementation: ImageMinimizerPlugin.imageminMinify,
+          implementation: ImageMinimizerPlugin.svgoMinify,
           options: {
-            // Lossless optimization with custom option
-            // Feel free to experiment with options for better result for you
-            plugins: [
-              ["gifsicle", { interlaced: true }],
-              ["jpegtran", { progressive: true }],
-              ["optipng", { optimizationLevel: 5 }],
-              // Svgo configuration here https://github.com/svg/svgo#configuration
-              [
-                "svgo",
+            encodeOptions: {
+              multipass: true,
+              plugins: [
                 {
-                  plugins: [
-                    {
-                      name: "preset-default",
-                      params: {
-                        overrides: {
-                          removeViewBox: false,
-                          addAttributesToSVGElement: {
-                            params: {
-                              attributes: [{ xmlns: "http://www.w3.org/2000/svg" }],
-                            },
-                          },
-                        },
-                      },
+                  name: "preset-default",
+                  params: {
+                    overrides: {
+                      removeViewBox: false,
                     },
-                  ],
+                  },
                 },
               ],
-            ],
+            },
+          },
+        },
+      }),
+      new ImageMinimizerPlugin({
+        minimizer: {
+          implementation: ImageMinimizerPlugin.sharpMinify,
+          options: {
+            encodeOptions: {
+              jpeg: {
+                quality: 100,
+              },
+              webp: {
+                lossless: true,
+              },
+              avif: {
+                lossless: true,
+              },
+              // by default 100% quality
+              png: {},
+              // by default 100% quality
+              gif: {},
+            },
           },
         },
       }),
