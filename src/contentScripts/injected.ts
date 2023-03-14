@@ -2,7 +2,7 @@ import { MerkleProof } from "@zk-kit/incremental-merkle-tree";
 import log from "loglevel";
 
 import { RPCAction } from "@src/constants";
-import { MerkleProofArtifacts } from "@src/types";
+import { InjectedMessageData, MerkleProofArtifacts } from "@src/types";
 
 import { IRlnGenerateArgs, ISemaphoreGenerateArgs, RlnProofGenerator, SemaphoreProofGenerator } from "./proof";
 
@@ -273,43 +273,40 @@ async function post(message: IRequest) {
   });
 }
 
-window.addEventListener(
-  "message",
-  (event: MessageEvent<{ target: string; nonce: string; payload: [string, unknown] }>) => {
-    const { data } = event;
+window.addEventListener("message", (event: MessageEvent<InjectedMessageData>) => {
+  const { data } = event;
 
-    if (data && data.target === "injected-injectedscript") {
-      if (data.nonce === "identityChanged") {
-        const [, res] = data.payload;
-        emit("identityChanged", res);
-        return;
-      }
-
-      if (data.nonce === "logout") {
-        const [, res] = data.payload;
-        emit("logout", res);
-        return;
-      }
-
-      if (data.nonce === "login") {
-        const [, res] = data.payload;
-        emit("login", res);
-        return;
-      }
-
-      if (!promises[data.nonce]) return;
-
-      const [err, res] = data.payload;
-      const { resolve, reject } = promises[data.nonce];
-
-      if (err) {
-        // eslint-disable-next-line consistent-return
-        return reject(new Error(err));
-      }
-
-      resolve(res);
-
-      delete promises[data.nonce];
+  if (data && data.target === "injected-injectedscript") {
+    if (data.nonce === "identityChanged") {
+      const [, res] = data.payload;
+      emit("identityChanged", res);
+      return;
     }
-  },
-);
+
+    if (data.nonce === "logout") {
+      const [, res] = data.payload;
+      emit("logout", res);
+      return;
+    }
+
+    if (data.nonce === "login") {
+      const [, res] = data.payload;
+      emit("login", res);
+      return;
+    }
+
+    if (!promises[data.nonce]) return;
+
+    const [err, res] = data.payload;
+    const { resolve, reject } = promises[data.nonce];
+
+    if (err) {
+      // eslint-disable-next-line consistent-return
+      return reject(new Error(err));
+    }
+
+    resolve(res);
+
+    delete promises[data.nonce];
+  }
+});

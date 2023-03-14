@@ -1,7 +1,7 @@
 import log from "loglevel";
 import { browser } from "webextension-polyfill-ts";
 
-import { ReduxAction } from "@src/types";
+import { InjectedMessageData, ReduxAction } from "@src/types";
 import { ActionType as AppActionType } from "@src/ui/ducks/app";
 import { ActionType as IdentityActionType } from "@src/ui/ducks/identities";
 
@@ -14,7 +14,7 @@ try {
   container.insertBefore(scriptTag, container.children[0]);
   container.removeChild(scriptTag);
 
-  window.addEventListener("message", (event: MessageEvent<{ target: string; message: unknown; nonce: string }>) => {
+  window.addEventListener("message", (event: MessageEvent<InjectedMessageData>) => {
     const { data } = event;
     if (data && data.target === "injected-contentscript") {
       browser.runtime.sendMessage(data.message).then((res: unknown) => {
