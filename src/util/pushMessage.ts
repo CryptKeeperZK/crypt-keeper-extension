@@ -27,7 +27,7 @@ export function messageSenderFactory(remotePort: Runtime.Port) {
   Object.freeze(messageSender);
 }
 
-export default async function pushMessage(message: ReduxAction): Promise<void> {
+export default function pushMessage(message: ReduxAction): void {
   try {
     messageSender.send(message);
   } catch (error) {

@@ -32,11 +32,11 @@ export default class ApprovalService {
     pushMessage(
       setApproval({
         host,
-        noApproval: this.allowedHosts.has(origin),
+        noApproval: this.allowedHosts.has(host),
       }),
     );
 
-    return this.allowedHosts.has(origin);
+    return this.allowedHosts.has(host);
   };
 
   public canSkipApprove = (host: string): boolean => Boolean(this.allowedHosts.get(host)?.noApproval);

@@ -94,7 +94,10 @@ describe("background/services/approval", () => {
       await service.unlock();
       const result = service.getPermission(defaultHosts[0]);
 
-      expect(result).toStrictEqual({ noApproval: true });
+      expect(result).toStrictEqual({ 
+        host: "https://localhost:3000",
+        noApproval: true 
+      });
     });
 
     test("should get permissions for unknown host", () => {
@@ -104,7 +107,10 @@ describe("background/services/approval", () => {
 
       const result = service.getPermission("unknown");
 
-      expect(result).toStrictEqual({ noApproval: false });
+      expect(result).toStrictEqual({
+        host: "unknown",
+        noApproval: false
+      });
     });
 
     test("should set permission", async () => {
@@ -116,6 +122,7 @@ describe("background/services/approval", () => {
       const canSkipApprove = service.canSkipApprove(defaultHosts[0]);
 
       expect(result).toStrictEqual({
+        host: "https://localhost:3000",
         noApproval: true,
       });
       expect(canSkipApprove).toBe(true);
@@ -131,6 +138,7 @@ describe("background/services/approval", () => {
       const result = await service.setPermission("unknown", { noApproval: false });
 
       expect(result).toStrictEqual({
+        host: "unknown",
         noApproval: false,
       });
       expect(approvalStorage.set).toBeCalledTimes(1);

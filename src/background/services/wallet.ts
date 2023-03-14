@@ -22,9 +22,11 @@ export default class WalletService {
     await this.walletStorage.set(payload);
   };
 
-  public getConnection = async (): Promise<void> => {
+  public getConnection = async (): Promise<WalletConnectionData | null> => {
     const walletConnectionData = await this.walletStorage.get<WalletConnectionData>();
 
     if (walletConnectionData) pushMessage(setWalletConnection(walletConnectionData));
+
+    return walletConnectionData;
   };
 }
