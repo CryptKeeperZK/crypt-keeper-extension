@@ -1,23 +1,24 @@
-import createMetaMaskProvider from "metamask-extension-provider";
-import ReactDOM from "react-dom/client";
-import { browser } from "webextension-polyfill-ts";
-import { HashRouter } from "react-router-dom";
-import { Provider } from "react-redux";
-import log from "loglevel";
-
-import Popup from "@src/ui/pages/Popup";
-import { store } from "@src/ui/store/configureAppStore";
-import { isDebugMode } from "@src/config/env";
-import { Web3ReactProvider } from "@web3-react/core";
-import { connectors } from "@src/connectors";
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { faTwitter, faGithub, faReddit } from "@fortawesome/free-brands-svg-icons";
+import { Web3ReactProvider } from "@web3-react/core";
+import log from "loglevel";
+import createMetaMaskProvider from "metamask-extension-provider";
+import ReactDOM from "react-dom/client";
+import { Provider } from "react-redux";
+import { HashRouter } from "react-router-dom";
+import { AnyAction } from "redux";
+import { browser } from "webextension-polyfill-ts";
+
+import { isDebugMode } from "@src/config/env";
+import { connectors } from "@src/connectors";
+import Popup from "@src/ui/pages/Popup";
+import { store } from "@src/ui/store/configureAppStore";
 
 log.setDefaultLevel(isDebugMode() ? "debug" : "info");
 
 window.ethereum = createMetaMaskProvider();
 
-browser.runtime.onMessage.addListener((action) => {
+browser.runtime.onMessage.addListener((action?: AnyAction) => {
   if (action?.type) {
     store.dispatch(action);
   }

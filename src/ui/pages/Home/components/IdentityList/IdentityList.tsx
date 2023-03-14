@@ -1,5 +1,5 @@
-import { useCallback, useState } from "react";
 import classNames from "classnames";
+import { useCallback, useState } from "react";
 
 import { CreateIdentityModal } from "@src/ui/components/CreateIdentityModal";
 import Icon from "@src/ui/components/Icon";
@@ -13,7 +13,8 @@ import {
 } from "@src/ui/ducks/identities";
 import { useWallet } from "@src/ui/hooks/wallet";
 
-import { IdentityItem } from "./IdentityItem";
+import "./identityListStyles.scss";
+import { IdentityItem } from "./Item";
 
 export const IdentityList = (): JSX.Element => {
   const identities = useIdentities();
@@ -24,7 +25,7 @@ export const IdentityList = (): JSX.Element => {
   const [isModalShow, setIsModalShow] = useState(false);
 
   const onSelectIdentity = useCallback(
-    async (identityCommitment: string) => {
+    (identityCommitment: string) => {
       dispatch(setActiveIdentity(identityCommitment));
     },
     [dispatch],
@@ -58,32 +59,31 @@ export const IdentityList = (): JSX.Element => {
     <>
       {isModalShow && <CreateIdentityModal onClose={onCloseCreateIdentityModal} />}
 
-      {identities.map(({ commitment, metadata }) => {
-        return (
-          <IdentityItem
-            key={commitment}
-            commitment={commitment}
-            metadata={metadata}
-            selected={selected.commitment}
-            onDeleteIdentity={onDeleteIdentity}
-            onSelectIdentity={onSelectIdentity}
-            onUpdateIdentityName={onUpdateIdentityName}
-          />
-        );
-      })}
+      {identities.map(({ commitment, metadata }) => (
+        <IdentityItem
+          key={commitment}
+          commitment={commitment}
+          metadata={metadata}
+          selected={selected.commitment}
+          onDeleteIdentity={onDeleteIdentity}
+          onSelectIdentity={onSelectIdentity}
+          onUpdateIdentityName={onUpdateIdentityName}
+        />
+      ))}
 
-      <div
-        data-testid="create-new-identity"
+      <button
         className={classNames(
           "flex flex-row items-center justify-center p-4 cursor-pointer text-gray-600",
           `create-identity-row__${address ? "active" : "not-active"}`,
         )}
+        data-testid="create-new-identity"
+        type="button"
         onClick={onShowCreateIdentityModal}
       >
-        <Icon fontAwesome="fas fa-plus" size={1} className="mr-2" />
+        <Icon className="mr-2" fontAwesome="fas fa-plus" size={1} />
 
         <div>Add Identity</div>
-      </div>
+      </button>
     </>
   );
 };

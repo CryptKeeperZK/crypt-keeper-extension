@@ -1,0 +1,23 @@
+@import "@src/util/variables";
+
+.create-identity-row {
+  &__active {
+    width: 100%;
+
+    &:hover {
+      color: $gray-300;
+
+      .icon {
+        color: $primary-green;
+      }
+    }
+  }
+
+  &__not-active {
+    width: 100%;
+
+    &:disabled {
+      color: $gray-600;
+    }
+  }
+}
