@@ -9,6 +9,7 @@ export enum ApproveActionType {
   GET_HOST_PERMISSIONS = "app/hosts/getHostPermissions",
   SET_HOST_PERMISSIONS = "app/hosts/setHostPermissions",
   IS_HOST_APPROVED = "app/hosts/isHostApprove",
+  TRY_INJECT = "app/inject"
 }
 
 type State = {

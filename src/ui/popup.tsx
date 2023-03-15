@@ -19,7 +19,7 @@ log.setDefaultLevel(isDebugMode() ? "debug" : "info");
 window.ethereum = createMetaMaskProvider();
 
 browser.tabs.query({ active: true, currentWindow: true }).then(() => {
-  const extensionPort = browser.runtime.connect(undefined, { name: "popup" });
+  const extensionPort = browser.runtime.connect(undefined, { name: "cryptkeeper-popup" });
 
   extensionPort.onMessage.addListener((action) => {
     log.debug("Extension response");

@@ -17,7 +17,7 @@ function intjectScirpt() {
   try {
     intjectScirpt();
 
-    const extensionPort = browser.runtime.connect(undefined, { name: "contentscript" });
+    const extensionPort = browser.runtime.connect(undefined, { name: "cryptkeeper-contentscript" });
 
     window.addEventListener("message", async (event) => {
       const { data } = event;

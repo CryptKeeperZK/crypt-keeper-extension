@@ -6,6 +6,7 @@ import requests from "@src/ui/ducks/requests";
 import app from "@src/ui/ducks/app";
 import wallets from "@src/ui/ducks/wallet";
 import approves from "@src/ui/ducks/approves";
+import injections from "../ducks/injections";
 import { isDebugMode } from "@src/config/env";
 
 const rootReducer = combineReducers({
@@ -14,6 +15,7 @@ const rootReducer = combineReducers({
   app,
   approves,
   wallets,
+  injections
 });
 
 export type AppRootState = ReturnType<typeof rootReducer>;
