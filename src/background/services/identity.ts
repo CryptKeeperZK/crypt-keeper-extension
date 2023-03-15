@@ -26,7 +26,7 @@ export default class IdentityService {
 
   private notificationService: NotificationService;
 
-  constructor() {
+  public constructor() {
     this.activeIdentity = undefined;
     this.identitiesStore = new SimpleStorage(IDENTITY_KEY);
     this.activeIdentityStore = new SimpleStorage(ACTIVE_IDENTITY_KEY);

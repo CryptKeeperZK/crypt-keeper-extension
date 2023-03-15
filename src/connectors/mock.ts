@@ -2,19 +2,19 @@ import { initializeConnector, Web3ReactHooks } from "@web3-react/core";
 import { Connector } from "@web3-react/types";
 
 export class MockConnector extends Connector {
-  activate(): Promise<void> | void {
+  public activate(): Promise<void> | void {
     return Promise.resolve();
   }
 
-  connectEagerly(): Promise<void> | void {
+  public connectEagerly(): Promise<void> | void {
     return Promise.resolve();
   }
 
-  resetState(): Promise<void> | void {
+  public resetState(): Promise<void> | void {
     return Promise.resolve();
   }
 
-  deactivate(): Promise<void> | void {
+  public deactivate(): Promise<void> | void {
     return Promise.resolve();
   }
 }

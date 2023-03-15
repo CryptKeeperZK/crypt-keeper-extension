@@ -7,25 +7,25 @@ export default class ZkIdentityDecorater {
 
   public metadata: IdentityMetadata;
 
-  constructor(zkIdentity: Identity, metadata: IdentityMetadata) {
+  public constructor(zkIdentity: Identity, metadata: IdentityMetadata) {
     this.zkIdentity = zkIdentity;
     this.metadata = metadata;
   }
 
-  genIdentityCommitment = (): bigint => this.zkIdentity.getCommitment();
+  public genIdentityCommitment = (): bigint => this.zkIdentity.getCommitment();
 
-  setIdentityMetadataName = (name: string): IdentityMetadata => {
+  public setIdentityMetadataName = (name: string): IdentityMetadata => {
     this.metadata.name = name;
     return this.metadata;
   };
 
-  serialize = (): string =>
+  public serialize = (): string =>
     JSON.stringify({
       secret: this.zkIdentity.toString(),
       metadata: this.metadata,
     });
 
-  static genFromSerialized = (serialized: string): ZkIdentityDecorater => {
+  public static genFromSerialized = (serialized: string): ZkIdentityDecorater => {
     const data = JSON.parse(serialized) as SerializedIdentity;
 
     if (!data.metadata) {

@@ -3,7 +3,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { browser } from "webextension-polyfill-ts";
 
 import { RPCAction } from "@src/constants";
-import Header from "@src/ui/components/Header";
+import { Header } from "@src/ui/components/Header";
 import { useAppDispatch } from "@src/ui/ducks/hooks";
 import { deleteAllIdentities, fetchIdentities } from "@src/ui/ducks/identities";
 import { useWallet } from "@src/ui/hooks/wallet";

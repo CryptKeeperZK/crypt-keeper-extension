@@ -17,7 +17,7 @@ interface CreateTabArgs {
 class BrowserUtils {
   private cached: Windows.Window | null = null;
 
-  constructor() {
+  public constructor() {
     this.removeWindow((windowId: number) => {
       log.debug("Inside removeWindow onRemove");
 
@@ -35,16 +35,7 @@ class BrowserUtils {
     });
   }
 
-  createTab = async (options: CreateTabArgs) => browser.tabs.create(options);
-
-  removeWindow = (callback: (windowId: number) => void) => {
-    // TODO: Converted from browser. to chrome. solved the error
-    browser.windows.onRemoved.addListener(callback);
-  };
-
-  createWindow = async (options: CreateWindowArgs) => browser.windows.create(options);
-
-  openPopup = async () => {
+  public openPopup = async () => {
     if (this.cached?.id) {
       await this.focusWindow(this.cached.id);
       return this.cached;
@@ -65,24 +56,23 @@ class BrowserUtils {
     return popup;
   };
 
-  closePopup = async () => {
+  public closePopup = async () => {
     if (this.cached?.id) {
       await browser.windows.remove(this.cached.id);
       this.cached = null;
     }
   };
 
-  focusWindow = (windowId: number) => browser.windows.update(windowId, { focused: true });
+  private createTab = async (options: CreateTabArgs) => browser.tabs.create(options);
 
-  getAllWindows = () => browser.windows.getAll();
-
-  activatedTabs = (callback: (info: unknown) => void) => {
-    browser.tabs.onActivated.addListener(callback);
+  private removeWindow = (callback: (windowId: number) => void) => {
+    // TODO: Converted from browser. to chrome. solved the error
+    browser.windows.onRemoved.addListener(callback);
   };
 
-  sendMessageTabs = async (tabId: number, message: unknown) => {
-    await browser.tabs.sendMessage(tabId, message);
-  };
+  private createWindow = async (options: CreateWindowArgs) => browser.windows.create(options);
+
+  private focusWindow = (windowId: number) => browser.windows.update(windowId, { focused: true });
 }
 
 export default new BrowserUtils();

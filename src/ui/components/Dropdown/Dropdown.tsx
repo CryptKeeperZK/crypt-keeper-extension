@@ -3,9 +3,9 @@ import Select, { Props as SelectProps } from "react-select";
 
 import { SelectOption } from "@src/types";
 
+import "./dropdown.scss";
 import { IconOption } from "./IconOption";
 import { IconSingleValue } from "./IconSingleValue";
-import "./dropdown.scss";
 
 export interface DropdownProps extends SelectProps<SelectOption> {
   id: string;
@@ -23,32 +23,35 @@ export const Dropdown = ({
   options,
   value,
   ...rest
-}: DropdownProps): JSX.Element => {
-  return (
-    <div className={classNames("dropdown", className)}>
-      {label && (
-        <label htmlFor={`input-${id}`} className="dropdown__label">
-          {label}
-        </label>
-      )}
+}: DropdownProps): JSX.Element => (
+  <div className={classNames("dropdown", className)}>
+    {label && (
+      <label className="dropdown__label" htmlFor={`input-${id}`}>
+        {label}
+      </label>
+    )}
 
-      <div className="dropdown__group">
-        <Select
-          classNamePrefix="dropdown"
-          className="dropdown__container"
-          closeMenuOnSelect={true}
-          components={{ Option: IconOption, SingleValue: IconSingleValue }}
-          defaultValue={defaultValue}
-          inputId={`input-${id}`}
-          id={id}
-          options={options}
-          placeholder="Choose"
-          value={value}
-          {...rest}
-        />
-      </div>
-
-      {errorMessage && <div className="dropdown__error-message">{errorMessage}</div>}
+    <div className="dropdown__group">
+      <Select
+        closeMenuOnSelect
+        className="dropdown__container"
+        classNamePrefix="dropdown"
+        components={{ Option: IconOption, SingleValue: IconSingleValue }}
+        defaultValue={defaultValue}
+        id={id}
+        inputId={`input-${id}`}
+        options={options}
+        placeholder="Choose"
+        value={value}
+        {...rest}
+      />
     </div>
-  );
+
+    {errorMessage && <div className="dropdown__error-message">{errorMessage}</div>}
+  </div>
+);
+
+Dropdown.defaultProps = {
+  label: "",
+  errorMessage: "",
 };

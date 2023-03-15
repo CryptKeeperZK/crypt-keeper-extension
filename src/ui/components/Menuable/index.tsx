@@ -1,34 +1,42 @@
-import React, { MouseEvent, ReactElement, ReactNode, useCallback, useEffect, useState } from "react";
 import classNames from "classnames";
-import "./menuable.scss";
-import Icon from "../Icon";
+import { MouseEvent as ReactMouseEvent, ReactNode, useCallback, useEffect, useState } from "react";
 
-type MenuableProps = {
+import { Icon } from "../Icon";
+
+import "./menuable.scss";
+
+export interface MenuableProps {
   items: ItemProps[];
   children?: ReactNode;
   className?: string;
   menuClassName?: string;
+  opened?: boolean;
   onOpen?: () => void;
   onClose?: () => void;
-  opened?: boolean;
-};
+}
 
-export type ItemProps = {
+export interface ItemProps {
   label: string;
   iconUrl?: string;
   iconFA?: string;
   iconClassName?: string;
   className?: string;
-  onClick?: (e: MouseEvent, reset: () => void) => void;
   disabled?: boolean;
   children?: ItemProps[];
   component?: ReactNode;
-};
+  onClick?: (e: ReactMouseEvent, reset: () => void) => Promise<void> | void;
+}
 
-export default function Menuable(props: MenuableProps): ReactElement {
-  const { opened } = props;
-
-  const [isShowing, setShowing] = useState(!!props.opened);
+export const Menuable = ({
+  opened,
+  className,
+  menuClassName,
+  children,
+  items,
+  onOpen,
+  onClose,
+}: MenuableProps): JSX.Element => {
+  const [isShowing, setShowing] = useState(!!opened);
   const [path, setPath] = useState<number[]>([]);
 
   useEffect(() => {
@@ -40,25 +48,25 @@ export default function Menuable(props: MenuableProps): ReactElement {
     }
   }, [opened]);
 
-  const onClose = useCallback(() => {
-    props.onClose && props.onClose();
+  const handleClose = useCallback(() => {
+    onClose?.();
     setShowing(false);
   }, []);
 
-  const onOpen = useCallback(() => {
-    props.onOpen && props.onOpen();
+  const handleOpen = useCallback(() => {
+    onOpen?.();
     setShowing(true);
 
     const cb = () => {
-      onClose();
+      handleClose();
       window.removeEventListener("click", cb);
     };
 
     window.addEventListener("click", cb);
-  }, [onClose]);
+  }, [handleClose]);
 
-  const goBack = useCallback(
-    (e: MouseEvent) => {
+  const handleGoBack = useCallback(
+    (e: ReactMouseEvent) => {
       e.stopPropagation();
       const newPath = [...path];
       newPath.pop();
@@ -68,49 +76,44 @@ export default function Menuable(props: MenuableProps): ReactElement {
   );
 
   const onItemClick = useCallback(
-    (e: MouseEvent, item: ItemProps, i: number) => {
+    (e: ReactMouseEvent, item: ItemProps, i: number) => {
       e.stopPropagation();
       if (item.disabled) return;
       if (item.children) {
         setPath([...path, i]);
       } else if (item.onClick) {
         item.onClick(e, () => setPath([]));
-        onClose();
+        handleClose();
       }
     },
-    [path, onClose, setPath],
+    [path, handleClose, setPath],
   );
 
-  let { items } = props;
-
-  if (path) {
-    for (const pathIndex of path) {
-      if (items[pathIndex].children) {
-        items = items[pathIndex].children as ItemProps[];
-      }
+  let menuItems: ItemProps[] = items;
+  path?.forEach((index) => {
+    if (items[index].children) {
+      menuItems = items[index].children as ItemProps[];
     }
-  }
+  });
 
   return (
     <div
+      className={classNames("menuable", { "menuable--active": isShowing }, className)}
       data-testid="menu"
-      className={classNames(
-        "menuable",
-        {
-          "menuable--active": isShowing,
-        },
-        props.className,
-      )}
       onClick={(e) => {
         e.stopPropagation();
 
-        if (isShowing) return onClose();
-        onOpen();
+        if (isShowing) {
+          handleClose();
+        } else {
+          handleOpen();
+        }
       }}
     >
-      {props.children}
+      {children}
+
       {isShowing && (
-        <div className={classNames("rounded-xl border border-gray-700 menuable__menu", props.menuClassName)}>
+        <div className={classNames("rounded-xl border border-gray-700 menuable__menu", menuClassName)}>
           {!!path.length && (
             <div
               className={classNames(
@@ -118,15 +121,17 @@ export default function Menuable(props: MenuableProps): ReactElement {
                 "flex flex-row flex-nowrap items-center",
                 "text-gray-500 hover:text-gray-300 hover:bg-gray-900 menuable__menu__item",
               )}
-              onClick={goBack}
+              onClick={handleGoBack}
             >
               <Icon fontAwesome="fas fa-caret-left" />
+
               <span className="ml-2">Go back</span>
             </div>
           )}
-          {items.map((item, i) => (
+
+          {menuItems.map((item, i) => (
             <div
-              key={i}
+              key={item.label}
               className={classNames(
                 "text-sm whitespace-nowrap",
                 "flex flex-row flex-nowrap items-center",
@@ -148,10 +153,9 @@ export default function Menuable(props: MenuableProps): ReactElement {
                   >
                     {item.label}
                   </div>
+
                   {(item.iconUrl || item.iconFA) && (
                     <Icon
-                      fontAwesome={item.iconFA}
-                      url={item.iconUrl}
                       className={classNames(
                         "ml-4",
                         {
@@ -159,6 +163,8 @@ export default function Menuable(props: MenuableProps): ReactElement {
                         },
                         item.iconClassName,
                       )}
+                      fontAwesome={item.iconFA}
+                      url={item.iconUrl}
                     />
                   )}
                 </>
@@ -169,4 +175,13 @@ export default function Menuable(props: MenuableProps): ReactElement {
       )}
     </div>
   );
-}
+};
+
+Menuable.defaultProps = {
+  className: "",
+  menuClassName: "",
+  children: undefined,
+  opened: false,
+  onOpen: undefined,
+  onClose: undefined,
+};

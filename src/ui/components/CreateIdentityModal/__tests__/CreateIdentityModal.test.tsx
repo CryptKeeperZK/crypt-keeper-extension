@@ -2,11 +2,12 @@
  * @jest-environment jsdom
  */
 
-import { render, screen } from "@testing-library/react";
+import { act, render, screen } from "@testing-library/react";
 
-import { IUseCreateIdentityModalData, useCreateIdentityModal } from "../useCreateIdentityModal";
-import { CreateIdentityModal, ICreateIdentityModalProps } from "..";
 import { IDENTITY_TYPES, WEB2_PROVIDER_OPTIONS } from "@src/constants";
+
+import { CreateIdentityModal, ICreateIdentityModalProps } from "..";
+import { IUseCreateIdentityModalData, useCreateIdentityModal } from "../useCreateIdentityModal";
 
 jest.mock("../useCreateIdentityModal", (): unknown => ({
   useCreateIdentityModal: jest.fn(),
@@ -73,5 +74,14 @@ describe("ui/components/CreateIdentityModal", () => {
     expect(error).toBeInTheDocument();
     expect(provider).toBeInTheDocument();
     expect(identityType).toBeInTheDocument();
+  });
+
+  test("should create identity properly", async () => {
+    render(<CreateIdentityModal {...defaultProps} />);
+
+    const button = await screen.findByText("Create");
+    act(() => button.click());
+
+    expect(defaultHookData.onCreateIdentity).toBeCalledTimes(1);
   });
 });

@@ -39,7 +39,6 @@ export type ZkInputs = {
 export enum PendingRequestType {
   SEMAPHORE_PROOF,
   RLN_PROOF,
-  DUMMY,
   APPROVE,
   INJECT,
   CREATE_IDENTITY,

@@ -1,26 +1,30 @@
-import React, { ChangeEventHandler, ReactElement } from "react";
-import c from "classnames";
-import "./index.scss";
-import Icon from "@src/ui/components/Icon";
+import classNames from "classnames";
+import { ChangeEventHandler } from "react";
 
-type Props = {
+import { Icon } from "@src/ui/components/Icon";
+
+import "./index.scss";
+
+export interface CheckboxProps {
   checked: boolean;
-  onChange: ChangeEventHandler<HTMLInputElement>;
   className?: string;
   disabled?: boolean;
-};
-
-export default function Checkbox(props: Props): ReactElement {
-  const { className, checked, onChange, disabled } = props;
-
-  return (
-    <div
-      className={c("checkbox", className, {
-        "checkbox--checked": checked,
-      })}
-    >
-      <input type="checkbox" checked={checked} onChange={onChange} disabled={disabled} />
-      <Icon fontAwesome="fa-check" />
-    </div>
-  );
+  onChange: ChangeEventHandler<HTMLInputElement>;
 }
+
+export const Checkbox = ({ className, checked, onChange, disabled }: CheckboxProps): JSX.Element => (
+  <div
+    className={classNames("checkbox", className, {
+      "checkbox--checked": checked,
+    })}
+  >
+    <input checked={checked} disabled={disabled} type="checkbox" onChange={onChange} />
+
+    <Icon fontAwesome="fa-check" />
+  </div>
+);
+
+Checkbox.defaultProps = {
+  className: "",
+  disabled: false,
+};

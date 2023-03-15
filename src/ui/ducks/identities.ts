@@ -3,8 +3,9 @@ import { useSelector } from "react-redux";
 
 import { RPCAction } from "@src/constants";
 import { CreateIdentityOptions, IdentityMetadata } from "@src/types";
-import { AppDispatch, AppRootState } from "@src/ui/store/configureAppStore";
 import postMessage from "@src/util/postMessage";
+
+import type { AppDispatch, AppRootState } from "@src/ui/store/configureAppStore";
 
 export enum ActionType {
   SET_COMMITMENTS = "app/identities/setCommitments",

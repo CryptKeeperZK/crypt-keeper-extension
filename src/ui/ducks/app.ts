@@ -3,8 +3,9 @@ import { useSelector } from "react-redux";
 import { Dispatch } from "redux";
 
 import { RPCAction } from "@src/constants";
-import { AppRootState } from "@src/ui/store/configureAppStore";
 import postMessage from "@src/util/postMessage";
+
+import type { AppRootState } from "@src/ui/store/configureAppStore";
 
 export enum ActionType {
   SET_STATUS = "app/setStatus",

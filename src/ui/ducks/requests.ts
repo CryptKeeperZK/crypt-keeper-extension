@@ -3,9 +3,10 @@ import { useSelector } from "react-redux";
 import { Dispatch } from "redux";
 
 import { RPCAction } from "@src/constants";
-import { PendingRequest } from "@src/types";
-import { AppRootState } from "@src/ui/store/configureAppStore";
 import postMessage from "@src/util/postMessage";
+
+import type { PendingRequest } from "@src/types";
+import type { AppRootState } from "@src/ui/store/configureAppStore";
 
 enum ActionType {
   SET_PENDING_REQUESTS = "request/setPendingRequests",

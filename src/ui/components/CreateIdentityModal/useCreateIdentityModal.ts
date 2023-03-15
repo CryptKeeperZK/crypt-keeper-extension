@@ -1,12 +1,12 @@
 import { ChangeEvent, useCallback, useState } from "react";
+import { ActionMeta, OnChangeValue } from "react-select";
 
+import { WEB2_PROVIDER_OPTIONS, IDENTITY_TYPES } from "@src/constants";
+import { IdentityStrategy, IdentityWeb2Provider, SelectOption } from "@src/types";
 import { useAppDispatch } from "@src/ui/ducks/hooks";
 import { createIdentity } from "@src/ui/ducks/identities";
-import { signIdentityMessage } from "@src/ui/services/identity";
-import { IdentityStrategy, IdentityWeb2Provider, SelectOption } from "@src/types";
 import { useWallet } from "@src/ui/hooks/wallet";
-import { WEB2_PROVIDER_OPTIONS, IDENTITY_TYPES } from "@src/constants";
-import { ActionMeta, OnChangeValue } from "react-select";
+import { signIdentityMessage } from "@src/ui/services/identity";
 
 export interface IUseCreateIdentityModalArgs {
   onClose: () => void;
@@ -21,7 +21,7 @@ export interface IUseCreateIdentityModalData {
   onSelectIdentityType: (value: OnChangeValue<SelectOption, boolean>, actionMeta: ActionMeta<SelectOption>) => void;
   onSelectWeb2Provider: (value: OnChangeValue<SelectOption, boolean>, actionMeta: ActionMeta<SelectOption>) => void;
   onChangeNonce: (event: ChangeEvent<HTMLInputElement>) => void;
-  onCreateIdentity: () => void;
+  onCreateIdentity: () => Promise<void>;
 }
 
 export const useCreateIdentityModal = ({ onClose }: IUseCreateIdentityModalArgs): IUseCreateIdentityModalData => {
@@ -74,8 +74,8 @@ export const useCreateIdentityModal = ({ onClose }: IUseCreateIdentityModalArgs)
       }
 
       onClose();
-    } catch (e: any) {
-      setError(e.message);
+    } catch (err) {
+      setError((err as Error).message);
     } finally {
       setIsLoading(false);
     }

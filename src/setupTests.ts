@@ -19,7 +19,7 @@ jest.mock("webextension-polyfill-ts", (): unknown => {
   return {
     browser: {
       tabs: {
-        query: jest.fn(),
+        query: jest.fn().mockResolvedValue([]),
         sendMessage: jest.fn(),
       },
 

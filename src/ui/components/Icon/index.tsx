@@ -1,39 +1,49 @@
-import React, { Component, MouseEventHandler } from "react";
-import c from "classnames";
+import classNames from "classnames";
+import { MouseEventHandler } from "react";
+
 import "./icon.scss";
 
-type Props = {
+export interface IconProps {
   url?: string;
   fontAwesome?: string;
   className?: string;
   size?: number;
-  onClick?: MouseEventHandler;
-  onKeyPress?: any;
   disabled?: boolean;
-};
-
-export default class Icon extends Component<Props> {
-  render() {
-    const { url, size = 0.75, className = "", disabled, fontAwesome, onClick, ...rest } = this.props;
-
-    return (
-      <div
-        {...rest}
-        className={c("icon", className, {
-          "icon--disabled": disabled,
-          "icon--clickable": onClick,
-        })}
-        style={{
-          backgroundImage: url ? `url(${url})` : undefined,
-          width: !fontAwesome ? `${size}rem` : undefined,
-          height: !fontAwesome ? `${size}rem` : undefined,
-          fontSize: fontAwesome && `${size}rem`,
-        }}
-        onClick={onClick}
-        // onKeyPress={handleKeypress}
-      >
-        {fontAwesome && <i className={`fas ${fontAwesome}`} />}
-      </div>
-    );
-  }
+  onClick?: MouseEventHandler;
 }
+
+export const Icon = ({
+  url,
+  size = 0.75,
+  className,
+  disabled,
+  fontAwesome,
+  onClick,
+  ...rest
+}: IconProps): JSX.Element => (
+  <div
+    {...rest}
+    className={classNames("icon", className, {
+      "icon--disabled": disabled,
+      "icon--clickable": onClick,
+    })}
+    style={{
+      backgroundImage: url ? `url(${url})` : undefined,
+      width: !fontAwesome ? `${size}rem` : undefined,
+      height: !fontAwesome ? `${size}rem` : undefined,
+      fontSize: fontAwesome && `${size}rem`,
+    }}
+    onClick={onClick}
+  >
+    {fontAwesome && <i className={`fas ${fontAwesome}`} />}
+  </div>
+);
+
+Icon.defaultProps = {
+  url: "",
+  fontAwesome: "",
+  className: "",
+  disabled: false,
+  size: undefined,
+  onClick: undefined,
+};

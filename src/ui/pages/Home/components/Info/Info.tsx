@@ -4,7 +4,7 @@ import { useCallback, useEffect, useState } from "react";
 
 import { Chain } from "@src/config/chains";
 import { DEFAULT_ROUND } from "@src/config/const";
-import ConnectionModal from "@src/ui/components/ConnectionModal";
+import { ConnectionModal } from "@src/ui/components/ConnectionModal";
 import { sliceAddress } from "@src/util/account";
 
 import "./infoStyles.scss";
@@ -20,11 +20,13 @@ export const Info = ({ address, balance, chain, refreshConnectionStatus }: InfoP
   const [isConnected, setIsConnected] = useState(false);
   const [isModalShow, setIsModalShow] = useState(false);
 
-  const onRefreshConnectionStatus = useCallback(() => {
-    refreshConnectionStatus()
-      .then((isHostApproved: boolean) => setIsConnected(isHostApproved))
-      .catch(() => setIsConnected(false));
-  }, [refreshConnectionStatus, setIsConnected]);
+  const onRefreshConnectionStatus = useCallback(
+    async () =>
+      refreshConnectionStatus()
+        .then((isHostApproved: boolean) => setIsConnected(isHostApproved))
+        .catch(() => setIsConnected(false)),
+    [refreshConnectionStatus, setIsConnected],
+  );
 
   const onShowModal = useCallback(() => {
     setIsModalShow((show) => !show);

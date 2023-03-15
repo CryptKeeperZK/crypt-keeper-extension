@@ -4,7 +4,7 @@ import { browser } from "webextension-polyfill-ts";
 export default class SimpleStorage {
   private key: string;
 
-  constructor(key: string) {
+  public constructor(key: string) {
     this.key = key;
 
     browser.storage.onChanged.addListener((changes, namespace) => {

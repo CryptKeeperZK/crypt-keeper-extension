@@ -1,18 +1,18 @@
-import React from "react";
+import React, { useCallback } from "react";
 
-import Button from "@src/ui/components/Button";
+import { IDENTITY_TYPES, WEB2_PROVIDER_OPTIONS } from "@src/constants";
+import { Button } from "@src/ui/components/Button";
 import { Dropdown } from "@src/ui/components/Dropdown";
-import FullModal, { FullModalContent, FullModalFooter, FullModalHeader } from "@src/ui/components/FullModal";
-import Input from "@src/ui/components/Input";
+import { FullModal, FullModalContent, FullModalFooter, FullModalHeader } from "@src/ui/components/FullModal";
+import { Input } from "@src/ui/components/Input";
 
 import { useCreateIdentityModal } from "./useCreateIdentityModal";
-import { IDENTITY_TYPES, WEB2_PROVIDER_OPTIONS } from "@src/constants";
 
 export interface ICreateIdentityModalProps {
   onClose: () => void;
 }
 
-export function CreateIdentityModal({ onClose }: ICreateIdentityModalProps): JSX.Element {
+export const CreateIdentityModal = ({ onClose }: ICreateIdentityModalProps): JSX.Element => {
   const {
     isLoading,
     error,
@@ -24,6 +24,10 @@ export function CreateIdentityModal({ onClose }: ICreateIdentityModalProps): JSX
     onSelectWeb2Provider,
     onCreateIdentity,
   } = useCreateIdentityModal({ onClose });
+
+  const handleCreateIdentity = useCallback(() => {
+    onCreateIdentity();
+  }, [onCreateIdentity]);
 
   return (
     <FullModal data-testid="create-identity-modal" onClose={onClose}>
@@ -54,10 +58,10 @@ export function CreateIdentityModal({ onClose }: ICreateIdentityModalProps): JSX
 
             <Input
               className="my-2"
-              type="number"
+              defaultValue={nonce}
               label="Nonce"
               step={1}
-              defaultValue={nonce}
+              type="number"
               onChange={onChangeNonce}
             />
           </>
@@ -67,10 +71,10 @@ export function CreateIdentityModal({ onClose }: ICreateIdentityModalProps): JSX
       {error && <div className="text-xs text-red-500 text-center pb-1">{error}</div>}
 
       <FullModalFooter>
-        <Button onClick={onCreateIdentity} loading={isLoading}>
+        <Button loading={isLoading} onClick={handleCreateIdentity}>
           Create
         </Button>
       </FullModalFooter>
     </FullModal>
   );
-}
+};
