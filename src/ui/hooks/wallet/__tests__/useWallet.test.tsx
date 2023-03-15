@@ -14,8 +14,8 @@ import postMessage from "@src/util/postMessage";
 import { useWallet } from "..";
 import { store } from "@src/ui/store/configureAppStore";
 import { ReactNode } from "react";
-import { Provider } from "react-redux"
-import { Store } from "redux"
+import { Provider } from "react-redux";
+import { Store } from "redux";
 
 jest.mock("@web3-react/core", (): unknown => ({
   ...jest.requireActual("@web3-react/core"),
@@ -24,28 +24,24 @@ jest.mock("@web3-react/core", (): unknown => ({
 
 jest.mock("@src/util/postMessage");
 
-type WrapperProvider = ({children} : {
-  children: ReactNode
-}) => JSX.Element
+type WrapperProvider = ({ children }: { children: ReactNode }) => JSX.Element;
 
 interface ReduxProviderTypes {
-  children: ReactNode,
-  reduxStore: Store
+  children: ReactNode;
+  reduxStore: Store;
 }
 
 const ReduxProvider = ({ children, reduxStore }: ReduxProviderTypes) => (
   <Provider store={reduxStore}>{children}</Provider>
-)
+);
 
 describe("ui/hooks/wallet", () => {
-  let wrapper: WrapperProvider
+  let wrapper: WrapperProvider;
   const defaultHooks = { usePriorityChainId: jest.fn(), usePriorityAccount: jest.fn(), usePriorityProvider: jest.fn() };
 
   beforeEach(() => {
-    wrapper = ({ children }) => (
-      <ReduxProvider reduxStore={store}>{children}</ReduxProvider>
-    );
-  
+    wrapper = ({ children }) => <ReduxProvider reduxStore={store}>{children}</ReduxProvider>;
+
     (defaultWalletHookData.provider?.getBalance as jest.Mock).mockResolvedValue(
       defaultWalletHookData.balance?.toString(10),
     );

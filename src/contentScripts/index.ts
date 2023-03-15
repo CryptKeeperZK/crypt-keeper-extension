@@ -20,25 +20,17 @@ function intjectScirpt() {
     const extensionPort = browser.runtime.connect(undefined, { name: "contentscript" });
 
     window.addEventListener("message", async (event) => {
-      console.log("window.addEventListener")
-      console.log(event)
       const { data } = event;
       if (data && data.target === "injected-contentscript") {
         extensionPort.postMessage(data.message);
-        // window.postMessage(
-        //   {
-        //     target: "injected-injectedscript",
-        //     payload: res,
-        //     nonce: data.nonce,
-        //   },
-        //   "*",
-        // );
+        console.log("window.addEventListener");
+        console.log(event);
       }
     });
 
     extensionPort.onMessage.addListener((action) => {
-      console.log("extensionPort.onMessage")
-      console.log(action)
+      console.log("extensionPort.onMessage");
+      console.log(action);
       switch (action.type) {
         case IdentityActionType.SET_SELECTED:
           window.postMessage(
@@ -60,16 +52,28 @@ function intjectScirpt() {
               },
               "*",
             );
+            return;
           } else {
             window.postMessage(
               {
                 target: "injected-injectedscript",
-                payload: [null],
+                payload: [null, action.payload],
                 nonce: "login",
               },
               "*",
             );
+            return;
           }
+        default:
+          window.postMessage(
+            {
+              target: "injected-injectedscript",
+              payload: [null, action.payload],
+              nonce: "default",
+            },
+            "*",
+          );
+          return;
       }
     });
   } catch (e) {

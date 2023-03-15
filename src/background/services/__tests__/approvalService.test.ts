@@ -94,9 +94,9 @@ describe("background/services/approval", () => {
       await service.unlock();
       const result = service.getPermission(defaultHosts[0]);
 
-      expect(result).toStrictEqual({ 
+      expect(result).toStrictEqual({
         host: "https://localhost:3000",
-        noApproval: true 
+        noApproval: true,
       });
     });
 
@@ -109,7 +109,7 @@ describe("background/services/approval", () => {
 
       expect(result).toStrictEqual({
         host: "unknown",
-        noApproval: false
+        noApproval: false,
       });
     });
 

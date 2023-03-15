@@ -63,7 +63,10 @@ export default class ApprovalService {
     return noApproval;
   };
 
-  public setPermission = async (host: string, { noApproval }: HostPermission): Promise<{
+  public setPermission = async (
+    host: string,
+    { noApproval }: HostPermission,
+  ): Promise<{
     host: string;
     noApproval: boolean;
   }> => {
@@ -80,7 +83,7 @@ export default class ApprovalService {
     return {
       host,
       noApproval,
-    }
+    };
   };
 
   public add = async ({ host, noApproval }: { host: string; noApproval: boolean }): Promise<void> => {

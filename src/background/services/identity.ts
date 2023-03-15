@@ -132,10 +132,12 @@ export default class IdentityService {
     return { commitments, identities };
   };
 
-  public getIdentities = async (): Promise<{ 
-    commitment: string;
-    metadata: IdentityMetadata  
-  }[]> => {
+  public getIdentities = async (): Promise<
+    {
+      commitment: string;
+      metadata: IdentityMetadata;
+    }[]
+  > => {
     const { commitments, identities } = await this.getIdentityCommitments();
 
     const identitiesMapped = commitments
