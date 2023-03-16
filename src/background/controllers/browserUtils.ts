@@ -17,6 +17,10 @@ interface CreateTabArgs {
   active?: boolean;
 }
 
+interface OpenPopupArgs {
+  params?: Record<string, string>;
+}
+
 class BrowserUtils {
   private cached: Windows.Window | null = null;
 
@@ -38,7 +42,7 @@ class BrowserUtils {
     });
   }
 
-  public openPopup = async () => {
+  public openPopup = async ({ params }: OpenPopupArgs = {}) => {
     if (this.cached?.id) {
       await this.focusWindow(this.cached.id);
       return this.cached;
@@ -46,7 +50,12 @@ class BrowserUtils {
 
     const tabs = await browser.tabs.query({});
     const index = tabs.findIndex((tab) => tab.active && tab.highlighted);
-    const tab = await this.createTab({ url: "popup.html", active: index >= 0, index: index >= 0 ? index : undefined });
+    const searchParams = params ? `?${new URLSearchParams(params).toString()}` : "";
+    const tab = await this.createTab({
+      url: `popup.html${searchParams}`,
+      active: index >= 0,
+      index: index >= 0 ? index : undefined,
+    });
 
     // TODO add this in config/constants...
     const popup = await this.createWindow({

@@ -6,21 +6,15 @@ import { act, render, screen } from "@testing-library/react";
 
 import { IDENTITY_TYPES, WEB2_PROVIDER_OPTIONS } from "@src/constants";
 
-import { CreateIdentityModal, ICreateIdentityModalProps } from "..";
-import { IUseCreateIdentityModalData, useCreateIdentityModal } from "../useCreateIdentityModal";
+import { CreateIdentity } from "..";
+import { IUseCreateIdentityData, useCreateIdentity } from "../useCreateIdentity";
 
-jest.mock("../useCreateIdentityModal", (): unknown => ({
-  useCreateIdentityModal: jest.fn(),
+jest.mock("../useCreateIdentity", (): unknown => ({
+  useCreateIdentity: jest.fn(),
 }));
 
-describe("ui/components/CreateIdentityModal", () => {
-  const defaultProps: ICreateIdentityModalProps = {
-    len: 1,
-    accept: jest.fn(),
-    reject: jest.fn(),
-  };
-
-  const defaultHookData: IUseCreateIdentityModalData = {
+describe("ui/pages/CreateIdentity", () => {
+  const defaultHookData: IUseCreateIdentityData = {
     isLoading: false,
     nonce: 0,
     error: "",
@@ -34,7 +28,7 @@ describe("ui/components/CreateIdentityModal", () => {
   };
 
   beforeEach(() => {
-    (useCreateIdentityModal as jest.Mock).mockReturnValue(defaultHookData);
+    (useCreateIdentity as jest.Mock).mockReturnValue(defaultHookData);
 
     const container = document.createElement("div");
     container.id = "modal";
@@ -49,7 +43,7 @@ describe("ui/components/CreateIdentityModal", () => {
   });
 
   test("should render properly", async () => {
-    render(<CreateIdentityModal {...defaultProps} len={2} />);
+    render(<CreateIdentity />);
 
     const button = await screen.findByText("Create");
     const identityType = await screen.findByText("Random");
@@ -59,14 +53,14 @@ describe("ui/components/CreateIdentityModal", () => {
   });
 
   test("should render properly with interrep provider and error", async () => {
-    (useCreateIdentityModal as jest.Mock).mockReturnValue({
+    (useCreateIdentity as jest.Mock).mockReturnValue({
       ...defaultHookData,
       error: "error",
       identityStrategyType: IDENTITY_TYPES[0],
       web2Provider: WEB2_PROVIDER_OPTIONS[2],
     });
 
-    render(<CreateIdentityModal {...defaultProps} />);
+    render(<CreateIdentity />);
 
     const button = await screen.findByText("Create");
     const provider = await screen.findByText("Github");
@@ -80,7 +74,7 @@ describe("ui/components/CreateIdentityModal", () => {
   });
 
   test("should create identity properly", async () => {
-    render(<CreateIdentityModal {...defaultProps} />);
+    render(<CreateIdentity />);
 
     const button = await screen.findByText("Create");
     act(() => button.click());

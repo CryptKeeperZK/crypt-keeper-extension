@@ -33,6 +33,10 @@ export const setStatus = (status: State): Action<State> => ({
   payload: status,
 });
 
+export const closePopup = () => async (): Promise<void> => {
+  await postMessage({ method: RPCAction.CLOSE_POPUP });
+};
+
 export const fetchStatus =
   () =>
   async (dispatch: Dispatch): Promise<void> => {

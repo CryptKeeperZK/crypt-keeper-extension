@@ -11,8 +11,6 @@ import { Input } from "@src/ui/components/Input";
 import { useRequestsPending } from "@src/ui/ducks/requests";
 import postMessage from "@src/util/postMessage";
 
-import { CreateIdentityModal } from "../CreateIdentityModal";
-
 import "./confirm-modal.scss";
 
 interface ConnectionModalProps {
@@ -360,8 +358,6 @@ export const ConfirmRequestModal = (): JSX.Element | null => {
           reject={reject}
         />
       );
-    case PendingRequestType.CREATE_IDENTITY:
-      return <CreateIdentityModal accept={approve} len={pendingRequests.length} reject={reject} />;
     default:
       return (
         <DefaultApprovalModal

@@ -1,12 +1,14 @@
 import log from "loglevel";
 import { ReactNode, useCallback, useEffect, useState } from "react";
-import { Navigate, Route, Routes } from "react-router-dom";
+import { Navigate, Route, Routes, useNavigate } from "react-router-dom";
 
+import { Paths } from "@src/constants";
 import { ConfirmRequestModal } from "@src/ui/components/ConfirmRequestModal";
 import { fetchStatus, useAppStatus } from "@src/ui/ducks/app";
 import { useAppDispatch } from "@src/ui/ducks/hooks";
 import { useRequestsPending, fetchRequestPendingStatus } from "@src/ui/ducks/requests";
 import { useWallet } from "@src/ui/hooks/wallet";
+import { CreateIdentity } from "@src/ui/pages/CreateIdentity";
 import { Home } from "@src/ui/pages/Home";
 import Login from "@src/ui/pages/Login";
 import Onboarding from "@src/ui/pages/Onboarding";
@@ -19,6 +21,8 @@ const Popup = (): JSX.Element | null => {
   const [loading, setLoading] = useState(true);
   const { initialized, unlocked } = useAppStatus();
   const { onConnectEagerly } = useWallet();
+  const navigate = useNavigate();
+  const url = new URL(window.location.href);
 
   const fetchData = useCallback(async () => {
     await Promise.all([dispatch(fetchStatus()), dispatch(fetchRequestPendingStatus())]);
@@ -27,6 +31,16 @@ const Popup = (): JSX.Element | null => {
   useEffect(() => {
     onConnectEagerly();
   }, [onConnectEagerly]);
+
+  useEffect(() => {
+    const redirect = url.searchParams.get("redirect");
+
+    if (redirect) {
+      url.searchParams.delete("redirect");
+      window.history.replaceState(null, "", url);
+      navigate(redirect);
+    }
+  }, [url, navigate, window.history]);
 
   useEffect(() => {
     fetchData()
@@ -49,9 +63,11 @@ const Popup = (): JSX.Element | null => {
   } else {
     content = (
       <Routes>
-        <Route element={<Home />} path="/" />
+        <Route element={<Home />} path={Paths.HOME} />
 
-        <Route element={<Navigate replace to="/" />} />
+        <Route element={<CreateIdentity />} path={Paths.CREATE_IDENTITY} />
+
+        <Route element={<Navigate replace to={Paths.HOME} />} />
       </Routes>
     );
   }

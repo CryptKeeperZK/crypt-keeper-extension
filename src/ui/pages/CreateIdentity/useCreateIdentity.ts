@@ -3,17 +3,13 @@ import { ActionMeta, OnChangeValue } from "react-select";
 
 import { WEB2_PROVIDER_OPTIONS, IDENTITY_TYPES } from "@src/constants";
 import { IdentityStrategy, IdentityWeb2Provider, SelectOption } from "@src/types";
+import { closePopup } from "@src/ui/ducks/app";
 import { useAppDispatch } from "@src/ui/ducks/hooks";
 import { createIdentity } from "@src/ui/ducks/identities";
 import { useWallet } from "@src/ui/hooks/wallet";
 import { signIdentityMessage } from "@src/ui/services/identity";
 
-export interface IUseCreateIdentityModalArgs {
-  accept: () => void;
-  reject: () => void;
-}
-
-export interface IUseCreateIdentityModalData {
+export interface IUseCreateIdentityData {
   isLoading: boolean;
   nonce: number;
   error: string;
@@ -26,10 +22,7 @@ export interface IUseCreateIdentityModalData {
   onCreateIdentity: () => Promise<void>;
 }
 
-export const useCreateIdentityModal = ({
-  accept,
-  reject,
-}: IUseCreateIdentityModalArgs): IUseCreateIdentityModalData => {
+export const useCreateIdentity = (): IUseCreateIdentityData => {
   const [nonce, setNonce] = useState(0);
   const [identityStrategyType, setIdentityStrategyType] = useState(IDENTITY_TYPES[0]);
   const [web2Provider, setWeb2Provider] = useState(WEB2_PROVIDER_OPTIONS[0]);
@@ -76,18 +69,17 @@ export const useCreateIdentityModal = ({
 
       if (messageSignature) {
         dispatch(createIdentity(identityStrategyType.value, messageSignature, options));
-        accept();
       }
     } catch (err) {
       setError((err as Error).message);
     } finally {
       setIsLoading(false);
     }
-  }, [nonce, web2Provider, identityStrategyType, address, provider, dispatch, setError, setIsLoading, accept]);
+  }, [nonce, web2Provider, identityStrategyType, address, provider, dispatch, setError, setIsLoading]);
 
   const closeModal = useCallback(() => {
-    reject();
-  }, [reject]);
+    dispatch(closePopup());
+  }, [dispatch]);
 
   return {
     isLoading,

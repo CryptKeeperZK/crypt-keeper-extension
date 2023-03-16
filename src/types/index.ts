@@ -41,7 +41,6 @@ export enum PendingRequestType {
   RLN_PROOF,
   APPROVE,
   INJECT,
-  CREATE_IDENTITY,
 }
 
 export type PendingRequest = {

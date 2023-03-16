@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import { useCallback } from "react";
 
 import { IDENTITY_TYPES, WEB2_PROVIDER_OPTIONS } from "@src/constants";
 import { Button } from "@src/ui/components/Button";
@@ -6,15 +6,9 @@ import { Dropdown } from "@src/ui/components/Dropdown";
 import { FullModal, FullModalContent, FullModalFooter, FullModalHeader } from "@src/ui/components/FullModal";
 import { Input } from "@src/ui/components/Input";
 
-import { useCreateIdentityModal } from "./useCreateIdentityModal";
+import { useCreateIdentity } from "./useCreateIdentity";
 
-export interface ICreateIdentityModalProps {
-  len: number;
-  accept: () => void;
-  reject: () => void;
-}
-
-export const CreateIdentityModal = ({ len, accept, reject }: ICreateIdentityModalProps): JSX.Element => {
+export const CreateIdentity = (): JSX.Element => {
   const {
     isLoading,
     error,
@@ -26,18 +20,15 @@ export const CreateIdentityModal = ({ len, accept, reject }: ICreateIdentityModa
     onSelectIdentityType,
     onSelectWeb2Provider,
     onCreateIdentity,
-  } = useCreateIdentityModal({ accept, reject });
+  } = useCreateIdentity();
 
   const handleCreateIdentity = useCallback(() => {
     onCreateIdentity();
   }, [onCreateIdentity]);
 
   return (
-    <FullModal data-testid="create-identity-modal" onClose={closeModal}>
-      <FullModalHeader onClose={closeModal}>
-        Create Identity
-        {len > 1 && <div className="flex-grow flex flex-row justify-end">{`1 of ${len}`}</div>}
-      </FullModalHeader>
+    <FullModal data-testid="create-identity-page" onClose={closeModal}>
+      <FullModalHeader onClose={closeModal}>Create Identity</FullModalHeader>
 
       <FullModalContent>
         <Dropdown

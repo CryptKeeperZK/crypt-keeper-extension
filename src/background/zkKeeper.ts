@@ -2,7 +2,7 @@ import { bigintToHex } from "bigint-conversion";
 import log from "loglevel";
 import { browser } from "webextension-polyfill-ts";
 
-import { RPCAction } from "@src/constants";
+import { Paths, RPCAction } from "@src/constants";
 import { PendingRequestType, NewIdentityRequest, IdentityName } from "@src/types";
 
 import BrowserUtils from "./controllers/browserUtils";
@@ -77,7 +77,7 @@ export default class ZkKeeperController extends Handler {
 
     // identities
     this.add(RPCAction.CREATE_IDENTITY_REQ, this.lockService.ensure, async () => {
-      await this.requestManager.newRequest(PendingRequestType.CREATE_IDENTITY, {});
+      await BrowserUtils.openPopup({ params: { redirect: Paths.CREATE_IDENTITY } });
     });
 
     this.add(RPCAction.CREATE_IDENTITY, this.lockService.ensure, async (payload: NewIdentityRequest) => {
