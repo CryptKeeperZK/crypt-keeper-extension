@@ -23,7 +23,7 @@ jobs:
       fail-fast: false
       matrix:
         node-version: [16, 18]
-        env: [build, dev]
+        env: ["build:chrome", "dev:chrome", "build:firefox", "dev:firefox"]
 
     steps:
       - uses: actions/checkout@v3
