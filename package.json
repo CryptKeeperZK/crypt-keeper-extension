@@ -6,6 +6,10 @@
   "scripts": {
     "build": "NODE_ENV=production webpack --config webpack.prod.js",
     "dev": "NODE_ENV=development webpack --config webpack.dev.js",
+    "build:chrome": "TARGET=chrome npm run build",
+    "dev:chrome": "TARGET=chrome npm run dev",
+    "build:firefox": "TARGET=firefox npm run build",
+    "dev:firefox": "TARGET=firefox npm run dev",
     "merkle": "ts-node src/server/index.ts",
     "test": "jest",
     "test:coverage": "jest --coverage",

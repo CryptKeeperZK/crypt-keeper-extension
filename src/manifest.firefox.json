@@ -1,0 +1,47 @@
+{
+  "manifest_version": 3,
+  "name": "CryptKeeper",
+  "description": "Extension that stores credentials and creates semaphore proofs",
+  "version": "0.0.1",
+  "action": {
+    "default_icon": "logo.png",
+    "default_popup": "popup.html"
+  },
+  "background": {
+    "scripts": ["js/backgroundPage.js"]
+  },
+  "content_scripts": [
+    {
+      "matches": ["file://*/*", "http://*/*", "https://*/*"],
+      "js": ["js/content.js"],
+      "run_at": "document_start",
+      "all_frames": true
+    }
+  ],
+  "icons": {
+    "16": "icon-16.png",
+    "48": "icon-48.png",
+    "128": "icon-128.png"
+  },
+  "content_security_policy": {
+    "extension_pages": "script-src 'self' 'wasm-unsafe-eval'; object-src 'self';"
+  },
+  "permissions": ["clipboardWrite", "activeTab", "storage", "notifications"],
+  "host_permissions": ["http://*/", "https://*/"],
+  "web_accessible_resources": [
+    {
+      "resources": ["js/injected.js"],
+      "matches": ["*://*/*"]
+    },
+    {
+      "resources": ["js/zkeyFiles/*"],
+      "matches": ["*://*/*"]
+    }
+  ],
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "{840d8da7-e1a6-48ac-afe2-59e07fa0c389}",
+      "strict_min_version": "91"
+    }
+  }
+}

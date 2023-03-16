@@ -9,12 +9,15 @@ dotenv.config({ path: "./.env" });
 
 const envPlugin = new webpack.EnvironmentPlugin({
   NODE_ENV: "development",
+  TARGET: "chrome",
   CRYPTKEEPER_DEBUG: false,
   INFURA_API_KEY: "",
   ALCHEMY_API_KEY: "",
   FREIGHT_TRUST_NETWORK: "",
   PULSECHAIN_API_KEY: "",
 });
+
+const TARGET = process.env.TARGET || "chrome";
 
 module.exports = {
   entry: {
@@ -26,6 +29,7 @@ module.exports = {
   output: {
     path: path.join(__dirname, "dist/js"),
     filename: "[name].js",
+    clean: true,
   },
   plugins: [
     envPlugin,
@@ -39,7 +43,7 @@ module.exports = {
       patterns: [
         { from: path.join(__dirname, "./src/static/icons/*"), to: path.join(__dirname, "./dist/[name][ext]") },
         {
-          from: path.join(__dirname, "./src/manifest.json"),
+          from: path.join(__dirname, `./src/manifest.${TARGET}.json`),
           to: path.join(__dirname, "./dist/manifest.json"),
         },
         { from: path.join(__dirname, "./zkeyFiles"), to: path.join(__dirname, "./dist/js/zkeyFiles") },
