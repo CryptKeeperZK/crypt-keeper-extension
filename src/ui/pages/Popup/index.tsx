@@ -15,6 +15,10 @@ import Onboarding from "@src/ui/pages/Onboarding";
 
 import "./popup.scss";
 
+const REDIRECT_PATHS: Record<string, Paths> = {
+  [Paths.CREATE_IDENTITY]: Paths.CREATE_IDENTITY,
+};
+
 const Popup = (): JSX.Element | null => {
   const pendingRequests = useRequestsPending();
   const dispatch = useAppDispatch();
@@ -33,7 +37,8 @@ const Popup = (): JSX.Element | null => {
   }, [onConnectEagerly]);
 
   useEffect(() => {
-    const redirect = url.searchParams.get("redirect");
+    const redirectParam = url.searchParams.get("redirect");
+    const redirect = redirectParam && REDIRECT_PATHS[redirectParam];
 
     if (redirect) {
       url.searchParams.delete("redirect");
