@@ -107,6 +107,7 @@ export const ConnectionModal = ({ refreshConnectionStatus, onClose }: Connection
           <Checkbox
             checked={checked}
             className="mr-2 mt-2 flex-shrink-0"
+            id="approval"
             onChange={(e) => {
               setApproval(e.target.checked);
             }}

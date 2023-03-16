@@ -18,8 +18,6 @@ jest.mock("@web3-react/core", (): unknown => ({
   useWeb3React: jest.fn(),
 }));
 
-jest.mock("@src/util/postMessage");
-
 describe("ui/hooks/wallet", () => {
   const defaultHooks = { usePriorityChainId: jest.fn(), usePriorityAccount: jest.fn(), usePriorityProvider: jest.fn() };
 
