@@ -256,6 +256,16 @@ export default class ZkKeeperController extends Handler {
 
     this.add(RPCAction.CLOSE_POPUP, async () => BrowserUtils.closePopup());
 
+    this.add(RPCAction.GET_CONNECT_WALLET_MODAL, this.lockService.ensure, async () => {
+      try {
+        await this.requestManager.newRequest(PendingRequestType.CONNECT_WALLET);
+        return true;
+      } catch (e) {
+        log.error(e);
+        return false;
+      }
+    });
+
     this.add(RPCAction.SET_CONNECT_WALLET, this.lockService.ensure, this.walletService.setConnection);
 
     this.add(RPCAction.GET_CONNECT_WALLET, this.lockService.ensure, this.walletService.getConnection);

@@ -30,6 +30,7 @@ export enum RPCAction {
   SET_HOST_PERMISSIONS = "rpc/hosts/setHostPermissions",
   REMOVE_HOST = "rpc/hosts/remove",
   CLOSE_POPUP = "rpc/popup/close",
+  GET_CONNECT_WALLET_MODAL = "rpc/wallet/get/connectModal",
   GET_CONNECT_WALLET = "rpc/wallet/get/connect",
   SET_CONNECT_WALLET = "rpc/wallet/connect",
   // DEV RPCS

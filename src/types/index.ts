@@ -42,6 +42,7 @@ export enum PendingRequestType {
   APPROVE,
   INJECT,
   CREATE_IDENTITY,
+  CONNECT_WALLET,
 }
 
 export type PendingRequest = {

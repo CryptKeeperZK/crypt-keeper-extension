@@ -15,6 +15,12 @@ import "./header.scss";
 export const Header = (): JSX.Element => {
   const { address, isActivating, isActive, chain, onConnect, onDisconnect } = useWallet();
 
+  const openConnectWalletModal = useCallback(() => {
+    postMessage({
+      method: RPCAction.GET_CONNECT_WALLET_MODAL,
+    });
+  }, []);
+
   const onLock = useCallback(async () => {
     await postMessage({ method: RPCAction.LOCK });
   }, []);
@@ -37,7 +43,7 @@ export const Header = (): JSX.Element => {
                   }
                 : {
                     label: "Connect wallet",
-                    onClick: onConnect,
+                    onClick: openConnectWalletModal,
                   },
               {
                 label: "Lock",
