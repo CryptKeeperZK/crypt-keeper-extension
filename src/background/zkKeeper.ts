@@ -75,7 +75,11 @@ export default class ZkKeeperController extends Handler {
     // lock
     this.add(RPCAction.SETUP_PASSWORD, (payload: string) => this.lockService.setupPassword(payload));
 
-    // identites
+    // identities
+    this.add(RPCAction.CREATE_IDENTITY_REQ, this.lockService.ensure, async () => {
+      await this.requestManager.newRequest(PendingRequestType.CREATE_IDENTITY, {});
+    });
+
     this.add(RPCAction.CREATE_IDENTITY, this.lockService.ensure, async (payload: NewIdentityRequest) => {
       const { strategy, messageSignature, options } = payload;
 
@@ -99,6 +103,8 @@ export default class ZkKeeperController extends Handler {
       }
 
       await this.identityService.insert(identity);
+
+      await BrowserUtils.closePopup();
 
       return true;
     });

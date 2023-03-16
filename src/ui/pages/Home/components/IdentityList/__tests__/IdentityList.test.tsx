@@ -29,6 +29,7 @@ jest.mock("@src/ui/ducks/identities", (): unknown => ({
   setIdentityName: jest.fn(),
   useIdentities: jest.fn(),
   useSelectedIdentity: jest.fn(),
+  createIdentityRequest: jest.fn(),
 }));
 
 jest.mock("@src/ui/hooks/wallet", (): unknown => ({
@@ -73,7 +74,7 @@ describe("ui/pages/Home/components/IdentityList", () => {
   });
 
   afterEach(() => {
-    jest.resetAllMocks();
+    jest.clearAllMocks();
 
     const container = document.getElementById("modal");
     document.body.removeChild(container as HTMLElement);
@@ -152,12 +153,6 @@ describe("ui/pages/Home/components/IdentityList", () => {
     const createIdentityButton = await screen.findByTestId("create-new-identity");
     await act(async () => Promise.resolve(createIdentityButton.click()));
 
-    const modal = await screen.findByTestId("create-identity-modal");
-    expect(modal).toBeInTheDocument();
-
-    const closeIcon = await screen.findByTestId("close-icon");
-    await act(async () => Promise.resolve(closeIcon.click()));
-
-    expect(screen.queryByTestId("create-identity-modal")).not.toBeInTheDocument();
+    expect(mockDispatch).toBeCalledTimes(1);
   });
 });

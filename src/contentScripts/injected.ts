@@ -57,31 +57,9 @@ async function setHostPermissions(
 }
 
 async function createIdentity() {
-  try {
-    const res = await post({
-      method: RPCAction.CREATE_IDENTITY_REQ,
-    });
-
-    await post({ method: RPCAction.CLOSE_POPUP });
-    return res;
-  } catch (e) {
-    await post({ method: RPCAction.CLOSE_POPUP });
-    throw e;
-  }
-}
-
-async function createDummyRequest() {
-  try {
-    const res = await post({
-      method: RPCAction.DUMMY_REQUEST,
-    });
-
-    await post({ method: RPCAction.CLOSE_POPUP });
-    return res;
-  } catch (e) {
-    await post({ method: RPCAction.CLOSE_POPUP });
-    throw e;
-  }
+  return post({
+    method: RPCAction.CREATE_IDENTITY_REQ,
+  });
 }
 
 async function semaphoreProof(
@@ -206,7 +184,6 @@ const client = {
   off,
   // dev-only
   clearApproved,
-  createDummyRequest,
 };
 
 export type Client = typeof client;
@@ -215,7 +192,7 @@ export type Client = typeof client;
  * Connect to Extension
  * @returns injected client
  */
-// eslint-disable-next-line consistent-return
+
 async function connect(): Promise<Client | null> {
   let result: Client | null = null;
   try {
@@ -226,7 +203,6 @@ async function connect(): Promise<Client | null> {
       result = client;
     }
   } catch (err) {
-    // eslint-disable-next-line no-console
     log.debug("Err: ", err);
     result = null;
   }

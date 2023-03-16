@@ -32,7 +32,8 @@ jest.mock("@src/ui/hooks/wallet", (): unknown => ({
 
 describe("ui/components/CreateIdentityModal/useCreateIdentityModal", () => {
   const defaultHookProps: IUseCreateIdentityModalArgs = {
-    onClose: jest.fn(),
+    accept: jest.fn(),
+    reject: jest.fn(),
   };
 
   const mockSignedMessage = "signed-message";
@@ -114,7 +115,15 @@ describe("ui/components/CreateIdentityModal/useCreateIdentityModal", () => {
     expect(createIdentity).toBeCalledTimes(1);
     expect(createIdentity).toBeCalledWith("random", mockSignedMessage, {});
     expect(result.current.isLoading).toBe(false);
-    expect(defaultHookProps.onClose).toBeCalledTimes(1);
+    expect(defaultHookProps.accept).toBeCalledTimes(1);
+  });
+
+  test("should close modal properly", () => {
+    const { result } = renderHook(() => useCreateIdentityModal(defaultHookProps));
+
+    act(() => result.current.closeModal());
+
+    expect(defaultHookProps.reject).toBeCalledTimes(1);
   });
 
   test("should handle create identity error properly", async () => {
@@ -134,6 +143,6 @@ describe("ui/components/CreateIdentityModal/useCreateIdentityModal", () => {
 
     expect(result.current.error).toBe(error.message);
     expect(result.current.isLoading).toBe(false);
-    expect(defaultHookProps.onClose).not.toBeCalled();
+    expect(defaultHookProps.accept).not.toBeCalled();
   });
 });

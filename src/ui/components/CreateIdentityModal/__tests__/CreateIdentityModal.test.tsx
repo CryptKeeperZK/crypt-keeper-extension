@@ -15,7 +15,9 @@ jest.mock("../useCreateIdentityModal", (): unknown => ({
 
 describe("ui/components/CreateIdentityModal", () => {
   const defaultProps: ICreateIdentityModalProps = {
-    onClose: jest.fn(),
+    len: 1,
+    accept: jest.fn(),
+    reject: jest.fn(),
   };
 
   const defaultHookData: IUseCreateIdentityModalData = {
@@ -24,6 +26,7 @@ describe("ui/components/CreateIdentityModal", () => {
     error: "",
     identityStrategyType: IDENTITY_TYPES[1],
     web2Provider: WEB2_PROVIDER_OPTIONS[0],
+    closeModal: jest.fn(),
     onSelectIdentityType: jest.fn(),
     onSelectWeb2Provider: jest.fn(),
     onChangeNonce: jest.fn(),
@@ -46,7 +49,7 @@ describe("ui/components/CreateIdentityModal", () => {
   });
 
   test("should render properly", async () => {
-    render(<CreateIdentityModal {...defaultProps} />);
+    render(<CreateIdentityModal {...defaultProps} len={2} />);
 
     const button = await screen.findByText("Create");
     const identityType = await screen.findByText("Random");

@@ -1,11 +1,12 @@
 import log from "loglevel";
-import { ReactNode, useEffect, useState } from "react";
+import { ReactNode, useCallback, useEffect, useState } from "react";
 import { Navigate, Route, Routes } from "react-router-dom";
 
 import { ConfirmRequestModal } from "@src/ui/components/ConfirmRequestModal";
 import { fetchStatus, useAppStatus } from "@src/ui/ducks/app";
 import { useAppDispatch } from "@src/ui/ducks/hooks";
 import { useRequestsPending, fetchRequestPendingStatus } from "@src/ui/ducks/requests";
+import { useWallet } from "@src/ui/hooks/wallet";
 import { Home } from "@src/ui/pages/Home";
 import Login from "@src/ui/pages/Login";
 import Onboarding from "@src/ui/pages/Onboarding";
@@ -17,24 +18,21 @@ const Popup = (): JSX.Element | null => {
   const dispatch = useAppDispatch();
   const [loading, setLoading] = useState(true);
   const { initialized, unlocked } = useAppStatus();
+  const { onConnectEagerly } = useWallet();
+
+  const fetchData = useCallback(async () => {
+    await Promise.all([dispatch(fetchStatus()), dispatch(fetchRequestPendingStatus())]);
+  }, [dispatch]);
 
   useEffect(() => {
-    (async () => {
-      try {
-        await dispatch(fetchStatus());
-        await dispatch(fetchRequestPendingStatus());
-      } catch (e) {
-        log.error(e);
-      } finally {
-        setLoading(false);
-      }
-    })();
-  }, []);
+    onConnectEagerly();
+  }, [onConnectEagerly]);
 
   useEffect(() => {
-    dispatch(fetchStatus());
-    dispatch(fetchRequestPendingStatus());
-  }, [unlocked]);
+    fetchData()
+      .catch((error) => log.error(error))
+      .finally(() => setLoading(false));
+  }, [fetchData, setLoading, unlocked]);
 
   if (loading) {
     return null;

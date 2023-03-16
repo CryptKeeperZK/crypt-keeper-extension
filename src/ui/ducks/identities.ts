@@ -36,6 +36,10 @@ const initialState: State = {
   selected: "",
 };
 
+export const createIdentityRequest = () => async (): Promise<void> => {
+  await postMessage({ method: RPCAction.CREATE_IDENTITY_REQ });
+};
+
 export const createIdentity =
   (strategy: string, messageSignature: string, options: CreateIdentityOptions) => async (): Promise<boolean> =>
     postMessage({

@@ -1,22 +1,17 @@
 import { getLinkPreview } from "link-preview-js";
 import { ChangeEvent, useCallback, useEffect, useState } from "react";
 
-import { RPCAction, IDENTITY_TYPES, WEB2_PROVIDER_OPTIONS } from "@src/constants";
-import {
-  IdentityStrategy,
-  PendingRequest,
-  PendingRequestType,
-  RequestResolutionAction,
-  SelectOption,
-} from "@src/types";
+import { RPCAction } from "@src/constants";
+import { PendingRequest, PendingRequestType, RequestResolutionAction } from "@src/types";
 import { ButtonType, Button } from "@src/ui/components/Button";
 import { Checkbox } from "@src/ui/components/Checkbox";
-import { Dropdown } from "@src/ui/components/Dropdown";
 import { FullModal, FullModalContent, FullModalFooter, FullModalHeader } from "@src/ui/components/FullModal";
 import { Icon } from "@src/ui/components/Icon";
 import { Input } from "@src/ui/components/Input";
 import { useRequestsPending } from "@src/ui/ducks/requests";
 import postMessage from "@src/util/postMessage";
+
+import { CreateIdentityModal } from "../CreateIdentityModal";
 
 import "./confirm-modal.scss";
 
@@ -120,92 +115,6 @@ const ConnectionApprovalModal = ({ len, pendingRequest, error, loading, accept, 
         </Button>
 
         <Button className="ml-2" loading={loading} onClick={handleAccept}>
-          Approve
-        </Button>
-      </FullModalFooter>
-    </FullModal>
-  );
-};
-
-interface CreateIdentityApprovalModalProps {
-  len: number;
-  loading: boolean;
-  error: string;
-  accept: (data?: {
-    provider: IdentityStrategy;
-    options: Partial<{ nonce: number; web2Provider: SelectOption }>;
-  }) => void;
-  reject: (error?: Error) => void;
-}
-
-const CreateIdentityApprovalModal = ({ len, loading, error, accept, reject }: CreateIdentityApprovalModalProps) => {
-  const [nonce, setNonce] = useState(0);
-  const [identityType, setIdentityType] = useState(IDENTITY_TYPES[0]);
-  const [web2Provider, setWeb2Provider] = useState(WEB2_PROVIDER_OPTIONS[0]);
-
-  const handleApprove = useCallback(() => {
-    const options = identityType.value !== "random" ? { nonce, web2Provider } : {};
-    const provider = identityType.value as IdentityStrategy;
-
-    accept({ provider, options });
-  }, [nonce, web2Provider, identityType, accept]);
-
-  const handleReject = useCallback(() => {
-    reject();
-  }, [reject]);
-
-  return (
-    <FullModal className="confirm-modal" onClose={() => null}>
-      <FullModalHeader>
-        Create Identity
-        {len > 1 && <div className="flex-grow flex flex-row justify-end">{`1 of ${len}`}</div>}
-      </FullModalHeader>
-
-      <FullModalContent>
-        <Dropdown
-          className="my-2"
-          id="identityType"
-          label="Identity type"
-          options={IDENTITY_TYPES}
-          value={identityType}
-          onChange={(option) => {
-            setIdentityType(option as SelectOption);
-          }}
-        />
-
-        {identityType.value === "interrep" && (
-          <>
-            <Dropdown
-              className="my-2"
-              id="web2Provider"
-              label="Web2 Provider"
-              options={WEB2_PROVIDER_OPTIONS}
-              value={web2Provider}
-              onChange={(option) => {
-                setWeb2Provider(option as SelectOption);
-              }}
-            />
-
-            <Input
-              className="my-2"
-              defaultValue={nonce}
-              label="Nonce"
-              step={1}
-              type="number"
-              onChange={(e) => setNonce(Number(e.target.value))}
-            />
-          </>
-        )}
-      </FullModalContent>
-
-      {error && <div className="text-xs text-red-500 text-center pb-1">{error}</div>}
-
-      <FullModalFooter>
-        <Button buttonType={ButtonType.SECONDARY} loading={loading} onClick={handleReject}>
-          Reject
-        </Button>
-
-        <Button className="ml-2" loading={loading} onClick={handleApprove}>
           Approve
         </Button>
       </FullModalFooter>
@@ -452,15 +361,7 @@ export const ConfirmRequestModal = (): JSX.Element | null => {
         />
       );
     case PendingRequestType.CREATE_IDENTITY:
-      return (
-        <CreateIdentityApprovalModal
-          accept={approve}
-          error={error}
-          len={pendingRequests.length}
-          loading={loading}
-          reject={reject}
-        />
-      );
+      return <CreateIdentityModal accept={approve} len={pendingRequests.length} reject={reject} />;
     default:
       return (
         <DefaultApprovalModal

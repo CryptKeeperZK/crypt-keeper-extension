@@ -9,29 +9,35 @@ import { Input } from "@src/ui/components/Input";
 import { useCreateIdentityModal } from "./useCreateIdentityModal";
 
 export interface ICreateIdentityModalProps {
-  onClose: () => void;
+  len: number;
+  accept: () => void;
+  reject: () => void;
 }
 
-export const CreateIdentityModal = ({ onClose }: ICreateIdentityModalProps): JSX.Element => {
+export const CreateIdentityModal = ({ len, accept, reject }: ICreateIdentityModalProps): JSX.Element => {
   const {
     isLoading,
     error,
     nonce,
     identityStrategyType,
     web2Provider,
+    closeModal,
     onChangeNonce,
     onSelectIdentityType,
     onSelectWeb2Provider,
     onCreateIdentity,
-  } = useCreateIdentityModal({ onClose });
+  } = useCreateIdentityModal({ accept, reject });
 
   const handleCreateIdentity = useCallback(() => {
     onCreateIdentity();
   }, [onCreateIdentity]);
 
   return (
-    <FullModal data-testid="create-identity-modal" onClose={onClose}>
-      <FullModalHeader onClose={onClose}>Create Identity</FullModalHeader>
+    <FullModal data-testid="create-identity-modal" onClose={closeModal}>
+      <FullModalHeader onClose={closeModal}>
+        Create Identity
+        {len > 1 && <div className="flex-grow flex flex-row justify-end">{`1 of ${len}`}</div>}
+      </FullModalHeader>
 
       <FullModalContent>
         <Dropdown

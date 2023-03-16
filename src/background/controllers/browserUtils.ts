@@ -2,16 +2,19 @@ import log from "loglevel";
 import { browser, Windows } from "webextension-polyfill-ts";
 
 interface CreateWindowArgs {
-  tabId?: number;
   type: "popup";
   focused: boolean;
   width: number;
   height: number;
+  tabId?: number;
+  url?: string;
 }
 
 interface CreateTabArgs {
-  url: string;
-  active: boolean;
+  url?: string;
+  index?: number;
+  highlighted?: boolean;
+  active?: boolean;
 }
 
 class BrowserUtils {
@@ -41,7 +44,9 @@ class BrowserUtils {
       return this.cached;
     }
 
-    const tab = await this.createTab({ url: "popup.html", active: false });
+    const tabs = await browser.tabs.query({});
+    const index = tabs.findIndex((tab) => tab.active && tab.highlighted);
+    const tab = await this.createTab({ url: "popup.html", active: index >= 0, index: index >= 0 ? index : undefined });
 
     // TODO add this in config/constants...
     const popup = await this.createWindow({
