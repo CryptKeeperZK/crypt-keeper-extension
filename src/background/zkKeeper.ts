@@ -37,6 +37,22 @@ export default class ZkKeeperController extends Handler {
     this.approvalService = new ApprovalService();
     this.walletService = new WalletService();
     this.lockService = LockService.getInstance();
+
+    BrowserUtils.addRemoveWindowListener((windowId: number) => {
+      log.debug("Inside removeWindow onRemove");
+
+      try {
+        log.debug("Inside removeWindow onRemove locked");
+        if (BrowserUtils.cached?.id === windowId) {
+          BrowserUtils.cached = null;
+          this.requestManager.finilizeRequestOnRemovedWindow(windowId);
+          log.debug("Inside removeWindow onRemove cleaned");
+        }
+      } catch (error) {
+        log.debug("Inside removeWindow onRemove error", error);
+      }
+    });
+
     log.debug("Inside ZkKepperController");
   }
 

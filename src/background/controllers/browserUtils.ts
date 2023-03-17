@@ -22,24 +22,10 @@ interface OpenPopupArgs {
 }
 
 class BrowserUtils {
-  private cached: Windows.Window | null = null;
+  public cached: Windows.Window | null = null;
 
   public constructor() {
-    this.removeWindow((windowId: number) => {
-      log.debug("Inside removeWindow onRemove");
-
-      try {
-        // TODO: Check either internalLogout() or logout()
-        // await LockService.internalLogout();
-        log.debug("Inside removeWindow onRemove locked");
-        if (this.cached?.id === windowId) {
-          this.cached = null;
-          log.debug("Inside removeWindow onRemove cleaned");
-        }
-      } catch (error) {
-        log.debug("Inside removeWindow onRemove error", error);
-      }
-    });
+    log.debug("BrowserUtils is created successfully");
   }
 
   public openPopup = async ({ params }: OpenPopupArgs = {}) => {
@@ -77,12 +63,15 @@ class BrowserUtils {
     }
   };
 
-  private createTab = async (options: CreateTabArgs) => browser.tabs.create(options);
-
-  private removeWindow = (callback: (windowId: number) => void) => {
-    // TODO: Converted from browser. to chrome. solved the error
+  public addRemoveWindowListener = (callback: (windowId: number) => void) => {
     browser.windows.onRemoved.addListener(callback);
   };
+
+  public removeRemoveWindowListener = (callback: (windowId: number) => void) => {
+    browser.windows.onRemoved.removeListener(callback);
+  };
+
+  private createTab = async (options: CreateTabArgs) => browser.tabs.create(options);
 
   private createWindow = async (options: CreateWindowArgs) => browser.windows.create(options);
 
