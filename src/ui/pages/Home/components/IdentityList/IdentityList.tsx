@@ -1,10 +1,10 @@
 import classNames from "classnames";
-import { useCallback, useState } from "react";
+import { useCallback } from "react";
 
-import { CreateIdentityModal } from "@src/ui/components/CreateIdentityModal";
 import { Icon } from "@src/ui/components/Icon";
 import { useAppDispatch } from "@src/ui/ducks/hooks";
 import {
+  createIdentityRequest,
   deleteIdentity,
   setActiveIdentity,
   setIdentityName,
@@ -21,8 +21,6 @@ export const IdentityList = (): JSX.Element => {
   const selected = useSelectedIdentity();
   const dispatch = useAppDispatch();
   const { address } = useWallet();
-
-  const [isModalShow, setIsModalShow] = useState(false);
 
   const onSelectIdentity = useCallback(
     (identityCommitment: string) => {
@@ -45,20 +43,14 @@ export const IdentityList = (): JSX.Element => {
     [dispatch],
   );
 
-  const onShowCreateIdentityModal = useCallback(() => {
+  const onCreateIdentityRequest = useCallback(() => {
     if (address) {
-      setIsModalShow(true);
+      dispatch(createIdentityRequest());
     }
-  }, [address, setIsModalShow]);
-
-  const onCloseCreateIdentityModal = useCallback(() => {
-    setIsModalShow(false);
-  }, [setIsModalShow]);
+  }, [address, dispatch]);
 
   return (
     <>
-      {isModalShow && <CreateIdentityModal onClose={onCloseCreateIdentityModal} />}
-
       {identities.map(({ commitment, metadata }) => (
         <IdentityItem
           key={commitment}
@@ -78,7 +70,7 @@ export const IdentityList = (): JSX.Element => {
         )}
         data-testid="create-new-identity"
         type="button"
-        onClick={onShowCreateIdentityModal}
+        onClick={onCreateIdentityRequest}
       >
         <Icon className="mr-2" fontAwesome="fas fa-plus" size={1} />
 

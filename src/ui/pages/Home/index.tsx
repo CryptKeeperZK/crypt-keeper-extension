@@ -14,7 +14,6 @@ import "./home.scss";
 
 export const Home = (): JSX.Element => {
   const dispatch = useAppDispatch();
-  const { onConnectEagerly } = useWallet();
 
   const scrollRef = useRef<HTMLDivElement>(null);
   const [fixedTabs, fixTabs] = useState(false);
@@ -22,9 +21,8 @@ export const Home = (): JSX.Element => {
   const { address, chain, balance } = useWallet();
 
   useEffect(() => {
-    onConnectEagerly();
     dispatch(fetchIdentities());
-  }, [dispatch, onConnectEagerly]);
+  }, [dispatch]);
 
   const onScroll = useCallback(() => {
     if (!scrollRef.current) {

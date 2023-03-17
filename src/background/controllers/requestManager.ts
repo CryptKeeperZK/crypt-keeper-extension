@@ -26,6 +26,7 @@ export default class RequestManager extends EventEmitter2 {
     this.pendingRequests = this.pendingRequests.filter((pendingRequest) => pendingRequest.id !== id);
     this.emit(`${id}:finalized`, action);
     await pushMessage(setPendingRequest(this.pendingRequests));
+
     return true;
   };
 

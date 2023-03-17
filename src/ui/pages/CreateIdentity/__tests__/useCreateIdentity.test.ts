@@ -12,7 +12,7 @@ import { createIdentity } from "@src/ui/ducks/identities";
 import { useWallet } from "@src/ui/hooks/wallet";
 import { signIdentityMessage } from "@src/ui/services/identity";
 
-import { IUseCreateIdentityModalArgs, useCreateIdentityModal } from "../useCreateIdentityModal";
+import { useCreateIdentity } from "../useCreateIdentity";
 
 jest.mock("@src/ui/ducks/hooks", (): unknown => ({
   useAppDispatch: jest.fn(),
@@ -20,6 +20,10 @@ jest.mock("@src/ui/ducks/hooks", (): unknown => ({
 
 jest.mock("@src/ui/services/identity", (): unknown => ({
   signIdentityMessage: jest.fn(),
+}));
+
+jest.mock("@src/ui/ducks/app", (): unknown => ({
+  closePopup: jest.fn(),
 }));
 
 jest.mock("@src/ui/ducks/identities", (): unknown => ({
@@ -30,11 +34,7 @@ jest.mock("@src/ui/hooks/wallet", (): unknown => ({
   useWallet: jest.fn(),
 }));
 
-describe("ui/components/CreateIdentityModal/useCreateIdentityModal", () => {
-  const defaultHookProps: IUseCreateIdentityModalArgs = {
-    onClose: jest.fn(),
-  };
-
+describe("ui/pages/CreateIdentity/useCreateIdentity", () => {
   const mockSignedMessage = "signed-message";
 
   const mockDispatch = jest.fn();
@@ -54,7 +54,7 @@ describe("ui/components/CreateIdentityModal/useCreateIdentityModal", () => {
   });
 
   test("should return initial data", () => {
-    const { result } = renderHook(() => useCreateIdentityModal(defaultHookProps));
+    const { result } = renderHook(() => useCreateIdentity());
 
     expect(result.current.isLoading).toBe(false);
     expect(result.current.error).toBe("");
@@ -64,7 +64,7 @@ describe("ui/components/CreateIdentityModal/useCreateIdentityModal", () => {
   });
 
   test("should update nonce value properly", () => {
-    const { result } = renderHook(() => useCreateIdentityModal(defaultHookProps));
+    const { result } = renderHook(() => useCreateIdentity());
 
     act(() => {
       result.current.onChangeNonce({ target: { value: "1" } } as ChangeEvent<HTMLInputElement>);
@@ -74,7 +74,7 @@ describe("ui/components/CreateIdentityModal/useCreateIdentityModal", () => {
   });
 
   test("should update web2 provider properly", () => {
-    const { result } = renderHook(() => useCreateIdentityModal(defaultHookProps));
+    const { result } = renderHook(() => useCreateIdentity());
 
     act(() => {
       result.current.onSelectWeb2Provider(WEB2_PROVIDER_OPTIONS[2], {
@@ -87,7 +87,7 @@ describe("ui/components/CreateIdentityModal/useCreateIdentityModal", () => {
   });
 
   test("should update identity type properly", () => {
-    const { result } = renderHook(() => useCreateIdentityModal(defaultHookProps));
+    const { result } = renderHook(() => useCreateIdentity());
 
     act(() => {
       result.current.onSelectIdentityType(IDENTITY_TYPES[1], { action: "select-option", option: IDENTITY_TYPES[1] });
@@ -97,7 +97,7 @@ describe("ui/components/CreateIdentityModal/useCreateIdentityModal", () => {
   });
 
   test("should create identity properly", async () => {
-    const { result } = renderHook(() => useCreateIdentityModal(defaultHookProps));
+    const { result } = renderHook(() => useCreateIdentity());
 
     act(() => {
       result.current.onSelectIdentityType(IDENTITY_TYPES[1], { action: "select-option", option: IDENTITY_TYPES[1] });
@@ -114,7 +114,14 @@ describe("ui/components/CreateIdentityModal/useCreateIdentityModal", () => {
     expect(createIdentity).toBeCalledTimes(1);
     expect(createIdentity).toBeCalledWith("random", mockSignedMessage, {});
     expect(result.current.isLoading).toBe(false);
-    expect(defaultHookProps.onClose).toBeCalledTimes(1);
+  });
+
+  test("should close modal properly", () => {
+    const { result } = renderHook(() => useCreateIdentity());
+
+    act(() => result.current.closeModal());
+
+    expect(mockDispatch).toBeCalledTimes(1);
   });
 
   test("should handle create identity error properly", async () => {
@@ -124,7 +131,7 @@ describe("ui/components/CreateIdentityModal/useCreateIdentityModal", () => {
       throw error;
     });
 
-    const { result } = renderHook(() => useCreateIdentityModal(defaultHookProps));
+    const { result } = renderHook(() => useCreateIdentity());
 
     await act(async () => {
       result.current.onCreateIdentity();
@@ -134,6 +141,5 @@ describe("ui/components/CreateIdentityModal/useCreateIdentityModal", () => {
 
     expect(result.current.error).toBe(error.message);
     expect(result.current.isLoading).toBe(false);
-    expect(defaultHookProps.onClose).not.toBeCalled();
   });
 });

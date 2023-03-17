@@ -14,3 +14,4 @@ export const IDENTITY_TYPES: readonly SelectOption[] = [
 ];
 
 export * from "./rpcActions";
+export * from "./paths";

@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import { useCallback } from "react";
 
 import { IDENTITY_TYPES, WEB2_PROVIDER_OPTIONS } from "@src/constants";
 import { Button } from "@src/ui/components/Button";
@@ -6,32 +6,29 @@ import { Dropdown } from "@src/ui/components/Dropdown";
 import { FullModal, FullModalContent, FullModalFooter, FullModalHeader } from "@src/ui/components/FullModal";
 import { Input } from "@src/ui/components/Input";
 
-import { useCreateIdentityModal } from "./useCreateIdentityModal";
+import { useCreateIdentity } from "./useCreateIdentity";
 
-export interface ICreateIdentityModalProps {
-  onClose: () => void;
-}
-
-export const CreateIdentityModal = ({ onClose }: ICreateIdentityModalProps): JSX.Element => {
+export const CreateIdentity = (): JSX.Element => {
   const {
     isLoading,
     error,
     nonce,
     identityStrategyType,
     web2Provider,
+    closeModal,
     onChangeNonce,
     onSelectIdentityType,
     onSelectWeb2Provider,
     onCreateIdentity,
-  } = useCreateIdentityModal({ onClose });
+  } = useCreateIdentity();
 
   const handleCreateIdentity = useCallback(() => {
     onCreateIdentity();
   }, [onCreateIdentity]);
 
   return (
-    <FullModal data-testid="create-identity-modal" onClose={onClose}>
-      <FullModalHeader onClose={onClose}>Create Identity</FullModalHeader>
+    <FullModal data-testid="create-identity-page" onClose={closeModal}>
+      <FullModalHeader onClose={closeModal}>Create Identity</FullModalHeader>
 
       <FullModalContent>
         <Dropdown
