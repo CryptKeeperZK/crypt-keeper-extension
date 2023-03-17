@@ -1,5 +1,4 @@
 import { EventEmitter2 } from "eventemitter2";
-import { browser } from "webextension-polyfill-ts";
 
 import { PendingRequest, PendingRequestType, RequestResolutionAction } from "@src/types";
 import { setPendingRequest } from "@src/ui/ducks/requests";
@@ -19,7 +18,7 @@ export default class RequestManager extends EventEmitter2 {
 
   public getRequests = (): PendingRequest[] => this.pendingRequests;
 
-  public finalizeRequest = async (action: RequestResolutionAction<unknown>): Promise<Boolean> => {
+  public finalizeRequest = async (action: RequestResolutionAction<unknown>): Promise<boolean> => {
     const { id } = action;
     if (!id) throw new Error("id not provided");
     // TODO add some mutex lock just in case something strange occurs
@@ -30,7 +29,7 @@ export default class RequestManager extends EventEmitter2 {
     return true;
   };
 
-  public finilizeRequestOnRemovedWindow = async (windowId: number | undefined): Promise<Boolean> => {
+  public finilizeRequestOnRemovedWindow = async (windowId: number | undefined): Promise<boolean> => {
     if (windowId) {
       this.pendingRequests = this.pendingRequests.filter((pendingRequests) => pendingRequests.windowId !== windowId);
       await pushMessage(setPendingRequest(this.pendingRequests));
