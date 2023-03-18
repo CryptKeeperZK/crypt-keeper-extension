@@ -24,10 +24,6 @@ interface OpenPopupArgs {
 class BrowserUtils {
   public cached: Windows.Window | null = null;
 
-  public constructor() {
-    log.debug("BrowserUtils is created successfully");
-  }
-
   public openPopup = async ({ params }: OpenPopupArgs = {}) => {
     if (this.cached?.id) {
       await this.focusWindow(this.cached.id);

@@ -147,8 +147,8 @@ function App() {
     setIdentityCommitment(idCommitment);
   }, [client, setIdentityCommitment]);
 
-  const createIdentity = useCallback(async () => {
-    await client?.createIdentity();
+  const createIdentity = useCallback(() => {
+    client?.createIdentity();
   }, [client]);
 
   const initClient = useCallback(async () => {
