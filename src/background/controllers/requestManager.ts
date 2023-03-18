@@ -40,7 +40,7 @@ export default class RequestManager extends EventEmitter2 {
 
   public addToQueue = async (
     type: PendingRequestType,
-    windowId: number | undefined,
+    windowId?: number,
     payload?: unknown,
   ): Promise<string> => {
     // eslint-disable-next-line no-plusplus
