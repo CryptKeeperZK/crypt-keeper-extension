@@ -241,7 +241,7 @@ function App() {
       <hr />
       <div>
         <h2>Create a new Identity</h2>
-        <button onClick={() => createIdentity()}>Create</button> <br />
+        <button onClick={createIdentity}>Create</button> <br />
         <br />
       </div>
 
