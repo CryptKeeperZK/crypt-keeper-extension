@@ -29,7 +29,7 @@ export default class RequestManager extends EventEmitter2 {
     return true;
   };
 
-  public finilizeRequestOnRemovedWindow = async (windowId: number | undefined): Promise<boolean> => {
+  public finilizeRequestOnRemovedWindow = async (windowId?: number): Promise<boolean> => {
     if (windowId) {
       this.pendingRequests = this.pendingRequests.filter((pendingRequests) => pendingRequests.windowId !== windowId);
       await pushMessage(setPendingRequest(this.pendingRequests));
