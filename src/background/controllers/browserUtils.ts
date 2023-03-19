@@ -1,6 +1,8 @@
 import log from "loglevel";
 import { browser, Windows } from "webextension-polyfill-ts";
 
+import type RequestManager from "./requestManager";
+
 interface CreateWindowArgs {
   type: "popup";
   focused: boolean;
@@ -21,10 +23,44 @@ interface OpenPopupArgs {
   params?: Record<string, string>;
 }
 
-class BrowserUtils {
-  public cached: Windows.Window | null = null;
+export default class BrowserUtils {
+  private static INSTANCE: BrowserUtils;
 
-  public openPopup = async ({ params }: OpenPopupArgs = {}) => {
+  private requestManager: RequestManager;
+
+  private cached: Windows.Window | null = null;
+
+  public constructor(requestManager: RequestManager) {
+    console.log("BrowserUtils is created successfully 1");
+    this.requestManager = requestManager;
+
+    this.addRemoveWindowListener((windowId: number) => {
+      log.debug("Inside removeWindow onRemove");
+
+      try {
+        log.debug("Inside removeWindow onRemove locked");
+        if (this.cached?.id === windowId) {
+          this.cached = null;
+          this.requestManager.finilizeRequestOnRemovedWindow(windowId);
+          log.debug("Inside removeWindow onRemove cleaned");
+        }
+      } catch (error) {
+        log.debug("Inside removeWindow onRemove error", error);
+      }
+    });
+  }
+
+  public static getInstance(requestManager?: RequestManager): BrowserUtils {
+    if (!BrowserUtils.INSTANCE) {
+      if (requestManager) {
+        BrowserUtils.INSTANCE = new BrowserUtils(requestManager);
+      } else log.warn("Please set RequestManager class instance");
+    }
+
+    return BrowserUtils.INSTANCE;
+  }
+
+  public openPopup = async ({ params }: OpenPopupArgs = {}): Promise<Windows.Window> => {
     if (this.cached?.id) {
       await this.focusWindow(this.cached.id);
       return this.cached;
@@ -52,18 +88,20 @@ class BrowserUtils {
     return popup;
   };
 
-  public closePopup = async () => {
+  public closePopup = async (): Promise<boolean> => {
     if (this.cached?.id) {
       await browser.windows.remove(this.cached.id);
       this.cached = null;
     }
+
+    return true;
   };
 
-  public addRemoveWindowListener = (callback: (windowId: number) => void) => {
+  public addRemoveWindowListener = (callback: (windowId: number) => void): void => {
     browser.windows.onRemoved.addListener(callback);
   };
 
-  public removeRemoveWindowListener = (callback: (windowId: number) => void) => {
+  public removeRemoveWindowListener = (callback: (windowId: number) => void): void => {
     browser.windows.onRemoved.removeListener(callback);
   };
 
@@ -73,5 +111,3 @@ class BrowserUtils {
 
   private focusWindow = (windowId: number) => browser.windows.update(windowId, { focused: true });
 }
-
-export default new BrowserUtils();
