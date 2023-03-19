@@ -1,5 +1,7 @@
 import { browser, Windows } from "webextension-polyfill-ts";
 
+import type RequestManager from "./requestManager";
+
 interface CreateWindowArgs {
   type: "popup";
   focused: boolean;
