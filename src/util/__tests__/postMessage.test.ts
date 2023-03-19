@@ -12,6 +12,8 @@ jest.mock("webextension-polyfill-ts", (): unknown => ({
   },
 }));
 
+jest.unmock("@src/util/postMessage");
+
 describe("util/postMessage", () => {
   beforeEach(() => {
     (browser.runtime.sendMessage as jest.Mock).mockResolvedValue([null, {}]);

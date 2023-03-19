@@ -4,6 +4,7 @@
 
 import { act, render, screen } from "@testing-library/react";
 
+import { createModalRoot, deleteModalRoot } from "@src/config/mock/modal";
 import { IDENTITY_TYPES, WEB2_PROVIDER_OPTIONS } from "@src/constants";
 
 import { CreateIdentity } from "..";
@@ -30,16 +31,13 @@ describe("ui/pages/CreateIdentity", () => {
   beforeEach(() => {
     (useCreateIdentity as jest.Mock).mockReturnValue(defaultHookData);
 
-    const container = document.createElement("div");
-    container.id = "modal";
-    document.body.append(container);
+    createModalRoot();
   });
 
   afterEach(() => {
     jest.resetAllMocks();
 
-    const container = document.getElementById("modal");
-    document.body.removeChild(container as HTMLElement);
+    deleteModalRoot();
   });
 
   test("should render properly", async () => {

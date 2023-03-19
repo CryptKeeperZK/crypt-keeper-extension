@@ -36,6 +36,16 @@ export type ZkInputs = {
   merkleProof?: MerkleProof;
 };
 
+export interface ProofPayload {
+  externalNullifier: string;
+  signal: string;
+  merkleStorageAddress?: string;
+  circuitFilePath: string;
+  verificationKey: string;
+  zkeyFilePath: string;
+  origin: string;
+}
+
 export enum PendingRequestType {
   SEMAPHORE_PROOF,
   RLN_PROOF,
@@ -43,11 +53,11 @@ export enum PendingRequestType {
   INJECT,
 }
 
-export type PendingRequest = {
+export interface PendingRequest<P = unknown> {
   id: string;
   type: PendingRequestType;
-  payload?: unknown;
-};
+  payload?: P;
+}
 
 export type RequestResolutionAction<data> = {
   id: string;

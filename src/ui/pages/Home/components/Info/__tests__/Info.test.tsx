@@ -4,6 +4,7 @@
 
 import { act, render, screen } from "@testing-library/react";
 
+import { createModalRoot, deleteModalRoot } from "@src/config/mock/modal";
 import { defaultWalletHookData } from "@src/config/mock/wallet";
 import { sliceAddress } from "@src/util/account";
 
@@ -18,16 +19,13 @@ describe("ui/pages/Home/components/Info", () => {
   };
 
   beforeEach(() => {
-    const container = document.createElement("div");
-    container.id = "modal";
-    document.body.append(container);
+    createModalRoot();
   });
 
   afterEach(() => {
     jest.clearAllMocks();
 
-    const container = document.getElementById("modal");
-    document.body.removeChild(container as HTMLElement);
+    deleteModalRoot();
   });
 
   test("should render properly", async () => {

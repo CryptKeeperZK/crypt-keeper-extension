@@ -5,6 +5,7 @@
 import { act, render, screen, fireEvent } from "@testing-library/react";
 
 import { ZERO_ADDRESS } from "@src/config/const";
+import { createModalRoot, deleteModalRoot } from "@src/config/mock/modal";
 import { defaultWalletHookData } from "@src/config/mock/wallet";
 import { IdentityMetadata } from "@src/types";
 import { useAppDispatch } from "@src/ui/ducks/hooks";
@@ -68,16 +69,13 @@ describe("ui/pages/Home/components/IdentityList", () => {
 
     (useWallet as jest.Mock).mockReturnValue(defaultWalletHookData);
 
-    const container = document.createElement("div");
-    container.id = "modal";
-    document.body.append(container);
+    createModalRoot();
   });
 
   afterEach(() => {
     jest.clearAllMocks();
 
-    const container = document.getElementById("modal");
-    document.body.removeChild(container as HTMLElement);
+    deleteModalRoot();
   });
 
   test("should render properly", async () => {

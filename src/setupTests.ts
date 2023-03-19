@@ -9,6 +9,14 @@ jest.mock("loglevel", () => ({
   error: jest.fn(),
 }));
 
+jest.mock("link-preview-js", (): unknown => ({
+  getLinkPreview: jest.fn().mockResolvedValue({
+    favicons: ["http://localhost:3000/favicon.ico"],
+  }),
+}));
+
+jest.mock("@src/util/postMessage");
+
 type Changes = Record<string, { oldValue: string | null; newValue: string | null }>;
 
 jest.mock("webextension-polyfill-ts", (): unknown => {
