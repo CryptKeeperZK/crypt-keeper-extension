@@ -94,7 +94,7 @@ describe("background/services/identity", () => {
       const [identityStorage] = (SimpleStorage as jest.Mock).mock.instances as [MockStorage];
       identityStorage.get.mockReturnValue(serializedDefaultIdentities);
 
-      const result = await service.setActiveIdentity({identityCommitment: ZERO_ADDRESS, updateUi: true});
+      const result = await service.setActiveIdentity({ identityCommitment: ZERO_ADDRESS, updateUi: true });
 
       expect(result).toBe(true);
       expect(pushMessage).toBeCalledTimes(1);
@@ -117,7 +117,7 @@ describe("background/services/identity", () => {
         instance.get.mockReturnValue(undefined);
       });
 
-      const result = await service.setActiveIdentity({identityCommitment: ZERO_ADDRESS, updateUi: true});
+      const result = await service.setActiveIdentity({ identityCommitment: ZERO_ADDRESS, updateUi: true });
 
       expect(result).toBe(false);
       expect(pushMessage).not.toBeCalled();
@@ -171,7 +171,7 @@ describe("background/services/identity", () => {
       const [identityStorage] = (SimpleStorage as jest.Mock).mock.instances as [MockStorage];
       identityStorage.get.mockReturnValue(serializedDefaultIdentities);
 
-      const isIdentitySet = await service.setActiveIdentity({identityCommitment: ZERO_ADDRESS, updateUi: true});
+      const isIdentitySet = await service.setActiveIdentity({ identityCommitment: ZERO_ADDRESS, updateUi: true });
       const result = await service.deleteAllIdentities();
 
       expect(isIdentitySet).toBe(true);
