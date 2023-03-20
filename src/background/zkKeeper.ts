@@ -29,6 +29,8 @@ export default class ZkKeeperController extends Handler {
 
   private lockService: LockService;
 
+  private browserService: BrowserUtils;
+
   public constructor() {
     super();
     this.identityService = new IdentityService();
@@ -37,6 +39,8 @@ export default class ZkKeeperController extends Handler {
     this.approvalService = new ApprovalService();
     this.walletService = new WalletService();
     this.lockService = LockService.getInstance();
+    this.browserService = BrowserUtils.getInstance();
+
     log.debug("Inside ZkKepperController");
   }
 
@@ -77,7 +81,7 @@ export default class ZkKeeperController extends Handler {
 
     // identities
     this.add(RPCAction.CREATE_IDENTITY_REQ, this.lockService.ensure, async () => {
-      await BrowserUtils.openPopup({ params: { redirect: Paths.CREATE_IDENTITY } });
+      await this.browserService.openPopup({ params: { redirect: Paths.CREATE_IDENTITY } });
     });
 
     this.add(RPCAction.CREATE_IDENTITY, this.lockService.ensure, async (payload: NewIdentityRequest) => {
@@ -104,7 +108,7 @@ export default class ZkKeeperController extends Handler {
 
       await this.identityService.insert(identity);
 
-      await BrowserUtils.closePopup();
+      await this.browserService.closePopup();
 
       return true;
     });
@@ -143,7 +147,7 @@ export default class ZkKeeperController extends Handler {
         };
 
         if (!unlocked) {
-          await BrowserUtils.openPopup();
+          await this.browserService.openPopup();
           await this.lockService.awaitUnlock();
         }
 
@@ -171,7 +175,7 @@ export default class ZkKeeperController extends Handler {
 
           return { identity: identity.serialize(), payload: request };
         } finally {
-          await BrowserUtils.closePopup();
+          await this.browserService.closePopup();
         }
       },
     );
@@ -211,7 +215,7 @@ export default class ZkKeeperController extends Handler {
 
           return { identity: identity.serialize(), payload: request };
         } finally {
-          await BrowserUtils.closePopup();
+          await this.browserService.closePopup();
         }
       },
     );
@@ -224,7 +228,7 @@ export default class ZkKeeperController extends Handler {
       const { unlocked } = await this.lockService.getStatus();
 
       if (!unlocked) {
-        await BrowserUtils.openPopup();
+        await this.browserService.openPopup();
         await this.lockService.awaitUnlock();
       }
 
@@ -260,7 +264,7 @@ export default class ZkKeeperController extends Handler {
       },
     );
 
-    this.add(RPCAction.CLOSE_POPUP, async () => BrowserUtils.closePopup());
+    this.add(RPCAction.CLOSE_POPUP, async () => this.browserService.closePopup());
 
     this.add(RPCAction.SET_CONNECT_WALLET, this.lockService.ensure, this.walletService.setConnection);
 

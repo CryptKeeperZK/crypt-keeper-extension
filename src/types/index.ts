@@ -55,6 +55,7 @@ export enum PendingRequestType {
 
 export interface PendingRequest<P = unknown> {
   id: string;
+  windowId?: number;
   type: PendingRequestType;
   payload?: P;
 }

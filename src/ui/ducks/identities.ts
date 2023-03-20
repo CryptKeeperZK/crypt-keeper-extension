@@ -58,7 +58,10 @@ export const setActiveIdentity = (identityCommitment: string) => async (): Promi
 
   return postMessage({
     method: RPCAction.SET_ACTIVE_IDENTITY,
-    payload: identityCommitment,
+    payload: {
+      identityCommitment,
+      updateUi: true,
+    },
   });
 };
 

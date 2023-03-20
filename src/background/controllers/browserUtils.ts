@@ -21,28 +21,24 @@ interface OpenPopupArgs {
   params?: Record<string, string>;
 }
 
-class BrowserUtils {
+export default class BrowserUtils {
+  private static INSTANCE: BrowserUtils;
+
   private cached: Windows.Window | null = null;
 
-  public constructor() {
-    this.removeWindow((windowId: number) => {
-      log.debug("Inside removeWindow onRemove");
-
-      try {
-        // TODO: Check either internalLogout() or logout()
-        // await LockService.internalLogout();
-        log.debug("Inside removeWindow onRemove locked");
-        if (this.cached?.id === windowId) {
-          this.cached = null;
-          log.debug("Inside removeWindow onRemove cleaned");
-        }
-      } catch (error) {
-        log.debug("Inside removeWindow onRemove error", error);
-      }
-    });
+  private constructor() {
+    this.addRemoveWindowListener(this.cleanCache);
   }
 
-  public openPopup = async ({ params }: OpenPopupArgs = {}) => {
+  public static getInstance(): BrowserUtils {
+    if (!BrowserUtils.INSTANCE) {
+      BrowserUtils.INSTANCE = new BrowserUtils();
+    }
+
+    return BrowserUtils.INSTANCE;
+  }
+
+  public openPopup = async ({ params }: OpenPopupArgs = {}): Promise<Windows.Window> => {
     if (this.cached?.id) {
       await this.focusWindow(this.cached.id);
       return this.cached;
@@ -70,23 +66,40 @@ class BrowserUtils {
     return popup;
   };
 
-  public closePopup = async () => {
+  public closePopup = async (): Promise<boolean> => {
     if (this.cached?.id) {
       await browser.windows.remove(this.cached.id);
       this.cached = null;
     }
+
+    return true;
+  };
+
+  public addRemoveWindowListener = (callback: (windowId: number) => void): void => {
+    browser.windows.onRemoved.addListener(callback);
+  };
+
+  public removeRemoveWindowListener = (callback: (windowId: number) => void): void => {
+    browser.windows.onRemoved.removeListener(callback);
   };
 
   private createTab = async (options: CreateTabArgs) => browser.tabs.create(options);
 
-  private removeWindow = (callback: (windowId: number) => void) => {
-    // TODO: Converted from browser. to chrome. solved the error
-    browser.windows.onRemoved.addListener(callback);
-  };
-
   private createWindow = async (options: CreateWindowArgs) => browser.windows.create(options);
 
   private focusWindow = (windowId: number) => browser.windows.update(windowId, { focused: true });
-}
 
-export default new BrowserUtils();
+  private cleanCache = (windowId: number) => {
+    log.debug("Inside removeWindow onRemove");
+
+    try {
+      log.debug("Inside removeWindow onRemove locked");
+      if (this.cached?.id === windowId) {
+        this.cached = null;
+        log.debug("Inside removeWindow onRemove cleaned");
+      }
+    } catch (error) {
+      log.debug("Inside removeWindow onRemove error", error);
+    }
+  };
+}

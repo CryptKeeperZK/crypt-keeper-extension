@@ -1,5 +1,4 @@
 import { EventEmitter2 } from "eventemitter2";
-import { browser } from "webextension-polyfill-ts";
 
 import { PendingRequest, PendingRequestType, RequestResolutionAction } from "@src/types";
 import { setPendingRequest } from "@src/ui/ducks/requests";
@@ -10,11 +9,16 @@ import BrowserUtils from "./browserUtils";
 let nonce = 0;
 
 export default class RequestManager extends EventEmitter2 {
+  private browserService: BrowserUtils;
+
   private pendingRequests: Array<PendingRequest>;
 
   public constructor() {
     super();
     this.pendingRequests = [];
+    this.browserService = BrowserUtils.getInstance();
+
+    this.browserService.addRemoveWindowListener(this.finilizeRequestOnRemovedWindow);
   }
 
   public getRequests = (): PendingRequest[] => this.pendingRequests;
@@ -30,31 +34,39 @@ export default class RequestManager extends EventEmitter2 {
     return true;
   };
 
-  public addToQueue = async (type: PendingRequestType, payload?: unknown): Promise<string> => {
+  private finilizeRequestOnRemovedWindow = (windowId?: number): boolean => {
+    if (windowId) {
+      this.pendingRequests = this.pendingRequests.filter((pendingRequests) => pendingRequests.windowId !== windowId);
+    }
+
+    return true;
+  };
+
+  public addToQueue = async (type: PendingRequestType, windowId?: number, payload?: unknown): Promise<string> => {
     // eslint-disable-next-line no-plusplus
     const id = `${nonce++}`;
-    this.pendingRequests.push({ id, type, payload });
+    this.pendingRequests.push({ id, windowId, type, payload });
     await pushMessage(setPendingRequest(this.pendingRequests));
 
     return id;
   };
 
   public newRequest = async (type: PendingRequestType, payload?: unknown): Promise<unknown> => {
-    const popup = await BrowserUtils.openPopup();
-    const id = await this.addToQueue(type, payload);
+    const popup = await this.browserService.openPopup();
+    const id = await this.addToQueue(type, popup.id, payload);
 
     return new Promise((resolve, reject) => {
       const onPopupClose = (windowId: number) => {
         if (windowId === popup.id) {
           reject(new Error("user rejected."));
-          browser.windows.onRemoved.removeListener(onPopupClose);
+          this.browserService.removeRemoveWindowListener(onPopupClose);
         }
       };
 
-      browser.windows.onRemoved.addListener(onPopupClose);
+      this.browserService.addRemoveWindowListener(onPopupClose);
 
       this.once(`${id}:finalized`, (action: RequestResolutionAction<unknown>) => {
-        browser.windows.onRemoved.removeListener(onPopupClose);
+        this.browserService.removeRemoveWindowListener(onPopupClose);
         switch (action.status) {
           case "accept":
             resolve(action.data);

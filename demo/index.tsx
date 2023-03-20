@@ -147,6 +147,10 @@ function App() {
     setIdentityCommitment(idCommitment);
   }, [client, setIdentityCommitment]);
 
+  const createIdentity = useCallback(() => {
+    client?.createIdentity();
+  }, [client]);
+
   const initClient = useCallback(async () => {
     const client = await window.zkpr?.connect();
 
@@ -159,6 +163,7 @@ function App() {
   const onIdentityChanged = useCallback(
     (idCommitment: unknown) => {
       setIdentityCommitment(idCommitment as string);
+      toast(`Identity has changed! ${idCommitment}`, { type: "success" });
     },
     [setIdentityCommitment],
   );
@@ -230,6 +235,13 @@ function App() {
       <div>
         <h2>Get identity commitment</h2>
         <button onClick={() => getIdentityCommitment()}>Get</button> <br />
+        <br />
+      </div>
+
+      <hr />
+      <div>
+        <h2>Create a new Identity</h2>
+        <button onClick={createIdentity}>Create</button> <br />
         <br />
       </div>
 
