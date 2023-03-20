@@ -1,13 +1,24 @@
 import classNames from "classnames";
 import { ChangeEvent, FormEvent, MouseEvent as ReactMouseEvent, useCallback, useState } from "react";
 
-import { IdentityMetadata } from "@src/types";
+import { IdentityMetadata, IdentityWeb2Provider } from "@src/types";
 import { Icon } from "@src/ui/components/Icon";
 import { Input } from "@src/ui/components/Input";
 import { Menuable } from "@src/ui/components/Menuable";
 import { ellipsify } from "@src/util/account";
+import { IconDefinition } from "@fortawesome/fontawesome-common-types";
+import { faGithub, faReddit, faTwitter } from "@fortawesome/free-brands-svg-icons";
 
 import "./identityListItemStyles.scss";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+
+type IconWeb2Providers = { [key in IdentityWeb2Provider]: IconDefinition };
+
+const web2ProvidersIcons: IconWeb2Providers = {
+  twitter: faTwitter,
+  reddit: faReddit,
+  github: faGithub
+}
 
 export interface IdentityItemProps {
   commitment: string;
@@ -94,7 +105,9 @@ export const IdentityItem = ({
             {`${metadata.name}`}
 
             <span className="text-xs py-1 px-2 ml-2 rounded-full bg-gray-500 text-gray-800">
-              {metadata.web2Provider || "random"}
+              {
+                metadata.web2Provider ?
+                  <FontAwesomeIcon icon={web2ProvidersIcons[metadata.web2Provider]} /> : "random"}
             </span>
           </div>
         )}
@@ -105,8 +118,8 @@ export const IdentityItem = ({
       <Menuable
         className="flex user-menu"
         items={[
-          { label: "Rename", onClick: handleToggleRenaming },
-          { label: "Delete", onClick: handleDeleteIdentity },
+          { label: "Rename", isDangerItem: false, onClick: handleToggleRenaming },
+          { label: "Delete", isDangerItem: true, onClick: handleDeleteIdentity },
         ]}
       >
         <Icon className="identity-row__menu-icon" fontAwesome="fas fa-ellipsis-h" />

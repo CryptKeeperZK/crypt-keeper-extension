@@ -33,14 +33,17 @@ export const Header = (): JSX.Element => {
               isActive
                 ? {
                     label: "Disconnect wallet",
+                    isDangerItem: false,
                     onClick: onDisconnect,
                   }
                 : {
                     label: "Connect wallet",
+                    isDangerItem: false,
                     onClick: onConnect,
                   },
               {
                 label: "Lock",
+                isDangerItem: false,
                 onClick: onLock,
               },
             ]}

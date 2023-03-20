@@ -2,6 +2,7 @@
  * @jest-environment jsdom
  */
 
+import { ZERO_ADDRESS } from "@src/config/const";
 import { act, render, screen } from "@testing-library/react";
 
 import { TabList, TabListProps } from "..";
@@ -9,6 +10,25 @@ import { TabList, TabListProps } from "..";
 describe("ui/pages/Home/components/TabList", () => {
   const defaultProps: TabListProps = {
     children: [],
+    identities: [
+      {
+        commitment: "0",
+        metadata: {
+          account: ZERO_ADDRESS,
+          name: "Account #0",
+          identityStrategy: "interrep",
+          web2Provider: "twitter",
+        },
+      },
+      {
+        commitment: "1",
+        metadata: {
+          account: ZERO_ADDRESS,
+          name: "Account #1",
+          identityStrategy: "random",
+        },
+      },
+    ],
     onDeleteAllIdentities: jest.fn(),
   };
 
@@ -30,7 +50,7 @@ describe("ui/pages/Home/components/TabList", () => {
     const icon = await screen.findByTestId("menu-icon");
     await act(async () => Promise.resolve(icon.click()));
 
-    const deleteAllButton = await screen.findByText("Delete all");
+    const deleteAllButton = await screen.findByText("Delete All");
     await act(async () => Promise.resolve(deleteAllButton.click()));
 
     expect(defaultProps.onDeleteAllIdentities).toBeCalledTimes(1);
