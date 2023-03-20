@@ -207,7 +207,7 @@ export default class IdentityService {
 
     if (updateUi) {
       await pushMessage(setSelected(commitment));
-      
+
       const tabs = await browser.tabs.query({ active: true });
       await Promise.all(tabs.map((tab) => browser.tabs.sendMessage(tab.id as number, setSelected(commitment))));
     }

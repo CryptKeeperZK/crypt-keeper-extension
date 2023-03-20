@@ -1,8 +1,6 @@
 import log from "loglevel";
 import { browser, Windows } from "webextension-polyfill-ts";
 
-import type RequestManager from "./requestManager";
-
 interface CreateWindowArgs {
   type: "popup";
   focused: boolean;
@@ -34,7 +32,7 @@ export default class BrowserUtils {
 
   public static getInstance(): BrowserUtils {
     if (!BrowserUtils.INSTANCE) {
-        BrowserUtils.INSTANCE = new BrowserUtils();
+      BrowserUtils.INSTANCE = new BrowserUtils();
     }
 
     return BrowserUtils.INSTANCE;
@@ -103,5 +101,5 @@ export default class BrowserUtils {
     } catch (error) {
       log.debug("Inside removeWindow onRemove error", error);
     }
-  }
+  };
 }
