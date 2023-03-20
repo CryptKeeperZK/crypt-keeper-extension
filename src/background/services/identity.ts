@@ -35,12 +35,12 @@ export default class IdentityService {
   }
 
   public unlock = async (): Promise<boolean> => {
-    await this.setDefaultIdentity();
+    await this.setDefaultIdentity(true);
 
     return true;
   };
 
-  public setActiveIdentity = async (identityCommitment: string): Promise<boolean> => {
+  public setActiveIdentity = async (identityCommitment: string, updateUi: boolean): Promise<boolean> => {
     const identities = await this.getIdentitiesFromStore();
     const identity = identities.get(identityCommitment);
 
@@ -49,7 +49,7 @@ export default class IdentityService {
     }
 
     this.activeIdentity = ZkIdentityDecorater.genFromSerialized(identity);
-    await this.writeActiveIdentity(identityCommitment);
+    await this.writeActiveIdentity(identityCommitment, updateUi);
 
     return true;
   };
@@ -83,7 +83,7 @@ export default class IdentityService {
     identities.delete(identityCommitment);
     await this.writeIdentities(identities);
 
-    await this.setDefaultIdentity();
+    await this.setDefaultIdentity(true);
     await this.refresh();
 
     return true;
@@ -164,8 +164,7 @@ export default class IdentityService {
       },
     });
 
-    await this.setActiveIdentity(identityCommitment);
-    await this.refresh();
+    await this.setActiveIdentity(identityCommitment, false);
 
     return true;
   };
@@ -175,7 +174,7 @@ export default class IdentityService {
     return identities.size;
   };
 
-  private setDefaultIdentity = async (): Promise<void> => {
+  private setDefaultIdentity = async (updateUi: boolean): Promise<void> => {
     const identities = await this.getIdentitiesFromStore();
 
     if (!identities.size) {
@@ -184,7 +183,7 @@ export default class IdentityService {
     }
 
     const identity = identities.keys().next();
-    await this.setActiveIdentity(identity.value as string);
+    await this.setActiveIdentity(identity.value as string, updateUi);
   };
 
   private clearActiveIdentity = async (): Promise<void> => {
@@ -193,7 +192,7 @@ export default class IdentityService {
     }
 
     this.activeIdentity = undefined;
-    await this.writeActiveIdentity("");
+    await this.writeActiveIdentity("", true);
   };
 
   private writeIdentities = async (identities: Map<string, string>): Promise<void> => {
@@ -202,13 +201,16 @@ export default class IdentityService {
     await this.identitiesStore.set(cipherText);
   };
 
-  private writeActiveIdentity = async (commitment: string): Promise<void> => {
+  private writeActiveIdentity = async (commitment: string, updateUi: boolean): Promise<void> => {
     const cipherText = this.lockService.encrypt(commitment);
     await this.activeIdentityStore.set(cipherText);
-    await pushMessage(setSelected(commitment));
 
-    const tabs = await browser.tabs.query({ active: true });
-    await Promise.all(tabs.map((tab) => browser.tabs.sendMessage(tab.id as number, setSelected(commitment))));
+    if (updateUi) {
+      await pushMessage(setSelected(commitment));
+      
+      const tabs = await browser.tabs.query({ active: true });
+      await Promise.all(tabs.map((tab) => browser.tabs.sendMessage(tab.id as number, setSelected(commitment))));
+    }
   };
 
   private getIdentitiesFromStore = async (): Promise<Map<string, string>> => {
