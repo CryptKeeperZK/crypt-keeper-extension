@@ -4,7 +4,6 @@ import { bigintToHex } from "bigint-conversion";
 import { browser } from "webextension-polyfill-ts";
 
 import ZkIdentityDecorater from "@src/background/identityDecorater";
-import { ZERO_ADDRESS } from "@src/config/const";
 import { setSelected } from "@src/ui/ducks/identities";
 import { ellipsify } from "@src/util/account";
 import pushMessage from "@src/util/pushMessage";
@@ -26,7 +25,7 @@ type MockStorage = { get: jest.Mock; set: jest.Mock; clear: jest.Mock };
 
 describe("background/services/identity", () => {
   const defaultTabs = [{ id: 1 }, { id: 2 }];
-  const defaultIdentityCommitment = ZERO_ADDRESS;
+  const defaultIdentityCommitment = "15206603389158210388485662342360617949291660595274505642693885456541816400294";
   const defaultIdentities = [[defaultIdentityCommitment, JSON.stringify({ secret: "1234", metadata: {} })]];
   const serializedDefaultIdentities = JSON.stringify(defaultIdentities);
   const mockNotificationService = {
@@ -63,14 +62,14 @@ describe("background/services/identity", () => {
 
       expect(result).toBe(true);
       expect(pushMessage).toBeCalledTimes(1);
-      expect(pushMessage).toBeCalledWith(setSelected(ZERO_ADDRESS));
+      expect(pushMessage).toBeCalledWith(setSelected(defaultIdentityCommitment));
       expect(browser.tabs.sendMessage).toBeCalledTimes(defaultTabs.length);
 
       for (let index = 0; index < defaultTabs.length; index += 1) {
         expect(browser.tabs.sendMessage).toHaveBeenNthCalledWith(
           index + 1,
           defaultTabs[index].id,
-          setSelected(ZERO_ADDRESS),
+          setSelected(defaultIdentityCommitment),
         );
       }
     });
@@ -94,18 +93,18 @@ describe("background/services/identity", () => {
       const [identityStorage] = (SimpleStorage as jest.Mock).mock.instances as [MockStorage];
       identityStorage.get.mockReturnValue(serializedDefaultIdentities);
 
-      const result = await service.setActiveIdentity({ identityCommitment: ZERO_ADDRESS, updateUi: true });
+      const result = await service.setActiveIdentity({ identityCommitment: defaultIdentityCommitment, updateUi: true });
 
       expect(result).toBe(true);
       expect(pushMessage).toBeCalledTimes(1);
-      expect(pushMessage).toBeCalledWith(setSelected(ZERO_ADDRESS));
+      expect(pushMessage).toBeCalledWith(setSelected(defaultIdentityCommitment));
       expect(browser.tabs.sendMessage).toBeCalledTimes(defaultTabs.length);
 
       for (let index = 0; index < defaultTabs.length; index += 1) {
         expect(browser.tabs.sendMessage).toHaveBeenNthCalledWith(
           index + 1,
           defaultTabs[index].id,
-          setSelected(ZERO_ADDRESS),
+          setSelected(defaultIdentityCommitment),
         );
       }
     });
@@ -117,7 +116,7 @@ describe("background/services/identity", () => {
         instance.get.mockReturnValue(undefined);
       });
 
-      const result = await service.setActiveIdentity({ identityCommitment: ZERO_ADDRESS, updateUi: true });
+      const result = await service.setActiveIdentity({ identityCommitment: defaultIdentityCommitment, updateUi: true });
 
       expect(result).toBe(false);
       expect(pushMessage).not.toBeCalled();
@@ -131,7 +130,7 @@ describe("background/services/identity", () => {
       const [identityStorage] = (SimpleStorage as jest.Mock).mock.instances as [MockStorage];
       identityStorage.get.mockReturnValue(serializedDefaultIdentities);
 
-      const result = await service.setIdentityName({ identityCommitment: ZERO_ADDRESS, name: "New name" });
+      const result = await service.setIdentityName({ identityCommitment: defaultIdentityCommitment, name: "New name" });
 
       expect(result).toBe(true);
     });
@@ -139,7 +138,7 @@ describe("background/services/identity", () => {
     test("should not set identity name if there is no such identity", async () => {
       const service = new IdentityService();
 
-      const result = await service.setIdentityName({ identityCommitment: ZERO_ADDRESS, name: "New name" });
+      const result = await service.setIdentityName({ identityCommitment: defaultIdentityCommitment, name: "New name" });
 
       expect(result).toBe(false);
     });
@@ -147,11 +146,23 @@ describe("background/services/identity", () => {
 
   describe("delete identity", () => {
     test("should delete identity properly", async () => {
-      const service = new IdentityService();
-      const [identityStorage] = (SimpleStorage as jest.Mock).mock.instances as [MockStorage];
-      identityStorage.get.mockReturnValue(serializedDefaultIdentities);
+      defaultLockService.decrypt
+        .mockReturnValueOnce(defaultIdentityCommitment)
+        .mockReturnValue(serializedDefaultIdentities);
 
-      const result = await service.deleteIdentity({ identityCommitment: ZERO_ADDRESS });
+      (LockService.getInstance as jest.Mock).mockReturnValue(defaultLockService);
+
+      const service = new IdentityService();
+      const [identityStorage, activeIdentityStorage] = (SimpleStorage as jest.Mock).mock.instances as [
+        MockStorage,
+        MockStorage,
+      ];
+      identityStorage.get.mockReturnValue(serializedDefaultIdentities);
+      activeIdentityStorage.get.mockReturnValue(defaultIdentityCommitment);
+
+      const result = await service.deleteIdentity({
+        identityCommitment: defaultIdentityCommitment,
+      });
 
       expect(result).toBe(true);
     });
@@ -159,7 +170,7 @@ describe("background/services/identity", () => {
     test("should not delete identity if there is no any identity", async () => {
       const service = new IdentityService();
 
-      const result = await service.deleteIdentity({ identityCommitment: ZERO_ADDRESS });
+      const result = await service.deleteIdentity({ identityCommitment: defaultIdentityCommitment });
 
       expect(result).toBe(false);
     });
@@ -171,7 +182,10 @@ describe("background/services/identity", () => {
       const [identityStorage] = (SimpleStorage as jest.Mock).mock.instances as [MockStorage];
       identityStorage.get.mockReturnValue(serializedDefaultIdentities);
 
-      const isIdentitySet = await service.setActiveIdentity({ identityCommitment: ZERO_ADDRESS, updateUi: true });
+      const isIdentitySet = await service.setActiveIdentity({
+        identityCommitment: defaultIdentityCommitment,
+        updateUi: true,
+      });
       const result = await service.deleteAllIdentities();
 
       expect(isIdentitySet).toBe(true);
@@ -191,7 +205,9 @@ describe("background/services/identity", () => {
 
   describe("get active identity", () => {
     test("should get active identity properly", async () => {
-      defaultLockService.decrypt.mockReturnValueOnce(ZERO_ADDRESS).mockReturnValue(serializedDefaultIdentities);
+      defaultLockService.decrypt
+        .mockReturnValueOnce(defaultIdentityCommitment)
+        .mockReturnValue(serializedDefaultIdentities);
       (LockService.getInstance as jest.Mock).mockReturnValue(defaultLockService);
 
       const service = new IdentityService();
@@ -200,7 +216,7 @@ describe("background/services/identity", () => {
         MockStorage,
       ];
       identityStorage.get.mockReturnValue(serializedDefaultIdentities);
-      activeIdentityStorage.get.mockReturnValue(ZERO_ADDRESS);
+      activeIdentityStorage.get.mockReturnValue(defaultIdentityCommitment);
 
       const result = await service.getActiveIdentity();
 
@@ -216,7 +232,7 @@ describe("background/services/identity", () => {
     });
 
     test("should not get active identity if there is no any identity", async () => {
-      defaultLockService.decrypt.mockReturnValue(ZERO_ADDRESS).mockReturnValue(undefined);
+      defaultLockService.decrypt.mockReturnValue(defaultIdentityCommitment).mockReturnValue(undefined);
       (LockService.getInstance as jest.Mock).mockReturnValue(defaultLockService);
 
       const service = new IdentityService();
@@ -226,7 +242,7 @@ describe("background/services/identity", () => {
         MockStorage,
       ];
       identityStorage.get.mockReturnValue(undefined);
-      activeIdentityStorage.get.mockReturnValue(ZERO_ADDRESS);
+      activeIdentityStorage.get.mockReturnValue(defaultIdentityCommitment);
 
       const result = await service.getActiveIdentity();
 
@@ -243,7 +259,7 @@ describe("background/services/identity", () => {
 
       const { commitments, identities } = await service.getIdentityCommitments();
 
-      expect(commitments).toStrictEqual([ZERO_ADDRESS]);
+      expect(commitments).toStrictEqual([defaultIdentityCommitment]);
       expect(identities.size).toBe(defaultIdentities.length);
     });
 
@@ -278,7 +294,7 @@ describe("background/services/identity", () => {
 
       const result = await service.insert(
         new ZkIdentityDecorater(identity, {
-          account: ZERO_ADDRESS,
+          account: defaultIdentityCommitment,
           name: "Name",
           identityStrategy: "random",
         }),
@@ -304,7 +320,7 @@ describe("background/services/identity", () => {
 
       const result = await service.insert(
         new ZkIdentityDecorater({ getCommitment: () => defaultIdentityCommitment } as unknown as Identity, {
-          account: ZERO_ADDRESS,
+          account: defaultIdentityCommitment,
           name: "Name",
           identityStrategy: "random",
         }),

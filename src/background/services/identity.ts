@@ -80,7 +80,9 @@ export default class IdentityService {
 
   public deleteIdentity = async (payload: { identityCommitment: string }): Promise<boolean> => {
     const { identityCommitment } = payload;
+    const activeIdentity = await this.getActiveIdentity();
     const identities = await this.getIdentitiesFromStore();
+    const activeIdentityCommitment = activeIdentity?.genIdentityCommitment().toString();
 
     if (!identities.has(identityCommitment)) {
       return false;
@@ -89,7 +91,10 @@ export default class IdentityService {
     identities.delete(identityCommitment);
     await this.writeIdentities(identities);
 
-    await this.setDefaultIdentity(true);
+    if (activeIdentityCommitment === identityCommitment) {
+      await this.setDefaultIdentity(true);
+    }
+
     await this.refresh();
 
     return true;
@@ -108,13 +113,13 @@ export default class IdentityService {
   };
 
   public getActiveIdentity = async (): Promise<ZkIdentityDecorater | undefined> => {
-    const acitveIdentityCommitmentCipher = await this.activeIdentityStore.get<string>();
+    const activeIdentityCommitmentCipher = await this.activeIdentityStore.get<string>();
 
-    if (!acitveIdentityCommitmentCipher) {
+    if (!activeIdentityCommitmentCipher) {
       return undefined;
     }
 
-    const activeIdentityCommitment = this.lockService.decrypt(acitveIdentityCommitmentCipher);
+    const activeIdentityCommitment = this.lockService.decrypt(activeIdentityCommitmentCipher);
     const identities = await this.getIdentitiesFromStore();
     const identity = identities.get(activeIdentityCommitment);
 
