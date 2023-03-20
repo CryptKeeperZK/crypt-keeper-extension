@@ -39,8 +39,7 @@ export default class ZkKeeperController extends Handler {
     this.approvalService = new ApprovalService();
     this.walletService = new WalletService();
     this.lockService = LockService.getInstance();
-    this.browserService = BrowserUtils.getInstance(this.requestManager);
-    this.requestManager.initialize(this.browserService);
+    this.browserService = BrowserUtils.getInstance();
 
     log.debug("Inside ZkKepperController");
   }

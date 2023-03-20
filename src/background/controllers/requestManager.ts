@@ -17,12 +17,8 @@ export default class RequestManager extends EventEmitter2 {
     super();
     this.pendingRequests = [];
     this.browserService = BrowserUtils.getInstance();
-  }
 
-  public initialize(browserService: BrowserUtils): boolean {
-    this.browserService = browserService;
-
-    return true;
+    this.browserService.addRemoveWindowListener(this.finilizeRequestOnRemovedWindow);
   }
 
   public getRequests = (): PendingRequest[] => this.pendingRequests;
@@ -38,7 +34,7 @@ export default class RequestManager extends EventEmitter2 {
     return true;
   };
 
-  public finilizeRequestOnRemovedWindow = (windowId?: number): boolean => {
+  private finilizeRequestOnRemovedWindow = (windowId?: number): boolean => {
     if (windowId) {
       this.pendingRequests = this.pendingRequests.filter((pendingRequests) => pendingRequests.windowId !== windowId);
     }

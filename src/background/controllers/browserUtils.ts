@@ -26,35 +26,15 @@ interface OpenPopupArgs {
 export default class BrowserUtils {
   private static INSTANCE: BrowserUtils;
 
-  private requestManager: RequestManager;
-
   private cached: Windows.Window | null = null;
 
-  public constructor(requestManager: RequestManager) {
-    console.log("BrowserUtils is created successfully 1");
-    this.requestManager = requestManager;
-
-    this.addRemoveWindowListener((windowId: number) => {
-      log.debug("Inside removeWindow onRemove");
-
-      try {
-        log.debug("Inside removeWindow onRemove locked");
-        if (this.cached?.id === windowId) {
-          this.cached = null;
-          this.requestManager.finilizeRequestOnRemovedWindow(windowId);
-          log.debug("Inside removeWindow onRemove cleaned");
-        }
-      } catch (error) {
-        log.debug("Inside removeWindow onRemove error", error);
-      }
-    });
+  private constructor() {
+    this.addRemoveWindowListener(this.cleanCache);
   }
 
-  public static getInstance(requestManager?: RequestManager): BrowserUtils {
+  public static getInstance(): BrowserUtils {
     if (!BrowserUtils.INSTANCE) {
-      if (requestManager) {
-        BrowserUtils.INSTANCE = new BrowserUtils(requestManager);
-      } else log.warn("Please set RequestManager class instance");
+        BrowserUtils.INSTANCE = new BrowserUtils();
     }
 
     return BrowserUtils.INSTANCE;
@@ -110,4 +90,18 @@ export default class BrowserUtils {
   private createWindow = async (options: CreateWindowArgs) => browser.windows.create(options);
 
   private focusWindow = (windowId: number) => browser.windows.update(windowId, { focused: true });
+
+  private cleanCache = (windowId: number) => {
+    log.debug("Inside removeWindow onRemove");
+
+    try {
+      log.debug("Inside removeWindow onRemove locked");
+      if (this.cached?.id === windowId) {
+        this.cached = null;
+        log.debug("Inside removeWindow onRemove cleaned");
+      }
+    } catch (error) {
+      log.debug("Inside removeWindow onRemove error", error);
+    }
+  }
 }
