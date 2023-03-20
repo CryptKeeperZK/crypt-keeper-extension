@@ -1,21 +1,17 @@
 import { ZkInputs } from "@src/types";
 
-export default class ZkValidator {
-  public validateZkInputs = (payload: Required<ZkInputs>): Required<ZkInputs> => {
-    const { merkleProofArtifacts, merkleProof } = payload;
+import { MerkleProofValidator, ArtifactsProofValidator } from "./validation";
 
-    if (merkleProof) {
-      if (!merkleProof.root) throw new Error("invalid merkleProof.root value");
-      if (!merkleProof.siblings.length) throw new Error("invalid merkleProof.siblings value");
-      if (!merkleProof.pathIndices.length) throw new Error("invalid merkleProof.pathIndices value");
-      if (!merkleProof.leaf) throw new Error("invalid merkleProof.leaf value");
-    } else if (merkleProofArtifacts) {
-      if (!merkleProofArtifacts.leaves.length || merkleProofArtifacts.leaves.length === 0)
-        throw new Error("invalid merkleProofArtifacts.leaves value");
-      if (!merkleProofArtifacts.depth) throw new Error("invalid merkleProofArtifacts.depth value");
-      if (!merkleProofArtifacts.leavesPerNode) throw new Error("invalid merkleProofArtifacts.leavesPerNode value");
-    }
+export const validateZkInputs = (payload: Required<ZkInputs>): Required<ZkInputs> => {
+  const { merkleProofArtifacts, merkleProof } = payload;
 
-    return payload;
-  };
-}
+  if (merkleProof) {
+    new MerkleProofValidator(merkleProof).validateProof();
+  } else if (merkleProofArtifacts) {
+    new ArtifactsProofValidator(merkleProofArtifacts).validateProof();
+  } else {
+    throw new Error("no proof provided");
+  }
+
+  return payload;
+};

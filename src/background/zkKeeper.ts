@@ -14,12 +14,10 @@ import IdentityService from "./services/identity";
 import LockService from "./services/lock";
 import { RLNProofRequest, SemaphoreProofRequest } from "./services/protocols/interfaces";
 import WalletService from "./services/wallet";
-import ZkValidator from "./services/zkValidator";
+import { validateZkInputs } from "./services/zkValidator";
 
 export default class ZkKeeperController extends Handler {
   private identityService: IdentityService;
-
-  private zkValidator: ZkValidator;
 
   private requestManager: RequestManager;
 
@@ -34,7 +32,6 @@ export default class ZkKeeperController extends Handler {
   public constructor() {
     super();
     this.identityService = new IdentityService();
-    this.zkValidator = new ZkValidator();
     this.requestManager = new RequestManager();
     this.approvalService = new ApprovalService();
     this.walletService = new WalletService();
@@ -136,7 +133,7 @@ export default class ZkKeeperController extends Handler {
     this.add(
       RPCAction.PREPARE_SEMAPHORE_PROOF_REQUEST,
       this.lockService.ensure,
-      this.zkValidator.validateZkInputs,
+      validateZkInputs,
       async (payload: SemaphoreProofRequest, meta: { origin: string }) => {
         const { unlocked } = await this.lockService.getStatus();
 
@@ -183,7 +180,7 @@ export default class ZkKeeperController extends Handler {
     this.add(
       RPCAction.PREPARE_RLN_PROOF_REQUEST,
       this.lockService.ensure,
-      this.zkValidator.validateZkInputs,
+      validateZkInputs,
       async (payload: RLNProofRequest, meta: { origin: string }) => {
         const identity = await this.identityService.getActiveIdentity();
         const approved = this.approvalService.isApproved(meta.origin);
