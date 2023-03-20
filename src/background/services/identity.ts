@@ -40,7 +40,7 @@ export default class IdentityService {
     return true;
   };
 
-  public setActiveIdentity = async (identityCommitment: string, updateUi: boolean): Promise<boolean> => {
+  public setActiveIdentity = async ({identityCommitment, updateUi}: {identityCommitment: string, updateUi: boolean}): Promise<boolean> => {
     const identities = await this.getIdentitiesFromStore();
     const identity = identities.get(identityCommitment);
 
@@ -164,7 +164,7 @@ export default class IdentityService {
       },
     });
 
-    await this.setActiveIdentity(identityCommitment, false);
+    await this.setActiveIdentity({identityCommitment, updateUi: false});
 
     return true;
   };
@@ -183,7 +183,7 @@ export default class IdentityService {
     }
 
     const identity = identities.keys().next();
-    await this.setActiveIdentity(identity.value as string, updateUi);
+    await this.setActiveIdentity({identityCommitment: identity.value as string, updateUi});
   };
 
   private clearActiveIdentity = async (): Promise<void> => {
