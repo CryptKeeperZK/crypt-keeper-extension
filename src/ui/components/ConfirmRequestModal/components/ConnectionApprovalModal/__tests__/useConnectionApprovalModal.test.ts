@@ -10,7 +10,11 @@ import postMessage from "@src/util/postMessage";
 
 import type { ChangeEvent } from "react";
 
-import { IUseConnectionApprovalModalArgs, useConnectionApprovalModal } from "../useConnectionApprovalModal";
+import {
+  IUseConnectionApprovalModalArgs,
+  IUseConnectionApprovalModalData,
+  useConnectionApprovalModal,
+} from "../useConnectionApprovalModal";
 
 describe("ui/components/ConfirmRequestModal/components/ConnectionApprovalModal/useConnectionApprovalModal", () => {
   const defaultArgs: IUseConnectionApprovalModalArgs = {
@@ -24,6 +28,12 @@ describe("ui/components/ConfirmRequestModal/components/ConnectionApprovalModal/u
   };
 
   const defaultPostMessageResponse = { noApproval: true };
+
+  const waitForData = async (current: IUseConnectionApprovalModalData) => {
+    await waitFor(() => current.checked === true);
+    await waitFor(() => current.faviconUrl !== "");
+    await waitFor(() => current.host !== "");
+  };
 
   beforeEach(() => {
     (postMessage as jest.Mock).mockResolvedValue(defaultPostMessageResponse);
@@ -45,7 +55,7 @@ describe("ui/components/ConfirmRequestModal/components/ConnectionApprovalModal/u
 
   test("should return initial data", async () => {
     const { result } = renderHook(() => useConnectionApprovalModal(defaultArgs));
-    await waitFor(() => result.current.checked === true);
+    await waitForData(result.current);
 
     expect(result.current.checked).toBe(true);
     expect(result.current.faviconUrl).toBe("http://localhost:3000/favicon.ico");
@@ -54,7 +64,7 @@ describe("ui/components/ConfirmRequestModal/components/ConnectionApprovalModal/u
 
   test("should accept approval properly", async () => {
     const { result } = renderHook(() => useConnectionApprovalModal(defaultArgs));
-    await waitFor(() => result.current.checked === true);
+    await waitForData(result.current);
 
     act(() => result.current.onAccept());
 
@@ -63,7 +73,7 @@ describe("ui/components/ConfirmRequestModal/components/ConnectionApprovalModal/u
 
   test("should reject approval properly", async () => {
     const { result } = renderHook(() => useConnectionApprovalModal(defaultArgs));
-    await waitFor(() => result.current.checked === true);
+    await waitForData(result.current);
 
     act(() => result.current.onReject());
 
@@ -72,9 +82,8 @@ describe("ui/components/ConfirmRequestModal/components/ConnectionApprovalModal/u
 
   test("should set approval properly", async () => {
     (postMessage as jest.Mock).mockResolvedValue({ ...defaultPostMessageResponse, noApproval: false });
-
     const { result } = renderHook(() => useConnectionApprovalModal(defaultArgs));
-    await waitFor(() => result.current.checked === true);
+    await waitForData(result.current);
 
     act(() => result.current.onSetApproval({ target: { checked: false } } as ChangeEvent<HTMLInputElement>));
     await waitFor(() => result.current.checked === false);
