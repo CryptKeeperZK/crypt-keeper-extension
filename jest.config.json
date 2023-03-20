@@ -9,7 +9,7 @@
     "@src/(.*)$": "<rootDir>/src/$1",
     "^.+\\.(css|scss|svg|png)$": "<rootDir>/src/config/mock/resourceMock.js"
   },
-  "coveragePathIgnorePatterns": ["/node_modules/", "/test/", "/__tests__/"],
+  "coveragePathIgnorePatterns": ["/node_modules/", "/test/", "/__tests__/", "/src/server/"],
   "coverageReporters": ["clover", "lcov", "json", "json-summary", "text", "text-summary"],
   "collectCoverageFrom": ["src/**/*.{ts,tsx}"]
 }
