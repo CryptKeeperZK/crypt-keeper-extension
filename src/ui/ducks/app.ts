@@ -37,6 +37,12 @@ export const closePopup = () => async (): Promise<void> => {
   await postMessage({ method: RPCAction.CLOSE_POPUP });
 };
 
+export const unlock = (password: string) => async (): Promise<boolean> =>
+  postMessage<boolean>({ method: RPCAction.UNLOCK, payload: password });
+
+export const setupPassword = (password: string) => async (): Promise<boolean> =>
+  postMessage<boolean>({ method: RPCAction.SETUP_PASSWORD, payload: password });
+
 export const fetchStatus =
   () =>
   async (dispatch: Dispatch): Promise<void> => {

@@ -11,7 +11,7 @@ import { browser } from "webextension-polyfill-ts";
 
 import { isDebugMode } from "@src/config/env";
 import { connectors } from "@src/connectors";
-import Popup from "@src/ui/pages/Popup";
+import { Popup } from "@src/ui/pages/Popup";
 import { store } from "@src/ui/store/configureAppStore";
 
 log.setDefaultLevel(isDebugMode() ? "debug" : "info");

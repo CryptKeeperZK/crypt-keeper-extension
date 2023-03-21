@@ -3,12 +3,13 @@ import { useCallback } from "react";
 import Jazzicon, { jsNumberForAddress } from "react-jazzicon";
 
 import { RPCAction } from "@src/constants";
-import loaderSvg from "@src/static/icons/loader.svg";
-import logoSvg from "@src/static/icons/logo.svg";
 import { Icon } from "@src/ui/components/Icon";
 import { Menuable } from "@src/ui/components/Menuable";
 import { useWallet } from "@src/ui/hooks/wallet";
 import postMessage from "@src/util/postMessage";
+
+import loaderSvg from "../../../static/icons/loader.svg";
+import logoSvg from "../../../static/icons/logo.svg";
 
 import "./header.scss";
 

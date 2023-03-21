@@ -14,6 +14,7 @@ export interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
 }
 
 export const Input = ({
+  id,
   fontAwesome,
   url,
   size = 1,
@@ -24,13 +25,18 @@ export const Input = ({
   ...inputProps
 }: InputProps): JSX.Element => (
   <div className={classNames("input-group", className)}>
-    {label && <div className="input-group__label">{label}</div>}
+    {label && (
+      <label className="input-group__label" htmlFor={id}>
+        {label}
+      </label>
+    )}
 
     <div className="input-group__group">
       <input
         className={classNames("input", {
           "input--full-width": !url && !fontAwesome,
         })}
+        id={id}
         title={label}
         {...inputProps}
       />

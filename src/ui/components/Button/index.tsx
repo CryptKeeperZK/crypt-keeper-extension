@@ -27,6 +27,7 @@ export const Button = ({
   buttonType,
   small,
   tiny,
+  disabled,
   ...buttonProps
 }: ButtonProps): JSX.Element => (
   <button
@@ -37,6 +38,7 @@ export const Button = ({
       "button--primary": buttonType === ButtonType.PRIMARY,
       "button--secondary": buttonType === ButtonType.SECONDARY,
     })}
+    disabled={disabled}
     type="button"
     {...buttonProps}
   >
