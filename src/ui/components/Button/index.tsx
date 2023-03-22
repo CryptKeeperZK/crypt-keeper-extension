@@ -1,9 +1,8 @@
 import classNames from "classnames";
 import { ButtonHTMLAttributes } from "react";
 
+import loaderSvg from "@src/static/icons/loader.svg";
 import { Icon } from "@src/ui/components/Icon";
-
-import loaderSvg from "../../../static/icons/loader.svg";
 
 import "./button.scss";
 
@@ -27,6 +26,7 @@ export const Button = ({
   buttonType,
   small,
   tiny,
+  disabled,
   ...buttonProps
 }: ButtonProps): JSX.Element => (
   <button
@@ -37,6 +37,7 @@ export const Button = ({
       "button--primary": buttonType === ButtonType.PRIMARY,
       "button--secondary": buttonType === ButtonType.SECONDARY,
     })}
+    disabled={disabled}
     type="button"
     {...buttonProps}
   >
