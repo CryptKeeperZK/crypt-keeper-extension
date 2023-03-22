@@ -12,7 +12,7 @@ import { ellipsify } from "@src/util/account";
 
 import "./identityListItemStyles.scss";
 
-type IconWeb2Providers = { [key in IdentityWeb2Provider]: IconDefinition };
+type IconWeb2Providers = Record<IdentityWeb2Provider, IconDefinition>;
 
 const web2ProvidersIcons: IconWeb2Providers = {
   twitter: faTwitter,

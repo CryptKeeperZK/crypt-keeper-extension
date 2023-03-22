@@ -1,7 +1,8 @@
 import classNames from "classnames";
 import { MouseEvent as ReactMouseEvent, ReactNode } from "react";
 
-import { DangerModal } from "../DangerModal";
+import { ConfirmDangerModal } from "@src/ui/components/ConfirmDangerModal";
+
 import { Icon } from "../Icon";
 
 import "./menuable.scss";
@@ -94,7 +95,7 @@ export const Menuable = ({
                   onClick={(e) => handleDangerModalOpen(e)}
                 >
                   {openDangerModal ? (
-                    <DangerModal
+                    <ConfirmDangerModal
                       accept={(e: ReactMouseEvent) => onItemClick(e, item, i)}
                       openModal={openDangerModal}
                       reject={handleDangerModalClose}

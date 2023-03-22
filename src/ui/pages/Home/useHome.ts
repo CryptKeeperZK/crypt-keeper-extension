@@ -9,7 +9,7 @@ import { fetchIdentities, deleteAllIdentities, useIdentities, IdentityData } fro
 import { useWallet } from "@src/ui/hooks/wallet";
 import postMessage from "@src/util/postMessage";
 
-export interface IuseHomeData {
+export interface IUseHomeData {
   scrollRef: RefObject<HTMLDivElement>;
   fixedTabs: boolean;
   address?: string;
@@ -21,7 +21,7 @@ export interface IuseHomeData {
   onScroll: () => void;
 }
 
-export const useHome = (): IuseHomeData => {
+export const useHome = (): IUseHomeData => {
   const dispatch = useAppDispatch();
   const identities = useIdentities();
 
@@ -48,7 +48,7 @@ export const useHome = (): IuseHomeData => {
 
   const refreshConnectionStatus = useCallback(async () => {
     const tabs = await browser.tabs.query({ active: true, lastFocusedWindow: true });
-    const [tab] = tabs || [];
+    const [tab] = tabs;
 
     if (!tab.url) {
       return false;
