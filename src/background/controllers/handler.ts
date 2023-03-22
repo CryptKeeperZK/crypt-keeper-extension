@@ -5,7 +5,7 @@ import { HandlerRequest } from "@src/types";
 type HandlerType = (payload: any, meta?: any) => Promise<any> | any;
 
 type Chain = {
-  middlewares: Array<HandlerType>;
+  middlewares: HandlerType[];
   handler: HandlerType;
 };
 
@@ -22,20 +22,20 @@ export default class Handler {
     this.handlers.set(method, { middlewares, handler });
   };
 
-  public handle = async (request: HandlerRequest): Promise<unknown> => {
-    const { method } = request;
-    const handler: Chain | undefined = this.handlers.get(method);
-    if (!handler) throw new Error(`method: ${method} not detected`);
+  public handle = async ({ method, payload, meta }: HandlerRequest): Promise<unknown> => {
+    const handler = this.handlers.get(method);
 
-    const { meta } = request;
-    let { payload } = request;
+    if (!handler) {
+      throw new Error(`method: ${method} is not detected`);
+    }
 
+    let enhancedPayload = payload;
     // eslint-disable-next-line no-restricted-syntax
     for (const middleware of handler.middlewares) {
       // eslint-disable-next-line no-await-in-loop
-      payload = await middleware(payload, meta);
+      enhancedPayload = await middleware(enhancedPayload, meta);
     }
 
-    return handler.handler(payload, meta) as unknown;
+    return handler.handler(enhancedPayload, meta) as unknown;
   };
 }

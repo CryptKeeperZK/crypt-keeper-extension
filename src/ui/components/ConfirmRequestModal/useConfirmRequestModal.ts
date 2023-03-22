@@ -1,7 +1,7 @@
 import { useCallback, useState } from "react";
 
 import { RPCAction } from "@src/constants";
-import { PendingRequest, RequestResolutionAction } from "@src/types";
+import { PendingRequest, RequestResolutionAction, RequestResolutionStatus } from "@src/types";
 import { useRequestsPending } from "@src/ui/ducks/requests";
 import postMessage from "@src/util/postMessage";
 
@@ -21,9 +21,9 @@ export const useConfirmRequestModal = (): IUseConfirmRequestModalData => {
 
   const reject = useCallback(
     (err?: Error) => {
-      const req: RequestResolutionAction<Error | undefined> = {
+      const req: RequestResolutionAction<Error> = {
         id: pendingRequest?.id,
-        status: "reject",
+        status: RequestResolutionStatus.REJECT,
         data: err,
       };
 
@@ -40,9 +40,9 @@ export const useConfirmRequestModal = (): IUseConfirmRequestModalData => {
 
   const accept = useCallback(
     (data?: unknown) => {
-      const req: RequestResolutionAction<unknown | undefined> = {
+      const req: RequestResolutionAction = {
         id: pendingRequest?.id,
-        status: "accept",
+        status: RequestResolutionStatus.ACCEPT,
         data,
       };
 

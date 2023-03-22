@@ -1,4 +1,3 @@
-import log from "loglevel";
 import { browser, Windows } from "webextension-polyfill-ts";
 
 interface CreateWindowArgs {
@@ -90,16 +89,8 @@ export default class BrowserUtils {
   private focusWindow = (windowId: number) => browser.windows.update(windowId, { focused: true });
 
   private cleanCache = (windowId: number) => {
-    log.debug("Inside removeWindow onRemove");
-
-    try {
-      log.debug("Inside removeWindow onRemove locked");
-      if (this.cached?.id === windowId) {
-        this.cached = null;
-        log.debug("Inside removeWindow onRemove cleaned");
-      }
-    } catch (error) {
-      log.debug("Inside removeWindow onRemove error", error);
+    if (this.cached?.id === windowId) {
+      this.cached = null;
     }
   };
 }

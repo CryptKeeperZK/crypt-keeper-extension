@@ -5,6 +5,7 @@
 import { act, renderHook, waitFor } from "@testing-library/react";
 
 import { RPCAction } from "@src/constants";
+import { RequestResolutionStatus } from "@src/types";
 import { useRequestsPending } from "@src/ui/ducks/requests";
 import postMessage from "@src/util/postMessage";
 
@@ -49,7 +50,7 @@ describe("ui/components/ConfirmRequestModal/useConfirmRequestModal", () => {
       method: RPCAction.FINALIZE_REQUEST,
       payload: {
         id: undefined,
-        status: "accept",
+        status: RequestResolutionStatus.ACCEPT,
         data: undefined,
       },
     });
