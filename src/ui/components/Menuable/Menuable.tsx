@@ -1,5 +1,6 @@
 import classNames from "classnames";
 import { MouseEvent as ReactMouseEvent, ReactNode, useCallback, useEffect, useState } from "react";
+import { DangerModal, DangerModal2, useDangerModal } from "../DangerModal";
 
 import { Icon } from "../Icon";
 
@@ -45,6 +46,14 @@ export const Menuable = ({
     onClose,
   });
 
+  const [open, setOpen] = useState(false);
+  const handleDangerModalOpen = () => setOpen(true);
+  const handleDangerModalClose = () => setOpen(false);
+
+  useEffect(() => {
+    console.log("Open changed", open);
+  }, [open]);
+
   return (
     <div
       className={classNames("menuable", { "menuable--active": isShowing }, className)}
@@ -79,53 +88,105 @@ export const Menuable = ({
           )}
 
           {menuItems.map((item, i) => (
-            <div
-              key={item.label}
-              className={classNames(
-                "text-sm whitespace-nowrap",
-                "flex flex-row flex-nowrap items-center",
-                "menuable__menu__item hover:bg-gray-900 ",
-                { "cursor-pointer": !item.disabled },
-                item.className,
-              )}
-              onClick={(e) => onItemClick(e, item, i)}
-            >
-              {item.component ? (
-                item.component
-              ) : (
-                <>
-                  {item.isDangerItem ? (<div
-                    className={classNames("flex-grow", {
-                      "text-gray-500 hover:text-gray-300 hover:font-semibold": !item.disabled,
-                      "text-gray-700": item.disabled,
-                    })}
-                  >
-                    {item.label}
-                  </div>) : <div
-                    className={classNames("flex-grow", {
-                      "text-gray-500 hover:text-gray-300 hover:font-semibold": !item.disabled,
-                      "text-gray-700": item.disabled,
-                    })}
-                  >
-                    {item.label}
-                  </div>}
-
-                  {(item.iconUrl || item.iconFA) && (
-                    <Icon
-                      className={classNames(
-                        "ml-4",
-                        {
-                          "opacity-50": item.disabled,
-                        },
-                        item.iconClassName,
-                      )}
-                      fontAwesome={item.iconFA}
-                      url={item.iconUrl}
-                    />
+            <>
+              {item.isDangerItem ? (
+                <div
+                  key={item.label}
+                  className={classNames(
+                    "text-sm whitespace-nowrap",
+                    "flex flex-row flex-nowrap items-center",
+                    "menuable__menu__item hover:bg-gray-900 ",
+                    { "cursor-pointer": !item.disabled },
+                    item.className,
                   )}
-                </>
+                  onClick={handleDangerModalOpen}
+                >
+                  {/* {open ? <DangerModal2 accept={(e) => onItemClick(e, item, i)} reject={handleDangerModalClose} /> : null } */}
+                  {open ? (
+                    <DangerModal open={open} title="Haha" body="LOL" handleClose={handleDangerModalClose} />
+                  ) : null}
+                  {item.component ? (
+                    item.component
+                  ) : (
+                    <>
+                      <div
+                        className={classNames("flex-grow", {
+                          "text-gray-500 hover:text-gray-300 hover:font-semibold": !item.disabled,
+                          "text-gray-700": item.disabled,
+                        })}
+                      >
+                        {item.label}
+                      </div>
+                      {(item.iconUrl || item.iconFA) && (
+                        <Icon
+                          className={classNames(
+                            "ml-4",
+                            {
+                              "opacity-50": item.disabled,
+                            },
+                            item.iconClassName,
+                          )}
+                          fontAwesome={item.iconFA}
+                          url={item.iconUrl}
+                        />
+                      )}
+                    </>
+                  )}
+                </div>
+              ) : (
+                <div
+                  key={item.label}
+                  className={classNames(
+                    "text-sm whitespace-nowrap",
+                    "flex flex-row flex-nowrap items-center",
+                    "menuable__menu__item hover:bg-gray-900 ",
+                    { "cursor-pointer": !item.disabled },
+                    item.className,
+                  )}
+                  onClick={(e) => onItemClick(e, item, i)}
+                >
+                  {item.component ? (
+                    item.component
+                  ) : (
+                    <>
+                      {item.isDangerItem ? (
+                        <div
+                          className={classNames("flex-grow", {
+                            "text-gray-500 hover:text-gray-300 hover:font-semibold": !item.disabled,
+                            "text-gray-700": item.disabled,
+                          })}
+                        >
+                          {item.label}
+                        </div>
+                      ) : (
+                        <div
+                          className={classNames("flex-grow", {
+                            "text-gray-500 hover:text-gray-300 hover:font-semibold": !item.disabled,
+                            "text-gray-700": item.disabled,
+                          })}
+                        >
+                          {item.label}
+                        </div>
+                      )}
+
+                      {(item.iconUrl || item.iconFA) && (
+                        <Icon
+                          className={classNames(
+                            "ml-4",
+                            {
+                              "opacity-50": item.disabled,
+                            },
+                            item.iconClassName,
+                          )}
+                          fontAwesome={item.iconFA}
+                          url={item.iconUrl}
+                        />
+                      )}
+                    </>
+                  )}
+                </div>
               )}
-            </div>
+            </>
           ))}
         </div>
       )}

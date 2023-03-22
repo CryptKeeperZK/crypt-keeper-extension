@@ -106,12 +106,14 @@
     "webpack-merge": "^5.8.0"
   },
   "dependencies": {
+    "@emotion/styled": "^11.10.6",
     "@fortawesome/fontawesome-common-types": "^6.3.0",
     "@fortawesome/fontawesome-svg-core": "^6.3.0",
     "@fortawesome/free-brands-svg-icons": "^6.3.0",
     "@fortawesome/react-fontawesome": "^0.2.0",
     "@interep/identity": "^0.3.0",
     "@reduxjs/toolkit": "^1.9.3",
+    "@mui/material": "^5.11.13",
     "@semaphore-protocol/group": "^3.2.3",
     "@semaphore-protocol/identity": "^3.2.3",
     "@semaphore-protocol/proof": "^3.2.3",
