@@ -6,8 +6,8 @@
   "testRegex": "(/__tests__/.*|\\.(test|spec))\\.(ts|tsx)$",
   "moduleFileExtensions": ["ts", "js", "tsx"],
   "moduleNameMapper": {
-    "@src/(.*)$": "<rootDir>/src/$1",
-    "^.+\\.(css|scss|svg|png)$": "<rootDir>/src/config/mock/resourceMock.js"
+    "^.+\\.(css|scss|svg|png)$": "<rootDir>/src/config/mock/resourceMock.js",
+    "@src/(.*)$": "<rootDir>/src/$1"
   },
   "coveragePathIgnorePatterns": ["/node_modules/", "/test/", "/__tests__/"],
   "coverageReporters": ["clover", "lcov", "json", "json-summary", "text", "text-summary"],
