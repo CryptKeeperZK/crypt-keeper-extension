@@ -28,6 +28,7 @@ export const DangerModal = ({ openModal, reject, accept }: BasicModalProps): JSX
     <Modal
       aria-describedby="modal-modal-description"
       aria-labelledby="modal-modal-title"
+      data-testid="danger-modal"
       open={openModal}
       onClose={reject}
     >
@@ -39,11 +40,11 @@ export const DangerModal = ({ openModal, reject, accept }: BasicModalProps): JSX
         </FullModalContent>
 
         <FullModalFooter>
-          <Button buttonType={ButtonType.SECONDARY} onClick={reject}>
+          <Button buttonType={ButtonType.SECONDARY} data-testid="danger-modal-reject" onClick={reject}>
             No
           </Button>
 
-          <Button className="ml-2 " onClick={accept}>
+          <Button className="ml-2 " data-testid="danger-modal-accept" onClick={accept}>
             Yes
           </Button>
         </FullModalFooter>

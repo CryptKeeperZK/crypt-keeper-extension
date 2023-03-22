@@ -45,7 +45,7 @@ describe("ui/pages/Home/components/TabList", () => {
     expect(component).toBeInTheDocument();
   });
 
-  test("should delete all identities properly", async () => {
+  test("should accept to delete all identities properly", async () => {
     render(<TabList {...defaultProps} />);
 
     const icon = await screen.findByTestId("menu-icon");
@@ -54,6 +54,34 @@ describe("ui/pages/Home/components/TabList", () => {
     const deleteAllButton = await screen.findByText("Delete All");
     await act(async () => Promise.resolve(deleteAllButton.click()));
 
+    const dangerModal = await screen.findByTestId("danger-modal");
+
+    expect(dangerModal).toBeInTheDocument();
+
+    const dangerModalAccept = await screen.findByTestId("danger-modal-accept");
+    await act(async () => Promise.resolve(dangerModalAccept.click()));
+
     expect(defaultProps.onDeleteAllIdentities).toBeCalledTimes(1);
+    expect(dangerModal).not.toBeInTheDocument();
+  });
+
+  test("should reject to delete all identities properly", async () => {
+    render(<TabList {...defaultProps} />);
+
+    const icon = await screen.findByTestId("menu-icon");
+    await act(async () => Promise.resolve(icon.click()));
+
+    const deleteAllButton = await screen.findByText("Delete All");
+    await act(async () => Promise.resolve(deleteAllButton.click()));
+
+    const dangerModal = await screen.findByTestId("danger-modal");
+
+    expect(dangerModal).toBeInTheDocument();
+
+    const dangerModalReject = await screen.findByTestId("danger-modal-reject");
+    await act(async () => Promise.resolve(dangerModalReject.click()));
+
+    expect(defaultProps.onDeleteAllIdentities).toBeCalledTimes(0);
+    expect(dangerModal).not.toBeInTheDocument();
   });
 });
