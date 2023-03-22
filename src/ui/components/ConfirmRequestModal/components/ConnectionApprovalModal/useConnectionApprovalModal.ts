@@ -25,10 +25,10 @@ export const useConnectionApprovalModal = ({
   accept,
   reject,
 }: IUseConnectionApprovalModalArgs): IUseConnectionApprovalModalData => {
-  const { payload } = pendingRequest;
-  const host = payload?.origin ?? "";
   const [checked, setChecked] = useState(false);
   const [faviconUrl, setFaviconUrl] = useState("");
+  const { payload } = pendingRequest;
+  const host = payload?.origin ?? "";
 
   const onAccept = useCallback(() => {
     accept();

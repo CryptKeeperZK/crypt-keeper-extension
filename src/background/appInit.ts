@@ -2,7 +2,7 @@
 // @src Metamask https://github.com/MetaMask/metamask-extension/blob/develop/app/scripts/app-init.js
 
 // TODO: importing scripts better using importScritps() check MM
-import importAllScripts from "./shared/importScripts";
+import { importAllScripts } from "./shared/importScripts";
 
 declare global {
   // eslint-disable-next-line no-var,vars-on-top

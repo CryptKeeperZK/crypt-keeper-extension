@@ -6,7 +6,7 @@ import { act, renderHook, waitFor } from "@testing-library/react";
 
 import { PendingRequestType } from "@src/types";
 
-import { IUseProofModalArgs, useProofModal } from "../useProofModal";
+import { IUseProofModalArgs, IUseProofModalData, useProofModal } from "../useProofModal";
 
 describe("ui/components/ConfirmRequestModal/components/ProofModal/useProofModal", () => {
   const defaultArgs: IUseProofModalArgs = {
@@ -25,6 +25,21 @@ describe("ui/components/ConfirmRequestModal/components/ProofModal/useProofModal"
     accept: jest.fn(),
     reject: jest.fn(),
   };
+
+  const jsdomOpen = window.open;
+
+  const waitForData = async (current: IUseProofModalData) => {
+    await waitFor(() => current.host !== "");
+    await waitFor(() => current.faviconUrl !== "");
+  };
+
+  beforeAll(() => {
+    window.open = jest.fn();
+  });
+
+  afterAll(() => {
+    window.open = jsdomOpen;
+  });
 
   afterEach(() => {
     jest.clearAllMocks();
@@ -50,7 +65,7 @@ describe("ui/components/ConfirmRequestModal/components/ProofModal/useProofModal"
 
   test("should return initial data", async () => {
     const { result } = renderHook(() => useProofModal(defaultArgs));
-    await waitFor(() => result.current.faviconUrl !== "");
+    await waitForData(result.current);
 
     expect(result.current.operation).toBe("Generate Semaphore Proof");
     expect(result.current.faviconUrl).toBe("http://localhost:3000/favicon.ico");
@@ -60,7 +75,7 @@ describe("ui/components/ConfirmRequestModal/components/ProofModal/useProofModal"
 
   test("should accept proof generation properly", async () => {
     const { result } = renderHook(() => useProofModal(defaultArgs));
-    await waitFor(() => result.current.faviconUrl !== "");
+    await waitForData(result.current);
 
     act(() => result.current.onAccept());
 
@@ -69,7 +84,7 @@ describe("ui/components/ConfirmRequestModal/components/ProofModal/useProofModal"
 
   test("should reject proof generation properly", async () => {
     const { result } = renderHook(() => useProofModal(defaultArgs));
-    await waitFor(() => result.current.faviconUrl !== "");
+    await waitForData(result.current);
 
     act(() => result.current.onReject());
 
@@ -79,7 +94,7 @@ describe("ui/components/ConfirmRequestModal/components/ProofModal/useProofModal"
   test("should open circuit file properly", async () => {
     const openSpy = jest.spyOn(window, "open");
     const { result } = renderHook(() => useProofModal(defaultArgs));
-    await waitFor(() => result.current.faviconUrl !== "");
+    await waitForData(result.current);
 
     act(() => result.current.onOpenCircuitFile());
 
@@ -90,7 +105,7 @@ describe("ui/components/ConfirmRequestModal/components/ProofModal/useProofModal"
   test("should open zkey file properly", async () => {
     const openSpy = jest.spyOn(window, "open");
     const { result } = renderHook(() => useProofModal(defaultArgs));
-    await waitFor(() => result.current.faviconUrl !== "");
+    await waitForData(result.current);
 
     act(() => result.current.onOpenZkeyFile());
 
@@ -101,7 +116,7 @@ describe("ui/components/ConfirmRequestModal/components/ProofModal/useProofModal"
   test("should open verification key file properly", async () => {
     const openSpy = jest.spyOn(window, "open");
     const { result } = renderHook(() => useProofModal(defaultArgs));
-    await waitFor(() => result.current.faviconUrl !== "");
+    await waitForData(result.current);
 
     act(() => result.current.onOpenVerificationKeyFile());
 
