@@ -1,4 +1,5 @@
 import classNames from "classnames";
+
 import { Header } from "@src/ui/components/Header";
 
 import { IdentityList, TabList, Info } from "./components";
@@ -31,7 +32,7 @@ export const Home = (): JSX.Element => {
       >
         <Info address={address} balance={balance} chain={chain} refreshConnectionStatus={refreshConnectionStatus} />
 
-        <TabList onDeleteAllIdentities={onDeleteAllIdentities} identities={identities}>
+        <TabList identities={identities} onDeleteAllIdentities={onDeleteAllIdentities}>
           <IdentityList identities={identities} />
         </TabList>
       </div>

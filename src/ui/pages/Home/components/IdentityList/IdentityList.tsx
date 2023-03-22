@@ -9,7 +9,6 @@ import {
   IdentityData,
   setActiveIdentity,
   setIdentityName,
-  useIdentities,
   useSelectedIdentity,
 } from "@src/ui/ducks/identities";
 import { useWallet } from "@src/ui/hooks/wallet";

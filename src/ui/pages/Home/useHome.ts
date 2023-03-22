@@ -1,12 +1,13 @@
+import BigNumber from "bignumber.js";
+import { useRef, useState, useEffect, useCallback, RefObject } from "react";
+import { browser } from "webextension-polyfill-ts";
+
+import { Chain } from "@src/config/rpc";
 import { RPCAction } from "@src/constants";
 import { useAppDispatch } from "@src/ui/ducks/hooks";
 import { fetchIdentities, deleteAllIdentities, useIdentities, IdentityData } from "@src/ui/ducks/identities";
 import { useWallet } from "@src/ui/hooks/wallet";
-import { useRef, useState, useEffect, useCallback, RefObject } from "react";
-import { browser } from "webextension-polyfill-ts";
 import postMessage from "@src/util/postMessage";
-import BigNumber from "bignumber.js";
-import { Chain } from "@src/config/rpc";
 
 export interface IuseHomeData {
   scrollRef: RefObject<HTMLDivElement>;

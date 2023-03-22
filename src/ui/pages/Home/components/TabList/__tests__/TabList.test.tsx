@@ -2,8 +2,9 @@
  * @jest-environment jsdom
  */
 
-import { ZERO_ADDRESS } from "@src/config/const";
 import { act, render, screen } from "@testing-library/react";
+
+import { ZERO_ADDRESS } from "@src/config/const";
 
 import { TabList, TabListProps } from "..";
 

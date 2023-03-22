@@ -7,7 +7,6 @@ import { act, render, screen, fireEvent } from "@testing-library/react";
 import { ZERO_ADDRESS } from "@src/config/const";
 import { createModalRoot, deleteModalRoot } from "@src/config/mock/modal";
 import { defaultWalletHookData } from "@src/config/mock/wallet";
-import { IdentityMetadata } from "@src/types";
 import { useAppDispatch } from "@src/ui/ducks/hooks";
 import {
   deleteIdentity,

@@ -1,5 +1,17 @@
-import { useState, useEffect, useCallback, MouseEvent as ReactMouseEvent } from "react";
-import { ItemProps } from ".";
+import { useState, useEffect, useCallback, MouseEvent as ReactMouseEvent, ReactNode, useRef, RefObject } from "react";
+
+export interface ItemProps {
+  label: string;
+  isDangerItem: boolean;
+  iconUrl?: string;
+  iconFA?: string;
+  iconClassName?: string;
+  className?: string;
+  disabled?: boolean;
+  children?: ItemProps[];
+  component?: ReactNode;
+  onClick?: (e: ReactMouseEvent, reset: () => void) => Promise<void> | void;
+}
 
 export interface IUseMeuableArgs {
   opened?: boolean;
@@ -9,27 +21,24 @@ export interface IUseMeuableArgs {
 }
 
 export interface IUseMenuableData {
+  menuRef: RefObject<HTMLDivElement>;
   isShowing: boolean;
   path: number[];
   menuItems: ItemProps[];
+  openDangerModal: boolean;
   onItemClick: (e: ReactMouseEvent, item: ItemProps, i: number) => void;
   handleClose: () => void;
   handleGoBack: (e: ReactMouseEvent) => void;
   handleOpen: () => void;
+  handleDangerModalOpen: (e: ReactMouseEvent) => void;
+  handleDangerModalClose: (e: ReactMouseEvent) => void;
 }
 
 export const useMeuable = ({ opened, items, onOpen, onClose }: IUseMeuableArgs): IUseMenuableData => {
   const [isShowing, setShowing] = useState(!!opened);
   const [path, setPath] = useState<number[]>([]);
-
-  useEffect(() => {
-    if (typeof opened !== "undefined") {
-      setShowing(opened);
-      if (!opened) {
-        setPath([]);
-      }
-    }
-  }, [opened]);
+  const [openDangerModal, setOpenDangerModal] = useState(false);
+  const menuRef = useRef<HTMLDivElement>(null);
 
   const handleClose = useCallback(() => {
     onClose?.();
@@ -72,6 +81,42 @@ export const useMeuable = ({ opened, items, onOpen, onClose }: IUseMeuableArgs):
     [path, handleClose, setPath],
   );
 
+  const handleDangerModalOpen = useCallback(
+    (e: ReactMouseEvent) => {
+      e.stopPropagation();
+      setOpenDangerModal(true);
+    },
+    [openDangerModal],
+  );
+  const handleDangerModalClose = useCallback(
+    (e: ReactMouseEvent) => {
+      e.stopPropagation();
+      setOpenDangerModal(false);
+    },
+    [openDangerModal],
+  );
+
+  useEffect(() => {
+    if (typeof opened !== "undefined") {
+      setShowing(opened);
+      if (!opened) {
+        setPath([]);
+      }
+    }
+  }, [opened]);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+        handleClose();
+      }
+    };
+    document.addEventListener("click", handleClickOutside, true);
+    return () => {
+      document.removeEventListener("click", handleClickOutside, true);
+    };
+  }, [isShowing]);
+
   let menuItems: ItemProps[] = items;
   path?.forEach((index) => {
     if (items[index].children) {
@@ -80,12 +125,16 @@ export const useMeuable = ({ opened, items, onOpen, onClose }: IUseMeuableArgs):
   });
 
   return {
+    menuRef,
     isShowing,
     path,
     menuItems,
+    openDangerModal,
     onItemClick,
     handleClose,
     handleGoBack,
     handleOpen,
+    handleDangerModalOpen,
+    handleDangerModalClose,
   };
 };

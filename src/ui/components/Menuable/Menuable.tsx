@@ -1,11 +1,11 @@
 import classNames from "classnames";
-import { MouseEvent as ReactMouseEvent, ReactNode, useCallback, useEffect, useState } from "react";
-import { DangerModal, DangerModal2, useDangerModal } from "../DangerModal";
+import { MouseEvent as ReactMouseEvent, ReactNode } from "react";
 
+import { DangerModal } from "../DangerModal";
 import { Icon } from "../Icon";
 
 import "./menuable.scss";
-import { useMeuable } from "./useMeunable";
+import { useMeuable, ItemProps } from "./useMeunable";
 
 export interface MenuableProps {
   items: ItemProps[];
@@ -17,19 +17,6 @@ export interface MenuableProps {
   onClose?: () => void;
 }
 
-export interface ItemProps {
-  label: string;
-  isDangerItem: boolean;
-  iconUrl?: string;
-  iconFA?: string;
-  iconClassName?: string;
-  className?: string;
-  disabled?: boolean;
-  children?: ItemProps[];
-  component?: ReactNode;
-  onClick?: (e: ReactMouseEvent, reset: () => void) => Promise<void> | void;
-}
-
 export const Menuable = ({
   opened,
   className,
@@ -39,23 +26,28 @@ export const Menuable = ({
   onOpen,
   onClose,
 }: MenuableProps): JSX.Element => {
-  const { isShowing, path, menuItems, onItemClick, handleClose, handleGoBack, handleOpen } = useMeuable({
+  const {
+    menuRef,
+    isShowing,
+    path,
+    menuItems,
+    openDangerModal,
+    onItemClick,
+    handleClose,
+    handleGoBack,
+    handleOpen,
+    handleDangerModalOpen,
+    handleDangerModalClose,
+  } = useMeuable({
     opened,
     items,
     onOpen,
     onClose,
   });
 
-  const [open, setOpen] = useState(false);
-  const handleDangerModalOpen = () => setOpen(true);
-  const handleDangerModalClose = () => setOpen(false);
-
-  useEffect(() => {
-    console.log("Open changed", open);
-  }, [open]);
-
   return (
     <div
+      ref={menuRef}
       className={classNames("menuable", { "menuable--active": isShowing }, className)}
       data-testid="menu"
       onClick={(e) => {
@@ -88,7 +80,7 @@ export const Menuable = ({
           )}
 
           {menuItems.map((item, i) => (
-            <>
+            <div key={i}>
               {item.isDangerItem ? (
                 <div
                   key={item.label}
@@ -99,12 +91,16 @@ export const Menuable = ({
                     { "cursor-pointer": !item.disabled },
                     item.className,
                   )}
-                  onClick={handleDangerModalOpen}
+                  onClick={(e) => handleDangerModalOpen(e)}
                 >
-                  {/* {open ? <DangerModal2 accept={(e) => onItemClick(e, item, i)} reject={handleDangerModalClose} /> : null } */}
-                  {open ? (
-                    <DangerModal open={open} title="Haha" body="LOL" handleClose={handleDangerModalClose} />
+                  {openDangerModal ? (
+                    <DangerModal
+                      accept={(e: ReactMouseEvent) => onItemClick(e, item, i)}
+                      openModal={openDangerModal}
+                      reject={handleDangerModalClose}
+                    />
                   ) : null}
+
                   {item.component ? (
                     item.component
                   ) : (
@@ -114,9 +110,11 @@ export const Menuable = ({
                           "text-gray-500 hover:text-gray-300 hover:font-semibold": !item.disabled,
                           "text-gray-700": item.disabled,
                         })}
+                        onClick={handleDangerModalOpen}
                       >
                         {item.label}
                       </div>
+
                       {(item.iconUrl || item.iconFA) && (
                         <Icon
                           className={classNames(
@@ -149,25 +147,14 @@ export const Menuable = ({
                     item.component
                   ) : (
                     <>
-                      {item.isDangerItem ? (
-                        <div
-                          className={classNames("flex-grow", {
-                            "text-gray-500 hover:text-gray-300 hover:font-semibold": !item.disabled,
-                            "text-gray-700": item.disabled,
-                          })}
-                        >
-                          {item.label}
-                        </div>
-                      ) : (
-                        <div
-                          className={classNames("flex-grow", {
-                            "text-gray-500 hover:text-gray-300 hover:font-semibold": !item.disabled,
-                            "text-gray-700": item.disabled,
-                          })}
-                        >
-                          {item.label}
-                        </div>
-                      )}
+                      <div
+                        className={classNames("flex-grow", {
+                          "text-gray-500 hover:text-gray-300 hover:font-semibold": !item.disabled,
+                          "text-gray-700": item.disabled,
+                        })}
+                      >
+                        {item.label}
+                      </div>
 
                       {(item.iconUrl || item.iconFA) && (
                         <Icon
@@ -186,7 +173,7 @@ export const Menuable = ({
                   )}
                 </div>
               )}
-            </>
+            </div>
           ))}
         </div>
       )}

@@ -3,9 +3,9 @@ import { ReactNode, Children, useState, useMemo } from "react";
 
 import { Icon } from "@src/ui/components/Icon";
 import { Menuable } from "@src/ui/components/Menuable";
+import { IdentityData } from "@src/ui/ducks/identities";
 
 import "./tabListStyles.scss";
-import { IdentityData } from "@src/ui/ducks/identities";
 
 export interface TabListProps {
   children: ReactNode;
