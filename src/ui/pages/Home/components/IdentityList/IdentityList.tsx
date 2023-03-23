@@ -56,7 +56,7 @@ export const IdentityList = (): JSX.Element => {
           key={commitment}
           commitment={commitment}
           metadata={metadata}
-          selected={selected.commitment}
+          selected={selected?.commitment}
           onDeleteIdentity={onDeleteIdentity}
           onSelectIdentity={onSelectIdentity}
           onUpdateIdentityName={onUpdateIdentityName}

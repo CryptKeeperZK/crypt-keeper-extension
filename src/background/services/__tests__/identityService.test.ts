@@ -4,7 +4,7 @@ import { bigintToHex } from "bigint-conversion";
 import { browser } from "webextension-polyfill-ts";
 
 import ZkIdentityDecorater from "@src/background/identityDecorater";
-import { setSelected } from "@src/ui/ducks/identities";
+import { setSelectedCommitment } from "@src/ui/ducks/identities";
 import { ellipsify } from "@src/util/account";
 import pushMessage from "@src/util/pushMessage";
 
@@ -62,14 +62,14 @@ describe("background/services/identity", () => {
 
       expect(result).toBe(true);
       expect(pushMessage).toBeCalledTimes(1);
-      expect(pushMessage).toBeCalledWith(setSelected(defaultIdentityCommitment));
+      expect(pushMessage).toBeCalledWith(setSelectedCommitment(defaultIdentityCommitment));
       expect(browser.tabs.sendMessage).toBeCalledTimes(defaultTabs.length);
 
       for (let index = 0; index < defaultTabs.length; index += 1) {
         expect(browser.tabs.sendMessage).toHaveBeenNthCalledWith(
           index + 1,
           defaultTabs[index].id,
-          setSelected(defaultIdentityCommitment),
+          setSelectedCommitment(defaultIdentityCommitment),
         );
       }
     });
@@ -97,14 +97,14 @@ describe("background/services/identity", () => {
 
       expect(result).toBe(true);
       expect(pushMessage).toBeCalledTimes(1);
-      expect(pushMessage).toBeCalledWith(setSelected(defaultIdentityCommitment));
+      expect(pushMessage).toBeCalledWith(setSelectedCommitment(defaultIdentityCommitment));
       expect(browser.tabs.sendMessage).toBeCalledTimes(defaultTabs.length);
 
       for (let index = 0; index < defaultTabs.length; index += 1) {
         expect(browser.tabs.sendMessage).toHaveBeenNthCalledWith(
           index + 1,
           defaultTabs[index].id,
-          setSelected(defaultIdentityCommitment),
+          setSelectedCommitment(defaultIdentityCommitment),
         );
       }
     });

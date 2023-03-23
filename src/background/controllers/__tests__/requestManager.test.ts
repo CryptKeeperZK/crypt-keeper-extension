@@ -1,5 +1,5 @@
 import { PendingRequestType, RequestResolutionStatus } from "@src/types";
-import { setPendingRequest } from "@src/ui/ducks/requests";
+import { setPendingRequests } from "@src/ui/ducks/requests";
 import pushMessage from "@src/util/pushMessage";
 
 import BrowserUtils from "../browserUtils";
@@ -50,7 +50,7 @@ describe("background/controllers/requestManager", () => {
     const requests = requestManager.getRequests();
     expect(requests).toHaveLength(1);
     expect(pushMessage).toBeCalledTimes(1);
-    expect(pushMessage).toBeCalledWith(setPendingRequest(requests));
+    expect(pushMessage).toBeCalledWith(setPendingRequests(requests));
 
     const finalized = await requestManager.finalizeRequest({
       id: nonce.toString(),
@@ -77,7 +77,7 @@ describe("background/controllers/requestManager", () => {
     expect(finalized).toBe(true);
     expect(requestPromise).resolves.toStrictEqual({ done: true });
     expect(pushMessage).toBeCalledTimes(2);
-    expect(pushMessage).toBeCalledWith(setPendingRequest([]));
+    expect(pushMessage).toBeCalledWith(setPendingRequests([]));
     expect(defaultBrowserUtils.addRemoveWindowListener).toBeCalledTimes(2);
     expect(defaultBrowserUtils.removeRemoveWindowListener).toBeCalledTimes(1);
   });

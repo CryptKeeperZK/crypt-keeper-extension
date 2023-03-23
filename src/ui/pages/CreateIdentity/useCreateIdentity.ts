@@ -68,7 +68,7 @@ export const useCreateIdentity = (): IUseCreateIdentityData => {
       });
 
       if (messageSignature) {
-        dispatch(createIdentity(identityStrategyType.value, messageSignature, options));
+        dispatch(createIdentity(identityStrategyType.value as IdentityStrategy, messageSignature, options));
       }
     } catch (err) {
       setError((err as Error).message);

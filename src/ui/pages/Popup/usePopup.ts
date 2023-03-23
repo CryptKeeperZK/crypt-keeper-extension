@@ -6,7 +6,7 @@ import { Paths } from "@src/constants";
 import { PendingRequest } from "@src/types";
 import { fetchStatus, useAppStatus } from "@src/ui/ducks/app";
 import { useAppDispatch } from "@src/ui/ducks/hooks";
-import { fetchRequestPendingStatus, useRequestsPending } from "@src/ui/ducks/requests";
+import { fetchPendingRequests, usePendingRequests } from "@src/ui/ducks/requests";
 import { useWallet } from "@src/ui/hooks/wallet";
 
 export interface IUsePopupData {
@@ -26,7 +26,7 @@ export const usePopup = (): IUsePopupData => {
 
   const dispatch = useAppDispatch();
   const { onConnectEagerly } = useWallet();
-  const pendingRequests = useRequestsPending();
+  const pendingRequests = usePendingRequests();
   const { initialized, unlocked } = useAppStatus();
 
   const url = new URL(window.location.href);
@@ -34,7 +34,7 @@ export const usePopup = (): IUsePopupData => {
   const redirect = useMemo(() => redirectParam && REDIRECT_PATHS[redirectParam], [redirectParam, window.location.href]);
 
   const fetchData = useCallback(async () => {
-    await Promise.all([dispatch(fetchStatus()), dispatch(fetchRequestPendingStatus())]);
+    await Promise.all([dispatch(fetchStatus()), dispatch(fetchPendingRequests())]);
   }, [dispatch]);
 
   useEffect(() => {

@@ -10,7 +10,7 @@ import { defaultWalletHookData } from "@src/config/mock/wallet";
 import { Paths } from "@src/constants";
 import { fetchStatus, useAppStatus } from "@src/ui/ducks/app";
 import { useAppDispatch } from "@src/ui/ducks/hooks";
-import { fetchRequestPendingStatus, useRequestsPending } from "@src/ui/ducks/requests";
+import { fetchPendingRequests, usePendingRequests } from "@src/ui/ducks/requests";
 import { useWallet } from "@src/ui/hooks/wallet";
 
 import { IUsePopupData, usePopup } from "../usePopup";
@@ -29,8 +29,8 @@ jest.mock("@src/ui/ducks/hooks", (): unknown => ({
 }));
 
 jest.mock("@src/ui/ducks/requests", (): unknown => ({
-  fetchRequestPendingStatus: jest.fn(),
-  useRequestsPending: jest.fn(),
+  fetchPendingRequests: jest.fn(),
+  usePendingRequests: jest.fn(),
 }));
 
 jest.mock("@src/ui/hooks/wallet", (): unknown => ({
@@ -49,6 +49,7 @@ describe("ui/pages/Popup/usePopup", () => {
 
   const waitForData = async (current: IUsePopupData) => {
     await waitFor(() => current.isLoading === true);
+    await waitFor(() => expect(mockDispatch).toBeCalledTimes(2));
     await waitFor(() => current.isLoading === false);
   };
 
@@ -64,7 +65,7 @@ describe("ui/pages/Popup/usePopup", () => {
   beforeEach(() => {
     (useNavigate as jest.Mock).mockReturnValue(mockNavigate);
 
-    (useRequestsPending as jest.Mock).mockReturnValue([]);
+    (usePendingRequests as jest.Mock).mockReturnValue([]);
 
     (useAppStatus as jest.Mock).mockReturnValue(defaultStatusData);
 
@@ -94,7 +95,7 @@ describe("ui/pages/Popup/usePopup", () => {
     expect(result.current.isLoading).toBe(false);
     expect(mockDispatch).toBeCalledTimes(2);
     expect(fetchStatus).toBeCalledTimes(1);
-    expect(fetchRequestPendingStatus).toBeCalledTimes(1);
+    expect(fetchPendingRequests).toBeCalledTimes(1);
     expect(defaultWalletHookData.onConnectEagerly).toBeCalledTimes(1);
   });
 
