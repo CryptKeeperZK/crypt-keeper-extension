@@ -17,10 +17,13 @@ jest.mock("link-preview-js", (): unknown => ({
 
 jest.mock("@src/util/postMessage");
 
+jest.mock("@src/util/pushMessage");
+
 type Changes = Record<string, { oldValue: string | null; newValue: string | null }>;
 
 jest.mock("webextension-polyfill-ts", (): unknown => {
   const storageListeners: ((changes: Changes, namespace: string) => void)[] = [];
+  const windowRemoveListeners: ((windowId: number) => void)[] = [];
   const namespace = "namespace";
   const defaultChanges = { key: { oldValue: null, newValue: null } };
 
@@ -29,6 +32,21 @@ jest.mock("webextension-polyfill-ts", (): unknown => {
       tabs: {
         query: jest.fn().mockResolvedValue([]),
         sendMessage: jest.fn(),
+        create: jest.fn(),
+      },
+
+      windows: {
+        create: jest.fn(),
+        update: jest.fn(),
+        remove: jest.fn().mockImplementation((windowId: number) => {
+          windowRemoveListeners.forEach((listener) => listener(windowId));
+        }),
+        onRemoved: {
+          addListener: jest.fn().mockImplementation((fun: (windowId: number) => void) => {
+            windowRemoveListeners.push(fun);
+          }),
+          removeListener: jest.fn(),
+        },
       },
 
       runtime: {

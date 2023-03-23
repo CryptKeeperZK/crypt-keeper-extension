@@ -60,11 +60,16 @@ export interface PendingRequest<P = unknown> {
   payload?: P;
 }
 
-export type RequestResolutionAction<data> = {
+export type RequestResolutionAction<data = unknown> = {
   id: string;
-  status: "accept" | "reject";
+  status: RequestResolutionStatus;
   data?: data;
 };
+
+export enum RequestResolutionStatus {
+  ACCEPT = "accept",
+  REJECT = "reject",
+}
 
 export type IdentityMetadata = {
   account: string;
