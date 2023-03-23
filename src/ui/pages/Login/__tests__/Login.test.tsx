@@ -33,7 +33,7 @@ describe("ui/pages/Login", () => {
   });
 
   test("should render properly with error", async () => {
-    (useLogin as jest.Mock).mockReturnValue({ ...defaultHookData, error: "Error" });
+    (useLogin as jest.Mock).mockReturnValue({ ...defaultHookData, error: "Error", isLoading: true });
     render(<Login />);
 
     const error = await screen.findByText("Error");
