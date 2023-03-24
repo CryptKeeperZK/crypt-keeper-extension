@@ -1,6 +1,6 @@
 import Box from "@mui/material/Box";
 import Modal from "@mui/material/Modal";
-import { MouseEvent as ReactMouseEvent, MouseEventHandler } from "react";
+import { MouseEvent as ReactMouseEvent } from "react";
 
 import { ButtonType, Button } from "@src/ui/components/Button";
 import { FullModalContent, FullModalFooter, FullModalHeader } from "@src/ui/components/FullModal";
@@ -10,7 +10,7 @@ import { style } from "./style";
 export interface BasicModalProps {
   openModal: boolean;
   reject: (e: ReactMouseEvent) => void;
-  accept: MouseEventHandler;
+  accept: (e: ReactMouseEvent) => void;
 }
 
 export const ConfirmDangerModal = ({ openModal, reject, accept }: BasicModalProps): JSX.Element => (

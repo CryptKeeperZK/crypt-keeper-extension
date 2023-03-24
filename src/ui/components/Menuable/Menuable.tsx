@@ -1,5 +1,5 @@
 import classNames from "classnames";
-import { MouseEvent as ReactMouseEvent, ReactNode } from "react";
+import { ReactNode } from "react";
 
 import { ConfirmDangerModal } from "@src/ui/components/ConfirmDangerModal";
 
@@ -37,8 +37,10 @@ export const Menuable = ({
     handleClose,
     handleGoBack,
     handleOpen,
-    handleDangerModalOpen,
+    handleDangerAction,
     handleDangerModalClose,
+    handleDangerModalOpen,
+    handleSetDangerItem,
   } = useMeuable({
     opened,
     items,
@@ -62,6 +64,10 @@ export const Menuable = ({
       }}
     >
       {children}
+
+      {openDangerModal ? (
+        <ConfirmDangerModal accept={handleDangerAction} openModal={openDangerModal} reject={handleDangerModalClose} />
+      ) : null}
 
       {isShowing && (
         <div className={classNames("rounded-xl border border-gray-700 menuable__menu", menuClassName)}>
@@ -92,16 +98,11 @@ export const Menuable = ({
                     { "cursor-pointer": !item.disabled },
                     item.className,
                   )}
-                  onClick={(e) => handleDangerModalOpen(e)}
+                  onClick={(e) => {
+                    handleSetDangerItem(item, i);
+                    handleDangerModalOpen(e);
+                  }}
                 >
-                  {openDangerModal ? (
-                    <ConfirmDangerModal
-                      accept={(e: ReactMouseEvent) => onItemClick(e, item, i)}
-                      openModal={openDangerModal}
-                      reject={handleDangerModalClose}
-                    />
-                  ) : null}
-
                   {item.component ? (
                     item.component
                   ) : (
@@ -111,7 +112,6 @@ export const Menuable = ({
                           "text-gray-500 hover:text-gray-300 hover:font-semibold": !item.disabled,
                           "text-gray-700": item.disabled,
                         })}
-                        onClick={handleDangerModalOpen}
                       >
                         {item.label}
                       </div>

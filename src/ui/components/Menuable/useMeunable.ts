@@ -30,6 +30,8 @@ export interface IUseMenuableData {
   handleClose: () => void;
   handleGoBack: (e: ReactMouseEvent) => void;
   handleOpen: () => void;
+  handleSetDangerItem: (item: ItemProps, i: number) => void;
+  handleDangerAction: (e: ReactMouseEvent) => void;
   handleDangerModalOpen: (e: ReactMouseEvent) => void;
   handleDangerModalClose: (e: ReactMouseEvent) => void;
 }
@@ -37,6 +39,8 @@ export interface IUseMenuableData {
 export const useMeuable = ({ opened, items, onOpen, onClose }: IUseMeuableArgs): IUseMenuableData => {
   const [isShowing, setShowing] = useState(!!opened);
   const [path, setPath] = useState<number[]>([]);
+  const [dangerItem, setDangerItem] = useState<ItemProps>();
+  const [number, setNumber] = useState<number>(0);
   const [openDangerModal, setOpenDangerModal] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
 
@@ -69,7 +73,6 @@ export const useMeuable = ({ opened, items, onOpen, onClose }: IUseMeuableArgs):
 
   const onItemClick = useCallback(
     (e: ReactMouseEvent, item: ItemProps, i: number) => {
-      e.stopPropagation();
       if (item.disabled) return;
       if (item.children) {
         setPath([...path, i]);
@@ -88,12 +91,31 @@ export const useMeuable = ({ opened, items, onOpen, onClose }: IUseMeuableArgs):
     },
     [openDangerModal],
   );
+
   const handleDangerModalClose = useCallback(
     (e: ReactMouseEvent) => {
       e.stopPropagation();
       setOpenDangerModal(false);
     },
     [openDangerModal],
+  );
+
+  const handleSetDangerItem = useCallback(
+    (item: ItemProps, i: number) => {
+      console.log("handleSetDangerItem");
+      setNumber(i);
+      setDangerItem(item);
+    },
+    [dangerItem, number],
+  );
+
+  const handleDangerAction = useCallback(
+    (e: ReactMouseEvent) => {
+      e.stopPropagation();
+      if (dangerItem) onItemClick(e, dangerItem, number);
+      setOpenDangerModal(false);
+    },
+    [dangerItem],
   );
 
   useEffect(() => {
@@ -134,6 +156,8 @@ export const useMeuable = ({ opened, items, onOpen, onClose }: IUseMeuableArgs):
     handleClose,
     handleGoBack,
     handleOpen,
+    handleSetDangerItem,
+    handleDangerAction,
     handleDangerModalOpen,
     handleDangerModalClose,
   };

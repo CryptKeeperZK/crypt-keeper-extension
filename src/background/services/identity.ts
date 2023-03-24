@@ -91,11 +91,13 @@ export default class IdentityService {
     identities.delete(identityCommitment);
     await this.writeIdentities(identities);
 
-    if (activeIdentityCommitment === identityCommitment) {
-      await this.setDefaultIdentity(true);
-    }
+    const size = await this.getNumOfIdentites();
 
     await this.refresh();
+
+    if (activeIdentityCommitment === identityCommitment || size === 1) {
+      await this.setDefaultIdentity(true);
+    }
 
     return true;
   };
@@ -107,7 +109,7 @@ export default class IdentityService {
       return false;
     }
 
-    await Promise.all([pushMessage(setIdentities([])), this.clearActiveIdentity(), this.identitiesStore.clear()]);
+    await Promise.all([this.clearActiveIdentity(false), this.identitiesStore.clear(), pushMessage(setIdentities([]))]);
 
     return true;
   };
@@ -189,7 +191,7 @@ export default class IdentityService {
     const identities = await this.getIdentitiesFromStore();
 
     if (!identities.size) {
-      await this.clearActiveIdentity();
+      await this.clearActiveIdentity(updateUi);
       return;
     }
 
@@ -197,13 +199,13 @@ export default class IdentityService {
     await this.setActiveIdentity({ identityCommitment: identity.value as string, updateUi });
   };
 
-  private clearActiveIdentity = async (): Promise<void> => {
+  private clearActiveIdentity = async (updateUi: boolean): Promise<void> => {
     if (!this.activeIdentity) {
       return;
     }
 
     this.activeIdentity = undefined;
-    await this.writeActiveIdentity("", true);
+    await this.writeActiveIdentity("", updateUi);
   };
 
   private writeIdentities = async (identities: Map<string, string>): Promise<void> => {
