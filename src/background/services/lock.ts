@@ -9,8 +9,8 @@ import SimpleStorage from "./simpleStorage";
 const PASSWORD_DB_KEY = "@password@";
 
 interface LockStatus {
-  initialized: boolean;
-  unlocked: boolean;
+  isInitialized: boolean;
+  isUnlocked: boolean;
 }
 
 export default class LockService {
@@ -55,8 +55,8 @@ export default class LockService {
     const cipherText = await this.passwordStorage.get();
 
     return {
-      initialized: !!cipherText,
-      unlocked: this.isUnlocked,
+      isInitialized: !!cipherText,
+      isUnlocked: this.isUnlocked,
     };
   };
 

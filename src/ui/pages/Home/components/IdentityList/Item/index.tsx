@@ -86,6 +86,7 @@ export const IdentityItem = ({
             <Input
               autoFocus
               className="identity-row__input-field"
+              label=""
               type="text"
               value={name}
               onBlur={handleToggleRenaming}

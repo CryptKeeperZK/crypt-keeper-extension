@@ -39,8 +39,8 @@ jest.mock("@src/ui/hooks/wallet", (): unknown => ({
 
 describe("ui/pages/Popup/usePopup", () => {
   const defaultStatusData = {
-    initialized: false,
-    unlocked: false,
+    isInitialized: false,
+    isUnlocked: false,
   };
 
   const mockDispatch = jest.fn();
@@ -83,8 +83,8 @@ describe("ui/pages/Popup/usePopup", () => {
     await waitForData(result.current);
 
     expect(result.current.isLoading).toBe(false);
-    expect(result.current.initialized).toBe(false);
-    expect(result.current.unlocked).toBe(false);
+    expect(result.current.isInitialized).toBe(false);
+    expect(result.current.isUnlocked).toBe(false);
     expect(result.current.pendingRequests).toHaveLength(0);
   });
 

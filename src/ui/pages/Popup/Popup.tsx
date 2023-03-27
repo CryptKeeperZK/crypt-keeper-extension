@@ -12,7 +12,7 @@ import "./popup.scss";
 import { usePopup } from "./usePopup";
 
 export const Popup = (): JSX.Element | null => {
-  const { isLoading, initialized, unlocked, pendingRequests } = usePopup();
+  const { isLoading, isInitialized, isUnlocked, pendingRequests } = usePopup();
 
   if (isLoading) {
     return null;
@@ -20,9 +20,9 @@ export const Popup = (): JSX.Element | null => {
 
   let content: ReactNode;
 
-  if (!initialized) {
+  if (!isInitialized) {
     content = <Onboarding />;
-  } else if (!unlocked) {
+  } else if (!isUnlocked) {
     content = <Login />;
   } else if (pendingRequests.length) {
     return <ConfirmRequestModal />;

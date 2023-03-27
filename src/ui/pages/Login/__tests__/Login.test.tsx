@@ -4,24 +4,30 @@
 
 import { render, screen, fireEvent, act } from "@testing-library/react";
 
-import { Login } from "..";
-import { IUseLoginData, useLogin } from "../useLogin";
+import { unlock } from "@src/ui/ducks/app";
+import { useAppDispatch } from "@src/ui/ducks/hooks";
 
-jest.mock("../useLogin", (): unknown => ({
-  useLogin: jest.fn(),
+import { Login } from "..";
+
+jest.mock("@src/ui/ducks/app", (): unknown => ({
+  unlock: jest.fn(),
+}));
+
+jest.mock("@src/ui/ducks/hooks", (): unknown => ({
+  useAppDispatch: jest.fn(),
 }));
 
 describe("ui/pages/Login", () => {
-  const defaultHookData: IUseLoginData = {
-    password: "",
-    error: "",
-    isLoading: false,
-    onChangePassword: jest.fn(),
-    onSubmit: jest.fn((event) => event.preventDefault()),
-  };
+  const mockDispatch = jest.fn(() => Promise.resolve());
 
   beforeEach(() => {
-    (useLogin as jest.Mock).mockReturnValue(defaultHookData);
+    (useAppDispatch as jest.Mock).mockReturnValue(mockDispatch);
+
+    (unlock as jest.Mock).mockResolvedValue({});
+  });
+
+  afterEach(() => {
+    jest.clearAllMocks();
   });
 
   test("should render properly", async () => {
@@ -32,32 +38,31 @@ describe("ui/pages/Login", () => {
     expect(form).toBeInTheDocument();
   });
 
-  test("should render properly with error", async () => {
-    (useLogin as jest.Mock).mockReturnValue({ ...defaultHookData, error: "Error", isLoading: true });
-    render(<Login />);
-
-    const error = await screen.findByText("Error");
-
-    expect(error).toBeInTheDocument();
-  });
-
-  test("should input password properly", async () => {
+  test("should handle error properly", async () => {
+    const err = new Error("Error");
+    (mockDispatch as jest.Mock).mockRejectedValue(err);
     render(<Login />);
 
     const input = await screen.findByLabelText("Password");
-    act(() => fireEvent.change(input, { target: { value: "password" } }));
+    await act(async () => Promise.resolve(fireEvent.change(input, { target: { value: "password" } })));
 
-    expect(input).toBeInTheDocument();
-    expect(defaultHookData.onChangePassword).toBeCalledTimes(1);
+    const button = await screen.findByTestId("unlock-button");
+    await act(async () => Promise.resolve(fireEvent.submit(button)));
+
+    const error = await screen.findByText(err.message);
+    expect(error).toBeInTheDocument();
   });
 
   test("should submit form properly", async () => {
-    (useLogin as jest.Mock).mockReturnValue({ ...defaultHookData, password: "password" });
     render(<Login />);
 
-    const button = await screen.findByTestId("unlock-button");
-    act(() => button.click());
+    const input = await screen.findByLabelText("Password");
+    await act(async () => Promise.resolve(fireEvent.change(input, { target: { value: "password" } })));
 
-    expect(defaultHookData.onSubmit).toBeCalledTimes(1);
+    const button = await screen.findByTestId("unlock-button");
+    await act(async () => Promise.resolve(fireEvent.submit(button)));
+
+    expect(mockDispatch).toBeCalledTimes(1);
+    expect(unlock).toBeCalledTimes(1);
   });
 });

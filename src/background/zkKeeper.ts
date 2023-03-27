@@ -56,16 +56,10 @@ export default class ZkKeeperController extends Handler {
     /**
      *  Return status of background process
      *  @returns {Object} status Background process status
-     *  @returns {boolean} status.initialized has background process been initialized
-     *  @returns {boolean} status.unlocked is background process unlocked
+     *  @returns {boolean} status.isInitialized has background process been initialized
+     *  @returns {boolean} status.isUnlocked is background process unlocked
      */
-    this.add(RPCAction.GET_STATUS, async () => {
-      const { initialized, unlocked } = await this.lockService.getStatus();
-      return {
-        initialized,
-        unlocked,
-      };
-    });
+    this.add(RPCAction.GET_STATUS, this.lockService.getStatus);
 
     // requests
     this.add(RPCAction.GET_PENDING_REQUESTS, this.lockService.ensure, this.requestManager.getRequests);
@@ -135,7 +129,7 @@ export default class ZkKeeperController extends Handler {
       this.lockService.ensure,
       validateZkInputs,
       async (payload: SemaphoreProofRequest, meta: { origin: string }) => {
-        const { unlocked } = await this.lockService.getStatus();
+        const { isUnlocked: unlocked } = await this.lockService.getStatus();
 
         const semaphorePath = {
           circuitFilePath: browser.runtime.getURL("js/zkeyFiles/semaphore/semaphore.wasm"),
@@ -222,7 +216,7 @@ export default class ZkKeeperController extends Handler {
       const { origin: host } = payload;
       if (!host) throw new Error("Origin not provided");
 
-      const { unlocked } = await this.lockService.getStatus();
+      const { isUnlocked: unlocked } = await this.lockService.getStatus();
 
       if (!unlocked) {
         await this.browserService.openPopup();

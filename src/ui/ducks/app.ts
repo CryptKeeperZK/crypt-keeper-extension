@@ -11,13 +11,13 @@ import type { TypedThunk } from "@src/ui/store/configureAppStore";
 import { useAppSelector } from "./hooks";
 
 export interface AppState {
-  initialized: boolean;
-  unlocked: boolean;
+  isInitialized: boolean;
+  isUnlocked: boolean;
 }
 
 const initialState: AppState = {
-  initialized: false,
-  unlocked: false,
+  isInitialized: false,
+  isUnlocked: false,
 };
 
 const appSlice = createSlice({
@@ -25,8 +25,8 @@ const appSlice = createSlice({
   initialState,
   reducers: {
     setStatus: (state: AppState, action: PayloadAction<AppState>) => {
-      state.initialized = action.payload.initialized;
-      state.unlocked = action.payload.unlocked;
+      state.isInitialized = action.payload.isInitialized;
+      state.isUnlocked = action.payload.isUnlocked;
     },
   },
 });
