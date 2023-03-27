@@ -25,7 +25,7 @@ export interface IUseMenuableData {
   isShowing: boolean;
   path: number[];
   menuItems: ItemProps[];
-  openDangerModal: boolean;
+  isOpenDangerModal: boolean;
   onItemClick: (e: ReactMouseEvent, item: ItemProps, i: number) => void;
   handleClose: () => void;
   handleGoBack: (e: ReactMouseEvent) => void;
@@ -41,7 +41,7 @@ export const useMeuable = ({ opened, items, onOpen, onClose }: IUseMeuableArgs):
   const [path, setPath] = useState<number[]>([]);
   const [dangerItem, setDangerItem] = useState<ItemProps>();
   const [number, setNumber] = useState<number>(0);
-  const [openDangerModal, setOpenDangerModal] = useState(false);
+  const [isOpenDangerModal, setOpenDangerModal] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
 
   const handleClose = useCallback(() => {
@@ -89,7 +89,7 @@ export const useMeuable = ({ opened, items, onOpen, onClose }: IUseMeuableArgs):
       e.stopPropagation();
       setOpenDangerModal(true);
     },
-    [openDangerModal],
+    [isOpenDangerModal],
   );
 
   const handleDangerModalClose = useCallback(
@@ -97,12 +97,11 @@ export const useMeuable = ({ opened, items, onOpen, onClose }: IUseMeuableArgs):
       e.stopPropagation();
       setOpenDangerModal(false);
     },
-    [openDangerModal],
+    [isOpenDangerModal],
   );
 
   const handleSetDangerItem = useCallback(
     (item: ItemProps, i: number) => {
-      console.log("handleSetDangerItem");
       setNumber(i);
       setDangerItem(item);
     },
@@ -151,7 +150,7 @@ export const useMeuable = ({ opened, items, onOpen, onClose }: IUseMeuableArgs):
     isShowing,
     path,
     menuItems,
-    openDangerModal,
+    isOpenDangerModal,
     onItemClick,
     handleClose,
     handleGoBack,

@@ -32,7 +32,7 @@ export const Menuable = ({
     isShowing,
     path,
     menuItems,
-    openDangerModal,
+    isOpenDangerModal,
     onItemClick,
     handleClose,
     handleGoBack,
@@ -65,8 +65,12 @@ export const Menuable = ({
     >
       {children}
 
-      {openDangerModal ? (
-        <ConfirmDangerModal accept={handleDangerAction} openModal={openDangerModal} reject={handleDangerModalClose} />
+      {isOpenDangerModal ? (
+        <ConfirmDangerModal
+          accept={handleDangerAction}
+          isOpenModal={isOpenDangerModal}
+          reject={handleDangerModalClose}
+        />
       ) : null}
 
       {isShowing && (

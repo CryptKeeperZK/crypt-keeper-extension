@@ -8,17 +8,17 @@ import { FullModalContent, FullModalFooter, FullModalHeader } from "@src/ui/comp
 import { style } from "./style";
 
 export interface BasicModalProps {
-  openModal: boolean;
+  isOpenModal: boolean;
   reject: (e: ReactMouseEvent) => void;
   accept: (e: ReactMouseEvent) => void;
 }
 
-export const ConfirmDangerModal = ({ openModal, reject, accept }: BasicModalProps): JSX.Element => (
+export const ConfirmDangerModal = ({ isOpenModal, reject, accept }: BasicModalProps): JSX.Element => (
   <Modal
     aria-describedby="modal-modal-description"
     aria-labelledby="modal-modal-title"
     data-testid="danger-modal"
-    open={openModal}
+    open={isOpenModal}
     onClose={reject}
   >
     <Box sx={style}>
