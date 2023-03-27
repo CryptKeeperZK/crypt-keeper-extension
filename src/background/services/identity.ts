@@ -2,7 +2,7 @@ import { bigintToHex } from "bigint-conversion";
 import { browser } from "webextension-polyfill-ts";
 
 import { IdentityMetadata, IdentityName } from "@src/types";
-import { setIdentities, setSelected } from "@src/ui/ducks/identities";
+import { setIdentities, setSelectedCommitment } from "@src/ui/ducks/identities";
 import { ellipsify } from "@src/util/account";
 import pushMessage from "@src/util/pushMessage";
 
@@ -217,10 +217,12 @@ export default class IdentityService {
     await this.activeIdentityStore.set(cipherText);
 
     if (updateUi) {
-      await pushMessage(setSelected(commitment));
+      await pushMessage(setSelectedCommitment(commitment));
 
       const tabs = await browser.tabs.query({ active: true });
-      await Promise.all(tabs.map((tab) => browser.tabs.sendMessage(tab.id as number, setSelected(commitment))));
+      await Promise.all(
+        tabs.map((tab) => browser.tabs.sendMessage(tab.id as number, setSelectedCommitment(commitment))),
+      );
     }
   };
 

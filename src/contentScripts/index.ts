@@ -2,8 +2,8 @@ import log from "loglevel";
 import { browser } from "webextension-polyfill-ts";
 
 import { InjectedMessageData, ReduxAction } from "@src/types";
-import { ActionType as AppActionType } from "@src/ui/ducks/app";
-import { ActionType as IdentityActionType } from "@src/ui/ducks/identities";
+import { setStatus } from "@src/ui/ducks/app";
+import { setSelectedCommitment } from "@src/ui/ducks/identities";
 
 try {
   const url = browser.runtime.getURL("js/injected.js");
@@ -32,7 +32,7 @@ try {
 
   browser.runtime.onMessage.addListener((action: ReduxAction) => {
     switch (action.type) {
-      case IdentityActionType.SET_SELECTED: {
+      case setSelectedCommitment.type: {
         window.postMessage(
           {
             target: "injected-injectedscript",
@@ -43,7 +43,7 @@ try {
         );
         return;
       }
-      case AppActionType.SET_STATUS: {
+      case setStatus.type: {
         window.postMessage(
           {
             target: "injected-injectedscript",

@@ -1,7 +1,7 @@
 import { EventEmitter2 } from "eventemitter2";
 
 import { PendingRequest, PendingRequestType, RequestResolutionAction, RequestResolutionStatus } from "@src/types";
-import { setPendingRequest } from "@src/ui/ducks/requests";
+import { setPendingRequests } from "@src/ui/ducks/requests";
 import pushMessage from "@src/util/pushMessage";
 
 import BrowserUtils from "./browserUtils";
@@ -62,7 +62,7 @@ export default class RequestManager extends EventEmitter2 {
     // TODO add some mutex lock just in case something strange occurs
     this.pendingRequests = this.pendingRequests.filter((pendingRequest) => pendingRequest.id !== id);
     this.emit(`${id}:finalized`, action);
-    await pushMessage(setPendingRequest(this.pendingRequests));
+    await pushMessage(setPendingRequests(this.pendingRequests));
 
     return true;
   };
@@ -71,7 +71,7 @@ export default class RequestManager extends EventEmitter2 {
     // eslint-disable-next-line no-plusplus
     const id = `${this.nonce++}`;
     this.pendingRequests.push({ id, windowId, type, payload });
-    await pushMessage(setPendingRequest(this.pendingRequests));
+    await pushMessage(setPendingRequests(this.pendingRequests));
 
     return id;
   };

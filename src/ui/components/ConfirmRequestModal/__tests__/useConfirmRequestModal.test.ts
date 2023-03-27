@@ -6,13 +6,13 @@ import { act, renderHook, waitFor } from "@testing-library/react";
 
 import { RPCAction } from "@src/constants";
 import { RequestResolutionStatus } from "@src/types";
-import { useRequestsPending } from "@src/ui/ducks/requests";
+import { usePendingRequests } from "@src/ui/ducks/requests";
 import postMessage from "@src/util/postMessage";
 
 import { IUseConfirmRequestModalData, useConfirmRequestModal } from "../useConfirmRequestModal";
 
 jest.mock("@src/ui/ducks/requests", (): unknown => ({
-  useRequestsPending: jest.fn(),
+  usePendingRequests: jest.fn(),
 }));
 
 describe("ui/components/ConfirmRequestModal/useConfirmRequestModal", () => {
@@ -23,7 +23,7 @@ describe("ui/components/ConfirmRequestModal/useConfirmRequestModal", () => {
   beforeEach(() => {
     (postMessage as jest.Mock).mockResolvedValue({});
 
-    (useRequestsPending as jest.Mock).mockReturnValue([]);
+    (usePendingRequests as jest.Mock).mockReturnValue([]);
   });
 
   afterEach(() => {

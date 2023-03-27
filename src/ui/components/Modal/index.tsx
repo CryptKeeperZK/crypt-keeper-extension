@@ -11,22 +11,18 @@ export interface ModalProps {
   onClose: MouseEventHandler;
 }
 
-export const Modal = ({ className = "", onClose, children, ...rest }: ModalProps): JSX.Element | null => {
+export const Modal = ({ className, onClose, children, ...rest }: ModalProps): JSX.Element | null => {
   modalRoot = document.querySelector("#modal");
 
   const onClick: MouseEventHandler = useCallback((e) => e.stopPropagation(), []);
 
-  if (!modalRoot) {
-    return null;
-  }
-
   return ReactDOM.createPortal(
     <div {...rest} className="modal__overlay" onClick={onClose}>
-      <div className={`modal__wrapper ${className}`} onClick={onClick}>
+      <div className={`modal__wrapper ${className as string}`} onClick={onClick}>
         {children}
       </div>
     </div>,
-    modalRoot,
+    modalRoot as HTMLDivElement,
   );
 };
 

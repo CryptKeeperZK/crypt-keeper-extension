@@ -2,7 +2,7 @@ import { useCallback, useState } from "react";
 
 import { RPCAction } from "@src/constants";
 import { PendingRequest, RequestResolutionAction, RequestResolutionStatus } from "@src/types";
-import { useRequestsPending } from "@src/ui/ducks/requests";
+import { usePendingRequests } from "@src/ui/ducks/requests";
 import postMessage from "@src/util/postMessage";
 
 export interface IUseConfirmRequestModalData {
@@ -14,7 +14,7 @@ export interface IUseConfirmRequestModalData {
 }
 
 export const useConfirmRequestModal = (): IUseConfirmRequestModalData => {
-  const pendingRequests = useRequestsPending();
+  const pendingRequests = usePendingRequests();
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [pendingRequest] = pendingRequests;

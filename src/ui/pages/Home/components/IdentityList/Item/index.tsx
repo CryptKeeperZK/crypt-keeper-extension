@@ -11,8 +11,8 @@ import "./identityListItemStyles.scss";
 
 export interface IdentityItemProps {
   commitment: string;
-  selected: string;
   metadata: IdentityMetadata;
+  selected?: string;
   onDeleteIdentity: (commitment: string) => Promise<void>;
   onSelectIdentity: (commitment: string) => void;
   onUpdateIdentityName: (commitment: string, name: string) => Promise<void>;
@@ -113,4 +113,8 @@ export const IdentityItem = ({
       </Menuable>
     </div>
   );
+};
+
+IdentityItem.defaultProps = {
+  selected: "",
 };

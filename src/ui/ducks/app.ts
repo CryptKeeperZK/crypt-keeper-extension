@@ -1,37 +1,37 @@
+/* eslint-disable no-param-reassign */
+import { createSlice } from "@reduxjs/toolkit";
 import deepEqual from "fast-deep-equal";
-import { useSelector } from "react-redux";
-import { Dispatch } from "redux";
 
 import { RPCAction } from "@src/constants";
 import postMessage from "@src/util/postMessage";
 
-import type { AppRootState } from "@src/ui/store/configureAppStore";
+import type { PayloadAction } from "@reduxjs/toolkit";
+import type { TypedThunk } from "@src/ui/store/configureAppStore";
 
-export enum ActionType {
-  SET_STATUS = "app/setStatus",
-}
+import { useAppSelector } from "./hooks";
 
-type Action<payload> = {
-  type: ActionType;
-  payload?: payload;
-  meta?: unknown;
-  error?: boolean;
-};
-
-type State = {
+export interface AppState {
   initialized: boolean;
   unlocked: boolean;
-};
+}
 
-const initialState: State = {
+const initialState: AppState = {
   initialized: false,
   unlocked: false,
 };
 
-export const setStatus = (status: State): Action<State> => ({
-  type: ActionType.SET_STATUS,
-  payload: status,
+const appSlice = createSlice({
+  name: "app",
+  initialState,
+  reducers: {
+    setStatus: (state: AppState, action: PayloadAction<AppState>) => {
+      state.initialized = action.payload.initialized;
+      state.unlocked = action.payload.unlocked;
+    },
+  },
 });
+
+export const { setStatus } = appSlice.actions;
 
 export const closePopup = () => async (): Promise<void> => {
   await postMessage({ method: RPCAction.CLOSE_POPUP });
@@ -43,25 +43,11 @@ export const unlock = (password: string) => async (): Promise<boolean> =>
 export const setupPassword = (password: string) => async (): Promise<boolean> =>
   postMessage<boolean>({ method: RPCAction.SETUP_PASSWORD, payload: password });
 
-export const fetchStatus =
-  () =>
-  async (dispatch: Dispatch): Promise<void> => {
-    const status = await postMessage<State>({ method: RPCAction.GET_STATUS });
-    dispatch(setStatus(status));
-  };
+export const fetchStatus = (): TypedThunk => async (dispatch) => {
+  const status = await postMessage<AppState>({ method: RPCAction.GET_STATUS });
+  dispatch(setStatus(status));
+};
 
-// eslint-disable-next-line default-param-last
-export default function app(state = initialState, action: Action<State>): State {
-  switch (action.type) {
-    case ActionType.SET_STATUS:
-      return {
-        ...state,
-        initialized: action.payload?.initialized ?? false,
-        unlocked: action.payload?.unlocked ?? false,
-      };
-    default:
-      return state;
-  }
-}
+export const useAppStatus = (): AppState => useAppSelector((state) => state.app, deepEqual);
 
-export const useAppStatus = (): State => useSelector((state: AppRootState) => state.app, deepEqual);
+export default appSlice.reducer;

@@ -1,12 +1,12 @@
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { faTwitter, faGithub, faReddit } from "@fortawesome/free-brands-svg-icons";
+import { AnyAction } from "@reduxjs/toolkit";
 import { Web3ReactProvider } from "@web3-react/core";
 import log from "loglevel";
 import createMetaMaskProvider from "metamask-extension-provider";
 import ReactDOM from "react-dom/client";
 import { Provider } from "react-redux";
 import { HashRouter } from "react-router-dom";
-import { AnyAction } from "redux";
 import { browser } from "webextension-polyfill-ts";
 
 import { isDebugMode } from "@src/config/env";
