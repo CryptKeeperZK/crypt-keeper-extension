@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 
-import { render, screen, waitFor } from "@testing-library/react";
+import { render, screen } from "@testing-library/react";
 import { Suspense } from "react";
 import { MemoryRouter } from "react-router-dom";
 
@@ -62,11 +62,11 @@ describe("ui/pages/Popup", () => {
 
   test("should render onboarding page properly", async () => {
     render(
-      <Suspense>
-        <MemoryRouter>
+      <MemoryRouter>
+        <Suspense>
           <Popup />
-        </MemoryRouter>
-      </Suspense>,
+        </Suspense>
+      </MemoryRouter>,
     );
 
     const onboarding = await screen.findByTestId("onboarding-form");
@@ -77,15 +77,17 @@ describe("ui/pages/Popup", () => {
   test("should render home page properly", async () => {
     (usePopup as jest.Mock).mockReturnValue({ ...defaultHookData, isUnlocked: true, isInitialized: true });
 
-    const { getByTestId } = render(
-      <Suspense>
-        <MemoryRouter>
+    render(
+      <MemoryRouter>
+        <Suspense>
           <Popup />
-        </MemoryRouter>
-      </Suspense>,
+        </Suspense>
+      </MemoryRouter>,
     );
 
-    await waitFor(() => expect(getByTestId("home-page")).toBeInTheDocument());
+    const home = await screen.findByTestId("home-page");
+
+    expect(home).toBeInTheDocument();
   });
 
   test("should render login page properly", async () => {
@@ -107,11 +109,11 @@ describe("ui/pages/Popup", () => {
   test("should not render if it's loading", () => {
     (usePopup as jest.Mock).mockReturnValue({ ...defaultHookData, isLoading: true });
     const { container } = render(
-      <Suspense>
-        <MemoryRouter>
+      <MemoryRouter>
+        <Suspense>
           <Popup />
-        </MemoryRouter>
-      </Suspense>,
+        </Suspense>
+      </MemoryRouter>,
     );
 
     expect(container.children).toHaveLength(0);
@@ -126,11 +128,11 @@ describe("ui/pages/Popup", () => {
     });
 
     render(
-      <Suspense>
-        <MemoryRouter>
+      <MemoryRouter>
+        <Suspense>
           <Popup />
-        </MemoryRouter>
-      </Suspense>,
+        </Suspense>
+      </MemoryRouter>,
     );
 
     const modal = await screen.findByTestId("default-approval-modal");
