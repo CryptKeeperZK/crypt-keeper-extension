@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 
-import { act, fireEvent, render, screen } from "@testing-library/react";
+import { act, fireEvent, render, screen, waitFor } from "@testing-library/react";
 import selectEvent from "react-select-event";
 
 import { ZERO_ADDRESS } from "@src/config/const";
@@ -59,7 +59,9 @@ describe("ui/pages/CreateIdentity", () => {
   });
 
   test("should render properly with random", async () => {
-    render(<CreateIdentity />);
+    const { container } = render(<CreateIdentity />);
+
+    await waitFor(() => container.firstChild !== null);
 
     const select = await screen.findByLabelText("Identity type");
     await selectEvent.select(select, IDENTITY_TYPES[1].label);
@@ -72,7 +74,9 @@ describe("ui/pages/CreateIdentity", () => {
   });
 
   test("should create random identity properly", async () => {
-    render(<CreateIdentity />);
+    const { container } = render(<CreateIdentity />);
+
+    await waitFor(() => container.firstChild !== null);
 
     const select = await screen.findByLabelText("Identity type");
     await selectEvent.select(select, IDENTITY_TYPES[1].label);
@@ -87,7 +91,9 @@ describe("ui/pages/CreateIdentity", () => {
   });
 
   test("should render properly with interrep provider", async () => {
-    render(<CreateIdentity />);
+    const { container } = render(<CreateIdentity />);
+
+    await waitFor(() => container.firstChild !== null);
 
     const button = await screen.findByText("Create");
     const provider = await screen.findByText("Twitter");
@@ -99,7 +105,9 @@ describe("ui/pages/CreateIdentity", () => {
   });
 
   test("should create interrep github identity properly", async () => {
-    render(<CreateIdentity />);
+    const { container } = render(<CreateIdentity />);
+
+    await waitFor(() => container.firstChild !== null);
 
     const select = await screen.findByLabelText("Web2 Provider");
     await selectEvent.select(select, WEB2_PROVIDER_OPTIONS[2].label);
@@ -123,7 +131,9 @@ describe("ui/pages/CreateIdentity", () => {
   test("should handle error properly", async () => {
     const err = new Error("Error");
     (signIdentityMessage as jest.Mock).mockRejectedValue(err);
-    render(<CreateIdentity />);
+    const { container } = render(<CreateIdentity />);
+
+    await waitFor(() => container.firstChild !== null);
 
     const button = await screen.findByText("Create");
     await act(async () => Promise.resolve(fireEvent.submit(button)));

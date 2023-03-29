@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 
-import { render, screen, fireEvent, act } from "@testing-library/react";
+import { render, screen, fireEvent, act, waitFor } from "@testing-library/react";
 
 import { setupPassword } from "@src/ui/ducks/app";
 import { useAppDispatch } from "@src/ui/ducks/hooks";
@@ -31,7 +31,9 @@ describe("ui/pages/Onboarding", () => {
   });
 
   test("should render properly", async () => {
-    render(<Onboarding />);
+    const { container } = render(<Onboarding />);
+
+    await waitFor(() => container.firstChild !== null);
 
     const form = await screen.findByTestId("onboarding-form");
 
@@ -41,7 +43,9 @@ describe("ui/pages/Onboarding", () => {
   test("should handle error properly", async () => {
     const err = new Error("Error");
     (mockDispatch as jest.Mock).mockRejectedValue(err);
-    render(<Onboarding />);
+    const { container } = render(<Onboarding />);
+
+    await waitFor(() => container.firstChild !== null);
 
     const passwordInput = await screen.findByLabelText("Password");
     await act(async () => Promise.resolve(fireEvent.change(passwordInput, { target: { value: "password" } })));
@@ -57,7 +61,9 @@ describe("ui/pages/Onboarding", () => {
   });
 
   test("should render unmatch passwords error properly", async () => {
-    render(<Onboarding />);
+    const { container } = render(<Onboarding />);
+
+    await waitFor(() => container.firstChild !== null);
 
     const passwordInput = await screen.findByLabelText("Password");
     await act(async () => Promise.resolve(fireEvent.change(passwordInput, { target: { value: "password1" } })));
@@ -73,7 +79,9 @@ describe("ui/pages/Onboarding", () => {
   });
 
   test("should submit form properly", async () => {
-    render(<Onboarding />);
+    const { container } = render(<Onboarding />);
+
+    await waitFor(() => container.firstChild !== null);
 
     const passwordInput = await screen.findByLabelText("Password");
     await act(async () => Promise.resolve(fireEvent.change(passwordInput, { target: { value: "password" } })));

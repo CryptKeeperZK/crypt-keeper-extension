@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 
-import { render, screen, waitFor } from "@testing-library/react";
+import { render, waitFor } from "@testing-library/react";
 import { Suspense } from "react";
 import { MemoryRouter } from "react-router-dom";
 
@@ -61,7 +61,7 @@ describe("ui/pages/Popup", () => {
   });
 
   test("should render onboarding page properly", async () => {
-    render(
+    const { container, findByTestId } = render(
       <MemoryRouter>
         <Suspense>
           <Popup />
@@ -69,7 +69,9 @@ describe("ui/pages/Popup", () => {
       </MemoryRouter>,
     );
 
-    const onboarding = await screen.findByTestId("onboarding-form");
+    await waitFor(() => container.firstChild !== null);
+
+    const onboarding = await findByTestId("onboarding-form");
 
     expect(onboarding).toBeInTheDocument();
   });
@@ -77,7 +79,7 @@ describe("ui/pages/Popup", () => {
   test("should render login page properly", async () => {
     (usePopup as jest.Mock).mockReturnValue({ ...defaultHookData, isUnlocked: false, isInitialized: true });
 
-    render(
+    const { container, findByTestId } = render(
       <MemoryRouter>
         <Suspense>
           <Popup />
@@ -85,7 +87,9 @@ describe("ui/pages/Popup", () => {
       </MemoryRouter>,
     );
 
-    const login = await screen.findByTestId("login-form");
+    await waitFor(() => container.firstChild !== null);
+
+    const login = await findByTestId("login-form");
 
     expect(login).toBeInTheDocument();
   });
@@ -111,7 +115,7 @@ describe("ui/pages/Popup", () => {
       isShowRequestModal: true,
     });
 
-    render(
+    const { container, findByTestId } = render(
       <MemoryRouter>
         <Suspense>
           <Popup />
@@ -119,7 +123,9 @@ describe("ui/pages/Popup", () => {
       </MemoryRouter>,
     );
 
-    const modal = await screen.findByTestId("default-approval-modal");
+    await waitFor(() => container.firstChild !== null);
+
+    const modal = await findByTestId("default-approval-modal");
 
     expect(modal).toBeInTheDocument();
   });
