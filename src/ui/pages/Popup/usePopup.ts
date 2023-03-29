@@ -11,8 +11,8 @@ import { useWallet } from "@src/ui/hooks/wallet";
 
 export interface IUsePopupData {
   isLoading: boolean;
-  initialized: boolean;
-  unlocked: boolean;
+  isInitialized: boolean;
+  isUnlocked: boolean;
   pendingRequests: PendingRequest[];
 }
 
@@ -27,7 +27,7 @@ export const usePopup = (): IUsePopupData => {
   const dispatch = useAppDispatch();
   const { onConnectEagerly } = useWallet();
   const pendingRequests = usePendingRequests();
-  const { initialized, unlocked } = useAppStatus();
+  const { isInitialized, isUnlocked } = useAppStatus();
 
   const url = new URL(window.location.href);
   const redirectParam = url.searchParams.get("redirect");
@@ -42,7 +42,7 @@ export const usePopup = (): IUsePopupData => {
     fetchData()
       .catch((error) => log.error(error))
       .finally(() => setIsLoading(false));
-  }, [unlocked, fetchData, setIsLoading]);
+  }, [isUnlocked, fetchData, setIsLoading]);
 
   useEffect(() => {
     onConnectEagerly();
@@ -58,8 +58,8 @@ export const usePopup = (): IUsePopupData => {
 
   return {
     isLoading,
-    initialized,
-    unlocked,
+    isInitialized,
+    isUnlocked,
     pendingRequests,
   };
 };

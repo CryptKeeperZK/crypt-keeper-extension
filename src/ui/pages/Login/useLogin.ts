@@ -1,50 +1,49 @@
-import { ChangeEvent, FormEvent, useCallback, useState } from "react";
+import { BaseSyntheticEvent, useCallback } from "react";
+import { UseFormRegister, useForm } from "react-hook-form";
 
 import { unlock } from "@src/ui/ducks/app";
 import { useAppDispatch } from "@src/ui/ducks/hooks";
 
 export interface IUseLoginData {
-  password: string;
-  error: string;
   isLoading: boolean;
-  onChangePassword: (event: ChangeEvent<HTMLInputElement>) => void;
-  onSubmit: (event: FormEvent<HTMLFormElement>) => void;
+  isValid: boolean;
+  error?: string;
+  register: UseFormRegister<FormFields>;
+  onSubmit: (event?: BaseSyntheticEvent) => Promise<void>;
+}
+
+interface FormFields {
+  password: string;
 }
 
 export const useLogin = (): IUseLoginData => {
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
+  const {
+    formState: { isLoading, isSubmitting, isValid, errors },
+    setError,
+    register,
+    handleSubmit,
+  } = useForm<FormFields>({
+    defaultValues: {
+      password: "",
+    },
+  });
+
   const dispatch = useAppDispatch();
 
-  const onChangePassword = useCallback(
-    (event: ChangeEvent<HTMLInputElement>) => setPassword(event.target.value),
-    [setPassword],
-  );
-
   const onSubmit = useCallback(
-    (event: FormEvent<HTMLFormElement>) => {
-      event.preventDefault();
-
-      if (!password) {
-        setError("Invalid password");
-        return;
-      }
-
-      setIsLoading(true);
-
-      dispatch(unlock(password))
-        .catch((err: Error) => setError(err.message))
-        .finally(() => setIsLoading(false));
+    (data: FormFields) => {
+      dispatch(unlock(data.password)).catch((error: Error) =>
+        setError("password", { type: "submit", message: error.message }),
+      );
     },
-    [password, dispatch, setError, setIsLoading],
+    [dispatch, setError],
   );
 
   return {
-    password,
-    error,
-    isLoading,
-    onChangePassword,
-    onSubmit,
+    isLoading: isLoading || isSubmitting,
+    isValid,
+    error: errors.password?.message,
+    register,
+    onSubmit: handleSubmit(onSubmit),
   };
 };

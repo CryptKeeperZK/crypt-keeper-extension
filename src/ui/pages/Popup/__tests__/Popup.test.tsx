@@ -29,8 +29,8 @@ jest.mock("../usePopup", (): unknown => ({
 describe("ui/pages/Popup", () => {
   const defaultHoodData: IUsePopupData = {
     isLoading: false,
-    initialized: false,
-    unlocked: false,
+    isInitialized: false,
+    isUnlocked: false,
     pendingRequests: [],
   };
 
@@ -64,7 +64,7 @@ describe("ui/pages/Popup", () => {
   });
 
   test("should render login form properly", async () => {
-    (usePopup as jest.Mock).mockReturnValue({ ...defaultHoodData, initialized: true });
+    (usePopup as jest.Mock).mockReturnValue({ ...defaultHoodData, isInitialized: true });
     render(
       <MemoryRouter>
         <Popup />
@@ -77,7 +77,7 @@ describe("ui/pages/Popup", () => {
   });
 
   test("should render home properly", async () => {
-    (usePopup as jest.Mock).mockReturnValue({ ...defaultHoodData, initialized: true, unlocked: true });
+    (usePopup as jest.Mock).mockReturnValue({ ...defaultHoodData, isInitialized: true, isUnlocked: true });
     render(
       <MemoryRouter>
         <Popup />
@@ -92,8 +92,8 @@ describe("ui/pages/Popup", () => {
   test("should render pending requests modal properly", async () => {
     (usePopup as jest.Mock).mockReturnValue({
       ...defaultHoodData,
-      initialized: true,
-      unlocked: true,
+      isInitialized: true,
+      isUnlocked: true,
       pendingRequests: [{}],
     });
 

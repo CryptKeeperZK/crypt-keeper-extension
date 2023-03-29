@@ -36,7 +36,7 @@ export interface IUseMenuableData {
   handleDangerModalClose: (e: ReactMouseEvent) => void;
 }
 
-export const useMeuable = ({ opened, items, onOpen, onClose }: IUseMeuableArgs): IUseMenuableData => {
+export const useMenuable = ({ opened, items, onOpen, onClose }: IUseMenuableArgs): IUseMenuableData => {
   const [isShowing, setShowing] = useState(!!opened);
   const [path, setPath] = useState<number[]>([]);
   const [dangerItem, setDangerItem] = useState<ItemProps>();

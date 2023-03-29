@@ -91,8 +91,8 @@ describe("background/services/lock", () => {
       const status = await lockService.getStatus();
 
       expect(status).toStrictEqual({
-        initialized: true,
-        unlocked: true,
+        isInitialized: true,
+        isUnlocked: true,
       });
     });
 
@@ -102,8 +102,8 @@ describe("background/services/lock", () => {
 
       expect(isUnlocked).toBe(true);
       expect(status).toStrictEqual({
-        initialized: true,
-        unlocked: true,
+        isInitialized: true,
+        isUnlocked: true,
       });
 
       expect(pushMessage).toBeCalledTimes(1);

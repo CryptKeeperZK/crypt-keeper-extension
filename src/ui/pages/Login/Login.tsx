@@ -7,7 +7,7 @@ import "./login.scss";
 import { useLogin } from "./useLogin";
 
 export const Login = (): JSX.Element => {
-  const { password, isLoading, error, onChangePassword, onSubmit } = useLogin();
+  const { isLoading, isValid, error, register, onSubmit } = useLogin();
 
   return (
     <form className="flex flex-col flex-nowrap h-full login" data-testid="login-form" onSubmit={onSubmit}>
@@ -24,12 +24,10 @@ export const Login = (): JSX.Element => {
           <Input
             autoFocus
             className="mb-4"
-            disabled={isLoading}
             id="password"
             label="Password"
             type="password"
-            value={password}
-            onChange={onChangePassword}
+            {...register("password", { required: "Password is required" })}
           />
         </div>
       </div>
@@ -40,7 +38,7 @@ export const Login = (): JSX.Element => {
         <Button
           buttonType={ButtonType.PRIMARY}
           data-testid="unlock-button"
-          disabled={!password}
+          disabled={!isValid}
           loading={isLoading}
           type="submit"
         >

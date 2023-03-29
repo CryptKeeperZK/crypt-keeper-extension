@@ -6,7 +6,7 @@ import { ConfirmDangerModal } from "@src/ui/components/ConfirmDangerModal";
 import { Icon } from "../Icon";
 
 import "./menuable.scss";
-import { useMeuable, ItemProps } from "./useMeunable";
+import { useMenuable, ItemProps } from "./useMenuable";
 
 export interface MenuableProps {
   items: ItemProps[];
@@ -41,7 +41,7 @@ export const Menuable = ({
     handleDangerModalClose,
     handleDangerModalOpen,
     handleSetDangerItem,
-  } = useMeuable({
+  } = useMenuable({
     opened,
     items,
     onOpen,

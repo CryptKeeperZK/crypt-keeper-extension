@@ -25,7 +25,7 @@ describe("ui/ducks/app", () => {
   });
 
   test("should fetch status properly", async () => {
-    const expectedState = { initialized: true, unlocked: true };
+    const expectedState = { isInitialized: true, isUnlocked: true };
     (postMessage as jest.Mock).mockResolvedValue(expectedState);
 
     await Promise.resolve(store.dispatch(fetchStatus()));
@@ -39,7 +39,7 @@ describe("ui/ducks/app", () => {
   });
 
   test("should set status properly", async () => {
-    const expectedState = { initialized: true, unlocked: true };
+    const expectedState = { isInitialized: true, isUnlocked: true };
 
     await Promise.resolve(store.dispatch(setStatus(expectedState)));
     const { app } = store.getState();

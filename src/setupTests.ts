@@ -1,6 +1,13 @@
 import "@testing-library/jest-dom";
 import "isomorphic-fetch";
 
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
+global.window = {};
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
+global.window = global;
+
 jest.mock("loglevel", () => ({
   info: jest.fn(),
   log: jest.fn(),
