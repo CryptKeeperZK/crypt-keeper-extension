@@ -129,7 +129,7 @@ export default class ZkKeeperController extends Handler {
       this.lockService.ensure,
       validateZkInputs,
       async (payload: SemaphoreProofRequest, meta: { origin: string }) => {
-        const { isUnlocked: unlocked } = await this.lockService.getStatus();
+        const { isUnlocked } = await this.lockService.getStatus();
 
         const semaphorePath = {
           circuitFilePath: browser.runtime.getURL("js/zkeyFiles/semaphore/semaphore.wasm"),
@@ -137,7 +137,7 @@ export default class ZkKeeperController extends Handler {
           verificationKey: browser.runtime.getURL("js/zkeyFiles/semaphore/semaphore.json"),
         };
 
-        if (!unlocked) {
+        if (!isUnlocked) {
           await this.browserService.openPopup();
           await this.lockService.awaitUnlock();
         }
@@ -216,9 +216,9 @@ export default class ZkKeeperController extends Handler {
       const { origin: host } = payload;
       if (!host) throw new Error("Origin not provided");
 
-      const { isUnlocked: unlocked } = await this.lockService.getStatus();
+      const { isUnlocked } = await this.lockService.getStatus();
 
-      if (!unlocked) {
+      if (!isUnlocked) {
         await this.browserService.openPopup();
         await this.lockService.awaitUnlock();
       }

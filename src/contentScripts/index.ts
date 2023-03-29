@@ -48,7 +48,7 @@ try {
           {
             target: "injected-injectedscript",
             payload: [null],
-            nonce: !(action.payload as { unlocked: boolean }).unlocked ? "logout" : "login",
+            nonce: !(action.payload as { isUnlocked: boolean }).isUnlocked ? "logout" : "login",
           },
           "*",
         );
