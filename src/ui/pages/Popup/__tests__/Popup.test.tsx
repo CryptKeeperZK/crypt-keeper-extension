@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 
-import { render, screen, waitFor } from "@testing-library/react";
+import { render, screen } from "@testing-library/react";
 import { Suspense } from "react";
 import { MemoryRouter } from "react-router-dom";
 
@@ -127,7 +127,7 @@ describe("ui/pages/Popup", () => {
   test("should render home page properly", async () => {
     (usePopup as jest.Mock).mockReturnValue({ ...defaultHookData, isUnlocked: true, isInitialized: true });
 
-    render(
+    const { container, findByTestId } = render(
       <MemoryRouter>
         <Suspense>
           <Popup />
@@ -135,6 +135,9 @@ describe("ui/pages/Popup", () => {
       </MemoryRouter>,
     );
 
-    await waitFor(async () => expect(await screen.findByTestId("home-page")).toBeInTheDocument());
+    expect(container.firstChild).toBeNull();
+
+    const home = await findByTestId("home-page");
+    expect(home).toBeInTheDocument();
   });
 });
