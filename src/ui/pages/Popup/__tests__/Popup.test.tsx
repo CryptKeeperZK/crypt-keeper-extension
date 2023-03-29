@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 
-import { render, screen } from "@testing-library/react";
+import { render, screen, waitFor } from "@testing-library/react";
 import { Suspense } from "react";
 import { MemoryRouter } from "react-router-dom";
 
@@ -74,8 +74,8 @@ describe("ui/pages/Popup", () => {
     expect(onboarding).toBeInTheDocument();
   });
 
-  test("should render home page properly", async () => {
-    (usePopup as jest.Mock).mockReturnValue({ ...defaultHookData, isUnlocked: true, isInitialized: true });
+  test("should render login page properly", async () => {
+    (usePopup as jest.Mock).mockReturnValue({ ...defaultHookData, isUnlocked: false, isInitialized: true });
 
     render(
       <MemoryRouter>
@@ -83,22 +83,6 @@ describe("ui/pages/Popup", () => {
           <Popup />
         </Suspense>
       </MemoryRouter>,
-    );
-
-    const home = await screen.findByTestId("home-page");
-
-    expect(home).toBeInTheDocument();
-  });
-
-  test("should render login page properly", async () => {
-    (usePopup as jest.Mock).mockReturnValue({ ...defaultHookData, isUnlocked: false, isInitialized: true });
-
-    render(
-      <Suspense>
-        <MemoryRouter>
-          <Popup />
-        </MemoryRouter>
-      </Suspense>,
     );
 
     const login = await screen.findByTestId("login-form");
@@ -138,5 +122,19 @@ describe("ui/pages/Popup", () => {
     const modal = await screen.findByTestId("default-approval-modal");
 
     expect(modal).toBeInTheDocument();
+  });
+
+  test("should render home page properly", async () => {
+    (usePopup as jest.Mock).mockReturnValue({ ...defaultHookData, isUnlocked: true, isInitialized: true });
+
+    render(
+      <MemoryRouter>
+        <Suspense>
+          <Popup />
+        </Suspense>
+      </MemoryRouter>,
+    );
+
+    await waitFor(async () => expect(await screen.findByTestId("home-page")).toBeInTheDocument());
   });
 });
