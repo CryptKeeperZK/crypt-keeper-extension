@@ -16,7 +16,7 @@ export interface IdentitiesState {
   selected: string;
 }
 
-interface IdentityData {
+export interface IdentityData {
   commitment: string;
   metadata: IdentityMetadata;
 }

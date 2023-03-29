@@ -37,7 +37,7 @@ describe("ui/pages/Home/components/IdentityList/Item", () => {
     expect(provider).toBeInTheDocument();
   });
 
-  test("should delete identity properly", async () => {
+  test("should accept to delete identity properly", async () => {
     render(<IdentityItem {...defaultProps} />);
 
     const menu = await screen.findByTestId("menu");
@@ -46,8 +46,36 @@ describe("ui/pages/Home/components/IdentityList/Item", () => {
     const deleteButton = await screen.findByText("Delete");
     act(() => deleteButton.click());
 
+    const dangerModal = await screen.findByTestId("danger-modal");
+
+    expect(dangerModal).toBeInTheDocument();
+
+    const dangerModalAccept = await screen.findByTestId("danger-modal-accept");
+    await act(async () => Promise.resolve(dangerModalAccept.click()));
+
     expect(defaultProps.onDeleteIdentity).toBeCalledTimes(1);
     expect(defaultProps.onDeleteIdentity).toBeCalledWith(defaultProps.commitment);
+    expect(dangerModal).not.toBeInTheDocument();
+  });
+
+  test("should reject to delete identity properly", async () => {
+    render(<IdentityItem {...defaultProps} />);
+
+    const menu = await screen.findByTestId("menu");
+    act(() => menu.click());
+
+    const deleteButton = await screen.findByText("Delete");
+    act(() => deleteButton.click());
+
+    const dangerModal = await screen.findByTestId("danger-modal");
+
+    expect(dangerModal).toBeInTheDocument();
+
+    const dangerModalreject = await screen.findByTestId("danger-modal-reject");
+    await act(async () => Promise.resolve(dangerModalreject.click()));
+
+    expect(defaultProps.onDeleteIdentity).toBeCalledTimes(0);
+    expect(dangerModal).not.toBeInTheDocument();
   });
 
   test("should select identity properly", async () => {

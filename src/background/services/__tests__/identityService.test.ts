@@ -191,7 +191,7 @@ describe("background/services/identity", () => {
       expect(isIdentitySet).toBe(true);
       expect(result).toBe(true);
       expect(identityStorage.clear).toBeCalledTimes(1);
-      expect(pushMessage).toBeCalledTimes(3);
+      expect(pushMessage).toBeCalledTimes(2);
     });
 
     test("should not delete all identities if there is no any identity", async () => {

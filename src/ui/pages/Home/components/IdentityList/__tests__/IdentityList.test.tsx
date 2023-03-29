@@ -7,10 +7,10 @@ import { act, render, screen, fireEvent } from "@testing-library/react";
 import { ZERO_ADDRESS } from "@src/config/const";
 import { createModalRoot, deleteModalRoot } from "@src/config/mock/modal";
 import { defaultWalletHookData } from "@src/config/mock/wallet";
-import { IdentityMetadata } from "@src/types";
 import { useAppDispatch } from "@src/ui/ducks/hooks";
 import {
   deleteIdentity,
+  IdentityData,
   setActiveIdentity,
   setIdentityName,
   useIdentities,
@@ -40,7 +40,7 @@ jest.mock("@src/ui/hooks/wallet", (): unknown => ({
 describe("ui/pages/Home/components/IdentityList", () => {
   const mockDispatch = jest.fn();
 
-  const defaultIdentities: { commitment: string; metadata: IdentityMetadata }[] = [
+  const defaultIdentities: IdentityData[] = [
     {
       commitment: "0",
       metadata: {
@@ -79,7 +79,7 @@ describe("ui/pages/Home/components/IdentityList", () => {
   });
 
   test("should render properly", async () => {
-    render(<IdentityList />);
+    render(<IdentityList identities={defaultIdentities} />);
 
     const identityName1 = await screen.findByText(defaultIdentities[0].metadata.name);
     const identityName2 = await screen.findByText(defaultIdentities[1].metadata.name);
@@ -91,7 +91,7 @@ describe("ui/pages/Home/components/IdentityList", () => {
   test("should render properly without connected wallet", async () => {
     (useWallet as jest.Mock).mockReturnValue({ ...defaultWalletHookData, address: undefined });
 
-    render(<IdentityList />);
+    render(<IdentityList identities={defaultIdentities} />);
 
     const identityName1 = await screen.findByText(defaultIdentities[0].metadata.name);
     const identityName2 = await screen.findByText(defaultIdentities[1].metadata.name);
@@ -101,7 +101,7 @@ describe("ui/pages/Home/components/IdentityList", () => {
   });
 
   test("should select identity properly", async () => {
-    render(<IdentityList />);
+    render(<IdentityList identities={defaultIdentities} />);
 
     const selectIcon = await screen.findByTestId(`identity-select-${defaultIdentities[1].commitment}`);
     act(() => selectIcon.click());
@@ -112,7 +112,7 @@ describe("ui/pages/Home/components/IdentityList", () => {
   });
 
   test("should rename identity properly", async () => {
-    render(<IdentityList />);
+    render(<IdentityList identities={defaultIdentities} />);
 
     const [menuIcon] = await screen.findAllByTestId("menu");
     act(() => menuIcon.click());
@@ -131,8 +131,8 @@ describe("ui/pages/Home/components/IdentityList", () => {
     expect(mockDispatch).toBeCalledTimes(1);
   });
 
-  test("should delete identity properly", async () => {
-    render(<IdentityList />);
+  test("should accept to delete identity properly", async () => {
+    render(<IdentityList identities={defaultIdentities} />);
 
     const [menuIcon] = await screen.findAllByTestId("menu");
     act(() => menuIcon.click());
@@ -140,13 +140,42 @@ describe("ui/pages/Home/components/IdentityList", () => {
     const deleteButton = await screen.findByText("Delete");
     act(() => deleteButton.click());
 
+    const dangerModal = await screen.findByTestId("danger-modal");
+
+    expect(dangerModal).toBeInTheDocument();
+
+    const dangerModalaccept = await screen.findByTestId("danger-modal-accept");
+    await act(async () => Promise.resolve(dangerModalaccept.click()));
+
     expect(deleteIdentity).toBeCalledTimes(1);
     expect(deleteIdentity).toBeCalledWith(defaultIdentities[0].commitment);
     expect(mockDispatch).toBeCalledTimes(1);
+    expect(dangerModal).not.toBeInTheDocument();
+  });
+
+  test("should reject to delete identity properly", async () => {
+    render(<IdentityList identities={defaultIdentities} />);
+
+    const [menuIcon] = await screen.findAllByTestId("menu");
+    act(() => menuIcon.click());
+
+    const deleteButton = await screen.findByText("Delete");
+    act(() => deleteButton.click());
+
+    const dangerModal = await screen.findByTestId("danger-modal");
+
+    expect(dangerModal).toBeInTheDocument();
+
+    const dangerModalreject = await screen.findByTestId("danger-modal-reject");
+    await act(async () => Promise.resolve(dangerModalreject.click()));
+
+    expect(deleteIdentity).toBeCalledTimes(0);
+    expect(mockDispatch).toBeCalledTimes(0);
+    expect(dangerModal).not.toBeInTheDocument();
   });
 
   test("should open create identity modal properly", async () => {
-    render(<IdentityList />);
+    render(<IdentityList identities={defaultIdentities} />);
 
     const createIdentityButton = await screen.findByTestId("create-new-identity");
     await act(async () => Promise.resolve(createIdentityButton.click()));

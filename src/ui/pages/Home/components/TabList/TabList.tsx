@@ -3,15 +3,17 @@ import { ReactNode, Children, useState, useMemo } from "react";
 
 import { Icon } from "@src/ui/components/Icon";
 import { Menuable } from "@src/ui/components/Menuable";
+import { IdentityData } from "@src/ui/ducks/identities";
 
 import "./tabListStyles.scss";
 
 export interface TabListProps {
   children: ReactNode;
+  identities: IdentityData[];
   onDeleteAllIdentities: () => void;
 }
 
-export const TabList = ({ children, onDeleteAllIdentities }: TabListProps): JSX.Element => {
+export const TabList = ({ children, identities, onDeleteAllIdentities }: TabListProps): JSX.Element => {
   const [selectedTab] = useState(0);
 
   const selectedContent = useMemo(() => Children.toArray(children)[selectedTab], [children, selectedTab]);
@@ -26,9 +28,14 @@ export const TabList = ({ children, onDeleteAllIdentities }: TabListProps): JSX.
         >
           <span>Identities</span>
 
-          <Menuable className="flex user-menu" items={[{ label: "Delete all", onClick: onDeleteAllIdentities }]}>
-            <Icon className="tab__list__menu-icon" data-testid="menu-icon" fontAwesome="fas fa-ellipsis-h" />
-          </Menuable>
+          {identities?.length ? (
+            <Menuable
+              className="flex user-menu"
+              items={[{ label: "Delete All", isDangerItem: true, onClick: onDeleteAllIdentities }]}
+            >
+              <Icon className="tab__list__menu-icon" data-testid="menu-icon" fontAwesome="fas fa-ellipsis-h" />
+            </Menuable>
+          ) : null}
         </div>
       </div>
 

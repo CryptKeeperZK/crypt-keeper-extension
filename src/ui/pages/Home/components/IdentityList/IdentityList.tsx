@@ -6,9 +6,9 @@ import { useAppDispatch } from "@src/ui/ducks/hooks";
 import {
   createIdentityRequest,
   deleteIdentity,
+  IdentityData,
   setActiveIdentity,
   setIdentityName,
-  useIdentities,
   useSelectedIdentity,
 } from "@src/ui/ducks/identities";
 import { useWallet } from "@src/ui/hooks/wallet";
@@ -16,8 +16,11 @@ import { useWallet } from "@src/ui/hooks/wallet";
 import "./identityListStyles.scss";
 import { IdentityItem } from "./Item";
 
-export const IdentityList = (): JSX.Element => {
-  const identities = useIdentities();
+export interface IdentityListProps {
+  identities: IdentityData[];
+}
+
+export const IdentityList = ({ identities }: IdentityListProps): JSX.Element => {
   const selected = useSelectedIdentity();
   const dispatch = useAppDispatch();
   const { address } = useWallet();

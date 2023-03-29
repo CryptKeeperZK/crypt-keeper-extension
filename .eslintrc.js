@@ -98,7 +98,7 @@ module.exports = {
       },
     ],
     "no-debugger": isProduction ? "error" : "off",
-    "no-console": isProduction ? "error" : "off",
+    "no-console": "error",
     "no-underscore-dangle": "error",
     "no-redeclare": ["error", { builtinGlobals: true }],
     "import/order": [
