@@ -1,12 +1,19 @@
 import "@testing-library/jest-dom";
 import "isomorphic-fetch";
 
+import type { ReactElement } from "react";
+
 jest.mock("loglevel", () => ({
   info: jest.fn(),
   log: jest.fn(),
   debug: jest.fn(),
   warn: jest.fn(),
   error: jest.fn(),
+}));
+
+jest.mock("react", (): unknown => ({
+  ...jest.requireActual("react"),
+  Suspense: ({ children }: { children: ReactElement }) => children,
 }));
 
 jest.mock("link-preview-js", (): unknown => ({
