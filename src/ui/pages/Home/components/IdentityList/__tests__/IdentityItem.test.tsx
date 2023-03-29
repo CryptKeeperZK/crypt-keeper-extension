@@ -83,6 +83,7 @@ describe("ui/pages/Home/components/IdentityList/Item", () => {
       <IdentityItem
         {...defaultProps}
         metadata={{ ...defaultProps.metadata, identityStrategy: "random", web2Provider: undefined }}
+        selected={undefined}
       />,
     );
 

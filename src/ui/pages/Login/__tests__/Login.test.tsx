@@ -7,7 +7,7 @@ import { render, screen, fireEvent, act } from "@testing-library/react";
 import { unlock } from "@src/ui/ducks/app";
 import { useAppDispatch } from "@src/ui/ducks/hooks";
 
-import { Login } from "..";
+import Login from "..";
 
 jest.mock("@src/ui/ducks/app", (): unknown => ({
   unlock: jest.fn(),
@@ -64,5 +64,6 @@ describe("ui/pages/Login", () => {
 
     expect(mockDispatch).toBeCalledTimes(1);
     expect(unlock).toBeCalledTimes(1);
+    expect(unlock).toBeCalledWith("password");
   });
 });

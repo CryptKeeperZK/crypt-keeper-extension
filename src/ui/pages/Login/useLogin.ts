@@ -6,8 +6,7 @@ import { useAppDispatch } from "@src/ui/ducks/hooks";
 
 export interface IUseLoginData {
   isLoading: boolean;
-  isValid: boolean;
-  error?: string;
+  errors: Partial<FormFields>;
   register: UseFormRegister<FormFields>;
   onSubmit: (event?: BaseSyntheticEvent) => Promise<void>;
 }
@@ -18,7 +17,7 @@ interface FormFields {
 
 export const useLogin = (): IUseLoginData => {
   const {
-    formState: { isLoading, isSubmitting, isValid, errors },
+    formState: { isLoading, isSubmitting, errors },
     setError,
     register,
     handleSubmit,
@@ -41,8 +40,9 @@ export const useLogin = (): IUseLoginData => {
 
   return {
     isLoading: isLoading || isSubmitting,
-    isValid,
-    error: errors.password?.message,
+    errors: {
+      password: errors.password?.message,
+    },
     register,
     onSubmit: handleSubmit(onSubmit),
   };

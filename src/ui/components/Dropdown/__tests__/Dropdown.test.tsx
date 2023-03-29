@@ -42,7 +42,7 @@ describe("ui/components/Dropdown", () => {
   test("should select new value properly", async () => {
     render(<Dropdown {...defaultProps} value={WEB2_PROVIDER_OPTIONS[0]} />);
 
-    const select = await screen.findByLabelText(defaultProps.label as string);
+    const select = await screen.findByLabelText(defaultProps.label);
     await selectEvent.select(select, WEB2_PROVIDER_OPTIONS[1].label);
 
     expect(defaultProps.onChange).toBeCalledTimes(1);

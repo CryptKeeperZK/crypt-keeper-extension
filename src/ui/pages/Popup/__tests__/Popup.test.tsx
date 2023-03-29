@@ -2,24 +2,30 @@
  * @jest-environment jsdom
  */
 
-import { render, screen } from "@testing-library/react";
+import { render, screen, waitFor } from "@testing-library/react";
+import { Suspense } from "react";
 import { MemoryRouter } from "react-router-dom";
 
-import { useAppDispatch } from "@src/ui/ducks/hooks";
+import { createModalRoot, deleteModalRoot } from "@src/config/mock/modal";
+import { defaultWalletHookData } from "@src/config/mock/wallet";
+import { useAppDispatch, useAppSelector } from "@src/ui/ducks/hooks";
+import { usePendingRequests } from "@src/ui/ducks/requests";
+import { useWallet } from "@src/ui/hooks/wallet";
 
 import { Popup } from "..";
 import { IUsePopupData, usePopup } from "../usePopup";
 
-jest.mock("@src/ui/pages/Home", (): unknown => ({
-  Home: () => <div data-testid="home-page" />,
-}));
-
-jest.mock("@src/ui/components/ConfirmRequestModal", (): unknown => ({
-  ConfirmRequestModal: () => <div data-testid="default-approval-modal" />,
-}));
-
 jest.mock("@src/ui/ducks/hooks", (): unknown => ({
   useAppDispatch: jest.fn(),
+  useAppSelector: jest.fn(),
+}));
+
+jest.mock("@src/ui/ducks/requests", (): unknown => ({
+  usePendingRequests: jest.fn(),
+}));
+
+jest.mock("@src/ui/hooks/wallet", (): unknown => ({
+  useWallet: jest.fn(),
 }));
 
 jest.mock("../usePopup", (): unknown => ({
@@ -27,24 +33,40 @@ jest.mock("../usePopup", (): unknown => ({
 }));
 
 describe("ui/pages/Popup", () => {
-  const defaultHoodData: IUsePopupData = {
+  const defaultHookData: IUsePopupData = {
     isLoading: false,
     isInitialized: false,
     isUnlocked: false,
-    pendingRequests: [],
+    isShowRequestModal: false,
   };
 
   beforeEach(() => {
-    (usePopup as jest.Mock).mockReturnValue(defaultHoodData);
+    (usePopup as jest.Mock).mockReturnValue(defaultHookData);
+
+    (useWallet as jest.Mock).mockReturnValue(defaultWalletHookData);
+
+    (usePendingRequests as jest.Mock).mockReturnValue([{ type: "unknown" }]);
 
     (useAppDispatch as jest.Mock).mockReturnValue(jest.fn());
+
+    (useAppSelector as jest.Mock).mockReturnValue([]);
+
+    createModalRoot();
   });
 
-  test("should render onboarding form properly", async () => {
+  afterEach(() => {
+    jest.clearAllMocks();
+
+    deleteModalRoot();
+  });
+
+  test("should render onboarding page properly", async () => {
     render(
-      <MemoryRouter>
-        <Popup />
-      </MemoryRouter>,
+      <Suspense>
+        <MemoryRouter>
+          <Popup />
+        </MemoryRouter>
+      </Suspense>,
     );
 
     const onboarding = await screen.findByTestId("onboarding-form");
@@ -52,23 +74,29 @@ describe("ui/pages/Popup", () => {
     expect(onboarding).toBeInTheDocument();
   });
 
-  test("should not render if it's loading", () => {
-    (usePopup as jest.Mock).mockReturnValue({ ...defaultHoodData, isLoading: true });
-    const { container } = render(
-      <MemoryRouter>
-        <Popup />
-      </MemoryRouter>,
+  test("should render home page properly", async () => {
+    (usePopup as jest.Mock).mockReturnValue({ ...defaultHookData, isUnlocked: true, isInitialized: true });
+
+    render(
+      <Suspense>
+        <MemoryRouter>
+          <Popup />
+        </MemoryRouter>
+      </Suspense>,
     );
 
-    expect(container.children).toHaveLength(0);
+    await waitFor(() => expect(screen.getByTestId("home-page")).toBeInTheDocument());
   });
 
-  test("should render login form properly", async () => {
-    (usePopup as jest.Mock).mockReturnValue({ ...defaultHoodData, isInitialized: true });
+  test("should render login page properly", async () => {
+    (usePopup as jest.Mock).mockReturnValue({ ...defaultHookData, isUnlocked: false, isInitialized: true });
+
     render(
-      <MemoryRouter>
-        <Popup />
-      </MemoryRouter>,
+      <Suspense>
+        <MemoryRouter>
+          <Popup />
+        </MemoryRouter>
+      </Suspense>,
     );
 
     const login = await screen.findByTestId("login-form");
@@ -76,31 +104,33 @@ describe("ui/pages/Popup", () => {
     expect(login).toBeInTheDocument();
   });
 
-  test("should render home properly", async () => {
-    (usePopup as jest.Mock).mockReturnValue({ ...defaultHoodData, isInitialized: true, isUnlocked: true });
-    render(
-      <MemoryRouter>
-        <Popup />
-      </MemoryRouter>,
+  test("should not render if it's loading", () => {
+    (usePopup as jest.Mock).mockReturnValue({ ...defaultHookData, isLoading: true });
+    const { container } = render(
+      <Suspense>
+        <MemoryRouter>
+          <Popup />
+        </MemoryRouter>
+      </Suspense>,
     );
 
-    const page = await screen.findByTestId("home-page");
-
-    expect(page).toBeInTheDocument();
+    expect(container.children).toHaveLength(0);
   });
 
   test("should render pending requests modal properly", async () => {
     (usePopup as jest.Mock).mockReturnValue({
-      ...defaultHoodData,
+      ...defaultHookData,
       isInitialized: true,
       isUnlocked: true,
-      pendingRequests: [{}],
+      isShowRequestModal: true,
     });
 
     render(
-      <MemoryRouter>
-        <Popup />
-      </MemoryRouter>,
+      <Suspense>
+        <MemoryRouter>
+          <Popup />
+        </MemoryRouter>
+      </Suspense>,
     );
 
     const modal = await screen.findByTestId("default-approval-modal");

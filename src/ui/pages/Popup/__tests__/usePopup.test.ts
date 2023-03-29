@@ -85,7 +85,7 @@ describe("ui/pages/Popup/usePopup", () => {
     expect(result.current.isLoading).toBe(false);
     expect(result.current.isInitialized).toBe(false);
     expect(result.current.isUnlocked).toBe(false);
-    expect(result.current.pendingRequests).toHaveLength(0);
+    expect(result.current.isShowRequestModal).toBe(false);
   });
 
   test("should get data and connect on first load", async () => {

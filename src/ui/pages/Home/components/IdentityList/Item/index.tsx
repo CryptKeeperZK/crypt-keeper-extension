@@ -31,7 +31,7 @@ export interface IdentityItemProps {
 
 export const IdentityItem = ({
   commitment,
-  selected,
+  selected = "",
   metadata,
   onDeleteIdentity,
   onSelectIdentity,
@@ -129,8 +129,4 @@ export const IdentityItem = ({
       </Menuable>
     </div>
   );
-};
-
-IdentityItem.defaultProps = {
-  selected: "",
 };

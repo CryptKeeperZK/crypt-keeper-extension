@@ -4,6 +4,7 @@ import { AnyAction } from "@reduxjs/toolkit";
 import { Web3ReactProvider } from "@web3-react/core";
 import log from "loglevel";
 import createMetaMaskProvider from "metamask-extension-provider";
+import { Suspense } from "react";
 import ReactDOM from "react-dom/client";
 import { Provider } from "react-redux";
 import { HashRouter } from "react-router-dom";
@@ -35,7 +36,9 @@ browser.tabs.query({ active: true, currentWindow: true }).then(() => {
     <Provider store={store}>
       <HashRouter>
         <Web3ReactProvider connectors={connectors}>
-          <Popup />
+          <Suspense>
+            <Popup />
+          </Suspense>
         </Web3ReactProvider>
       </HashRouter>
     </Provider>,

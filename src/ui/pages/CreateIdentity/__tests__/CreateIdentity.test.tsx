@@ -2,46 +2,67 @@
  * @jest-environment jsdom
  */
 
-import { act, render, screen } from "@testing-library/react";
+import { act, fireEvent, render, screen } from "@testing-library/react";
+import selectEvent from "react-select-event";
 
+import { ZERO_ADDRESS } from "@src/config/const";
 import { createModalRoot, deleteModalRoot } from "@src/config/mock/modal";
+import { defaultWalletHookData } from "@src/config/mock/wallet";
 import { IDENTITY_TYPES, WEB2_PROVIDER_OPTIONS } from "@src/constants";
+import { useAppDispatch } from "@src/ui/ducks/hooks";
+import { createIdentity } from "@src/ui/ducks/identities";
+import { useWallet } from "@src/ui/hooks/wallet";
+import { signIdentityMessage } from "@src/ui/services/identity";
 
-import { CreateIdentity } from "..";
-import { IUseCreateIdentityData, useCreateIdentity } from "../useCreateIdentity";
+import CreateIdentity from "..";
 
-jest.mock("../useCreateIdentity", (): unknown => ({
-  useCreateIdentity: jest.fn(),
+jest.mock("@src/ui/ducks/hooks", (): unknown => ({
+  useAppDispatch: jest.fn(),
+}));
+
+jest.mock("@src/ui/services/identity", (): unknown => ({
+  signIdentityMessage: jest.fn(),
+}));
+
+jest.mock("@src/ui/ducks/app", (): unknown => ({
+  closePopup: jest.fn(),
+}));
+
+jest.mock("@src/ui/ducks/identities", (): unknown => ({
+  createIdentity: jest.fn(),
+}));
+
+jest.mock("@src/ui/hooks/wallet", (): unknown => ({
+  useWallet: jest.fn(),
 }));
 
 describe("ui/pages/CreateIdentity", () => {
-  const defaultHookData: IUseCreateIdentityData = {
-    isLoading: false,
-    nonce: 0,
-    error: "",
-    identityStrategyType: IDENTITY_TYPES[1],
-    web2Provider: WEB2_PROVIDER_OPTIONS[0],
-    closeModal: jest.fn(),
-    onSelectIdentityType: jest.fn(),
-    onSelectWeb2Provider: jest.fn(),
-    onChangeNonce: jest.fn(),
-    onCreateIdentity: jest.fn(),
-  };
+  const mockSignedMessage = "signed-message";
+  const mockDispatch = jest.fn(() => Promise.resolve());
 
   beforeEach(() => {
-    (useCreateIdentity as jest.Mock).mockReturnValue(defaultHookData);
+    (useWallet as jest.Mock).mockReturnValue(defaultWalletHookData);
+
+    (useAppDispatch as jest.Mock).mockReturnValue(mockDispatch);
+
+    (signIdentityMessage as jest.Mock).mockResolvedValue(mockSignedMessage);
+
+    (createIdentity as jest.Mock).mockResolvedValue(true);
 
     createModalRoot();
   });
 
   afterEach(() => {
-    jest.resetAllMocks();
+    jest.clearAllMocks();
 
     deleteModalRoot();
   });
 
-  test("should render properly", async () => {
+  test("should render properly with random", async () => {
     render(<CreateIdentity />);
+
+    const select = await screen.findByLabelText("Identity type");
+    await selectEvent.select(select, IDENTITY_TYPES[1].label);
 
     const button = await screen.findByText("Create");
     const identityType = await screen.findByText("Random");
@@ -50,33 +71,64 @@ describe("ui/pages/CreateIdentity", () => {
     expect(identityType).toBeInTheDocument();
   });
 
-  test("should render properly with interrep provider and error", async () => {
-    (useCreateIdentity as jest.Mock).mockReturnValue({
-      ...defaultHookData,
-      error: "error",
-      identityStrategyType: IDENTITY_TYPES[0],
-      web2Provider: WEB2_PROVIDER_OPTIONS[2],
-    });
+  test("should create random identity properly", async () => {
+    render(<CreateIdentity />);
 
+    const select = await screen.findByLabelText("Identity type");
+    await selectEvent.select(select, IDENTITY_TYPES[1].label);
+
+    const button = await screen.findByText("Create");
+    await act(async () => Promise.resolve(fireEvent.submit(button)));
+
+    expect(signIdentityMessage).toBeCalledTimes(1);
+    expect(mockDispatch).toBeCalledTimes(1);
+    expect(createIdentity).toBeCalledTimes(1);
+    expect(createIdentity).toBeCalledWith("random", mockSignedMessage, {});
+  });
+
+  test("should render properly with interrep provider", async () => {
     render(<CreateIdentity />);
 
     const button = await screen.findByText("Create");
-    const provider = await screen.findByText("Github");
+    const provider = await screen.findByText("Twitter");
     const identityType = await screen.findByText("InterRep");
-    const error = await screen.findByText("error");
 
     expect(button).toBeInTheDocument();
-    expect(error).toBeInTheDocument();
     expect(provider).toBeInTheDocument();
     expect(identityType).toBeInTheDocument();
   });
 
-  test("should create identity properly", async () => {
+  test("should create interrep github identity properly", async () => {
+    render(<CreateIdentity />);
+
+    const select = await screen.findByLabelText("Web2 Provider");
+    await selectEvent.select(select, WEB2_PROVIDER_OPTIONS[2].label);
+
+    const nonce = await screen.findByLabelText("Nonce");
+    await act(async () => Promise.resolve(fireEvent.change(nonce, { target: { value: 1 } })));
+
+    const button = await screen.findByText("Create");
+    await act(async () => Promise.resolve(fireEvent.submit(button)));
+
+    expect(signIdentityMessage).toBeCalledTimes(1);
+    expect(mockDispatch).toBeCalledTimes(1);
+    expect(createIdentity).toBeCalledTimes(1);
+    expect(createIdentity).toBeCalledWith("interrep", mockSignedMessage, {
+      account: ZERO_ADDRESS,
+      nonce: "1",
+      web2Provider: "github",
+    });
+  });
+
+  test("should handle error properly", async () => {
+    const err = new Error("Error");
+    (signIdentityMessage as jest.Mock).mockRejectedValue(err);
     render(<CreateIdentity />);
 
     const button = await screen.findByText("Create");
-    act(() => button.click());
+    await act(async () => Promise.resolve(fireEvent.submit(button)));
 
-    expect(defaultHookData.onCreateIdentity).toBeCalledTimes(1);
+    const error = await screen.findByText(err.message);
+    expect(error).toBeInTheDocument();
   });
 });

@@ -2452,5 +2452,17 @@ export function getChainsConfig(): Chain[] {
       rpc: ["https://molereum.jdubedition.com"],
       infoURL: "https://github.com/Jdubedition/molereum",
     },
+    {
+      name: "Sepolia Test Netwok",
+      chainId: 11155111,
+      shortName: "sepolia",
+      networkId: 11155111,
+      nativeCurrency: { name: "Sepolia Ethereum", symbol: "SepoliaETH", decimals: 18 },
+      rpc: [
+        ALCHEMY_API_KEY && `https://eth-sepolia.g.alchemy.com/v2/${ALCHEMY_API_KEY}`,
+        "https://sepolia.infura.io/v3/",
+      ].filter(Boolean) as string[],
+      infoURL: "",
+    },
   ];
 }

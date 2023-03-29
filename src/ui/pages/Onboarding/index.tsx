@@ -1,1 +1,3 @@
-export * from "./Onboarding";
+import { lazy } from "react";
+
+export default lazy(() => import("./Onboarding"));

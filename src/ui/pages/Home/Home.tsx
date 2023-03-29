@@ -6,7 +6,7 @@ import { IdentityList, TabList, Info } from "./components";
 import "./home.scss";
 import { useHome } from "./useHome";
 
-export const Home = (): JSX.Element => {
+const Home = (): JSX.Element => {
   const {
     scrollRef,
     fixedTabs,
@@ -20,7 +20,7 @@ export const Home = (): JSX.Element => {
   } = useHome();
 
   return (
-    <div className="w-full h-full flex flex-col home">
+    <div className="w-full h-full flex flex-col home" data-testid="home-page">
       <Header />
 
       <div
@@ -39,3 +39,5 @@ export const Home = (): JSX.Element => {
     </div>
   );
 };
+
+export default Home;

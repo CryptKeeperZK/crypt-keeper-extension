@@ -39,7 +39,7 @@ describe("ui/components/ConfirmRequestModal/components/DefaultApprovalModal", ()
   });
 
   test("should render properly with error", async () => {
-    render(<DefaultApprovalModal {...defaultProps} error="Error" len={2} />);
+    render(<DefaultApprovalModal {...defaultProps} error="Error" len={2} pendingRequest={undefined} />);
 
     const error = await screen.findByText("Error");
 

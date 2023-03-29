@@ -8,12 +8,12 @@ import "./index.scss";
 export interface CheckboxProps {
   checked: boolean;
   id: string;
-  className?: string;
+  className: string;
   disabled?: boolean;
   onChange: ChangeEventHandler<HTMLInputElement>;
 }
 
-export const Checkbox = ({ id, className, checked, onChange, disabled }: CheckboxProps): JSX.Element => (
+export const Checkbox = ({ id, className, disabled = false, checked, onChange }: CheckboxProps): JSX.Element => (
   <div
     className={classNames("checkbox", className, {
       "checkbox--checked": checked,
@@ -24,8 +24,3 @@ export const Checkbox = ({ id, className, checked, onChange, disabled }: Checkbo
     <Icon fontAwesome="fa-check" />
   </div>
 );
-
-Checkbox.defaultProps = {
-  className: "",
-  disabled: false,
-};

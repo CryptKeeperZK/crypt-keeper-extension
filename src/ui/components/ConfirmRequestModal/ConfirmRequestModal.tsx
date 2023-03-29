@@ -4,15 +4,11 @@ import { ProofModal, ConnectionApprovalModal, DefaultApprovalModal } from "./com
 import "./confirm-modal.scss";
 import { useConfirmRequestModal } from "./useConfirmRequestModal";
 
-export const ConfirmRequestModal = (): JSX.Element | null => {
+const ConfirmRequestModal = (): JSX.Element | null => {
   const { pendingRequests, loading, error, accept, reject } = useConfirmRequestModal();
   const [pendingRequest] = pendingRequests;
 
-  if (!pendingRequest) {
-    return null;
-  }
-
-  switch (pendingRequest.type) {
+  switch (pendingRequest?.type) {
     case PendingRequestType.INJECT:
     case PendingRequestType.APPROVE:
       return (
@@ -50,3 +46,5 @@ export const ConfirmRequestModal = (): JSX.Element | null => {
       );
   }
 };
+
+export default ConfirmRequestModal;

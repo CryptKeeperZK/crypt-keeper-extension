@@ -1,5 +1,6 @@
 import classNames from "classnames";
-import Select, { Props as SelectProps } from "react-select";
+import { forwardRef, Ref } from "react";
+import Select, { Props as SelectProps, SelectInstance } from "react-select";
 
 import { SelectOption } from "@src/types";
 
@@ -9,21 +10,15 @@ import { IconSingleValue } from "./IconSingleValue";
 
 export interface DropdownProps extends SelectProps<SelectOption> {
   id: string;
-  label?: string;
+  label: string;
   errorMessage?: string;
   options: readonly SelectOption[];
 }
 
-export const Dropdown = ({
-  id,
-  defaultValue,
-  label,
-  errorMessage,
-  className,
-  options,
-  value,
-  ...rest
-}: DropdownProps): JSX.Element => (
+const DropdownUI = (
+  { id, defaultValue, label, errorMessage = "", className, options, value, ...rest }: DropdownProps,
+  ref: Ref<SelectInstance<SelectOption, boolean>>,
+): JSX.Element => (
   <div className={classNames("dropdown", className)}>
     {label && (
       <label className="dropdown__label" htmlFor={`input-${id}`}>
@@ -33,6 +28,7 @@ export const Dropdown = ({
 
     <div className="dropdown__group">
       <Select
+        ref={ref}
         closeMenuOnSelect
         className="dropdown__container"
         classNamePrefix="dropdown"
@@ -51,7 +47,4 @@ export const Dropdown = ({
   </div>
 );
 
-Dropdown.defaultProps = {
-  label: "",
-  errorMessage: "",
-};
+export const Dropdown = forwardRef<SelectInstance<SelectOption, boolean>, DropdownProps>(DropdownUI);

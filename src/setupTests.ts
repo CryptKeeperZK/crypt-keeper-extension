@@ -1,13 +1,6 @@
 import "@testing-library/jest-dom";
 import "isomorphic-fetch";
 
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
-global.window = {};
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
-global.window = global;
-
 jest.mock("loglevel", () => ({
   info: jest.fn(),
   log: jest.fn(),
@@ -38,7 +31,7 @@ jest.mock("webextension-polyfill-ts", (): unknown => {
     browser: {
       tabs: {
         query: jest.fn().mockResolvedValue([]),
-        sendMessage: jest.fn(),
+        sendMessage: jest.fn().mockResolvedValue(true),
         create: jest.fn(),
       },
 

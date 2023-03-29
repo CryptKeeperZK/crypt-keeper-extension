@@ -35,19 +35,24 @@ export default class IdentityService {
   }
 
   public unlock = async (): Promise<boolean> => {
-    await this.setDefaultIdentity(true);
+    await this.setDefaultIdentity();
 
     return true;
   };
 
-  public setActiveIdentity = async ({
-    identityCommitment,
-    updateUi,
-  }: {
-    identityCommitment: string;
-    updateUi: boolean;
-  }): Promise<boolean> => {
+  public setActiveIdentity = async ({ identityCommitment }: { identityCommitment: string }): Promise<boolean> => {
     const identities = await this.getIdentitiesFromStore();
+
+    return this.updateActiveIdentity({ identities, identityCommitment });
+  };
+
+  private updateActiveIdentity = async ({
+    identities,
+    identityCommitment,
+  }: {
+    identities: Map<string, string>;
+    identityCommitment: string;
+  }): Promise<boolean> => {
     const identity = identities.get(identityCommitment);
 
     if (!identity) {
@@ -55,7 +60,7 @@ export default class IdentityService {
     }
 
     this.activeIdentity = ZkIdentityDecorater.genFromSerialized(identity);
-    await this.writeActiveIdentity(identityCommitment, updateUi);
+    await this.writeActiveIdentity(identityCommitment);
 
     return true;
   };
@@ -96,7 +101,7 @@ export default class IdentityService {
     await this.refresh();
 
     if (activeIdentityCommitment === identityCommitment || size === 1) {
-      await this.setDefaultIdentity(true);
+      await this.setDefaultIdentity();
     }
 
     return true;
@@ -109,7 +114,7 @@ export default class IdentityService {
       return false;
     }
 
-    await Promise.all([this.clearActiveIdentity(false), this.identitiesStore.clear(), pushMessage(setIdentities([]))]);
+    await Promise.all([this.clearActiveIdentity(), this.identitiesStore.clear(), pushMessage(setIdentities([]))]);
 
     return true;
   };
@@ -167,6 +172,7 @@ export default class IdentityService {
 
     identities.set(identityCommitment, newIdentity.serialize());
     await this.writeIdentities(identities);
+    await this.updateActiveIdentity({ identities, identityCommitment });
 
     await this.notificationService.create({
       options: {
@@ -177,8 +183,6 @@ export default class IdentityService {
       },
     });
 
-    await this.setActiveIdentity({ identityCommitment, updateUi: false });
-
     return true;
   };
 
@@ -187,25 +191,25 @@ export default class IdentityService {
     return identities.size;
   };
 
-  private setDefaultIdentity = async (updateUi: boolean): Promise<void> => {
+  private setDefaultIdentity = async (): Promise<void> => {
     const identities = await this.getIdentitiesFromStore();
 
     if (!identities.size) {
-      await this.clearActiveIdentity(updateUi);
+      await this.clearActiveIdentity();
       return;
     }
 
     const identity = identities.keys().next();
-    await this.setActiveIdentity({ identityCommitment: identity.value as string, updateUi });
+    await this.updateActiveIdentity({ identities, identityCommitment: identity.value as string });
   };
 
-  private clearActiveIdentity = async (updateUi: boolean): Promise<void> => {
+  private clearActiveIdentity = async (): Promise<void> => {
     if (!this.activeIdentity) {
       return;
     }
 
     this.activeIdentity = undefined;
-    await this.writeActiveIdentity("", updateUi);
+    await this.writeActiveIdentity("");
   };
 
   private writeIdentities = async (identities: Map<string, string>): Promise<void> => {
@@ -214,18 +218,18 @@ export default class IdentityService {
     await this.identitiesStore.set(cipherText);
   };
 
-  private writeActiveIdentity = async (commitment: string, updateUi: boolean): Promise<void> => {
+  private writeActiveIdentity = async (commitment: string): Promise<void> => {
     const cipherText = this.lockService.encrypt(commitment);
     await this.activeIdentityStore.set(cipherText);
 
-    if (updateUi) {
-      await pushMessage(setSelectedCommitment(commitment));
+    const [tabs] = await Promise.all([
+      browser.tabs.query({ active: true }),
+      pushMessage(setSelectedCommitment(commitment)),
+    ]);
 
-      const tabs = await browser.tabs.query({ active: true });
-      await Promise.all(
-        tabs.map((tab) => browser.tabs.sendMessage(tab.id as number, setSelectedCommitment(commitment))),
-      );
-    }
+    tabs.map((tab) =>
+      browser.tabs.sendMessage(tab.id as number, setSelectedCommitment(commitment)).catch(() => undefined),
+    );
   };
 
   private getIdentitiesFromStore = async (): Promise<Map<string, string>> => {

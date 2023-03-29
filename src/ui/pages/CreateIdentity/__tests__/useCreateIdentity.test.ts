@@ -3,10 +3,10 @@
  */
 
 import { act, renderHook } from "@testing-library/react";
-import { ChangeEvent } from "react";
 
+import { ZERO_ADDRESS } from "@src/config/const";
 import { defaultWalletHookData } from "@src/config/mock/wallet";
-import { IDENTITY_TYPES, WEB2_PROVIDER_OPTIONS } from "@src/constants";
+import { IDENTITY_TYPES } from "@src/constants";
 import { useAppDispatch } from "@src/ui/ducks/hooks";
 import { createIdentity } from "@src/ui/ducks/identities";
 import { useWallet } from "@src/ui/hooks/wallet";
@@ -50,70 +50,37 @@ describe("ui/pages/CreateIdentity/useCreateIdentity", () => {
   });
 
   afterEach(() => {
-    jest.resetAllMocks();
+    jest.clearAllMocks();
   });
 
   test("should return initial data", () => {
     const { result } = renderHook(() => useCreateIdentity());
 
     expect(result.current.isLoading).toBe(false);
-    expect(result.current.error).toBe("");
-    expect(result.current.identityStrategyType.value).toBe("interrep");
-    expect(result.current.web2Provider.value).toBe("twitter");
-    expect(result.current.nonce).toBe(0);
-  });
-
-  test("should update nonce value properly", () => {
-    const { result } = renderHook(() => useCreateIdentity());
-
-    act(() => {
-      result.current.onChangeNonce({ target: { value: "1" } } as ChangeEvent<HTMLInputElement>);
+    expect(result.current.isProviderAvailable).toBe(true);
+    expect(result.current.control).toBeDefined();
+    expect(result.current.errors).toStrictEqual({
+      root: undefined,
+      web2Provider: undefined,
+      identityStrategyType: undefined,
+      nonce: undefined,
     });
-
-    expect(result.current.nonce).toBe(1);
-  });
-
-  test("should update web2 provider properly", () => {
-    const { result } = renderHook(() => useCreateIdentity());
-
-    act(() => {
-      result.current.onSelectWeb2Provider(WEB2_PROVIDER_OPTIONS[2], {
-        action: "select-option",
-        option: IDENTITY_TYPES[2],
-      });
-    });
-
-    expect(result.current.web2Provider).toStrictEqual(WEB2_PROVIDER_OPTIONS[2]);
-  });
-
-  test("should update identity type properly", () => {
-    const { result } = renderHook(() => useCreateIdentity());
-
-    act(() => {
-      result.current.onSelectIdentityType(IDENTITY_TYPES[1], { action: "select-option", option: IDENTITY_TYPES[1] });
-    });
-
-    expect(result.current.identityStrategyType).toStrictEqual(IDENTITY_TYPES[1]);
   });
 
   test("should create identity properly", async () => {
     const { result } = renderHook(() => useCreateIdentity());
 
-    act(() => {
-      result.current.onSelectIdentityType(IDENTITY_TYPES[1], { action: "select-option", option: IDENTITY_TYPES[1] });
-    });
+    await act(async () => Promise.resolve(result.current.onSubmit()));
 
-    await act(async () => {
-      result.current.onCreateIdentity();
-
-      return Promise.resolve();
-    });
-
+    expect(result.current.isLoading).toBe(false);
     expect(signIdentityMessage).toBeCalledTimes(1);
     expect(mockDispatch).toBeCalledTimes(1);
     expect(createIdentity).toBeCalledTimes(1);
-    expect(createIdentity).toBeCalledWith("random", mockSignedMessage, {});
-    expect(result.current.isLoading).toBe(false);
+    expect(createIdentity).toBeCalledWith("interrep", mockSignedMessage, {
+      account: ZERO_ADDRESS,
+      nonce: 0,
+      web2Provider: "twitter",
+    });
   });
 
   test("should close modal properly", () => {
@@ -133,13 +100,15 @@ describe("ui/pages/CreateIdentity/useCreateIdentity", () => {
 
     const { result } = renderHook(() => useCreateIdentity());
 
-    await act(async () => {
-      result.current.onCreateIdentity();
+    await act(async () =>
+      Promise.resolve(
+        result.current.register("identityStrategyType").onChange({ target: { value: IDENTITY_TYPES[0] } }),
+      ),
+    );
 
-      return Promise.resolve();
-    });
+    await act(async () => Promise.resolve(result.current.onSubmit()));
 
-    expect(result.current.error).toBe(error.message);
     expect(result.current.isLoading).toBe(false);
+    expect(result.current.errors.root).toBe(error.message);
   });
 });
