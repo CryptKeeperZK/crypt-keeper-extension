@@ -13,7 +13,7 @@ export interface ItemProps {
   onClick?: (e: ReactMouseEvent, reset: () => void) => Promise<void> | void;
 }
 
-export interface IUseMeuableArgs {
+export interface IUseMenuableArgs {
   opened?: boolean;
   items: ItemProps[];
   onOpen?: () => void;
