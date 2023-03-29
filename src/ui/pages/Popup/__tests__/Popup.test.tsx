@@ -77,7 +77,7 @@ describe("ui/pages/Popup", () => {
   test("should render home page properly", async () => {
     (usePopup as jest.Mock).mockReturnValue({ ...defaultHookData, isUnlocked: true, isInitialized: true });
 
-    render(
+    const { getByTestId } = render(
       <Suspense>
         <MemoryRouter>
           <Popup />
@@ -85,7 +85,7 @@ describe("ui/pages/Popup", () => {
       </Suspense>,
     );
 
-    await waitFor(() => expect(screen.getByTestId("home-page")).toBeInTheDocument());
+    await waitFor(() => expect(getByTestId("home-page")).toBeInTheDocument());
   });
 
   test("should render login page properly", async () => {
