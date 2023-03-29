@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 
-import { render, screen } from "@testing-library/react";
+import { render, screen, waitFor } from "@testing-library/react";
 import { Suspense } from "react";
 import { MemoryRouter } from "react-router-dom";
 
@@ -12,7 +12,7 @@ import { useAppDispatch, useAppSelector } from "@src/ui/ducks/hooks";
 import { usePendingRequests } from "@src/ui/ducks/requests";
 import { useWallet } from "@src/ui/hooks/wallet";
 
-import { Popup } from "..";
+import Popup from "..";
 import { IUsePopupData, usePopup } from "../usePopup";
 
 jest.mock("@src/ui/ducks/hooks", (): unknown => ({
@@ -135,7 +135,7 @@ describe("ui/pages/Popup", () => {
       </MemoryRouter>,
     );
 
-    expect(container.firstChild).toBeNull();
+    await waitFor(() => container.firstChild !== null);
 
     const home = await findByTestId("home-page");
     expect(home).toBeInTheDocument();

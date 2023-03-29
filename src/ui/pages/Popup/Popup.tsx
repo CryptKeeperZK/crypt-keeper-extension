@@ -11,7 +11,7 @@ import Onboarding from "@src/ui/pages/Onboarding";
 import "./popup.scss";
 import { usePopup } from "./usePopup";
 
-export const Popup = (): JSX.Element | null => {
+const Popup = (): JSX.Element | null => {
   const { isLoading, isInitialized, isUnlocked, isShowRequestModal } = usePopup();
 
   if (isLoading) {
@@ -40,3 +40,5 @@ export const Popup = (): JSX.Element | null => {
 
   return <div className="popup">{content}</div>;
 };
+
+export default Popup;
