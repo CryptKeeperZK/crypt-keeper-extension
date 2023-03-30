@@ -25,7 +25,8 @@ type MockStorage = { get: jest.Mock; set: jest.Mock; clear: jest.Mock };
 
 describe("background/services/identity", () => {
   const defaultTabs = [{ id: 1 }, { id: 2 }];
-  const defaultIdentityCommitment = "15206603389158210388485662342360617949291660595274505642693885456541816400294";
+  const defaultIdentityCommitment =
+    bigintToHex(15206603389158210388485662342360617949291660595274505642693885456541816400294n);
   const defaultIdentities = [[defaultIdentityCommitment, JSON.stringify({ secret: "1234", metadata: {} })]];
   const serializedDefaultIdentities = JSON.stringify(defaultIdentities);
   const mockNotificationService = {
