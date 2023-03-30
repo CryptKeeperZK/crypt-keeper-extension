@@ -30,28 +30,24 @@ browser.runtime.onConnect.addListener(async () => {
   log.debug("CryptKeeper onConnect Event, initializing completed...");
 });
 
-function initialize() {
-  try {
-    const app = new ZkKeeperController();
+try {
+  const app = new ZkKeeperController();
 
-    app.initialize();
+  app.initialize();
 
-    browser.runtime.onMessage.addListener(async (request: HandlerRequest) => {
-      try {
-        log.debug("Background: request: ", request);
-        const response = await app.handle(request);
-        log.debug("Background: response: ", response);
-        return [null, response];
-      } catch (e) {
-        return [(e as Error).message, null];
-      }
-    });
+  browser.runtime.onMessage.addListener(async (request: HandlerRequest) => {
+    try {
+      log.debug("Background: request: ", request);
+      const response = await app.handle(request);
+      log.debug("Background: response: ", response);
+      return [null, response];
+    } catch (e) {
+      return [(e as Error).message, null];
+    }
+  });
 
-    log.debug("CryptKeeper initialization complete.");
-    resolveInitialization?.(true);
-  } catch (error) {
-    rejectInitialization?.(error);
-  }
+  log.debug("CryptKeeper initialization complete.");
+  resolveInitialization?.(true);
+} catch (error) {
+  rejectInitialization?.(error);
 }
-
-initialize();

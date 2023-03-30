@@ -22,6 +22,7 @@ export interface IUseWalletData {
   provider?: BrowserProvider;
   onConnect: () => Promise<void>;
   onConnectEagerly: () => Promise<void>;
+  onLock: () => Promise<void>;
   onDisconnect: () => Promise<void>;
 }
 
@@ -71,6 +72,10 @@ export const useWallet = (): IUseWalletData => {
     await postMessage({ method: RPCAction.SET_CONNECT_WALLET, payload: { isDisconnectedPermanently: true } });
   }, [connector]);
 
+  const onLock = useCallback(async () => {
+    await postMessage({ method: RPCAction.LOCK });
+  }, []);
+
   return {
     isActive,
     isActivating,
@@ -83,5 +88,6 @@ export const useWallet = (): IUseWalletData => {
     onConnect,
     onConnectEagerly,
     onDisconnect,
+    onLock,
   };
 };

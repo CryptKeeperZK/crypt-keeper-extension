@@ -24,4 +24,5 @@ export const defaultWalletHookData: IUseWalletData = {
   onConnect: jest.fn(),
   onConnectEagerly: jest.fn(),
   onDisconnect: jest.fn(),
+  onLock: jest.fn(),
 };

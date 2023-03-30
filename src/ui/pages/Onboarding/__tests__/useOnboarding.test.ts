@@ -19,6 +19,10 @@ jest.mock("@src/ui/ducks/hooks", (): unknown => ({
   useAppDispatch: jest.fn(),
 }));
 
+jest.mock("@src/ui/hooks/validation", (): unknown => ({
+  useValidationResolver: jest.fn(),
+}));
+
 describe("ui/pages/Onboarding/useOnboarding", () => {
   const mockDispatch = jest.fn(() => Promise.resolve());
 
@@ -43,24 +47,14 @@ describe("ui/pages/Onboarding/useOnboarding", () => {
     const { result } = renderHook(() => useOnboarding());
 
     await act(async () =>
-      Promise.resolve(
-        result.current
-          .register("password")
-          .onChange({ target: { value: "password" } } as ChangeEvent<HTMLInputElement>),
-      ),
+      Promise.resolve(result.current.register("password").onChange({ target: { value: "Password123@" } })),
     );
 
     await act(() =>
-      Promise.resolve(
-        result.current.register("confirmPassword").onChange({
-          target: { value: "password" },
-        } as ChangeEvent<HTMLInputElement>),
-      ),
+      Promise.resolve(result.current.register("confirmPassword").onChange({ target: { value: "Password123@" } })),
     );
 
-    await act(async () =>
-      Promise.resolve(result.current.onSubmit({ preventDefault: jest.fn() } as unknown as FormEvent<HTMLFormElement>)),
-    );
+    await act(async () => Promise.resolve(result.current.onSubmit()));
     await waitFor(() => result.current.isLoading !== true);
 
     expect(result.current.isLoading).toBe(false);
@@ -76,14 +70,14 @@ describe("ui/pages/Onboarding/useOnboarding", () => {
       Promise.resolve(
         result.current
           .register("password")
-          .onChange({ target: { value: "password" } } as ChangeEvent<HTMLInputElement>),
+          .onChange({ target: { value: "Password123@" } } as ChangeEvent<HTMLInputElement>),
       ),
     );
 
     await act(() =>
       Promise.resolve(
         result.current.register("confirmPassword").onChange({
-          target: { value: "password" },
+          target: { value: "Password123@" },
         } as ChangeEvent<HTMLInputElement>),
       ),
     );

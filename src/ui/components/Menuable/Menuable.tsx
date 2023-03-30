@@ -10,7 +10,7 @@ import { useMenuable, ItemProps } from "./useMenuable";
 
 export interface MenuableProps {
   items: ItemProps[];
-  children?: ReactNode;
+  children: ReactNode;
   className?: string;
   menuClassName?: string;
   opened?: boolean;
@@ -20,10 +20,10 @@ export interface MenuableProps {
 
 export const Menuable = ({
   items,
+  children,
   opened = false,
   className = "",
   menuClassName = "",
-  children = undefined,
   onOpen = undefined,
   onClose = undefined,
 }: MenuableProps): JSX.Element => {

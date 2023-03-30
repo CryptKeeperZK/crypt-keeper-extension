@@ -1,23 +1,16 @@
 import classNames from "classnames";
-import { useCallback } from "react";
 import Jazzicon, { jsNumberForAddress } from "react-jazzicon";
 
-import { RPCAction } from "@src/constants";
 import loaderSvg from "@src/static/icons/loader.svg";
 import logoSvg from "@src/static/icons/logo.svg";
 import { Icon } from "@src/ui/components/Icon";
 import { Menuable } from "@src/ui/components/Menuable";
 import { useWallet } from "@src/ui/hooks/wallet";
-import postMessage from "@src/util/postMessage";
 
 import "./header.scss";
 
 export const Header = (): JSX.Element => {
-  const { address, isActivating, isActive, chain, onConnect, onDisconnect } = useWallet();
-
-  const onLock = useCallback(async () => {
-    await postMessage({ method: RPCAction.LOCK });
-  }, []);
+  const { address, isActivating, isActive, chain, onConnect, onDisconnect, onLock } = useWallet();
 
   return (
     <div className="header h-16 flex flex-row items-center px-4">
@@ -50,6 +43,7 @@ export const Header = (): JSX.Element => {
           >
             {!address ? (
               <Icon
+                data-testid={`inactive-wallet-icon${isActivating ? "-activating" : ""}`}
                 fontAwesome={classNames({
                   "fas fa-plug": !isActivating,
                 })}

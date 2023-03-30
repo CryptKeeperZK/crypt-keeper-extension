@@ -4,9 +4,14 @@
   color: $primary-green;
 
   &__content {
-    .icon {
-      width: 8rem !important;
-      height: 8rem !important;
+    .info-tooltip {
+      height: 0.75rem;
+      width: 0.75rem;
+    }
+
+    .info-icon {
+      color: $primary-green;
+      cursor: pointer;
     }
   }
 }

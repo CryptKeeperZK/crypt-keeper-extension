@@ -1,8 +1,10 @@
 import { BaseSyntheticEvent, useCallback } from "react";
 import { useForm, UseFormRegister } from "react-hook-form";
+import { object, ref, string } from "yup";
 
 import { setupPassword } from "@src/ui/ducks/app";
 import { useAppDispatch } from "@src/ui/ducks/hooks";
+import { useValidationResolver } from "@src/ui/hooks/validation";
 
 export interface IUseOnboardingData {
   isLoading: boolean;
@@ -16,13 +18,28 @@ interface FormFields {
   confirmPassword: string;
 }
 
+const passwordRules = /^(?=.*[0-9])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{8,}$/;
+
+const validationSchema = object({
+  password: string()
+    .matches(passwordRules, {
+      message: "Password isn't strong",
+    })
+    .required("Password is required"),
+  confirmPassword: string()
+    .oneOf([ref("password"), ""], "Passwords must match")
+    .required("Confirm your password"),
+});
+
 export const useOnboarding = (): IUseOnboardingData => {
+  const resolver = useValidationResolver(validationSchema);
   const {
     formState: { isLoading, isSubmitting, errors },
     setError,
     register,
     handleSubmit,
   } = useForm<FormFields>({
+    resolver,
     defaultValues: {
       password: "",
       confirmPassword: "",

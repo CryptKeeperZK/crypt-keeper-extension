@@ -10,47 +10,44 @@ import { useWallet } from "@src/ui/hooks/wallet";
 import postMessage from "@src/util/postMessage";
 
 export interface IUseHomeData {
+  isFixedTabsMode: boolean;
+  identities: IdentityData[];
   scrollRef: RefObject<HTMLDivElement>;
-  fixedTabs: boolean;
   address?: string;
   balance?: BigNumber;
   chain?: Chain;
-  identities: IdentityData[];
   refreshConnectionStatus: () => Promise<boolean>;
   onDeleteAllIdentities: () => void;
   onScroll: () => void;
 }
+
+const SCROLL_THRESHOLD = 92;
 
 export const useHome = (): IUseHomeData => {
   const dispatch = useAppDispatch();
   const identities = useIdentities();
 
   const scrollRef = useRef<HTMLDivElement>(null);
-  const [fixedTabs, fixTabs] = useState(false);
+  const [isFixedTabsMode, setFixTabsMode] = useState(false);
 
   const { address, chain, balance } = useWallet();
-
-  useEffect(() => {
-    dispatch(fetchIdentities());
-  }, [dispatch]);
 
   const onScroll = useCallback(() => {
     if (!scrollRef.current) {
       return;
     }
 
-    fixTabs(scrollRef.current.scrollTop > 92);
-  }, [scrollRef, fixTabs]);
+    setFixTabsMode(scrollRef.current.scrollTop > SCROLL_THRESHOLD);
+  }, [scrollRef, setFixTabsMode]);
 
   const onDeleteAllIdentities = useCallback(() => {
     dispatch(deleteAllIdentities());
   }, [dispatch]);
 
   const refreshConnectionStatus = useCallback(async () => {
-    const tabs = await browser.tabs.query({ active: true, lastFocusedWindow: true });
-    const [tab] = tabs;
+    const [tab] = await browser.tabs.query({ active: true, lastFocusedWindow: true });
 
-    if (!tab.url) {
+    if (!tab?.url) {
       return false;
     }
 
@@ -60,9 +57,13 @@ export const useHome = (): IUseHomeData => {
     });
   }, []);
 
+  useEffect(() => {
+    dispatch(fetchIdentities());
+  }, [dispatch]);
+
   return {
     scrollRef,
-    fixedTabs,
+    isFixedTabsMode,
     address,
     chain,
     balance,
