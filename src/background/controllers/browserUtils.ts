@@ -43,7 +43,7 @@ export default class BrowserUtils {
       return this.cached;
     }
 
-    const tabs = await browser.tabs.query({});
+    const tabs = await browser.tabs.query({ lastFocusedWindow: true });
     const index = tabs.findIndex((tab) => tab.active && tab.highlighted);
     const searchParams = params ? `?${new URLSearchParams(params).toString()}` : "";
     const tab = await this.createTab({
