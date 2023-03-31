@@ -8,7 +8,7 @@ export interface DefaultApprovalModalProps {
   len: number;
   loading: boolean;
   error: string;
-  pendingRequest: PendingRequest;
+  pendingRequest?: PendingRequest;
   accept: () => void;
   reject: () => void;
 }
@@ -17,7 +17,7 @@ export const DefaultApprovalModal = ({
   len,
   loading,
   error,
-  pendingRequest,
+  pendingRequest = undefined,
   accept,
   reject,
 }: DefaultApprovalModalProps): JSX.Element => (
@@ -28,7 +28,7 @@ export const DefaultApprovalModal = ({
     </FullModalHeader>
 
     <FullModalContent className="flex flex-col">
-      <div className="text-sm font-semibold mb-2 break-all">{JSON.stringify(pendingRequest)}</div>
+      <div className="text-sm font-semibold mb-2 break-all">{JSON.stringify(pendingRequest || {})}</div>
     </FullModalContent>
 
     {error && <div className="text-xs text-red-500 text-center pb-1">{error}</div>}

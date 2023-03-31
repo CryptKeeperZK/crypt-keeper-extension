@@ -13,12 +13,12 @@ export interface IconProps {
 }
 
 export const Icon = ({
-  url,
+  url = "",
   size = 0.75,
-  className,
-  disabled,
-  fontAwesome,
-  onClick,
+  className = "",
+  disabled = false,
+  fontAwesome = "",
+  onClick = undefined,
   ...rest
 }: IconProps): JSX.Element => (
   <div
@@ -38,12 +38,3 @@ export const Icon = ({
     {fontAwesome && <i className={`fas ${fontAwesome}`} />}
   </div>
 );
-
-Icon.defaultProps = {
-  url: "",
-  fontAwesome: "",
-  className: "",
-  disabled: false,
-  size: undefined,
-  onClick: undefined,
-};

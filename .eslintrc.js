@@ -121,7 +121,12 @@ module.exports = {
     "class-methods-use-this": "off",
     "prefer-promise-reject-errors": "off",
     "max-classes-per-file": "off",
-    "react/require-default-props": "error",
+    "react/require-default-props": [
+      "error",
+      {
+        functions: "defaultArguments",
+      },
+    ],
     "react/no-unused-prop-types": "error",
     "react/function-component-definition": ["error", { namedComponents: ["arrow-function"] }],
     "no-use-before-define": ["off"],

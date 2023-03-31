@@ -5,9 +5,13 @@ import "./input.scss";
 
 export interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   label: string;
+  errorMessage?: string;
 }
 
-const InputUI = ({ id, label, className, ...inputProps }: InputProps, ref: Ref<HTMLInputElement>): JSX.Element => (
+const InputUI = (
+  { id, label, className, errorMessage = "", ...inputProps }: InputProps,
+  ref: Ref<HTMLInputElement>,
+): JSX.Element => (
   <div className={classNames("input-group", className)}>
     {label && (
       <label className="input-group__label" htmlFor={id}>
@@ -26,7 +30,9 @@ const InputUI = ({ id, label, className, ...inputProps }: InputProps, ref: Ref<H
         {...inputProps}
       />
     </div>
+
+    <p className="input-group__error-message">{errorMessage}</p>
   </div>
 );
 
-export const Input = forwardRef(InputUI);
+export const Input = forwardRef<HTMLInputElement, InputProps>(InputUI);

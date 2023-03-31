@@ -19,13 +19,13 @@ export interface MenuableProps {
 }
 
 export const Menuable = ({
-  opened,
-  className,
-  menuClassName,
-  children,
   items,
-  onOpen,
-  onClose,
+  opened = false,
+  className = "",
+  menuClassName = "",
+  children = undefined,
+  onOpen = undefined,
+  onClose = undefined,
 }: MenuableProps): JSX.Element => {
   const {
     menuRef,
@@ -184,13 +184,4 @@ export const Menuable = ({
       )}
     </div>
   );
-};
-
-Menuable.defaultProps = {
-  className: "",
-  menuClassName: "",
-  children: undefined,
-  opened: false,
-  onOpen: undefined,
-  onClose: undefined,
 };

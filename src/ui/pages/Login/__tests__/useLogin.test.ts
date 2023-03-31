@@ -29,8 +29,7 @@ describe("ui/pages/Login/useLogin", () => {
     const { result } = renderHook(() => useLogin());
 
     expect(result.current.isLoading).toBe(false);
-    expect(result.current.isValid).toBe(false);
-    expect(result.current.error).toBeUndefined();
+    expect(result.current.errors).toStrictEqual({ password: undefined });
   });
 
   test("should submit form properly", async () => {
@@ -69,9 +68,9 @@ describe("ui/pages/Login/useLogin", () => {
     await act(async () =>
       Promise.resolve(result.current.onSubmit({ preventDefault: jest.fn() } as unknown as FormEvent<HTMLFormElement>)),
     );
-    await waitFor(() => result.current.error !== "" && result.current.isLoading !== true);
+    await waitFor(() => result.current.errors.password !== "" && result.current.isLoading !== true);
 
-    expect(result.current.error).toBe(error.message);
+    expect(result.current.errors.password).toBe(error.message);
     expect(result.current.isLoading).toBe(false);
   });
 });

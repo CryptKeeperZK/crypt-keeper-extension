@@ -11,7 +11,11 @@ export interface FullModalHeaderProps {
   onClose?: () => void;
 }
 
-export const FullModalHeader = ({ className, children, onClose }: FullModalHeaderProps): JSX.Element => (
+export const FullModalHeader = ({
+  children,
+  className = "",
+  onClose = undefined,
+}: FullModalHeaderProps): JSX.Element => (
   <div className={classNames("full-modal__header", className)}>
     <div className="text-xl flex-grow flex-shrink full-modal__header__content">{children}</div>
 
@@ -20,8 +24,3 @@ export const FullModalHeader = ({ className, children, onClose }: FullModalHeade
     </div>
   </div>
 );
-
-FullModalHeader.defaultProps = {
-  className: "",
-  onClose: undefined,
-};

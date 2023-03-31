@@ -20,12 +20,12 @@ export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 }
 
 export const Button = ({
-  className,
-  loading,
+  className = "",
+  loading = false,
   children,
-  buttonType,
-  small,
-  tiny,
+  buttonType = ButtonType.PRIMARY,
+  small = false,
+  tiny = false,
   disabled,
   ...buttonProps
 }: ButtonProps): JSX.Element => (
@@ -37,7 +37,7 @@ export const Button = ({
       "button--primary": buttonType === ButtonType.PRIMARY,
       "button--secondary": buttonType === ButtonType.SECONDARY,
     })}
-    disabled={disabled}
+    disabled={disabled || loading}
     type="button"
     {...buttonProps}
   >
@@ -46,11 +46,3 @@ export const Button = ({
     {!loading && children}
   </button>
 );
-
-Button.defaultProps = {
-  className: "",
-  buttonType: ButtonType.PRIMARY,
-  loading: false,
-  small: false,
-  tiny: false,
-};

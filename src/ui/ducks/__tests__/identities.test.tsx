@@ -108,7 +108,6 @@ describe("ui/ducks/identities", () => {
       method: RPCAction.SET_ACTIVE_IDENTITY,
       payload: {
         identityCommitment: "1",
-        updateUi: true,
       },
     });
   });

@@ -1,1 +1,3 @@
-export * from "./CreateIdentity";
+import { lazy } from "react";
+
+export default lazy(() => import("./CreateIdentity"));

@@ -6,8 +6,8 @@ import { Input } from "@src/ui/components/Input";
 import "./login.scss";
 import { useLogin } from "./useLogin";
 
-export const Login = (): JSX.Element => {
-  const { isLoading, isValid, error, register, onSubmit } = useLogin();
+const Login = (): JSX.Element => {
+  const { isLoading, errors, register, onSubmit } = useLogin();
 
   return (
     <form className="flex flex-col flex-nowrap h-full login" data-testid="login-form" onSubmit={onSubmit}>
@@ -32,19 +32,15 @@ export const Login = (): JSX.Element => {
         </div>
       </div>
 
-      {error && <div className="text-red-500 text-sm text-center">{error}</div>}
+      {errors.password && <div className="text-red-500 text-sm text-center">{errors.password}</div>}
 
       <div className="flex flex-row items-center justify-center flex-shrink p-8 login__footer">
-        <Button
-          buttonType={ButtonType.PRIMARY}
-          data-testid="unlock-button"
-          disabled={!isValid}
-          loading={isLoading}
-          type="submit"
-        >
+        <Button buttonType={ButtonType.PRIMARY} data-testid="unlock-button" loading={isLoading} type="submit">
           Unlock
         </Button>
       </div>
     </form>
   );
 };
+
+export default Login;

@@ -2,12 +2,12 @@
  * @jest-environment jsdom
  */
 
-import { render, screen, fireEvent, act } from "@testing-library/react";
+import { render, screen, fireEvent, act, waitFor } from "@testing-library/react";
 
 import { unlock } from "@src/ui/ducks/app";
 import { useAppDispatch } from "@src/ui/ducks/hooks";
 
-import { Login } from "..";
+import Login from "..";
 
 jest.mock("@src/ui/ducks/app", (): unknown => ({
   unlock: jest.fn(),
@@ -31,7 +31,9 @@ describe("ui/pages/Login", () => {
   });
 
   test("should render properly", async () => {
-    render(<Login />);
+    const { container } = render(<Login />);
+
+    await waitFor(() => container.firstChild !== null);
 
     const form = await screen.findByTestId("login-form");
 
@@ -41,7 +43,9 @@ describe("ui/pages/Login", () => {
   test("should handle error properly", async () => {
     const err = new Error("Error");
     (mockDispatch as jest.Mock).mockRejectedValue(err);
-    render(<Login />);
+    const { container } = render(<Login />);
+
+    await waitFor(() => container.firstChild !== null);
 
     const input = await screen.findByLabelText("Password");
     await act(async () => Promise.resolve(fireEvent.change(input, { target: { value: "password" } })));
@@ -54,7 +58,9 @@ describe("ui/pages/Login", () => {
   });
 
   test("should submit form properly", async () => {
-    render(<Login />);
+    const { container } = render(<Login />);
+
+    await waitFor(() => container.firstChild !== null);
 
     const input = await screen.findByLabelText("Password");
     await act(async () => Promise.resolve(fireEvent.change(input, { target: { value: "password" } })));
@@ -64,5 +70,6 @@ describe("ui/pages/Login", () => {
 
     expect(mockDispatch).toBeCalledTimes(1);
     expect(unlock).toBeCalledTimes(1);
+    expect(unlock).toBeCalledWith("password");
   });
 });

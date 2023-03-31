@@ -1,1 +1,3 @@
-export * from "./ConfirmRequestModal";
+import { lazy } from "react";
+
+export default lazy(() => import("./ConfirmRequestModal"));

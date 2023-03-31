@@ -1,12 +1,7 @@
 import "@testing-library/jest-dom";
 import "isomorphic-fetch";
 
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
-global.window = {};
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
-global.window = global;
+import type { ReactElement } from "react";
 
 jest.mock("loglevel", () => ({
   info: jest.fn(),
@@ -14,6 +9,11 @@ jest.mock("loglevel", () => ({
   debug: jest.fn(),
   warn: jest.fn(),
   error: jest.fn(),
+}));
+
+jest.mock("react", (): unknown => ({
+  ...jest.requireActual("react"),
+  Suspense: ({ children }: { children: ReactElement }) => children,
 }));
 
 jest.mock("link-preview-js", (): unknown => ({
@@ -38,7 +38,7 @@ jest.mock("webextension-polyfill-ts", (): unknown => {
     browser: {
       tabs: {
         query: jest.fn().mockResolvedValue([]),
-        sendMessage: jest.fn(),
+        sendMessage: jest.fn().mockResolvedValue(true),
         create: jest.fn(),
       },
 

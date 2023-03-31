@@ -28,14 +28,14 @@ export const TabList = ({ children, identities, onDeleteAllIdentities }: TabList
         >
           <span>Identities</span>
 
-          {identities?.length ? (
+          {identities.length > 0 && (
             <Menuable
               className="flex user-menu"
               items={[{ label: "Delete All", isDangerItem: true, onClick: onDeleteAllIdentities }]}
             >
               <Icon className="tab__list__menu-icon" data-testid="menu-icon" fontAwesome="fas fa-ellipsis-h" />
             </Menuable>
-          ) : null}
+          )}
         </div>
       </div>
 

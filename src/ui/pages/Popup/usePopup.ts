@@ -3,7 +3,6 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import { Paths } from "@src/constants";
-import { PendingRequest } from "@src/types";
 import { fetchStatus, useAppStatus } from "@src/ui/ducks/app";
 import { useAppDispatch } from "@src/ui/ducks/hooks";
 import { fetchPendingRequests, usePendingRequests } from "@src/ui/ducks/requests";
@@ -13,7 +12,7 @@ export interface IUsePopupData {
   isLoading: boolean;
   isInitialized: boolean;
   isUnlocked: boolean;
-  pendingRequests: PendingRequest[];
+  isShowRequestModal: boolean;
 }
 
 const REDIRECT_PATHS: Record<string, Paths> = {
@@ -60,6 +59,6 @@ export const usePopup = (): IUsePopupData => {
     isLoading,
     isInitialized,
     isUnlocked,
-    pendingRequests,
+    isShowRequestModal: pendingRequests.length > 0,
   };
 };

@@ -11,12 +11,8 @@ export interface FullModalProps {
   onClose: () => void;
 }
 
-export const FullModal = ({ children, className, onClose, ...rest }: FullModalProps): JSX.Element => (
+export const FullModal = ({ children, className = "", onClose, ...rest }: FullModalProps): JSX.Element => (
   <Modal {...rest} className={classNames("full-modal", className)} onClose={onClose}>
     {children}
   </Modal>
 );
-
-FullModal.defaultProps = {
-  className: "",
-};

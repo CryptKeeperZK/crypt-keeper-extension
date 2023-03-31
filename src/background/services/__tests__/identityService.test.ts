@@ -45,6 +45,8 @@ describe("background/services/identity", () => {
 
     (browser.tabs.query as jest.Mock).mockResolvedValue(defaultTabs);
 
+    (browser.tabs.sendMessage as jest.Mock).mockRejectedValueOnce(false).mockResolvedValue(true);
+
     (NotificationService.getInstance as jest.Mock).mockReturnValue(mockNotificationService);
   });
 
@@ -93,7 +95,7 @@ describe("background/services/identity", () => {
       const [identityStorage] = (SimpleStorage as jest.Mock).mock.instances as [MockStorage];
       identityStorage.get.mockReturnValue(serializedDefaultIdentities);
 
-      const result = await service.setActiveIdentity({ identityCommitment: defaultIdentityCommitment, updateUi: true });
+      const result = await service.setActiveIdentity({ identityCommitment: defaultIdentityCommitment });
 
       expect(result).toBe(true);
       expect(pushMessage).toBeCalledTimes(1);
@@ -116,7 +118,7 @@ describe("background/services/identity", () => {
         instance.get.mockReturnValue(undefined);
       });
 
-      const result = await service.setActiveIdentity({ identityCommitment: defaultIdentityCommitment, updateUi: true });
+      const result = await service.setActiveIdentity({ identityCommitment: defaultIdentityCommitment });
 
       expect(result).toBe(false);
       expect(pushMessage).not.toBeCalled();
@@ -184,14 +186,13 @@ describe("background/services/identity", () => {
 
       const isIdentitySet = await service.setActiveIdentity({
         identityCommitment: defaultIdentityCommitment,
-        updateUi: true,
       });
       const result = await service.deleteAllIdentities();
 
       expect(isIdentitySet).toBe(true);
       expect(result).toBe(true);
       expect(identityStorage.clear).toBeCalledTimes(1);
-      expect(pushMessage).toBeCalledTimes(2);
+      expect(pushMessage).toBeCalledTimes(3);
     });
 
     test("should not delete all identities if there is no any identity", async () => {

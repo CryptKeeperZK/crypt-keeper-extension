@@ -16,7 +16,12 @@ export interface InfoProps {
   refreshConnectionStatus: () => Promise<boolean>;
 }
 
-export const Info = ({ address, balance, chain, refreshConnectionStatus }: InfoProps): JSX.Element => {
+export const Info = ({
+  address = "",
+  balance = undefined,
+  chain = undefined,
+  refreshConnectionStatus,
+}: InfoProps): JSX.Element => {
   const [isConnected, setIsConnected] = useState(false);
   const [isModalShow, setIsModalShow] = useState(false);
 
@@ -70,10 +75,4 @@ export const Info = ({ address, balance, chain, refreshConnectionStatus }: InfoP
       </div>
     </>
   );
-};
-
-Info.defaultProps = {
-  address: undefined,
-  balance: undefined,
-  chain: undefined,
 };

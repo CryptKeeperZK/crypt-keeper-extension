@@ -35,8 +35,9 @@ describe("background/services/lock", () => {
 
     (CryptoJS.AES.decrypt as jest.Mock).mockReturnValue({ toString: () => passwordChecker });
 
+    (browser.tabs.sendMessage as jest.Mock).mockClear();
     (pushMessage as jest.Mock).mockReset();
-    (browser.tabs.sendMessage as jest.Mock).mockReset();
+    (browser.tabs.sendMessage as jest.Mock).mockRejectedValueOnce(false).mockResolvedValue(true);
 
     (SimpleStorage as jest.Mock).mock.instances.forEach((instance: { get: jest.Mock }) => {
       instance.get.mockReturnValue(defaultPassword);

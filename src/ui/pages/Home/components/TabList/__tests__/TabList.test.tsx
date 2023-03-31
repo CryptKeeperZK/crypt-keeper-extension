@@ -38,7 +38,7 @@ describe("ui/pages/Home/components/TabList", () => {
   });
 
   test("should render properly", async () => {
-    render(<TabList {...defaultProps} />);
+    render(<TabList {...defaultProps} identities={[]} />);
 
     const component = await screen.findByTestId("tab-list");
 

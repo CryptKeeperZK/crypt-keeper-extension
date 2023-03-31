@@ -8,10 +8,6 @@ export interface FullModalContentProps {
   children: ReactNode;
 }
 
-export const FullModalContent = ({ className, children }: FullModalContentProps): JSX.Element => (
+export const FullModalContent = ({ className = "", children }: FullModalContentProps): JSX.Element => (
   <div className={classNames("full-modal__content", className)}>{children}</div>
 );
-
-FullModalContent.defaultProps = {
-  className: "",
-};

@@ -155,7 +155,9 @@ export default class LockService {
 
     const tabs = await browser.tabs.query({ active: true });
 
-    await Promise.all(tabs.map((tab) => browser.tabs.sendMessage(tab.id as number, setStatus(status))));
+    await Promise.all(
+      tabs.map((tab) => browser.tabs.sendMessage(tab.id as number, setStatus(status)).catch(() => undefined)),
+    );
 
     return status;
   };

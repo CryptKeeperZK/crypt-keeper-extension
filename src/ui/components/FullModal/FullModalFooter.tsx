@@ -8,10 +8,6 @@ export interface FullModalFooterProps {
   children: ReactNode;
 }
 
-export const FullModalFooter = ({ className, children }: FullModalFooterProps): JSX.Element => (
+export const FullModalFooter = ({ className = "", children }: FullModalFooterProps): JSX.Element => (
   <div className={classNames("full-modal__footer", className)}>{children}</div>
 );
-
-FullModalFooter.defaultProps = {
-  className: "",
-};

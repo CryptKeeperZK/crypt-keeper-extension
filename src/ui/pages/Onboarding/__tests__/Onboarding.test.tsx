@@ -2,75 +2,98 @@
  * @jest-environment jsdom
  */
 
-import { render, screen, fireEvent, act } from "@testing-library/react";
+import { render, screen, fireEvent, act, waitFor } from "@testing-library/react";
 
-import { Onboarding } from "..";
-import { IUseOnboardingData, useOnboarding } from "../useOnboarding";
+import { setupPassword } from "@src/ui/ducks/app";
+import { useAppDispatch } from "@src/ui/ducks/hooks";
 
-jest.mock("../useOnboarding", (): unknown => ({
-  useOnboarding: jest.fn(),
+import Onboarding from "..";
+
+jest.mock("@src/ui/ducks/app", (): unknown => ({
+  setupPassword: jest.fn(),
+}));
+
+jest.mock("@src/ui/ducks/hooks", (): unknown => ({
+  useAppDispatch: jest.fn(),
 }));
 
 describe("ui/pages/Onboarding", () => {
-  const defaultHookData: IUseOnboardingData = {
-    isValid: false,
-    password: "",
-    confirmPassword: "",
-    error: "",
-    isLoading: false,
-    onChangePassword: jest.fn(),
-    onChangeConfirmPassword: jest.fn(),
-    onSubmit: jest.fn((event) => event.preventDefault()),
-  };
+  const mockDispatch = jest.fn(() => Promise.resolve());
 
   beforeEach(() => {
-    (useOnboarding as jest.Mock).mockReturnValue(defaultHookData);
+    (useAppDispatch as jest.Mock).mockReturnValue(mockDispatch);
+
+    (setupPassword as jest.Mock).mockResolvedValue({});
+  });
+
+  afterEach(() => {
+    jest.clearAllMocks();
   });
 
   test("should render properly", async () => {
-    render(<Onboarding />);
+    const { container } = render(<Onboarding />);
+
+    await waitFor(() => container.firstChild !== null);
 
     const form = await screen.findByTestId("onboarding-form");
 
     expect(form).toBeInTheDocument();
   });
 
-  test("should render properly with error", async () => {
-    (useOnboarding as jest.Mock).mockReturnValue({ ...defaultHookData, error: "Error" });
-    render(<Onboarding />);
+  test("should handle error properly", async () => {
+    const err = new Error("Error");
+    (mockDispatch as jest.Mock).mockRejectedValue(err);
+    const { container } = render(<Onboarding />);
 
-    const error = await screen.findByText("Error");
+    await waitFor(() => container.firstChild !== null);
 
+    const passwordInput = await screen.findByLabelText("Password");
+    await act(async () => Promise.resolve(fireEvent.change(passwordInput, { target: { value: "password" } })));
+
+    const confirmPasswordInput = await screen.findByLabelText("Confirm Password");
+    await act(async () => Promise.resolve(fireEvent.change(confirmPasswordInput, { target: { value: "password" } })));
+
+    const button = await screen.findByTestId("submit-button");
+    await act(async () => Promise.resolve(fireEvent.submit(button)));
+
+    const error = await screen.findByText(err.message);
     expect(error).toBeInTheDocument();
   });
 
-  test("should input password properly", async () => {
-    render(<Onboarding />);
+  test("should render unmatch passwords error properly", async () => {
+    const { container } = render(<Onboarding />);
+
+    await waitFor(() => container.firstChild !== null);
 
     const passwordInput = await screen.findByLabelText("Password");
-    act(() => fireEvent.change(passwordInput, { target: { value: "password" } }));
+    await act(async () => Promise.resolve(fireEvent.change(passwordInput, { target: { value: "password1" } })));
 
     const confirmPasswordInput = await screen.findByLabelText("Confirm Password");
-    act(() => fireEvent.change(confirmPasswordInput, { target: { value: "password" } }));
+    await act(async () => Promise.resolve(fireEvent.change(confirmPasswordInput, { target: { value: "password2" } })));
 
-    expect(passwordInput).toBeInTheDocument();
-    expect(confirmPasswordInput).toBeInTheDocument();
-    expect(defaultHookData.onChangePassword).toBeCalledTimes(1);
-    expect(defaultHookData.onChangeConfirmPassword).toBeCalledTimes(1);
+    const button = await screen.findByTestId("submit-button");
+    await act(async () => Promise.resolve(fireEvent.submit(button)));
+
+    const error = await screen.findByText("Passwords must match");
+    expect(error).toBeInTheDocument();
   });
 
   test("should submit form properly", async () => {
-    (useOnboarding as jest.Mock).mockReturnValue({
-      ...defaultHookData,
-      isValid: true,
-      password: "password",
-      confirmPassword: "password",
-    });
-    render(<Onboarding />);
+    const { container } = render(<Onboarding />);
+
+    await waitFor(() => container.firstChild !== null);
+
+    const passwordInput = await screen.findByLabelText("Password");
+    await act(async () => Promise.resolve(fireEvent.change(passwordInput, { target: { value: "password" } })));
+
+    const confirmPasswordInput = await screen.findByLabelText("Confirm Password");
+    await act(async () => Promise.resolve(fireEvent.change(confirmPasswordInput, { target: { value: "password" } })));
 
     const button = await screen.findByTestId("submit-button");
-    act(() => button.click());
+    await act(async () => Promise.resolve(fireEvent.submit(button)));
 
-    expect(defaultHookData.onSubmit).toBeCalledTimes(1);
+    expect(mockDispatch).toBeCalledTimes(1);
+    expect(setupPassword).toBeCalledTimes(1);
+    expect(setupPassword).toBeCalledWith("password");
   });
 });

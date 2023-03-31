@@ -1,68 +1,53 @@
-import { ChangeEvent, FormEvent, useCallback, useState } from "react";
+import { BaseSyntheticEvent, useCallback } from "react";
+import { useForm, UseFormRegister } from "react-hook-form";
 
 import { setupPassword } from "@src/ui/ducks/app";
 import { useAppDispatch } from "@src/ui/ducks/hooks";
 
 export interface IUseOnboardingData {
-  isValid: boolean;
+  isLoading: boolean;
+  errors: Partial<FormFields & { root: string }>;
+  register: UseFormRegister<FormFields>;
+  onSubmit: (event?: BaseSyntheticEvent) => Promise<void>;
+}
+
+interface FormFields {
   password: string;
   confirmPassword: string;
-  error: string;
-  isLoading: boolean;
-  onChangePassword: (event: ChangeEvent<HTMLInputElement>) => void;
-  onChangeConfirmPassword: (event: ChangeEvent<HTMLInputElement>) => void;
-  onSubmit: (event: FormEvent<HTMLFormElement>) => void;
 }
 
 export const useOnboarding = (): IUseOnboardingData => {
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [error, setError] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
+  const {
+    formState: { isLoading, isSubmitting, errors },
+    setError,
+    register,
+    handleSubmit,
+  } = useForm<FormFields>({
+    defaultValues: {
+      password: "",
+      confirmPassword: "",
+    },
+  });
+
   const dispatch = useAppDispatch();
 
-  const isValid = !!password && password === confirmPassword;
-
-  const onChangePassword = useCallback(
-    (event: ChangeEvent<HTMLInputElement>) => {
-      setPassword(event.target.value);
-    },
-    [setPassword],
-  );
-
-  const onChangeConfirmPassword = useCallback(
-    (event: ChangeEvent<HTMLInputElement>) => {
-      setConfirmPassword(event.target.value);
-    },
-    [setConfirmPassword],
-  );
-
   const onSubmit = useCallback(
-    (event: FormEvent<HTMLFormElement>) => {
-      event.preventDefault();
-
-      if (!isValid) {
-        setError("Invalid password");
-        return;
-      }
-
-      setIsLoading(true);
-
-      dispatch(setupPassword(password))
-        .catch((err: Error) => setError(err.message))
-        .finally(() => setIsLoading(false));
+    (data: FormFields) => {
+      dispatch(setupPassword(data.password)).catch((err: Error) =>
+        setError("root", { type: "submit", message: err.message }),
+      );
     },
-    [isValid, password, dispatch, setError, setIsLoading],
+    [dispatch, setError],
   );
 
   return {
-    isValid,
-    password,
-    confirmPassword,
-    error,
-    isLoading,
-    onChangePassword,
-    onChangeConfirmPassword,
-    onSubmit,
+    isLoading: isLoading || isSubmitting,
+    errors: {
+      password: errors.password?.message,
+      confirmPassword: errors.confirmPassword?.message,
+      root: errors.root?.message,
+    },
+    register,
+    onSubmit: handleSubmit(onSubmit),
   };
 };
