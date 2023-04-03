@@ -2,6 +2,8 @@
  * @jest-environment jsdom
  */
 
+import { library } from "@fortawesome/fontawesome-svg-core";
+import { faTwitter } from "@fortawesome/free-brands-svg-icons";
 import { act, render, screen, fireEvent } from "@testing-library/react";
 
 import { ZERO_ADDRESS } from "@src/config/const";
@@ -28,6 +30,8 @@ describe("ui/pages/Home/components/IdentityList/Item", () => {
   });
 
   test("should render properly", async () => {
+    library.add(faTwitter);
+
     render(<IdentityItem {...defaultProps} />);
 
     const name = await screen.findByText(defaultProps.metadata.name);
