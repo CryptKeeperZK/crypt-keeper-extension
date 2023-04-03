@@ -4,9 +4,9 @@
 
 import { act, renderHook, waitFor } from "@testing-library/react";
 
-import { RPCAction } from "@src/constants";
 import { PendingRequestType } from "@src/types";
-import postMessage from "@src/util/postMessage";
+import { useAppDispatch } from "@src/ui/ducks/hooks";
+import { fetchHostPermissions, setHostPermissions, useHostPermission } from "@src/ui/ducks/permissions";
 
 import type { ChangeEvent } from "react";
 
@@ -16,7 +16,19 @@ import {
   useConnectionApprovalModal,
 } from "../useConnectionApprovalModal";
 
+jest.mock("@src/ui/ducks/hooks", (): unknown => ({
+  useAppDispatch: jest.fn(),
+}));
+
+jest.mock("@src/ui/ducks/permissions", (): unknown => ({
+  fetchHostPermissions: jest.fn(),
+  setHostPermissions: jest.fn(),
+  useHostPermission: jest.fn(),
+}));
+
 describe("ui/components/ConfirmRequestModal/components/ConnectionApprovalModal/useConnectionApprovalModal", () => {
+  const mockDispatch = jest.fn(() => Promise.resolve());
+
   const defaultArgs: IUseConnectionApprovalModalArgs = {
     pendingRequest: {
       id: "1",
@@ -27,7 +39,7 @@ describe("ui/components/ConfirmRequestModal/components/ConnectionApprovalModal/u
     reject: jest.fn(),
   };
 
-  const defaultPostMessageResponse = { noApproval: true };
+  const defaultPermission = { noApproval: true };
 
   const waitForData = async (current: IUseConnectionApprovalModalData) => {
     await waitFor(() => current.checked === true);
@@ -36,7 +48,9 @@ describe("ui/components/ConfirmRequestModal/components/ConnectionApprovalModal/u
   };
 
   beforeEach(() => {
-    (postMessage as jest.Mock).mockResolvedValue(defaultPostMessageResponse);
+    (useAppDispatch as jest.Mock).mockReturnValue(mockDispatch);
+
+    (useHostPermission as jest.Mock).mockReturnValue(defaultPermission);
   });
 
   afterEach(() => {
@@ -48,7 +62,7 @@ describe("ui/components/ConfirmRequestModal/components/ConnectionApprovalModal/u
       useConnectionApprovalModal({ ...defaultArgs, pendingRequest: { id: "1", type: PendingRequestType.APPROVE } }),
     );
 
-    expect(result.current.checked).toBe(false);
+    expect(result.current.checked).toBe(true);
     expect(result.current.faviconUrl).toBe("");
     expect(result.current.host).toBe("");
   });
@@ -81,24 +95,16 @@ describe("ui/components/ConfirmRequestModal/components/ConnectionApprovalModal/u
   });
 
   test("should set approval properly", async () => {
-    (postMessage as jest.Mock).mockResolvedValue({ ...defaultPostMessageResponse, noApproval: false });
+    (mockDispatch as jest.Mock).mockResolvedValue({ ...defaultPermission, noApproval: false });
     const { result } = renderHook(() => useConnectionApprovalModal(defaultArgs));
     await waitForData(result.current);
 
     act(() => result.current.onSetApproval({ target: { checked: false } } as ChangeEvent<HTMLInputElement>));
     await waitFor(() => result.current.checked === false);
 
-    expect(postMessage).toBeCalledTimes(2);
-    expect(postMessage).toHaveBeenNthCalledWith(1, {
-      method: RPCAction.GET_HOST_PERMISSIONS,
-      payload: defaultArgs.pendingRequest.payload?.origin,
-    });
-    expect(postMessage).toHaveBeenNthCalledWith(2, {
-      method: RPCAction.SET_HOST_PERMISSIONS,
-      payload: {
-        host: defaultArgs.pendingRequest.payload?.origin,
-        noApproval: false,
-      },
-    });
+    expect(fetchHostPermissions).toBeCalledTimes(1);
+    expect(fetchHostPermissions).toBeCalledWith(defaultArgs.pendingRequest.payload?.origin);
+    expect(setHostPermissions).toBeCalledTimes(1);
+    expect(setHostPermissions).toBeCalledWith({ host: defaultArgs.pendingRequest.payload?.origin, noApproval: false });
   });
 });

@@ -8,8 +8,8 @@ import { useWeb3React } from "@web3-react/core";
 import { defaultWalletHookData } from "@src/config/mock/wallet";
 import { ConnectorNames, metamask } from "@src/connectors";
 import { mockConnector } from "@src/connectors/mock";
-import { RPCAction } from "@src/constants";
-import postMessage from "@src/util/postMessage";
+import { getWalletConnection, lock, setWalletConnection, useAppStatus } from "@src/ui/ducks/app";
+import { useAppDispatch } from "@src/ui/ducks/hooks";
 
 import { useWallet } from "..";
 
@@ -18,7 +18,19 @@ jest.mock("@web3-react/core", (): unknown => ({
   useWeb3React: jest.fn(),
 }));
 
+jest.mock("@src/ui/ducks/app", (): unknown => ({
+  useAppStatus: jest.fn(),
+  getWalletConnection: jest.fn(),
+  setWalletConnection: jest.fn(),
+  lock: jest.fn(),
+}));
+
+jest.mock("@src/ui/ducks/hooks", (): unknown => ({
+  useAppDispatch: jest.fn(),
+}));
+
 describe("ui/hooks/wallet", () => {
+  const mockDispatch = jest.fn(() => Promise.resolve());
   const defaultHooks = { usePriorityChainId: jest.fn(), usePriorityAccount: jest.fn(), usePriorityProvider: jest.fn() };
 
   beforeEach(() => {
@@ -33,6 +45,10 @@ describe("ui/hooks/wallet", () => {
       isActivating: false,
       hooks: defaultHooks,
     });
+
+    (useAppStatus as jest.Mock).mockReturnValue({ isDisconnectedPermanently: false });
+
+    (useAppDispatch as jest.Mock).mockReturnValue(mockDispatch);
 
     defaultHooks.usePriorityChainId.mockReturnValue(1);
 
@@ -102,23 +118,19 @@ describe("ui/hooks/wallet", () => {
     await act(async () => result.current.onConnect());
 
     expect(activateSpy).toBeCalledTimes(1);
-    expect(postMessage).toBeCalledTimes(1);
-    expect(postMessage).toBeCalledWith({
-      method: RPCAction.SET_CONNECT_WALLET,
-      payload: { isDisconnectedPermanently: false },
-    });
+    expect(setWalletConnection).toBeCalledTimes(1);
+    expect(setWalletConnection).toBeCalledWith(false);
   });
 
   test("should connect eagerly properly", async () => {
+    (useAppStatus as jest.Mock).mockReturnValue({ isDisconnectedPermanently: false });
     const connectEagerlySpy = jest.spyOn(mockConnector, "connectEagerly");
-    (postMessage as jest.Mock).mockReturnValue({ isDisconnectedPermanently: false });
     const { result } = renderHook(() => useWallet());
 
     await act(async () => result.current.onConnectEagerly());
 
     expect(connectEagerlySpy).toBeCalledTimes(1);
-    expect(postMessage).toBeCalledTimes(1);
-    expect(postMessage).toBeCalledWith({ method: RPCAction.GET_CONNECT_WALLET });
+    expect(getWalletConnection).toBeCalledTimes(1);
   });
 
   test("should disconnect properly", async () => {
@@ -128,21 +140,15 @@ describe("ui/hooks/wallet", () => {
     await act(async () => result.current.onDisconnect());
 
     expect(resetStateSpy).toBeCalledTimes(1);
-    expect(postMessage).toBeCalledTimes(1);
-    expect(postMessage).toBeCalledWith({
-      method: RPCAction.SET_CONNECT_WALLET,
-      payload: { isDisconnectedPermanently: true },
-    });
+    expect(setWalletConnection).toBeCalledTimes(1);
+    expect(setWalletConnection).toBeCalledWith(true);
   });
 
   test("should lock properly", async () => {
     const { result } = renderHook(() => useWallet());
 
-    await act(async () => result.current.onLock());
+    await act(async () => Promise.resolve(result.current.onLock()));
 
-    expect(postMessage).toBeCalledTimes(1);
-    expect(postMessage).toBeCalledWith({
-      method: RPCAction.LOCK,
-    });
+    expect(lock).toBeCalledTimes(1);
   });
 });

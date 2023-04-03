@@ -4,26 +4,32 @@
 
 import { act, renderHook, waitFor } from "@testing-library/react";
 
-import { RPCAction } from "@src/constants";
 import { RequestResolutionStatus } from "@src/types";
-import { usePendingRequests } from "@src/ui/ducks/requests";
-import postMessage from "@src/util/postMessage";
+import { useAppDispatch } from "@src/ui/ducks/hooks";
+import { finalizeRequest, usePendingRequests } from "@src/ui/ducks/requests";
 
 import { IUseConfirmRequestModalData, useConfirmRequestModal } from "../useConfirmRequestModal";
 
 jest.mock("@src/ui/ducks/requests", (): unknown => ({
+  finalizeRequest: jest.fn(),
   usePendingRequests: jest.fn(),
 }));
 
+jest.mock("@src/ui/ducks/hooks", (): unknown => ({
+  useAppDispatch: jest.fn(),
+}));
+
 describe("ui/components/ConfirmRequestModal/useConfirmRequestModal", () => {
+  const mockDispatch = jest.fn(() => Promise.resolve());
+
   const waitForData = async (current: IUseConfirmRequestModalData) => {
     await waitFor(() => current.loading !== true);
   };
 
   beforeEach(() => {
-    (postMessage as jest.Mock).mockResolvedValue({});
+    (usePendingRequests as jest.Mock).mockReturnValue([{ id: "1" }]);
 
-    (usePendingRequests as jest.Mock).mockReturnValue([]);
+    (useAppDispatch as jest.Mock).mockReturnValue(mockDispatch);
   });
 
   afterEach(() => {
@@ -36,7 +42,7 @@ describe("ui/components/ConfirmRequestModal/useConfirmRequestModal", () => {
 
     expect(result.current.error).toBe("");
     expect(result.current.loading).toBe(false);
-    expect(result.current.pendingRequests).toHaveLength(0);
+    expect(result.current.pendingRequests).toHaveLength(1);
   });
 
   test("should accept properly", async () => {
@@ -45,20 +51,17 @@ describe("ui/components/ConfirmRequestModal/useConfirmRequestModal", () => {
 
     await act(async () => Promise.resolve(result.current.accept()));
 
-    expect(postMessage).toBeCalledTimes(1);
-    expect(postMessage).toBeCalledWith({
-      method: RPCAction.FINALIZE_REQUEST,
-      payload: {
-        id: undefined,
-        status: RequestResolutionStatus.ACCEPT,
-        data: undefined,
-      },
+    expect(finalizeRequest).toBeCalledTimes(1);
+    expect(finalizeRequest).toBeCalledWith({
+      id: "1",
+      status: RequestResolutionStatus.ACCEPT,
+      data: undefined,
     });
   });
 
   test("should handle accept error", async () => {
     const error = new Error("error");
-    (postMessage as jest.Mock).mockRejectedValue(error);
+    (mockDispatch as jest.Mock).mockRejectedValue(error);
     const { result } = renderHook(() => useConfirmRequestModal());
     await waitForData(result.current);
 
@@ -73,20 +76,17 @@ describe("ui/components/ConfirmRequestModal/useConfirmRequestModal", () => {
 
     await act(async () => Promise.resolve(result.current.reject()));
 
-    expect(postMessage).toBeCalledTimes(1);
-    expect(postMessage).toBeCalledWith({
-      method: RPCAction.FINALIZE_REQUEST,
-      payload: {
-        id: undefined,
-        status: "reject",
-        data: undefined,
-      },
+    expect(finalizeRequest).toBeCalledTimes(1);
+    expect(finalizeRequest).toBeCalledWith({
+      id: "1",
+      status: "reject",
+      data: undefined,
     });
   });
 
   test("should handle reject error", async () => {
     const error = new Error("error");
-    (postMessage as jest.Mock).mockRejectedValue(error);
+    (mockDispatch as jest.Mock).mockRejectedValue(error);
     const { result } = renderHook(() => useConfirmRequestModal());
     await waitForData(result.current);
 

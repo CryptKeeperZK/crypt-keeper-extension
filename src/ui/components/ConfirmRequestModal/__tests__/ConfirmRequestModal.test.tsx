@@ -9,13 +9,25 @@ import { createModalRoot, deleteModalRoot } from "@src/config/mock/modal";
 import { PendingRequestType } from "@src/types";
 
 import ConfirmRequestModal from "..";
+import {
+  IUseConnectionApprovalModalData,
+  useConnectionApprovalModal,
+} from "../components/ConnectionApprovalModal/useConnectionApprovalModal";
 import { IUseConfirmRequestModalData, useConfirmRequestModal } from "../useConfirmRequestModal";
+
+jest.mock("@src/ui/ducks/hooks", (): unknown => ({
+  useAppDispatch: jest.fn(),
+}));
 
 jest.mock("../useConfirmRequestModal", (): unknown => ({
   useConfirmRequestModal: jest.fn(),
 }));
 
-describe("ui/components/ConnectionModal/ConnectionModal", () => {
+jest.mock("../components/ConnectionApprovalModal/useConnectionApprovalModal", (): unknown => ({
+  useConnectionApprovalModal: jest.fn(),
+}));
+
+describe("ui/components/ConfirmRequestModal", () => {
   const defaultHookData: IUseConfirmRequestModalData = {
     error: "",
     loading: false,
@@ -24,8 +36,19 @@ describe("ui/components/ConnectionModal/ConnectionModal", () => {
     reject: jest.fn(),
   };
 
+  const defaultConnectionModalHookData: IUseConnectionApprovalModalData = {
+    host: "http://localhost:3000",
+    checked: false,
+    faviconUrl: "http://localhost:3000/favicon.ico",
+    onAccept: jest.fn(),
+    onReject: jest.fn(),
+    onSetApproval: jest.fn(),
+  };
+
   beforeEach(() => {
     (useConfirmRequestModal as jest.Mock).mockReturnValue(defaultHookData);
+
+    (useConnectionApprovalModal as jest.Mock).mockReturnValue(defaultConnectionModalHookData);
 
     createModalRoot();
   });

@@ -1,9 +1,9 @@
 import { getLinkPreview } from "link-preview-js";
 import { ChangeEvent, useCallback, useEffect, useState } from "react";
 
-import { RPCAction } from "@src/constants";
 import { PendingRequest } from "@src/types";
-import postMessage from "@src/util/postMessage";
+import { useAppDispatch } from "@src/ui/ducks/hooks";
+import { fetchHostPermissions, setHostPermissions, useHostPermission } from "@src/ui/ducks/permissions";
 
 export interface IUseConnectionApprovalModalArgs {
   pendingRequest: PendingRequest<{ origin: string }>;
@@ -25,10 +25,12 @@ export const useConnectionApprovalModal = ({
   accept,
   reject,
 }: IUseConnectionApprovalModalArgs): IUseConnectionApprovalModalData => {
-  const [checked, setChecked] = useState(false);
   const [faviconUrl, setFaviconUrl] = useState("");
   const { payload } = pendingRequest;
   const host = payload?.origin ?? "";
+
+  const dispatch = useAppDispatch();
+  const permission = useHostPermission(host);
 
   const onAccept = useCallback(() => {
     accept();
@@ -40,15 +42,9 @@ export const useConnectionApprovalModal = ({
 
   const onSetApproval = useCallback(
     (event: ChangeEvent<HTMLInputElement>) => {
-      postMessage<{ noApproval: boolean }>({
-        method: RPCAction.SET_HOST_PERMISSIONS,
-        payload: {
-          host,
-          noApproval: event.target.checked,
-        },
-      }).then((res) => setChecked(res.noApproval));
+      dispatch(setHostPermissions({ host, noApproval: event.target.checked }));
     },
-    [host, setChecked],
+    [host, dispatch],
   );
 
   useEffect(() => {
@@ -61,15 +57,12 @@ export const useConnectionApprovalModal = ({
       setFaviconUrl(favicon);
     });
 
-    postMessage<{ noApproval: boolean }>({
-      method: RPCAction.GET_HOST_PERMISSIONS,
-      payload: host,
-    }).then((res) => setChecked(res.noApproval));
-  }, [host, setChecked, setFaviconUrl]);
+    dispatch(fetchHostPermissions(host));
+  }, [host, setFaviconUrl]);
 
   return {
     host,
-    checked,
+    checked: Boolean(permission?.noApproval),
     faviconUrl,
     onAccept,
     onReject,
