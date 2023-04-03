@@ -53,8 +53,8 @@ const Onboarding = (): JSX.Element => {
                 <Tooltip
                   key={2}
                   className="eye-slash-tooltip"
-                  title="Hide Password"
                   data-testid="eye-slash-button"
+                  title="Hide Password"
                   onClick={onEyeSlash}
                 >
                   <Icon className="eye-slash-icon" fontAwesome="fa-eye-slash" />
@@ -105,8 +105,8 @@ const Onboarding = (): JSX.Element => {
                 <Tooltip
                   key={2}
                   className="eye-tooltip"
-                  title="Show Password"
                   data-testid="eye-look-button"
+                  title="Show Password"
                   onClick={onEyeLook}
                 >
                   <Icon className="eye-icon" fontAwesome="fa-eye" />
