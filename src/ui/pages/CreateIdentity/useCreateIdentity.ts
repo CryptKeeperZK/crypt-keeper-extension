@@ -1,6 +1,7 @@
 import { BaseSyntheticEvent, useCallback } from "react";
 import { Control, useForm, UseFormRegister } from "react-hook-form";
 
+import { getEnabledFeatures } from "@src/config/features";
 import { WEB2_PROVIDER_OPTIONS, IDENTITY_TYPES } from "@src/constants";
 import { IdentityStrategy, IdentityWeb2Provider, SelectOption } from "@src/types";
 import { closePopup } from "@src/ui/ducks/app";
@@ -31,6 +32,7 @@ interface FormFields {
 }
 
 export const useCreateIdentity = (): IUseCreateIdentityData => {
+  const features = getEnabledFeatures();
   const {
     formState: { isSubmitting, isLoading, errors },
     control,
@@ -84,7 +86,7 @@ export const useCreateIdentity = (): IUseCreateIdentityData => {
 
   return {
     isLoading: isLoading || isSubmitting,
-    isProviderAvailable: values.identityStrategyType.value === "interrep",
+    isProviderAvailable: values.identityStrategyType.value === "interrep" || !features.RANDOM_IDENTITY,
     errors: {
       web2Provider: errors.web2Provider?.message,
       identityStrategyType: errors.identityStrategyType?.message,

@@ -4,6 +4,7 @@ import { bigintToHex } from "bigint-conversion";
 import { browser } from "webextension-polyfill-ts";
 
 import ZkIdentityDecorater from "@src/background/identityDecorater";
+import { getEnabledFeatures } from "@src/config/features";
 import { setSelectedCommitment } from "@src/ui/ducks/identities";
 import { ellipsify } from "@src/util/account";
 import pushMessage from "@src/util/pushMessage";
@@ -27,7 +28,9 @@ describe("background/services/identity", () => {
   const defaultTabs = [{ id: 1 }, { id: 2 }];
   const defaultIdentityCommitment =
     bigintToHex(15206603389158210388485662342360617949291660595274505642693885456541816400294n);
-  const defaultIdentities = [[defaultIdentityCommitment, JSON.stringify({ secret: "1234", metadata: {} })]];
+  const defaultIdentities = [
+    [defaultIdentityCommitment, JSON.stringify({ secret: "1234", metadata: { identityStrategy: "random" } })],
+  ];
   const serializedDefaultIdentities = JSON.stringify(defaultIdentities);
   const mockNotificationService = {
     create: jest.fn(),
@@ -49,6 +52,8 @@ describe("background/services/identity", () => {
     (browser.tabs.sendMessage as jest.Mock).mockRejectedValueOnce(false).mockResolvedValue(true);
 
     (NotificationService.getInstance as jest.Mock).mockReturnValue(mockNotificationService);
+
+    (getEnabledFeatures as jest.Mock).mockReturnValue({ RANDOM_IDENTITY: true });
   });
 
   afterEach(() => {
@@ -274,6 +279,19 @@ describe("background/services/identity", () => {
       const identities = await service.getIdentities();
 
       expect(identities).toHaveLength(defaultIdentities.length);
+    });
+
+    test("should get identities properly with disabled random identities", async () => {
+      (getEnabledFeatures as jest.Mock).mockReturnValue({ RANDOM_IDENTITY: false });
+
+      const service = new IdentityService();
+
+      const [identityStorage] = (SimpleStorage as jest.Mock).mock.instances as [MockStorage];
+      identityStorage.get.mockReturnValue(serializedDefaultIdentities);
+
+      const identities = await service.getIdentities();
+
+      expect(identities).toHaveLength(0);
     });
 
     test("should get number of identities properly", async () => {

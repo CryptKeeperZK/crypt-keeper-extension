@@ -1,5 +1,6 @@
 import { Controller } from "react-hook-form";
 
+import { getEnabledFeatures } from "@src/config/features";
 import { IDENTITY_TYPES, WEB2_PROVIDER_OPTIONS } from "@src/constants";
 import { Button } from "@src/ui/components/Button";
 import { Dropdown } from "@src/ui/components/Dropdown";
@@ -10,6 +11,7 @@ import "./createIdentityStyles.scss";
 import { useCreateIdentity } from "./useCreateIdentity";
 
 const CreateIdentity = (): JSX.Element => {
+  const features = getEnabledFeatures();
   const { isLoading, isProviderAvailable, errors, control, closeModal, onSubmit } = useCreateIdentity();
 
   return (
@@ -18,22 +20,24 @@ const CreateIdentity = (): JSX.Element => {
         <FullModalHeader onClose={closeModal}>Create Identity</FullModalHeader>
 
         <FullModalContent>
-          <Controller
-            control={control}
-            defaultValue={IDENTITY_TYPES[0]}
-            name="identityStrategyType"
-            render={({ field }) => (
-              <Dropdown
-                {...field}
-                className="my-2"
-                errorMessage={errors.identityStrategyType}
-                id="identityStrategyType"
-                label="Identity type"
-                options={IDENTITY_TYPES}
-              />
-            )}
-            rules={{ required: "Identity strategy type is required" }}
-          />
+          {features.RANDOM_IDENTITY && (
+            <Controller
+              control={control}
+              defaultValue={IDENTITY_TYPES[0]}
+              name="identityStrategyType"
+              render={({ field }) => (
+                <Dropdown
+                  {...field}
+                  className="my-2"
+                  errorMessage={errors.identityStrategyType}
+                  id="identityStrategyType"
+                  label="Identity type"
+                  options={IDENTITY_TYPES}
+                />
+              )}
+              rules={{ required: "Identity strategy type is required" }}
+            />
+          )}
 
           {isProviderAvailable && (
             <>

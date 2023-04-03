@@ -1,7 +1,11 @@
+import { library } from "@fortawesome/fontawesome-svg-core";
+import { faTwitter, faGithub, faReddit } from "@fortawesome/free-brands-svg-icons";
 import "@testing-library/jest-dom";
 import "isomorphic-fetch";
 
 import type { ReactElement } from "react";
+
+library.add(faTwitter, faGithub, faReddit);
 
 jest.mock("loglevel", () => ({
   info: jest.fn(),
@@ -25,6 +29,11 @@ jest.mock("link-preview-js", (): unknown => ({
 jest.mock("@src/util/postMessage");
 
 jest.mock("@src/util/pushMessage");
+
+jest.mock("@src/config/features", (): unknown => ({
+  ...jest.requireActual("@src/config/features"),
+  getEnabledFeatures: jest.fn().mockReturnValue({ RANDOM_IDENTITY: true }),
+}));
 
 type Changes = Record<string, { oldValue: string | null; newValue: string | null }>;
 
