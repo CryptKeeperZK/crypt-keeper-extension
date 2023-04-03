@@ -2,14 +2,13 @@
  * @jest-environment jsdom
  */
 
+import { library } from "@fortawesome/fontawesome-svg-core";
+import { faTwitter } from "@fortawesome/free-brands-svg-icons";
 import { act, render, screen, fireEvent } from "@testing-library/react";
 
 import { ZERO_ADDRESS } from "@src/config/const";
 
 import { IdentityItem, IdentityItemProps } from "../Item";
-
-import { library } from "@fortawesome/fontawesome-svg-core";
-import { faTwitter } from "@fortawesome/free-brands-svg-icons";
 
 describe("ui/pages/Home/components/IdentityList/Item", () => {
   const defaultProps: IdentityItemProps = {
