@@ -1,5 +1,4 @@
-import { IconDefinition } from "@fortawesome/fontawesome-common-types";
-import { faGithub, faReddit, faTwitter } from "@fortawesome/free-brands-svg-icons";
+import { IconName, IconPrefix } from "@fortawesome/fontawesome-common-types";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import classNames from "classnames";
 import { ChangeEvent, FormEvent, MouseEvent as ReactMouseEvent, useCallback, useState } from "react";
@@ -12,12 +11,12 @@ import { ellipsify } from "@src/util/account";
 
 import "./identityListItemStyles.scss";
 
-type IconWeb2Providers = Record<IdentityWeb2Provider, IconDefinition>;
+type IconWeb2Providers = Record<IdentityWeb2Provider, [IconPrefix, IconName]>;
 
 const web2ProvidersIcons: IconWeb2Providers = {
-  twitter: faTwitter,
-  reddit: faReddit,
-  github: faGithub,
+  twitter: ["fab", "twitter"],
+  reddit: ["fab", "reddit"],
+  github: ["fab", "github"],
 };
 
 export interface IdentityItemProps {

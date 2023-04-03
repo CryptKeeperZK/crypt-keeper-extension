@@ -8,6 +8,9 @@ import { ZERO_ADDRESS } from "@src/config/const";
 
 import { IdentityItem, IdentityItemProps } from "../Item";
 
+import { library } from "@fortawesome/fontawesome-svg-core";
+import { faTwitter } from "@fortawesome/free-brands-svg-icons";
+
 describe("ui/pages/Home/components/IdentityList/Item", () => {
   const defaultProps: IdentityItemProps = {
     commitment: "1",
@@ -28,6 +31,8 @@ describe("ui/pages/Home/components/IdentityList/Item", () => {
   });
 
   test("should render properly", async () => {
+    library.add(faTwitter);
+
     render(<IdentityItem {...defaultProps} />);
 
     const name = await screen.findByText(defaultProps.metadata.name);

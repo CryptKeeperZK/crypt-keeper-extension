@@ -1,4 +1,5 @@
-import type { IconDefinition } from "@fortawesome/fontawesome-common-types";
+import { IconProp } from "@fortawesome/fontawesome-svg-core";
+
 import type { MerkleProof } from "@zk-kit/incremental-merkle-tree";
 
 export type HandlerRequest = {
@@ -116,7 +117,7 @@ export interface DeferredPromise<T> {
 export type SelectOption = {
   readonly value: string;
   readonly label: string;
-  readonly icon: IconDefinition | null;
+  readonly icon: IconProp | null;
 };
 
 export interface InjectedMessageData<M = unknown, P = unknown> {
