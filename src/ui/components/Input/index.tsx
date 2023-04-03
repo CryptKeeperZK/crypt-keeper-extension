@@ -5,7 +5,7 @@ import "./input.scss";
 
 export interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   label: string;
-  icon?: ReactElement;
+  icon?: ReactElement[];
   errorMessage?: string;
 }
 

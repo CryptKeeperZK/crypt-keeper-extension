@@ -100,6 +100,33 @@ describe("ui/pages/Onboarding", () => {
     expect(error).toBeInTheDocument();
   });
 
+  test("should be able to show/hide password", async () => {
+    const { container } = render(<Onboarding />);
+
+    await waitFor(() => container.firstChild !== null);
+
+    const hiddenInputs = await screen.findByTestId("hidden-inputs");
+
+    const passwordInput = await screen.findByLabelText("Password");
+    await act(async () => Promise.resolve(fireEvent.change(passwordInput, { target: { value: "12345" } })));
+
+    const confirmPasswordInput = await screen.findByLabelText("Confirm Password");
+    await act(async () => Promise.resolve(fireEvent.change(confirmPasswordInput, { target: { value: "12345" } })));
+
+    expect(hiddenInputs).toBeInTheDocument();
+
+    const eyeLookButton = await screen.findByTestId("eye-look-button");
+    await act(async () => Promise.resolve(fireEvent.click(eyeLookButton)));
+
+    const showenInputs = await screen.findByTestId("showen-inputs");
+    expect(showenInputs).toBeInTheDocument();
+
+    const eyeSlashButton = await screen.findByTestId("eye-slash-button");
+    await act(async () => Promise.resolve(fireEvent.click(eyeSlashButton)));
+
+    expect(hiddenInputs).toBeInTheDocument();
+  });
+
   test("should submit form properly", async () => {
     const { container } = render(<Onboarding />);
 
