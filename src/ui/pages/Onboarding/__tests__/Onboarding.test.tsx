@@ -48,10 +48,12 @@ describe("ui/pages/Onboarding", () => {
     await waitFor(() => container.firstChild !== null);
 
     const passwordInput = await screen.findByLabelText("Password");
-    await act(async () => Promise.resolve(fireEvent.change(passwordInput, { target: { value: "password" } })));
+    await act(async () => Promise.resolve(fireEvent.change(passwordInput, { target: { value: "Password123@" } })));
 
     const confirmPasswordInput = await screen.findByLabelText("Confirm Password");
-    await act(async () => Promise.resolve(fireEvent.change(confirmPasswordInput, { target: { value: "password" } })));
+    await act(async () =>
+      Promise.resolve(fireEvent.change(confirmPasswordInput, { target: { value: "Password123@" } })),
+    );
 
     const button = await screen.findByTestId("submit-button");
     await act(async () => Promise.resolve(fireEvent.submit(button)));
@@ -66,15 +68,35 @@ describe("ui/pages/Onboarding", () => {
     await waitFor(() => container.firstChild !== null);
 
     const passwordInput = await screen.findByLabelText("Password");
-    await act(async () => Promise.resolve(fireEvent.change(passwordInput, { target: { value: "password1" } })));
+    await act(async () => Promise.resolve(fireEvent.change(passwordInput, { target: { value: "Password123@" } })));
 
     const confirmPasswordInput = await screen.findByLabelText("Confirm Password");
-    await act(async () => Promise.resolve(fireEvent.change(confirmPasswordInput, { target: { value: "password2" } })));
+    await act(async () =>
+      Promise.resolve(fireEvent.change(confirmPasswordInput, { target: { value: "Password123@4" } })),
+    );
 
     const button = await screen.findByTestId("submit-button");
     await act(async () => Promise.resolve(fireEvent.submit(button)));
 
     const error = await screen.findByText("Passwords must match");
+    expect(error).toBeInTheDocument();
+  });
+
+  test("should render weak password error properly", async () => {
+    const { container } = render(<Onboarding />);
+
+    await waitFor(() => container.firstChild !== null);
+
+    const passwordInput = await screen.findByLabelText("Password");
+    await act(async () => Promise.resolve(fireEvent.change(passwordInput, { target: { value: "12345" } })));
+
+    const confirmPasswordInput = await screen.findByLabelText("Confirm Password");
+    await act(async () => Promise.resolve(fireEvent.change(confirmPasswordInput, { target: { value: "12345" } })));
+
+    const button = await screen.findByTestId("submit-button");
+    await act(async () => Promise.resolve(fireEvent.submit(button)));
+
+    const error = await screen.findByText("Password isn't strong");
     expect(error).toBeInTheDocument();
   });
 
@@ -84,16 +106,18 @@ describe("ui/pages/Onboarding", () => {
     await waitFor(() => container.firstChild !== null);
 
     const passwordInput = await screen.findByLabelText("Password");
-    await act(async () => Promise.resolve(fireEvent.change(passwordInput, { target: { value: "password" } })));
+    await act(async () => Promise.resolve(fireEvent.change(passwordInput, { target: { value: "Password123@" } })));
 
     const confirmPasswordInput = await screen.findByLabelText("Confirm Password");
-    await act(async () => Promise.resolve(fireEvent.change(confirmPasswordInput, { target: { value: "password" } })));
+    await act(async () =>
+      Promise.resolve(fireEvent.change(confirmPasswordInput, { target: { value: "Password123@" } })),
+    );
 
     const button = await screen.findByTestId("submit-button");
     await act(async () => Promise.resolve(fireEvent.submit(button)));
 
     expect(mockDispatch).toBeCalledTimes(1);
     expect(setupPassword).toBeCalledTimes(1);
-    expect(setupPassword).toBeCalledWith("password");
+    expect(setupPassword).toBeCalledWith("Password123@");
   });
 });

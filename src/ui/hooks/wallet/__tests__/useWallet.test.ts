@@ -134,4 +134,15 @@ describe("ui/hooks/wallet", () => {
       payload: { isDisconnectedPermanently: true },
     });
   });
+
+  test("should lock properly", async () => {
+    const { result } = renderHook(() => useWallet());
+
+    await act(async () => result.current.onLock());
+
+    expect(postMessage).toBeCalledTimes(1);
+    expect(postMessage).toBeCalledWith({
+      method: RPCAction.LOCK,
+    });
+  });
 });

@@ -9,7 +9,7 @@ import { useHome } from "./useHome";
 const Home = (): JSX.Element => {
   const {
     scrollRef,
-    fixedTabs,
+    isFixedTabsMode,
     address,
     chain,
     balance,
@@ -26,7 +26,7 @@ const Home = (): JSX.Element => {
       <div
         ref={scrollRef}
         className={classNames("flex flex-col flex-grow flex-shrink overflow-y-auto home__scroller", {
-          "home__scroller--fixed-menu": fixedTabs,
+          "home__scroller--fixed-menu": isFixedTabsMode,
         })}
         onScroll={onScroll}
       >

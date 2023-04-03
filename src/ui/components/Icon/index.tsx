@@ -1,5 +1,5 @@
 import classNames from "classnames";
-import { MouseEventHandler } from "react";
+import { forwardRef, MouseEventHandler, Ref } from "react";
 
 import "./icon.scss";
 
@@ -12,16 +12,20 @@ export interface IconProps {
   onClick?: MouseEventHandler;
 }
 
-export const Icon = ({
-  url = "",
-  size = 0.75,
-  className = "",
-  disabled = false,
-  fontAwesome = "",
-  onClick = undefined,
-  ...rest
-}: IconProps): JSX.Element => (
+const IconUI = (
+  {
+    url = "",
+    size = 0.75,
+    className = "",
+    disabled = false,
+    fontAwesome = "",
+    onClick = undefined,
+    ...rest
+  }: IconProps,
+  ref: Ref<HTMLDivElement>,
+): JSX.Element => (
   <div
+    ref={ref}
     {...rest}
     className={classNames("icon", className, {
       "icon--disabled": disabled,
@@ -38,3 +42,5 @@ export const Icon = ({
     {fontAwesome && <i className={`fas ${fontAwesome}`} />}
   </div>
 );
+
+export const Icon = forwardRef(IconUI);

@@ -112,8 +112,8 @@
     "@fortawesome/free-brands-svg-icons": "^6.3.0",
     "@fortawesome/react-fontawesome": "^0.2.0",
     "@interep/identity": "^0.3.0",
-    "@reduxjs/toolkit": "^1.9.3",
     "@mui/material": "^5.11.13",
+    "@reduxjs/toolkit": "^1.9.3",
     "@semaphore-protocol/group": "^3.2.3",
     "@semaphore-protocol/identity": "^3.2.3",
     "@semaphore-protocol/proof": "^3.2.3",
@@ -144,7 +144,8 @@
     "redux-thunk": "^2.4.2",
     "rlnjs": "github:Rate-Limiting-Nullifier/rlnjs",
     "subworkers": "^1.0.1",
-    "webextension-polyfill-ts": "^0.26.0"
+    "webextension-polyfill-ts": "^0.26.0",
+    "yup": "^1.0.2"
   },
   "config": {
     "commitizen": {

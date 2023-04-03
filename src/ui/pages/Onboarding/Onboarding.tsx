@@ -1,3 +1,5 @@
+import Tooltip from "@mui/material/Tooltip";
+
 import logoSVG from "@src/static/icons/logo.svg";
 import { ButtonType, Button } from "@src/ui/components/Button";
 import { Icon } from "@src/ui/components/Icon";
@@ -12,7 +14,7 @@ const Onboarding = (): JSX.Element => {
   return (
     <form className="flex flex-col flex-nowrap h-full onboarding" data-testid="onboarding-form" onSubmit={onSubmit}>
       <div className="flex flex-col items-center flex-grow p-8 onboarding__content">
-        <Icon url={logoSVG} />
+        <Icon size={8} url={logoSVG} />
 
         <div className="text-lg pt-8">
           <b>Thanks for using CryptKeeper!</b>
@@ -25,10 +27,32 @@ const Onboarding = (): JSX.Element => {
             autoFocus
             className="mb-4"
             errorMessage={errors.password}
+            icon={
+              <Tooltip
+                className="info-tooltip"
+                title={
+                  <div>
+                    <p>Password requirements:</p>
+
+                    <p>- At least 8 characters</p>
+
+                    <p>- At least 1 upper case and letter</p>
+
+                    <p>- At least 1 lower case letter</p>
+
+                    <p>- At least 1 special character (!@#$%^&*)</p>
+
+                    <p>- At least 1 number</p>
+                  </div>
+                }
+              >
+                <Icon className="info-icon" fontAwesome="fa-info" />
+              </Tooltip>
+            }
             id="password"
             label="Password"
             type="password"
-            {...register("password", { required: "Password is required" })}
+            {...register("password")}
           />
 
           <Input
@@ -36,10 +60,7 @@ const Onboarding = (): JSX.Element => {
             id="confirmPassword"
             label="Confirm Password"
             type="password"
-            {...register("confirmPassword", {
-              required: "Confirm your password",
-              validate: (_, values) => (values.password !== values.confirmPassword ? "Passwords must match" : true),
-            })}
+            {...register("confirmPassword")}
           />
         </div>
       </div>

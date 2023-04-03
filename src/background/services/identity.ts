@@ -87,7 +87,7 @@ export default class IdentityService {
     const { identityCommitment } = payload;
     const activeIdentity = await this.getActiveIdentity();
     const identities = await this.getIdentitiesFromStore();
-    const activeIdentityCommitment = activeIdentity?.genIdentityCommitment().toString();
+    const activeIdentityCommitment = activeIdentity ? bigintToHex(activeIdentity?.genIdentityCommitment()) : undefined;
 
     if (!identities.has(identityCommitment)) {
       return false;
@@ -96,11 +96,9 @@ export default class IdentityService {
     identities.delete(identityCommitment);
     await this.writeIdentities(identities);
 
-    const size = await this.getNumOfIdentites();
-
     await this.refresh();
 
-    if (activeIdentityCommitment === identityCommitment || size === 1) {
+    if (activeIdentityCommitment === identityCommitment) {
       await this.setDefaultIdentity();
     }
 

@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 
-import { render, screen } from "@testing-library/react";
+import { render, screen, waitFor } from "@testing-library/react";
 import { Suspense } from "react";
 
 import { createModalRoot, deleteModalRoot } from "@src/config/mock/modal";
@@ -39,11 +39,14 @@ describe("ui/components/ConnectionModal/ConnectionModal", () => {
       ...defaultHookData,
       pendingRequests: [{ id: "1", type: PendingRequestType.INJECT }],
     });
-    render(
+
+    const { container } = render(
       <Suspense>
         <ConfirmRequestModal />
       </Suspense>,
     );
+
+    await waitFor(() => container.firstChild !== null);
 
     const modal = await screen.findByTestId("approval-modal");
 
@@ -55,11 +58,14 @@ describe("ui/components/ConnectionModal/ConnectionModal", () => {
       ...defaultHookData,
       pendingRequests: [{ id: "1", type: PendingRequestType.APPROVE }],
     });
-    render(
+
+    const { container } = render(
       <Suspense>
         <ConfirmRequestModal />
       </Suspense>,
     );
+
+    await waitFor(() => container.firstChild !== null);
 
     const modal = await screen.findByTestId("approval-modal");
 
@@ -71,11 +77,14 @@ describe("ui/components/ConnectionModal/ConnectionModal", () => {
       ...defaultHookData,
       pendingRequests: [{ id: "1", type: PendingRequestType.SEMAPHORE_PROOF }],
     });
-    render(
+
+    const { container } = render(
       <Suspense>
         <ConfirmRequestModal />
       </Suspense>,
     );
+
+    await waitFor(() => container.firstChild !== null);
 
     const title = await screen.findByText("Generate Semaphore Proof");
 
@@ -87,11 +96,14 @@ describe("ui/components/ConnectionModal/ConnectionModal", () => {
       ...defaultHookData,
       pendingRequests: [{ id: "1", type: PendingRequestType.RLN_PROOF }],
     });
-    render(
+
+    const { container } = render(
       <Suspense>
         <ConfirmRequestModal />
       </Suspense>,
     );
+
+    await waitFor(() => container.firstChild !== null);
 
     const title = await screen.findByText("Generate RLN Proof");
 
@@ -103,11 +115,14 @@ describe("ui/components/ConnectionModal/ConnectionModal", () => {
       ...defaultHookData,
       pendingRequests: [{ id: "1", type: "unknown" as unknown as PendingRequestType }],
     });
-    render(
+
+    const { container } = render(
       <Suspense>
         <ConfirmRequestModal />
       </Suspense>,
     );
+
+    await waitFor(() => container.firstChild !== null);
 
     const modal = await screen.findByTestId("default-approval-modal");
 
