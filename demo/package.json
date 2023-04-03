@@ -11,7 +11,7 @@
     "rlnjs": "github:Rate-Limiting-Nullifier/rlnjs"
   },
   "devDependencies": {
-    "@types/react": "^18.0.28",
+    "@types/react": "^18.0.32",
     "@types/react-dom": "^18.0.11",
     "assert": "^2.0.0",
     "parcel": "^2.8.3"
