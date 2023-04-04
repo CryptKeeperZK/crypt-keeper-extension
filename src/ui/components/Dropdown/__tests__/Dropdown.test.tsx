@@ -2,6 +2,8 @@
  * @jest-environment jsdom
  */
 
+import { library } from "@fortawesome/fontawesome-svg-core";
+import { faTwitter, faGithub, faReddit } from "@fortawesome/free-brands-svg-icons";
 import { render, screen } from "@testing-library/react";
 import selectEvent from "react-select-event";
 
@@ -18,6 +20,8 @@ describe("ui/components/Dropdown", () => {
   };
 
   afterEach(() => {
+    library.add(faTwitter, faGithub, faReddit);
+
     jest.resetAllMocks();
   });
 
