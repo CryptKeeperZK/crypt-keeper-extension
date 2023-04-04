@@ -8,6 +8,7 @@ import { MemoryRouter } from "react-router-dom";
 
 import { createModalRoot, deleteModalRoot } from "@src/config/mock/modal";
 import { defaultWalletHookData } from "@src/config/mock/wallet";
+import { Paths } from "@src/constants";
 import { useAppDispatch, useAppSelector } from "@src/ui/ducks/hooks";
 import { usePendingRequests } from "@src/ui/ducks/requests";
 import { useWallet } from "@src/ui/hooks/wallet";
@@ -35,9 +36,6 @@ jest.mock("../usePopup", (): unknown => ({
 describe("ui/pages/Popup", () => {
   const defaultHookData: IUsePopupData = {
     isLoading: false,
-    isInitialized: false,
-    isUnlocked: false,
-    isShowRequestModal: false,
   };
 
   beforeEach(() => {
@@ -62,7 +60,7 @@ describe("ui/pages/Popup", () => {
 
   test("should render onboarding page properly", async () => {
     const { container, findByTestId } = render(
-      <MemoryRouter>
+      <MemoryRouter initialEntries={[Paths.ONBOARDING]}>
         <Suspense>
           <Popup />
         </Suspense>
@@ -77,10 +75,8 @@ describe("ui/pages/Popup", () => {
   });
 
   test("should render login page properly", async () => {
-    (usePopup as jest.Mock).mockReturnValue({ ...defaultHookData, isUnlocked: false, isInitialized: true });
-
     const { container, findByTestId } = render(
-      <MemoryRouter>
+      <MemoryRouter initialEntries={[Paths.LOGIN]}>
         <Suspense>
           <Popup />
         </Suspense>
@@ -96,6 +92,7 @@ describe("ui/pages/Popup", () => {
 
   test("should not render if it's loading", () => {
     (usePopup as jest.Mock).mockReturnValue({ ...defaultHookData, isLoading: true });
+
     const { container } = render(
       <MemoryRouter>
         <Suspense>
@@ -108,15 +105,8 @@ describe("ui/pages/Popup", () => {
   });
 
   test("should render pending requests modal properly", async () => {
-    (usePopup as jest.Mock).mockReturnValue({
-      ...defaultHookData,
-      isInitialized: true,
-      isUnlocked: true,
-      isShowRequestModal: true,
-    });
-
     const { container, findByTestId } = render(
-      <MemoryRouter>
+      <MemoryRouter initialEntries={[Paths.REQUESTS]}>
         <Suspense>
           <Popup />
         </Suspense>
@@ -131,10 +121,8 @@ describe("ui/pages/Popup", () => {
   });
 
   test("should render home page properly", async () => {
-    (usePopup as jest.Mock).mockReturnValue({ ...defaultHookData, isUnlocked: true, isInitialized: true });
-
     const { container, findByTestId } = render(
-      <MemoryRouter>
+      <MemoryRouter initialEntries={[Paths.HOME]}>
         <Suspense>
           <Popup />
         </Suspense>

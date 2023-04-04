@@ -10,9 +10,6 @@ import { useWallet } from "@src/ui/hooks/wallet";
 
 export interface IUsePopupData {
   isLoading: boolean;
-  isInitialized: boolean;
-  isUnlocked: boolean;
-  isShowRequestModal: boolean;
 }
 
 const REDIRECT_PATHS: Record<string, Paths> = {
@@ -20,13 +17,14 @@ const REDIRECT_PATHS: Record<string, Paths> = {
 };
 
 export const usePopup = (): IUsePopupData => {
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
 
   const dispatch = useAppDispatch();
   const { onConnectEagerly } = useWallet();
   const pendingRequests = usePendingRequests();
   const { isInitialized, isUnlocked } = useAppStatus();
+  const isShowRequestModal = pendingRequests.length > 0;
 
   const url = new URL(window.location.href);
   const redirectParam = url.searchParams.get("redirect");
@@ -35,6 +33,24 @@ export const usePopup = (): IUsePopupData => {
   const fetchData = useCallback(async () => {
     await Promise.all([dispatch(fetchStatus()), dispatch(fetchPendingRequests())]);
   }, [dispatch]);
+
+  useEffect(() => {
+    if (isLoading) {
+      return;
+    }
+
+    if (!isInitialized) {
+      navigate(Paths.ONBOARDING);
+    } else if (!isUnlocked) {
+      navigate(Paths.LOGIN);
+    } else if (isShowRequestModal) {
+      navigate(Paths.REQUESTS);
+    } else if (redirect) {
+      navigate(redirect);
+    } else {
+      navigate(Paths.HOME);
+    }
+  }, [isLoading, isInitialized, isUnlocked, isShowRequestModal, redirect, navigate]);
 
   useEffect(() => {
     setIsLoading(true);
@@ -47,18 +63,7 @@ export const usePopup = (): IUsePopupData => {
     onConnectEagerly();
   }, [onConnectEagerly]);
 
-  useEffect(() => {
-    if (redirect) {
-      url.searchParams.delete("redirect");
-      window.history.replaceState(null, "", url);
-      navigate(redirect);
-    }
-  }, [redirect, navigate]);
-
   return {
     isLoading,
-    isInitialized,
-    isUnlocked,
-    isShowRequestModal: pendingRequests.length > 0,
   };
 };
