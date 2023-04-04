@@ -20,24 +20,23 @@ const CreateIdentity = (): JSX.Element => {
         <FullModalHeader onClose={closeModal}>Create Identity</FullModalHeader>
 
         <FullModalContent>
-          {features.RANDOM_IDENTITY && (
-            <Controller
-              control={control}
-              defaultValue={IDENTITY_TYPES[0]}
-              name="identityStrategyType"
-              render={({ field }) => (
-                <Dropdown
-                  {...field}
-                  className="my-2"
-                  errorMessage={errors.identityStrategyType}
-                  id="identityStrategyType"
-                  label="Identity type"
-                  options={IDENTITY_TYPES}
-                />
-              )}
-              rules={{ required: "Identity strategy type is required" }}
-            />
-          )}
+          <Controller
+            control={control}
+            defaultValue={IDENTITY_TYPES[0]}
+            name="identityStrategyType"
+            render={({ field }) => (
+              <Dropdown
+                {...field}
+                className="my-2"
+                errorMessage={errors.identityStrategyType}
+                id="identityStrategyType"
+                isDisabled={!features.RANDOM_IDENTITY}
+                label="Identity type"
+                options={IDENTITY_TYPES}
+              />
+            )}
+            rules={{ required: "Identity strategy type is required" }}
+          />
 
           {isProviderAvailable && (
             <>
