@@ -11,9 +11,8 @@ export interface IUseOnboardingData {
   errors: Partial<FormFields & { root: string }>;
   register: UseFormRegister<FormFields>;
   onSubmit: (event?: BaseSyntheticEvent) => Promise<void>;
-  eyeLook: boolean;
-  onEyeLook: () => void;
-  onEyeSlash: () => void;
+  isShowPassword: boolean;
+  setShowPassword: () => void;
 }
 
 interface FormFields {
@@ -35,7 +34,7 @@ const validationSchema = object({
 });
 
 export const useOnboarding = (): IUseOnboardingData => {
-  const [eyeLook, setEyeLook] = useState(false);
+  const [isShowPassword, setIsShowPassword] = useState(false);
   const resolver = useValidationResolver(validationSchema);
   const {
     formState: { isLoading, isSubmitting, errors },
@@ -61,13 +60,9 @@ export const useOnboarding = (): IUseOnboardingData => {
     [dispatch, setError],
   );
 
-  const onEyeLook = useCallback(() => {
-    setEyeLook(true);
-  }, [eyeLook]);
-
-  const onEyeSlash = useCallback(() => {
-    setEyeLook(false);
-  }, [eyeLook]);
+  const setShowPassword = () => {
+    setIsShowPassword((isShow) => !isShow);
+  };
 
   return {
     isLoading: isLoading || isSubmitting,
@@ -78,8 +73,7 @@ export const useOnboarding = (): IUseOnboardingData => {
     },
     register,
     onSubmit: handleSubmit(onSubmit),
-    eyeLook,
-    onEyeLook,
-    onEyeSlash,
+    isShowPassword,
+    setShowPassword,
   };
 };

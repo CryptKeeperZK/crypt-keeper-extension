@@ -9,7 +9,7 @@ import "./onboarding.scss";
 import { useOnboarding } from "./useOnboarding";
 
 const Onboarding = (): JSX.Element => {
-  const { errors, isLoading, register, onSubmit, eyeLook, onEyeLook, onEyeSlash } = useOnboarding();
+  const { errors, isLoading, register, onSubmit, isShowPassword, setShowPassword } = useOnboarding();
 
   return (
     <form className="flex flex-col flex-nowrap h-full onboarding" data-testid="onboarding-form" onSubmit={onSubmit}>
@@ -22,111 +22,69 @@ const Onboarding = (): JSX.Element => {
 
         <div className="text-base">To continue, please setup a password</div>
 
-        {eyeLook ? (
-          <div className="py-4 w-full" data-testid="showen-inputs">
-            <Input
-              autoFocus
-              className="mb-4"
-              errorMessage={errors.password}
-              icon={[
-                <Tooltip
-                  key={1}
-                  className="info-tooltip"
-                  title={
-                    <div>
-                      <p>Password requirements:</p>
+        <div className="py-4 w-full" data-testid="showen-inputs">
+          <Input
+            autoFocus
+            className="mb-4"
+            errorMessage={errors.password}
+            icon={[
+              <Tooltip
+                key={1}
+                className="info-tooltip"
+                title={
+                  <div>
+                    <p>Password requirements:</p>
 
-                      <p>- At least 8 characters</p>
+                    <p>- At least 8 characters</p>
 
-                      <p>- At least 1 upper case and letter</p>
+                    <p>- At least 1 upper case and letter</p>
 
-                      <p>- At least 1 lower case letter</p>
+                    <p>- At least 1 lower case letter</p>
 
-                      <p>- At least 1 special character (!@#$%^&*)</p>
+                    <p>- At least 1 special character (!@#$%^&*)</p>
 
-                      <p>- At least 1 number</p>
-                    </div>
-                  }
-                >
-                  <Icon className="info-icon" fontAwesome="fa-info" />
-                </Tooltip>,
+                    <p>- At least 1 number</p>
+                  </div>
+                }
+              >
+                <Icon className="info-icon" fontAwesome="fa-info" />
+              </Tooltip>,
+              isShowPassword ? (
                 <Tooltip
                   key={2}
                   className="eye-slash-tooltip"
                   data-testid="eye-slash-button"
                   title="Hide Password"
-                  onClick={onEyeSlash}
+                  onClick={setShowPassword}
                 >
                   <Icon className="eye-slash-icon" fontAwesome="fa-eye-slash" />
-                </Tooltip>,
-              ]}
-              id="password"
-              label="Password"
-              type="text"
-              {...register("password")}
-            />
-
-            <Input
-              errorMessage={errors.confirmPassword}
-              id="confirmPassword"
-              label="Confirm Password"
-              type="text"
-              {...register("confirmPassword")}
-            />
-          </div>
-        ) : (
-          <div className="py-4 w-full" data-testid="hidden-inputs">
-            <Input
-              autoFocus
-              className="mb-4"
-              errorMessage={errors.password}
-              icon={[
-                <Tooltip
-                  key={1}
-                  className="info-tooltip"
-                  title={
-                    <div>
-                      <p>Password requirements:</p>
-
-                      <p>- At least 8 characters</p>
-
-                      <p>- At least 1 upper case and letter</p>
-
-                      <p>- At least 1 lower case letter</p>
-
-                      <p>- At least 1 special character (!@#$%^&*)</p>
-
-                      <p>- At least 1 number</p>
-                    </div>
-                  }
-                >
-                  <Icon className="info-icon" fontAwesome="fa-info" />
-                </Tooltip>,
+                </Tooltip>
+              ) : (
                 <Tooltip
                   key={2}
-                  className="eye-tooltip"
+                  className="eye-slash-tooltip"
                   data-testid="eye-look-button"
                   title="Show Password"
-                  onClick={onEyeLook}
+                  onClick={setShowPassword}
                 >
                   <Icon className="eye-icon" fontAwesome="fa-eye" />
-                </Tooltip>,
-              ]}
-              id="password"
-              label="Password"
-              type="password"
-              {...register("password")}
-            />
+                </Tooltip>
+              ),
+            ]}
+            id="password"
+            label="Password"
+            type={isShowPassword ? "text" : "password"}
+            {...register("password")}
+          />
 
-            <Input
-              errorMessage={errors.confirmPassword}
-              id="confirmPassword"
-              label="Confirm Password"
-              type="password"
-              {...register("confirmPassword")}
-            />
-          </div>
-        )}
+          <Input
+            errorMessage={errors.confirmPassword}
+            id="confirmPassword"
+            label="Confirm Password"
+            type={isShowPassword ? "text" : "password"}
+            {...register("confirmPassword")}
+          />
+        </div>
       </div>
 
       {errors.root && <div className="text-red-500 text-sm text-center">{errors.root}</div>}
