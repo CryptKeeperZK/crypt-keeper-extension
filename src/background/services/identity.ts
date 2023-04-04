@@ -1,6 +1,7 @@
 import { bigintToHex } from "bigint-conversion";
 import { browser } from "webextension-polyfill-ts";
 
+import { getEnabledFeatures } from "@src/config/features";
 import { IdentityMetadata, IdentityName } from "@src/types";
 import { setIdentities, setSelectedCommitment } from "@src/ui/ducks/identities";
 import { ellipsify } from "@src/util/account";
@@ -237,8 +238,17 @@ export default class IdentityService {
       return new Map();
     }
 
+    const features = getEnabledFeatures();
     const identitesDecrypted = this.lockService.decrypt(cipherText);
-    return new Map(JSON.parse(identitesDecrypted) as Iterable<readonly [string, string]>);
+    const iterableIdentities = JSON.parse(identitesDecrypted) as Iterable<readonly [string, string]>;
+
+    return new Map(
+      features.RANDOM_IDENTITY
+        ? iterableIdentities
+        : [...iterableIdentities].filter(
+            ([, identity]) => ZkIdentityDecorater.genFromSerialized(identity).metadata.identityStrategy !== "random",
+          ),
+    );
   };
 
   private refresh = async (): Promise<void> => {
