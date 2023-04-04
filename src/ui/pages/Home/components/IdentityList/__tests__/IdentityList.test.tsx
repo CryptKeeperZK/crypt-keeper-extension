@@ -2,6 +2,8 @@
  * @jest-environment jsdom
  */
 
+import { library } from "@fortawesome/fontawesome-svg-core";
+import { faTwitter, faGithub, faReddit } from "@fortawesome/free-brands-svg-icons";
 import { act, render, screen, fireEvent } from "@testing-library/react";
 
 import { ZERO_ADDRESS } from "@src/config/const";
@@ -61,6 +63,8 @@ describe("ui/pages/Home/components/IdentityList", () => {
   ];
 
   beforeEach(() => {
+    library.add(faTwitter, faGithub, faReddit);
+
     (useAppDispatch as jest.Mock).mockReturnValue(mockDispatch);
 
     (useIdentities as jest.Mock).mockReturnValue(defaultIdentities);

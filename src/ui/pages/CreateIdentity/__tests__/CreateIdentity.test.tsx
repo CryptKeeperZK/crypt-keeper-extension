@@ -2,6 +2,8 @@
  * @jest-environment jsdom
  */
 
+import { library } from "@fortawesome/fontawesome-svg-core";
+import { faTwitter, faGithub, faReddit } from "@fortawesome/free-brands-svg-icons";
 import { act, fireEvent, render, screen, waitFor } from "@testing-library/react";
 import selectEvent from "react-select-event";
 
@@ -41,6 +43,8 @@ describe("ui/pages/CreateIdentity", () => {
   const mockDispatch = jest.fn(() => Promise.resolve());
 
   beforeEach(() => {
+    library.add(faTwitter, faGithub, faReddit);
+
     (useWallet as jest.Mock).mockReturnValue(defaultWalletHookData);
 
     (useAppDispatch as jest.Mock).mockReturnValue(mockDispatch);
