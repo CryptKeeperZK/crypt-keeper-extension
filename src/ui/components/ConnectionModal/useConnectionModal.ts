@@ -1,9 +1,9 @@
 import { getLinkPreview } from "link-preview-js";
 import { ChangeEvent, useCallback, useEffect, useState } from "react";
-import { browser } from "webextension-polyfill-ts";
 
-import { RPCAction } from "@src/constants";
-import postMessage from "@src/util/postMessage";
+import { useAppDispatch } from "@src/ui/ducks/hooks";
+import { fetchHostPermissions, removeHost, setHostPermissions, useHostPermission } from "@src/ui/ducks/permissions";
+import { getLastActiveTabUrl } from "@src/util/browser";
 
 export interface IUseConnectionModalArgs {
   refreshConnectionStatus: () => Promise<void>;
@@ -22,17 +22,15 @@ export const useConnectionModal = ({
   refreshConnectionStatus,
   onClose,
 }: IUseConnectionModalArgs): IUseConnectionModalData => {
-  const [checked, setChecked] = useState(false);
   const [url, setUrl] = useState<URL>();
   const [faviconUrl, setFaviconUrl] = useState("");
-  const host = url?.origin;
+  const host = url?.origin ?? "";
+
+  const dispatch = useAppDispatch();
+  const permission = useHostPermission(host);
 
   useEffect(() => {
-    browser.tabs.query({ active: true, lastFocusedWindow: true }).then(([tab]) => {
-      if (tab?.url) {
-        setUrl(new URL(tab.url));
-      }
-    });
+    getLastActiveTabUrl().then((tabUrl) => setUrl(tabUrl));
   }, [setUrl]);
 
   useEffect(() => {
@@ -45,38 +43,24 @@ export const useConnectionModal = ({
       setFaviconUrl(favicon);
     });
 
-    postMessage<{ noApproval: boolean }>({
-      method: RPCAction.GET_HOST_PERMISSIONS,
-      payload: host,
-    }).then((res) => setChecked(res.noApproval));
-  }, [host, setFaviconUrl, setChecked]);
+    dispatch(fetchHostPermissions(host));
+  }, [host, setFaviconUrl, dispatch]);
 
   const onRemoveHost = useCallback(() => {
-    postMessage({
-      method: RPCAction.REMOVE_HOST,
-      payload: {
-        host,
-      },
-    })
+    dispatch(removeHost(host))
       .then(() => refreshConnectionStatus())
       .then(() => onClose());
-  }, [host, refreshConnectionStatus, onClose]);
+  }, [host, dispatch, refreshConnectionStatus, onClose]);
 
   const onSetApproval = useCallback(
     (event: ChangeEvent<HTMLInputElement>) => {
-      postMessage<{ noApproval: boolean }>({
-        method: RPCAction.SET_HOST_PERMISSIONS,
-        payload: {
-          host,
-          noApproval: event.target.checked,
-        },
-      }).then((res) => setChecked(res.noApproval));
+      dispatch(setHostPermissions({ host, noApproval: event.target.checked }));
     },
-    [host, setChecked],
+    [host, dispatch],
   );
 
   return {
-    checked,
+    checked: Boolean(permission?.noApproval),
     faviconUrl,
     url,
     onRemoveHost,

@@ -5,8 +5,8 @@ import { useCallback, useEffect, useState } from "react";
 
 import { Chain, getChains } from "@src/config/rpc";
 import { ConnectorNames, getConnectorName } from "@src/connectors";
-import { RPCAction } from "@src/constants";
-import postMessage from "@src/util/postMessage";
+import { useAppStatus, getWalletConnection, setWalletConnection, lock } from "@src/ui/ducks/app";
+import { useAppDispatch } from "@src/ui/ducks/hooks";
 
 import type { Connector } from "@web3-react/types";
 import type { BrowserProvider } from "ethers/types/providers";
@@ -22,13 +22,15 @@ export interface IUseWalletData {
   provider?: BrowserProvider;
   onConnect: () => Promise<void>;
   onConnectEagerly: () => Promise<void>;
-  onLock: () => Promise<void>;
+  onLock: () => void;
   onDisconnect: () => Promise<void>;
 }
 
 export const useWallet = (): IUseWalletData => {
   const [balance, setBalance] = useState<BigNumber>();
   const { connector, isActive, isActivating, provider, hooks } = useWeb3React();
+  const { isDisconnectedPermanently } = useAppStatus();
+  const dispatch = useAppDispatch();
   const connectorName = getConnectorName(connector);
 
   const handlers = hooks;
@@ -38,6 +40,10 @@ export const useWallet = (): IUseWalletData => {
   const address = handlers?.usePriorityAccount();
   const chain = chainId ? chains[chainId] : undefined;
   const decimals = chain?.nativeCurrency.decimals;
+
+  useEffect(() => {
+    dispatch(getWalletConnection());
+  }, [dispatch]);
 
   useEffect(() => {
     if (!address || !provider) {
@@ -51,30 +57,25 @@ export const useWallet = (): IUseWalletData => {
   }, [address, chainId, provider, decimals, setBalance]);
 
   const onConnect = useCallback(async () => {
-    await postMessage({ method: RPCAction.SET_CONNECT_WALLET, payload: { isDisconnectedPermanently: false } });
+    dispatch(setWalletConnection(false));
     await connector.activate();
-  }, [connector]);
+  }, [connector, dispatch]);
 
   const onConnectEagerly = useCallback(async () => {
-    const response = await postMessage<{ isDisconnectedPermanently: boolean }>({
-      method: RPCAction.GET_CONNECT_WALLET,
-    });
-
-    if (!response?.isDisconnectedPermanently) {
+    if (isDisconnectedPermanently === false) {
       await connector.connectEagerly?.();
     }
-  }, [connector]);
+  }, [connector, isDisconnectedPermanently]);
 
   const onDisconnect = useCallback(async () => {
+    dispatch(setWalletConnection(true));
     await connector.deactivate?.();
     await connector.resetState();
+  }, [connector, dispatch]);
 
-    await postMessage({ method: RPCAction.SET_CONNECT_WALLET, payload: { isDisconnectedPermanently: true } });
-  }, [connector]);
-
-  const onLock = useCallback(async () => {
-    await postMessage({ method: RPCAction.LOCK });
-  }, []);
+  const onLock = useCallback(() => {
+    dispatch(lock());
+  }, [dispatch]);
 
   return {
     isActive,

@@ -4,14 +4,13 @@
 
 import { act, renderHook } from "@testing-library/react";
 import { useRef } from "react";
-import { browser } from "webextension-polyfill-ts";
 
 import { defaultWalletHookData } from "@src/config/mock/wallet";
-import { RPCAction } from "@src/constants";
 import { useAppDispatch } from "@src/ui/ducks/hooks";
 import { IdentityData, useIdentities, fetchIdentities, deleteAllIdentities } from "@src/ui/ducks/identities";
+import { checkHostApproval } from "@src/ui/ducks/permissions";
 import { useWallet } from "@src/ui/hooks/wallet";
-import postMessage from "@src/util/postMessage";
+import { getLastActiveTabUrl } from "@src/util/browser";
 
 import { useHome } from "../useHome";
 
@@ -32,6 +31,14 @@ jest.mock("@src/ui/ducks/identities", (): unknown => ({
   fetchIdentities: jest.fn(),
   deleteAllIdentities: jest.fn(),
   useIdentities: jest.fn(),
+}));
+
+jest.mock("@src/ui/ducks/permissions", (): unknown => ({
+  checkHostApproval: jest.fn(),
+}));
+
+jest.mock("@src/util/browser", (): unknown => ({
+  getLastActiveTabUrl: jest.fn(),
 }));
 
 describe("ui/pages/Home/useHome", () => {
@@ -57,10 +64,10 @@ describe("ui/pages/Home/useHome", () => {
     },
   ];
 
-  const defaultTabs = [{ id: 1, url: "http://localhost:3000" }];
+  const defaultUrl = new URL("http://localhost:3000");
 
   beforeEach(() => {
-    (browser.tabs.query as jest.Mock).mockResolvedValue(defaultTabs);
+    (getLastActiveTabUrl as jest.Mock).mockResolvedValue(defaultUrl);
 
     (useRef as jest.Mock).mockReturnValue({ current: null });
 
@@ -69,6 +76,8 @@ describe("ui/pages/Home/useHome", () => {
     (useWallet as jest.Mock).mockReturnValue(defaultWalletHookData);
 
     (useIdentities as jest.Mock).mockReturnValue(defaultIdentities);
+
+    (checkHostApproval as jest.Mock).mockReturnValue(true);
   });
 
   afterEach(() => {
@@ -93,21 +102,18 @@ describe("ui/pages/Home/useHome", () => {
 
     await act(async () => result.current.refreshConnectionStatus());
 
-    expect(postMessage).toBeCalledTimes(1);
-    expect(postMessage).toBeCalledWith({
-      method: RPCAction.IS_HOST_APPROVED,
-      payload: defaultTabs[0].url,
-    });
+    expect(checkHostApproval).toBeCalledTimes(1);
+    expect(checkHostApproval).toBeCalledWith(defaultUrl.origin);
   });
 
   test("should not refresh connection status if there is no any tab", async () => {
-    (browser.tabs.query as jest.Mock).mockResolvedValue([]);
+    (getLastActiveTabUrl as jest.Mock).mockResolvedValue(undefined);
 
     const { result } = renderHook(() => useHome());
 
     await act(async () => result.current.refreshConnectionStatus());
 
-    expect(postMessage).not.toBeCalled();
+    expect(checkHostApproval).not.toBeCalled();
   });
 
   test("should delete all identities properly", async () => {

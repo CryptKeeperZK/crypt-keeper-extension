@@ -4,22 +4,39 @@
 
 import { act, renderHook, waitFor } from "@testing-library/react";
 import { ChangeEvent } from "react";
-import { browser } from "webextension-polyfill-ts";
 
-import { RPCAction } from "@src/constants";
-import postMessage from "@src/util/postMessage";
+import { useAppDispatch } from "@src/ui/ducks/hooks";
+import { fetchHostPermissions, removeHost, setHostPermissions, useHostPermission } from "@src/ui/ducks/permissions";
+import { getLastActiveTabUrl } from "@src/util/browser";
 
 import { IUseConnectionModalArgs, IUseConnectionModalData, useConnectionModal } from "../useConnectionModal";
 
+jest.mock("@src/ui/ducks/hooks", (): unknown => ({
+  useAppDispatch: jest.fn(),
+}));
+
+jest.mock("@src/ui/ducks/permissions", (): unknown => ({
+  fetchHostPermissions: jest.fn(),
+  setHostPermissions: jest.fn(),
+  useHostPermission: jest.fn(),
+  removeHost: jest.fn(),
+}));
+
+jest.mock("@src/util/browser", (): unknown => ({
+  getLastActiveTabUrl: jest.fn(),
+}));
+
 describe("ui/components/ConnectionModal/useConnectionModal", () => {
+  const mockDispatch = jest.fn(() => Promise.resolve());
+
   const defaultArgs: IUseConnectionModalArgs = {
     refreshConnectionStatus: jest.fn(),
     onClose: jest.fn(),
   };
 
-  const defaultTabs = [{ url: "http://localhost:3000" }];
+  const defaultUrl = new URL("http://localhost:3000");
 
-  const defaultPostMessageResponse = { noApproval: true };
+  const defaultPermission = { noApproval: true };
 
   const waitForData = async (current: IUseConnectionModalData) => {
     await waitFor(() => current.url !== undefined);
@@ -28,9 +45,11 @@ describe("ui/components/ConnectionModal/useConnectionModal", () => {
   };
 
   beforeEach(() => {
-    (postMessage as jest.Mock).mockResolvedValue(defaultPostMessageResponse);
+    (useAppDispatch as jest.Mock).mockReturnValue(mockDispatch);
 
-    (browser.tabs.query as jest.Mock).mockResolvedValue(defaultTabs);
+    (useHostPermission as jest.Mock).mockReturnValue(defaultPermission);
+
+    (getLastActiveTabUrl as jest.Mock).mockResolvedValue(defaultUrl);
   });
 
   afterEach(() => {
@@ -38,10 +57,10 @@ describe("ui/components/ConnectionModal/useConnectionModal", () => {
   });
 
   test("should return empty data", () => {
-    (browser.tabs.query as jest.Mock).mockResolvedValue([]);
+    (getLastActiveTabUrl as jest.Mock).mockResolvedValue(undefined);
     const { result } = renderHook(() => useConnectionModal(defaultArgs));
 
-    expect(result.current.checked).toBe(false);
+    expect(result.current.checked).toBe(true);
     expect(result.current.faviconUrl).toBe("");
     expect(result.current.url).toBeUndefined();
   });
@@ -52,7 +71,7 @@ describe("ui/components/ConnectionModal/useConnectionModal", () => {
 
     expect(result.current.checked).toBe(true);
     expect(result.current.faviconUrl).toBe("http://localhost:3000/favicon.ico");
-    expect(result.current.url?.origin).toBe(defaultTabs[0].url);
+    expect(result.current.url?.origin).toBe(defaultUrl.origin);
   });
 
   test("should set approval properly", async () => {
@@ -63,17 +82,12 @@ describe("ui/components/ConnectionModal/useConnectionModal", () => {
       Promise.resolve(result.current.onSetApproval({ target: { checked: true } } as ChangeEvent<HTMLInputElement>)),
     );
 
-    expect(postMessage).toBeCalledTimes(2);
-    expect(postMessage).toHaveBeenNthCalledWith(1, {
-      method: RPCAction.GET_HOST_PERMISSIONS,
-      payload: result.current.url?.origin,
-    });
-    expect(postMessage).toHaveBeenNthCalledWith(2, {
-      method: RPCAction.SET_HOST_PERMISSIONS,
-      payload: {
-        host: result.current.url?.origin,
-        noApproval: true,
-      },
+    expect(fetchHostPermissions).toBeCalledTimes(1);
+    expect(fetchHostPermissions).toBeCalledWith(result.current.url?.origin);
+    expect(setHostPermissions).toBeCalledTimes(1);
+    expect(setHostPermissions).toBeCalledWith({
+      host: result.current.url?.origin,
+      noApproval: true,
     });
   });
 
@@ -83,17 +97,10 @@ describe("ui/components/ConnectionModal/useConnectionModal", () => {
 
     await act(async () => Promise.resolve(result.current.onRemoveHost()));
 
-    expect(postMessage).toBeCalledTimes(2);
-    expect(postMessage).toHaveBeenNthCalledWith(1, {
-      method: RPCAction.GET_HOST_PERMISSIONS,
-      payload: result.current.url?.origin,
-    });
-    expect(postMessage).toHaveBeenNthCalledWith(2, {
-      method: RPCAction.REMOVE_HOST,
-      payload: {
-        host: result.current.url?.origin,
-      },
-    });
+    expect(fetchHostPermissions).toBeCalledTimes(1);
+    expect(fetchHostPermissions).toBeCalledWith(result.current.url?.origin);
+    expect(removeHost).toBeCalledTimes(1);
+    expect(removeHost).toBeCalledWith(result.current.url?.origin);
     expect(defaultArgs.refreshConnectionStatus).toBeCalledTimes(1);
     expect(defaultArgs.onClose).toBeCalledTimes(1);
   });

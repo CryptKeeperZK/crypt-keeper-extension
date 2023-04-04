@@ -5,7 +5,7 @@ import deepEqual from "fast-deep-equal";
 import { RPCAction } from "@src/constants";
 import postMessage from "@src/util/postMessage";
 
-import type { PendingRequest } from "@src/types";
+import type { PendingRequest, RequestResolutionAction } from "@src/types";
 import type { TypedThunk } from "@src/ui/store/configureAppStore";
 
 import { useAppSelector } from "./hooks";
@@ -34,6 +34,14 @@ export const fetchPendingRequests = (): TypedThunk => async (dispatch) => {
   const pendingRequests = await postMessage<PendingRequest[]>({ method: RPCAction.GET_PENDING_REQUESTS });
   dispatch(setPendingRequests(pendingRequests));
 };
+
+export const finalizeRequest =
+  (request: RequestResolutionAction): TypedThunk<Promise<boolean>> =>
+  async (): Promise<boolean> =>
+    postMessage({
+      method: RPCAction.FINALIZE_REQUEST,
+      payload: request,
+    });
 
 export const usePendingRequests = (): PendingRequest[] =>
   useAppSelector((state) => state.requests.pendingRequests, deepEqual);

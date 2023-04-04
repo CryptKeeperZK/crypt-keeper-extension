@@ -1,9 +1,8 @@
 import { useCallback, useState } from "react";
 
-import { RPCAction } from "@src/constants";
 import { PendingRequest, RequestResolutionAction, RequestResolutionStatus } from "@src/types";
-import { usePendingRequests } from "@src/ui/ducks/requests";
-import postMessage from "@src/util/postMessage";
+import { useAppDispatch } from "@src/ui/ducks/hooks";
+import { finalizeRequest, usePendingRequests } from "@src/ui/ducks/requests";
 
 export interface IUseConfirmRequestModalData {
   error: string;
@@ -15,6 +14,7 @@ export interface IUseConfirmRequestModalData {
 
 export const useConfirmRequestModal = (): IUseConfirmRequestModalData => {
   const pendingRequests = usePendingRequests();
+  const dispatch = useAppDispatch();
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [pendingRequest] = pendingRequests;
@@ -28,14 +28,11 @@ export const useConfirmRequestModal = (): IUseConfirmRequestModalData => {
       };
 
       setLoading(true);
-      postMessage({
-        method: RPCAction.FINALIZE_REQUEST,
-        payload: req,
-      })
+      dispatch(finalizeRequest(req))
         .catch((e: Error) => setError(e.message))
         .finally(() => setLoading(false));
     },
-    [pendingRequest?.id, setLoading, setError],
+    [pendingRequest?.id, setLoading, setError, dispatch],
   );
 
   const accept = useCallback(
@@ -47,10 +44,7 @@ export const useConfirmRequestModal = (): IUseConfirmRequestModalData => {
       };
 
       setLoading(true);
-      postMessage({
-        method: RPCAction.FINALIZE_REQUEST,
-        payload: req,
-      })
+      dispatch(finalizeRequest(req))
         .catch((e: Error) => setError(e.message))
         .finally(() => setLoading(false));
     },

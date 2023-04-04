@@ -6,9 +6,14 @@ import { act, render, screen } from "@testing-library/react";
 
 import { createModalRoot, deleteModalRoot } from "@src/config/mock/modal";
 import { defaultWalletHookData } from "@src/config/mock/wallet";
+import { IUseConnectionModalData, useConnectionModal } from "@src/ui/components/ConnectionModal/useConnectionModal";
 import { sliceAddress } from "@src/util/account";
 
 import { Info, InfoProps } from "..";
+
+jest.mock("@src/ui/components/ConnectionModal/useConnectionModal", (): unknown => ({
+  useConnectionModal: jest.fn(),
+}));
 
 describe("ui/pages/Home/components/Info", () => {
   const defaultProps: InfoProps = {
@@ -18,7 +23,17 @@ describe("ui/pages/Home/components/Info", () => {
     refreshConnectionStatus: jest.fn().mockResolvedValue(true),
   };
 
+  const defaultConnectionModalHookData: IUseConnectionModalData = {
+    url: new URL("http://localhost:3000"),
+    checked: false,
+    faviconUrl: "http://localhost:3000/favicon.ico",
+    onSetApproval: jest.fn(),
+    onRemoveHost: jest.fn(),
+  };
+
   beforeEach(() => {
+    (useConnectionModal as jest.Mock).mockReturnValue(defaultConnectionModalHookData);
+
     createModalRoot();
   });
 

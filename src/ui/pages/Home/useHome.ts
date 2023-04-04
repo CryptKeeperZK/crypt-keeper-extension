@@ -1,13 +1,12 @@
 import BigNumber from "bignumber.js";
 import { useRef, useState, useEffect, useCallback, RefObject } from "react";
-import { browser } from "webextension-polyfill-ts";
 
 import { Chain } from "@src/config/rpc";
-import { RPCAction } from "@src/constants";
 import { useAppDispatch } from "@src/ui/ducks/hooks";
 import { fetchIdentities, deleteAllIdentities, useIdentities, IdentityData } from "@src/ui/ducks/identities";
+import { checkHostApproval } from "@src/ui/ducks/permissions";
 import { useWallet } from "@src/ui/hooks/wallet";
-import postMessage from "@src/util/postMessage";
+import { getLastActiveTabUrl } from "@src/util/browser";
 
 export interface IUseHomeData {
   isFixedTabsMode: boolean;
@@ -45,17 +44,14 @@ export const useHome = (): IUseHomeData => {
   }, [dispatch]);
 
   const refreshConnectionStatus = useCallback(async () => {
-    const [tab] = await browser.tabs.query({ active: true, lastFocusedWindow: true });
+    const tabUrl = await getLastActiveTabUrl();
 
-    if (!tab?.url) {
+    if (!tabUrl) {
       return false;
     }
 
-    return postMessage<boolean>({
-      method: RPCAction.IS_HOST_APPROVED,
-      payload: new URL(tab.url).origin,
-    });
-  }, []);
+    return dispatch(checkHostApproval(tabUrl.origin));
+  }, [dispatch]);
 
   useEffect(() => {
     dispatch(fetchIdentities());

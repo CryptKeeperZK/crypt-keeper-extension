@@ -9,7 +9,17 @@ import { RPCAction } from "@src/constants";
 import { store } from "@src/ui/store/configureAppStore";
 import postMessage from "@src/util/postMessage";
 
-import { closePopup, fetchStatus, setStatus, setupPassword, unlock, useAppStatus } from "../app";
+import {
+  closePopup,
+  fetchStatus,
+  getWalletConnection,
+  lock,
+  setStatus,
+  setWalletConnection,
+  setupPassword,
+  unlock,
+  useAppStatus,
+} from "../app";
 
 jest.mock("redux-logger", (): unknown => ({
   createLogger: () => () => (action: unknown) => action,
@@ -25,7 +35,7 @@ describe("ui/ducks/app", () => {
   });
 
   test("should fetch status properly", async () => {
-    const expectedState = { isInitialized: true, isUnlocked: true };
+    const expectedState = { isInitialized: true, isUnlocked: true, isDisconnectedPermanently: undefined };
     (postMessage as jest.Mock).mockResolvedValue(expectedState);
 
     await Promise.resolve(store.dispatch(fetchStatus()));
@@ -39,7 +49,7 @@ describe("ui/ducks/app", () => {
   });
 
   test("should set status properly", async () => {
-    const expectedState = { isInitialized: true, isUnlocked: true };
+    const expectedState = { isInitialized: true, isUnlocked: true, isDisconnectedPermanently: undefined };
 
     await Promise.resolve(store.dispatch(setStatus(expectedState)));
     const { app } = store.getState();
@@ -47,11 +57,47 @@ describe("ui/ducks/app", () => {
     expect(app).toStrictEqual(expectedState);
   });
 
+  test("should set wallet connection properly", async () => {
+    const expectedState = { isInitialized: true, isUnlocked: true, isDisconnectedPermanently: true };
+
+    await Promise.resolve(store.dispatch(setWalletConnection(true)));
+    const { app } = store.getState();
+
+    expect(app).toStrictEqual(expectedState);
+    expect(postMessage).toBeCalledTimes(1);
+    expect(postMessage).toBeCalledWith({
+      method: RPCAction.SET_CONNECT_WALLET,
+      payload: { isDisconnectedPermanently: true },
+    });
+  });
+
+  test("should get wallet connection properly", async () => {
+    (postMessage as jest.Mock).mockResolvedValue({ isDisconnectedPermanently: true });
+
+    const expectedState = { isInitialized: true, isUnlocked: true, isDisconnectedPermanently: true };
+
+    await Promise.resolve(store.dispatch(getWalletConnection()));
+    const { app } = store.getState();
+
+    expect(app).toStrictEqual(expectedState);
+    expect(postMessage).toBeCalledTimes(1);
+    expect(postMessage).toBeCalledWith({
+      method: RPCAction.GET_CONNECT_WALLET,
+    });
+  });
+
   test("should call close popup action properly", async () => {
     await Promise.resolve(store.dispatch(closePopup()));
 
     expect(postMessage).toBeCalledTimes(1);
     expect(postMessage).toBeCalledWith({ method: RPCAction.CLOSE_POPUP });
+  });
+
+  test("should call lock action properly", async () => {
+    await Promise.resolve(store.dispatch(lock()));
+
+    expect(postMessage).toBeCalledTimes(1);
+    expect(postMessage).toBeCalledWith({ method: RPCAction.LOCK });
   });
 
   test("should call unlock action properly", async () => {
