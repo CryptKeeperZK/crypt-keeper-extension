@@ -1,4 +1,5 @@
-import { Tooltip } from "@mui/material";
+import { InputAdornment, Tooltip } from "@mui/material";
+
 import logoSVG from "@src/static/icons/logo.svg";
 import { ButtonType, Button } from "@src/ui/components/Button";
 import { Icon } from "@src/ui/components/Icon";
