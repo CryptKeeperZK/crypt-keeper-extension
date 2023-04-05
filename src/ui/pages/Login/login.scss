@@ -8,5 +8,15 @@
       width: 8rem !important;
       height: 8rem !important;
     }
+
+    .eye-tooltip {
+      height: 0.75rem !important;
+      width: 0.75rem !important;
+    }
+    
+    .eye-icon {
+      color: $primary-green;
+      cursor: pointer;
+    }
   }
 }

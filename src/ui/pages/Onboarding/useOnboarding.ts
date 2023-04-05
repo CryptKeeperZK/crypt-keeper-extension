@@ -13,16 +13,7 @@ export interface IUseOnboardingData {
   register: UseFormRegister<PasswordFormFields>;
   onSubmit: (event?: BaseSyntheticEvent) => Promise<void>;
   isShowPassword: boolean;
-<<<<<<< HEAD
   onShowPassword: () => void;
-=======
-  setShowPassword: () => void;
-}
-
-interface FormFields {
-  password: string;
-  confirmPassword: string;
->>>>>>> c06e1ac (chore: fix reqested changes)
 }
 
 const passwordRules = /^(?=.*[0-9])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{8,}$/;
@@ -39,7 +30,6 @@ const validationSchema = object({
 });
 
 export const useOnboarding = (): IUseOnboardingData => {
-  const [isShowPassword, setIsShowPassword] = useState(false);
   const resolver = useValidationResolver(validationSchema);
   const {
     formState: { isLoading, isSubmitting, errors },
