@@ -65,6 +65,8 @@ describe("ui/hooks/wallet", () => {
     await waitFor(() => expect(result.current.balance).toBeDefined());
 
     expect(result.current.isActive).toBe(true);
+    expect(result.current.isActivating).toBe(false);
+    expect(result.current.isInjectedWallet).toBe(false);
     expect(result.current.chain).toStrictEqual(defaultWalletHookData.chain);
     expect(result.current.address).toBe(defaultWalletHookData.address);
     expect(result.current.connectorName).toBe(ConnectorNames.MOCK);
@@ -86,6 +88,8 @@ describe("ui/hooks/wallet", () => {
     await waitFor(() => expect(result.current.balance).toBeDefined());
 
     expect(result.current.isActive).toBe(true);
+    expect(result.current.isActivating).toBe(false);
+    expect(result.current.isInjectedWallet).toBe(false);
     expect(result.current.chain).toStrictEqual(defaultWalletHookData.chain);
     expect(result.current.address).toBe(defaultWalletHookData.address);
     expect(result.current.connectorName).toBe(ConnectorNames.METAMASK);
@@ -104,6 +108,7 @@ describe("ui/hooks/wallet", () => {
 
     expect(result.current.isActive).toBe(false);
     expect(result.current.isActivating).toBe(false);
+    expect(result.current.isInjectedWallet).toBe(false);
     expect(result.current.chain).toBeUndefined();
     expect(result.current.address).toBeUndefined();
     expect(result.current.connectorName).toBe(ConnectorNames.UNKNOWN);

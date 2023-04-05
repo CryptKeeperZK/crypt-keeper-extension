@@ -2,7 +2,9 @@
  * @jest-environment jsdom
  */
 
-import { render } from "@testing-library/react";
+/* eslint-disable @typescript-eslint/unbound-method */
+import { act, render } from "@testing-library/react";
+import { browser } from "webextension-polyfill-ts";
 
 import { defaultWalletHookData } from "@src/config/mock/wallet";
 import { useWallet } from "@src/ui/hooks/wallet";
@@ -65,5 +67,23 @@ describe("ui/components/Header", () => {
     const icon = await findByTestId("inactive-wallet-icon-activating");
 
     expect(icon).toBeInTheDocument();
+  });
+
+  test("should render without installed wallet", async () => {
+    (useWallet as jest.Mock).mockReturnValue({
+      ...defaultWalletHookData,
+      isInjectedWallet: false,
+    });
+
+    const { findByTestId, findByText } = render(<Header />);
+
+    const menu = await findByTestId("menu");
+    await act(async () => Promise.resolve(menu.click()));
+
+    const metamaskInstall = await findByText("Install metamask");
+    await act(async () => Promise.resolve(metamaskInstall.click()));
+
+    expect(browser.tabs.create).toBeCalledTimes(1);
+    expect(browser.tabs.create).toBeCalledWith({ url: "https://metamask.io/" });
   });
 });

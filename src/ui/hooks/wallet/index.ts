@@ -14,6 +14,7 @@ import type { BrowserProvider } from "ethers/types/providers";
 export interface IUseWalletData {
   isActive: boolean;
   isActivating: boolean;
+  isInjectedWallet: boolean;
   address?: string;
   balance?: BigNumber;
   chain?: Chain;
@@ -33,11 +34,10 @@ export const useWallet = (): IUseWalletData => {
   const dispatch = useAppDispatch();
   const connectorName = getConnectorName(connector);
 
-  const handlers = hooks;
   const chains = getChains();
 
-  const chainId = handlers?.usePriorityChainId();
-  const address = handlers?.usePriorityAccount();
+  const chainId = hooks?.usePriorityChainId();
+  const address = hooks?.usePriorityAccount();
   const chain = chainId ? chains[chainId] : undefined;
   const decimals = chain?.nativeCurrency.decimals;
 
@@ -80,6 +80,7 @@ export const useWallet = (): IUseWalletData => {
   return {
     isActive,
     isActivating,
+    isInjectedWallet: Boolean(window.ethereum),
     address,
     balance,
     chain,

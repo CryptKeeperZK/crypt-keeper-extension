@@ -1,9 +1,9 @@
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { faTwitter, faGithub, faReddit } from "@fortawesome/free-brands-svg-icons";
+import { createExternalExtensionProvider } from "@metamask/providers";
 import { AnyAction } from "@reduxjs/toolkit";
 import { Web3ReactProvider } from "@web3-react/core";
 import log from "loglevel";
-import createMetaMaskProvider from "metamask-extension-provider";
 import { Suspense } from "react";
 import ReactDOM from "react-dom/client";
 import { Provider } from "react-redux";
@@ -17,7 +17,16 @@ import { store } from "@src/ui/store/configureAppStore";
 
 log.setDefaultLevel(isDebugMode() ? "debug" : "info");
 
-window.ethereum = createMetaMaskProvider();
+const provider = createExternalExtensionProvider();
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
+window.ethereum = provider;
+
+provider.on("error", (error) => {
+  if ((error as string).includes(`Lost connection`)) {
+    window.ethereum = undefined;
+  }
+});
 
 browser.runtime.onMessage.addListener((action?: AnyAction) => {
   if (action?.type) {
