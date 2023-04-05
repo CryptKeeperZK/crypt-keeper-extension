@@ -1,4 +1,5 @@
-import { Tooltip } from "@mui/material";
+import { InputAdornment, Tooltip } from "@mui/material";
+
 import logoSVG from "@src/static/icons/logo.svg";
 import { ButtonType, Button } from "@src/ui/components/Button";
 import { Icon } from "@src/ui/components/Icon";
@@ -27,27 +28,31 @@ const Login = (): JSX.Element => {
           <Input
             autoFocus
             className="mb-4"
-            icon={[isShowPassword ? (
-              <Tooltip
-                key={2}
-                className="eye-tooltip"
-                data-testid="eye-slash-button"
-                title="Hide Password"
-                onClick={setShowPassword}
-              >
-                <Icon className="eye-icon" fontAwesome="fa-eye-slash" />
-              </Tooltip>
-            ) : (
-              <Tooltip
-                key={2}
-                className="eye-tooltip"
-                data-testid="eye-look-button"
-                title="Show Password"
-                onClick={setShowPassword}
-              >
-                <Icon className="eye-icon" fontAwesome="fa-eye" />
-              </Tooltip>
-            ),]}
+            endAdornment={
+              <InputAdornment position="end">
+                {isShowPassword ? (
+                  <Tooltip
+                    key={2}
+                    className="eye-tooltip"
+                    data-testid="eye-slash-button"
+                    title="Hide Password"
+                    onClick={setShowPassword}
+                  >
+                    <Icon className="eye-icon" fontAwesome="fa-eye-slash" />
+                  </Tooltip>
+                ) : (
+                  <Tooltip
+                    key={2}
+                    className="eye-tooltip"
+                    data-testid="eye-look-button"
+                    title="Show Password"
+                    onClick={setShowPassword}
+                  >
+                    <Icon className="eye-icon" fontAwesome="fa-eye" />
+                  </Tooltip>
+                )}
+              </InputAdornment>
+            }
             id="password"
             label="Password"
             type={isShowPassword ? "text" : "password"}

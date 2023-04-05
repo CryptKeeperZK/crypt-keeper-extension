@@ -1,3 +1,4 @@
+import { InputAdornment } from "@mui/material";
 import Tooltip from "@mui/material/Tooltip";
 
 import logoSVG from "@src/static/icons/logo.svg";
@@ -28,51 +29,54 @@ const Onboarding = (): JSX.Element => {
           <Input
             autoFocus
             className="mb-4"
+            endAdornment={
+              <InputAdornment position="end">
+                <Tooltip
+                  key={1}
+                  className="info-tooltip"
+                  title={
+                    <div>
+                      <p>Password requirements:</p>
+
+                      <p>- At least 8 characters</p>
+
+                      <p>- At least 1 upper case and letter</p>
+
+                      <p>- At least 1 lower case letter</p>
+
+                      <p>- At least 1 special character (!@#$%^&*)</p>
+
+                      <p>- At least 1 number</p>
+                    </div>
+                  }
+                >
+                  <Icon className="info-icon" fontAwesome="fa-info" />
+                </Tooltip>
+
+                {isShowPassword ? (
+                  <Tooltip
+                    key={2}
+                    className="eye-tooltip"
+                    data-testid="eye-slash-button"
+                    title="Hide Password"
+                    onClick={setShowPassword}
+                  >
+                    <Icon className="info-icon" fontAwesome="fa-eye-slash" />
+                  </Tooltip>
+                ) : (
+                  <Tooltip
+                    key={2}
+                    className="eye-tooltip"
+                    data-testid="eye-look-button"
+                    title="Show Password"
+                    onClick={setShowPassword}
+                  >
+                    <Icon className="info-icon" fontAwesome="fa-eye" />
+                  </Tooltip>
+                )}
+              </InputAdornment>
+            }
             errorMessage={errors.password}
-            icon={[
-              <Tooltip
-                key={1}
-                className="info-tooltip"
-                title={
-                  <div>
-                    <p>Password requirements:</p>
-
-                    <p>- At least 8 characters</p>
-
-                    <p>- At least 1 upper case and letter</p>
-
-                    <p>- At least 1 lower case letter</p>
-
-                    <p>- At least 1 special character (!@#$%^&*)</p>
-
-                    <p>- At least 1 number</p>
-                  </div>
-                }
-              >
-                <Icon className="info-icon" fontAwesome="fa-info" />
-              </Tooltip>,
-              isShowPassword ? (
-                <Tooltip
-                  key={2}
-                  className="eye-tooltip"
-                  data-testid="eye-slash-button"
-                  title="Hide Password"
-                  onClick={setShowPassword}
-                >
-                  <Icon className="info-icon" fontAwesome="fa-eye-slash" />
-                </Tooltip>
-              ) : (
-                <Tooltip
-                  key={2}
-                  className="eye-tooltip"
-                  data-testid="eye-look-button"
-                  title="Show Password"
-                  onClick={setShowPassword}
-                >
-                  <Icon className="info-icon" fontAwesome="fa-eye" />
-                </Tooltip>
-              ),
-            ]}
             id="password"
             label="Password"
             type={isShowPassword ? "text" : "password"}
