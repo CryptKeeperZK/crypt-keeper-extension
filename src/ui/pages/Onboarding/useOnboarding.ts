@@ -11,8 +11,6 @@ export interface IUseOnboardingData {
   errors: Partial<FormFields & { root: string }>;
   register: UseFormRegister<FormFields>;
   onSubmit: (event?: BaseSyntheticEvent) => Promise<void>;
-  isShowPassword: boolean;
-  setShowPassword: () => void;
 }
 
 interface FormFields {
@@ -34,7 +32,6 @@ const validationSchema = object({
 });
 
 export const useOnboarding = (): IUseOnboardingData => {
-  const [isShowPassword, setIsShowPassword] = useState(false);
   const resolver = useValidationResolver(validationSchema);
   const {
     formState: { isLoading, isSubmitting, errors },
@@ -60,10 +57,6 @@ export const useOnboarding = (): IUseOnboardingData => {
     [dispatch, setError],
   );
 
-  const setShowPassword = () => {
-    setIsShowPassword((isShow) => !isShow);
-  };
-
   return {
     isLoading: isLoading || isSubmitting,
     errors: {
@@ -73,7 +66,5 @@ export const useOnboarding = (): IUseOnboardingData => {
     },
     register,
     onSubmit: handleSubmit(onSubmit),
-    isShowPassword,
-    setShowPassword,
   };
 };

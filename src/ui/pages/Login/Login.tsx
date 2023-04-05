@@ -1,13 +1,16 @@
+import { Tooltip } from "@mui/material";
 import logoSVG from "@src/static/icons/logo.svg";
 import { ButtonType, Button } from "@src/ui/components/Button";
 import { Icon } from "@src/ui/components/Icon";
 import { Input } from "@src/ui/components/Input";
+import { useShowPassword } from "@src/ui/hooks/showPassword";
 
 import "./login.scss";
 import { useLogin } from "./useLogin";
 
 const Login = (): JSX.Element => {
   const { isLoading, errors, register, onSubmit } = useLogin();
+  const { isShowPassword, setShowPassword } = useShowPassword();
 
   return (
     <form className="flex flex-col flex-nowrap h-full login" data-testid="login-form" onSubmit={onSubmit}>
@@ -24,9 +27,30 @@ const Login = (): JSX.Element => {
           <Input
             autoFocus
             className="mb-4"
+            icon={[isShowPassword ? (
+              <Tooltip
+                key={2}
+                className="eye-tooltip"
+                data-testid="eye-slash-button"
+                title="Hide Password"
+                onClick={setShowPassword}
+              >
+                <Icon className="eye-icon" fontAwesome="fa-eye-slash" />
+              </Tooltip>
+            ) : (
+              <Tooltip
+                key={2}
+                className="eye-tooltip"
+                data-testid="eye-look-button"
+                title="Show Password"
+                onClick={setShowPassword}
+              >
+                <Icon className="eye-icon" fontAwesome="fa-eye" />
+              </Tooltip>
+            ),]}
             id="password"
             label="Password"
-            type="password"
+            type={isShowPassword ? "text" : "password"}
             {...register("password", { required: "Password is required" })}
           />
         </div>

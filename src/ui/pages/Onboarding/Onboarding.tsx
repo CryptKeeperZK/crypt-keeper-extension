@@ -4,12 +4,14 @@ import logoSVG from "@src/static/icons/logo.svg";
 import { ButtonType, Button } from "@src/ui/components/Button";
 import { Icon } from "@src/ui/components/Icon";
 import { Input } from "@src/ui/components/Input";
+import { useShowPassword } from "@src/ui/hooks/showPassword";
 
 import "./onboarding.scss";
 import { useOnboarding } from "./useOnboarding";
 
 const Onboarding = (): JSX.Element => {
-  const { errors, isLoading, register, onSubmit, isShowPassword, setShowPassword } = useOnboarding();
+  const { errors, isLoading, register, onSubmit } = useOnboarding();
+  const { isShowPassword, setShowPassword } = useShowPassword();
 
   return (
     <form className="flex flex-col flex-nowrap h-full onboarding" data-testid="onboarding-form" onSubmit={onSubmit}>
@@ -52,22 +54,22 @@ const Onboarding = (): JSX.Element => {
               isShowPassword ? (
                 <Tooltip
                   key={2}
-                  className="eye-slash-tooltip"
+                  className="eye-tooltip"
                   data-testid="eye-slash-button"
                   title="Hide Password"
                   onClick={setShowPassword}
                 >
-                  <Icon className="eye-slash-icon" fontAwesome="fa-eye-slash" />
+                  <Icon className="info-icon" fontAwesome="fa-eye-slash" />
                 </Tooltip>
               ) : (
                 <Tooltip
                   key={2}
-                  className="eye-slash-tooltip"
+                  className="eye-tooltip"
                   data-testid="eye-look-button"
                   title="Show Password"
                   onClick={setShowPassword}
                 >
-                  <Icon className="eye-icon" fontAwesome="fa-eye" />
+                  <Icon className="info-icon" fontAwesome="fa-eye" />
                 </Tooltip>
               ),
             ]}
