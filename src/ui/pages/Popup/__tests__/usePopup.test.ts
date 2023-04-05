@@ -83,9 +83,6 @@ describe("ui/pages/Popup/usePopup", () => {
     await waitForData(result.current);
 
     expect(result.current.isLoading).toBe(false);
-    expect(result.current.isInitialized).toBe(false);
-    expect(result.current.isUnlocked).toBe(false);
-    expect(result.current.isShowRequestModal).toBe(false);
   });
 
   test("should get data and connect on first load", async () => {
@@ -113,18 +110,59 @@ describe("ui/pages/Popup/usePopup", () => {
   });
 
   test("should redirect to create identity page", async () => {
+    (useAppStatus as jest.Mock).mockReturnValue({ isInitialized: true, isUnlocked: true });
+
     const url = `${window.location.href}?redirect=${Paths.CREATE_IDENTITY}`;
     window.location.href = url;
-
-    const spyReplaceState = jest.spyOn(window.history, "replaceState");
 
     const { result } = renderHook(() => usePopup());
     await waitForData(result.current);
 
     expect(mockNavigate).toBeCalledTimes(1);
     expect(mockNavigate).toBeCalledWith(Paths.CREATE_IDENTITY);
-    expect(spyReplaceState).toBeCalledTimes(1);
 
     window.location.href = oldHref;
+  });
+
+  test("should redirect to login page", async () => {
+    (useAppStatus as jest.Mock).mockReturnValue({ isInitialized: true, isUnlocked: false });
+
+    const { result } = renderHook(() => usePopup());
+    await waitForData(result.current);
+
+    expect(mockNavigate).toBeCalledTimes(1);
+    expect(mockNavigate).toBeCalledWith(Paths.LOGIN);
+  });
+
+  test("should redirect to onboarding page", async () => {
+    (useAppStatus as jest.Mock).mockReturnValue({ isInitialized: false, isUnlocked: false });
+
+    const { result } = renderHook(() => usePopup());
+    await waitForData(result.current);
+
+    expect(mockNavigate).toBeCalledTimes(1);
+    expect(mockNavigate).toBeCalledWith(Paths.ONBOARDING);
+  });
+
+  test("should redirect to onboarding page", async () => {
+    (useAppStatus as jest.Mock).mockReturnValue({ isInitialized: true, isUnlocked: true });
+    (usePendingRequests as jest.Mock).mockReturnValue([{}]);
+
+    const { result } = renderHook(() => usePopup());
+    await waitForData(result.current);
+
+    expect(mockNavigate).toBeCalledTimes(1);
+    expect(mockNavigate).toBeCalledWith(Paths.REQUESTS);
+  });
+
+  test("should redirect to home page", async () => {
+    (useAppStatus as jest.Mock).mockReturnValue({ isInitialized: true, isUnlocked: true });
+    (usePendingRequests as jest.Mock).mockReturnValue([]);
+
+    const { result } = renderHook(() => usePopup());
+    await waitForData(result.current);
+
+    expect(mockNavigate).toBeCalledTimes(1);
+    expect(mockNavigate).toBeCalledWith(Paths.HOME);
   });
 });
