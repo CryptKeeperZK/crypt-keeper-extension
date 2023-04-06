@@ -3,7 +3,7 @@ import { browser } from "webextension-polyfill-ts";
 
 import { InjectedMessageData, ReduxAction } from "@src/types";
 import { setStatus } from "@src/ui/ducks/app";
-import { setSelectedCommitment } from "@src/ui/ducks/identities";
+import { SelectedIdentity, setSelectedCommitment } from "@src/ui/ducks/identities";
 
 try {
   const url = browser.runtime.getURL("js/injected.js");
@@ -36,7 +36,7 @@ try {
         window.postMessage(
           {
             target: "injected-injectedscript",
-            payload: [null, action.payload],
+            payload: [null, action.payload as SelectedIdentity],
             nonce: "identityChanged",
           },
           "*",

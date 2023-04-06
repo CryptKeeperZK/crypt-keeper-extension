@@ -3,7 +3,7 @@ import { browser } from "webextension-polyfill-ts";
 
 import { getEnabledFeatures } from "@src/config/features";
 import { IdentityMetadata, IdentityName } from "@src/types";
-import { setIdentities, setSelectedCommitment } from "@src/ui/ducks/identities";
+import { SelectedIdentity, setIdentities, setSelectedCommitment } from "@src/ui/ducks/identities";
 import { ellipsify } from "@src/util/account";
 import pushMessage from "@src/util/pushMessage";
 
@@ -61,7 +61,10 @@ export default class IdentityService {
     }
 
     this.activeIdentity = ZkIdentityDecorater.genFromSerialized(identity);
-    await this.writeActiveIdentity(identityCommitment);
+
+    const activeIdentityWeb2Provider = this.activeIdentity.metadata.web2Provider;
+
+    await this.writeActiveIdentity(identityCommitment, activeIdentityWeb2Provider);
 
     return true;
   };
@@ -138,6 +141,17 @@ export default class IdentityService {
     return this.activeIdentity;
   };
 
+  public getActiveIdentityData = async (): Promise<SelectedIdentity | undefined> => {
+    const identity = await this.getActiveIdentity();
+
+    const web2Provider = identity?.metadata.web2Provider;
+
+    return {
+      commitment: identity ? bigintToHex(identity.genIdentityCommitment()) : "",
+      web2Provider: web2Provider || "",
+    };
+  };
+
   public getIdentityCommitments = async (): Promise<{ commitments: string[]; identities: Map<string, string> }> => {
     const identities = await this.getIdentitiesFromStore();
     const commitments = [...identities.keys()];
@@ -208,7 +222,7 @@ export default class IdentityService {
     }
 
     this.activeIdentity = undefined;
-    await this.writeActiveIdentity("");
+    await this.writeActiveIdentity("", "");
   };
 
   private writeIdentities = async (identities: Map<string, string>): Promise<void> => {
@@ -217,17 +231,30 @@ export default class IdentityService {
     await this.identitiesStore.set(cipherText);
   };
 
-  private writeActiveIdentity = async (commitment: string): Promise<void> => {
+  private writeActiveIdentity = async (commitment: string, web2Provider?: string): Promise<void> => {
     const cipherText = this.lockService.encrypt(commitment);
     await this.activeIdentityStore.set(cipherText);
 
     const [tabs] = await Promise.all([
       browser.tabs.query({ active: true }),
-      pushMessage(setSelectedCommitment(commitment)),
+      pushMessage(
+        setSelectedCommitment({
+          commitment,
+          web2Provider,
+        }),
+      ),
     ]);
 
     tabs.map((tab) =>
-      browser.tabs.sendMessage(tab.id as number, setSelectedCommitment(commitment)).catch(() => undefined),
+      browser.tabs
+        .sendMessage(
+          tab.id as number,
+          setSelectedCommitment({
+            commitment,
+            web2Provider,
+          }),
+        )
+        .catch(() => undefined),
     );
   };
 

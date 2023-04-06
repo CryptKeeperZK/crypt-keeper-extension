@@ -3,6 +3,7 @@ import log from "loglevel";
 
 import { RPCAction } from "@src/constants";
 import { InjectedMessageData, MerkleProofArtifacts } from "@src/types";
+import { SelectedIdentity } from "@src/ui/ducks/identities";
 
 import { IRlnGenerateArgs, ISemaphoreGenerateArgs, RlnProofGenerator, SemaphoreProofGenerator } from "./proof";
 
@@ -30,8 +31,8 @@ async function getIdentityCommitments() {
 
 async function getActiveIdentity() {
   return post({
-    method: RPCAction.GET_ACTIVE_IDENTITY,
-  }) as Promise<string>;
+    method: RPCAction.GET_ACTIVE_IDENTITY_DATA,
+  }) as Promise<SelectedIdentity>;
 }
 
 async function getHostPermissions(host: string) {

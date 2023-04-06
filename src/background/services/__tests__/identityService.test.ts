@@ -70,14 +70,20 @@ describe("background/services/identity", () => {
 
       expect(result).toBe(true);
       expect(pushMessage).toBeCalledTimes(1);
-      expect(pushMessage).toBeCalledWith(setSelectedCommitment(defaultIdentityCommitment));
+      expect(pushMessage).toBeCalledWith(
+        setSelectedCommitment({
+          commitment: defaultIdentityCommitment,
+        }),
+      );
       expect(browser.tabs.sendMessage).toBeCalledTimes(defaultTabs.length);
 
       for (let index = 0; index < defaultTabs.length; index += 1) {
         expect(browser.tabs.sendMessage).toHaveBeenNthCalledWith(
           index + 1,
           defaultTabs[index].id,
-          setSelectedCommitment(defaultIdentityCommitment),
+          setSelectedCommitment({
+            commitment: defaultIdentityCommitment,
+          }),
         );
       }
     });
@@ -105,14 +111,20 @@ describe("background/services/identity", () => {
 
       expect(result).toBe(true);
       expect(pushMessage).toBeCalledTimes(1);
-      expect(pushMessage).toBeCalledWith(setSelectedCommitment(defaultIdentityCommitment));
+      expect(pushMessage).toBeCalledWith(
+        setSelectedCommitment({
+          commitment: defaultIdentityCommitment,
+        }),
+      );
       expect(browser.tabs.sendMessage).toBeCalledTimes(defaultTabs.length);
 
       for (let index = 0; index < defaultTabs.length; index += 1) {
         expect(browser.tabs.sendMessage).toHaveBeenNthCalledWith(
           index + 1,
           defaultTabs[index].id,
-          setSelectedCommitment(defaultIdentityCommitment),
+          setSelectedCommitment({
+            commitment: defaultIdentityCommitment,
+          }),
         );
       }
     });
