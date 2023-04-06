@@ -7,7 +7,7 @@ const isProduction = process.env.NODE_ENV === "production";
 
 module.exports = {
   extends: ["airbnb", "prettier", "plugin:react/recommended", "plugin:import/recommended"],
-  ignorePatterns: [".eslintrc.js", "commitlint.config.js", "webpack.*.js", "demo/index.tsx"],
+  ignorePatterns: [".eslintrc.js", "commitlint.config.js", "playwright.config.ts", "webpack.*.js", "demo/index.tsx"],
   root: true,
   env: {
     browser: true,
@@ -26,7 +26,7 @@ module.exports = {
       typescript: {},
       node: {
         extensions: [".ts", ".tsx", ".js", ".jsx"],
-        moduleDirectory: ["node_modules", "src"],
+        moduleDirectory: ["node_modules", "src", "e2e"],
       },
     },
   },
@@ -91,7 +91,9 @@ module.exports = {
           "**/*.test.ts",
           "**/*.test.tsx",
           "**/setupTests.ts",
+          "playwright.config.ts",
           "webpack.**.js",
+          "e2e/**/*.ts",
           "**/server/mockMerkleProof.ts",
           "jest.config.js",
         ],
@@ -134,7 +136,7 @@ module.exports = {
   },
   overrides: [
     {
-      files: ["src/**/*.ts", "src/**/*.tsx"],
+      files: ["**/*.ts", "**/*.tsx"],
       parser: "@typescript-eslint/parser",
       extends: [
         "plugin:@typescript-eslint/eslint-recommended",
@@ -171,6 +173,8 @@ module.exports = {
               "Text",
               "Option",
               "screen",
+              "test",
+              "expect",
             ],
           },
         ],
