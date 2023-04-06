@@ -12,7 +12,6 @@ import { useOnboarding } from "./useOnboarding";
 
 const Onboarding = (): JSX.Element => {
   const { errors, isLoading, register, onSubmit } = useOnboarding();
-  const { isShowPassword, setShowPassword } = useShowPassword();
 
   return (
     <form className="flex flex-col flex-nowrap h-full onboarding" data-testid="onboarding-form" onSubmit={onSubmit}>
@@ -25,72 +24,7 @@ const Onboarding = (): JSX.Element => {
 
         <div className="text-base">To continue, please setup a password</div>
 
-        <div className="py-4 w-full" data-testid="showen-inputs">
-          <Input
-            autoFocus
-            className="mb-4"
-            endAdornment={
-              <InputAdornment position="end">
-                <Tooltip
-                  key={1}
-                  className="info-tooltip"
-                  title={
-                    <div>
-                      <p>Password requirements:</p>
-
-                      <p>- At least 8 characters</p>
-
-                      <p>- At least 1 upper case and letter</p>
-
-                      <p>- At least 1 lower case letter</p>
-
-                      <p>- At least 1 special character (!@#$%^&*)</p>
-
-                      <p>- At least 1 number</p>
-                    </div>
-                  }
-                >
-                  <Icon className="info-icon" fontAwesome="fa-info" />
-                </Tooltip>
-
-                {isShowPassword ? (
-                  <Tooltip
-                    key={2}
-                    className="eye-tooltip"
-                    data-testid="eye-slash-button"
-                    title="Hide Password"
-                    onClick={setShowPassword}
-                  >
-                    <Icon className="info-icon" fontAwesome="fa-eye-slash" />
-                  </Tooltip>
-                ) : (
-                  <Tooltip
-                    key={2}
-                    className="eye-tooltip"
-                    data-testid="eye-look-button"
-                    title="Show Password"
-                    onClick={setShowPassword}
-                  >
-                    <Icon className="info-icon" fontAwesome="fa-eye" />
-                  </Tooltip>
-                )}
-              </InputAdornment>
-            }
-            errorMessage={errors.password}
-            id="password"
-            label="Password"
-            type={isShowPassword ? "text" : "password"}
-            {...register("password")}
-          />
-
-          <Input
-            errorMessage={errors.confirmPassword}
-            id="confirmPassword"
-            label="Confirm Password"
-            type={isShowPassword ? "text" : "password"}
-            {...register("confirmPassword")}
-          />
-        </div>
+        
       </div>
 
       {errors.root && <div className="text-red-500 text-sm text-center">{errors.root}</div>}
