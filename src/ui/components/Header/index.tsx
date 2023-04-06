@@ -1,13 +1,13 @@
 import classNames from "classnames";
 import { useCallback } from "react";
 import Jazzicon, { jsNumberForAddress } from "react-jazzicon";
-import { browser } from "webextension-polyfill-ts";
 
 import loaderSvg from "@src/static/icons/loader.svg";
 import logoSvg from "@src/static/icons/logo.svg";
 import { Icon } from "@src/ui/components/Icon";
 import { Menuable } from "@src/ui/components/Menuable";
 import { useWallet } from "@src/ui/hooks/wallet";
+import { redirectToNewTab } from "@src/util/browser";
 
 import "./header.scss";
 
@@ -18,7 +18,7 @@ export const Header = (): JSX.Element => {
   const isLoading = isActivating && isInjectedWallet;
 
   const onGoToMetamaskPage = useCallback(() => {
-    browser.tabs.create({ url: METAMASK_INSTALL_URL });
+    redirectToNewTab(METAMASK_INSTALL_URL);
   }, []);
 
   return (

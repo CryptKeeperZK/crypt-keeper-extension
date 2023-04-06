@@ -2,17 +2,20 @@
  * @jest-environment jsdom
  */
 
-/* eslint-disable @typescript-eslint/unbound-method */
 import { act, render } from "@testing-library/react";
-import { browser } from "webextension-polyfill-ts";
 
 import { defaultWalletHookData } from "@src/config/mock/wallet";
 import { useWallet } from "@src/ui/hooks/wallet";
+import { redirectToNewTab } from "@src/util/browser";
 
 import { Header } from "..";
 
 jest.mock("@src/ui/hooks/wallet", (): unknown => ({
   useWallet: jest.fn(),
+}));
+
+jest.mock("@src/util/browser", (): unknown => ({
+  redirectToNewTab: jest.fn(),
 }));
 
 describe("ui/components/Header", () => {
@@ -83,7 +86,7 @@ describe("ui/components/Header", () => {
     const metamaskInstall = await findByText("Install metamask");
     await act(async () => Promise.resolve(metamaskInstall.click()));
 
-    expect(browser.tabs.create).toBeCalledTimes(1);
-    expect(browser.tabs.create).toBeCalledWith({ url: "https://metamask.io/" });
+    expect(redirectToNewTab).toBeCalledTimes(1);
+    expect(redirectToNewTab).toBeCalledWith("https://metamask.io/");
   });
 });
