@@ -3,7 +3,7 @@
     "\\.(ts|tsx)": "ts-jest"
   },
   "setupFilesAfterEnv": ["<rootDir>/src/setupTests.ts"],
-  "testRegex": "(/__tests__/.*|\\.(test|spec))\\.(ts|tsx)$",
+  "testMatch": ["**/src/**/__tests__/**/*.[jt]s?(x)", "**/src/**/?(*.)+(spec|test).[jt]s?(x)"],
   "moduleFileExtensions": ["ts", "js", "tsx"],
   "moduleNameMapper": {
     "^.+\\.(css|scss|svg|png)$": "<rootDir>/src/config/mock/resourceMock.js",
@@ -13,6 +13,7 @@
     "/node_modules/",
     "/test/",
     "/__tests__/",
+    "/e2e/",
     "/src/server/",
     "/src/ui/popup.tsx",
     "/src/background/backgroundPage.ts",

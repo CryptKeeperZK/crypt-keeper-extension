@@ -57,3 +57,7 @@ tsout/
 .env
 .zip
 demo/.parcel-cache
+/test-results/
+/playwright-report/
+/playwright/.cache/
+tmp/
