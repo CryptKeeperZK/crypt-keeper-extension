@@ -70,9 +70,11 @@ describe("background/services/identity", () => {
 
       expect(result).toBe(true);
       expect(pushMessage).toBeCalledTimes(1);
-      expect(pushMessage).toBeCalledWith(setSelectedCommitment({
-        commitment: defaultIdentityCommitment,
-      }));
+      expect(pushMessage).toBeCalledWith(
+        setSelectedCommitment({
+          commitment: defaultIdentityCommitment,
+        }),
+      );
       expect(browser.tabs.sendMessage).toBeCalledTimes(defaultTabs.length);
 
       for (let index = 0; index < defaultTabs.length; index += 1) {
@@ -109,9 +111,11 @@ describe("background/services/identity", () => {
 
       expect(result).toBe(true);
       expect(pushMessage).toBeCalledTimes(1);
-      expect(pushMessage).toBeCalledWith(setSelectedCommitment({
-        commitment: defaultIdentityCommitment,
-      }));
+      expect(pushMessage).toBeCalledWith(
+        setSelectedCommitment({
+          commitment: defaultIdentityCommitment,
+        }),
+      );
       expect(browser.tabs.sendMessage).toBeCalledTimes(defaultTabs.length);
 
       for (let index = 0; index < defaultTabs.length; index += 1) {

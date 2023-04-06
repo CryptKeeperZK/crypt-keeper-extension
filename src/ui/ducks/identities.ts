@@ -31,8 +31,8 @@ const initialState: IdentitiesState = {
   requestPending: false,
   selected: {
     commitment: "",
-    web2Provider: ""
-  }
+    web2Provider: "",
+  },
 };
 
 const identitiesSlice = createSlice({
@@ -42,8 +42,8 @@ const identitiesSlice = createSlice({
     setSelectedCommitment: (state: IdentitiesState, action: PayloadAction<SelectedIdentity>) => {
       state.selected = {
         commitment: action.payload.commitment,
-        web2Provider: action.payload.web2Provider
-      }
+        web2Provider: action.payload.web2Provider,
+      };
     },
 
     setIdentityRequestPending: (state: IdentitiesState, action: PayloadAction<boolean>) => {
@@ -64,15 +64,15 @@ export const createIdentityRequest = () => async (): Promise<void> => {
 
 export const createIdentity =
   (strategy: IdentityStrategy, messageSignature: string, options: CreateIdentityOptions) =>
-    async (): Promise<boolean> =>
-      postMessage({
-        method: RPCAction.CREATE_IDENTITY,
-        payload: {
-          strategy,
-          messageSignature,
-          options,
-        },
-      });
+  async (): Promise<boolean> =>
+    postMessage({
+      method: RPCAction.CREATE_IDENTITY,
+      payload: {
+        strategy,
+        messageSignature,
+        options,
+      },
+    });
 
 export const setActiveIdentity = (identityCommitment: string) => async (): Promise<boolean> =>
   postMessage({
@@ -106,12 +106,16 @@ export const deleteAllIdentities = () => async (): Promise<boolean> =>
 
 export const fetchIdentities = (): TypedThunk => async (dispatch) => {
   const data = await postMessage<IdentityData[]>({ method: RPCAction.GET_IDENTITIES });
-  const { commitment, web2Provider } = await postMessage<SelectedIdentity>({ method: RPCAction.GET_ACTIVE_IDENTITY_DATA });
+  const { commitment, web2Provider } = await postMessage<SelectedIdentity>({
+    method: RPCAction.GET_ACTIVE_IDENTITY_DATA,
+  });
   dispatch(setIdentities(data));
-  dispatch(setSelectedCommitment({
-    commitment,
-    web2Provider
-  }));
+  dispatch(
+    setSelectedCommitment({
+      commitment,
+      web2Provider,
+    }),
+  );
 };
 
 export const useIdentities = (): IdentityData[] => useAppSelector((state) => state.identities.identities, deepEqual);

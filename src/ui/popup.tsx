@@ -22,7 +22,7 @@ const provider = createExternalExtensionProvider();
 // @ts-ignore
 window.ethereum = provider;
 
-provider.on("error", (error) => {
+provider.on("error", (error: unknown) => {
   if ((error as string).includes(`Lost connection`)) {
     window.ethereum = undefined;
   }

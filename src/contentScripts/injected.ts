@@ -3,9 +3,9 @@ import log from "loglevel";
 
 import { RPCAction } from "@src/constants";
 import { InjectedMessageData, MerkleProofArtifacts } from "@src/types";
+import { SelectedIdentity } from "@src/ui/ducks/identities";
 
 import { IRlnGenerateArgs, ISemaphoreGenerateArgs, RlnProofGenerator, SemaphoreProofGenerator } from "./proof";
-import { SelectedIdentity } from "@src/ui/ducks/identities";
 
 export type IRequest = {
   method: string;

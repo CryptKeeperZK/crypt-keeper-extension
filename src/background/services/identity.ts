@@ -148,9 +148,9 @@ export default class IdentityService {
 
     return {
       commitment: identity ? bigintToHex(identity.genIdentityCommitment()) : "",
-      web2Provider: web2Provider ? web2Provider : ""
+      web2Provider: web2Provider || "",
     };
-  }
+  };
 
   public getIdentityCommitments = async (): Promise<{ commitments: string[]; identities: Map<string, string> }> => {
     const identities = await this.getIdentitiesFromStore();
@@ -237,17 +237,24 @@ export default class IdentityService {
 
     const [tabs] = await Promise.all([
       browser.tabs.query({ active: true }),
-      pushMessage(setSelectedCommitment({
-        commitment,
-        web2Provider
-      })),
+      pushMessage(
+        setSelectedCommitment({
+          commitment,
+          web2Provider,
+        }),
+      ),
     ]);
 
     tabs.map((tab) =>
-      browser.tabs.sendMessage(tab.id as number, setSelectedCommitment({
-        commitment,
-        web2Provider
-      })).catch(() => undefined),
+      browser.tabs
+        .sendMessage(
+          tab.id as number,
+          setSelectedCommitment({
+            commitment,
+            web2Provider,
+          }),
+        )
+        .catch(() => undefined),
     );
   };
 
@@ -266,8 +273,8 @@ export default class IdentityService {
       features.RANDOM_IDENTITY
         ? iterableIdentities
         : [...iterableIdentities].filter(
-          ([, identity]) => ZkIdentityDecorater.genFromSerialized(identity).metadata.identityStrategy !== "random",
-        ),
+            ([, identity]) => ZkIdentityDecorater.genFromSerialized(identity).metadata.identityStrategy !== "random",
+          ),
     );
   };
 

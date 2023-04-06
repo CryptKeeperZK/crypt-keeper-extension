@@ -38,17 +38,15 @@ describe("ui/ducks/identities", () => {
 
   const defaultSelectedIdentity: SelectedIdentity = {
     commitment: defaultIdentities[0].commitment,
-    web2Provider: defaultIdentities[0].metadata.web2Provider      
-  }
+    web2Provider: defaultIdentities[0].metadata.web2Provider,
+  };
 
   afterEach(() => {
     jest.clearAllMocks();
   });
 
   test("should fetch identities properly", async () => {
-    (postMessage as jest.Mock)
-      .mockResolvedValueOnce(defaultIdentities)
-      .mockResolvedValueOnce(defaultSelectedIdentity);
+    (postMessage as jest.Mock).mockResolvedValueOnce(defaultIdentities).mockResolvedValueOnce(defaultSelectedIdentity);
 
     await Promise.resolve(store.dispatch(fetchIdentities()));
     const { identities } = store.getState();

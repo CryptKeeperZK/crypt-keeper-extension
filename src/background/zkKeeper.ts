@@ -1,4 +1,3 @@
-import { bigintToHex } from "bigint-conversion";
 import log from "loglevel";
 import { browser } from "webextension-polyfill-ts";
 
@@ -117,7 +116,7 @@ export default class ZkKeeperController extends Handler {
 
       return true;
     });
-    
+
     // Protocols
     this.add(
       RPCAction.PREPARE_SEMAPHORE_PROOF_REQUEST,

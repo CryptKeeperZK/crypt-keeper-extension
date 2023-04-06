@@ -65,7 +65,7 @@ function App() {
   const [isLocked, setIsLocked] = useState(true);
   const [selectedIdentity, setSelectedIdentity] = useState<SelectedIdentity>({
     commitment: "",
-    web2Provider: ""
+    web2Provider: "",
   });
   const mockIdentityCommitments: string[] = genMockIdentityCommitments();
 
@@ -154,13 +154,16 @@ function App() {
 
     setSelectedIdentity({
       commitment: payload.commitment,
-      web2Provider: payload.web2Provider
+      web2Provider: payload.web2Provider,
     });
 
-    toast(<div>
-      <p>Getting Identity Commitment successfully! {payload.commitment}</p>
-      <p>Identity Web2 Provider is {payload.web2Provider}</p>
-    </div>, { type: "success" });
+    toast(
+      <div>
+        <p>Getting Identity Commitment successfully! {payload.commitment}</p>
+        <p>Identity Web2 Provider is {payload.web2Provider}</p>
+      </div>,
+      { type: "success" },
+    );
   }, [client, setSelectedIdentity]);
 
   const createIdentity = useCallback(() => {
@@ -194,7 +197,7 @@ function App() {
   const onLogout = useCallback(() => {
     setSelectedIdentity({
       commitment: "",
-      web2Provider: ""
+      web2Provider: "",
     });
     setIsLocked(true);
   }, [setSelectedIdentity, setIsLocked]);
