@@ -12,6 +12,7 @@ import { getChains } from "../rpc";
 export const defaultWalletHookData: IUseWalletData = {
   isActive: false,
   isActivating: false,
+  isInjectedWallet: true,
   address: ZERO_ADDRESS,
   balance: new BigNumber(1000),
   chain: getChains()[1],
