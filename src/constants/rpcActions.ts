@@ -10,7 +10,7 @@ export enum RPCAction {
   SET_IDENTITY_NAME = "rpc/identity/setIdentityName",
   DELETE_IDENTITY = "rpc/identity/deleteIdentity",
   DELETE_ALL_IDENTITIES = "rpc/identity/deleteAllIdentities",
-  GET_ACTIVE_IDENTITY = "rpc/identity/getActiveidentity",
+  GET_ACTIVE_IDENTITY_DATA = "rpc/identity/getActiveidentityData",
   GET_COMMITMENTS = "rpc/identity/getIdentityCommitments",
   GET_IDENTITIES = "rpc/identity/getIdentities",
   GET_REQUEST_PENDING_STATUS = "rpc/identity/getRequestPendingStatus",

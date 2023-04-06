@@ -70,7 +70,21 @@ export default class ZkKeeperController extends Handler {
     // lock
     this.add(RPCAction.SETUP_PASSWORD, (payload: string) => this.lockService.setupPassword(payload));
 
-    // identities
+    // Identities
+    this.add(RPCAction.GET_COMMITMENTS, this.lockService.ensure, this.identityService.getIdentityCommitments);
+    this.add(RPCAction.GET_IDENTITIES, this.lockService.ensure, this.identityService.getIdentities);
+    this.add(RPCAction.GET_ACTIVE_IDENTITY_DATA, this.lockService.ensure, this.identityService.getActiveIdentityData);
+    this.add(RPCAction.SET_ACTIVE_IDENTITY, this.lockService.ensure, this.identityService.setActiveIdentity);
+    this.add(RPCAction.SET_IDENTITY_NAME, this.lockService.ensure, async (payload: IdentityName) =>
+      this.identityService.setIdentityName(payload),
+    );
+
+    this.add(RPCAction.DELETE_IDENTITY, this.lockService.ensure, async (payload: IdentityName) =>
+      this.identityService.deleteIdentity(payload),
+    );
+
+    this.add(RPCAction.DELETE_ALL_IDENTITIES, this.lockService.ensure, this.identityService.deleteAllIdentities);
+
     this.add(RPCAction.CREATE_IDENTITY_REQ, this.lockService.ensure, async () => {
       await this.browserService.openPopup({ params: { redirect: Paths.CREATE_IDENTITY } });
     });
@@ -103,27 +117,8 @@ export default class ZkKeeperController extends Handler {
 
       return true;
     });
-
-    this.add(RPCAction.GET_COMMITMENTS, this.lockService.ensure, this.identityService.getIdentityCommitments);
-    this.add(RPCAction.GET_IDENTITIES, this.lockService.ensure, this.identityService.getIdentities);
-    this.add(RPCAction.SET_ACTIVE_IDENTITY, this.lockService.ensure, this.identityService.setActiveIdentity);
-    this.add(RPCAction.SET_IDENTITY_NAME, this.lockService.ensure, async (payload: IdentityName) =>
-      this.identityService.setIdentityName(payload),
-    );
-
-    this.add(RPCAction.DELETE_IDENTITY, this.lockService.ensure, async (payload: IdentityName) =>
-      this.identityService.deleteIdentity(payload),
-    );
-
-    this.add(RPCAction.DELETE_ALL_IDENTITIES, this.lockService.ensure, this.identityService.deleteAllIdentities);
-
-    this.add(RPCAction.GET_ACTIVE_IDENTITY, this.lockService.ensure, async () => {
-      const identity = await this.identityService.getActiveIdentity();
-
-      return identity ? bigintToHex(identity.genIdentityCommitment()) : null;
-    });
-
-    // protocols
+    
+    // Protocols
     this.add(
       RPCAction.PREPARE_SEMAPHORE_PROOF_REQUEST,
       this.lockService.ensure,
@@ -211,7 +206,7 @@ export default class ZkKeeperController extends Handler {
       },
     );
 
-    // injecting
+    // Injecting
     this.add(RPCAction.TRY_INJECT, async (payload: { origin: string }) => {
       const { origin: host } = payload;
       if (!host) throw new Error("Origin not provided");

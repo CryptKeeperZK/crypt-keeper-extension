@@ -5,6 +5,7 @@ import { RPCAction } from "@src/constants";
 import { InjectedMessageData, MerkleProofArtifacts } from "@src/types";
 
 import { IRlnGenerateArgs, ISemaphoreGenerateArgs, RlnProofGenerator, SemaphoreProofGenerator } from "./proof";
+import { SelectedIdentity } from "@src/ui/ducks/identities";
 
 export type IRequest = {
   method: string;
@@ -30,8 +31,8 @@ async function getIdentityCommitments() {
 
 async function getActiveIdentity() {
   return post({
-    method: RPCAction.GET_ACTIVE_IDENTITY,
-  }) as Promise<string>;
+    method: RPCAction.GET_ACTIVE_IDENTITY_DATA,
+  }) as Promise<SelectedIdentity>;
 }
 
 async function getHostPermissions(host: string) {

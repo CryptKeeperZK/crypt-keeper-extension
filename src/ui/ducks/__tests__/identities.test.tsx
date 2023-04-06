@@ -25,6 +25,7 @@ import {
   useIdentities,
   useIdentityRequestPending,
   useSelectedIdentity,
+  SelectedIdentity,
 } from "../identities";
 
 describe("ui/ducks/identities", () => {
@@ -35,6 +36,11 @@ describe("ui/ducks/identities", () => {
     },
   ];
 
+  const defaultSelectedIdentity: SelectedIdentity = {
+    commitment: defaultIdentities[0].commitment,
+    web2Provider: defaultIdentities[0].metadata.web2Provider      
+  }
+
   afterEach(() => {
     jest.clearAllMocks();
   });
@@ -42,7 +48,7 @@ describe("ui/ducks/identities", () => {
   test("should fetch identities properly", async () => {
     (postMessage as jest.Mock)
       .mockResolvedValueOnce(defaultIdentities)
-      .mockResolvedValueOnce(defaultIdentities[0].commitment);
+      .mockResolvedValueOnce(defaultSelectedIdentity);
 
     await Promise.resolve(store.dispatch(fetchIdentities()));
     const { identities } = store.getState();
@@ -59,10 +65,11 @@ describe("ui/ducks/identities", () => {
   });
 
   test("should set selected commitment properly", async () => {
-    await Promise.resolve(store.dispatch(setSelectedCommitment("1")));
+    await Promise.resolve(store.dispatch(setSelectedCommitment(defaultSelectedIdentity)));
     const { identities } = store.getState();
 
-    expect(identities.selected).toBe("1");
+    expect(identities.selected.commitment).toBe("1");
+    expect(identities.selected.web2Provider).toBe("twitter");
   });
 
   test("should set identities properly", async () => {

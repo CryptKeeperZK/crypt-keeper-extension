@@ -27,6 +27,12 @@ declare global {
   }
 }
 
+// TODO: we should import this from CK types package @types/cryptkeeper
+interface SelectedIdentity {
+  commitment: string;
+  web2Provider?: string;
+}
+
 const genMockIdentityCommitments = (): string[] => {
   const identityCommitments: string[] = [];
   for (let i = 0; i < 10; i++) {
@@ -57,7 +63,10 @@ function NoActiveIDCommitment() {
 function App() {
   const [client, setClient] = useState<Client | null>(null);
   const [isLocked, setIsLocked] = useState(true);
-  const [identityCommitment, setIdentityCommitment] = useState("");
+  const [selectedIdentity, setSelectedIdentity] = useState<SelectedIdentity>({
+    commitment: "",
+    web2Provider: ""
+  });
   const mockIdentityCommitments: string[] = genMockIdentityCommitments();
 
   const genSemaphoreProof = async (proofType: MerkleProofType = MerkleProofType.STORAGE_ADDRESS) => {
@@ -66,8 +75,8 @@ function App() {
 
     let storageAddressOrArtifacts: any = `${merkleStorageAddress}/Semaphore`;
     if (proofType === MerkleProofType.ARTIFACTS) {
-      if (!mockIdentityCommitments.includes(identityCommitment)) {
-        mockIdentityCommitments.push(identityCommitment);
+      if (!mockIdentityCommitments.includes(selectedIdentity.commitment)) {
+        mockIdentityCommitments.push(selectedIdentity.commitment);
       }
       storageAddressOrArtifacts = {
         leaves: mockIdentityCommitments,
@@ -106,8 +115,8 @@ function App() {
     let storageAddressOrArtifacts: any = `${merkleStorageAddress}/RLN`;
 
     if (proofType === MerkleProofType.ARTIFACTS) {
-      if (!mockIdentityCommitments.includes(identityCommitment)) {
-        mockIdentityCommitments.push(identityCommitment);
+      if (!mockIdentityCommitments.includes(selectedIdentity.commitment)) {
+        mockIdentityCommitments.push(selectedIdentity.commitment);
       }
 
       storageAddressOrArtifacts = {
@@ -137,15 +146,22 @@ function App() {
   };
 
   const getIdentityCommitment = useCallback(async () => {
-    const idCommitment = await client?.getActiveIdentity();
+    const payload: SelectedIdentity = await client?.getActiveIdentity();
 
-    if (!idCommitment) {
+    if (!payload) {
       return;
     }
 
-    toast(`Getting Identity Commitment successfully! ${idCommitment}`, { type: "success" });
-    setIdentityCommitment(idCommitment);
-  }, [client, setIdentityCommitment]);
+    setSelectedIdentity({
+      commitment: payload.commitment,
+      web2Provider: payload.web2Provider
+    });
+
+    toast(<div>
+      <p>Getting Identity Commitment successfully! {payload.commitment}</p>
+      <p>Identity Web2 Provider is {payload.web2Provider}</p>
+    </div>, { type: "success" });
+  }, [client, setSelectedIdentity]);
 
   const createIdentity = useCallback(() => {
     client?.createIdentity();
@@ -161,11 +177,13 @@ function App() {
   }, [setClient, setIsLocked]);
 
   const onIdentityChanged = useCallback(
-    (idCommitment: unknown) => {
-      setIdentityCommitment(idCommitment as string);
-      toast(`Identity has changed! ${idCommitment}`, { type: "success" });
+    (payload: unknown) => {
+      const { commitment, web2Provider } = payload as SelectedIdentity;
+
+      setSelectedIdentity({ commitment, web2Provider });
+      toast(`Identity has changed! ${commitment}`, { type: "success" });
     },
-    [setIdentityCommitment],
+    [setSelectedIdentity],
   );
 
   const onLogin = useCallback(() => {
@@ -174,9 +192,12 @@ function App() {
   }, [setIsLocked, getIdentityCommitment]);
 
   const onLogout = useCallback(() => {
-    setIdentityCommitment("");
+    setSelectedIdentity({
+      commitment: "",
+      web2Provider: ""
+    });
     setIsLocked(true);
-  }, [setIdentityCommitment, setIsLocked]);
+  }, [setSelectedIdentity, setIsLocked]);
 
   useEffect(() => {
     if (!client) {
@@ -201,7 +222,8 @@ function App() {
     return <NotConnected onClick={initClient} />;
   }
 
-  if (!identityCommitment) {
+  if (!selectedIdentity) {
+    console.log("identityCommitment", selectedIdentity);
     return <NoActiveIDCommitment />;
   }
 
@@ -233,7 +255,7 @@ function App() {
 
       <hr />
       <div>
-        <h2>Get identity commitment</h2>
+        <h2>Get Identity Commitment</h2>
         <button onClick={() => getIdentityCommitment()}>Get</button> <br />
         <br />
       </div>
@@ -248,7 +270,7 @@ function App() {
       <hr />
       <div>
         <h2>Identity commitment for active identity:</h2>
-        <p>{identityCommitment}</p>
+        <p>{selectedIdentity.commitment}</p>
       </div>
 
       <ToastContainer newestOnTop={true} />

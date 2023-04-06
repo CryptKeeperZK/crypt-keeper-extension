@@ -13,7 +13,7 @@ import { useAppSelector } from "./hooks";
 export interface IdentitiesState {
   identities: IdentityData[];
   requestPending: boolean;
-  selected: string;
+  selected: SelectedIdentity; // This aim to be a short-term solution to the integration with Zkitter
 }
 
 export interface IdentityData {
@@ -21,18 +21,29 @@ export interface IdentityData {
   metadata: IdentityMetadata;
 }
 
+export interface SelectedIdentity {
+  commitment: string;
+  web2Provider?: string;
+}
+
 const initialState: IdentitiesState = {
   identities: [],
   requestPending: false,
-  selected: "",
+  selected: {
+    commitment: "",
+    web2Provider: ""
+  }
 };
 
 const identitiesSlice = createSlice({
   name: "identities",
   initialState,
   reducers: {
-    setSelectedCommitment: (state: IdentitiesState, action: PayloadAction<string>) => {
-      state.selected = action.payload;
+    setSelectedCommitment: (state: IdentitiesState, action: PayloadAction<SelectedIdentity>) => {
+      state.selected = {
+        commitment: action.payload.commitment,
+        web2Provider: action.payload.web2Provider
+      }
     },
 
     setIdentityRequestPending: (state: IdentitiesState, action: PayloadAction<boolean>) => {
@@ -53,15 +64,15 @@ export const createIdentityRequest = () => async (): Promise<void> => {
 
 export const createIdentity =
   (strategy: IdentityStrategy, messageSignature: string, options: CreateIdentityOptions) =>
-  async (): Promise<boolean> =>
-    postMessage({
-      method: RPCAction.CREATE_IDENTITY,
-      payload: {
-        strategy,
-        messageSignature,
-        options,
-      },
-    });
+    async (): Promise<boolean> =>
+      postMessage({
+        method: RPCAction.CREATE_IDENTITY,
+        payload: {
+          strategy,
+          messageSignature,
+          options,
+        },
+      });
 
 export const setActiveIdentity = (identityCommitment: string) => async (): Promise<boolean> =>
   postMessage({
@@ -95,9 +106,12 @@ export const deleteAllIdentities = () => async (): Promise<boolean> =>
 
 export const fetchIdentities = (): TypedThunk => async (dispatch) => {
   const data = await postMessage<IdentityData[]>({ method: RPCAction.GET_IDENTITIES });
-  const selected = await postMessage<string>({ method: RPCAction.GET_ACTIVE_IDENTITY });
+  const { commitment, web2Provider } = await postMessage<SelectedIdentity>({ method: RPCAction.GET_ACTIVE_IDENTITY_DATA });
   dispatch(setIdentities(data));
-  dispatch(setSelectedCommitment(selected));
+  dispatch(setSelectedCommitment({
+    commitment,
+    web2Provider
+  }));
 };
 
 export const useIdentities = (): IdentityData[] => useAppSelector((state) => state.identities.identities, deepEqual);
@@ -105,7 +119,7 @@ export const useIdentities = (): IdentityData[] => useAppSelector((state) => sta
 export const useSelectedIdentity = (): IdentityData | undefined =>
   useAppSelector((state) => {
     const { identities, selected } = state.identities;
-    return identities.find(({ commitment }) => commitment === selected);
+    return identities.find(({ commitment }) => commitment === selected.commitment);
   }, deepEqual);
 
 export const useIdentityRequestPending = (): boolean =>
