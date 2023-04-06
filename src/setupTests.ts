@@ -7,8 +7,6 @@ import type { ReactElement } from "react";
 
 library.add(faTwitter, faGithub, faReddit);
 
-jest.setTimeout(60000);
-
 jest.mock("loglevel", () => ({
   info: jest.fn(),
   log: jest.fn(),
