@@ -1,4 +1,4 @@
-import { BaseSyntheticEvent, useCallback } from "react";
+import { BaseSyntheticEvent, useCallback, useState } from "react";
 import { useForm, UseFormRegister } from "react-hook-form";
 import { object, ref, string } from "yup";
 
@@ -30,6 +30,8 @@ const validationSchema = object({
 });
 
 export const useOnboarding = (): IUseOnboardingData => {
+  const [isShowPassword, setIsShowPassword] = useState(false);
+
   const resolver = useValidationResolver(validationSchema);
   const {
     formState: { isLoading, isSubmitting, errors },
