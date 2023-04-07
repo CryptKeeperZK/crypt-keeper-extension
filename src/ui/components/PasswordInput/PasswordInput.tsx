@@ -8,7 +8,7 @@ import { usePasswordInput } from "@src/ui/components/PasswordInput/usePasswordIn
 import { Icon } from "../Icon";
 import { Input } from "../Input";
 
-import "./password.scss";
+import "./password-input.scss";
 
 export interface PasswordInputProps {
   isShowInfo: boolean;
@@ -26,16 +26,16 @@ export const PasswordInput = ({
   const { isShowPassword, onShowPassword } = usePasswordInput();
 
   return (
-    <div className="py-4 w-full password" data-testid="showen-inputs">
+    <div className="py-4 w-full password-input" data-testid="showen-inputs">
       <Input
         autoFocus
-        className="mb-4 password__content"
+        className="mb-4 password-input__content"
         endAdornment={
           <InputAdornment position="end">
             {isShowInfo ? (
               <Tooltip
                 key={1}
-                className="password__info-tooltip"
+                className="password-input__info-tooltip"
                 title={
                   <div>
                     <p>Password requirements:</p>
@@ -52,7 +52,7 @@ export const PasswordInput = ({
                   </div>
                 }
               >
-                <Icon className="password__info-icon" fontAwesome="fa-info" />
+                <Icon className="password-input__info-icon" fontAwesome="fa-info" />
               </Tooltip>
             ) : null}
 
@@ -64,7 +64,7 @@ export const PasswordInput = ({
                 title="Hide Password"
                 onClick={onShowPassword}
               >
-                <Icon className="password__info-icon" fontAwesome="fa-eye-slash" />
+                <Icon className="password-input__info-icon" fontAwesome="fa-eye-slash" />
               </Tooltip>
             ) : (
               <Tooltip
@@ -74,7 +74,7 @@ export const PasswordInput = ({
                 title="Show Password"
                 onClick={onShowPassword}
               >
-                <Icon className="password__info-icon" fontAwesome="fa-eye" />
+                <Icon className="password-input__info-icon" fontAwesome="fa-eye" />
               </Tooltip>
             )}
           </InputAdornment>
