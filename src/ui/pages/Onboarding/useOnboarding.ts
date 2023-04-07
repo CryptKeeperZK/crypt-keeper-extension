@@ -6,6 +6,7 @@ import { PasswordFormFields } from "@src/types";
 import { setupPassword } from "@src/ui/ducks/app";
 import { useAppDispatch } from "@src/ui/ducks/hooks";
 import { useValidationResolver } from "@src/ui/hooks/validation";
+import { PasswordFormFields } from "@src/types";
 
 export interface IUseOnboardingData {
   isLoading: boolean;
