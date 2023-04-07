@@ -1,4 +1,5 @@
-import { InputAdornment, Tooltip } from "@mui/material";
+import InputAdornment from "@mui/material/InputAdornment";
+import Tooltip from "@mui/material/Tooltip";
 import { UseFormRegister } from "react-hook-form";
 
 import { PasswordFormFields } from "@src/types";
@@ -22,7 +23,7 @@ export const PasswordInput = ({
   errors,
   register,
 }: PasswordInputProps): JSX.Element => {
-  const { isShowPassword, setShowPassword } = usePasswordInput();
+  const { isShowPassword, onShowPassword } = usePasswordInput();
 
   return (
     <div className="py-4 w-full password" data-testid="showen-inputs">
@@ -61,7 +62,7 @@ export const PasswordInput = ({
                 className="eye-tooltip"
                 data-testid="eye-slash-button"
                 title="Hide Password"
-                onClick={setShowPassword}
+                onClick={onShowPassword}
               >
                 <Icon className="password__info-icon" fontAwesome="fa-eye-slash" />
               </Tooltip>
@@ -71,7 +72,7 @@ export const PasswordInput = ({
                 className="eye-tooltip"
                 data-testid="eye-look-button"
                 title="Show Password"
-                onClick={setShowPassword}
+                onClick={onShowPassword}
               >
                 <Icon className="password__info-icon" fontAwesome="fa-eye" />
               </Tooltip>

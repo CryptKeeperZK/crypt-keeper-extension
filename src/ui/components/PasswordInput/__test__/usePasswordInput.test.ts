@@ -16,11 +16,11 @@ describe("ui/components/PasswordInput/usePasswordInput", () => {
   test("should be able to change isShowPassword", () => {
     const { result } = renderHook(() => usePasswordInput());
 
-    act(() => result.current.setShowPassword());
+    act(() => result.current.onShowPassword());
 
     expect(result.current.isShowPassword).toStrictEqual(true);
 
-    act(() => result.current.setShowPassword());
+    act(() => result.current.onShowPassword());
     expect(result.current.isShowPassword).toStrictEqual(false);
   });
 });
