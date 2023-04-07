@@ -120,6 +120,11 @@ export type SelectOption = {
   readonly icon: IconProp | null;
 };
 
+export interface PasswordFormFields {
+  password: string;
+  confirmPassword: string;
+}
+
 export interface InjectedMessageData<M = unknown, P = unknown> {
   target: string;
   nonce: string;

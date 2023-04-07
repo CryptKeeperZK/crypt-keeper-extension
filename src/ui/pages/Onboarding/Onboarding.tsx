@@ -5,6 +5,7 @@ import logoSVG from "@src/static/icons/logo.svg";
 import { ButtonType, Button } from "@src/ui/components/Button";
 import { Icon } from "@src/ui/components/Icon";
 import { Input } from "@src/ui/components/Input";
+import { PasswordInput } from "@src/ui/components/PasswordInput";
 import { useShowPassword } from "@src/ui/hooks/showPassword";
 
 import "./onboarding.scss";
@@ -24,7 +25,12 @@ const Onboarding = (): JSX.Element => {
 
         <div className="text-base">To continue, please setup a password</div>
 
-        
+        <PasswordInput
+          isShowInfo={true}
+          isShowConfirmPassword={true}
+          register={register}
+          errors={errors}
+        />
       </div>
 
       {errors.root && <div className="text-red-500 text-sm text-center">{errors.root}</div>}

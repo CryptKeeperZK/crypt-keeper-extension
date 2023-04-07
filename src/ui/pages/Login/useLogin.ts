@@ -3,16 +3,13 @@ import { UseFormRegister, useForm } from "react-hook-form";
 
 import { unlock } from "@src/ui/ducks/app";
 import { useAppDispatch } from "@src/ui/ducks/hooks";
+import { PasswordFormFields } from "@src/types";
 
 export interface IUseLoginData {
   isLoading: boolean;
-  errors: Partial<FormFields>;
-  register: UseFormRegister<FormFields>;
+  errors: Partial<PasswordFormFields>;
+  register: UseFormRegister<PasswordFormFields>;
   onSubmit: (event?: BaseSyntheticEvent) => Promise<void>;
-}
-
-interface FormFields {
-  password: string;
 }
 
 export const useLogin = (): IUseLoginData => {
@@ -21,7 +18,7 @@ export const useLogin = (): IUseLoginData => {
     setError,
     register,
     handleSubmit,
-  } = useForm<FormFields>({
+  } = useForm<PasswordFormFields>({
     defaultValues: {
       password: "",
     },
@@ -30,7 +27,7 @@ export const useLogin = (): IUseLoginData => {
   const dispatch = useAppDispatch();
 
   const onSubmit = useCallback(
-    (data: FormFields) => {
+    (data: PasswordFormFields) => {
       dispatch(unlock(data.password)).catch((error: Error) =>
         setError("password", { type: "submit", message: error.message }),
       );

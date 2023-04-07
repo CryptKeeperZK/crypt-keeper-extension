@@ -4,6 +4,7 @@ import logoSVG from "@src/static/icons/logo.svg";
 import { ButtonType, Button } from "@src/ui/components/Button";
 import { Icon } from "@src/ui/components/Icon";
 import { Input } from "@src/ui/components/Input";
+import { PasswordInput } from "@src/ui/components/PasswordInput";
 import { useShowPassword } from "@src/ui/hooks/showPassword";
 
 import "./login.scss";
@@ -11,7 +12,6 @@ import { useLogin } from "./useLogin";
 
 const Login = (): JSX.Element => {
   const { isLoading, errors, register, onSubmit } = useLogin();
-  const { isShowPassword, setShowPassword } = useShowPassword();
 
   return (
     <form className="flex flex-col flex-nowrap h-full login" data-testid="login-form" onSubmit={onSubmit}>
@@ -24,41 +24,12 @@ const Login = (): JSX.Element => {
 
         <div className="text-base">To continue, please unlock your wallet</div>
 
-        <div className="py-8 w-full">
-          <Input
-            autoFocus
-            className="mb-4"
-            endAdornment={
-              <InputAdornment position="end">
-                {isShowPassword ? (
-                  <Tooltip
-                    key={2}
-                    className="eye-tooltip"
-                    data-testid="eye-slash-button"
-                    title="Hide Password"
-                    onClick={setShowPassword}
-                  >
-                    <Icon className="eye-icon" fontAwesome="fa-eye-slash" />
-                  </Tooltip>
-                ) : (
-                  <Tooltip
-                    key={2}
-                    className="eye-tooltip"
-                    data-testid="eye-look-button"
-                    title="Show Password"
-                    onClick={setShowPassword}
-                  >
-                    <Icon className="eye-icon" fontAwesome="fa-eye" />
-                  </Tooltip>
-                )}
-              </InputAdornment>
-            }
-            id="password"
-            label="Password"
-            type={isShowPassword ? "text" : "password"}
-            {...register("password", { required: "Password is required" })}
-          />
-        </div>
+        <PasswordInput
+          isShowInfo={false}
+          isShowConfirmPassword={false}
+          register={register}
+          errors={errors}
+        />
       </div>
 
       {errors.password && <div className="text-red-500 text-sm text-center">{errors.password}</div>}
