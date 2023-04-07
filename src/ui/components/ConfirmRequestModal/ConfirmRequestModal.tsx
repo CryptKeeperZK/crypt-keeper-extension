@@ -1,7 +1,7 @@
 import { PendingRequest, PendingRequestType, ProofPayload } from "@src/types";
 
 import { ProofModal, ConnectionApprovalModal, DefaultApprovalModal } from "./components";
-import "./confirm-modal.scss";
+import "./confirmModal.scss";
 import { useConfirmRequestModal } from "./useConfirmRequestModal";
 
 const ConfirmRequestModal = (): JSX.Element | null => {

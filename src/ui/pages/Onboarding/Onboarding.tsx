@@ -1,13 +1,13 @@
 import logoSVG from "@src/static/icons/logo.svg";
 import { ButtonType, Button } from "@src/ui/components/Button";
 import { Icon } from "@src/ui/components/Icon";
-import { PasswordInput } from "@src/ui/components/PasswordInput";
+import { ConfirmPasswordInput, PasswordInput } from "@src/ui/components/PasswordInput";
 
 import "./onboarding.scss";
 import { useOnboarding } from "./useOnboarding";
 
 const Onboarding = (): JSX.Element => {
-  const { errors, isLoading, register, onSubmit } = useOnboarding();
+  const { errors, isLoading, register, onSubmit, isShowPassword, onShowPassword } = useOnboarding();
 
   return (
     <form className="flex flex-col flex-nowrap h-full onboarding" data-testid="onboarding-form" onSubmit={onSubmit}>
@@ -20,7 +20,21 @@ const Onboarding = (): JSX.Element => {
 
         <div className="text-base">To continue, please setup a password</div>
 
-        <PasswordInput isShowConfirmPassword isShowInfo errors={errors} register={register} />
+        <div className="py-4 w-full password-input" data-testid="showen-inputs">
+          <PasswordInput
+            isShowHint
+            errorMessage={errors.password}
+            isShowPassword={isShowPassword}
+            onShowPassword={onShowPassword}
+            {...register("password")}
+          />
+
+          <ConfirmPasswordInput
+            errorMessage={errors.confirmPassword}
+            isShowPassword={isShowPassword}
+            {...register("confirmPassword")}
+          />
+        </div>
       </div>
 
       {errors.root && <div className="text-red-500 text-sm text-center">{errors.root}</div>}

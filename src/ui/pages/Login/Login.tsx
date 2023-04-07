@@ -7,7 +7,7 @@ import "./login.scss";
 import { useLogin } from "./useLogin";
 
 const Login = (): JSX.Element => {
-  const { isLoading, errors, register, onSubmit } = useLogin();
+  const { isLoading, errors, register, onSubmit, isShowPassword, onShowPassword } = useLogin();
 
   return (
     <form className="flex flex-col flex-nowrap h-full login" data-testid="login-form" onSubmit={onSubmit}>
@@ -20,7 +20,15 @@ const Login = (): JSX.Element => {
 
         <div className="text-base">To continue, please unlock your wallet</div>
 
-        <PasswordInput errors={errors} isShowConfirmPassword={false} isShowInfo={false} register={register} />
+        <div className="py-4 w-full password-input" data-testid="showen-inputs">
+          <PasswordInput
+            errorMessage={errors.password}
+            isShowHint={false}
+            isShowPassword={isShowPassword}
+            onShowPassword={onShowPassword}
+            {...register("password")}
+          />
+        </div>
       </div>
 
       <div className="flex flex-row items-center justify-center flex-shrink p-8 login__footer">

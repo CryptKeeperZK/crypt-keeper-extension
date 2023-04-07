@@ -1,7 +1,7 @@
 import classNames from "classnames";
 import { ReactNode } from "react";
 
-import "./full-modal.scss";
+import "./fullModal.scss";
 
 export interface FullModalFooterProps {
   className?: string;

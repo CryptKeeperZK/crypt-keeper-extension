@@ -7,10 +7,19 @@ export interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   label: string;
   endAdornment?: React.ReactNode;
   errorMessage?: string;
+  inputRef?: Ref<HTMLInputElement>;
 }
 
 const InputUI = (
-  { id, label, className, errorMessage = "", endAdornment = undefined, ...inputProps }: InputProps,
+  {
+    id,
+    label,
+    className,
+    errorMessage = "",
+    endAdornment = undefined,
+    inputRef = undefined,
+    ...inputProps
+  }: InputProps,
   ref: Ref<HTMLInputElement>,
 ): JSX.Element => (
   <div className={classNames("input-group", className)}>
@@ -22,7 +31,7 @@ const InputUI = (
 
     <div className="input-group__group">
       <input
-        ref={ref}
+        ref={inputRef || ref}
         className={classNames("input", {
           "input--full-width": !endAdornment,
         })}

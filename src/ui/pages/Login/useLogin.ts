@@ -1,4 +1,4 @@
-import { BaseSyntheticEvent, useCallback } from "react";
+import { BaseSyntheticEvent, useCallback, useState } from "react";
 import { UseFormRegister, useForm } from "react-hook-form";
 
 import { PasswordFormFields } from "@src/types";
@@ -10,9 +10,13 @@ export interface IUseLoginData {
   errors: Partial<PasswordFormFields>;
   register: UseFormRegister<PasswordFormFields>;
   onSubmit: (event?: BaseSyntheticEvent) => Promise<void>;
+  isShowPassword: boolean;
+  onShowPassword: () => void;
 }
 
 export const useLogin = (): IUseLoginData => {
+  const [isShowPassword, setIsShowPassword] = useState(false);
+
   const {
     formState: { isLoading, isSubmitting, errors },
     setError,
@@ -35,6 +39,10 @@ export const useLogin = (): IUseLoginData => {
     [dispatch, setError],
   );
 
+  const onShowPassword = useCallback(() => {
+    setIsShowPassword((isShow) => !isShow);
+  }, [setIsShowPassword]);
+
   return {
     isLoading: isLoading || isSubmitting,
     errors: {
@@ -42,5 +50,7 @@ export const useLogin = (): IUseLoginData => {
     },
     register,
     onSubmit: handleSubmit(onSubmit),
+    isShowPassword,
+    onShowPassword,
   };
 };

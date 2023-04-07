@@ -3,7 +3,7 @@ import { ChangeEventHandler } from "react";
 
 import { Icon } from "@src/ui/components/Icon";
 
-import "./index.scss";
+import "./checkbox.scss";
 
 export interface CheckboxProps {
   checked: boolean;

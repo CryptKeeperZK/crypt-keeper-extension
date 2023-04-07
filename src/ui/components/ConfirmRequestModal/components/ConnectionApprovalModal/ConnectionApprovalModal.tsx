@@ -3,7 +3,7 @@ import { ButtonType, Button } from "@src/ui/components/Button";
 import { Checkbox } from "@src/ui/components/Checkbox";
 import { FullModal, FullModalContent, FullModalFooter, FullModalHeader } from "@src/ui/components/FullModal";
 
-import "../../confirm-modal.scss";
+import "../../confirmModal.scss";
 
 import { useConnectionApprovalModal } from "./useConnectionApprovalModal";
 

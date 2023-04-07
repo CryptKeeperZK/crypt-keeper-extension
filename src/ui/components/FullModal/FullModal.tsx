@@ -3,7 +3,7 @@ import { ReactNode } from "react";
 
 import { Modal } from "@src/ui/components/Modal";
 
-import "./full-modal.scss";
+import "./fullModal.scss";
 
 export interface FullModalProps {
   children: ReactNode;

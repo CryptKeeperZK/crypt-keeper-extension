@@ -90,4 +90,21 @@ describe("ui/pages/Onboarding/useOnboarding", () => {
     expect(result.current.isLoading).toBe(false);
     expect(result.current.errors.root).toBe(error.message);
   });
+
+  test("should isShowPassword set to false as default", () => {
+    const { result } = renderHook(() => useOnboarding());
+
+    expect(result.current.isShowPassword).toStrictEqual(false);
+  });
+
+  test("should be able to change isShowPassword", () => {
+    const { result } = renderHook(() => useOnboarding());
+
+    act(() => result.current.onShowPassword());
+
+    expect(result.current.isShowPassword).toStrictEqual(true);
+
+    act(() => result.current.onShowPassword());
+    expect(result.current.isShowPassword).toStrictEqual(false);
+  });
 });

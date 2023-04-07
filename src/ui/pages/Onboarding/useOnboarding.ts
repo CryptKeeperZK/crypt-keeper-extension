@@ -1,4 +1,4 @@
-import { BaseSyntheticEvent, useCallback } from "react";
+import { BaseSyntheticEvent, useCallback, useState } from "react";
 import { useForm, UseFormRegister } from "react-hook-form";
 import { object, ref, string } from "yup";
 
@@ -12,6 +12,8 @@ export interface IUseOnboardingData {
   errors: Partial<PasswordFormFields & { root: string }>;
   register: UseFormRegister<PasswordFormFields>;
   onSubmit: (event?: BaseSyntheticEvent) => Promise<void>;
+  isShowPassword: boolean;
+  onShowPassword: () => void;
 }
 
 const passwordRules = /^(?=.*[0-9])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{8,}$/;
@@ -28,6 +30,8 @@ const validationSchema = object({
 });
 
 export const useOnboarding = (): IUseOnboardingData => {
+  const [isShowPassword, setIsShowPassword] = useState(false);
+
   const resolver = useValidationResolver(validationSchema);
   const {
     formState: { isLoading, isSubmitting, errors },
@@ -53,6 +57,10 @@ export const useOnboarding = (): IUseOnboardingData => {
     [dispatch, setError],
   );
 
+  const onShowPassword = useCallback(() => {
+    setIsShowPassword((isShow) => !isShow);
+  }, [setIsShowPassword]);
+
   return {
     isLoading: isLoading || isSubmitting,
     errors: {
@@ -62,5 +70,7 @@ export const useOnboarding = (): IUseOnboardingData => {
     },
     register,
     onSubmit: handleSubmit(onSubmit),
+    isShowPassword,
+    onShowPassword,
   };
 };
