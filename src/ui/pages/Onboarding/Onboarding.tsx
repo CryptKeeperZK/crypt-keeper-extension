@@ -1,15 +1,13 @@
-import Tooltip from "@mui/material/Tooltip";
-
 import logoSVG from "@src/static/icons/logo.svg";
 import { ButtonType, Button } from "@src/ui/components/Button";
 import { Icon } from "@src/ui/components/Icon";
-import { Input } from "@src/ui/components/Input";
+import { ConfirmPasswordInput, PasswordInput } from "@src/ui/components/PasswordInput";
 
 import "./onboarding.scss";
 import { useOnboarding } from "./useOnboarding";
 
 const Onboarding = (): JSX.Element => {
-  const { errors, isLoading, register, onSubmit } = useOnboarding();
+  const { errors, isLoading, register, onSubmit, isShowPassword, onShowPassword } = useOnboarding();
 
   return (
     <form className="flex flex-col flex-nowrap h-full onboarding" data-testid="onboarding-form" onSubmit={onSubmit}>
@@ -22,44 +20,18 @@ const Onboarding = (): JSX.Element => {
 
         <div className="text-base">To continue, please setup a password</div>
 
-        <div className="py-4 w-full">
-          <Input
-            autoFocus
-            className="mb-4"
+        <div className="py-4 w-full password-input" data-testid="showen-inputs">
+          <PasswordInput
+            isShowHint
             errorMessage={errors.password}
-            icon={
-              <Tooltip
-                className="info-tooltip"
-                title={
-                  <div>
-                    <p>Password requirements:</p>
-
-                    <p>- At least 8 characters</p>
-
-                    <p>- At least 1 upper case and letter</p>
-
-                    <p>- At least 1 lower case letter</p>
-
-                    <p>- At least 1 special character (!@#$%^&*)</p>
-
-                    <p>- At least 1 number</p>
-                  </div>
-                }
-              >
-                <Icon className="info-icon" fontAwesome="fa-info" />
-              </Tooltip>
-            }
-            id="password"
-            label="Password"
-            type="password"
+            isShowPassword={isShowPassword}
+            onShowPassword={onShowPassword}
             {...register("password")}
           />
 
-          <Input
+          <ConfirmPasswordInput
             errorMessage={errors.confirmPassword}
-            id="confirmPassword"
-            label="Confirm Password"
-            type="password"
+            isShowPassword={isShowPassword}
             {...register("confirmPassword")}
           />
         </div>

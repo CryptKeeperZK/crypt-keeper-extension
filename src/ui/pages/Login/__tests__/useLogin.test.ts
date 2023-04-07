@@ -73,4 +73,21 @@ describe("ui/pages/Login/useLogin", () => {
     expect(result.current.errors.password).toBe(error.message);
     expect(result.current.isLoading).toBe(false);
   });
+
+  test("should isShowPassword set to false as default", () => {
+    const { result } = renderHook(() => useLogin());
+
+    expect(result.current.isShowPassword).toStrictEqual(false);
+  });
+
+  test("should be able to change isShowPassword", () => {
+    const { result } = renderHook(() => useLogin());
+
+    act(() => result.current.onShowPassword());
+
+    expect(result.current.isShowPassword).toStrictEqual(true);
+
+    act(() => result.current.onShowPassword());
+    expect(result.current.isShowPassword).toStrictEqual(false);
+  });
 });

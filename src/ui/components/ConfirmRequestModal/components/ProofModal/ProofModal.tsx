@@ -4,7 +4,7 @@ import { FullModal, FullModalContent, FullModalFooter, FullModalHeader } from "@
 import { Icon } from "@src/ui/components/Icon";
 import { Input } from "@src/ui/components/Input";
 
-import "../../confirm-modal.scss";
+import "../../confirmModal.scss";
 
 import { useProofModal } from "./useProofModal";
 

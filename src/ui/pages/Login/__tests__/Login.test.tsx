@@ -57,6 +57,29 @@ describe("ui/pages/Login", () => {
     expect(error).toBeInTheDocument();
   });
 
+  test("should be able to show/hide password", async () => {
+    const { container } = render(<Login />);
+
+    await waitFor(() => container.firstChild !== null);
+
+    const passwordInput = await screen.findByLabelText("Password");
+    await act(async () => Promise.resolve(fireEvent.change(passwordInput, { target: { value: "12345" } })));
+
+    const eyeLookButton = await screen.findByTestId("eye-look-button");
+
+    expect(eyeLookButton).toBeInTheDocument();
+
+    await act(async () => Promise.resolve(fireEvent.click(eyeLookButton)));
+
+    const eyeSlashButton = await screen.findByTestId("eye-slash-button");
+
+    expect(eyeSlashButton).toBeInTheDocument();
+
+    await act(async () => Promise.resolve(fireEvent.click(eyeSlashButton)));
+
+    expect(eyeLookButton).toBeInTheDocument();
+  });
+
   test("should submit form properly", async () => {
     const { container } = render(<Login />);
 

@@ -3,7 +3,7 @@ import { ReactNode } from "react";
 
 import { Icon } from "@src/ui/components/Icon";
 
-import "./full-modal.scss";
+import "./fullModal.scss";
 
 export interface FullModalHeaderProps {
   children: ReactNode;

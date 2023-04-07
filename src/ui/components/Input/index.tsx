@@ -1,16 +1,25 @@
 import classNames from "classnames";
-import { forwardRef, InputHTMLAttributes, ReactElement, Ref } from "react";
+import { forwardRef, InputHTMLAttributes, Ref } from "react";
 
 import "./input.scss";
 
 export interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   label: string;
-  icon?: ReactElement;
+  endAdornment?: React.ReactNode;
   errorMessage?: string;
+  inputRef?: Ref<HTMLInputElement>;
 }
 
 const InputUI = (
-  { id, label, className, errorMessage = "", icon = undefined, ...inputProps }: InputProps,
+  {
+    id,
+    label,
+    className,
+    errorMessage = "",
+    endAdornment = undefined,
+    inputRef = undefined,
+    ...inputProps
+  }: InputProps,
   ref: Ref<HTMLInputElement>,
 ): JSX.Element => (
   <div className={classNames("input-group", className)}>
@@ -22,16 +31,16 @@ const InputUI = (
 
     <div className="input-group__group">
       <input
-        ref={ref}
+        ref={inputRef || ref}
         className={classNames("input", {
-          "input--full-width": !icon,
+          "input--full-width": !endAdornment,
         })}
         id={id}
         title={label}
         {...inputProps}
       />
 
-      {icon}
+      {endAdornment}
     </div>
 
     <p className="input-group__error-message">{errorMessage}</p>

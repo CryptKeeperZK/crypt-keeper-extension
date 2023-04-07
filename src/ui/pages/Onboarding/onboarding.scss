@@ -2,16 +2,4 @@
 
 .onboarding {
   color: $primary-green;
-
-  &__content {
-    .info-tooltip {
-      height: 0.75rem;
-      width: 0.75rem;
-    }
-
-    .info-icon {
-      color: $primary-green;
-      cursor: pointer;
-    }
-  }
 }

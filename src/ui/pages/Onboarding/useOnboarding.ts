@@ -1,21 +1,19 @@
-import { BaseSyntheticEvent, useCallback } from "react";
+import { BaseSyntheticEvent, useCallback, useState } from "react";
 import { useForm, UseFormRegister } from "react-hook-form";
 import { object, ref, string } from "yup";
 
+import { PasswordFormFields } from "@src/types";
 import { setupPassword } from "@src/ui/ducks/app";
 import { useAppDispatch } from "@src/ui/ducks/hooks";
 import { useValidationResolver } from "@src/ui/hooks/validation";
 
 export interface IUseOnboardingData {
   isLoading: boolean;
-  errors: Partial<FormFields & { root: string }>;
-  register: UseFormRegister<FormFields>;
+  errors: Partial<PasswordFormFields & { root: string }>;
+  register: UseFormRegister<PasswordFormFields>;
   onSubmit: (event?: BaseSyntheticEvent) => Promise<void>;
-}
-
-interface FormFields {
-  password: string;
-  confirmPassword: string;
+  isShowPassword: boolean;
+  onShowPassword: () => void;
 }
 
 const passwordRules = /^(?=.*[0-9])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{8,}$/;
@@ -32,13 +30,15 @@ const validationSchema = object({
 });
 
 export const useOnboarding = (): IUseOnboardingData => {
+  const [isShowPassword, setIsShowPassword] = useState(false);
+
   const resolver = useValidationResolver(validationSchema);
   const {
     formState: { isLoading, isSubmitting, errors },
     setError,
     register,
     handleSubmit,
-  } = useForm<FormFields>({
+  } = useForm<PasswordFormFields>({
     resolver,
     defaultValues: {
       password: "",
@@ -49,13 +49,17 @@ export const useOnboarding = (): IUseOnboardingData => {
   const dispatch = useAppDispatch();
 
   const onSubmit = useCallback(
-    (data: FormFields) => {
+    (data: PasswordFormFields) => {
       dispatch(setupPassword(data.password)).catch((err: Error) =>
         setError("root", { type: "submit", message: err.message }),
       );
     },
     [dispatch, setError],
   );
+
+  const onShowPassword = useCallback(() => {
+    setIsShowPassword((isShow) => !isShow);
+  }, [setIsShowPassword]);
 
   return {
     isLoading: isLoading || isSubmitting,
@@ -66,5 +70,7 @@ export const useOnboarding = (): IUseOnboardingData => {
     },
     register,
     onSubmit: handleSubmit(onSubmit),
+    isShowPassword,
+    onShowPassword,
   };
 };

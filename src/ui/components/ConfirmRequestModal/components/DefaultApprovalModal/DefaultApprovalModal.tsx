@@ -2,7 +2,7 @@ import { PendingRequest } from "@src/types";
 import { ButtonType, Button } from "@src/ui/components/Button";
 import { FullModal, FullModalContent, FullModalFooter, FullModalHeader } from "@src/ui/components/FullModal";
 
-import "../../confirm-modal.scss";
+import "../../confirmModal.scss";
 
 export interface DefaultApprovalModalProps {
   len: number;
