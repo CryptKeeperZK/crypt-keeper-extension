@@ -4,17 +4,17 @@
 
 import { act, renderHook } from "@testing-library/react";
 
-import { useShowPassword } from "..";
+import { usePasswordInput } from "@src/ui/components/PasswordInput/usePasswordInput";
 
-describe("ui/hooks/showPassword", () => {
+describe("ui/components/PasswordInput/usePasswordInput", () => {
   test("should isShowPassword set to false as default", () => {
-    const { result } = renderHook(() => useShowPassword());
+    const { result } = renderHook(() => usePasswordInput());
 
     expect(result.current.isShowPassword).toStrictEqual(false);
   });
 
   test("should be able to change isShowPassword", () => {
-    const { result } = renderHook(() => useShowPassword());
+    const { result } = renderHook(() => usePasswordInput());
 
     act(() => result.current.setShowPassword());
 

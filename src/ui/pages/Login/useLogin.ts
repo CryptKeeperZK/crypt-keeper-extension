@@ -4,7 +4,6 @@ import { UseFormRegister, useForm } from "react-hook-form";
 import { PasswordFormFields } from "@src/types";
 import { unlock } from "@src/ui/ducks/app";
 import { useAppDispatch } from "@src/ui/ducks/hooks";
-import { PasswordFormFields } from "@src/types";
 
 export interface IUseLoginData {
   isLoading: boolean;
