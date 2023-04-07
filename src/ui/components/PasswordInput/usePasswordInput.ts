@@ -1,11 +1,11 @@
 import { useState } from "react";
 
-export interface IUseShowPassword {
+export interface IUsePasswordInput {
   isShowPassword: boolean;
   setShowPassword: () => void;
 }
 
-export const useShowPassword = (): IUseShowPassword => {
+export const usePasswordInput = (): IUsePasswordInput => {
   const [isShowPassword, setIsShowPassword] = useState(false);
 
   const setShowPassword = () => {
