@@ -3,7 +3,7 @@ import { RLN, RLNFullProof } from "rlnjs";
 import ZkIdentityDecorater from "@src/background/identityDecorater";
 
 import { RLNProofRequest } from "./interfaces";
-import { getMerkleProof } from "./utils";
+import { getMerkleProof, getRlnVerficationKeyJson } from "./utils";
 
 export default class RLNService {
   public async genProof(
@@ -19,7 +19,9 @@ export default class RLNService {
       merkleProof: providerMerkleProof,
     }: RLNProofRequest,
   ): Promise<RLNFullProof> {
-    const rln = new RLN(circuitFilePath, zkeyFilePath, verificationKey);
+    const rlnVerificationKeyJson = await getRlnVerficationKeyJson(verificationKey);
+
+    const rln = new RLN(circuitFilePath, zkeyFilePath, rlnVerificationKeyJson);
 
     const identityCommitment = identity.genIdentityCommitment();
 

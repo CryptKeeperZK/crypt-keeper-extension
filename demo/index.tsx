@@ -1,9 +1,10 @@
 /* eslint-disable no-console */
 import React, { useState, useEffect, useCallback } from "react";
 import { createRoot } from "react-dom/client";
-import { RLN, genExternalNullifier } from "rlnjs";
+import { RLN } from "rlnjs";
 import { bigintToHex } from "bigint-conversion";
 import { Identity } from "@semaphore-protocol/identity";
+import { encodeBytes32String } from "ethers";
 
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -70,8 +71,8 @@ function App() {
   const mockIdentityCommitments: string[] = genMockIdentityCommitments();
 
   const genSemaphoreProof = async (proofType: MerkleProofType = MerkleProofType.STORAGE_ADDRESS) => {
-    const externalNullifier = genExternalNullifier("voting-1");
-    const signal = "0x111";
+    const externalNullifier = encodeBytes32String("voting-1");
+    const signal = encodeBytes32String("hello-world");
 
     let storageAddressOrArtifacts: any = `${merkleStorageAddress}/Semaphore`;
     if (proofType === MerkleProofType.ARTIFACTS) {
@@ -107,8 +108,8 @@ function App() {
   };
 
   const genRLNProof = async (proofType: MerkleProofType = MerkleProofType.STORAGE_ADDRESS) => {
-    const externalNullifier = genExternalNullifier("voting-1");
-    const signal = "0x111";
+    const externalNullifier = encodeBytes32String("voting-1");
+    const signal = encodeBytes32String("hello-world");
     const rlnIdentifier = RLN._genIdentifier();
     const rlnIdentifierHex = bigintToHex(rlnIdentifier);
 
