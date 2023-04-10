@@ -59,7 +59,7 @@ describe("background/services/protocols", () => {
       const rln = new RLNService();
 
       await rln.genProof(identityDecorater, { ...proofRequest, merkleStorageAddress: "http://localhost:3000/merkle" });
-      const [rlnInstance] = (RLN as jest.Mock).mock.instances as [{ generateProof: jest.Mock }];
+      const [rlnInstance] = (RLN as unknown as jest.Mock).mock.instances as [{ generateProof: jest.Mock }];
 
       expect(rlnInstance.generateProof).toBeCalledTimes(1);
       expect(rlnInstance.generateProof).toBeCalledWith(

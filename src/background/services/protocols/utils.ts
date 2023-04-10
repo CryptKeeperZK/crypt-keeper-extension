@@ -1,6 +1,8 @@
 import { Group, BigNumberish } from "@semaphore-protocol/group";
 import { MerkleProof } from "@zk-kit/incremental-merkle-tree";
 import { bigintToHex, hexToBigint } from "bigint-conversion";
+// eslint-disable-next-line import/no-unresolved
+import { VerificationKeyT } from "rlnjs/dist/types/types";
 
 import { MerkleProofArtifacts } from "@src/types";
 
@@ -57,6 +59,13 @@ export async function getMerkleProof({
         member: identityCommitment,
         members: [identityCommitment],
       });
+}
+
+export async function getRlnVerficationKeyJson(rlnVerificationKeyPath: string): Promise<VerificationKeyT> {
+  const verificationKeyResponse = await fetch(rlnVerificationKeyPath);
+  const verificationKeyJson = (await verificationKeyResponse.json()) as VerificationKeyT;
+
+  return verificationKeyJson;
 }
 
 async function getRemoteMerkleProof(merkleStorageAddress: string, identityCommitmentHex: string): Promise<MerkleProof> {
