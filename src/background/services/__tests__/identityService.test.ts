@@ -234,20 +234,49 @@ describe("background/services/identity", () => {
         MockStorage,
         MockStorage,
       ];
+
       identityStorage.get.mockReturnValue(serializedDefaultIdentities);
       activeIdentityStorage.get.mockReturnValue(defaultIdentityCommitment);
 
-      const result = await service.getActiveIdentity();
+      const activeIdentity = await service.getActiveIdentity();
 
-      expect(result).toBeDefined();
+      expect(activeIdentity).toBeDefined();
+    });
+
+    test("should get active identity data properly", async () => {
+      defaultLockService.decrypt
+        .mockReturnValueOnce(defaultIdentityCommitment)
+        .mockReturnValue(serializedDefaultIdentities);
+      (LockService.getInstance as jest.Mock).mockReturnValue(defaultLockService);
+
+      const service = new IdentityService();
+      const [identityStorage, activeIdentityStorage] = (SimpleStorage as jest.Mock).mock.instances as [
+        MockStorage,
+        MockStorage,
+      ];
+
+      identityStorage.get.mockReturnValue(serializedDefaultIdentities);
+      activeIdentityStorage.get.mockReturnValue(defaultIdentityCommitment);
+
+      const data = await service.getActiveIdentityData();
+
+      expect(data).toStrictEqual({
+        commitment: defaultIdentityCommitment,
+        web2Provider: "",
+      });
     });
 
     test("should not get active identity if there is no any active identity", async () => {
       const service = new IdentityService();
 
-      const result = await service.getActiveIdentity();
+      const identity = await service.getActiveIdentity();
+      const data = await service.getActiveIdentityData();
 
-      expect(result).toBeUndefined();
+      expect(identity).toBeUndefined();
+      expect(data).toStrictEqual({
+        commitment: "",
+        web2Provider: "",
+      });
     });
 
     test("should not get active identity if there is no any identity", async () => {

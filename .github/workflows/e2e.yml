@@ -13,6 +13,8 @@ on:
 env:
   CRYPTKEEPER_DEBUG: false
   RANDOM_IDENTITY: false
+  METAMASK_EXTENSION_ID: "gopbpnbkpnnmomhlhkpljncmmoidkioi"
+  METAMASK_VERSION: "10.28.1"
   INFURA_API_KEY: ${{ secrets.INFURA_API_KEY }}
   ALCHEMY_API_KEY: ${{ secrets.ALCHEMY_API_KEY }}
   FREIGHT_TRUST_NETWORK: ${{ secrets.FREIGHT_TRUST_NETWORK }}
@@ -30,7 +32,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        node-version: [16, 18]
+        node-version: [18]
         command: ["e2e"]
 
     steps:
@@ -41,21 +43,47 @@ jobs:
           node-version: ${{ matrix.node-version }}
           cache: "npm"
 
-      - name: Install dependencies
-        run: npm ci
+      - name: Cache node modules
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.npm
+            node_modules
+            /home/runner/.cache/Cypress
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
 
-      - name: Install Playwright Browsers
-        run: npx playwright install --with-deps chromium
+      - name: Get installed Playwright version
+        id: playwright-version
+        run: echo "PLAYWRIGHT_VERSION=$(node -e "console.log(require('./package-lock.json').dependencies['@playwright/test'].version)")" >> $GITHUB_ENV
+
+      - name: Cache playwright binaries
+        uses: actions/cache@v3
+        id: playwright-cache
+        with:
+          path: |
+            ~/.cache/ms-playwright
+          key: ${{ runner.os }}-playwright-${{ env.PLAYWRIGHT_VERSION }}
+
+      - name: Install dependencies
+        run: npm ci --prefer-offline --no-audit
 
       - name: Setup demo
         working-directory: ./demo
-        run: npm ci
+        run: npm ci --prefer-offline --no-audit
 
       - name: Build extension
-        run: npm run build
+        run: METAMASK_EXTENSION_ID=${{ env.METAMASK_EXTENSION_ID }} npm run build
+
+      - name: Install Playwright Browsers
+        if: steps.playwright-cache.outputs.cache-hit != 'true'
+        run: npx playwright install --with-deps chromium
 
       - name: Run Playwright tests
-        run: npm run ${{ matrix.command }}
+        uses: coactions/setup-xvfb@v1
+        with:
+          run: npm run ${{ matrix.command }}
 
       - uses: actions/upload-artifact@v3
         if: always()

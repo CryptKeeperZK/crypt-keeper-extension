@@ -1,3 +1,5 @@
+import * as metamask from "@synthetixio/synpress/commands/metamask";
+
 import type { Page } from "@playwright/test";
 
 import { CRYPT_KEEPER_PASSWORD } from "../constants";
@@ -20,6 +22,15 @@ export async function lockAccount({ app, cryptKeeperExtensionId }: TestExtension
 
   await app.getByTestId("menu").click();
   await app.getByText("Lock", { exact: true }).click();
+}
+
+export async function connectWallet({ app, cryptKeeperExtensionId }: TestExtension): Promise<void> {
+  await app.goto(`chrome-extension://${cryptKeeperExtensionId}/popup.html`);
+
+  await app.getByTestId("menu").click();
+  await app.getByText("Connect wallet", { exact: true }).click();
+
+  await metamask.acceptAccess();
 }
 
 export async function unlockAccount({ app, cryptKeeperExtensionId }: TestExtension): Promise<void> {

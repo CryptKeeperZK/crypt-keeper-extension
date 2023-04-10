@@ -141,14 +141,12 @@ export default class IdentityService {
     return this.activeIdentity;
   };
 
-  public getActiveIdentityData = async (): Promise<SelectedIdentity | undefined> => {
+  public getActiveIdentityData = async (): Promise<SelectedIdentity> => {
     const identity = await this.getActiveIdentity();
-
-    const web2Provider = identity?.metadata.web2Provider;
 
     return {
       commitment: identity ? bigintToHex(identity.genIdentityCommitment()) : "",
-      web2Provider: web2Provider || "",
+      web2Provider: identity?.metadata.web2Provider || "",
     };
   };
 
