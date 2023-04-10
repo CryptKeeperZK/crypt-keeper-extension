@@ -20,14 +20,26 @@ const Onboarding = (): JSX.Element => {
 
         <div className="text-base">To continue, please setup a password</div>
 
-        <PasswordInput
-          isShowConfirmPassword
-          isShowHint
-          errorMessages={[errors.password, errors.confirmPassword]}
-          isShowPassword={isShowPassword}
-          onShowPassword={onShowPassword}
-          {...[register("password"), register("confirmPassword")]}
-        />
+        <div className="py-4 w-full password-input" data-testid="showen-inputs">
+          <PasswordInput
+            isShowHint
+            errorMessage={errors.password}
+            id="password"
+            isShowPassword={isShowPassword}
+            label="Password"
+            onShowPassword={onShowPassword}
+            {...register("password")}
+          />
+
+          <PasswordInput
+            isConfirmPasswordInput
+            errorMessage={errors.confirmPassword}
+            id="confirmPassword"
+            isShowPassword={isShowPassword}
+            label="Confirm Password"
+            {...register("confirmPassword")}
+          />
+        </div>
       </div>
 
       {errors.root && <div className="text-red-500 text-sm text-center">{errors.root}</div>}

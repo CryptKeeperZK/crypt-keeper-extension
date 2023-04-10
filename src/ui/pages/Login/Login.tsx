@@ -22,11 +22,13 @@ const Login = (): JSX.Element => {
 
         <div className="py-4 w-full password-input" data-testid="showen-inputs">
           <PasswordInput
-            errorMessages={[errors.password]}
-            isShowHint={false}
+            isShowHint
+            errorMessage={errors.password}
+            id="password"
             isShowPassword={isShowPassword}
+            label="Password"
             onShowPassword={onShowPassword}
-            {...[register("password")]}
+            {...register("password")}
           />
         </div>
       </div>

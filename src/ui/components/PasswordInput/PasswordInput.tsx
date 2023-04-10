@@ -8,29 +8,33 @@ import { Input } from "../Input";
 import "./passwordInput.scss";
 
 interface PasswordInputProps extends InputHTMLAttributes<HTMLInputElement> {
-  isShowHint: boolean;
+  id: string;
+  label: string;
+  isShowHint?: boolean;
   isShowPassword: boolean;
-  isShowConfirmPassword?: boolean;
-  onShowPassword: () => void;
-  errorMessages: (string | undefined)[];
+  isConfirmPasswordInput?: boolean;
+  onShowPassword?: () => void;
+  errorMessage?: string;
 }
 
 const PasswordInputUI = (
   {
-    isShowHint,
-    errorMessages,
+    id,
+    label,
+    isShowHint = false,
+    errorMessage = undefined,
     isShowPassword,
-    isShowConfirmPassword = false,
-    onShowPassword,
+    isConfirmPasswordInput = false,
+    onShowPassword = undefined,
     ...passwordInputProps
   }: PasswordInputProps,
   ref: Ref<HTMLInputElement>,
 ): JSX.Element => (
-  <div className="py-4 w-full password-input" data-testid="showen-inputs">
-    <Input
-      autoFocus
-      className="mb-4 password-input__content"
-      endAdornment={
+  <Input
+    autoFocus
+    className="mb-4 password-input__content"
+    endAdornment={
+      isConfirmPasswordInput ? null : (
         <InputAdornment position="end">
           {isShowHint ? (
             <Tooltip
@@ -78,26 +82,15 @@ const PasswordInputUI = (
             </Tooltip>
           )}
         </InputAdornment>
-      }
-      errorMessage={errorMessages[0]}
-      id="password"
-      inputRef={ref}
-      label="Password"
-      type={isShowPassword ? "text" : "password"}
-      {...Object.values(passwordInputProps)[0]}
-    />
-
-    {isShowConfirmPassword ? (
-      <Input
-        errorMessage={errorMessages[1]}
-        id="confirmPassword"
-        inputRef={ref}
-        label="Confirm Password"
-        type={isShowPassword ? "text" : "password"}
-        {...Object.values(passwordInputProps)[1]}
-      />
-    ) : null}
-  </div>
+      )
+    }
+    errorMessage={errorMessage}
+    id={id}
+    inputRef={ref}
+    label={label}
+    type={isShowPassword ? "text" : "password"}
+    {...passwordInputProps}
+  />
 );
 
 export const PasswordInput = forwardRef<HTMLInputElement, PasswordInputProps>(PasswordInputUI);
