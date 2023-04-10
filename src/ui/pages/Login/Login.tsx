@@ -22,7 +22,6 @@ const Login = (): JSX.Element => {
 
         <div className="py-4 w-full password-input" data-testid="showen-inputs">
           <PasswordInput
-            isShowHint
             errorMessage={errors.password}
             id="password"
             isShowPassword={isShowPassword}

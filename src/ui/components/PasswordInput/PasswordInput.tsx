@@ -23,8 +23,8 @@ const PasswordInputUI = (
     label,
     isShowHint = false,
     errorMessage = undefined,
-    isShowPassword,
     isConfirmPasswordInput = false,
+    isShowPassword,
     onShowPassword = undefined,
     ...passwordInputProps
   }: PasswordInputProps,
