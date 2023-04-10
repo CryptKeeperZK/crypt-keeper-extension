@@ -62,10 +62,7 @@ export async function getMerkleProof({
 }
 
 export async function getRlnVerficationKeyJson(rlnVerificationKeyPath: string): Promise<VerificationKeyT> {
-  const verificationKeyResponse = await fetch(rlnVerificationKeyPath);
-  const verificationKeyJson = (await verificationKeyResponse.json()) as VerificationKeyT;
-
-  return verificationKeyJson;
+  return fetch(rlnVerificationKeyPath).then((res) => res.json());
 }
 
 async function getRemoteMerkleProof(merkleStorageAddress: string, identityCommitmentHex: string): Promise<MerkleProof> {
