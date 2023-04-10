@@ -1,6 +1,9 @@
 import { IconProp } from "@fortawesome/fontawesome-svg-core";
 
 import type { MerkleProof } from "@zk-kit/incremental-merkle-tree";
+// TODO: remove `rlnjs/dist/types/types`
+
+export type { VerificationKeyT } from "rlnjs/dist/types/types";
 
 export type HandlerRequest = {
   method: string;
