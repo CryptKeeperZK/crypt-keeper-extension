@@ -1,7 +1,7 @@
 import logoSVG from "@src/static/icons/logo.svg";
 import { ButtonType, Button } from "@src/ui/components/Button";
 import { Icon } from "@src/ui/components/Icon";
-import { ConfirmPasswordInput, PasswordInput } from "@src/ui/components/PasswordInput";
+import { PasswordInput } from "@src/ui/components/PasswordInput";
 
 import "./onboarding.scss";
 import { useOnboarding } from "./useOnboarding";
@@ -20,21 +20,14 @@ const Onboarding = (): JSX.Element => {
 
         <div className="text-base">To continue, please setup a password</div>
 
-        <div className="py-4 w-full password-input" data-testid="showen-inputs">
-          <PasswordInput
-            isShowHint
-            errorMessage={errors.password}
-            isShowPassword={isShowPassword}
-            onShowPassword={onShowPassword}
-            {...register("password")}
-          />
-
-          <ConfirmPasswordInput
-            errorMessage={errors.confirmPassword}
-            isShowPassword={isShowPassword}
-            {...register("confirmPassword")}
-          />
-        </div>
+        <PasswordInput
+          isShowConfirmPassword
+          isShowHint
+          errorMessages={[errors.password, errors.confirmPassword]}
+          isShowPassword={isShowPassword}
+          onShowPassword={onShowPassword}
+          {...[register("password"), register("confirmPassword")]}
+        />
       </div>
 
       {errors.root && <div className="text-red-500 text-sm text-center">{errors.root}</div>}
