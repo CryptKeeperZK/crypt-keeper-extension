@@ -32,11 +32,11 @@ const Onboarding = (): JSX.Element => {
           />
 
           <PasswordInput
-            isConfirmPasswordInput
             errorMessage={errors.confirmPassword}
             id="confirmPassword"
             isShowPassword={isShowPassword}
             label="Confirm Password"
+            onShowPassword={onShowPassword}
             {...register("confirmPassword")}
           />
         </div>

@@ -111,13 +111,13 @@ describe("ui/pages/Onboarding", () => {
     const confirmPasswordInput = await screen.findByLabelText("Confirm Password");
     await act(async () => Promise.resolve(fireEvent.change(confirmPasswordInput, { target: { value: "12345" } })));
 
-    const eyeLookButton = await screen.findByTestId("eye-look-button");
+    const [eyeLookButton] = await screen.findAllByTestId("eye-look-button");
 
     expect(eyeLookButton).toBeInTheDocument();
 
     await act(async () => Promise.resolve(fireEvent.click(eyeLookButton)));
 
-    const eyeSlashButton = await screen.findByTestId("eye-slash-button");
+    const [, eyeSlashButton] = await screen.findAllByTestId("eye-slash-button");
 
     expect(eyeSlashButton).toBeInTheDocument();
 

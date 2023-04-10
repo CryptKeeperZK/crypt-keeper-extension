@@ -10,11 +10,10 @@ import "./passwordInput.scss";
 interface PasswordInputProps extends InputHTMLAttributes<HTMLInputElement> {
   id: string;
   label: string;
-  isShowHint?: boolean;
   isShowPassword: boolean;
-  isConfirmPasswordInput?: boolean;
-  onShowPassword?: () => void;
+  isShowHint?: boolean;
   errorMessage?: string;
+  onShowPassword: () => void;
 }
 
 const PasswordInputUI = (
@@ -23,9 +22,8 @@ const PasswordInputUI = (
     label,
     isShowHint = false,
     errorMessage = undefined,
-    isConfirmPasswordInput = false,
     isShowPassword,
-    onShowPassword = undefined,
+    onShowPassword,
     ...passwordInputProps
   }: PasswordInputProps,
   ref: Ref<HTMLInputElement>,
@@ -34,55 +32,53 @@ const PasswordInputUI = (
     autoFocus
     className="mb-4 password-input__content"
     endAdornment={
-      isConfirmPasswordInput ? null : (
-        <InputAdornment position="end">
-          {isShowHint ? (
-            <Tooltip
-              key={1}
-              className="password-input__info-tooltip"
-              title={
-                <div>
-                  <p>Password requirements:</p>
+      <InputAdornment position="end">
+        {isShowHint && (
+          <Tooltip
+            key={1}
+            className="password-input__info-tooltip"
+            title={
+              <div>
+                <p>Password requirements:</p>
 
-                  <p>- At least 8 characters</p>
+                <p>- At least 8 characters</p>
 
-                  <p>- At least 1 upper case and letter</p>
+                <p>- At least 1 upper case and letter</p>
 
-                  <p>- At least 1 lower case letter</p>
+                <p>- At least 1 lower case letter</p>
 
-                  <p>- At least 1 special character (!@#$%^&*)</p>
+                <p>- At least 1 special character (!@#$%^&*)</p>
 
-                  <p>- At least 1 number</p>
-                </div>
-              }
-            >
-              <Icon className="password-input__info-icon" fontAwesome="fa-info" />
-            </Tooltip>
-          ) : null}
+                <p>- At least 1 number</p>
+              </div>
+            }
+          >
+            <Icon className="password-input__info-icon" fontAwesome="fa-info" />
+          </Tooltip>
+        )}
 
-          {isShowPassword ? (
-            <Tooltip
-              key={2}
-              className="eye-tooltip"
-              data-testid="eye-slash-button"
-              title="Hide Password"
-              onClick={onShowPassword}
-            >
-              <Icon className="password-input__info-icon" fontAwesome="fa-eye-slash" />
-            </Tooltip>
-          ) : (
-            <Tooltip
-              key={2}
-              className="eye-tooltip"
-              data-testid="eye-look-button"
-              title="Show Password"
-              onClick={onShowPassword}
-            >
-              <Icon className="password-input__info-icon" fontAwesome="fa-eye" />
-            </Tooltip>
-          )}
-        </InputAdornment>
-      )
+        {isShowPassword ? (
+          <Tooltip
+            key={2}
+            className="eye-tooltip"
+            data-testid="eye-slash-button"
+            title="Hide Password"
+            onClick={onShowPassword}
+          >
+            <Icon className="password-input__info-icon" fontAwesome="fa-eye-slash" />
+          </Tooltip>
+        ) : (
+          <Tooltip
+            key={2}
+            className="eye-tooltip"
+            data-testid="eye-look-button"
+            title="Show Password"
+            onClick={onShowPassword}
+          >
+            <Icon className="password-input__info-icon" fontAwesome="fa-eye" />
+          </Tooltip>
+        )}
+      </InputAdornment>
     }
     errorMessage={errorMessage}
     id={id}
