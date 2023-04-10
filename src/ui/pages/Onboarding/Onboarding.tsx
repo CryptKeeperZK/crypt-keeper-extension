@@ -20,7 +20,7 @@ const Onboarding = (): JSX.Element => {
 
         <div className="text-base">To continue, please setup a password</div>
 
-        <div className="py-4 w-full password-input" data-testid="showen-inputs">
+        <div className="py-4 w-full password-input">
           <PasswordInput
             isShowHint
             errorMessage={errors.password}

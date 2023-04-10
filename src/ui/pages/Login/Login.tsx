@@ -20,7 +20,7 @@ const Login = (): JSX.Element => {
 
         <div className="text-base">To continue, please unlock your wallet</div>
 
-        <div className="py-4 w-full password-input" data-testid="showen-inputs">
+        <div className="py-4 w-full password-input">
           <PasswordInput
             errorMessage={errors.password}
             id="password"
