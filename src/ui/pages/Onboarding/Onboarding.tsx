@@ -22,6 +22,7 @@ const Onboarding = (): JSX.Element => {
 
         <div className="py-4 w-full password-input">
           <PasswordInput
+            isShowEye
             isShowHint
             errorMessage={errors.password}
             id="password"

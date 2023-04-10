@@ -5,6 +5,7 @@ import "./input.scss";
 
 export interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   label: string;
+  endLabelIcon?: React.ReactNode;
   endAdornment?: React.ReactNode;
   errorMessage?: string;
   inputRef?: Ref<HTMLInputElement>;
@@ -14,6 +15,7 @@ const InputUI = (
   {
     id,
     label,
+    endLabelIcon = undefined,
     className,
     errorMessage = "",
     endAdornment = undefined,
@@ -26,6 +28,12 @@ const InputUI = (
     {label && (
       <label className="input-group__label" htmlFor={id}>
         {label}
+
+        {endLabelIcon && (
+          <label className="input-group__label__end" htmlFor={id}>
+            {endLabelIcon}
+          </label>
+        )}
       </label>
     )}
 

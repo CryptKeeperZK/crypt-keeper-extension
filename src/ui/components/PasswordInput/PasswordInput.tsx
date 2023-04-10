@@ -11,6 +11,7 @@ interface PasswordInputProps extends InputHTMLAttributes<HTMLInputElement> {
   id: string;
   label: string;
   isShowPassword: boolean;
+  isShowEye?: boolean;
   isShowHint?: boolean;
   errorMessage?: string;
   onShowPassword: () => void;
@@ -22,6 +23,7 @@ const PasswordInputUI = (
     label,
     isShowHint = false,
     errorMessage = undefined,
+    isShowEye = false,
     isShowPassword,
     onShowPassword,
     ...passwordInputProps
@@ -56,29 +58,34 @@ const PasswordInputUI = (
             <Icon className="password-input__info-icon" fontAwesome="fa-info" />
           </Tooltip>
         )}
-
-        {isShowPassword ? (
-          <Tooltip
-            key={2}
-            className="eye-tooltip"
-            data-testid="eye-slash-button"
-            title="Hide Password"
-            onClick={onShowPassword}
-          >
-            <Icon className="password-input__info-icon" fontAwesome="fa-eye-slash" />
-          </Tooltip>
-        ) : (
-          <Tooltip
-            key={2}
-            className="eye-tooltip"
-            data-testid="eye-look-button"
-            title="Show Password"
-            onClick={onShowPassword}
-          >
-            <Icon className="password-input__info-icon" fontAwesome="fa-eye" />
-          </Tooltip>
-        )}
       </InputAdornment>
+    }
+    endLabelIcon={
+      isShowEye && (
+        <InputAdornment position="end">
+          {isShowPassword ? (
+            <Tooltip
+              key={2}
+              className="eye-tooltip"
+              data-testid="eye-slash-button"
+              title="Hide Password"
+              onClick={onShowPassword}
+            >
+              <span className="password-input__info-icon"> Hide </span>
+            </Tooltip>
+          ) : (
+            <Tooltip
+              key={2}
+              className="eye-tooltip"
+              data-testid="eye-look-button"
+              title="Show Password"
+              onClick={onShowPassword}
+            >
+              <span className="password-input__info-icon"> Show </span>
+            </Tooltip>
+          )}
+        </InputAdornment>
+      )
     }
     errorMessage={errorMessage}
     id={id}
