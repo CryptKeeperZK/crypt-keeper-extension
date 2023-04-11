@@ -54,7 +54,8 @@ notes.txt
 # TypeScript
 tsout/
 
-.env
+.env*
+!.env.example
 .zip
 demo/.parcel-cache
 /test-results/

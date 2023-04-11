@@ -6,7 +6,13 @@ const prettierOptions = JSON.parse(prettierConfig);
 const isProduction = process.env.NODE_ENV === "production";
 
 module.exports = {
-  extends: ["airbnb", "prettier", "plugin:react/recommended", "plugin:import/recommended"],
+  extends: [
+    "airbnb",
+    "prettier",
+    "plugin:react/recommended",
+    "plugin:import/recommended",
+    "plugin:playwright/playwright-test",
+  ],
   ignorePatterns: [".eslintrc.js", "commitlint.config.js", "playwright.config.ts", "webpack.*.js", "demo/index.tsx"],
   root: true,
   env: {
@@ -135,6 +141,24 @@ module.exports = {
     "no-shadow": "off",
   },
   overrides: [
+    {
+      files: ["e2e/**/*.ts", "e2e/**/*.tsx"],
+      rules: {
+        "playwright/prefer-lowercase-title": "error",
+        "playwright/prefer-to-be": "error",
+        "playwright/prefer-to-have-length": "error",
+        "playwright/prefer-strict-equal": "error",
+        "playwright/max-nested-describe": ["error", { max: 1 }],
+        "playwright/no-restricted-matchers": [
+          "error",
+          {
+            toBeFalsy: "Use `toBe(false)` instead.",
+            not: null,
+          },
+        ],
+      },
+    },
+
     {
       files: ["**/*.ts", "**/*.tsx"],
       parser: "@typescript-eslint/parser",

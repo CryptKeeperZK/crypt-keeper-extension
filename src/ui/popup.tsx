@@ -1,6 +1,5 @@
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { faTwitter, faGithub, faReddit } from "@fortawesome/free-brands-svg-icons";
-import { createExternalExtensionProvider } from "@metamask/providers";
 import { AnyAction } from "@reduxjs/toolkit";
 import { Web3ReactProvider } from "@web3-react/core";
 import log from "loglevel";
@@ -15,11 +14,11 @@ import { connectors } from "@src/connectors";
 import Popup from "@src/ui/pages/Popup";
 import { store } from "@src/ui/store/configureAppStore";
 
+import { createMetamaskProvider } from "./services/provider";
+
 log.setDefaultLevel(isDebugMode() ? "debug" : "info");
 
-const provider = createExternalExtensionProvider();
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
+const provider = createMetamaskProvider(process.env.METAMASK_EXTENSION_ID);
 window.ethereum = provider;
 
 provider.on("error", (error: unknown) => {

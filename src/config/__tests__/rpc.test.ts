@@ -24,7 +24,7 @@ describe("config/rpc", () => {
     const rpcUrls = getRpcUrls();
 
     chainIds.forEach((chainId) => {
-      expect(rpcUrls[chainId].length).not.toBe(0);
+      expect(rpcUrls[chainId]).not.toHaveLength(0);
     });
   });
 
@@ -37,9 +37,9 @@ describe("config/rpc", () => {
 
     chainIds.forEach((chainId) => {
       if (rpcUrls[chainId]) {
-        expect(rpcUrls[chainId].length).not.toBe(0);
+        expect(rpcUrls[chainId]).not.toHaveLength(0);
       } else {
-        expect(chains[chainId].rpc.length).toBe(0);
+        expect(chains[chainId].rpc).toHaveLength(0);
       }
     });
   });

@@ -12,6 +12,7 @@ const envPlugin = new webpack.EnvironmentPlugin({
   TARGET: "chrome",
   CRYPTKEEPER_DEBUG: false,
   RANDOM_IDENTITY: false,
+  METAMASK_EXTENSION_ID: "",
   INFURA_API_KEY: "",
   ALCHEMY_API_KEY: "",
   FREIGHT_TRUST_NETWORK: "",

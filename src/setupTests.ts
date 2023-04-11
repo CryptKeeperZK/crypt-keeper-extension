@@ -66,6 +66,7 @@ jest.mock("webextension-polyfill-ts", (): unknown => {
       },
 
       runtime: {
+        connect: jest.fn(),
         getURL: jest.fn(),
       },
 

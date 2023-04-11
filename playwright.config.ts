@@ -3,30 +3,28 @@ import dotenv from "dotenv";
 
 import path from "path";
 
-dotenv.config();
+dotenv.config({ path: "./.env.test" });
 
 /**
  * See https://playwright.dev/docs/test-configuration.
  */
 export default defineConfig({
   testDir: "./e2e/tests",
-  /* Run tests in files in parallel */
+  timeout: 60_000,
+  expect: {
+    timeout: 5_000,
+  },
   fullyParallel: true,
-  /* Fail the build on CI if you accidentally left test.only in the source code. */
   forbidOnly: !!process.env.CI,
-  /* Retry on CI only */
-  retries: process.env.CI ? 2 : 0,
-  /* Opt out of parallel tests on CI. */
-  workers: process.env.CI ? 1 : undefined,
-  /* Reporter to use. See https://playwright.dev/docs/test-reporters */
+  retries: process.env.CI ? 1 : 0,
+  workers: 1,
   reporter: [["github"], ["list"], ["html"]],
-  /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
-    /* Base URL to use in actions like `await page.goto('/')`. */
+    actionTimeout: 0,
     baseURL: "http://localhost:1234",
-    /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
     trace: "on-first-retry",
     screenshot: "only-on-failure",
+    headless: false,
   },
 
   projects: [
@@ -36,7 +34,6 @@ export default defineConfig({
     },
   ],
 
-  /* Run your local dev server before starting the tests */
   webServer: [
     // {
     //   command: "npm run merkle",

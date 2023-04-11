@@ -5,7 +5,7 @@
     "paths": {
       "@src/*": ["src/*"]
     },
-    "typeRoots": ["./node_modules/@types", "./src/custom.d.ts"],
+    "typeRoots": ["./node_modules/@types", "./e2e/@types", "./src/custom.d.ts"],
     "target": "ES2020",
     "module": "commonjs",
     "moduleResolution": "node",
