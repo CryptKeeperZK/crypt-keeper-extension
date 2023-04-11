@@ -17,6 +17,8 @@ import {
   useHostPermission,
 } from "../permissions";
 
+jest.unmock("@src/ui/ducks/hooks");
+
 describe("ui/ducks/permissions", () => {
   const defaultHost = "http://localhost:3000";
   const defaultPermission = {

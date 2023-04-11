@@ -65,13 +65,7 @@ export const Menuable = ({
     >
       {children}
 
-      {isOpenDangerModal ? (
-        <ConfirmDangerModal
-          accept={handleDangerAction}
-          isOpenModal={isOpenDangerModal}
-          reject={handleDangerModalClose}
-        />
-      ) : null}
+      <ConfirmDangerModal accept={handleDangerAction} isOpenModal={isOpenDangerModal} reject={handleDangerModalClose} />
 
       {isShowing && (
         <div className={classNames("rounded-xl border border-gray-700 menuable__menu", menuClassName)}>

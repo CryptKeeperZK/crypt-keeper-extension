@@ -28,6 +28,8 @@ import {
   SelectedIdentity,
 } from "../identities";
 
+jest.unmock("@src/ui/ducks/hooks");
+
 describe("ui/ducks/identities", () => {
   const defaultIdentities: IdentitiesState["identities"] = [
     {

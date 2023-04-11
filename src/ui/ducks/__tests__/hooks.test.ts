@@ -12,6 +12,8 @@ jest.mock("react-redux", (): unknown => ({
   useSelector: jest.fn(),
 }));
 
+jest.unmock("@src/ui/ducks/hooks");
+
 describe("ui/ducks/hooks", () => {
   beforeEach(() => {
     (useDispatch as jest.Mock).mockReturnValue(jest.fn());

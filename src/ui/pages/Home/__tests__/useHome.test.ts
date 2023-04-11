@@ -7,7 +7,7 @@ import { useRef } from "react";
 
 import { defaultWalletHookData } from "@src/config/mock/wallet";
 import { useAppDispatch } from "@src/ui/ducks/hooks";
-import { IdentityData, useIdentities, fetchIdentities, deleteAllIdentities } from "@src/ui/ducks/identities";
+import { IdentityData, useIdentities, fetchIdentities } from "@src/ui/ducks/identities";
 import { checkHostApproval } from "@src/ui/ducks/permissions";
 import { useWallet } from "@src/ui/hooks/wallet";
 import { getLastActiveTabUrl } from "@src/util/browser";
@@ -29,7 +29,6 @@ jest.mock("@src/ui/ducks/hooks", (): unknown => ({
 
 jest.mock("@src/ui/ducks/identities", (): unknown => ({
   fetchIdentities: jest.fn(),
-  deleteAllIdentities: jest.fn(),
   useIdentities: jest.fn(),
 }));
 
@@ -90,8 +89,6 @@ describe("ui/pages/Home/useHome", () => {
     expect(result.current.address).toBe(defaultWalletHookData.address);
     expect(result.current.balance).toStrictEqual(defaultWalletHookData.balance);
     expect(result.current.chain).toStrictEqual(defaultWalletHookData.chain);
-    expect(result.current.isFixedTabsMode).toBe(false);
-    expect(result.current.scrollRef.current).toBeNull();
     expect(result.current.identities).toStrictEqual(defaultIdentities);
     expect(fetchIdentities).toBeCalledTimes(1);
     expect(mockDispatch).toBeCalledTimes(1);
@@ -114,32 +111,5 @@ describe("ui/pages/Home/useHome", () => {
     await act(async () => result.current.refreshConnectionStatus());
 
     expect(checkHostApproval).not.toBeCalled();
-  });
-
-  test("should delete all identities properly", async () => {
-    const { result } = renderHook(() => useHome());
-
-    await act(async () => Promise.resolve(result.current.onDeleteAllIdentities()));
-
-    expect(mockDispatch).toBeCalledTimes(2);
-    expect(deleteAllIdentities).toBeCalledTimes(1);
-  });
-
-  test("should set fixed tabs mode properly", async () => {
-    (useRef as jest.Mock).mockReturnValue({ current: { scrollTop: 100 } });
-
-    const { result } = renderHook(() => useHome());
-
-    await act(async () => Promise.resolve(result.current.onScroll()));
-
-    expect(result.current.isFixedTabsMode).toBe(true);
-  });
-
-  test("should not set fixed tabs mode if there is no ref", async () => {
-    const { result } = renderHook(() => useHome());
-
-    await act(async () => Promise.resolve(result.current.onScroll()));
-
-    expect(result.current.isFixedTabsMode).toBe(false);
   });
 });

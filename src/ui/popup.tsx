@@ -1,5 +1,6 @@
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { faTwitter, faGithub, faReddit } from "@fortawesome/free-brands-svg-icons";
+import { ThemeProvider } from "@mui/material/styles";
 import { AnyAction } from "@reduxjs/toolkit";
 import { Web3ReactProvider } from "@web3-react/core";
 import log from "loglevel";
@@ -15,6 +16,7 @@ import Popup from "@src/ui/pages/Popup";
 import { store } from "@src/ui/store/configureAppStore";
 
 import { createMetamaskProvider } from "./services/provider";
+import { theme } from "./theme";
 
 log.setDefaultLevel(isDebugMode() ? "debug" : "info");
 
@@ -45,7 +47,9 @@ browser.tabs.query({ active: true, currentWindow: true }).then(() => {
       <HashRouter>
         <Web3ReactProvider connectors={connectors}>
           <Suspense>
-            <Popup />
+            <ThemeProvider theme={theme}>
+              <Popup />
+            </ThemeProvider>
           </Suspense>
         </Web3ReactProvider>
       </HashRouter>
