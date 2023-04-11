@@ -8,22 +8,34 @@ import { Input } from "../Input";
 import "./passwordInput.scss";
 
 interface PasswordInputProps extends InputHTMLAttributes<HTMLInputElement> {
-  isShowHint: boolean;
+  id: string;
+  label: string;
   isShowPassword: boolean;
-  onShowPassword: () => void;
+  isShowEye?: boolean;
+  isShowHint?: boolean;
   errorMessage?: string;
+  onShowPassword: () => void;
 }
 
 const PasswordInputUI = (
-  { isShowHint, errorMessage = undefined, isShowPassword, onShowPassword, ...passwordInputProps }: PasswordInputProps,
-  inputRef: Ref<HTMLInputElement>,
+  {
+    id,
+    label,
+    isShowHint = false,
+    errorMessage = undefined,
+    isShowEye = false,
+    isShowPassword,
+    onShowPassword,
+    ...passwordInputProps
+  }: PasswordInputProps,
+  ref: Ref<HTMLInputElement>,
 ): JSX.Element => (
   <Input
     autoFocus
     className="mb-4 password-input__content"
     endAdornment={
       <InputAdornment position="end">
-        {isShowHint ? (
+        {isShowHint && (
           <Tooltip
             key={1}
             className="password-input__info-tooltip"
@@ -45,35 +57,28 @@ const PasswordInputUI = (
           >
             <Icon className="password-input__info-icon" fontAwesome="fa-info" />
           </Tooltip>
-        ) : null}
-
-        {isShowPassword ? (
-          <Tooltip
-            key={2}
-            className="eye-tooltip"
-            data-testid="eye-slash-button"
-            title="Hide Password"
-            onClick={onShowPassword}
-          >
-            <Icon className="password-input__info-icon" fontAwesome="fa-eye-slash" />
-          </Tooltip>
-        ) : (
-          <Tooltip
-            key={2}
-            className="eye-tooltip"
-            data-testid="eye-look-button"
-            title="Show Password"
-            onClick={onShowPassword}
-          >
-            <Icon className="password-input__info-icon" fontAwesome="fa-eye" />
-          </Tooltip>
         )}
       </InputAdornment>
     }
+    endLabelIcon={
+      isShowEye && (
+        <InputAdornment className="password-input__adornment" position="end">
+          {isShowPassword ? (
+            <Tooltip key={2} className="eye-tooltip" title="Hide Password" onClick={onShowPassword}>
+              <span className="password-input__info-icon">Hide</span>
+            </Tooltip>
+          ) : (
+            <Tooltip key={2} className="eye-tooltip" title="Show Password" onClick={onShowPassword}>
+              <span className="password-input__info-icon">Show</span>
+            </Tooltip>
+          )}
+        </InputAdornment>
+      )
+    }
     errorMessage={errorMessage}
-    id="password"
-    inputRef={inputRef}
-    label="Password"
+    id={id}
+    inputRef={ref}
+    label={label}
     type={isShowPassword ? "text" : "password"}
     {...passwordInputProps}
   />

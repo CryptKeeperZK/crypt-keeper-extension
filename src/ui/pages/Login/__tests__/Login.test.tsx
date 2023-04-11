@@ -65,19 +65,19 @@ describe("ui/pages/Login", () => {
     const passwordInput = await screen.findByLabelText("Password");
     await act(async () => Promise.resolve(fireEvent.change(passwordInput, { target: { value: "12345" } })));
 
-    const eyeLookButton = await screen.findByTestId("eye-look-button");
+    const showButton = await screen.findByText("Show");
 
-    expect(eyeLookButton).toBeInTheDocument();
+    expect(showButton).toBeInTheDocument();
 
-    await act(async () => Promise.resolve(fireEvent.click(eyeLookButton)));
+    await act(async () => Promise.resolve(fireEvent.click(showButton)));
 
-    const eyeSlashButton = await screen.findByTestId("eye-slash-button");
+    const hideButton = await screen.findByText("Hide");
 
-    expect(eyeSlashButton).toBeInTheDocument();
+    expect(hideButton).toBeInTheDocument();
 
-    await act(async () => Promise.resolve(fireEvent.click(eyeSlashButton)));
+    await act(async () => Promise.resolve(fireEvent.click(hideButton)));
 
-    expect(eyeLookButton).toBeInTheDocument();
+    expect(showButton).toBeInTheDocument();
   });
 
   test("should submit form properly", async () => {

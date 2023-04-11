@@ -5,6 +5,7 @@ import "./input.scss";
 
 export interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   label: string;
+  endLabelIcon?: React.ReactNode;
   endAdornment?: React.ReactNode;
   errorMessage?: string;
   inputRef?: Ref<HTMLInputElement>;
@@ -14,6 +15,7 @@ const InputUI = (
   {
     id,
     label,
+    endLabelIcon = undefined,
     className,
     errorMessage = "",
     endAdornment = undefined,
@@ -24,9 +26,13 @@ const InputUI = (
 ): JSX.Element => (
   <div className={classNames("input-group", className)}>
     {label && (
-      <label className="input-group__label" htmlFor={id}>
-        {label}
-      </label>
+      <div className="input-group__label-wrapper">
+        <label className="input-group__label" htmlFor={id}>
+          {label}
+        </label>
+
+        {endLabelIcon && <div className="input-group__label__end">{endLabelIcon}</div>}
+      </div>
     )}
 
     <div className="input-group__group">
