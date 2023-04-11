@@ -26,15 +26,13 @@ const InputUI = (
 ): JSX.Element => (
   <div className={classNames("input-group", className)}>
     {label && (
-      <label className="input-group__label" htmlFor={id}>
-        {label}
+      <div className="input-group__label-wrapper">
+        <label className="input-group__label" htmlFor={id}>
+          {label}
+        </label>
 
-        {endLabelIcon && (
-          <label className="input-group__label__end" htmlFor={id}>
-            {endLabelIcon}
-          </label>
-        )}
-      </label>
+        {endLabelIcon && <div className="input-group__label__end">{endLabelIcon}</div>}
+      </div>
     )}
 
     <div className="input-group__group">

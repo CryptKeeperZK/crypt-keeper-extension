@@ -111,19 +111,19 @@ describe("ui/pages/Onboarding", () => {
     const confirmPasswordInput = await screen.findByLabelText("Confirm Password");
     await act(async () => Promise.resolve(fireEvent.change(confirmPasswordInput, { target: { value: "12345" } })));
 
-    const [eyeLookButton] = await screen.findAllByTestId("eye-look-button");
+    const showButton = await screen.findByText("Show");
 
-    expect(eyeLookButton).toBeInTheDocument();
+    expect(showButton).toBeInTheDocument();
 
-    await act(async () => Promise.resolve(fireEvent.click(eyeLookButton)));
+    await act(async () => Promise.resolve(fireEvent.click(showButton)));
 
-    const [, eyeSlashButton] = await screen.findAllByTestId("eye-slash-button");
+    const hideButton = await screen.findByText("Hide");
 
-    expect(eyeSlashButton).toBeInTheDocument();
+    expect(hideButton).toBeInTheDocument();
 
-    await act(async () => Promise.resolve(fireEvent.click(eyeSlashButton)));
+    await act(async () => Promise.resolve(fireEvent.click(hideButton)));
 
-    expect(eyeLookButton).toBeInTheDocument();
+    expect(showButton).toBeInTheDocument();
   });
 
   test("should submit form properly", async () => {

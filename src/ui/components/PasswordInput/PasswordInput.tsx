@@ -62,26 +62,14 @@ const PasswordInputUI = (
     }
     endLabelIcon={
       isShowEye && (
-        <InputAdornment position="end">
+        <InputAdornment className="password-input__adornment" position="end">
           {isShowPassword ? (
-            <Tooltip
-              key={2}
-              className="eye-tooltip"
-              data-testid="eye-slash-button"
-              title="Hide Password"
-              onClick={onShowPassword}
-            >
-              <span className="password-input__info-icon"> Hide </span>
+            <Tooltip key={2} className="eye-tooltip" title="Hide Password" onClick={onShowPassword}>
+              <span className="password-input__info-icon">Hide</span>
             </Tooltip>
           ) : (
-            <Tooltip
-              key={2}
-              className="eye-tooltip"
-              data-testid="eye-look-button"
-              title="Show Password"
-              onClick={onShowPassword}
-            >
-              <span className="password-input__info-icon"> Show </span>
+            <Tooltip key={2} className="eye-tooltip" title="Show Password" onClick={onShowPassword}>
+              <span className="password-input__info-icon">Show</span>
             </Tooltip>
           )}
         </InputAdornment>

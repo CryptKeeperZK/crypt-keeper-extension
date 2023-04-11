@@ -1,7 +1,7 @@
 import { Identity } from "@semaphore-protocol/identity";
 import { MerkleProof } from "@zk-kit/incremental-merkle-tree";
 
-import { deserializeMerkleProof, generateMerkleProof, getMerkleProof } from "../utils";
+import { deserializeMerkleProof, generateMerkleProof, getMerkleProof, getRlnVerficationKeyJson } from "../utils";
 
 describe("background/services/protocols/utils", () => {
   const defaultMerkleProof: MerkleProof = {
@@ -79,5 +79,16 @@ describe("background/services/protocols/utils", () => {
     });
 
     expect(result).toBeDefined();
+  });
+
+  test("should get merkle proof from remote host properly", async () => {
+    const fetchSpy = jest.spyOn(global, "fetch").mockResolvedValue({
+      json: () => Promise.resolve({ data: {} }),
+    } as Response);
+
+    const result = await getRlnVerficationKeyJson("path");
+
+    expect(fetchSpy).toBeCalledTimes(1);
+    expect(result).toStrictEqual({ data: {} });
   });
 });
