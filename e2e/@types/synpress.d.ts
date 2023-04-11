@@ -4,7 +4,7 @@ declare module "@synthetixio/synpress/helpers" {
 
 declare module "@synthetixio/synpress/commands/metamask" {
   export function initialSetup(
-    browser: unknown,
+    browser: import("@playwright/test").BrowserType,
     options: {
       secretWordsOrPrivateKey: string;
       network: string;
