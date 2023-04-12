@@ -29,6 +29,8 @@ jest.mock("@src/config/env", (): unknown => ({
   isDebugMode: () => true,
 }));
 
+jest.unmock("@src/ui/ducks/hooks");
+
 describe("ui/ducks/app", () => {
   afterEach(() => {
     jest.clearAllMocks();

@@ -7,8 +7,6 @@ import type { Duplex } from "stream";
 
 export function createMetamaskProvider(extensionId?: string): MetaMaskInpageProvider {
   const currentMetaMaskId = extensionId || getMetaMaskId();
-  // eslint-disable-next-line no-console
-  console.error(currentMetaMaskId);
   const metamaskPort = browser.runtime.connect(currentMetaMaskId);
   const pluginStream = new PortStream(metamaskPort);
 

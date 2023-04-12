@@ -33,6 +33,7 @@ jest.mock("@src/ui/ducks/identities", (): unknown => ({
   useIdentities: jest.fn(),
   useSelectedIdentity: jest.fn(),
   createIdentityRequest: jest.fn(),
+  deleteAllIdentities: jest.fn(),
 }));
 
 jest.mock("@src/ui/hooks/wallet", (): unknown => ({
@@ -40,7 +41,7 @@ jest.mock("@src/ui/hooks/wallet", (): unknown => ({
 }));
 
 describe("ui/pages/Home/components/IdentityList", () => {
-  const mockDispatch = jest.fn();
+  const mockDispatch = jest.fn(() => Promise.resolve());
 
   const defaultIdentities: IdentityData[] = [
     {
@@ -183,6 +184,21 @@ describe("ui/pages/Home/components/IdentityList", () => {
 
     const createIdentityButton = await screen.findByTestId("create-new-identity");
     await act(async () => Promise.resolve(createIdentityButton.click()));
+
+    expect(mockDispatch).toBeCalledTimes(1);
+  });
+
+  test("should delete all the identities properly", async () => {
+    render(<IdentityList identities={defaultIdentities} />);
+
+    const clearIdentitiesButton = await screen.findByTestId("clear-all-identities");
+    await act(async () => Promise.resolve(clearIdentitiesButton.click()));
+
+    const modal = await screen.findByTestId("danger-modal");
+    expect(modal).toBeInTheDocument();
+
+    const yesButton = await screen.findByText("Yes");
+    await act(async () => Promise.resolve(yesButton.click()));
 
     expect(mockDispatch).toBeCalledTimes(1);
   });

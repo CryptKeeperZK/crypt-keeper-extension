@@ -1,42 +1,11 @@
 @import "@src/util/variables";
 
 .tab__list {
-  @extend %col-nowrap;
-  flex: 1 1 auto;
-
-  &__fix-header {
-    display: none;
-  }
-
-  &__header {
-    @extend %row-nowrap;
-
-    &__tab {
-      @extend %row-nowrap;
-      justify-content: space-between;
-      align-items: center;
-      flex: 1 1 auto;
-      cursor: pointer;
-      padding: 1rem;
-      border-bottom: 2px solid $gray-800;
-
-      &--selected {
-        border-color: $primary-green;
-      }
-    }
-  }
-
   &__content {
-    flex: 1 1 auto;
     background-color: $black;
-  }
-
-  &__menu-icon {
-    font-size: 0.8125rem !important;
-    color: $gray-600;
-
-    &:hover {
-      color: $gray-300;
-    }
+    flex: 1;
+    height: 375px;
+    overflow-x: hidden;
+    overflow-y: auto;
   }
 }

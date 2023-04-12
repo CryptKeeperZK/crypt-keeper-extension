@@ -7,32 +7,16 @@ import "./home.scss";
 import { useHome } from "./useHome";
 
 const Home = (): JSX.Element => {
-  const {
-    scrollRef,
-    isFixedTabsMode,
-    address,
-    chain,
-    balance,
-    identities,
-    refreshConnectionStatus,
-    onDeleteAllIdentities,
-    onScroll,
-  } = useHome();
+  const { address, chain, balance, identities, refreshConnectionStatus } = useHome();
 
   return (
     <div className="w-full h-full flex flex-col home" data-testid="home-page">
       <Header />
 
-      <div
-        ref={scrollRef}
-        className={classNames("flex flex-col flex-grow flex-shrink overflow-y-auto home__scroller", {
-          "home__scroller--fixed-menu": isFixedTabsMode,
-        })}
-        onScroll={onScroll}
-      >
+      <div className={classNames("flex flex-col flex-grow flex-shrink overflow-y-auto home__scroller")}>
         <Info address={address} balance={balance} chain={chain} refreshConnectionStatus={refreshConnectionStatus} />
 
-        <TabList identities={identities} onDeleteAllIdentities={onDeleteAllIdentities}>
+        <TabList>
           <IdentityList identities={identities} />
         </TabList>
       </div>

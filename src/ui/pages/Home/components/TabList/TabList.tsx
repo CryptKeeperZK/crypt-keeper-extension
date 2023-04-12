@@ -1,53 +1,37 @@
-import classNames from "classnames";
-import { ReactNode, Children, useState, useMemo } from "react";
-
-import { Icon } from "@src/ui/components/Icon";
-import { Menuable } from "@src/ui/components/Menuable";
-import { IdentityData } from "@src/ui/ducks/identities";
+import Tab from "@mui/material/Tab";
+import Tabs from "@mui/material/Tabs";
+import { type ReactNode, type SyntheticEvent, Children, useState, useMemo, useCallback } from "react";
 
 import "./tabListStyles.scss";
 
 export interface TabListProps {
   children: ReactNode;
-  identities: IdentityData[];
-  onDeleteAllIdentities: () => void;
 }
 
-export const TabList = ({ children, identities, onDeleteAllIdentities }: TabListProps): JSX.Element => {
-  const [selectedTab] = useState(0);
+enum HomeTabs {
+  IDENTITIES = 0,
+  ACTIVITY = 1,
+}
+
+export const TabList = ({ children }: TabListProps): JSX.Element => {
+  const [selectedTab, setSelectedTab] = useState(HomeTabs.IDENTITIES);
 
   const selectedContent = useMemo(() => Children.toArray(children)[selectedTab], [children, selectedTab]);
 
+  const onTabChange = useCallback(
+    (_: SyntheticEvent, value: HomeTabs) => {
+      setSelectedTab(value);
+    },
+    [setSelectedTab],
+  );
+
   return (
     <div className="tab__list" data-testid="tab-list">
-      <div className="tab__list__header">
-        <div
-          className={classNames("tab__list__header__tab", {
-            "tab__list__header__tab--selected": selectedTab === 0,
-          })}
-        >
-          <span>Identities</span>
+      <Tabs indicatorColor="primary" textColor="primary" value={selectedTab} variant="fullWidth" onChange={onTabChange}>
+        <Tab data-testid="tab-identities" label="Identities" />
 
-          {identities.length > 0 && (
-            <Menuable
-              className="flex user-menu"
-              items={[{ label: "Delete All", isDangerItem: true, onClick: onDeleteAllIdentities }]}
-            >
-              <Icon className="tab__list__menu-icon" data-testid="menu-icon" fontAwesome="fas fa-ellipsis-h" />
-            </Menuable>
-          )}
-        </div>
-      </div>
-
-      <div className="tab__list__fix-header">
-        <div
-          className={classNames("tab__list__header__tab", {
-            "tab__list__header__tab--selected": selectedTab === 0,
-          })}
-        >
-          Identities
-        </div>
-      </div>
+        <Tab data-testid="tab-activity" label="Activity" />
+      </Tabs>
 
       <div className="tab__list__content">{selectedContent}</div>
     </div>

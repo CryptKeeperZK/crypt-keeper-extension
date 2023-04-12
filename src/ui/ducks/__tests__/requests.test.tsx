@@ -12,6 +12,8 @@ import postMessage from "@src/util/postMessage";
 
 import { fetchPendingRequests, finalizeRequest, setPendingRequests, usePendingRequests } from "../requests";
 
+jest.unmock("@src/ui/ducks/hooks");
+
 describe("ui/ducks/requests", () => {
   const defaultPendingRequests: PendingRequest[] = [{ id: "1", windowId: 1, type: PendingRequestType.APPROVE }];
 

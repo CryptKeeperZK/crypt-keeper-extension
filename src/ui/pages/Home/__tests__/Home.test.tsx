@@ -26,15 +26,11 @@ jest.mock("../useHome", (): unknown => ({
 
 describe("ui/pages/Home", () => {
   const defaultHookData: IUseHomeData = {
-    isFixedTabsMode: false,
     identities: [],
-    scrollRef: { current: null },
     address: defaultWalletHookData.address,
     balance: defaultWalletHookData.balance,
     chain: defaultWalletHookData.chain,
     refreshConnectionStatus: jest.fn().mockResolvedValue(true),
-    onDeleteAllIdentities: jest.fn(),
-    onScroll: jest.fn(),
   };
 
   beforeEach(() => {

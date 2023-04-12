@@ -16,6 +16,7 @@
     "/e2e/",
     "/src/server/",
     "/src/ui/popup.tsx",
+    "/src/ui/theme.ts",
     "/src/background/backgroundPage.ts",
     "/src/background/appInit.ts"
   ],
