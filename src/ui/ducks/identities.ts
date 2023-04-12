@@ -3,7 +3,7 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import deepEqual from "fast-deep-equal";
 
 import { RPCAction } from "@src/constants";
-import { CreateIdentityOptions, IdentityMetadata, IdentityStrategy } from "@src/types";
+import { CreateIdentityOptions, IdentityMetadata, IdentityStrategy, Operation } from "@src/types";
 import postMessage from "@src/util/postMessage";
 
 import type { TypedThunk } from "@src/ui/store/configureAppStore";
@@ -12,6 +12,7 @@ import { useAppSelector } from "./hooks";
 
 export interface IdentitiesState {
   identities: IdentityData[];
+  operations: Operation[];
   requestPending: boolean;
   selected: SelectedIdentity; // This aim to be a short-term solution to the integration with Zkitter
 }
@@ -28,6 +29,7 @@ export interface SelectedIdentity {
 
 const initialState: IdentitiesState = {
   identities: [],
+  operations: [],
   requestPending: false,
   selected: {
     commitment: "",
@@ -53,10 +55,15 @@ const identitiesSlice = createSlice({
     setIdentities: (state: IdentitiesState, action: PayloadAction<IdentityData[]>) => {
       state.identities = action.payload;
     },
+
+    setOperations: (state: IdentitiesState, action: PayloadAction<Operation[]>) => {
+      state.operations = action.payload;
+    },
   },
 });
 
-export const { setSelectedCommitment, setIdentities, setIdentityRequestPending } = identitiesSlice.actions;
+export const { setSelectedCommitment, setIdentities, setIdentityRequestPending, setOperations } =
+  identitiesSlice.actions;
 
 export const createIdentityRequest = () => async (): Promise<void> => {
   await postMessage({ method: RPCAction.CREATE_IDENTITY_REQ });
@@ -118,6 +125,16 @@ export const fetchIdentities = (): TypedThunk => async (dispatch) => {
   );
 };
 
+export const fetchHistory = (): TypedThunk => async (dispatch) => {
+  const operations = await postMessage<Operation[]>({ method: RPCAction.LOAD_IDENTITY_HISTORY });
+  dispatch(setOperations(operations));
+};
+
+export const getHistory = (): TypedThunk => async (dispatch) => {
+  const operations = await postMessage<Operation[]>({ method: RPCAction.GET_IDENTITY_HISTORY });
+  dispatch(setOperations(operations));
+};
+
 export const useIdentities = (): IdentityData[] => useAppSelector((state) => state.identities.identities, deepEqual);
 
 export const useSelectedIdentity = (): IdentityData | undefined =>
@@ -128,5 +145,8 @@ export const useSelectedIdentity = (): IdentityData | undefined =>
 
 export const useIdentityRequestPending = (): boolean =>
   useAppSelector((state) => state.identities.requestPending, deepEqual);
+
+export const useIdentityOperations = (): Operation[] =>
+  useAppSelector((state) => state.identities.operations, deepEqual);
 
 export default identitiesSlice.reducer;

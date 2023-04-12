@@ -7,6 +7,7 @@ import { Provider } from "react-redux";
 
 import { ZERO_ADDRESS } from "@src/config/const";
 import { RPCAction } from "@src/constants";
+import { OperationType } from "@src/types";
 import { store } from "@src/ui/store/configureAppStore";
 import postMessage from "@src/util/postMessage";
 
@@ -26,6 +27,10 @@ import {
   useIdentityRequestPending,
   useSelectedIdentity,
   SelectedIdentity,
+  fetchHistory,
+  useIdentityOperations,
+  getHistory,
+  setOperations,
 } from "../identities";
 
 jest.unmock("@src/ui/ducks/hooks");
@@ -36,6 +41,10 @@ describe("ui/ducks/identities", () => {
       commitment: "1",
       metadata: { account: ZERO_ADDRESS, name: "Account #1", identityStrategy: "interrep", web2Provider: "twitter" },
     },
+  ];
+
+  const defaultOperations: IdentitiesState["operations"] = [
+    { type: OperationType.CREATE_IDENTITY, createdAt: new Date().toISOString(), identity: defaultIdentities[0] },
   ];
 
   const defaultSelectedIdentity: SelectedIdentity = {
@@ -62,6 +71,39 @@ describe("ui/ducks/identities", () => {
     expect(identities.identities).toStrictEqual(defaultIdentities);
     expect(identitiesHookData.result.current).toStrictEqual(defaultIdentities);
     expect(selectedIdentityHookData.result.current).toStrictEqual(defaultIdentities[0]);
+  });
+
+  test("should fetch history properly", async () => {
+    (postMessage as jest.Mock).mockResolvedValue(defaultOperations);
+
+    await Promise.resolve(store.dispatch(fetchHistory()));
+    const { identities } = store.getState();
+    const operationsHookData = renderHook(() => useIdentityOperations(), {
+      wrapper: ({ children }) => <Provider store={store}>{children}</Provider>,
+    });
+
+    expect(identities.operations).toStrictEqual(defaultOperations);
+    expect(operationsHookData.result.current).toStrictEqual(defaultOperations);
+  });
+
+  test("should get history properly", async () => {
+    (postMessage as jest.Mock).mockResolvedValue(defaultOperations);
+
+    await Promise.resolve(store.dispatch(getHistory()));
+    const { identities } = store.getState();
+    const operationsHookData = renderHook(() => useIdentityOperations(), {
+      wrapper: ({ children }) => <Provider store={store}>{children}</Provider>,
+    });
+
+    expect(identities.operations).toStrictEqual(defaultOperations);
+    expect(operationsHookData.result.current).toStrictEqual(defaultOperations);
+  });
+
+  test("should set operations properly", async () => {
+    await Promise.resolve(store.dispatch(setOperations(defaultOperations)));
+    const { identities } = store.getState();
+
+    expect(identities.operations).toStrictEqual(defaultOperations);
   });
 
   test("should set selected commitment properly", async () => {

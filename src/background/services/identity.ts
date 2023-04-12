@@ -9,6 +9,7 @@ import pushMessage from "@src/util/pushMessage";
 
 import ZkIdentityDecorater from "../identityDecorater";
 
+import HistoryService from "./history";
 import LockService from "./lock";
 import NotificationService from "./notification";
 import SimpleStorage from "./simpleStorage";
@@ -27,12 +28,15 @@ export default class IdentityService {
 
   private notificationService: NotificationService;
 
+  private historyService: HistoryService;
+
   public constructor() {
     this.activeIdentity = undefined;
     this.identitiesStore = new SimpleStorage(IDENTITY_KEY);
     this.activeIdentityStore = new SimpleStorage(ACTIVE_IDENTITY_KEY);
     this.lockService = LockService.getInstance();
     this.notificationService = NotificationService.getInstance();
+    this.historyService = HistoryService.getInstance();
   }
 
   public unlock = async (): Promise<boolean> => {
