@@ -11,16 +11,26 @@ const HISTORY_KEY = "@@HISTORY@@";
 export * from "./types";
 
 export default class HistoryService {
+  private static INSTANCE: HistoryService;
+
   private historyStore: SimpleStorage;
 
   private lockService: LockService;
 
   private operations: Operation[];
 
-  public constructor() {
+  private constructor() {
     this.historyStore = new SimpleStorage(HISTORY_KEY);
     this.lockService = LockService.getInstance();
     this.operations = [];
+  }
+
+  public static getInstance(): HistoryService {
+    if (!HistoryService.INSTANCE) {
+      HistoryService.INSTANCE = new HistoryService();
+    }
+
+    return HistoryService.INSTANCE;
   }
 
   public loadOperations = async (): Promise<Operation[]> => {
@@ -56,5 +66,10 @@ export default class HistoryService {
     );
     await this.historyStore.set(cipherText);
     this.operations.push({ type, createdAt, ...options });
+  };
+
+  public clear = async (): Promise<void> => {
+    await this.historyStore.clear();
+    this.operations = [];
   };
 }

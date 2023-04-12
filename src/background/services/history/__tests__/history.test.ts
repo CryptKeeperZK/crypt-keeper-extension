@@ -5,13 +5,20 @@ import HistoryService, { OperationType } from "..";
 import LockService from "../../lock";
 import SimpleStorage from "../../simpleStorage";
 
-jest.mock("../../lock");
+jest.mock("../../lock", (): unknown => ({
+  __esModule: true,
+  default: {
+    getInstance: jest.fn(() => ({ encrypt: jest.fn(), decrypt: jest.fn() })),
+  },
+}));
 
 jest.mock("../../simpleStorage");
 
 type MockStorage = { get: jest.Mock; set: jest.Mock; clear: jest.Mock };
 
 describe("background/services/history", () => {
+  const service = HistoryService.getInstance();
+
   const defaultOperations = [
     {
       type: OperationType.CREATE_IDENTITY,
@@ -43,17 +50,17 @@ describe("background/services/history", () => {
     (LockService.getInstance as jest.Mock).mockReturnValue(defaultLockService);
 
     (getEnabledFeatures as jest.Mock).mockReturnValue({ RANDOM_IDENTITY: true });
+
+    (SimpleStorage as jest.Mock).mock.instances.forEach((instance: MockStorage) => {
+      instance.get.mockResolvedValue(serializedDefaultOperations);
+    });
   });
 
-  afterEach(() => {
-    jest.clearAllMocks();
+  afterEach(async () => {
+    await service.clear();
   });
 
   test("should load history operations properly", async () => {
-    const service = new HistoryService();
-    const [historyStorage] = (SimpleStorage as jest.Mock).mock.instances as [MockStorage];
-    historyStorage.get.mockResolvedValue(serializedDefaultOperations);
-
     const operations = await service.loadOperations();
 
     expect(operations).toHaveLength(3);
@@ -63,10 +70,6 @@ describe("background/services/history", () => {
   test("should load history operations without random identities", async () => {
     (getEnabledFeatures as jest.Mock).mockReturnValue({ RANDOM_IDENTITY: false });
 
-    const service = new HistoryService();
-    const [historyStorage] = (SimpleStorage as jest.Mock).mock.instances as [MockStorage];
-    historyStorage.get.mockResolvedValue(serializedDefaultOperations);
-
     const operations = await service.loadOperations();
 
     expect(operations).toHaveLength(2);
@@ -74,31 +77,23 @@ describe("background/services/history", () => {
   });
 
   test("should load history operations properly if the store is empty", async () => {
-    const service = new HistoryService();
-    const [historyStorage] = (SimpleStorage as jest.Mock).mock.instances as [MockStorage];
-    historyStorage.get.mockResolvedValue(null);
+    (SimpleStorage as jest.Mock).mock.instances.forEach((instance: MockStorage) => {
+      instance.get.mockResolvedValue(null);
+    });
 
     const operations = await service.loadOperations();
 
     expect(operations).toHaveLength(0);
-    expect(service.getOperations()).toStrictEqual(operations);
+    expect(service.getOperations()).toHaveLength(0);
   });
 
   test("should get cached operations without loading from store", () => {
-    const service = new HistoryService();
-    const [historyStorage] = (SimpleStorage as jest.Mock).mock.instances as [MockStorage];
-    historyStorage.get.mockResolvedValue(serializedDefaultOperations);
-
     const operations = service.getOperations();
 
     expect(operations).toHaveLength(0);
   });
 
   test("should filter cached operations by type", async () => {
-    const service = new HistoryService();
-    const [historyStorage] = (SimpleStorage as jest.Mock).mock.instances as [MockStorage];
-    historyStorage.get.mockResolvedValue(serializedDefaultOperations);
-
     await service.loadOperations();
     const operations = service.getOperations({ type: OperationType.CREATE_IDENTITY });
 
@@ -106,10 +101,6 @@ describe("background/services/history", () => {
   });
 
   test("should track operation properly", async () => {
-    const service = new HistoryService();
-    const [historyStorage] = (SimpleStorage as jest.Mock).mock.instances as [MockStorage];
-    historyStorage.get.mockResolvedValue(serializedDefaultOperations);
-
     await service.loadOperations();
     await service.trackOperation(OperationType.CREATE_IDENTITY, {
       identity: ZkIdentityDecorater.genFromSerialized(defaultOperations[0].identity),
