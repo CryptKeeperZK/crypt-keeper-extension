@@ -9,6 +9,7 @@ import Handler from "./controllers/handler";
 import RequestManager from "./controllers/requestManager";
 import identityFactory from "./identityFactory";
 import ApprovalService from "./services/approval";
+import HistoryService from "./services/history";
 import IdentityService from "./services/identity";
 import LockService from "./services/lock";
 import { RLNProofRequest, SemaphoreProofRequest } from "./services/protocols/interfaces";
@@ -28,6 +29,8 @@ export default class ZkKeeperController extends Handler {
 
   private browserService: BrowserUtils;
 
+  private historyService: HistoryService;
+
   public constructor() {
     super();
     this.identityService = new IdentityService();
@@ -36,6 +39,7 @@ export default class ZkKeeperController extends Handler {
     this.walletService = new WalletService();
     this.lockService = LockService.getInstance();
     this.browserService = BrowserUtils.getInstance();
+    this.historyService = HistoryService.getInstance();
 
     log.debug("Inside ZkKepperController");
   }
@@ -116,6 +120,10 @@ export default class ZkKeeperController extends Handler {
 
       return true;
     });
+
+    this.add(RPCAction.LOAD_IDENTITY_HISTORY, this.lockService.ensure, this.historyService.loadOperations);
+
+    this.add(RPCAction.GET_IDENTITY_HISTORY, this.lockService.ensure, this.historyService.getOperations);
 
     // Protocols
     this.add(

@@ -28,6 +28,8 @@ export enum RPCAction {
   CLOSE_POPUP = "rpc/popup/close",
   GET_CONNECT_WALLET = "rpc/wallet/get/connect",
   SET_CONNECT_WALLET = "rpc/wallet/connect",
+  LOAD_IDENTITY_HISTORY = "rpc/identity/load-history",
+  GET_IDENTITY_HISTORY = "rpc/identity/get-history",
   // DEV RPCS
   CLEAR_APPROVED_HOSTS = "rpc/hosts/clear",
 }

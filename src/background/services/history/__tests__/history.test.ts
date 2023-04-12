@@ -1,7 +1,8 @@
-import ZkIdentityDecorater from "@src/background/identityDecorater";
+import { ZERO_ADDRESS } from "@src/config/const";
 import { getEnabledFeatures } from "@src/config/features";
+import { Operation, OperationType } from "@src/types";
 
-import HistoryService, { OperationType } from "..";
+import HistoryService from "..";
 import LockService from "../../lock";
 import SimpleStorage from "../../simpleStorage";
 
@@ -19,21 +20,30 @@ type MockStorage = { get: jest.Mock; set: jest.Mock; clear: jest.Mock };
 describe("background/services/history", () => {
   const service = HistoryService.getInstance();
 
-  const defaultOperations = [
+  const defaultOperations: Operation[] = [
     {
       type: OperationType.CREATE_IDENTITY,
-      identity: JSON.stringify({ secret: "1234", metadata: { identityStrategy: "random" } }),
-      createdAt: new Date(),
+      identity: {
+        commitment: "1234",
+        metadata: { identityStrategy: "random", account: ZERO_ADDRESS, name: "Account #1" },
+      },
+      createdAt: new Date().toISOString(),
     },
     {
       type: OperationType.CREATE_IDENTITY,
-      identity: JSON.stringify({ secret: "1234", metadata: { identityStrategy: "interrep" } }),
-      createdAt: new Date(),
+      identity: {
+        commitment: "1234",
+        metadata: { identityStrategy: "interrep", account: ZERO_ADDRESS, name: "Account #2" },
+      },
+      createdAt: new Date().toISOString(),
     },
     {
       type: OperationType.DELETE_IDENTITY,
-      identity: JSON.stringify({ secret: "1234", metadata: { identityStrategy: "interrep" } }),
-      createdAt: new Date(),
+      identity: {
+        commitment: "1234",
+        metadata: { identityStrategy: "interrep", account: ZERO_ADDRESS, name: "Account #3" },
+      },
+      createdAt: new Date().toISOString(),
     },
   ];
   const serializedDefaultOperations = JSON.stringify(defaultOperations);
@@ -103,7 +113,7 @@ describe("background/services/history", () => {
   test("should track operation properly", async () => {
     await service.loadOperations();
     await service.trackOperation(OperationType.CREATE_IDENTITY, {
-      identity: ZkIdentityDecorater.genFromSerialized(defaultOperations[0].identity),
+      identity: defaultOperations[0].identity,
     });
     const cachedOperations = service.getOperations();
 

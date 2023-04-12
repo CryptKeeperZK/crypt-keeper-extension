@@ -1,8 +1,8 @@
 import { getEnabledFeatures } from "@src/config/features";
+import { Operation, OperationType } from "@src/types";
 
-import type { Operation, SerializedOperation, OperationType, OperationOptions, OperationFilter } from "./types";
+import type { OperationOptions, OperationFilter } from "./types";
 
-import ZkIdentityDecorater from "../../identityDecorater";
 import LockService from "../lock";
 import SimpleStorage from "../simpleStorage";
 
@@ -37,15 +37,11 @@ export default class HistoryService {
     const features = getEnabledFeatures();
     const serializedOperations = await this.historyStore
       .get<string>()
-      .then((serialized) => (serialized ? (JSON.parse(serialized) as SerializedOperation[]) : []));
+      .then((serialized) => (serialized ? (JSON.parse(serialized) as Operation[]) : []));
 
-    this.operations = serializedOperations
-      .map((operation) => ({
-        ...operation,
-        identity: ZkIdentityDecorater.genFromSerialized(operation.identity),
-        createdAt: new Date(operation.createdAt),
-      }))
-      .filter(({ identity }) => (!features.RANDOM_IDENTITY ? identity.metadata.identityStrategy !== "random" : true));
+    this.operations = serializedOperations.filter(({ identity }) =>
+      !features.RANDOM_IDENTITY ? identity.metadata.identityStrategy !== "random" : true,
+    );
 
     return this.operations;
   };
@@ -53,19 +49,14 @@ export default class HistoryService {
   public getOperations = (filter?: Partial<OperationFilter>): Operation[] =>
     this.operations.filter((operation) => (filter?.type ? operation.type === filter.type : true));
 
-  public trackOperation = async (type: OperationType, options: OperationOptions): Promise<void> => {
-    const createdAt = new Date();
-    const cipherText = this.lockService.encrypt(
-      JSON.stringify(
-        this.operations.map((operation) => ({
-          ...operation,
-          identity: operation.identity.serialize(),
-          createdAt,
-        })),
-      ),
-    );
+  public trackOperation = async (type: OperationType, { identity }: OperationOptions): Promise<void> => {
+    this.operations.push({
+      type,
+      identity,
+      createdAt: new Date().toISOString(),
+    });
+    const cipherText = this.lockService.encrypt(JSON.stringify(this.operations));
     await this.historyStore.set(cipherText);
-    this.operations.push({ type, createdAt, ...options });
   };
 
   public clear = async (): Promise<void> => {
