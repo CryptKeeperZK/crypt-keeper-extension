@@ -77,9 +77,10 @@ describe("background/services/history", () => {
     historyStore.get.mockResolvedValue(serializedDefaultOperations);
     settingsStore.get.mockResolvedValueOnce(serializedDefaultSettings);
 
-    const operations = await service.loadOperations();
+    const { operations, settings } = await service.loadOperations();
 
     expect(operations).toHaveLength(3);
+    expect(settings).toStrictEqual(defaultSettings);
     expect(service.getOperations()).toStrictEqual(operations);
   });
 
@@ -88,9 +89,10 @@ describe("background/services/history", () => {
     historyStore.get.mockResolvedValue(serializedDefaultOperations);
     settingsStore.get.mockResolvedValueOnce(null);
 
-    const operations = await service.loadOperations();
+    const { operations, settings } = await service.loadOperations();
 
     expect(operations).toHaveLength(3);
+    expect(settings).toStrictEqual(defaultSettings);
     expect(service.getOperations()).toStrictEqual(operations);
     expect(service.getSettings()).toStrictEqual(defaultSettings);
   });
@@ -102,9 +104,10 @@ describe("background/services/history", () => {
     historyStore.get.mockResolvedValue(serializedDefaultOperations);
     settingsStore.get.mockResolvedValueOnce(serializedDefaultSettings);
 
-    const operations = await service.loadOperations();
+    const { operations, settings } = await service.loadOperations();
 
     expect(operations).toHaveLength(2);
+    expect(settings).toStrictEqual(defaultSettings);
     expect(service.getOperations()).toStrictEqual(operations);
   });
 
@@ -112,9 +115,10 @@ describe("background/services/history", () => {
     const [, settingsStore] = (SimpleStorage as jest.Mock).mock.instances as [MockStorage, MockStorage];
     settingsStore.get.mockResolvedValueOnce(JSON.stringify({ ...defaultSettings, isEnabled: false }));
 
-    const operations = await service.loadOperations();
+    const { operations, settings } = await service.loadOperations();
 
     expect(operations).toHaveLength(0);
+    expect(settings).toStrictEqual({ isEnabled: false });
     expect(service.getOperations()).toHaveLength(0);
   });
 
@@ -123,9 +127,10 @@ describe("background/services/history", () => {
     historyStore.get.mockResolvedValue(null);
     settingsStore.get.mockResolvedValueOnce(serializedDefaultSettings);
 
-    const operations = await service.loadOperations();
+    const { operations, settings } = await service.loadOperations();
 
     expect(operations).toHaveLength(0);
+    expect(settings).toStrictEqual(defaultSettings);
     expect(service.getOperations()).toHaveLength(0);
   });
 

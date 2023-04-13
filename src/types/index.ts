@@ -149,3 +149,7 @@ export interface Operation {
   };
   createdAt: string;
 }
+
+export interface HistorySettings {
+  isEnabled: boolean;
+}

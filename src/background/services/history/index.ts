@@ -1,7 +1,7 @@
 import { nanoid } from "nanoid";
 
 import { getEnabledFeatures } from "@src/config/features";
-import { IdentityMetadata, Operation, OperationType } from "@src/types";
+import { HistorySettings, IdentityMetadata, Operation, OperationType } from "@src/types";
 
 import LockService from "../lock";
 import SimpleStorage from "../simpleStorage";
@@ -20,8 +20,9 @@ export interface OperationFilter {
   type: OperationType;
 }
 
-export interface HistorySettings {
-  isEnabled: boolean;
+export interface ILoadOperationsData {
+  operations: Operation[];
+  settings?: HistorySettings;
 }
 
 export default class HistoryService {
@@ -58,11 +59,11 @@ export default class HistoryService {
     await this.writeSettings(this.settings);
   };
 
-  public loadOperations = async (): Promise<Operation[]> => {
+  public loadOperations = async (): Promise<ILoadOperationsData> => {
     await this.loadSettings();
 
     if (!this.settings?.isEnabled) {
-      return [];
+      return { operations: [], settings: this.settings };
     }
 
     const features = getEnabledFeatures();
@@ -74,7 +75,7 @@ export default class HistoryService {
       !features.RANDOM_IDENTITY ? identity.metadata.identityStrategy !== "random" : true,
     );
 
-    return this.operations;
+    return { operations: this.operations, settings: this.settings };
   };
 
   public getOperations = (filter?: Partial<OperationFilter>): Operation[] =>
@@ -97,10 +98,12 @@ export default class HistoryService {
     await this.writeOperations(this.operations);
   };
 
-  public removeOperation = async (id: string): Promise<void> => {
+  public removeOperation = async (id: string): Promise<Operation[]> => {
     this.operations = this.operations.filter((operation) => operation.id !== id);
 
     await this.writeOperations(this.operations);
+
+    return this.operations;
   };
 
   public clear = async (): Promise<void> => {
