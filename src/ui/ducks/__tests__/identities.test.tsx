@@ -44,7 +44,12 @@ describe("ui/ducks/identities", () => {
   ];
 
   const defaultOperations: IdentitiesState["operations"] = [
-    { type: OperationType.CREATE_IDENTITY, createdAt: new Date().toISOString(), identity: defaultIdentities[0] },
+    {
+      id: "1",
+      type: OperationType.CREATE_IDENTITY,
+      createdAt: new Date().toISOString(),
+      identity: defaultIdentities[0],
+    },
   ];
 
   const defaultSelectedIdentity: SelectedIdentity = {

@@ -141,6 +141,7 @@ export enum OperationType {
 }
 
 export interface Operation {
+  id: string;
   type: OperationType;
   identity: {
     commitment: string;
