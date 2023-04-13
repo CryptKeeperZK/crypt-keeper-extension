@@ -1,14 +1,21 @@
 import { getEnabledFeatures } from "@src/config/features";
-import { Operation, OperationType } from "@src/types";
-
-import type { OperationOptions, OperationFilter } from "./types";
+import { IdentityMetadata, Operation, OperationType } from "@src/types";
 
 import LockService from "../lock";
 import SimpleStorage from "../simpleStorage";
 
 const HISTORY_KEY = "@@HISTORY@@";
 
-export * from "./types";
+export interface OperationOptions {
+  identity: {
+    commitment: string;
+    metadata: IdentityMetadata;
+  };
+}
+
+export interface OperationFilter {
+  type: OperationType;
+}
 
 export default class HistoryService {
   private static INSTANCE: HistoryService;
