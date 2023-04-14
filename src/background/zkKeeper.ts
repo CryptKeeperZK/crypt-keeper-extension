@@ -127,7 +127,9 @@ export default class ZkKeeperController extends Handler {
 
     this.add(RPCAction.DELETE_HISTORY_OPERATION, this.lockService.ensure, this.historyService.removeOperation);
 
-    this.add(RPCAction.DELETE_HISTORY_OPERATION, this.lockService.ensure, this.historyService.clear);
+    this.add(RPCAction.DELETE_ALL_HISTORY_OPERATIONS, this.lockService.ensure, this.historyService.clear);
+
+    this.add(RPCAction.ENABLE_OPERATION_HISTORY, this.lockService.ensure, this.historyService.enableHistory);
 
     // Protocols
     this.add(

@@ -32,6 +32,7 @@ export enum RPCAction {
   GET_IDENTITY_HISTORY = "rpc/identity/get-history",
   DELETE_HISTORY_OPERATION = "rpc/identity/delete-history-operation",
   DELETE_ALL_HISTORY_OPERATIONS = "rpc/identity/delete-history",
+  ENABLE_OPERATION_HISTORY = "rpc/identity/history-enable",
   // DEV RPCS
   CLEAR_APPROVED_HOSTS = "rpc/hosts/clear",
 }

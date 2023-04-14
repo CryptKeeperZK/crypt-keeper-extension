@@ -1,0 +1,13 @@
+@import "@src/util/variables";
+
+.activity-row {
+  width: 100%;
+
+  &:hover {
+    color: $gray-300;
+
+    .icon {
+      color: $primary-green;
+    }
+  }
+}

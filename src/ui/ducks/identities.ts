@@ -3,7 +3,7 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import deepEqual from "fast-deep-equal";
 
 import { RPCAction } from "@src/constants";
-import { CreateIdentityOptions, HistorySettings, IdentityMetadata, IdentityStrategy, Operation } from "@src/types";
+import { CreateIdentityOptions, HistorySettings, IdentityData, IdentityStrategy, Operation } from "@src/types";
 import postMessage from "@src/util/postMessage";
 
 import type { TypedThunk } from "@src/ui/store/configureAppStore";
@@ -16,11 +16,6 @@ export interface IdentitiesState {
   requestPending: boolean;
   selected: SelectedIdentity; // This aim to be a short-term solution to the integration with Zkitter
   settings?: HistorySettings;
-}
-
-export interface IdentityData {
-  commitment: string;
-  metadata: IdentityMetadata;
 }
 
 export interface SelectedIdentity {
@@ -131,7 +126,7 @@ export const fetchIdentities = (): TypedThunk => async (dispatch) => {
   );
 };
 
-export const fetchHistory = (): TypedThunk => async (dispatch) => {
+export const fetchHistory = (): TypedThunk<Promise<void>> => async (dispatch) => {
   const { operations, settings } = await postMessage<{ operations: Operation[]; settings: HistorySettings }>({
     method: RPCAction.LOAD_IDENTITY_HISTORY,
   });
@@ -145,16 +140,23 @@ export const getHistory = (): TypedThunk => async (dispatch) => {
 };
 
 export const deleteHistoryOperation =
-  (id: string): TypedThunk =>
+  (id: string): TypedThunk<Promise<void>> =>
   async (dispatch) => {
     const operations = await postMessage<Operation[]>({ method: RPCAction.DELETE_HISTORY_OPERATION, payload: id });
     dispatch(setOperations(operations));
   };
 
-export const clearHistory = (): TypedThunk => async (dispatch) => {
+export const clearHistory = (): TypedThunk<Promise<void>> => async (dispatch) => {
   await postMessage<Operation[]>({ method: RPCAction.DELETE_ALL_HISTORY_OPERATIONS });
   dispatch(setOperations([]));
 };
+
+export const enableHistory =
+  (isEnabled: boolean): TypedThunk<Promise<void>> =>
+  async (dispatch) => {
+    await postMessage<HistorySettings>({ method: RPCAction.ENABLE_OPERATION_HISTORY, payload: isEnabled });
+    dispatch(setSettings({ isEnabled }));
+  };
 
 export const useIdentities = (): IdentityData[] => useAppSelector((state) => state.identities.identities, deepEqual);
 

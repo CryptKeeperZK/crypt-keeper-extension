@@ -6,8 +6,9 @@ import { act, renderHook } from "@testing-library/react";
 import { useRef } from "react";
 
 import { defaultWalletHookData } from "@src/config/mock/wallet";
+import { IdentityData } from "@src/types";
 import { useAppDispatch } from "@src/ui/ducks/hooks";
-import { IdentityData, useIdentities, fetchIdentities } from "@src/ui/ducks/identities";
+import { useIdentities, fetchIdentities, fetchHistory } from "@src/ui/ducks/identities";
 import { checkHostApproval } from "@src/ui/ducks/permissions";
 import { useWallet } from "@src/ui/hooks/wallet";
 import { getLastActiveTabUrl } from "@src/util/browser";
@@ -29,6 +30,7 @@ jest.mock("@src/ui/ducks/hooks", (): unknown => ({
 
 jest.mock("@src/ui/ducks/identities", (): unknown => ({
   fetchIdentities: jest.fn(),
+  fetchHistory: jest.fn(),
   useIdentities: jest.fn(),
 }));
 
@@ -91,7 +93,8 @@ describe("ui/pages/Home/useHome", () => {
     expect(result.current.chain).toStrictEqual(defaultWalletHookData.chain);
     expect(result.current.identities).toStrictEqual(defaultIdentities);
     expect(fetchIdentities).toBeCalledTimes(1);
-    expect(mockDispatch).toBeCalledTimes(1);
+    expect(fetchHistory).toBeCalledTimes(1);
+    expect(mockDispatch).toBeCalledTimes(2);
   });
 
   test("should refresh connection status properly", async () => {
