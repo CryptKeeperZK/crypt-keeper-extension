@@ -134,3 +134,17 @@ export interface InjectedMessageData<M = unknown, P = unknown> {
   message: M;
   payload: [string, P];
 }
+
+export enum OperationType {
+  CREATE_IDENTITY = "CREATE_IDENTITY",
+  DELETE_IDENTITY = "DELETE_IDENTITY",
+}
+
+export interface Operation {
+  type: OperationType;
+  identity: {
+    commitment: string;
+    metadata: IdentityMetadata;
+  };
+  createdAt: string;
+}

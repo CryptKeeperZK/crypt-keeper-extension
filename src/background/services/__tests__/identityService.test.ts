@@ -9,6 +9,7 @@ import { setSelectedCommitment } from "@src/ui/ducks/identities";
 import { ellipsify } from "@src/util/account";
 import pushMessage from "@src/util/pushMessage";
 
+import HistoryService from "../history";
 import IdentityService from "../identity";
 import LockService from "../lock";
 import NotificationService from "../notification";
@@ -17,6 +18,8 @@ import SimpleStorage from "../simpleStorage";
 jest.mock("@src/util/pushMessage");
 
 jest.mock("../lock");
+
+jest.mock("../history");
 
 jest.mock("../simpleStorage");
 
@@ -41,11 +44,17 @@ describe("background/services/identity", () => {
     encrypt: jest.fn(),
   };
 
+  const defaultHistoryService = {
+    trackOperation: jest.fn(),
+  };
+
   beforeEach(() => {
     defaultLockService.encrypt.mockReturnValue(serializedDefaultIdentities);
     defaultLockService.decrypt.mockReturnValue(serializedDefaultIdentities);
 
     (LockService.getInstance as jest.Mock).mockReturnValue(defaultLockService);
+
+    (HistoryService.getInstance as jest.Mock).mockReturnValue(defaultHistoryService);
 
     (browser.tabs.query as jest.Mock).mockResolvedValue(defaultTabs);
 
