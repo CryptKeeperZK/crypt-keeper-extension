@@ -78,7 +78,8 @@ export default class ApprovalService {
   };
 
   private async saveApprovals(): Promise<void> {
-    const newApprovals = this.lockService.encrypt(JSON.stringify(this.allowedHosts));
+    const serializedApprovals = JSON.stringify(Array.from(this.allowedHosts.entries()));
+    const newApprovals = this.lockService.encrypt(serializedApprovals);
     await this.approvals.set(newApprovals);
   }
 }

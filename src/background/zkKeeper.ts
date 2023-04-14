@@ -238,33 +238,21 @@ export default class ZkKeeperController extends Handler {
         return { isApproved: false, canSkipApprove: false };
       }
     });
-    this.add(RPCAction.APPROVE_HOST, this.lockService.ensure, (payload: { host: string; noApproval: boolean }) => {
-      this.approvalService.add(payload);
-    });
+
+    // Approvals
+    this.add(RPCAction.APPROVE_HOST, this.lockService.ensure, this.approvalService.add);
     this.add(RPCAction.IS_HOST_APPROVED, this.lockService.ensure, this.approvalService.isApproved);
     this.add(RPCAction.REMOVE_HOST, this.lockService.ensure, this.approvalService.remove);
-
-    this.add(RPCAction.GET_HOST_PERMISSIONS, this.lockService.ensure, (payload: string) =>
-      this.approvalService.getPermission(payload),
-    );
-
-    this.add(
-      RPCAction.SET_HOST_PERMISSIONS,
-      this.lockService.ensure,
-      (payload: { host: string; noApproval: boolean }) => {
-        const { host, ...permissions } = payload;
-        return this.approvalService.setPermission(host, permissions);
-      },
-    );
-
-    this.add(RPCAction.CLOSE_POPUP, async () => this.browserService.closePopup());
+    this.add(RPCAction.GET_HOST_PERMISSIONS, this.lockService.ensure, this.approvalService.getPermission);
+    this.add(RPCAction.SET_HOST_PERMISSIONS, this.lockService.ensure, this.approvalService.setPermission);
+    // Approvals - DEV ONLY
+    this.add(RPCAction.CLEAR_APPROVED_HOSTS, this.approvalService.clear);
 
     this.add(RPCAction.SET_CONNECT_WALLET, this.lockService.ensure, this.walletService.setConnection);
 
     this.add(RPCAction.GET_CONNECT_WALLET, this.lockService.ensure, this.walletService.getConnection);
 
-    // dev
-    this.add(RPCAction.CLEAR_APPROVED_HOSTS, this.approvalService.clear);
+    this.add(RPCAction.CLOSE_POPUP, async () => this.browserService.closePopup());
 
     return this;
   };
