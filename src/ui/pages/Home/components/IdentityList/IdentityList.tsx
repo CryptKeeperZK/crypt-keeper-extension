@@ -66,17 +66,19 @@ export const IdentityList = ({ identities }: IdentityListProps): JSX.Element => 
 
   return (
     <>
-      {identities.map(({ commitment, metadata }) => (
-        <IdentityItem
-          key={commitment}
-          commitment={commitment}
-          metadata={metadata}
-          selected={selected?.commitment}
-          onDeleteIdentity={onDeleteIdentity}
-          onSelectIdentity={onSelectIdentity}
-          onUpdateIdentityName={onUpdateIdentityName}
-        />
-      ))}
+      <div className="identities-content">
+        {identities.map(({ commitment, metadata }) => (
+          <IdentityItem
+            key={commitment}
+            commitment={commitment}
+            metadata={metadata}
+            selected={selected?.commitment}
+            onDeleteIdentity={onDeleteIdentity}
+            onSelectIdentity={onSelectIdentity}
+            onUpdateIdentityName={onUpdateIdentityName}
+          />
+        ))}
+      </div>
 
       <ConfirmDangerModal accept={onDeleteAllIdentities} isOpenModal={isConfirmModalOpen} reject={onConfirmModalShow} />
 

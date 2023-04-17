@@ -4,8 +4,6 @@
   &__content {
     background-color: $black;
     flex: 1;
-    height: 375px;
-    overflow-x: hidden;
-    overflow-y: auto;
+    overflow: hidden;
   }
 }
