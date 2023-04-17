@@ -1,6 +1,6 @@
+import { ApprovalService } from "@src/background/services/Approval";
 import { LockService } from "@src/background/services/Lock";
 import { SimpleStorageService } from "@src/background/services/Storage";
-import { ApprovalService } from "@src/background/services/Approval";
 
 jest.mock("@src/background/services/Lock/Lock");
 

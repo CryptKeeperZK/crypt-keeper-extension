@@ -53,7 +53,7 @@ jest.mock("@src/background/services/Storage/SimpleStorage");
 
 type MockStorage = { get: jest.Mock; set: jest.Mock; clear: jest.Mock };
 
-describe("background/services/history", () => {
+describe("background/services/History/History", () => {
   const service = HistoryService.getInstance();
 
   beforeEach(() => {
