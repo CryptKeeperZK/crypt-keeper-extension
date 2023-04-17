@@ -30,6 +30,8 @@ export enum RPCAction {
   SET_CONNECT_WALLET = "rpc/wallet/connect",
   LOAD_IDENTITY_HISTORY = "rpc/identity/load-history",
   GET_IDENTITY_HISTORY = "rpc/identity/get-history",
+  DELETE_HISTORY_OPERATION = "rpc/identity/delete-history-operation",
+  DELETE_ALL_HISTORY_OPERATIONS = "rpc/identity/delete-history",
   // DEV RPCS
   CLEAR_APPROVED_HOSTS = "rpc/hosts/clear",
 }

@@ -3,7 +3,7 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import deepEqual from "fast-deep-equal";
 
 import { RPCAction } from "@src/constants";
-import { CreateIdentityOptions, IdentityMetadata, IdentityStrategy, Operation } from "@src/types";
+import { CreateIdentityOptions, HistorySettings, IdentityMetadata, IdentityStrategy, Operation } from "@src/types";
 import postMessage from "@src/util/postMessage";
 
 import type { TypedThunk } from "@src/ui/store/configureAppStore";
@@ -15,6 +15,7 @@ export interface IdentitiesState {
   operations: Operation[];
   requestPending: boolean;
   selected: SelectedIdentity; // This aim to be a short-term solution to the integration with Zkitter
+  settings?: HistorySettings;
 }
 
 export interface IdentityData {
@@ -30,6 +31,7 @@ export interface SelectedIdentity {
 const initialState: IdentitiesState = {
   identities: [],
   operations: [],
+  settings: undefined,
   requestPending: false,
   selected: {
     commitment: "",
@@ -59,10 +61,14 @@ const identitiesSlice = createSlice({
     setOperations: (state: IdentitiesState, action: PayloadAction<Operation[]>) => {
       state.operations = action.payload;
     },
+
+    setSettings: (state: IdentitiesState, action: PayloadAction<HistorySettings>) => {
+      state.settings = action.payload;
+    },
   },
 });
 
-export const { setSelectedCommitment, setIdentities, setIdentityRequestPending, setOperations } =
+export const { setSelectedCommitment, setIdentities, setIdentityRequestPending, setOperations, setSettings } =
   identitiesSlice.actions;
 
 export const createIdentityRequest = () => async (): Promise<void> => {
@@ -126,13 +132,28 @@ export const fetchIdentities = (): TypedThunk => async (dispatch) => {
 };
 
 export const fetchHistory = (): TypedThunk => async (dispatch) => {
-  const operations = await postMessage<Operation[]>({ method: RPCAction.LOAD_IDENTITY_HISTORY });
+  const { operations, settings } = await postMessage<{ operations: Operation[]; settings: HistorySettings }>({
+    method: RPCAction.LOAD_IDENTITY_HISTORY,
+  });
   dispatch(setOperations(operations));
+  dispatch(setSettings(settings));
 };
 
 export const getHistory = (): TypedThunk => async (dispatch) => {
   const operations = await postMessage<Operation[]>({ method: RPCAction.GET_IDENTITY_HISTORY });
   dispatch(setOperations(operations));
+};
+
+export const deleteHistoryOperation =
+  (id: string): TypedThunk =>
+  async (dispatch) => {
+    const operations = await postMessage<Operation[]>({ method: RPCAction.DELETE_HISTORY_OPERATION, payload: id });
+    dispatch(setOperations(operations));
+  };
+
+export const clearHistory = (): TypedThunk => async (dispatch) => {
+  await postMessage<Operation[]>({ method: RPCAction.DELETE_ALL_HISTORY_OPERATIONS });
+  dispatch(setOperations([]));
 };
 
 export const useIdentities = (): IdentityData[] => useAppSelector((state) => state.identities.identities, deepEqual);
@@ -148,5 +169,8 @@ export const useIdentityRequestPending = (): boolean =>
 
 export const useIdentityOperations = (): Operation[] =>
   useAppSelector((state) => state.identities.operations, deepEqual);
+
+export const useHistorySettings = (): HistorySettings | undefined =>
+  useAppSelector((state) => state.identities.settings, deepEqual);
 
 export default identitiesSlice.reducer;

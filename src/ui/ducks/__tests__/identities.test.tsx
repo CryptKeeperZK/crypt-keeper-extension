@@ -7,7 +7,7 @@ import { Provider } from "react-redux";
 
 import { ZERO_ADDRESS } from "@src/config/const";
 import { RPCAction } from "@src/constants";
-import { OperationType } from "@src/types";
+import { HistorySettings, OperationType } from "@src/types";
 import { store } from "@src/ui/store/configureAppStore";
 import postMessage from "@src/util/postMessage";
 
@@ -31,6 +31,9 @@ import {
   useIdentityOperations,
   getHistory,
   setOperations,
+  deleteHistoryOperation,
+  clearHistory,
+  useHistorySettings,
 } from "../identities";
 
 jest.unmock("@src/ui/ducks/hooks");
@@ -44,8 +47,15 @@ describe("ui/ducks/identities", () => {
   ];
 
   const defaultOperations: IdentitiesState["operations"] = [
-    { type: OperationType.CREATE_IDENTITY, createdAt: new Date().toISOString(), identity: defaultIdentities[0] },
+    {
+      id: "1",
+      type: OperationType.CREATE_IDENTITY,
+      createdAt: new Date().toISOString(),
+      identity: defaultIdentities[0],
+    },
   ];
+
+  const defaultSettings: HistorySettings = { isEnabled: true };
 
   const defaultSelectedIdentity: SelectedIdentity = {
     commitment: defaultIdentities[0].commitment,
@@ -74,16 +84,21 @@ describe("ui/ducks/identities", () => {
   });
 
   test("should fetch history properly", async () => {
-    (postMessage as jest.Mock).mockResolvedValue(defaultOperations);
+    (postMessage as jest.Mock).mockResolvedValue({ operations: defaultOperations, settings: defaultSettings });
 
     await Promise.resolve(store.dispatch(fetchHistory()));
     const { identities } = store.getState();
     const operationsHookData = renderHook(() => useIdentityOperations(), {
       wrapper: ({ children }) => <Provider store={store}>{children}</Provider>,
     });
+    const settingsHookData = renderHook(() => useHistorySettings(), {
+      wrapper: ({ children }) => <Provider store={store}>{children}</Provider>,
+    });
 
     expect(identities.operations).toStrictEqual(defaultOperations);
+    expect(identities.settings).toStrictEqual(defaultSettings);
     expect(operationsHookData.result.current).toStrictEqual(defaultOperations);
+    expect(settingsHookData.result.current).toStrictEqual(defaultSettings);
   });
 
   test("should get history properly", async () => {
@@ -97,6 +112,33 @@ describe("ui/ducks/identities", () => {
 
     expect(identities.operations).toStrictEqual(defaultOperations);
     expect(operationsHookData.result.current).toStrictEqual(defaultOperations);
+  });
+
+  test("should delete history operation properly", async () => {
+    const expectedOperations = defaultOperations.slice(1);
+    (postMessage as jest.Mock).mockResolvedValue(expectedOperations);
+
+    await Promise.resolve(store.dispatch(deleteHistoryOperation(defaultOperations[0].id)));
+    const { identities } = store.getState();
+    const operationsHookData = renderHook(() => useIdentityOperations(), {
+      wrapper: ({ children }) => <Provider store={store}>{children}</Provider>,
+    });
+
+    expect(identities.operations).toStrictEqual(expectedOperations);
+    expect(operationsHookData.result.current).toStrictEqual(expectedOperations);
+  });
+
+  test("should clear history properly", async () => {
+    (postMessage as jest.Mock).mockResolvedValue(undefined);
+
+    await Promise.resolve(store.dispatch(clearHistory()));
+    const { identities } = store.getState();
+    const operationsHookData = renderHook(() => useIdentityOperations(), {
+      wrapper: ({ children }) => <Provider store={store}>{children}</Provider>,
+    });
+
+    expect(identities.operations).toHaveLength(0);
+    expect(operationsHookData.result.current).toHaveLength(0);
   });
 
   test("should set operations properly", async () => {

@@ -141,10 +141,15 @@ export enum OperationType {
 }
 
 export interface Operation {
+  id: string;
   type: OperationType;
   identity: {
     commitment: string;
     metadata: IdentityMetadata;
   };
   createdAt: string;
+}
+
+export interface HistorySettings {
+  isEnabled: boolean;
 }
