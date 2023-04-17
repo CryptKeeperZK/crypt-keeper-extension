@@ -8,12 +8,13 @@ import {
   createIdentityRequest,
   deleteAllIdentities,
   deleteIdentity,
-  IdentityData,
   setActiveIdentity,
   setIdentityName,
   useSelectedIdentity,
 } from "@src/ui/ducks/identities";
 import { useWallet } from "@src/ui/hooks/wallet";
+
+import type { IdentityData } from "@src/types";
 
 import "./identityListStyles.scss";
 import { IdentityItem } from "./Item";

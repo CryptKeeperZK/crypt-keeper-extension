@@ -2,7 +2,7 @@ import { bigintToHex } from "bigint-conversion";
 import { browser } from "webextension-polyfill-ts";
 
 import { getEnabledFeatures } from "@src/config/features";
-import { IdentityMetadata, IdentityName } from "@src/types";
+import { IdentityMetadata, IdentityName, OperationType } from "@src/types";
 import { SelectedIdentity, setIdentities, setSelectedCommitment } from "@src/ui/ducks/identities";
 import { ellipsify } from "@src/util/account";
 import pushMessage from "@src/util/pushMessage";
@@ -96,13 +96,20 @@ export default class IdentityService {
     const activeIdentity = await this.getActiveIdentity();
     const identities = await this.getIdentitiesFromStore();
     const activeIdentityCommitment = activeIdentity ? bigintToHex(activeIdentity?.genIdentityCommitment()) : undefined;
+    const identity = identities.get(identityCommitment);
 
-    if (!identities.has(identityCommitment)) {
+    if (!identity) {
       return false;
     }
 
     identities.delete(identityCommitment);
     await this.writeIdentities(identities);
+    await this.historyService.trackOperation(OperationType.DELETE_IDENTITY, {
+      identity: {
+        commitment: identityCommitment,
+        metadata: ZkIdentityDecorater.genFromSerialized(identity).metadata,
+      },
+    });
 
     await this.refresh();
 
@@ -121,6 +128,7 @@ export default class IdentityService {
     }
 
     await Promise.all([this.clearActiveIdentity(), this.identitiesStore.clear(), pushMessage(setIdentities([]))]);
+    await this.historyService.trackOperation(OperationType.DELETE_ALL_IDENTITIES, {});
 
     return true;
   };
@@ -188,6 +196,9 @@ export default class IdentityService {
     identities.set(identityCommitment, newIdentity.serialize());
     await this.writeIdentities(identities);
     await this.updateActiveIdentity({ identities, identityCommitment });
+    await this.historyService.trackOperation(OperationType.CREATE_IDENTITY, {
+      identity: { commitment: identityCommitment, metadata: newIdentity.metadata },
+    });
 
     await this.notificationService.create({
       options: {

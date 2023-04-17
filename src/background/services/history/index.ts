@@ -1,7 +1,7 @@
 import { nanoid } from "nanoid";
 
 import { getEnabledFeatures } from "@src/config/features";
-import { HistorySettings, IdentityMetadata, Operation, OperationType } from "@src/types";
+import { HistorySettings, IdentityData, Operation, OperationType } from "@src/types";
 
 import LockService from "../lock";
 import SimpleStorage from "../simpleStorage";
@@ -10,10 +10,7 @@ const HISTORY_KEY = "@@HISTORY@@";
 const HISTORY_SETTINGS_KEY = "@@HISTORY-SETTINGS@@";
 
 export interface OperationOptions {
-  identity: {
-    commitment: string;
-    metadata: IdentityMetadata;
-  };
+  identity?: IdentityData;
 }
 
 export interface OperationFilter {
@@ -62,18 +59,15 @@ export default class HistoryService {
   public loadOperations = async (): Promise<ILoadOperationsData> => {
     await this.loadSettings();
 
-    if (!this.settings?.isEnabled) {
-      return { operations: [], settings: this.settings };
-    }
-
     const features = getEnabledFeatures();
     const serializedOperations = await this.historyStore
       .get<string>()
-      .then((serialized) => (serialized ? (JSON.parse(serialized) as Operation[]) : []));
+      .then((raw) => (raw ? this.lockService.decrypt(raw) : JSON.stringify([])))
+      .then((serialized) => JSON.parse(serialized) as Operation[]);
 
-    this.operations = serializedOperations.filter(({ identity }) =>
-      !features.RANDOM_IDENTITY ? identity.metadata.identityStrategy !== "random" : true,
-    );
+    this.operations = serializedOperations
+      .filter(({ identity }) => (!features.RANDOM_IDENTITY ? identity?.metadata.identityStrategy !== "random" : true))
+      .sort((a, b) => +new Date(b.createdAt) - +new Date(a.createdAt));
 
     return { operations: this.operations, settings: this.settings };
   };

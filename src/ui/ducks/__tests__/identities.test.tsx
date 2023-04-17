@@ -34,6 +34,8 @@ import {
   deleteHistoryOperation,
   clearHistory,
   useHistorySettings,
+  setSettings,
+  enableHistory,
 } from "../identities";
 
 jest.unmock("@src/ui/ducks/hooks");
@@ -226,6 +228,24 @@ describe("ui/ducks/identities", () => {
         identityCommitment: "1",
       },
     });
+  });
+
+  test("should set settings properly", async () => {
+    await Promise.resolve(store.dispatch(setSettings({ isEnabled: true })));
+    const settingsHookData = renderHook(() => useHistorySettings(), {
+      wrapper: ({ children }) => <Provider store={store}>{children}</Provider>,
+    });
+
+    expect(settingsHookData.result.current).toStrictEqual(defaultSettings);
+  });
+
+  test("should enable history properly", async () => {
+    await Promise.resolve(store.dispatch(enableHistory(true)));
+    const settingsHookData = renderHook(() => useHistorySettings(), {
+      wrapper: ({ children }) => <Provider store={store}>{children}</Provider>,
+    });
+
+    expect(settingsHookData.result.current).toStrictEqual(defaultSettings);
   });
 
   test("should call delete all identities action properly", async () => {
