@@ -4,7 +4,7 @@ import { PendingRequestType, RequestResolutionStatus } from "@src/types";
 import { setPendingRequests } from "@src/ui/ducks/requests";
 import pushMessage from "@src/util/pushMessage";
 
-jest.mock("../browserUtils");
+jest.mock("@src/background/controllers/Browser/Browser");
 
 describe("background/controllers/requestManager", () => {
   let removeListeners: ((window?: number) => void)[] = [];

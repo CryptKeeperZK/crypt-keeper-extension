@@ -1,13 +1,13 @@
 import { IdentityDecoraterService } from "@src/background/services/Identity";
-import { SemaphoreService } from "@src/background/services/proof";
+import { SemaphoreService } from "@src/background/services/Proof";
 
 import { ISemaphoreGenerateArgs, SemaphoreProofGenerator } from "..";
 
-jest.mock("@src/background/identityDecorater", (): unknown => ({
+jest.mock("@src/background/service/Identity/IdentityDecorater", (): unknown => ({
   genFromSerialized: jest.fn(),
 }));
 
-jest.mock("@src/background/services/proofs/semaphore");
+jest.mock("@src/background/services/Proof/Semaphore");
 
 describe("contentScripts/proof/semaphore", () => {
   const defaultGenerateArgs: ISemaphoreGenerateArgs = {

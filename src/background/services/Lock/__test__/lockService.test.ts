@@ -17,7 +17,7 @@ jest.mock("crypto-js", (): unknown => ({
 
 jest.mock("@src/util/pushMessage");
 
-jest.mock("../simpleStorage");
+jest.mock("@src/background/services/Storage/SimpleStorage");
 
 describe("background/services/Lock", () => {
   const lockService = LockService.getInstance();

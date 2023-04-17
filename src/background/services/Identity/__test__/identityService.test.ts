@@ -15,13 +15,13 @@ import pushMessage from "@src/util/pushMessage";
 
 jest.mock("@src/util/pushMessage");
 
-jest.mock("../Lock");
+jest.mock("@src/background/services/Lock/Lock");
 
-jest.mock("../history");
+jest.mock("@src/background/services/History/History");
 
-jest.mock("../simpleStorage");
+jest.mock("@src/background/services/Storage/SimpleStorage");
 
-jest.mock("../notification");
+jest.mock("@src/background/services/Notification/Notification");
 
 type MockStorage = { get: jest.Mock; set: jest.Mock; clear: jest.Mock };
 

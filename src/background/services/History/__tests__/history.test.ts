@@ -5,14 +5,14 @@ import { ZERO_ADDRESS } from "@src/config/const";
 import { getEnabledFeatures } from "@src/config/features";
 import { Operation, OperationType } from "@src/types";
 
-jest.mock("../../Lock", (): unknown => ({
+jest.mock("@src/background/services/Lock/Lock", (): unknown => ({
   __esModule: true,
   default: {
     getInstance: jest.fn(() => ({ encrypt: jest.fn(), decrypt: jest.fn() })),
   },
 }));
 
-jest.mock("../../simpleStorage");
+jest.mock("@src/background/services/Storage/SimpleStorage");
 
 type MockStorage = { get: jest.Mock; set: jest.Mock; clear: jest.Mock };
 
