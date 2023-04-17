@@ -28,11 +28,11 @@ export enum RPCAction {
   CLOSE_POPUP = "rpc/popup/close",
   GET_CONNECT_WALLET = "rpc/wallet/get/connect",
   SET_CONNECT_WALLET = "rpc/wallet/connect",
-  LOAD_IDENTITY_HISTORY = "rpc/identity/load-history",
-  GET_IDENTITY_HISTORY = "rpc/identity/get-history",
-  DELETE_HISTORY_OPERATION = "rpc/identity/delete-history-operation",
-  DELETE_ALL_HISTORY_OPERATIONS = "rpc/identity/delete-history",
-  ENABLE_OPERATION_HISTORY = "rpc/identity/history-enable",
+  LOAD_IDENTITY_HISTORY = "rpc/identity/loadHistory",
+  GET_IDENTITY_HISTORY = "rpc/identity/getHistory",
+  DELETE_HISTORY_OPERATION = "rpc/identity/deleteHistoryOperation",
+  DELETE_ALL_HISTORY_OPERATIONS = "rpc/identity/deleteHistory",
+  ENABLE_OPERATION_HISTORY = "rpc/identity/historyEnable",
   // DEV RPCS
   CLEAR_APPROVED_HOSTS = "rpc/hosts/clear",
 }
