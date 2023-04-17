@@ -1,9 +1,9 @@
 export enum RPCAction {
   UNLOCK = "rpc/unlock",
-  LOCK = "rpc/lock",
+  LOCK = "rpc/Lock",
   GET_STATUS = "rpc/getStatus",
   TRY_INJECT = "rpc/inject",
-  SETUP_PASSWORD = "rpc/lock/setupPassword",
+  SETUP_PASSWORD = "rpc/Lock/setupPassword",
   CREATE_IDENTITY = "rpc/identity/createIdentity",
   CREATE_IDENTITY_REQ = "rpc/identity/createIdentityRequest",
   SET_ACTIVE_IDENTITY = "rpc/identity/setActiveIdentity",
