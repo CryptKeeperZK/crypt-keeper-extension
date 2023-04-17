@@ -1,5 +1,5 @@
-import { IdentityDecoraterService } from "@src/background/services/Identity";
-import { SemaphoreService } from "@src/background/services/Proof";
+import { IdentityDecoraterService } from "@src/background/services/identity";
+import { SemaphoreService } from "@src/background/services/proof";
 
 import type { SemaphoreProof, SemaphoreProofRequest } from "@src/types";
 

@@ -1,14 +1,14 @@
 import log from "loglevel";
 import { browser } from "webextension-polyfill-ts";
 
-import { BrowserController } from "@src/background/controllers/Browser";
-import { HandlerController } from "@src/background/controllers/Handler";
-import { RequestManagerController } from "@src/background/controllers/RequestManager";
-import { ApprovalService } from "@src/background/services/Approval";
-import { HistoryService } from "@src/background/services/History";
-import { IdentityService, identityFactory } from "@src/background/services/Identity";
-import { LockService } from "@src/background/services/Lock";
-import { WalletService } from "@src/background/services/Wallet";
+import { BrowserController } from "@src/background/controllers/browser";
+import { HandlerController } from "@src/background/controllers/handler";
+import { RequestManagerController } from "@src/background/controllers/requestManager";
+import { ApprovalService } from "@src/background/services/approval";
+import { HistoryService } from "@src/background/services/history";
+import { IdentityService, identityFactory } from "@src/background/services/identity";
+import { LockService } from "@src/background/services/lock";
+import { WalletService } from "@src/background/services/wallet";
 import { Paths, RPCAction } from "@src/constants";
 import {
   PendingRequestType,
@@ -18,7 +18,7 @@ import {
   SemaphoreProofRequest,
 } from "@src/types";
 
-import { validateZkInputs } from "./services/Validator/zkValidator";
+import { validateZkInputs } from "./services/validator/zkValidator";
 
 export default class CryptKeeperController extends HandlerController {
   private identityService: IdentityService;
