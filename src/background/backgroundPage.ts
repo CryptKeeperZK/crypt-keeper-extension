@@ -2,13 +2,13 @@ import log from "loglevel";
 import "subworkers";
 import { browser } from "webextension-polyfill-ts";
 
+import CryptKeeperController from "@src/background/CryptKeeper";
 import { deferredPromise } from "@src/background/shared/utils";
 import { isDebugMode } from "@src/config/env";
-import { HandlerRequest } from "@src/types";
+import { RequestHandler } from "@src/types";
 
 import "./appInit";
 import "./shared/initGlobals";
-import ZkKeeperController from "./zkKeeper";
 
 log.setDefaultLevel(isDebugMode() ? "debug" : "info");
 
@@ -31,11 +31,11 @@ browser.runtime.onConnect.addListener(async () => {
 });
 
 try {
-  const app = new ZkKeeperController();
+  const app = new CryptKeeperController();
 
   app.initialize();
 
-  browser.runtime.onMessage.addListener(async (request: HandlerRequest) => {
+  browser.runtime.onMessage.addListener(async (request: RequestHandler) => {
     try {
       log.debug("Background: request: ", request);
       const response = await app.handle(request);

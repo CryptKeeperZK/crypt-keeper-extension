@@ -1,7 +1,7 @@
-import ZkIdentityDecorater from "@src/background/identityDecorater";
-import SemaphoreService from "@src/background/services/protocols/semaphore";
+import { IdentityDecoraterService } from "@src/background/services/Identity";
+import { SemaphoreService } from "@src/background/services/proof";
 
-import type { SemaphoreProof, SemaphoreProofRequest } from "@src/background/services/protocols/interfaces";
+import type { SemaphoreProof, SemaphoreProofRequest } from "@src/types";
 
 export interface ISemaphoreGenerateArgs {
   identity: string;
@@ -26,6 +26,6 @@ export class SemaphoreProofGenerator {
   }
 
   public generate({ identity, payload }: ISemaphoreGenerateArgs): Promise<SemaphoreProof> {
-    return this.semaphoreService.genProof(ZkIdentityDecorater.genFromSerialized(identity), payload);
+    return this.semaphoreService.genProof(IdentityDecoraterService.genFromSerialized(identity), payload);
   }
 }

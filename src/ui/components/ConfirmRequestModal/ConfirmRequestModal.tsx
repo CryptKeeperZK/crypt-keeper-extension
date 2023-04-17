@@ -1,4 +1,4 @@
-import { PendingRequest, PendingRequestType, ProofPayload } from "@src/types";
+import { PendingRequest, PendingRequestType, ZKProofPayload } from "@src/types";
 
 import { ProofModal, ConnectionApprovalModal, DefaultApprovalModal } from "./components";
 import "./confirmModal.scss";
@@ -29,7 +29,7 @@ const ConfirmRequestModal = (): JSX.Element | null => {
           error={error}
           len={pendingRequests.length}
           loading={loading}
-          pendingRequest={pendingRequest as PendingRequest<ProofPayload>}
+          pendingRequest={pendingRequest as PendingRequest<ZKProofPayload>}
           reject={reject}
         />
       );
