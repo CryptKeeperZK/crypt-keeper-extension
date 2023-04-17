@@ -1,7 +1,7 @@
 import { SimpleStorageService } from "@src/background/services/Storage";
 import { WalletService } from "@src/background/services/Wallet";
 
-jest.mock("../simpleStorage");
+jest.mock("@src/background/services/Storage/SimpleStorage");
 
 describe("background/services/wallet", () => {
   const service = new WalletService();

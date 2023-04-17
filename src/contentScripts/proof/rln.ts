@@ -1,5 +1,5 @@
 import { IdentityDecoraterService } from "@src/background/services/Identity";
-import { RLNService } from "@src/background/services/proof";
+import { RLNService } from "@src/background/services/Proof";
 
 import type { RLNProofRequest, RLNFullProof } from "@src/types";
 

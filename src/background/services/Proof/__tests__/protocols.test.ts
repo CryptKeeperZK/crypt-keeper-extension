@@ -7,7 +7,7 @@ import { IdentityDecoraterService } from "@src/background/services/Identity";
 import { ZERO_ADDRESS } from "@src/config/const";
 import { IdentityMetadata, RLNProofRequest } from "@src/types";
 
-import { RLNService } from "../Rln";
+import { RLNService } from "../RLN";
 import { SemaphoreService } from "../Semaphore";
 import { getMerkleProof } from "../utils";
 

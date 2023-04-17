@@ -1,11 +1,10 @@
 import { LockService } from "@src/background/services/Lock";
 import { SimpleStorageService } from "@src/background/services/Storage";
+import { ApprovalService } from "@src/background/services/Approval";
 
-import { ApprovalService } from "../Approval";
+jest.mock("@src/background/services/Lock/Lock");
 
-jest.mock("../Lock");
-
-jest.mock("@src/background/services/Storage/simpleStorage");
+jest.mock("@src/background/services/Storage/SimpleStorage");
 
 type MockStorage = { get: jest.Mock; set: jest.Mock; clear: jest.Mock };
 

@@ -3,7 +3,7 @@ import { browser } from "webextension-polyfill-ts";
 
 import { SimpleStorageService } from "@src/background/services/Storage";
 
-describe("background/services/simpleStorage", () => {
+describe("background/services/Storage/SimpleStorage", () => {
   afterEach(() => {
     jest.resetAllMocks();
   });

@@ -1,13 +1,13 @@
 import { IdentityDecoraterService } from "@src/background/services/Identity";
-import { RLNService } from "@src/background/services/proof";
+import { RLNService } from "@src/background/services/Proof";
 
 import { IRlnGenerateArgs, RlnProofGenerator } from "..";
 
-jest.mock("@src/background/identityDecorater", (): unknown => ({
+jest.mock("@src/background/services/Identity/IdentityDecorater", (): unknown => ({
   genFromSerialized: jest.fn(),
 }));
 
-jest.mock("@src/background/services/protocols/rln");
+jest.mock("@src/background/services/Proof/RLN");
 
 describe("contentScripts/proof/rln", () => {
   const defaultGenerateArgs: IRlnGenerateArgs = {
