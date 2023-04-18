@@ -85,6 +85,7 @@ export const IdentityItem = ({
             <Input
               autoFocus
               className="identity-row__input-field"
+              id="identityRename"
               label=""
               type="text"
               value={name}

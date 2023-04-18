@@ -11,7 +11,6 @@ export interface TestExtension {
   context: BrowserContext;
   cryptKeeperExtensionId: string;
   app: Page;
-  cryptKeeper: Page;
 }
 
 export const test = base.extend<TestExtension>({
@@ -49,44 +48,6 @@ export const test = base.extend<TestExtension>({
       });
 
       await use(context);
-      await context.close();
-    },
-    { scope: "test" },
-  ],
-
-  app: [
-    async ({ context }, use) => {
-      const [page] = context.pages();
-      await page.goto("/");
-      await page.bringToFront();
-
-      await use(page);
-      await context.close();
-    },
-    { scope: "test" },
-  ],
-
-  cryptKeeper: [
-    async ({ context }, use) => {
-      await Promise.all(
-        context.serviceWorkers().map((sw) => {
-          if (!sw) {
-            return context.waitForEvent("serviceworker");
-          }
-
-          return undefined;
-        }),
-      );
-
-      context.on("page", async (page: Page) => {
-        await page.waitForLoadState();
-
-        const title = await page.title();
-
-        if (title.toLowerCase() === "crypt keeper") {
-          await use(page);
-        }
-      });
     },
     { scope: "test" },
   ],
@@ -100,6 +61,18 @@ export const test = base.extend<TestExtension>({
 
       const extensionId = background.url().split("/")[2];
       await use(extensionId);
+    },
+    { scope: "test" },
+  ],
+
+  app: [
+    async ({ context }, use) => {
+      const [page] = context.pages();
+      await page.goto("/");
+      await page.bringToFront();
+
+      await use(page);
+      await context.close();
     },
     { scope: "test" },
   ],

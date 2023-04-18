@@ -1,50 +1,50 @@
-import * as metamask from "@synthetixio/synpress/commands/metamask";
-
 import type { Page } from "@playwright/test";
 
 import { CRYPT_KEEPER_PASSWORD } from "../constants";
 import { type TestExtension, expect } from "../fixtures";
+import { CryptKeeper } from "../pages";
 
-export async function createAccount({ app, cryptKeeper }: TestExtension): Promise<void> {
-  await connectCryptKeeper(app);
+export async function createAccount({ app }: TestExtension): Promise<void> {
+  const cryptKeeper = await connectCryptKeeper(app);
 
-  await cryptKeeper.getByLabel("Password", { exact: true }).type(CRYPT_KEEPER_PASSWORD);
-  await cryptKeeper.getByLabel("Confirm Password", { exact: true }).type(CRYPT_KEEPER_PASSWORD);
-  await cryptKeeper.getByText("Continue", { exact: true }).click();
+  await cryptKeeper.createAccount(CRYPT_KEEPER_PASSWORD);
+  await cryptKeeper.approve();
 
-  await cryptKeeper.getByText("Approve").click();
+  await cryptKeeper.close();
 }
 
 export async function lockAccount({ app, cryptKeeperExtensionId }: TestExtension): Promise<void> {
-  await connectCryptKeeper(app);
+  const cryptKeeper = new CryptKeeper(app);
+  await cryptKeeper.openPopup(cryptKeeperExtensionId);
 
-  await app.goto(`chrome-extension://${cryptKeeperExtensionId}/popup.html`);
-
-  await app.getByTestId("menu").click();
-  await app.getByText("Lock", { exact: true }).click();
+  await cryptKeeper.lock();
 }
 
 export async function connectWallet({ app, cryptKeeperExtensionId }: TestExtension): Promise<void> {
-  await app.goto(`chrome-extension://${cryptKeeperExtensionId}/popup.html`);
+  const cryptKeeper = new CryptKeeper(app);
+  await cryptKeeper.openPopup(cryptKeeperExtensionId);
 
-  await app.getByTestId("menu").click();
-  await app.getByText("Connect wallet", { exact: true }).click();
-
-  await metamask.acceptAccess();
+  await cryptKeeper.connectWallet();
 }
 
 export async function unlockAccount({ app, cryptKeeperExtensionId }: TestExtension): Promise<void> {
-  await app.goto(`chrome-extension://${cryptKeeperExtensionId}/popup.html`);
+  const cryptKeeper = new CryptKeeper(app);
+  await cryptKeeper.openPopup(cryptKeeperExtensionId);
 
-  await app.getByLabel("Password", { exact: true }).type(CRYPT_KEEPER_PASSWORD);
-  await app.getByText("Unlock", { exact: true }).click();
+  await cryptKeeper.unlock(CRYPT_KEEPER_PASSWORD);
 }
 
-async function connectCryptKeeper(app: Page): Promise<void> {
-  await app.reload();
-  await app.goto("/");
+const CRYPT_KEEPER_CONNECT_TIMEOUT_MS = 3000;
 
+async function connectCryptKeeper(app: Page): Promise<CryptKeeper> {
   await expect(app).toHaveTitle(/Crypt-keeper Extension demo/);
   await expect(app.getByText(/Please connect to Crypt-Keeper to continue./)).toBeVisible();
-  await app.getByText("Connect", { exact: true }).click();
+
+  const [popup] = await Promise.all([
+    app.context().waitForEvent("page"),
+    app.getByText("Connect", { exact: true }).click(),
+    app.waitForTimeout(CRYPT_KEEPER_CONNECT_TIMEOUT_MS),
+  ]);
+
+  return new CryptKeeper(popup);
 }

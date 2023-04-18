@@ -227,7 +227,6 @@ function App() {
   }
 
   if (!selectedIdentity) {
-    console.log("identityCommitment", selectedIdentity);
     return <NoActiveIDCommitment />;
   }
 
