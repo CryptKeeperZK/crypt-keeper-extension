@@ -22,4 +22,8 @@ export default abstract class BasePage {
   public getByText(text: string | RegExp, options?: { exact: boolean }): Locator {
     return this.page.getByText(text, options);
   }
+
+  public getByTestId(testId: string | RegExp): Locator {
+    return this.page.getByTestId(testId);
+  }
 }

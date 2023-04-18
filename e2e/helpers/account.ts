@@ -34,16 +34,13 @@ export async function unlockAccount({ app, cryptKeeperExtensionId }: TestExtensi
   await cryptKeeper.unlock(CRYPT_KEEPER_PASSWORD);
 }
 
-const CRYPT_KEEPER_CONNECT_TIMEOUT_MS = 3000;
-
 async function connectCryptKeeper(app: Page): Promise<CryptKeeper> {
   await expect(app).toHaveTitle(/Crypt-keeper Extension demo/);
   await expect(app.getByText(/Please connect to Crypt-Keeper to continue./)).toBeVisible();
 
-  const [popup] = await Promise.all([
-    app.context().waitForEvent("page"),
+  const [, popup] = await Promise.all([
     app.getByText("Connect", { exact: true }).click(),
-    app.waitForTimeout(CRYPT_KEEPER_CONNECT_TIMEOUT_MS),
+    app.context().waitForEvent("page"),
   ]);
 
   return new CryptKeeper(popup);
