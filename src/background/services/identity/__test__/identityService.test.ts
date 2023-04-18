@@ -4,7 +4,8 @@ import { bigintToHex } from "bigint-conversion";
 import { browser } from "webextension-polyfill-ts";
 
 import { HistoryService } from "@src/background/services/history";
-import { IdentityDecoraterService, IdentityService } from "@src/background/services/identity";
+import { IdentityService } from "@src/background/services/identity";
+import { IdentityDecoraterService } from "@src/background/services/identity/services/IdentityDecorater";
 import { LockService } from "@src/background/services/lock";
 import { NotificationService } from "@src/background/services/notification";
 import { SimpleStorageService } from "@src/background/services/storage";
@@ -12,6 +13,9 @@ import { getEnabledFeatures } from "@src/config/features";
 import { setSelectedCommitment } from "@src/ui/ducks/identities";
 import { ellipsify } from "@src/util/account";
 import pushMessage from "@src/util/pushMessage";
+import { CreateIdentityOptions, ICreateIdentityArgs, IdentityStrategy } from "@src/types";
+import { ZERO_ADDRESS } from "@src/config/const";
+import { IdentityFactoryService } from "../services/IdentityFactory";
 
 jest.mock("@src/util/pushMessage");
 
@@ -354,47 +358,73 @@ describe("background/services/identity", () => {
     });
   });
 
-  describe("insert", () => {
-    test("should insert identity properly", async () => {
+  describe("create", () => {
+    test("should create a new identity properly", async () => {
       const service = new IdentityService();
-      const identity = new Identity();
-      const identityCommitment = bigintToHex(identity.getCommitment());
 
-      const result = await service.insert(
-        new IdentityDecoraterService(identity, {
-          account: defaultIdentityCommitment,
-          name: "Name",
-          identityStrategy: "random",
-        }),
-      );
+      const identityMessageSignature = "0x000"
+      const identityStrategy: IdentityStrategy = "random";
+      const identityOptions: CreateIdentityOptions = {
+        nonce: 0,
+        account: ZERO_ADDRESS,
+        name: "Name"
+      }
 
-      expect(result).toBe(true);
+      const result = await service.createIdentity({
+        strategy: identityStrategy,
+        messageSignature: identityMessageSignature,
+        options: identityOptions
+      })
+
+      expect(result.status).toBe(true);
       expect(mockNotificationService.create).toBeCalledTimes(1);
+      expect(result.identityCommitment).toBeDefined();
       expect(mockNotificationService.create).toBeCalledWith({
         options: {
           title: "New identity has been created.",
-          message: `Identity commitment: ${ellipsify(identityCommitment)}`,
+          message: `Identity commitment: ${ellipsify(bigintToHex(result.identityCommitment as bigint))}`,
           iconUrl: browser.runtime.getURL("/logo.png"),
           type: "basic",
         },
       });
     });
 
-    test("should not insert identity if there is the same identity in the store", async () => {
+    test("should not create a new identity if there is the same identity in the store", async () => {
       const service = new IdentityService();
-
       const [identityStorage] = (SimpleStorageService as jest.Mock).mock.instances as [MockStorage];
-      identityStorage.get.mockReturnValue(serializedDefaultIdentities);
 
-      const result = await service.insert(
-        new IdentityDecoraterService({ getCommitment: () => defaultIdentityCommitment } as unknown as Identity, {
-          account: defaultIdentityCommitment,
-          name: "Name",
-          identityStrategy: "random",
-        }),
-      );
+      const identityMessageSignature = "0x000"
+      const identityStrategy: IdentityStrategy = "interrep";
+      const identityOptions: CreateIdentityOptions = {
+        nonce: 0,
+        web2Provider: "twitter",
+        account: ZERO_ADDRESS,
+        name: "Name"
+      }
 
-      expect(result).toBe(false);
+      // First successful creation
+      const successResult = await service.createIdentity({
+        strategy: identityStrategy,
+        messageSignature: identityMessageSignature,
+        options: identityOptions
+      })
+
+      const newIdentities = JSON.stringify([
+        [bigintToHex(successResult.identityCommitment as bigint), JSON.stringify({ secret: "12345", metadata: { identityStrategy: "interrep", web2Provider: "twitter" } })],
+      ]);
+
+      defaultLockService.encrypt.mockReturnValue(newIdentities);
+      defaultLockService.decrypt.mockReturnValue(newIdentities);
+      identityStorage.get.mockReturnValue(newIdentities);
+
+      // Second failed creation
+      const result = await service.createIdentity({
+        strategy: identityStrategy,
+        messageSignature: identityMessageSignature,
+        options: identityOptions
+      })
+
+      expect(result.status).toBe(false);
     });
   });
 });

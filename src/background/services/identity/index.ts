@@ -1,3 +1,2 @@
 export * from "./Identity";
-export * from "./IdentityDecorater";
-export * from "./identityFactory";
+export * from "./services/IdentityDecorater";

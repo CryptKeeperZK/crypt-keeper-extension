@@ -1,4 +1,4 @@
-import { IdentityDecoraterService } from "@src/background/services/identity";
+import { IdentityDecoraterService } from "@src/background/services/identity/services/IdentityDecorater";
 import { RLNService } from "@src/background/services/proof";
 
 import { IRlnGenerateArgs, RlnProofGenerator } from "..";

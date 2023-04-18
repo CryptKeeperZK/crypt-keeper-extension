@@ -6,7 +6,7 @@ import { HandlerController } from "@src/background/controllers/handler";
 import { RequestManagerController } from "@src/background/controllers/requestManager";
 import { ApprovalService } from "@src/background/services/approval";
 import { HistoryService } from "@src/background/services/history";
-import { IdentityService, identityFactory } from "@src/background/services/identity";
+import { IdentityService } from "@src/background/services/identity";
 import { LockService } from "@src/background/services/lock";
 import { WalletService } from "@src/background/services/wallet";
 import { Paths, RPCAction } from "@src/constants";
@@ -78,51 +78,12 @@ export default class CryptKeeperController extends HandlerController {
     this.add(RPCAction.GET_IDENTITIES, this.lockService.ensure, this.identityService.getIdentities);
     this.add(RPCAction.GET_ACTIVE_IDENTITY_DATA, this.lockService.ensure, this.identityService.getActiveIdentityData);
     this.add(RPCAction.SET_ACTIVE_IDENTITY, this.lockService.ensure, this.identityService.setActiveIdentity);
-    this.add(RPCAction.SET_IDENTITY_NAME, this.lockService.ensure, async (payload: IdentityName) =>
-      this.identityService.setIdentityName(payload),
-    );
-
-    this.add(RPCAction.DELETE_IDENTITY, this.lockService.ensure, async (payload: IdentityName) =>
-      this.identityService.deleteIdentity(payload),
-    );
-
+    this.add(RPCAction.SET_IDENTITY_NAME, this.lockService.ensure, this.identityService.setIdentityName);
+    this.add(RPCAction.DELETE_IDENTITY, this.lockService.ensure, this.identityService.deleteIdentity);
     this.add(RPCAction.DELETE_ALL_IDENTITIES, this.lockService.ensure, this.identityService.deleteAllIdentities);
-
-    this.add(RPCAction.CREATE_IDENTITY_REQ, this.lockService.ensure, async () => {
-      await this.browsercontroller.openPopup({ params: { redirect: Paths.CREATE_IDENTITY } });
-    });
-
-    this.add(RPCAction.CREATE_IDENTITY, this.lockService.ensure, async (payload: NewIdentityRequest) => {
-      const { strategy, messageSignature, options } = payload;
-
-      if (!strategy) {
-        throw new Error("strategy not provided");
-      }
-
-      const numOfIdentites = await this.identityService.getNumOfIdentites();
-      const config = {
-        ...options,
-        account: options.account ?? "",
-        identityStrategy: strategy,
-        name: options?.name || `Account # ${numOfIdentites}`,
-        messageSignature: strategy === "interrep" ? messageSignature : undefined,
-      };
-
-      const identity = identityFactory(strategy, config);
-
-      if (!identity) {
-        throw new Error("Identity not created, make sure to check strategy");
-      }
-
-      await this.identityService.insert(identity);
-
-      await this.browsercontroller.closePopup();
-
-      return true;
-    });
-
+    this.add(RPCAction.CREATE_IDENTITY_REQ, this.lockService.ensure, this.identityService.createIdentityRequest);
+    this.add(RPCAction.CREATE_IDENTITY, this.lockService.ensure, this.identityService.createIdentity);
     this.add(RPCAction.LOAD_IDENTITY_HISTORY, this.lockService.ensure, this.historyService.loadOperations);
-
     this.add(RPCAction.GET_IDENTITY_HISTORY, this.lockService.ensure, this.historyService.getOperations);
 
     // Protocols
