@@ -6,7 +6,7 @@ import { ISemaphoreGenerateArgs, SemaphoreProofGenerator } from "..";
 jest.mock("@src/background/services/identity", (): unknown => ({
   IdentityDecoraterService: {
     genFromSerialized: jest.fn(),
-  }
+  },
 }));
 
 jest.mock("@src/background/services/proof/Semaphore");
