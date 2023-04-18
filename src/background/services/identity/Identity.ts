@@ -106,7 +106,7 @@ export class IdentityService {
     await this.historyService.trackOperation(OperationType.DELETE_IDENTITY, {
       identity: {
         commitment: identityCommitment,
-        metadata: ZkIdentityDecorater.genFromSerialized(identity).metadata,
+        metadata: IdentityDecoraterService.genFromSerialized(identity).metadata,
       },
     });
 

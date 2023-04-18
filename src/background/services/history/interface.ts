@@ -12,4 +12,3 @@ export interface ILoadOperationsData {
   operations: Operation[];
   settings?: HistorySettings;
 }
-

@@ -1,5 +1,4 @@
 import { HistoryService } from "@src/background/services/history";
-import { LockService } from "@src/background/services/lock";
 import { SimpleStorageService } from "@src/background/services/storage";
 import { ZERO_ADDRESS } from "@src/config/const";
 import { getEnabledFeatures } from "@src/config/features";
@@ -65,7 +64,10 @@ describe("background/services/history/History", () => {
   });
 
   test("should load history operations properly", async () => {
-    const [historyStore, settingsStore] = (SimpleStorageService as jest.Mock).mock.instances as [MockStorage, MockStorage];
+    const [historyStore, settingsStore] = (SimpleStorageService as jest.Mock).mock.instances as [
+      MockStorage,
+      MockStorage,
+    ];
     historyStore.get.mockResolvedValue(mockSerializedDefaultOperations);
     settingsStore.get.mockResolvedValueOnce(mockSerializedDefaultSettings);
 
@@ -77,7 +79,10 @@ describe("background/services/history/History", () => {
   });
 
   test("should load history operations with empty history settings", async () => {
-    const [historyStore, settingsStore] = (SimpleStorageService as jest.Mock).mock.instances as [MockStorage, MockStorage];
+    const [historyStore, settingsStore] = (SimpleStorageService as jest.Mock).mock.instances as [
+      MockStorage,
+      MockStorage,
+    ];
     historyStore.get.mockResolvedValue(mockSerializedDefaultOperations);
     settingsStore.get.mockResolvedValueOnce(null);
 
@@ -92,7 +97,10 @@ describe("background/services/history/History", () => {
   test("should load history operations without random identities", async () => {
     (getEnabledFeatures as jest.Mock).mockReturnValue({ RANDOM_IDENTITY: false });
 
-    const [historyStore, settingsStore] = (SimpleStorageService as jest.Mock).mock.instances as [MockStorage, MockStorage];
+    const [historyStore, settingsStore] = (SimpleStorageService as jest.Mock).mock.instances as [
+      MockStorage,
+      MockStorage,
+    ];
     historyStore.get.mockResolvedValue(mockSerializedDefaultOperations);
     settingsStore.get.mockResolvedValueOnce(mockSerializedDefaultSettings);
 
@@ -115,7 +123,10 @@ describe("background/services/history/History", () => {
   });
 
   test("should load history operations properly if the store is empty", async () => {
-    const [historyStore, settingsStore] = (SimpleStorageService as jest.Mock).mock.instances as [MockStorage, MockStorage];
+    const [historyStore, settingsStore] = (SimpleStorageService as jest.Mock).mock.instances as [
+      MockStorage,
+      MockStorage,
+    ];
     historyStore.get.mockResolvedValue(null);
     settingsStore.get.mockResolvedValueOnce(mockSerializedDefaultSettings);
 
@@ -133,7 +144,10 @@ describe("background/services/history/History", () => {
   });
 
   test("should filter cached operations by type", async () => {
-    const [historyStore, settingsStore] = (SimpleStorageService as jest.Mock).mock.instances as [MockStorage, MockStorage];
+    const [historyStore, settingsStore] = (SimpleStorageService as jest.Mock).mock.instances as [
+      MockStorage,
+      MockStorage,
+    ];
     historyStore.get.mockResolvedValue(mockSerializedDefaultOperations);
     settingsStore.get.mockResolvedValueOnce(mockSerializedDefaultSettings);
 
@@ -144,7 +158,10 @@ describe("background/services/history/History", () => {
   });
 
   test("should track operation properly", async () => {
-    const [historyStore, settingsStore] = (SimpleStorageService as jest.Mock).mock.instances as [MockStorage, MockStorage];
+    const [historyStore, settingsStore] = (SimpleStorageService as jest.Mock).mock.instances as [
+      MockStorage,
+      MockStorage,
+    ];
     historyStore.get.mockResolvedValue(mockSerializedDefaultOperations);
     settingsStore.get.mockResolvedValueOnce(mockSerializedDefaultSettings);
 
@@ -158,7 +175,10 @@ describe("background/services/history/History", () => {
   });
 
   test("should not track operation if history is disabled", async () => {
-    const [historyStore, settingsStore] = (SimpleStorageService as jest.Mock).mock.instances as [MockStorage, MockStorage];
+    const [historyStore, settingsStore] = (SimpleStorageService as jest.Mock).mock.instances as [
+      MockStorage,
+      MockStorage,
+    ];
     historyStore.get.mockResolvedValue(mockSerializedDefaultOperations);
     settingsStore.get.mockResolvedValueOnce(JSON.stringify({ ...mockDefaultSettings, isEnabled: false }));
 
@@ -172,7 +192,10 @@ describe("background/services/history/History", () => {
   });
 
   test("should remove operation properly", async () => {
-    const [historyStore, settingsStore] = (SimpleStorageService as jest.Mock).mock.instances as [MockStorage, MockStorage];
+    const [historyStore, settingsStore] = (SimpleStorageService as jest.Mock).mock.instances as [
+      MockStorage,
+      MockStorage,
+    ];
     historyStore.get.mockResolvedValue(mockSerializedDefaultOperations);
     settingsStore.get.mockResolvedValueOnce(mockSerializedDefaultSettings);
 

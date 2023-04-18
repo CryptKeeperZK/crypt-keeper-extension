@@ -1,9 +1,9 @@
 import { nanoid } from "nanoid";
 
-import { getEnabledFeatures } from "@src/config/features";
-import { HistorySettings, Operation, OperationType } from "@src/types";
 import { LockService } from "@src/background/services/lock";
 import { SimpleStorageService } from "@src/background/services/storage";
+import { getEnabledFeatures } from "@src/config/features";
+import { HistorySettings, Operation, OperationType } from "@src/types";
 
 import { ILoadOperationsData, OperationFilter, OperationOptions } from "./interface";
 
