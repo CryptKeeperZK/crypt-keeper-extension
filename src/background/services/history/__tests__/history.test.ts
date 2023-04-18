@@ -38,9 +38,9 @@ const mockSerializedDefaultOperations = JSON.stringify(mockDefaultOperations);
 const mockDefaultSettings = { isEnabled: true };
 const mockSerializedDefaultSettings = JSON.stringify(mockDefaultSettings);
 
-jest.mock("@src/background/services/lock/Lock", (): unknown => ({
+jest.mock("@src/background/services/lock", (): unknown => ({
   __esModule: true,
-  default: {
+  LockService: {
     getInstance: jest.fn(() => ({
       encrypt: jest.fn(() => Promise.resolve(mockSerializedDefaultOperations)),
       decrypt: jest.fn(() => Promise.resolve(mockSerializedDefaultOperations)),

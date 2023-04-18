@@ -3,8 +3,10 @@ import { SemaphoreService } from "@src/background/services/proof";
 
 import { ISemaphoreGenerateArgs, SemaphoreProofGenerator } from "..";
 
-jest.mock("@src/background/service/Identity/IdentityDecorater", (): unknown => ({
-  genFromSerialized: jest.fn(),
+jest.mock("@src/background/services/identity", (): unknown => ({
+  IdentityDecoraterService: {
+    genFromSerialized: jest.fn(),
+  }
 }));
 
 jest.mock("@src/background/services/proof/Semaphore");
