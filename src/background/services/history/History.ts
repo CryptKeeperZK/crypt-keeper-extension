@@ -3,7 +3,7 @@ import { SimpleStorageService } from "@src/background/services/storage";
 import { getEnabledFeatures } from "@src/config/features";
 import { Operation, OperationType } from "@src/types";
 
-import { OperationFilter, OperationOptions } from "./History.interface";
+import { OperationFilter, OperationOptions } from "./interface";
 
 const HISTORY_KEY = "@@HISTORY@@";
 

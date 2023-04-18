@@ -1,6 +1,6 @@
 import { browser, Windows } from "webextension-polyfill-ts";
 
-import { OpenPopupArgs, CreateTabArgs, CreateWindowArgs } from "./Browser.interface";
+import { OpenPopupArgs, CreateTabArgs, CreateWindowArgs } from "./interface";
 
 export class BrowserController {
   private static INSTANCE: BrowserController;

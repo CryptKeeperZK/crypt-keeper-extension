@@ -2,7 +2,7 @@ import { browser } from "webextension-polyfill-ts";
 
 import { NotificationService } from "@src/background/services/notification";
 
-import { CreateNotificationArgs } from "../Notification.interface";
+import { CreateNotificationArgs } from "../interface";
 
 describe("background/services/notification", () => {
   const defaultId = "1";

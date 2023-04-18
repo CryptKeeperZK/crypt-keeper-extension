@@ -1,6 +1,6 @@
 import { RequestHandler } from "@src/types";
 
-import { Chain, HandlerType } from "./Handler.type";
+import { Chain, HandlerType } from "./type";
 
 export class HandlerController {
   private handlers: Map<string, Chain>;
