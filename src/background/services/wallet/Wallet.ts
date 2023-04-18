@@ -1,6 +1,6 @@
 import { SimpleStorageService } from "@src/background/services/storage";
 
-import { WalletConnectionData } from "./Wallet.inteface";
+import { WalletConnectionData } from "./inteface";
 
 const WALLET_STORAGE_KEY = "@@WALLET@@";
 

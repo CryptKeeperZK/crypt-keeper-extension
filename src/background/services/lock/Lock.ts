@@ -5,7 +5,7 @@ import { SimpleStorageService } from "@src/background/services/storage";
 import { setStatus } from "@src/ui/ducks/app";
 import pushMessage from "@src/util/pushMessage";
 
-import { LockStatus } from "./Lock.type";
+import { LockStatus } from "./type";
 
 const PASSWORD_DB_KEY = "@password@";
 

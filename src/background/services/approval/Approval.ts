@@ -1,7 +1,7 @@
 import { LockService } from "@src/background/services/lock";
 import { SimpleStorageService } from "@src/background/services/storage";
 
-import { HostPermission } from "./Approval.type";
+import { HostPermission } from "./type";
 
 const APPPROVALS_DB_KEY = "@APPROVED@";
 

@@ -5,7 +5,7 @@ import { HistorySettings, Operation, OperationType } from "@src/types";
 import { LockService } from "@src/background/services/lock";
 import { SimpleStorageService } from "@src/background/services/storage";
 
-import { ILoadOperationsData, OperationFilter, OperationOptions } from "./History.interface";
+import { ILoadOperationsData, OperationFilter, OperationOptions } from "./interface";
 
 const HISTORY_KEY = "@@HISTORY@@";
 const HISTORY_SETTINGS_KEY = "@@HISTORY-SETTINGS@@";

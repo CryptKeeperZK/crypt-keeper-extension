@@ -1,7 +1,7 @@
 import log from "loglevel";
 import { browser } from "webextension-polyfill-ts";
 
-import { CreateNotificationArgs } from "./Notification.interface";
+import { CreateNotificationArgs } from "./interface";
 
 export class NotificationService {
   private static INSTANCE: NotificationService;
