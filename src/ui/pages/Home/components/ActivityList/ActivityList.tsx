@@ -4,6 +4,7 @@ import { Checkbox } from "@src/ui/components/Checkbox";
 import { ConfirmDangerModal } from "@src/ui/components/ConfirmDangerModal";
 import { Icon } from "@src/ui/components/Icon";
 
+import "./activityListStyles.scss";
 import { ActivityItem } from "./Item";
 import { useActivityList } from "./useActivityList";
 
@@ -29,7 +30,7 @@ export const ActivityList = (): JSX.Element => {
 
   return (
     <>
-      <div className="flex justify-end mb-2 mt-2 mr-2">
+      <div className="flex justify-end mb-3 mt-3 mr-2">
         <Checkbox
           checked={Boolean(settings?.isEnabled)}
           className="mr-2"
@@ -42,9 +43,11 @@ export const ActivityList = (): JSX.Element => {
         </label>
       </div>
 
-      {operations.map((operation) => (
-        <ActivityItem key={operation.id} operation={operation} onDelete={onDeleteHistoryOperation} />
-      ))}
+      <div className="activity-content">
+        {operations.map((operation) => (
+          <ActivityItem key={operation.id} operation={operation} onDelete={onDeleteHistoryOperation} />
+        ))}
+      </div>
 
       <ConfirmDangerModal accept={onDeleteAllHistory} isOpenModal={isConfirmModalOpen} reject={onConfirmModalShow} />
 

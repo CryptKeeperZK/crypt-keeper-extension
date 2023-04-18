@@ -1,5 +1,11 @@
 @import "@src/util/variables";
 
+.identities-content {
+  height: 320px;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
 .create-identity-row {
   &__active {
     width: 100%;

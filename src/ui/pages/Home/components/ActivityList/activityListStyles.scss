@@ -1,5 +1,11 @@
 @import "@src/util/variables";
 
+.activity-content {
+  height: 275px;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
 .activity-row {
   width: 100%;
 
