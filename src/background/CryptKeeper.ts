@@ -9,14 +9,8 @@ import { HistoryService } from "@src/background/services/history";
 import { IdentityService } from "@src/background/services/identity";
 import { LockService } from "@src/background/services/lock";
 import { WalletService } from "@src/background/services/wallet";
-import { Paths, RPCAction } from "@src/constants";
-import {
-  PendingRequestType,
-  NewIdentityRequest,
-  IdentityName,
-  RLNProofRequest,
-  SemaphoreProofRequest,
-} from "@src/types";
+import { RPCAction } from "@src/constants";
+import { PendingRequestType, RLNProofRequest, SemaphoreProofRequest } from "@src/types";
 
 import { validateZkInputs } from "./services/validator/zkValidator";
 

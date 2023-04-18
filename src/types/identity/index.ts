@@ -41,6 +41,6 @@ export interface ICreateIdentityArgs {
 }
 
 export type StrategiesMap = {
-  random: (config: ICreateIdentityArgs) => void,
-  interrep: (config: ICreateIdentityArgs) => void
-}
+  random: (config: ICreateIdentityArgs) => void;
+  interrep: (config: ICreateIdentityArgs) => void;
+};

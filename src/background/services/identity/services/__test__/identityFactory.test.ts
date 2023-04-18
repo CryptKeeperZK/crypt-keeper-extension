@@ -1,13 +1,11 @@
-import { IdentityFactoryService } from "@src/background/services/identity/services/IdentityFactory";
 import { IdentityDecoraterService } from "@src/background/services/identity/services/IdentityDecorater";
+import { IdentityFactoryService } from "@src/background/services/identity/services/IdentityFactory";
 import { ZERO_ADDRESS } from "@src/config/const";
 import { ICreateIdentityArgs, StrategiesMap } from "@src/types";
 
 class MockIdentityService extends IdentityFactoryService {
-  public mockNewIdentity = (strategy: keyof StrategiesMap,
-    config: ICreateIdentityArgs,) => {
-    return this.createNewIdentity(strategy, config);
-  }
+  public mockNewIdentity = (strategy: keyof StrategiesMap, config: ICreateIdentityArgs) =>
+    this.createNewIdentity(strategy, config);
 }
 
 describe("background/identityFactory", () => {

@@ -1,9 +1,9 @@
 import { Identity } from "@semaphore-protocol/identity";
 
+import { ICreateIdentityArgs, StrategiesMap } from "@src/types";
 import checkParameter from "@src/util/checkParameter";
 
 import { IdentityDecoraterService } from "./IdentityDecorater";
-import { ICreateIdentityArgs, StrategiesMap } from "@src/types";
 
 export class IdentityFactoryService {
   protected createNewIdentity = (
@@ -26,7 +26,7 @@ export class IdentityFactoryService {
       identityStrategy,
       web2Provider,
     });
-  }
+  };
 
   private createRandomIdentity = (config: ICreateIdentityArgs): IdentityDecoraterService => {
     const { identityStrategy, name } = config;

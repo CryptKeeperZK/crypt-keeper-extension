@@ -1,9 +1,8 @@
 import { Identity } from "@semaphore-protocol/identity";
 
+import { IdentityDecoraterService } from "@src/background/services/identity/services/IdentityDecorater";
 import { ZERO_ADDRESS } from "@src/config/const";
 import { IdentityMetadata } from "@src/types";
-
-import { IdentityDecoraterService } from "@src/background/services/identity/services/IdentityDecorater";
 
 describe("background/identityDecorater", () => {
   const defaultIdentity = new Identity("1234");

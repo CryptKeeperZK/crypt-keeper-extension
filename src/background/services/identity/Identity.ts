@@ -1,20 +1,19 @@
 import { bigintToHex } from "bigint-conversion";
 import { browser } from "webextension-polyfill-ts";
 
+import { BrowserController } from "@src/background/controllers/browser";
 import { HistoryService } from "@src/background/services/history";
+import { IdentityDecoraterService } from "@src/background/services/identity/services/IdentityDecorater";
+import { IdentityFactoryService } from "@src/background/services/identity/services/IdentityFactory";
 import { LockService } from "@src/background/services/lock";
 import { NotificationService } from "@src/background/services/notification";
 import { SimpleStorageService } from "@src/background/services/storage";
 import { getEnabledFeatures } from "@src/config/features";
+import { Paths } from "@src/constants";
 import { IdentityMetadata, IdentityName, NewIdentityRequest } from "@src/types";
 import { SelectedIdentity, setIdentities, setSelectedCommitment } from "@src/ui/ducks/identities";
 import { ellipsify } from "@src/util/account";
-import { Paths } from "@src/constants";
 import pushMessage from "@src/util/pushMessage";
-
-import { IdentityDecoraterService } from "@src/background/services/identity/services/IdentityDecorater";
-import { IdentityFactoryService } from "@src/background/services/identity/services/IdentityFactory";
-import { BrowserController } from "@src/background/controllers/browser";
 
 const IDENTITY_KEY = "@@ID@@";
 const ACTIVE_IDENTITY_KEY = "@@AID@@";
@@ -183,11 +182,15 @@ export class IdentityService extends IdentityFactoryService {
       });
   };
 
-  public createIdentityRequest = async () => {
+  public createIdentityRequest = async (): Promise<void> => {
     await this.browsercontroller.openPopup({ params: { redirect: Paths.CREATE_IDENTITY } });
-  }
+  };
 
-  public createIdentity = async ({ strategy, messageSignature, options }: NewIdentityRequest): Promise<{status: boolean, identityCommitment?: bigint}> => {
+  public createIdentity = async ({
+    strategy,
+    messageSignature,
+    options,
+  }: NewIdentityRequest): Promise<{ status: boolean; identityCommitment?: bigint }> => {
     if (!strategy) {
       throw new Error("strategy not provided");
     }
@@ -208,15 +211,15 @@ export class IdentityService extends IdentityFactoryService {
       throw new Error("Identity not created, make sure to check strategy");
     }
 
-    const status = await this.insertIdentity(identity)
+    const status = await this.insertIdentity(identity);
 
     await this.browsercontroller.closePopup();
 
     return {
       status,
-      identityCommitment: identity.genIdentityCommitment()
+      identityCommitment: identity.genIdentityCommitment(),
     };
-  }
+  };
 
   private insertIdentity = async (newIdentity: IdentityDecoraterService): Promise<boolean> => {
     const identities = await this.getIdentitiesFromStore();
@@ -316,9 +319,9 @@ export class IdentityService extends IdentityFactoryService {
       features.RANDOM_IDENTITY
         ? iterableIdentities
         : [...iterableIdentities].filter(
-          ([, identity]) =>
-            IdentityDecoraterService.genFromSerialized(identity).metadata.identityStrategy !== "random",
-        ),
+            ([, identity]) =>
+              IdentityDecoraterService.genFromSerialized(identity).metadata.identityStrategy !== "random",
+          ),
     );
   };
 
