@@ -1,13 +1,15 @@
-import ZkIdentityDecorater from "@src/background/identityDecorater";
-import SemaphoreService from "@src/background/services/protocols/semaphore";
+import { IdentityDecoraterService } from "@src/background/services/identity";
+import { SemaphoreService } from "@src/background/services/proof";
 
 import { ISemaphoreGenerateArgs, SemaphoreProofGenerator } from "..";
 
-jest.mock("@src/background/identityDecorater", (): unknown => ({
-  genFromSerialized: jest.fn(),
+jest.mock("@src/background/services/identity", (): unknown => ({
+  IdentityDecoraterService: {
+    genFromSerialized: jest.fn(),
+  },
 }));
 
-jest.mock("@src/background/services/protocols/semaphore");
+jest.mock("@src/background/services/proof/Semaphore");
 
 describe("contentScripts/proof/semaphore", () => {
   const defaultGenerateArgs: ISemaphoreGenerateArgs = {
@@ -29,7 +31,7 @@ describe("contentScripts/proof/semaphore", () => {
   };
 
   beforeEach(() => {
-    (ZkIdentityDecorater.genFromSerialized as jest.Mock).mockReturnValue("serialized");
+    (IdentityDecoraterService.genFromSerialized as jest.Mock).mockReturnValue("serialized");
   });
 
   afterEach(() => {

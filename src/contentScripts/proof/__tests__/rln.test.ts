@@ -1,13 +1,15 @@
-import ZkIdentityDecorater from "@src/background/identityDecorater";
-import RLNService from "@src/background/services/protocols/rln";
+import { IdentityDecoraterService } from "@src/background/services/identity";
+import { RLNService } from "@src/background/services/proof";
 
 import { IRlnGenerateArgs, RlnProofGenerator } from "..";
 
-jest.mock("@src/background/identityDecorater", (): unknown => ({
-  genFromSerialized: jest.fn(),
+jest.mock("@src/background/services/identity", (): unknown => ({
+  IdentityDecoraterService: {
+    genFromSerialized: jest.fn(),
+  },
 }));
 
-jest.mock("@src/background/services/protocols/rln");
+jest.mock("@src/background/services/proof/RLN");
 
 describe("contentScripts/proof/rln", () => {
   const defaultGenerateArgs: IRlnGenerateArgs = {
@@ -28,7 +30,7 @@ describe("contentScripts/proof/rln", () => {
   };
 
   beforeEach(() => {
-    (ZkIdentityDecorater.genFromSerialized as jest.Mock).mockReturnValue("serialized");
+    (IdentityDecoraterService.genFromSerialized as jest.Mock).mockReturnValue("serialized");
   });
 
   afterEach(() => {
