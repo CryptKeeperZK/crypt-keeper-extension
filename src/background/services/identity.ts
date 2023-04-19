@@ -196,6 +196,7 @@ export default class IdentityService {
     identities.set(identityCommitment, newIdentity.serialize());
     await this.writeIdentities(identities);
     await this.updateActiveIdentity({ identities, identityCommitment });
+    await this.refresh();
     await this.historyService.trackOperation(OperationType.CREATE_IDENTITY, {
       identity: { commitment: identityCommitment, metadata: newIdentity.metadata },
     });

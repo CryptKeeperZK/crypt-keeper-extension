@@ -12,7 +12,7 @@ on:
 
 env:
   CRYPTKEEPER_DEBUG: false
-  RANDOM_IDENTITY: false
+  RANDOM_IDENTITY: true
   METAMASK_EXTENSION_ID: "gopbpnbkpnnmomhlhkpljncmmoidkioi"
   METAMASK_VERSION: "10.28.1"
   INFURA_API_KEY: ${{ secrets.INFURA_API_KEY }}

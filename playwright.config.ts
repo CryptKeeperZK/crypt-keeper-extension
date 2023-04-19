@@ -20,7 +20,6 @@ export default defineConfig({
   workers: 1,
   reporter: [["github"], ["list"], ["html"]],
   use: {
-    actionTimeout: 0,
     baseURL: "http://localhost:1234",
     trace: "on-first-retry",
     screenshot: "only-on-failure",
