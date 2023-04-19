@@ -1,4 +1,4 @@
-import { PendingRequest, ProofPayload } from "@src/types";
+import { PendingRequest, ZKProofPayload } from "@src/types";
 import { ButtonType, Button } from "@src/ui/components/Button";
 import { FullModal, FullModalContent, FullModalFooter, FullModalHeader } from "@src/ui/components/FullModal";
 import { Icon } from "@src/ui/components/Icon";
@@ -12,7 +12,7 @@ export interface ProofModalProps {
   len: number;
   loading: boolean;
   error: string;
-  pendingRequest: PendingRequest<ProofPayload>;
+  pendingRequest: PendingRequest<ZKProofPayload>;
   accept: () => void;
   reject: () => void;
 }
