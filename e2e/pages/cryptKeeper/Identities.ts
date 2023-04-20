@@ -1,6 +1,4 @@
-import * as metamaskCommands from "@synthetixio/synpress/commands/metamask";
-
-import BasePage from "./BasePage";
+import BasePage from "../BasePage";
 
 export interface ICreateIdentityArgs {
   identityType?: IdentityType;
@@ -23,36 +21,9 @@ const PROVIDER_OPTIONS: Record<ProviderType, number> = {
   Reddit: 2,
 };
 
-export default class CryptKeeper extends BasePage {
-  public async openPopup(extensionId: string): Promise<void> {
-    await this.page.goto(`chrome-extension://${extensionId}/popup.html`);
-  }
-
-  public async unlock(password: string): Promise<void> {
-    await this.page.getByLabel("Password", { exact: true }).type(password);
-    await this.page.getByText("Unlock", { exact: true }).click();
-  }
-
-  public async lock(): Promise<void> {
-    await this.page.getByTestId("menu").click();
-    await this.page.getByText("Lock", { exact: true }).click();
-  }
-
-  public async connectWallet(): Promise<void> {
-    await this.page.getByTestId("menu").click();
-    await this.page.getByText("Connect wallet", { exact: true }).click();
-
-    await metamaskCommands.acceptAccess();
-  }
-
-  public async createAccount(password: string, confirmPassword?: string): Promise<void> {
-    await this.page.getByLabel("Password", { exact: true }).type(password);
-    await this.page.getByLabel("Confirm Password", { exact: true }).type(confirmPassword ?? password);
-    await this.page.getByText("Continue", { exact: true }).click();
-  }
-
-  public async approve(): Promise<void> {
-    await this.page.getByText("Approve").click();
+export default class Identities extends BasePage {
+  public async openTab(): Promise<void> {
+    await this.page.getByText("Identities", { exact: true }).click();
   }
 
   public async createIdentity({ identityType, provider, nonce }: ICreateIdentityArgs | undefined = {}): Promise<void> {
@@ -91,7 +62,7 @@ export default class CryptKeeper extends BasePage {
     await this.page.locator("#identityRename").press("Enter");
   }
 
-  public async deleteIdentity(index: number): Promise<void> {
+  public async deleteIdentity(index = 0): Promise<void> {
     const identities = await this.page.locator(".identity-row").all();
     await identities[index].getByTestId("menu").click();
 

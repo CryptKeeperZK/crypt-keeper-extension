@@ -19,7 +19,7 @@ type IconWeb2Providers = Record<IdentityWeb2Provider, [IconPrefix, IconName]>;
 
 const OPERATIONS: Record<OperationType, string> = {
   [OperationType.CREATE_IDENTITY]: "Identity created",
-  [OperationType.DELETE_IDENTITY]: "Idendity removed",
+  [OperationType.DELETE_IDENTITY]: "Identity removed",
   [OperationType.DELETE_ALL_IDENTITIES]: "All identities removed",
 };
 
