@@ -1,4 +1,4 @@
-import { HandlerRequest } from "@src/types";
+import { RequestHandler } from "@src/types";
 
 // TODO: eslint fix any
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -22,7 +22,7 @@ export default class Handler {
     this.handlers.set(method, { middlewares, handler });
   };
 
-  public handle = async ({ method, payload, meta }: HandlerRequest): Promise<unknown> => {
+  public handle = async ({ method, payload, meta }: RequestHandler): Promise<unknown> => {
     const handler = this.handlers.get(method);
 
     if (!handler) {

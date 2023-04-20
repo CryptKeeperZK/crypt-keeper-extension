@@ -1,10 +1,10 @@
 import { getLinkPreview } from "link-preview-js";
 import { useCallback, useEffect, useState } from "react";
 
-import { PendingRequest, PendingRequestType, ProofPayload } from "@src/types";
+import { PendingRequest, PendingRequestType, ZKProofPayload } from "@src/types";
 
 export interface IUseProofModalArgs {
-  pendingRequest: PendingRequest<ProofPayload>;
+  pendingRequest: PendingRequest<ZKProofPayload>;
   accept: () => void;
   reject: () => void;
 }
@@ -13,7 +13,7 @@ export interface IUseProofModalData {
   host: string;
   faviconUrl: string;
   operation: string;
-  payload?: ProofPayload;
+  payload?: ZKProofPayload;
   onAccept: () => void;
   onReject: () => void;
   onOpenCircuitFile: () => void;

@@ -4,7 +4,7 @@ import { browser } from "webextension-polyfill-ts";
 
 import { deferredPromise } from "@src/background/shared/utils";
 import { isDebugMode } from "@src/config/env";
-import { HandlerRequest } from "@src/types";
+import { RequestHandler } from "@src/types";
 
 import "./appInit";
 import "./shared/initGlobals";
@@ -35,7 +35,7 @@ try {
 
   app.initialize();
 
-  browser.runtime.onMessage.addListener(async (request: HandlerRequest) => {
+  browser.runtime.onMessage.addListener(async (request: RequestHandler) => {
     try {
       log.debug("Background: request: ", request);
       const response = await app.handle(request);

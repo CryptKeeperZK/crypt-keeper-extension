@@ -15,7 +15,9 @@
     "test": "jest",
     "test:coverage": "jest --coverage",
     "test:watch": "jest --watch",
+    "jest:clearCache": "jest --clearCache",
     "e2e": "playwright test",
+    "e2e:ci": "CI=true npm run e2e",
     "e2e:debug": "npm run e2e -- --debug",
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
     "lint:fix": "eslint . --ext .js,.jsx,.ts,.tsx --fix",
@@ -152,7 +154,7 @@
     "react-select": "^5.7.2",
     "redux-logger": "^3.0.6",
     "redux-thunk": "^2.4.2",
-    "rlnjs": "^2.0.6",
+    "rlnjs": "^2.0.8",
     "subworkers": "^1.0.1",
     "webextension-polyfill-ts": "^0.26.0",
     "yup": "^1.0.2"
