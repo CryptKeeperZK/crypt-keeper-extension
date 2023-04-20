@@ -5,4 +5,5 @@ export enum Paths {
   LOGIN = "/login",
   ONBOARDING = "/onboarding",
   REQUESTS = "/requests",
+  SETTINGS = "/settings",
 }

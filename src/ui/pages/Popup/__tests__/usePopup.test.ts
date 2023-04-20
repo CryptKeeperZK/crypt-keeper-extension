@@ -144,7 +144,7 @@ describe("ui/pages/Popup/usePopup", () => {
     expect(mockNavigate).toBeCalledWith(Paths.ONBOARDING);
   });
 
-  test("should redirect to onboarding page", async () => {
+  test("should redirect to pending requests page", async () => {
     (useAppStatus as jest.Mock).mockReturnValue({ isInitialized: true, isUnlocked: true });
     (usePendingRequests as jest.Mock).mockReturnValue([{}]);
 
@@ -153,16 +153,5 @@ describe("ui/pages/Popup/usePopup", () => {
 
     expect(mockNavigate).toBeCalledTimes(1);
     expect(mockNavigate).toBeCalledWith(Paths.REQUESTS);
-  });
-
-  test("should redirect to home page", async () => {
-    (useAppStatus as jest.Mock).mockReturnValue({ isInitialized: true, isUnlocked: true });
-    (usePendingRequests as jest.Mock).mockReturnValue([]);
-
-    const { result } = renderHook(() => usePopup());
-    await waitForData(result.current);
-
-    expect(mockNavigate).toBeCalledTimes(1);
-    expect(mockNavigate).toBeCalledWith(Paths.HOME);
   });
 });

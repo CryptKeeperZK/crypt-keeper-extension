@@ -4,12 +4,17 @@
 
 import { render, waitFor } from "@testing-library/react";
 import { Suspense } from "react";
+import { useNavigate } from "react-router-dom";
 
 import { defaultWalletHookData } from "@src/config/mock/wallet";
 import { useWallet } from "@src/ui/hooks/wallet";
 
 import Home from "..";
 import { IUseHomeData, useHome } from "../useHome";
+
+jest.mock("react-router-dom", () => ({
+  useNavigate: jest.fn(),
+}));
 
 jest.mock("@src/ui/hooks/wallet", (): unknown => ({
   useWallet: jest.fn(),
@@ -25,6 +30,8 @@ jest.mock("../useHome", (): unknown => ({
 }));
 
 describe("ui/pages/Home", () => {
+  const mockNavigate = jest.fn();
+
   const defaultHookData: IUseHomeData = {
     identities: [],
     address: defaultWalletHookData.address,
@@ -35,6 +42,8 @@ describe("ui/pages/Home", () => {
 
   beforeEach(() => {
     (useHome as jest.Mock).mockReturnValue(defaultHookData);
+
+    (useNavigate as jest.Mock).mockReturnValue(mockNavigate);
 
     (useWallet as jest.Mock).mockReturnValue(defaultWalletHookData);
   });

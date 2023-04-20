@@ -39,6 +39,13 @@ a {
   }
 }
 
+.options {
+  @extend %col-nowrap;
+  display: flex;
+  width: 100vw;
+  height: 100vh;
+}
+
 @media only screen and (min-width: 768px) {
   html {
     height: 100%;
@@ -51,6 +58,14 @@ a {
   }
 
   .popup {
+    width: 36rem;
+    height: 40rem;
+    border: 1px solid $gray-700;
+    margin: 3rem auto;
+    box-shadow: 0 2px 4px 0px $header-gray;
+  }
+
+  .options {
     width: 36rem;
     height: 40rem;
     border: 1px solid $gray-700;

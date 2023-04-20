@@ -45,7 +45,7 @@ describe("ui/pages/Popup", () => {
 
     (usePendingRequests as jest.Mock).mockReturnValue([{ type: "unknown" }]);
 
-    (useAppDispatch as jest.Mock).mockReturnValue(jest.fn());
+    (useAppDispatch as jest.Mock).mockReturnValue(jest.fn(() => Promise.resolve()));
 
     (useAppSelector as jest.Mock).mockReturnValue([]);
 
@@ -133,5 +133,20 @@ describe("ui/pages/Popup", () => {
 
     const home = await findByTestId("home-page");
     expect(home).toBeInTheDocument();
+  });
+
+  test("should render settings page properly", async () => {
+    const { container, findByTestId } = render(
+      <MemoryRouter initialEntries={[Paths.SETTINGS]}>
+        <Suspense>
+          <Popup />
+        </Suspense>
+      </MemoryRouter>,
+    );
+
+    await waitFor(() => container.firstChild !== null);
+
+    const settings = await findByTestId("settings");
+    expect(settings).toBeInTheDocument();
   });
 });

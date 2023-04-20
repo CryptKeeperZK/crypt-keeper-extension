@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/unbound-method */
 import { browser } from "webextension-polyfill-ts";
 
-import { getLastActiveTabUrl, redirectToNewTab } from "../browser";
+import { getLastActiveTabUrl, redirectToNewTab, getExtensionUrl } from "../browser";
 
 describe("util/browser", () => {
   const defaultTabs = [{ url: "http://localhost:3000" }];
@@ -33,5 +33,12 @@ describe("util/browser", () => {
 
     expect(browser.tabs.create).toBeCalledTimes(1);
     expect(browser.tabs.create).toBeCalledWith({ url: "url" });
+  });
+
+  test("should redirect to new tab properly", () => {
+    getExtensionUrl("url");
+
+    expect(browser.runtime.getURL).toBeCalledTimes(1);
+    expect(browser.runtime.getURL).toBeCalledWith("url");
   });
 });

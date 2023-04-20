@@ -9,3 +9,5 @@ export const getLastActiveTabUrl = async (): Promise<URL | undefined> => {
 export const redirectToNewTab = async (url: string): Promise<void> => {
   await browser.tabs.create({ url });
 };
+
+export const getExtensionUrl = (path: string): string => browser.runtime.getURL(path);

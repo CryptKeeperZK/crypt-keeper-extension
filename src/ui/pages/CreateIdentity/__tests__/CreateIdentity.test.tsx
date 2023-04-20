@@ -5,6 +5,7 @@
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { faTwitter, faGithub, faReddit } from "@fortawesome/free-brands-svg-icons";
 import { act, fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { useNavigate } from "react-router-dom";
 import selectEvent from "react-select-event";
 
 import { ZERO_ADDRESS } from "@src/config/const";
@@ -17,6 +18,10 @@ import { useWallet } from "@src/ui/hooks/wallet";
 import { signIdentityMessage } from "@src/ui/services/identity";
 
 import CreateIdentity from "..";
+
+jest.mock("react-router-dom", () => ({
+  useNavigate: jest.fn(),
+}));
 
 jest.mock("@src/ui/ducks/hooks", (): unknown => ({
   useAppDispatch: jest.fn(),
@@ -41,6 +46,7 @@ jest.mock("@src/ui/hooks/wallet", (): unknown => ({
 describe("ui/pages/CreateIdentity", () => {
   const mockSignedMessage = "signed-message";
   const mockDispatch = jest.fn(() => Promise.resolve());
+  const mockNavigate = jest.fn();
 
   beforeEach(() => {
     library.add(faTwitter, faGithub, faReddit);
@@ -48,6 +54,8 @@ describe("ui/pages/CreateIdentity", () => {
     (useWallet as jest.Mock).mockReturnValue(defaultWalletHookData);
 
     (useAppDispatch as jest.Mock).mockReturnValue(mockDispatch);
+
+    (useNavigate as jest.Mock).mockReturnValue(mockNavigate);
 
     (signIdentityMessage as jest.Mock).mockResolvedValue(mockSignedMessage);
 

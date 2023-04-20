@@ -1,9 +1,11 @@
 import { nanoid } from "nanoid";
+import { browser } from "webextension-polyfill-ts";
 
 import { getEnabledFeatures } from "@src/config/features";
 import { HistorySettings, IdentityData, Operation, OperationType } from "@src/types";
 
 import LockService from "../lock";
+import NotificationService from "../notification";
 import SimpleStorage from "../simpleStorage";
 
 const HISTORY_KEY = "@@HISTORY@@";
@@ -31,6 +33,8 @@ export default class HistoryService {
 
   private lockService: LockService;
 
+  private notificationService: NotificationService;
+
   private operations: Operation[];
 
   private settings?: HistorySettings;
@@ -39,6 +43,7 @@ export default class HistoryService {
     this.historyStore = new SimpleStorage(HISTORY_KEY);
     this.historySettingsStore = new SimpleStorage(HISTORY_SETTINGS_KEY);
     this.lockService = LockService.getInstance();
+    this.notificationService = NotificationService.getInstance();
     this.operations = [];
     this.settings = undefined;
   }
@@ -103,6 +108,15 @@ export default class HistoryService {
   public clear = async (): Promise<void> => {
     this.operations = [];
     await this.historyStore.clear();
+
+    await this.notificationService.create({
+      options: {
+        title: "History clear",
+        message: "History operations has been cleared",
+        iconUrl: browser.runtime.getURL("/logo.png"),
+        type: "basic",
+      },
+    });
   };
 
   private loadSettings = async (): Promise<HistorySettings> => {

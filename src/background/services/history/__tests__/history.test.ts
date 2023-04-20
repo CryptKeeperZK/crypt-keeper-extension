@@ -39,6 +39,15 @@ const mockSerializedDefaultOperations = JSON.stringify(mockDefaultOperations);
 const mockDefaultSettings = { isEnabled: true };
 const mockSerializedDefaultSettings = JSON.stringify(mockDefaultSettings);
 
+jest.mock("../../notification", (): unknown => ({
+  __esModule: true,
+  default: {
+    getInstance: jest.fn(() => ({
+      create: jest.fn(),
+    })),
+  },
+}));
+
 jest.mock("../../lock", (): unknown => ({
   __esModule: true,
   default: {

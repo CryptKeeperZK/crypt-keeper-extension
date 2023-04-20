@@ -1,7 +1,9 @@
 import classNames from "classnames";
 import { useCallback } from "react";
 import Jazzicon, { jsNumberForAddress } from "react-jazzicon";
+import { useNavigate } from "react-router-dom";
 
+import { Paths } from "@src/constants";
 import loaderSvg from "@src/static/icons/loader.svg";
 import logoSvg from "@src/static/icons/logo.svg";
 import { Icon } from "@src/ui/components/Icon";
@@ -15,15 +17,24 @@ const METAMASK_INSTALL_URL = "https://metamask.io/";
 
 export const Header = (): JSX.Element => {
   const { address, isActivating, isActive, isInjectedWallet, chain, onConnect, onDisconnect, onLock } = useWallet();
+  const navigate = useNavigate();
   const isLoading = isActivating && isInjectedWallet;
 
   const onGoToMetamaskPage = useCallback(() => {
     redirectToNewTab(METAMASK_INSTALL_URL);
   }, []);
 
+  const onGoToHome = useCallback(() => {
+    navigate(Paths.HOME);
+  }, [navigate]);
+
+  const onGoToSettings = useCallback(() => {
+    navigate(Paths.SETTINGS);
+  }, [navigate]);
+
   return (
     <div className="header h-16 flex flex-row items-center px-4">
-      <Icon size={3} url={logoSvg} />
+      <Icon data-testid="logo" size={3} url={logoSvg} onClick={onGoToHome} />
 
       <div className="flex-grow flex flex-row items-center justify-end header__content">
         {chain && <div className="text-sm rounded-full header__network-type">{chain.name}</div>}
@@ -43,6 +54,11 @@ export const Header = (): JSX.Element => {
                     isDangerItem: false,
                     onClick: isInjectedWallet ? onConnect : onGoToMetamaskPage,
                   },
+              {
+                label: "Settings",
+                isDangerItem: false,
+                onClick: onGoToSettings,
+              },
               {
                 label: "Lock",
                 isDangerItem: false,

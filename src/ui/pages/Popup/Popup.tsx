@@ -6,17 +6,19 @@ import CreateIdentity from "@src/ui/pages/CreateIdentity";
 import Home from "@src/ui/pages/Home";
 import Login from "@src/ui/pages/Login";
 import Onboarding from "@src/ui/pages/Onboarding";
+import Settings from "@src/ui/pages/Settings";
 
-import "./popup.scss";
+import "../../styles.scss";
+
 import { usePopup } from "./usePopup";
 
 const routeConfig: RouteObject[] = [
-  { path: Paths.ROOT, element: null },
   { path: Paths.HOME, element: <Home /> },
   { path: Paths.CREATE_IDENTITY, element: <CreateIdentity /> },
   { path: Paths.LOGIN, element: <Login /> },
   { path: Paths.ONBOARDING, element: <Onboarding /> },
   { path: Paths.REQUESTS, element: <ConfirmRequestModal /> },
+  { path: Paths.SETTINGS, element: <Settings /> },
   {
     path: "*",
     element: <Navigate to={Paths.HOME} />,

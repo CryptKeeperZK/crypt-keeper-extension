@@ -1,8 +1,9 @@
 import { BaseSyntheticEvent, useCallback } from "react";
 import { Control, useForm, UseFormRegister } from "react-hook-form";
+import { useNavigate } from "react-router-dom";
 
 import { getEnabledFeatures } from "@src/config/features";
-import { WEB2_PROVIDER_OPTIONS, IDENTITY_TYPES } from "@src/constants";
+import { WEB2_PROVIDER_OPTIONS, IDENTITY_TYPES, Paths } from "@src/constants";
 import { IdentityStrategy, IdentityWeb2Provider, SelectOption } from "@src/types";
 import { closePopup } from "@src/ui/ducks/app";
 import { useAppDispatch } from "@src/ui/ducks/hooks";
@@ -47,6 +48,7 @@ export const useCreateIdentity = (): IUseCreateIdentityData => {
       nonce: 0,
     },
   });
+  const navigate = useNavigate();
 
   const { address, provider } = useWallet();
   const dispatch = useAppDispatch();
@@ -71,7 +73,8 @@ export const useCreateIdentity = (): IUseCreateIdentityData => {
         });
 
         if (messageSignature) {
-          dispatch(createIdentity(identityStrategyType.value as IdentityStrategy, messageSignature, options));
+          await dispatch(createIdentity(identityStrategyType.value as IdentityStrategy, messageSignature, options));
+          navigate(Paths.HOME);
         }
       } catch (err) {
         setError("root", { type: "submit", message: (err as Error).message });
