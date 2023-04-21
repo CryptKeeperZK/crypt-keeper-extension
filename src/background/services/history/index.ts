@@ -44,9 +44,18 @@ export default class HistoryService {
     return HistoryService.INSTANCE;
   }
 
+  getSettings = (): HistorySettings | undefined => this.settings;
+
+  getOperations = (filter?: Partial<OperationFilter>): Operation[] =>
+    this.operations.filter((operation) => (filter?.type ? operation.type === filter.type : true));
+
   enableHistory = async (isEnabled: boolean): Promise<void> => {
     this.settings = { isEnabled };
     await this.writeSettings(this.settings);
+  };
+
+  private writeSettings = async (settings: HistorySettings) => {
+    await this.historySettingsStore.set(JSON.stringify(settings));
   };
 
   loadOperations = async (): Promise<ILoadOperationsData> => {
@@ -65,10 +74,18 @@ export default class HistoryService {
     return { operations: this.operations, settings: this.settings };
   };
 
-  getOperations = (filter?: Partial<OperationFilter>): Operation[] =>
-    this.operations.filter((operation) => (filter?.type ? operation.type === filter.type : true));
+  private loadSettings = async (): Promise<HistorySettings> => {
+    this.settings = await this.historySettingsStore
+      .get<string>()
+      .then((settings) => (settings ? (JSON.parse(settings) as HistorySettings) : undefined));
 
-  getSettings = (): HistorySettings | undefined => this.settings;
+    if (!this.settings) {
+      this.settings = { isEnabled: true };
+      await this.writeSettings(this.settings);
+    }
+
+    return this.settings;
+  };
 
   trackOperation = async (type: OperationType, { identity }: OperationOptions): Promise<void> => {
     if (!this.settings?.isEnabled) {
@@ -83,6 +100,11 @@ export default class HistoryService {
     });
 
     await this.writeOperations(this.operations);
+  };
+
+  private writeOperations = async (operations: Operation[]) => {
+    const cipherText = this.lockService.encrypt(JSON.stringify(operations));
+    await this.historyStore.set(cipherText);
   };
 
   removeOperation = async (id: string): Promise<Operation[]> => {
@@ -105,27 +127,5 @@ export default class HistoryService {
         type: "basic",
       },
     });
-  };
-
-  private loadSettings = async (): Promise<HistorySettings> => {
-    this.settings = await this.historySettingsStore
-      .get<string>()
-      .then((settings) => (settings ? (JSON.parse(settings) as HistorySettings) : undefined));
-
-    if (!this.settings) {
-      this.settings = { isEnabled: true };
-      await this.writeSettings(this.settings);
-    }
-
-    return this.settings;
-  };
-
-  private writeOperations = async (operations: Operation[]) => {
-    const cipherText = this.lockService.encrypt(JSON.stringify(operations));
-    await this.historyStore.set(cipherText);
-  };
-
-  private writeSettings = async (settings: HistorySettings) => {
-    await this.historySettingsStore.set(JSON.stringify(settings));
   };
 }
