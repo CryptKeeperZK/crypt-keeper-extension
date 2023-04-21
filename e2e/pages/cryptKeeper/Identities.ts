@@ -27,10 +27,9 @@ export default class Identities extends BasePage {
   }
 
   public async createIdentity({ identityType, provider, nonce }: ICreateIdentityArgs | undefined = {}): Promise<void> {
-    const [cryptKeeper] = await Promise.all([
-      this.page.context().waitForEvent("page"),
-      this.page.getByText(/Add Identity/).click(),
-    ]);
+    await this.page.getByText(/Add Identity/).click();
+
+    const cryptKeeper = await this.page.context().waitForEvent("page");
 
     if (identityType) {
       await cryptKeeper.locator("#identityStrategyType").click();
@@ -45,10 +44,12 @@ export default class Identities extends BasePage {
     if (nonce && identityType !== "Random") {
       await cryptKeeper.getByLabel("Nonce").fill(nonce.toString());
     }
+
     await cryptKeeper.getByRole("button", { name: "Create" }).click();
 
     // TODO: synpress doesn't support new data-testid for metamask
     const metamask = await this.page.context().waitForEvent("page");
+
     await metamask.getByTestId("page-container-footer-next").click();
   }
 

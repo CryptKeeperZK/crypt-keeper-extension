@@ -38,10 +38,7 @@ async function connectCryptKeeper(app: Page): Promise<CryptKeeper> {
   await expect(app).toHaveTitle(/Crypt-keeper Extension demo/);
   await expect(app.getByText(/Please connect to Crypt-Keeper to continue./)).toBeVisible();
 
-  const [, popup] = await Promise.all([
-    app.getByText("Connect", { exact: true }).click(),
-    app.context().waitForEvent("page"),
-  ]);
+  const popup = await app.context().waitForEvent("page");
 
   return new CryptKeeper(popup);
 }

@@ -48,6 +48,7 @@ export const test = base.extend<TestExtension>({
       });
 
       await use(context);
+      await context.close();
     },
     { scope: "test" },
   ],
@@ -61,6 +62,7 @@ export const test = base.extend<TestExtension>({
 
       const extensionId = background.url().split("/")[2];
       await use(extensionId);
+      await context.close();
     },
     { scope: "test" },
   ],
