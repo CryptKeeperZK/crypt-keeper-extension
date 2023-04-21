@@ -6,7 +6,7 @@ import { SemaphoreProof, SemaphoreProofRequest } from "@src/types";
 import { getMerkleProof } from "./utils";
 import { ZkProof } from "./ZkProof";
 
-export class SemaphoreProofService extends ZkProof {
+export class SemaphoreProofService extends ZkProof<SemaphoreProofRequest, SemaphoreProof> {
   async genProof(
     identity: ZkIdentityDecorater,
     {

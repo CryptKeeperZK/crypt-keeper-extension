@@ -6,7 +6,7 @@ import { RLNProofRequest } from "@src/types";
 import { getMerkleProof, getRlnVerficationKeyJson } from "./utils";
 import { ZkProof } from "./ZkProof";
 
-export class RLNProofService extends ZkProof {
+export class RLNProofService extends ZkProof<RLNProofRequest, RLNFullProof> {
   async genProof(
     identity: ZkIdentityDecorater,
     {
