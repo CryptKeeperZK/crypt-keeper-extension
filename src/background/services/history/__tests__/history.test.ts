@@ -39,7 +39,7 @@ const mockSerializedDefaultOperations = JSON.stringify(mockDefaultOperations);
 const mockDefaultSettings = { isEnabled: true };
 const mockSerializedDefaultSettings = JSON.stringify(mockDefaultSettings);
 
-jest.mock("../../notification", (): unknown => ({
+jest.mock("@src/background/services/notification", (): unknown => ({
   __esModule: true,
   default: {
     getInstance: jest.fn(() => ({
@@ -48,7 +48,7 @@ jest.mock("../../notification", (): unknown => ({
   },
 }));
 
-jest.mock("../../lock", (): unknown => ({
+jest.mock("@src/background/services/lock", (): unknown => ({
   __esModule: true,
   default: {
     getInstance: jest.fn(() => ({
@@ -58,7 +58,7 @@ jest.mock("../../lock", (): unknown => ({
   },
 }));
 
-jest.mock("../../simpleStorage");
+jest.mock("@src/background/services/simpleStorage");
 
 type MockStorage = { get: jest.Mock; set: jest.Mock; clear: jest.Mock };
 

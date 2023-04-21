@@ -1,28 +1,16 @@
 import { nanoid } from "nanoid";
 import { browser } from "webextension-polyfill-ts";
 
+import LockService from "@src/background/services/lock";
+import NotificationService from "@src/background/services/notification";
+import SimpleStorage from "@src/background/services/simpleStorage";
 import { getEnabledFeatures } from "@src/config/features";
-import { HistorySettings, IdentityData, Operation, OperationType } from "@src/types";
+import { HistorySettings, Operation, OperationType } from "@src/types";
 
-import LockService from "../lock";
-import NotificationService from "../notification";
-import SimpleStorage from "../simpleStorage";
+import { ILoadOperationsData, OperationFilter, OperationOptions } from "./types";
 
 const HISTORY_KEY = "@@HISTORY@@";
 const HISTORY_SETTINGS_KEY = "@@HISTORY-SETTINGS@@";
-
-export interface OperationOptions {
-  identity?: IdentityData;
-}
-
-export interface OperationFilter {
-  type: OperationType;
-}
-
-export interface ILoadOperationsData {
-  operations: Operation[];
-  settings?: HistorySettings;
-}
 
 export default class HistoryService {
   private static INSTANCE: HistoryService;
