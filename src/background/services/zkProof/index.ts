@@ -1,3 +1,3 @@
-export * from "./RLNProof";
+export * from "./protocols/RLNProof";
 export * from "./SemaphoreProof";
-export * from "./utils";
+export * from "./protocols/utils";

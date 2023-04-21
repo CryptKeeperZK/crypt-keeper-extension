@@ -4,9 +4,9 @@ import ZkIdentityDecorater from "@src/background/identityDecorater";
 import { SemaphoreProof, SemaphoreProofRequest } from "@src/types";
 
 import { getMerkleProof } from "./utils";
-import { ZkProof } from "./ZkProof";
+import { IZkProof } from "./IZkProof";
 
-export class SemaphoreProofService extends ZkProof<SemaphoreProofRequest, SemaphoreProof> {
+export class SemaphoreProofService implements IZkProof<SemaphoreProofRequest, SemaphoreProof> {
   async genProof(
     identity: ZkIdentityDecorater,
     {

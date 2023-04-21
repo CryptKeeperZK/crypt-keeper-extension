@@ -1,7 +1,7 @@
 import { Identity } from "@semaphore-protocol/identity";
 import { MerkleProof } from "@zk-kit/incremental-merkle-tree";
 
-import { deserializeMerkleProof, generateMerkleProof, getMerkleProof, getRlnVerficationKeyJson } from "../utils";
+import { deserializeMerkleProof, generateMerkleProof, getMerkleProof, getRlnVerficationKeyJson } from "../protocols/utils";
 
 describe("background/services/protocols/utils", () => {
   const defaultMerkleProof: MerkleProof = {
