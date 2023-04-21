@@ -3,29 +3,29 @@ import { Identity } from "@semaphore-protocol/identity";
 import { SerializedIdentity, IdentityMetadata } from "@src/types";
 
 export default class ZkIdentityDecorater {
-  public zkIdentity: Identity;
+  zkIdentity: Identity;
 
-  public metadata: IdentityMetadata;
+  metadata: IdentityMetadata;
 
-  public constructor(zkIdentity: Identity, metadata: IdentityMetadata) {
+  constructor(zkIdentity: Identity, metadata: IdentityMetadata) {
     this.zkIdentity = zkIdentity;
     this.metadata = metadata;
   }
 
-  public genIdentityCommitment = (): bigint => this.zkIdentity.getCommitment();
+  genIdentityCommitment = (): bigint => this.zkIdentity.getCommitment();
 
-  public setIdentityMetadataName = (name: string): IdentityMetadata => {
+  setIdentityMetadataName = (name: string): IdentityMetadata => {
     this.metadata.name = name;
     return this.metadata;
   };
 
-  public serialize = (): string =>
+  serialize = (): string =>
     JSON.stringify({
       secret: this.zkIdentity.toString(),
       metadata: this.metadata,
     });
 
-  public static genFromSerialized = (serialized: string): ZkIdentityDecorater => {
+  static genFromSerialized = (serialized: string): ZkIdentityDecorater => {
     const data = JSON.parse(serialized) as SerializedIdentity;
 
     if (!data.metadata) {

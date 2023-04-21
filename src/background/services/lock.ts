@@ -34,7 +34,7 @@ export default class LockService {
     this.unlockCB = undefined;
   }
 
-  public static getInstance(): LockService {
+  static getInstance(): LockService {
     if (!LockService.INSTANCE) {
       LockService.INSTANCE = new LockService();
     }
@@ -45,13 +45,13 @@ export default class LockService {
   /**
    *  This method is called when install event occurs
    */
-  public setupPassword = async (password: string): Promise<void> => {
+  setupPassword = async (password: string): Promise<void> => {
     const cipherText = CryptoJS.AES.encrypt(this.passwordChecker, password).toString();
     await this.passwordStorage.set(cipherText);
     await this.unlock(password);
   };
 
-  public getStatus = async (): Promise<LockStatus> => {
+  getStatus = async (): Promise<LockStatus> => {
     const cipherText = await this.passwordStorage.get();
 
     return {
@@ -60,7 +60,7 @@ export default class LockService {
     };
   };
 
-  public awaitUnlock = async (): Promise<unknown | undefined> => {
+  awaitUnlock = async (): Promise<unknown | undefined> => {
     if (this.isUnlocked) {
       return undefined;
     }
@@ -70,7 +70,7 @@ export default class LockService {
     });
   };
 
-  public onUnlocked = (): boolean => {
+  onUnlocked = (): boolean => {
     if (this.unlockCB) {
       this.unlockCB();
       this.unlockCB = undefined;
@@ -79,7 +79,7 @@ export default class LockService {
     return true;
   };
 
-  public unlock = async (password: string): Promise<boolean> => {
+  unlock = async (password: string): Promise<boolean> => {
     if (this.isUnlocked) {
       return true;
     }
@@ -110,13 +110,13 @@ export default class LockService {
     return true;
   };
 
-  public logout = async (): Promise<boolean> => {
+  logout = async (): Promise<boolean> => {
     await this.internalLogout();
 
     return true;
   };
 
-  public ensure = (payload: unknown = null): unknown | null | false => {
+  ensure = (payload: unknown = null): unknown | null | false => {
     if (!this.isUnlocked || !this.password) {
       return false;
     }
@@ -124,7 +124,7 @@ export default class LockService {
     return payload;
   };
 
-  public encrypt = (payload: string): string => {
+  encrypt = (payload: string): string => {
     if (!this.password) {
       throw new Error("Password is not provided");
     }
@@ -132,7 +132,7 @@ export default class LockService {
     return CryptoJS.AES.encrypt(payload, this.password).toString();
   };
 
-  public decrypt = (ciphertext: string): string => {
+  decrypt = (ciphertext: string): string => {
     if (!this.password) {
       throw new Error("Password is not provided");
     }

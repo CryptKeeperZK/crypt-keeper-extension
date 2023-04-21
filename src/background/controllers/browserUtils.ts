@@ -29,7 +29,7 @@ export default class BrowserUtils {
     this.addRemoveWindowListener(this.cleanCache);
   }
 
-  public static getInstance(): BrowserUtils {
+  static getInstance(): BrowserUtils {
     if (!BrowserUtils.INSTANCE) {
       BrowserUtils.INSTANCE = new BrowserUtils();
     }
@@ -37,7 +37,7 @@ export default class BrowserUtils {
     return BrowserUtils.INSTANCE;
   }
 
-  public openPopup = async ({ params }: OpenPopupArgs = {}): Promise<Windows.Window> => {
+  openPopup = async ({ params }: OpenPopupArgs = {}): Promise<Windows.Window> => {
     if (this.cached?.id) {
       await this.focusWindow(this.cached.id);
       return this.cached;
@@ -65,7 +65,7 @@ export default class BrowserUtils {
     return popup;
   };
 
-  public closePopup = async (): Promise<boolean> => {
+  closePopup = async (): Promise<boolean> => {
     if (this.cached?.id) {
       await browser.windows.remove(this.cached.id);
       this.cached = null;
@@ -74,11 +74,11 @@ export default class BrowserUtils {
     return true;
   };
 
-  public addRemoveWindowListener = (callback: (windowId: number) => void): void => {
+  addRemoveWindowListener = (callback: (windowId: number) => void): void => {
     browser.windows.onRemoved.addListener(callback);
   };
 
-  public removeRemoveWindowListener = (callback: (windowId: number) => void): void => {
+  removeRemoveWindowListener = (callback: (windowId: number) => void): void => {
     browser.windows.onRemoved.removeListener(callback);
   };
 

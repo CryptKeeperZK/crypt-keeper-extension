@@ -18,7 +18,7 @@ export default class NotificationService {
     log.debug("Notification service was initialized");
   }
 
-  public static getInstance(): NotificationService {
+  static getInstance(): NotificationService {
     if (!NotificationService.INSTANCE) {
       NotificationService.INSTANCE = new NotificationService();
     }
@@ -26,14 +26,14 @@ export default class NotificationService {
     return NotificationService.INSTANCE;
   }
 
-  public create = async ({ id, options }: CreateNotificationArgs): Promise<string[]> => {
+  create = async ({ id, options }: CreateNotificationArgs): Promise<string[]> => {
     const tabs = await this.getTabs();
     const notificationIds = await Promise.all(tabs.map(() => browser.notifications.create(id, options)));
 
     return notificationIds;
   };
 
-  public clear = async (id: string): Promise<boolean[]> => {
+  clear = async (id: string): Promise<boolean[]> => {
     const tabs = await this.getTabs();
     const result = await Promise.all(tabs.map(() => browser.notifications.clear(id)));
 

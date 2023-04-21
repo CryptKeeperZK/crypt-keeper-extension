@@ -1,11 +1,11 @@
 import BasePage from "../BasePage";
 
 export default class Activity extends BasePage {
-  public async openTab(): Promise<void> {
+  async openTab(): Promise<void> {
     await this.page.getByText("Activity", { exact: true }).click();
   }
 
-  public async deleteOperation(index = 0): Promise<void> {
+  async deleteOperation(index = 0): Promise<void> {
     const operations = await this.page.locator(".activity-row").all();
     await operations[index].getByTestId("menu").click();
 

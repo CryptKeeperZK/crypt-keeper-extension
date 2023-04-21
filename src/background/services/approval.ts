@@ -14,20 +14,20 @@ export default class ApprovalService {
 
   private lockService: LockService;
 
-  public constructor() {
+  constructor() {
     this.allowedHosts = new Map();
     this.approvals = new SimpleStorage(APPPROVALS_DB_KEY);
     this.lockService = LockService.getInstance();
   }
 
-  public getAllowedHosts = (): string[] =>
+  getAllowedHosts = (): string[] =>
     [...this.allowedHosts.entries()].filter(([, isApproved]) => isApproved).map(([key]) => key);
 
-  public isApproved = (host: string): boolean => this.allowedHosts.has(host);
+  isApproved = (host: string): boolean => this.allowedHosts.has(host);
 
-  public canSkipApprove = (host: string): boolean => Boolean(this.allowedHosts.get(host)?.noApproval);
+  canSkipApprove = (host: string): boolean => Boolean(this.allowedHosts.get(host)?.noApproval);
 
-  public unlock = async (): Promise<boolean> => {
+  unlock = async (): Promise<boolean> => {
     const encryped = await this.approvals.get<string>();
 
     if (encryped) {
@@ -38,18 +38,18 @@ export default class ApprovalService {
     return true;
   };
 
-  public getPermission = (host: string): HostPermission => ({
+  getPermission = (host: string): HostPermission => ({
     noApproval: Boolean(this.allowedHosts.get(host)?.noApproval),
   });
 
-  public setPermission = async (host: string, { noApproval }: HostPermission): Promise<HostPermission> => {
+  setPermission = async (host: string, { noApproval }: HostPermission): Promise<HostPermission> => {
     this.allowedHosts.set(host, { noApproval });
     await this.saveApprovals();
 
     return { noApproval };
   };
 
-  public add = async ({ host, noApproval }: { host: string; noApproval: boolean }): Promise<void> => {
+  add = async ({ host, noApproval }: { host: string; noApproval: boolean }): Promise<void> => {
     if (this.allowedHosts.get(host)) {
       return;
     }
@@ -58,7 +58,7 @@ export default class ApprovalService {
     await this.saveApprovals();
   };
 
-  public remove = async ({ host }: { host: string }): Promise<void> => {
+  remove = async ({ host }: { host: string }): Promise<void> => {
     if (!this.allowedHosts.has(host)) {
       return;
     }
@@ -68,7 +68,7 @@ export default class ApprovalService {
   };
 
   /** dev only */
-  public clear = async (): Promise<void> => {
+  clear = async (): Promise<void> => {
     if (!["development", "test"].includes(process.env.NODE_ENV as string)) {
       return;
     }

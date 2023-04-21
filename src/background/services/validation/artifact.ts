@@ -9,13 +9,13 @@ export enum ArtifactsProofValidatorErrors {
 export class ArtifactsProofValidator {
   private proof: MerkleProofArtifacts;
 
-  public constructor(proof: MerkleProofArtifacts) {
+  constructor(proof: MerkleProofArtifacts) {
     this.proof = proof;
   }
 
-  public validateProof = (): ArtifactsProofValidator => this.validateDepth().validateLeaves().validateLeavesPerNode();
+  validateProof = (): ArtifactsProofValidator => this.validateDepth().validateLeaves().validateLeavesPerNode();
 
-  public validateDepth = (): ArtifactsProofValidator => {
+  validateDepth = (): ArtifactsProofValidator => {
     if (!this.proof.depth) {
       throw new Error(ArtifactsProofValidatorErrors.INVALID_DEPTH);
     }
@@ -23,7 +23,7 @@ export class ArtifactsProofValidator {
     return this;
   };
 
-  public validateLeaves = (): ArtifactsProofValidator => {
+  validateLeaves = (): ArtifactsProofValidator => {
     if (!this.proof.leaves.length) {
       throw new Error(ArtifactsProofValidatorErrors.INVALID_LEAVES);
     }
@@ -31,7 +31,7 @@ export class ArtifactsProofValidator {
     return this;
   };
 
-  public validateLeavesPerNode = (): ArtifactsProofValidator => {
+  validateLeavesPerNode = (): ArtifactsProofValidator => {
     if (!this.proof.leavesPerNode) {
       throw new Error(ArtifactsProofValidatorErrors.INVALID_LEAVES_PER_NODE);
     }

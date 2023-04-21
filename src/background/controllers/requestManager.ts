@@ -13,7 +13,7 @@ export default class RequestManager extends EventEmitter2 {
 
   private nonce: number;
 
-  public constructor() {
+  constructor() {
     super();
     this.pendingRequests = [];
     this.nonce = 0;
@@ -22,11 +22,11 @@ export default class RequestManager extends EventEmitter2 {
     this.browserService.addRemoveWindowListener(this.clearRequests);
   }
 
-  public getNonce = (): number => this.nonce;
+  getNonce = (): number => this.nonce;
 
-  public getRequests = (): PendingRequest[] => this.pendingRequests;
+  getRequests = (): PendingRequest[] => this.pendingRequests;
 
-  public newRequest = async (type: PendingRequestType, payload?: unknown): Promise<unknown> => {
+  newRequest = async (type: PendingRequestType, payload?: unknown): Promise<unknown> => {
     const popup = await this.browserService.openPopup();
     const id = await this.addToQueue(type, popup.id, payload);
 
@@ -56,7 +56,7 @@ export default class RequestManager extends EventEmitter2 {
     });
   };
 
-  public finalizeRequest = async (action: RequestResolutionAction<unknown>): Promise<boolean> => {
+  finalizeRequest = async (action: RequestResolutionAction<unknown>): Promise<boolean> => {
     const { id } = action;
 
     // TODO add some mutex lock just in case something strange occurs

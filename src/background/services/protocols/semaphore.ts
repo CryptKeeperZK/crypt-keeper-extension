@@ -6,7 +6,7 @@ import { SemaphoreProof, SemaphoreProofRequest } from "./interfaces";
 import { getMerkleProof } from "./utils";
 
 export default class SemaphoreService {
-  public async genProof(identity: ZkIdentityDecorater, request: SemaphoreProofRequest): Promise<SemaphoreProof> {
+  async genProof(identity: ZkIdentityDecorater, request: SemaphoreProofRequest): Promise<SemaphoreProof> {
     const {
       circuitFilePath,
       zkeyFilePath,

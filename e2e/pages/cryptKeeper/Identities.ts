@@ -22,11 +22,11 @@ const PROVIDER_OPTIONS: Record<ProviderType, number> = {
 };
 
 export default class Identities extends BasePage {
-  public async openTab(): Promise<void> {
+  async openTab(): Promise<void> {
     await this.page.getByText("Identities", { exact: true }).click();
   }
 
-  public async createIdentity({ identityType, provider, nonce }: ICreateIdentityArgs | undefined = {}): Promise<void> {
+  async createIdentity({ identityType, provider, nonce }: ICreateIdentityArgs | undefined = {}): Promise<void> {
     await this.page.getByText(/Add Identity/).click();
 
     const cryptKeeper = await this.page.context().waitForEvent("page");
@@ -53,7 +53,7 @@ export default class Identities extends BasePage {
     await metamask.getByTestId("page-container-footer-next").click();
   }
 
-  public async renameIdentity(index: number, name: string): Promise<void> {
+  async renameIdentity(index: number, name: string): Promise<void> {
     const identities = await this.page.locator(".identity-row").all();
     await identities[index].getByTestId("menu").click();
 
@@ -63,7 +63,7 @@ export default class Identities extends BasePage {
     await this.page.locator("#identityRename").press("Enter");
   }
 
-  public async deleteIdentity(index = 0): Promise<void> {
+  async deleteIdentity(index = 0): Promise<void> {
     const identities = await this.page.locator(".identity-row").all();
     await identities[index].getByTestId("menu").click();
 
@@ -71,7 +71,7 @@ export default class Identities extends BasePage {
     await this.page.getByText("Yes").click();
   }
 
-  public async deleteAllIdentities(): Promise<void> {
+  async deleteAllIdentities(): Promise<void> {
     await this.page.getByText("Clear all identities").click();
     await this.page.getByText("Yes").click();
   }

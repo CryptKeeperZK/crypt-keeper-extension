@@ -174,7 +174,7 @@ module.exports = {
         warnOnUnsupportedTypeScriptVersion: true,
       },
       rules: {
-        "@typescript-eslint/explicit-member-accessibility": ["error"],
+        "@typescript-eslint/explicit-member-accessibility": ["error", { accessibility: "no-public" }],
         "@typescript-eslint/no-floating-promises": "off",
         "@typescript-eslint/no-explicit-any": "error",
         "@typescript-eslint/explicit-module-boundary-types": "error",

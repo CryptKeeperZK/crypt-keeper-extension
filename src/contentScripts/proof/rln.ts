@@ -18,7 +18,7 @@ export class RlnProofGenerator {
     this.rlnService = new RLNService();
   }
 
-  public static getInstance(): RlnProofGenerator {
+  static getInstance(): RlnProofGenerator {
     if (!RlnProofGenerator.INSTANCE) {
       RlnProofGenerator.INSTANCE = new RlnProofGenerator();
     }
@@ -26,7 +26,7 @@ export class RlnProofGenerator {
     return RlnProofGenerator.INSTANCE;
   }
 
-  public generate({ identity, payload }: IRlnGenerateArgs): Promise<RLNFullProof> {
+  generate({ identity, payload }: IRlnGenerateArgs): Promise<RLNFullProof> {
     return this.rlnService.genProof(ZkIdentityDecorater.genFromSerialized(identity), payload);
   }
 }
