@@ -3,11 +3,16 @@
  */
 
 import { render, screen, fireEvent, act, waitFor } from "@testing-library/react";
+import { useNavigate } from "react-router-dom";
 
 import { unlock } from "@src/ui/ducks/app";
 import { useAppDispatch } from "@src/ui/ducks/hooks";
 
 import Login from "..";
+
+jest.mock("react-router-dom", () => ({
+  useNavigate: jest.fn(),
+}));
 
 jest.mock("@src/ui/ducks/app", (): unknown => ({
   unlock: jest.fn(),
@@ -19,9 +24,12 @@ jest.mock("@src/ui/ducks/hooks", (): unknown => ({
 
 describe("ui/pages/Login", () => {
   const mockDispatch = jest.fn(() => Promise.resolve());
+  const mockNavigate = jest.fn();
 
   beforeEach(() => {
     (useAppDispatch as jest.Mock).mockReturnValue(mockDispatch);
+
+    (useNavigate as jest.Mock).mockReturnValue(mockNavigate);
 
     (unlock as jest.Mock).mockResolvedValue({});
   });

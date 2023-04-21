@@ -3,12 +3,18 @@
  */
 
 import { act, renderHook, waitFor } from "@testing-library/react";
+import { useNavigate } from "react-router-dom";
 
+import { Paths } from "@src/constants";
 import { useAppDispatch } from "@src/ui/ducks/hooks";
 
 import type { ChangeEvent, FormEvent } from "react";
 
 import { useLogin } from "../useLogin";
+
+jest.mock("react-router-dom", () => ({
+  useNavigate: jest.fn(),
+}));
 
 jest.mock("@src/ui/ducks/hooks", (): unknown => ({
   useAppDispatch: jest.fn(),
@@ -17,8 +23,12 @@ jest.mock("@src/ui/ducks/hooks", (): unknown => ({
 describe("ui/pages/Login/useLogin", () => {
   const mockDispatch = jest.fn(() => Promise.resolve());
 
+  const mockNavigate = jest.fn();
+
   beforeEach(() => {
     (useAppDispatch as jest.Mock).mockReturnValue(mockDispatch);
+
+    (useNavigate as jest.Mock).mockReturnValue(mockNavigate);
   });
 
   afterEach(() => {
@@ -50,6 +60,8 @@ describe("ui/pages/Login/useLogin", () => {
 
     expect(result.current.isLoading).toBe(false);
     expect(mockDispatch).toBeCalledTimes(1);
+    expect(mockNavigate).toBeCalledTimes(1);
+    expect(mockNavigate).toBeCalledWith(Paths.HOME);
   });
 
   test("should handle submit error", async () => {

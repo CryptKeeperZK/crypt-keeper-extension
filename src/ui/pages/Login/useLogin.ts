@@ -1,6 +1,8 @@
 import { BaseSyntheticEvent, useCallback, useState } from "react";
 import { UseFormRegister, useForm } from "react-hook-form";
+import { useNavigate } from "react-router-dom";
 
+import { Paths } from "@src/constants";
 import { PasswordFormFields } from "@src/types";
 import { unlock } from "@src/ui/ducks/app";
 import { useAppDispatch } from "@src/ui/ducks/hooks";
@@ -28,13 +30,15 @@ export const useLogin = (): IUseLoginData => {
     },
   });
 
+  const navigate = useNavigate();
+
   const dispatch = useAppDispatch();
 
   const onSubmit = useCallback(
     (data: PasswordFormFields) => {
-      dispatch(unlock(data.password)).catch((error: Error) =>
-        setError("password", { type: "submit", message: error.message }),
-      );
+      dispatch(unlock(data.password))
+        .then(() => navigate(Paths.HOME))
+        .catch((error: Error) => setError("password", { type: "submit", message: error.message }));
     },
     [dispatch, setError],
   );

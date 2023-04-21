@@ -47,12 +47,8 @@ describe("ui/pages/Home/components/ActivityList", () => {
 
   const defaultHookData: IUseActivityListData = {
     isLoading: false,
-    isConfirmModalOpen: false,
     operations: defaultIdentityOperations,
-    onConfirmModalShow: jest.fn(),
-    onDeleteAllHistory: jest.fn(),
     onDeleteHistoryOperation: jest.fn(),
-    onEnableHistory: jest.fn(),
   };
 
   beforeEach(() => {
@@ -91,15 +87,6 @@ describe("ui/pages/Home/components/ActivityList", () => {
     const noRecords = await screen.findByText("No records found");
 
     expect(noRecords).toBeInTheDocument();
-  });
-
-  test("should delete all history properly", async () => {
-    render(<ActivityList />);
-
-    const clearHistoryButton = await screen.findByText("Clear history");
-    await act(async () => Promise.resolve(clearHistoryButton.click()));
-
-    expect(defaultHookData.onConfirmModalShow).toBeCalledTimes(1);
   });
 
   test("should delete activity operation properly", async () => {

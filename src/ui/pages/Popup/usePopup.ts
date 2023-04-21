@@ -47,8 +47,6 @@ export const usePopup = (): IUsePopupData => {
       navigate(Paths.REQUESTS);
     } else if (redirect) {
       navigate(redirect);
-    } else {
-      navigate(Paths.HOME);
     }
   }, [isLoading, isInitialized, isUnlocked, isShowRequestModal, redirect, navigate]);
 

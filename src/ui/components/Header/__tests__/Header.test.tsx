@@ -3,12 +3,18 @@
  */
 
 import { act, render } from "@testing-library/react";
+import { useNavigate } from "react-router-dom";
 
 import { defaultWalletHookData } from "@src/config/mock/wallet";
+import { Paths } from "@src/constants";
 import { useWallet } from "@src/ui/hooks/wallet";
-import { redirectToNewTab } from "@src/util/browser";
+import { getExtensionUrl, redirectToNewTab } from "@src/util/browser";
 
 import { Header } from "..";
+
+jest.mock("react-router-dom", () => ({
+  useNavigate: jest.fn(),
+}));
 
 jest.mock("@src/ui/hooks/wallet", (): unknown => ({
   useWallet: jest.fn(),
@@ -16,11 +22,18 @@ jest.mock("@src/ui/hooks/wallet", (): unknown => ({
 
 jest.mock("@src/util/browser", (): unknown => ({
   redirectToNewTab: jest.fn(),
+  getExtensionUrl: jest.fn(),
 }));
 
 describe("ui/components/Header", () => {
+  const mockNavigate = jest.fn();
+
   beforeEach(() => {
     (useWallet as jest.Mock).mockReturnValue(defaultWalletHookData);
+
+    (useNavigate as jest.Mock).mockReturnValue(mockNavigate);
+
+    (getExtensionUrl as jest.Mock).mockReturnValue("options.html");
   });
 
   afterEach(() => {
@@ -88,5 +101,28 @@ describe("ui/components/Header", () => {
 
     expect(redirectToNewTab).toBeCalledTimes(1);
     expect(redirectToNewTab).toBeCalledWith("https://metamask.io/");
+  });
+
+  test("should redirect to options page", async () => {
+    const { findByTestId, findByText } = render(<Header />);
+
+    const menu = await findByTestId("menu");
+    await act(async () => Promise.resolve(menu.click()));
+
+    const options = await findByText("Settings");
+    await act(async () => Promise.resolve(options.click()));
+
+    expect(mockNavigate).toBeCalledTimes(1);
+    expect(mockNavigate).toBeCalledWith(Paths.SETTINGS);
+  });
+
+  test("should redirect to home page", async () => {
+    const { findByTestId } = render(<Header />);
+
+    const logo = await findByTestId("logo");
+    await act(async () => Promise.resolve(logo.click()));
+
+    expect(mockNavigate).toBeCalledTimes(1);
+    expect(mockNavigate).toBeCalledWith(Paths.HOME);
   });
 });

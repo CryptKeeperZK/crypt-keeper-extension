@@ -3,13 +3,19 @@
  */
 
 import { act, renderHook, waitFor } from "@testing-library/react";
+import { useNavigate } from "react-router-dom";
 
+import { Paths } from "@src/constants";
 import { setupPassword } from "@src/ui/ducks/app";
 import { useAppDispatch } from "@src/ui/ducks/hooks";
 
 import type { ChangeEvent, FormEvent } from "react";
 
 import { useOnboarding } from "../useOnboarding";
+
+jest.mock("react-router-dom", () => ({
+  useNavigate: jest.fn(),
+}));
 
 jest.mock("@src/ui/ducks/app", (): unknown => ({
   setupPassword: jest.fn(),
@@ -26,8 +32,12 @@ jest.mock("@src/ui/hooks/validation", (): unknown => ({
 describe("ui/pages/Onboarding/useOnboarding", () => {
   const mockDispatch = jest.fn(() => Promise.resolve());
 
+  const mockNavigate = jest.fn();
+
   beforeEach(() => {
     (useAppDispatch as jest.Mock).mockReturnValue(mockDispatch);
+
+    (useNavigate as jest.Mock).mockReturnValue(mockNavigate);
 
     (setupPassword as jest.Mock).mockResolvedValue({});
   });
@@ -59,6 +69,8 @@ describe("ui/pages/Onboarding/useOnboarding", () => {
 
     expect(result.current.isLoading).toBe(false);
     expect(mockDispatch).toBeCalledTimes(1);
+    expect(mockNavigate).toBeCalledTimes(1);
+    expect(mockNavigate).toBeCalledWith(Paths.HOME);
   });
 
   test("should handle submit error", async () => {

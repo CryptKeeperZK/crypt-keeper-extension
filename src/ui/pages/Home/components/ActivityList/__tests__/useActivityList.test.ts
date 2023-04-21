@@ -8,9 +8,7 @@ import { ZERO_ADDRESS } from "@src/config/const";
 import { HistorySettings, Operation, OperationType } from "@src/types";
 import { useAppDispatch } from "@src/ui/ducks/hooks";
 import {
-  clearHistory,
   deleteHistoryOperation,
-  enableHistory,
   fetchHistory,
   useHistorySettings,
   useIdentityOperations,
@@ -19,10 +17,8 @@ import {
 import { useActivityList } from "../useActivityList";
 
 jest.mock("@src/ui/ducks/identities", (): unknown => ({
-  clearHistory: jest.fn(),
   deleteHistoryOperation: jest.fn(),
   fetchHistory: jest.fn(),
-  enableHistory: jest.fn(),
   useHistorySettings: jest.fn(),
   useIdentityOperations: jest.fn(),
 }));
@@ -85,39 +81,8 @@ describe("ui/pages/Home/components/ActivityList/useActivityList", () => {
 
     await waitFor(() => result.current.isLoading === false);
 
-    expect(result.current.isConfirmModalOpen).toBe(false);
     expect(result.current.isLoading).toBe(false);
-    expect(result.current.settings).toStrictEqual(defaultHistorySettings);
     expect(result.current.operations).toStrictEqual(defaultIdentityOperations);
-  });
-
-  test("should show confirm modal", async () => {
-    const { result } = renderHook(() => useActivityList());
-
-    await waitFor(() => result.current.isLoading === false);
-
-    await act(async () => Promise.resolve(result.current.onConfirmModalShow()));
-    await waitFor(() => result.current.isConfirmModalOpen === true);
-
-    await act(async () => Promise.resolve(result.current.onDeleteAllHistory()));
-
-    await waitFor(() => result.current.isConfirmModalOpen === false);
-
-    expect(mockDispatch).toBeCalledTimes(2);
-    expect(fetchHistory).toBeCalledTimes(1);
-    expect(clearHistory).toBeCalledTimes(1);
-  });
-
-  test("should delete all history properly", async () => {
-    const { result } = renderHook(() => useActivityList());
-
-    await waitFor(() => result.current.isLoading === false);
-
-    await act(async () => Promise.resolve(result.current.onDeleteAllHistory()));
-
-    expect(mockDispatch).toBeCalledTimes(2);
-    expect(fetchHistory).toBeCalledTimes(1);
-    expect(clearHistory).toBeCalledTimes(1);
   });
 
   test("should delete history operation properly", async () => {
@@ -131,18 +96,5 @@ describe("ui/pages/Home/components/ActivityList/useActivityList", () => {
     expect(fetchHistory).toBeCalledTimes(1);
     expect(deleteHistoryOperation).toBeCalledTimes(1);
     expect(deleteHistoryOperation).toBeCalledWith("1");
-  });
-
-  test("should delete history operation properly", async () => {
-    const { result } = renderHook(() => useActivityList());
-
-    await waitFor(() => result.current.isLoading === false);
-
-    await act(async () => Promise.resolve(result.current.onEnableHistory()));
-
-    expect(mockDispatch).toBeCalledTimes(2);
-    expect(fetchHistory).toBeCalledTimes(1);
-    expect(enableHistory).toBeCalledTimes(1);
-    expect(enableHistory).toBeCalledWith(!defaultHistorySettings.isEnabled);
   });
 });

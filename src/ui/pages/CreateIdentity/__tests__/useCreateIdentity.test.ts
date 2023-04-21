@@ -3,16 +3,21 @@
  */
 
 import { act, renderHook } from "@testing-library/react";
+import { useNavigate } from "react-router-dom";
 
 import { ZERO_ADDRESS } from "@src/config/const";
 import { defaultWalletHookData } from "@src/config/mock/wallet";
-import { IDENTITY_TYPES } from "@src/constants";
+import { IDENTITY_TYPES, Paths } from "@src/constants";
 import { useAppDispatch } from "@src/ui/ducks/hooks";
 import { createIdentity } from "@src/ui/ducks/identities";
 import { useWallet } from "@src/ui/hooks/wallet";
 import { signIdentityMessage } from "@src/ui/services/identity";
 
 import { useCreateIdentity } from "../useCreateIdentity";
+
+jest.mock("react-router-dom", () => ({
+  useNavigate: jest.fn(),
+}));
 
 jest.mock("@src/ui/ducks/hooks", (): unknown => ({
   useAppDispatch: jest.fn(),
@@ -39,6 +44,8 @@ describe("ui/pages/CreateIdentity/useCreateIdentity", () => {
 
   const mockDispatch = jest.fn();
 
+  const mockNavigate = jest.fn();
+
   beforeEach(() => {
     (useAppDispatch as jest.Mock).mockReturnValue(mockDispatch);
 
@@ -47,6 +54,8 @@ describe("ui/pages/CreateIdentity/useCreateIdentity", () => {
     (createIdentity as jest.Mock).mockReturnValue(true);
 
     (useWallet as jest.Mock).mockReturnValue(defaultWalletHookData);
+
+    (useNavigate as jest.Mock).mockReturnValue(mockNavigate);
   });
 
   afterEach(() => {
@@ -81,6 +90,8 @@ describe("ui/pages/CreateIdentity/useCreateIdentity", () => {
       nonce: 0,
       web2Provider: "twitter",
     });
+    expect(mockNavigate).toBeCalledTimes(1);
+    expect(mockNavigate).toBeCalledWith(Paths.HOME);
   });
 
   test("should close modal properly", () => {
