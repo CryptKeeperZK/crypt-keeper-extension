@@ -31,7 +31,7 @@ export default class ZkKeeperController extends Handler {
 
   private historyService: HistoryService;
 
-  public constructor() {
+  constructor() {
     super();
     this.identityService = new IdentityService();
     this.requestManager = new RequestManager();
@@ -44,7 +44,7 @@ export default class ZkKeeperController extends Handler {
     log.debug("Inside ZkKepperController");
   }
 
-  public initialize = (): ZkKeeperController => {
+  initialize = (): ZkKeeperController => {
     // common
     this.add(
       RPCAction.UNLOCK,

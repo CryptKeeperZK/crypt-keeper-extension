@@ -10,14 +10,14 @@ export enum MerkleProofValidatorErrors {
 export class MerkleProofValidator {
   private proof: MerkleProof;
 
-  public constructor(proof: MerkleProof) {
+  constructor(proof: MerkleProof) {
     this.proof = proof;
   }
 
-  public validateProof = (): MerkleProofValidator =>
+  validateProof = (): MerkleProofValidator =>
     this.validateRoot().validateSiblings().validatePathIndicies().validateLeaf();
 
-  public validateRoot = (): MerkleProofValidator => {
+  validateRoot = (): MerkleProofValidator => {
     if (!this.proof.root) {
       throw new Error(MerkleProofValidatorErrors.INVALID_ROOT);
     }
@@ -25,7 +25,7 @@ export class MerkleProofValidator {
     return this;
   };
 
-  public validateSiblings = (): MerkleProofValidator => {
+  validateSiblings = (): MerkleProofValidator => {
     if (!this.proof.siblings.length) {
       throw new Error(MerkleProofValidatorErrors.INVALID_SIBLINGS);
     }
@@ -33,7 +33,7 @@ export class MerkleProofValidator {
     return this;
   };
 
-  public validatePathIndicies = (): MerkleProofValidator => {
+  validatePathIndicies = (): MerkleProofValidator => {
     if (!this.proof.pathIndices.length) {
       throw new Error(MerkleProofValidatorErrors.INVALID_PATH_INDICIES);
     }
@@ -41,7 +41,7 @@ export class MerkleProofValidator {
     return this;
   };
 
-  public validateLeaf = (): MerkleProofValidator => {
+  validateLeaf = (): MerkleProofValidator => {
     if (!this.proof.leaf) {
       throw new Error(MerkleProofValidatorErrors.INVALID_LEAF);
     }

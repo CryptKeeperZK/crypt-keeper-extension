@@ -12,17 +12,17 @@ type Chain = {
 export default class Handler {
   private handlers: Map<string, Chain>;
 
-  public constructor() {
+  constructor() {
     this.handlers = new Map();
   }
 
-  public add = (method: string, ...args: Array<HandlerType>): void => {
+  add = (method: string, ...args: Array<HandlerType>): void => {
     const handler = args[args.length - 1];
     const middlewares = args.slice(0, args.length - 1);
     this.handlers.set(method, { middlewares, handler });
   };
 
-  public handle = async ({ method, payload, meta }: RequestHandler): Promise<unknown> => {
+  handle = async ({ method, payload, meta }: RequestHandler): Promise<unknown> => {
     const handler = this.handlers.get(method);
 
     if (!handler) {

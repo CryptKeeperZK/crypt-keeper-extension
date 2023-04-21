@@ -48,7 +48,7 @@ export default class HistoryService {
     this.settings = undefined;
   }
 
-  public static getInstance(): HistoryService {
+  static getInstance(): HistoryService {
     if (!HistoryService.INSTANCE) {
       HistoryService.INSTANCE = new HistoryService();
     }
@@ -56,12 +56,12 @@ export default class HistoryService {
     return HistoryService.INSTANCE;
   }
 
-  public enableHistory = async (isEnabled: boolean): Promise<void> => {
+  enableHistory = async (isEnabled: boolean): Promise<void> => {
     this.settings = { isEnabled };
     await this.writeSettings(this.settings);
   };
 
-  public loadOperations = async (): Promise<ILoadOperationsData> => {
+  loadOperations = async (): Promise<ILoadOperationsData> => {
     await this.loadSettings();
 
     const features = getEnabledFeatures();
@@ -77,12 +77,12 @@ export default class HistoryService {
     return { operations: this.operations, settings: this.settings };
   };
 
-  public getOperations = (filter?: Partial<OperationFilter>): Operation[] =>
+  getOperations = (filter?: Partial<OperationFilter>): Operation[] =>
     this.operations.filter((operation) => (filter?.type ? operation.type === filter.type : true));
 
-  public getSettings = (): HistorySettings | undefined => this.settings;
+  getSettings = (): HistorySettings | undefined => this.settings;
 
-  public trackOperation = async (type: OperationType, { identity }: OperationOptions): Promise<void> => {
+  trackOperation = async (type: OperationType, { identity }: OperationOptions): Promise<void> => {
     if (!this.settings?.isEnabled) {
       return;
     }
@@ -97,7 +97,7 @@ export default class HistoryService {
     await this.writeOperations(this.operations);
   };
 
-  public removeOperation = async (id: string): Promise<Operation[]> => {
+  removeOperation = async (id: string): Promise<Operation[]> => {
     this.operations = this.operations.filter((operation) => operation.id !== id);
 
     await this.writeOperations(this.operations);
@@ -105,7 +105,7 @@ export default class HistoryService {
     return this.operations;
   };
 
-  public clear = async (): Promise<void> => {
+  clear = async (): Promise<void> => {
     this.operations = [];
     await this.historyStore.clear();
 

@@ -30,7 +30,7 @@ export default class IdentityService {
 
   private historyService: HistoryService;
 
-  public constructor() {
+  constructor() {
     this.activeIdentity = undefined;
     this.identitiesStore = new SimpleStorage(IDENTITY_KEY);
     this.activeIdentityStore = new SimpleStorage(ACTIVE_IDENTITY_KEY);
@@ -39,13 +39,13 @@ export default class IdentityService {
     this.historyService = HistoryService.getInstance();
   }
 
-  public unlock = async (): Promise<boolean> => {
+  unlock = async (): Promise<boolean> => {
     await this.setDefaultIdentity();
 
     return true;
   };
 
-  public setActiveIdentity = async ({ identityCommitment }: { identityCommitment: string }): Promise<boolean> => {
+  setActiveIdentity = async ({ identityCommitment }: { identityCommitment: string }): Promise<boolean> => {
     const identities = await this.getIdentitiesFromStore();
 
     return this.updateActiveIdentity({ identities, identityCommitment });
@@ -73,7 +73,7 @@ export default class IdentityService {
     return true;
   };
 
-  public setIdentityName = async (payload: IdentityName): Promise<boolean> => {
+  setIdentityName = async (payload: IdentityName): Promise<boolean> => {
     const identities = await this.getIdentitiesFromStore();
     const { identityCommitment, name } = payload;
     const rawIdentity = identities.get(identityCommitment);
@@ -91,7 +91,7 @@ export default class IdentityService {
     return true;
   };
 
-  public deleteIdentity = async (payload: { identityCommitment: string }): Promise<boolean> => {
+  deleteIdentity = async (payload: { identityCommitment: string }): Promise<boolean> => {
     const { identityCommitment } = payload;
     const activeIdentity = await this.getActiveIdentity();
     const identities = await this.getIdentitiesFromStore();
@@ -120,7 +120,7 @@ export default class IdentityService {
     return true;
   };
 
-  public deleteAllIdentities = async (): Promise<boolean> => {
+  deleteAllIdentities = async (): Promise<boolean> => {
     const identities = await this.getIdentitiesFromStore();
 
     if (!identities.size) {
@@ -133,7 +133,7 @@ export default class IdentityService {
     return true;
   };
 
-  public getActiveIdentity = async (): Promise<ZkIdentityDecorater | undefined> => {
+  getActiveIdentity = async (): Promise<ZkIdentityDecorater | undefined> => {
     const activeIdentityCommitmentCipher = await this.activeIdentityStore.get<string>();
 
     if (!activeIdentityCommitmentCipher) {
@@ -153,7 +153,7 @@ export default class IdentityService {
     return this.activeIdentity;
   };
 
-  public getActiveIdentityData = async (): Promise<SelectedIdentity> => {
+  getActiveIdentityData = async (): Promise<SelectedIdentity> => {
     const identity = await this.getActiveIdentity();
 
     return {
@@ -162,14 +162,14 @@ export default class IdentityService {
     };
   };
 
-  public getIdentityCommitments = async (): Promise<{ commitments: string[]; identities: Map<string, string> }> => {
+  getIdentityCommitments = async (): Promise<{ commitments: string[]; identities: Map<string, string> }> => {
     const identities = await this.getIdentitiesFromStore();
     const commitments = [...identities.keys()];
 
     return { commitments, identities };
   };
 
-  public getIdentities = async (): Promise<{ commitment: string; metadata: IdentityMetadata }[]> => {
+  getIdentities = async (): Promise<{ commitment: string; metadata: IdentityMetadata }[]> => {
     const { commitments, identities } = await this.getIdentityCommitments();
 
     return commitments
@@ -185,7 +185,7 @@ export default class IdentityService {
       });
   };
 
-  public insert = async (newIdentity: ZkIdentityDecorater): Promise<boolean> => {
+  insert = async (newIdentity: ZkIdentityDecorater): Promise<boolean> => {
     const identities = await this.getIdentitiesFromStore();
     const identityCommitment = bigintToHex(newIdentity.genIdentityCommitment());
 
@@ -213,7 +213,7 @@ export default class IdentityService {
     return true;
   };
 
-  public getNumOfIdentites = async (): Promise<number> => {
+  getNumOfIdentites = async (): Promise<number> => {
     const identities = await this.getIdentitiesFromStore();
     return identities.size;
   };

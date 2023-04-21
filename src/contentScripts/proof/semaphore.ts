@@ -17,7 +17,7 @@ export class SemaphoreProofGenerator {
     this.semaphoreService = new SemaphoreService();
   }
 
-  public static getInstance(): SemaphoreProofGenerator {
+  static getInstance(): SemaphoreProofGenerator {
     if (!SemaphoreProofGenerator.INSTANCE) {
       SemaphoreProofGenerator.INSTANCE = new SemaphoreProofGenerator();
     }
@@ -25,7 +25,7 @@ export class SemaphoreProofGenerator {
     return SemaphoreProofGenerator.INSTANCE;
   }
 
-  public generate({ identity, payload }: ISemaphoreGenerateArgs): Promise<SemaphoreProof> {
+  generate({ identity, payload }: ISemaphoreGenerateArgs): Promise<SemaphoreProof> {
     return this.semaphoreService.genProof(ZkIdentityDecorater.genFromSerialized(identity), payload);
   }
 }
