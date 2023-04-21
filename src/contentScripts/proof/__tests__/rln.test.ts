@@ -1,5 +1,5 @@
 import ZkIdentityDecorater from "@src/background/identityDecorater";
-import RLNService from "@src/background/services/protocols/rln";
+import { RLNProofService } from "@src/background/services/zkProof";
 
 import { IRlnGenerateArgs, RlnProofGenerator } from "..";
 
@@ -7,7 +7,7 @@ jest.mock("@src/background/identityDecorater", (): unknown => ({
   genFromSerialized: jest.fn(),
 }));
 
-jest.mock("@src/background/services/protocols/rln");
+jest.mock("@src/background/services/zkProof/RLNProof");
 
 describe("contentScripts/proof/rln", () => {
   const defaultGenerateArgs: IRlnGenerateArgs = {
@@ -37,7 +37,7 @@ describe("contentScripts/proof/rln", () => {
 
   test("should generate proof properly", async () => {
     const rlnProofGenerator = RlnProofGenerator.getInstance();
-    const [rlnServiceInstance] = (RLNService as jest.Mock).mock.instances as [{ genProof: jest.Mock }];
+    const [rlnServiceInstance] = (RLNProofService as jest.Mock).mock.instances as [{ genProof: jest.Mock }];
     rlnServiceInstance.genProof.mockResolvedValue(emptyFullProof);
 
     const result = await rlnProofGenerator.generate(defaultGenerateArgs);

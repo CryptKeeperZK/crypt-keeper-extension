@@ -6,7 +6,7 @@ import cors from "cors";
 import express, { Request as ExpressRequest } from "express";
 import log from "loglevel";
 
-import { generateMerkleProof } from "../background/services/protocols/utils";
+import { generateMerkleProof } from "../background/services/zkProof/utils";
 
 const DEPTH_RLN = 15;
 const DEPTH_SEMAPHORE = 20;

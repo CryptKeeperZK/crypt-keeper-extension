@@ -1,13 +1,15 @@
 import { generateProof } from "@semaphore-protocol/proof";
 
 import ZkIdentityDecorater from "@src/background/identityDecorater";
+import { SemaphoreProof, SemaphoreProofRequest } from "@src/types";
 
-import { SemaphoreProof, SemaphoreProofRequest } from "./interfaces";
 import { getMerkleProof } from "./utils";
+import { ZkProof } from "./ZkProof";
 
-export default class SemaphoreService {
-  async genProof(identity: ZkIdentityDecorater, request: SemaphoreProofRequest): Promise<SemaphoreProof> {
-    const {
+export class SemaphoreProofService extends ZkProof {
+  async genProof(
+    identity: ZkIdentityDecorater,
+    {
       circuitFilePath,
       zkeyFilePath,
       merkleStorageAddress,
@@ -15,8 +17,8 @@ export default class SemaphoreService {
       signal,
       merkleProofArtifacts,
       merkleProof: providerMerkleProof,
-    } = request;
-
+    }: SemaphoreProofRequest,
+  ): Promise<SemaphoreProof> {
     const identityCommitment = identity.genIdentityCommitment();
 
     const merkleProof = await getMerkleProof({
