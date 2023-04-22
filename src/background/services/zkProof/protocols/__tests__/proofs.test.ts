@@ -7,9 +7,9 @@ import ZkIdentityDecorater from "@src/background/identityDecorater";
 import { ZERO_ADDRESS } from "@src/config/const";
 import { IdentityMetadata, RLNProofRequest } from "@src/types";
 
-import { RLNProofService } from "../protocols/RLNProof";
+import { RLNProofService } from "../RLNProof";
 import { SemaphoreProofService } from "../SemaphoreProof";
-import { getMerkleProof } from "../protocols/utils";
+import { getMerkleProof } from "../utils";
 
 jest.mock("rlnjs");
 
