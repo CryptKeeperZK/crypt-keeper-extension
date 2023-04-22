@@ -2,7 +2,13 @@ import log from "loglevel";
 import { browser } from "webextension-polyfill-ts";
 
 import { Paths, RPCAction } from "@src/constants";
-import { PendingRequestType, NewIdentityRequest, IdentityName, RLNProofRequest, SemaphoreProofRequest } from "@src/types";
+import {
+  PendingRequestType,
+  NewIdentityRequest,
+  IdentityName,
+  RLNProofRequest,
+  SemaphoreProofRequest,
+} from "@src/types";
 
 import BrowserUtils from "./controllers/browserUtils";
 import Handler from "./controllers/handler";
