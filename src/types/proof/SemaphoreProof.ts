@@ -17,3 +17,8 @@ export interface SemaphoreProofRequest {
   merkleProofArtifacts?: MerkleProofArtifacts;
   merkleProof?: MerkleProof;
 }
+
+export interface ISemaphoreGenerateArgs {
+  identity: string;
+  payload: SemaphoreProofRequest;
+}
