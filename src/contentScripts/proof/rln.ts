@@ -1,8 +1,6 @@
 import ZkIdentityDecorater from "@src/background/identityDecorater";
-import RLNService from "@src/background/services/protocols/rln";
-
-import type { RLNProofRequest } from "@src/background/services/protocols/interfaces";
-import type { RLNFullProof } from "rlnjs";
+import { RLNProofService } from "@src/background/services/zkProof";
+import { RLNProofRequest, RLNFullProof } from "@src/types";
 
 export interface IRlnGenerateArgs {
   identity: string;
@@ -12,10 +10,10 @@ export interface IRlnGenerateArgs {
 export class RlnProofGenerator {
   private static INSTANCE: RlnProofGenerator;
 
-  private rlnService: RLNService;
+  private rlnService: RLNProofService;
 
   private constructor() {
-    this.rlnService = new RLNService();
+    this.rlnService = new RLNProofService();
   }
 
   static getInstance(): RlnProofGenerator {

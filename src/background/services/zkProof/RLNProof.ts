@@ -1,11 +1,12 @@
 import { RLN, RLNFullProof } from "rlnjs";
 
 import ZkIdentityDecorater from "@src/background/identityDecorater";
+import { RLNProofRequest } from "@src/types";
 
-import { RLNProofRequest } from "./interfaces";
 import { getMerkleProof, getRlnVerficationKeyJson } from "./utils";
+import { ZkProof } from "./ZkProof";
 
-export default class RLNService {
+export class RLNProofService extends ZkProof<RLNProofRequest, RLNFullProof> {
   async genProof(
     identity: ZkIdentityDecorater,
     {

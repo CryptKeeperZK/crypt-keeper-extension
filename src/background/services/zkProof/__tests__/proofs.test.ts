@@ -5,11 +5,10 @@ import { RLN } from "rlnjs";
 
 import ZkIdentityDecorater from "@src/background/identityDecorater";
 import { ZERO_ADDRESS } from "@src/config/const";
-import { IdentityMetadata } from "@src/types";
+import { IdentityMetadata, RLNProofRequest } from "@src/types";
 
-import { RLNProofRequest } from "../interfaces";
-import RLNService from "../rln";
-import SemaphoreService from "../semaphore";
+import { RLNProofService } from "../RLNProof";
+import { SemaphoreProofService } from "../SemaphoreProof";
 import { getMerkleProof } from "../utils";
 
 jest.mock("rlnjs");
@@ -56,7 +55,7 @@ describe("background/services/protocols", () => {
 
   describe("rln", () => {
     test("should generate rln proof properly with remote merkle proof", async () => {
-      const rln = new RLNService();
+      const rln = new RLNProofService();
 
       await rln.genProof(identityDecorater, { ...proofRequest, merkleStorageAddress: "http://localhost:3000/merkle" });
       const [rlnInstance] = (RLN as unknown as jest.Mock).mock.instances as [{ generateProof: jest.Mock }];
@@ -72,7 +71,7 @@ describe("background/services/protocols", () => {
     test("should handle error properly when generating rln proof", async () => {
       (getMerkleProof as jest.Mock).mockRejectedValue(new Error("error"));
 
-      const rln = new RLNService();
+      const rln = new RLNProofService();
 
       const promise = rln.genProof(identityDecorater, {
         ...proofRequest,
@@ -85,7 +84,7 @@ describe("background/services/protocols", () => {
 
   describe("semaphore", () => {
     test("should generate semaphore proof properly with remote merkle proof", async () => {
-      const semaphore = new SemaphoreService();
+      const semaphore = new SemaphoreProofService();
 
       await semaphore.genProof(identityDecorater, {
         ...proofRequest,
@@ -104,7 +103,7 @@ describe("background/services/protocols", () => {
 
     test("should handle error properly when generating semaphore proof", async () => {
       (getMerkleProof as jest.Mock).mockRejectedValue(new Error("error"));
-      const semaphore = new SemaphoreService();
+      const semaphore = new SemaphoreProofService();
 
       const promise = semaphore.genProof(identityDecorater, {
         ...proofRequest,

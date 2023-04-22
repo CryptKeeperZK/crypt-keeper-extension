@@ -2,7 +2,13 @@ import log from "loglevel";
 import { browser } from "webextension-polyfill-ts";
 
 import { Paths, RPCAction } from "@src/constants";
-import { PendingRequestType, NewIdentityRequest, IdentityName } from "@src/types";
+import {
+  PendingRequestType,
+  NewIdentityRequest,
+  IdentityName,
+  RLNProofRequest,
+  SemaphoreProofRequest,
+} from "@src/types";
 
 import BrowserUtils from "./controllers/browserUtils";
 import Handler from "./controllers/handler";
@@ -12,7 +18,6 @@ import ApprovalService from "./services/approval";
 import HistoryService from "./services/history";
 import IdentityService from "./services/identity";
 import LockService from "./services/lock";
-import { RLNProofRequest, SemaphoreProofRequest } from "./services/protocols/interfaces";
 import WalletService from "./services/wallet";
 import { validateZkInputs } from "./services/zkValidator";
 

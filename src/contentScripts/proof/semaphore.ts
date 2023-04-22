@@ -1,7 +1,6 @@
 import ZkIdentityDecorater from "@src/background/identityDecorater";
-import SemaphoreService from "@src/background/services/protocols/semaphore";
-
-import type { SemaphoreProof, SemaphoreProofRequest } from "@src/background/services/protocols/interfaces";
+import { SemaphoreProofService } from "@src/background/services/zkProof";
+import { SemaphoreProofRequest, SemaphoreProof } from "@src/types";
 
 export interface ISemaphoreGenerateArgs {
   identity: string;
@@ -11,10 +10,10 @@ export interface ISemaphoreGenerateArgs {
 export class SemaphoreProofGenerator {
   private static INSTANCE: SemaphoreProofGenerator;
 
-  private semaphoreService: SemaphoreService;
+  private semaphoreService: SemaphoreProofService;
 
   private constructor() {
-    this.semaphoreService = new SemaphoreService();
+    this.semaphoreService = new SemaphoreProofService();
   }
 
   static getInstance(): SemaphoreProofGenerator {
