@@ -1,5 +1,5 @@
 import ZkIdentityDecorater from "@src/background/identityDecorater";
-import { SemaphoreProofService } from "@src/background/services/zkProof";
+import ZkProofService from "@src/background/services/zkProof";
 
 import { ISemaphoreGenerateArgs, SemaphoreProofGenerator } from "..";
 
