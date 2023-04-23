@@ -1,28 +1,21 @@
 import log from "loglevel";
 import { browser } from "webextension-polyfill-ts";
 
-import { Paths, RPCAction } from "@src/constants";
-import {
-  PendingRequestType,
-  NewIdentityRequest,
-  IdentityName,
-  RLNProofRequest,
-  SemaphoreProofRequest,
-} from "@src/types";
+import { RPCAction } from "@src/constants";
+import { PendingRequestType, RLNProofRequest, SemaphoreProofRequest } from "@src/types";
 
 import BrowserUtils from "./controllers/browserUtils";
 import Handler from "./controllers/handler";
 import RequestManager from "./controllers/requestManager";
-import identityFactory from "./identityFactory";
 import ApprovalService from "./services/approval";
 import HistoryService from "./services/history";
-import IdentityService from "./services/identity";
 import LockService from "./services/lock";
 import WalletService from "./services/wallet";
+import ZkIdentityService from "./services/zkIdentity";
 import { validateZkInputs } from "./services/zkValidator";
 
 export default class ZkKeeperController extends Handler {
-  private identityService: IdentityService;
+  private zkIdentityService: ZkIdentityService;
 
   private requestManager: RequestManager;
 
@@ -38,7 +31,7 @@ export default class ZkKeeperController extends Handler {
 
   constructor() {
     super();
-    this.identityService = new IdentityService();
+    this.zkIdentityService = new ZkIdentityService();
     this.requestManager = new RequestManager();
     this.approvalService = new ApprovalService();
     this.walletService = new WalletService();
@@ -54,7 +47,7 @@ export default class ZkKeeperController extends Handler {
     this.add(
       RPCAction.UNLOCK,
       this.lockService.unlock,
-      this.identityService.unlock,
+      this.zkIdentityService.unlock,
       this.approvalService.unlock,
       this.lockService.onUnlocked,
     );
@@ -73,67 +66,25 @@ export default class ZkKeeperController extends Handler {
     this.add(RPCAction.GET_PENDING_REQUESTS, this.lockService.ensure, this.requestManager.getRequests);
     this.add(RPCAction.FINALIZE_REQUEST, this.lockService.ensure, this.requestManager.finalizeRequest);
 
-    log.debug("3. Inside ZkKepperController() class");
-
     // lock
     this.add(RPCAction.SETUP_PASSWORD, (payload: string) => this.lockService.setupPassword(payload));
 
     // Identities
-    this.add(RPCAction.GET_COMMITMENTS, this.lockService.ensure, this.identityService.getIdentityCommitments);
-    this.add(RPCAction.GET_IDENTITIES, this.lockService.ensure, this.identityService.getIdentities);
-    this.add(RPCAction.GET_ACTIVE_IDENTITY_DATA, this.lockService.ensure, this.identityService.getActiveIdentityData);
-    this.add(RPCAction.SET_ACTIVE_IDENTITY, this.lockService.ensure, this.identityService.setActiveIdentity);
-    this.add(RPCAction.SET_IDENTITY_NAME, this.lockService.ensure, async (payload: IdentityName) =>
-      this.identityService.setIdentityName(payload),
-    );
+    this.add(RPCAction.GET_COMMITMENTS, this.lockService.ensure, this.zkIdentityService.getIdentityCommitments);
+    this.add(RPCAction.GET_IDENTITIES, this.lockService.ensure, this.zkIdentityService.getIdentities);
+    this.add(RPCAction.GET_ACTIVE_IDENTITY_DATA, this.lockService.ensure, this.zkIdentityService.getActiveIdentityData);
+    this.add(RPCAction.SET_ACTIVE_IDENTITY, this.lockService.ensure, this.zkIdentityService.setActiveIdentity);
+    this.add(RPCAction.SET_IDENTITY_NAME, this.lockService.ensure, this.zkIdentityService.setIdentityName);
+    this.add(RPCAction.CREATE_IDENTITY_REQ, this.lockService.ensure, this.zkIdentityService.createIdentityRequest);
+    this.add(RPCAction.CREATE_IDENTITY, this.lockService.ensure, this.zkIdentityService.createIdentity);
+    this.add(RPCAction.DELETE_IDENTITY, this.lockService.ensure, this.zkIdentityService.deleteIdentity);
+    this.add(RPCAction.DELETE_ALL_IDENTITIES, this.lockService.ensure, this.zkIdentityService.deleteAllIdentities);
 
-    this.add(RPCAction.DELETE_IDENTITY, this.lockService.ensure, async (payload: IdentityName) =>
-      this.identityService.deleteIdentity(payload),
-    );
-
-    this.add(RPCAction.DELETE_ALL_IDENTITIES, this.lockService.ensure, this.identityService.deleteAllIdentities);
-
-    this.add(RPCAction.CREATE_IDENTITY_REQ, this.lockService.ensure, async () => {
-      await this.browserService.openPopup({ params: { redirect: Paths.CREATE_IDENTITY } });
-    });
-
-    this.add(RPCAction.CREATE_IDENTITY, this.lockService.ensure, async (payload: NewIdentityRequest) => {
-      const { strategy, messageSignature, options } = payload;
-
-      if (!strategy) {
-        throw new Error("strategy not provided");
-      }
-
-      const numOfIdentites = await this.identityService.getNumOfIdentites();
-      const config = {
-        ...options,
-        account: options.account ?? "",
-        identityStrategy: strategy,
-        name: options?.name || `Account # ${numOfIdentites}`,
-        messageSignature: strategy === "interrep" ? messageSignature : undefined,
-      };
-
-      const identity = identityFactory(strategy, config);
-
-      if (!identity) {
-        throw new Error("Identity not created, make sure to check strategy");
-      }
-
-      await this.identityService.insert(identity);
-
-      await this.browserService.closePopup();
-
-      return true;
-    });
-
-    this.add(RPCAction.LOAD_IDENTITY_HISTORY, this.lockService.ensure, this.historyService.loadOperations);
-
+    // History
     this.add(RPCAction.GET_IDENTITY_HISTORY, this.lockService.ensure, this.historyService.getOperations);
-
+    this.add(RPCAction.LOAD_IDENTITY_HISTORY, this.lockService.ensure, this.historyService.loadOperations);
     this.add(RPCAction.DELETE_HISTORY_OPERATION, this.lockService.ensure, this.historyService.removeOperation);
-
     this.add(RPCAction.DELETE_ALL_HISTORY_OPERATIONS, this.lockService.ensure, this.historyService.clear);
-
     this.add(RPCAction.ENABLE_OPERATION_HISTORY, this.lockService.ensure, this.historyService.enableHistory);
 
     // Protocols
@@ -155,7 +106,7 @@ export default class ZkKeeperController extends Handler {
           await this.lockService.awaitUnlock();
         }
 
-        const identity = await this.identityService.getActiveIdentity();
+        const identity = await this.zkIdentityService.getActiveIdentity();
         const approved = this.approvalService.isApproved(meta.origin);
         const permission = this.approvalService.getPermission(meta.origin);
 
@@ -189,7 +140,7 @@ export default class ZkKeeperController extends Handler {
       this.lockService.ensure,
       validateZkInputs,
       async (payload: RLNProofRequest, meta: { origin: string }) => {
-        const identity = await this.identityService.getActiveIdentity();
+        const identity = await this.zkIdentityService.getActiveIdentity();
         const approved = this.approvalService.isApproved(meta.origin);
         const permission = this.approvalService.getPermission(meta.origin);
 

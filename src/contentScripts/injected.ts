@@ -1,7 +1,7 @@
 import { MerkleProof } from "@zk-kit/incremental-merkle-tree";
 import log from "loglevel";
 
-import ZkIdentityDecorater from "@src/background/identityDecorater";
+import { ZkIdentityDecorater } from "@src/background/services/zkIdentity/services/zkIdentityDecorater";
 import ZkProofService from "@src/background/services/zkProof";
 import { RPCAction } from "@src/constants";
 import { IRlnGenerateArgs, ISemaphoreGenerateArgs, InjectedMessageData, MerkleProofArtifacts } from "@src/types";

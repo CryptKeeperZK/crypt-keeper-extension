@@ -2,7 +2,7 @@ import { Identity } from "@semaphore-protocol/identity";
 
 import { SerializedIdentity, IdentityMetadata } from "@src/types";
 
-export default class ZkIdentityDecorater {
+export class ZkIdentityDecorater {
   zkIdentity: Identity;
 
   metadata: IdentityMetadata;

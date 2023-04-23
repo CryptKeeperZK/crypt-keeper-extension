@@ -1,10 +1,10 @@
-import ZkIdentityDecorater from "@src/background/identityDecorater";
+import { ZkIdentityDecorater } from "@src/background/services/zkIdentity/services/zkIdentityDecorater";
 import { IRlnGenerateArgs } from "@src/types";
 
 import ZkProofService from "..";
 import { RLNProofService } from "../protocols";
 
-jest.mock("@src/background/identityDecorater", (): unknown => ({
+jest.mock("@src/background/services/zkIdentity/services/zkIdentityDecorater", (): unknown => ({
   genFromSerialized: jest.fn(),
 }));
 

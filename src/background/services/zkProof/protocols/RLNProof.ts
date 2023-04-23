@@ -1,6 +1,6 @@
 import { RLN, RLNFullProof } from "rlnjs";
 
-import ZkIdentityDecorater from "@src/background/identityDecorater";
+import { ZkIdentityDecorater } from "@src/background/services/zkIdentity/services/zkIdentityDecorater";
 import { RLNProofRequest } from "@src/types";
 
 import { IZkProof } from "./IZkProof";

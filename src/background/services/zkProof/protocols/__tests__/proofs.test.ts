@@ -3,7 +3,7 @@ import { generateProof } from "@semaphore-protocol/proof";
 import { MerkleProof } from "@zk-kit/incremental-merkle-tree";
 import { RLN } from "rlnjs";
 
-import ZkIdentityDecorater from "@src/background/identityDecorater";
+import { ZkIdentityDecorater } from "@src/background/services/zkIdentity/services/zkIdentityDecorater";
 import { ZERO_ADDRESS } from "@src/config/const";
 import { IdentityMetadata, RLNProofRequest } from "@src/types";
 

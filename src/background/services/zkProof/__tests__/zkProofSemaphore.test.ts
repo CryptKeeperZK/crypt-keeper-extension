@@ -1,11 +1,12 @@
-import ZkIdentityDecorater from "@src/background/identityDecorater";
+import { ZkIdentityDecorater } from "@src/background/services/zkIdentity/services/zkIdentityDecorater";
 import { ISemaphoreGenerateArgs } from "@src/types";
 
 import ZkProofService from "..";
 import { SemaphoreProofService } from "../protocols";
 
-jest.mock("@src/background/identityDecorater", (): unknown => ({
-  genFromSerialized: jest.fn(),
+jest.mock("@src/background/services/zkIdentity/services/zkIdentityDecorater", (): unknown => ({  ZkIdentityDecorater: jest.fn(() => ({
+    genFromSerialized: jest.fn(),
+  }))
 }));
 
 jest.mock("@src/background/services/zkProof/protocols/SemaphoreProof");

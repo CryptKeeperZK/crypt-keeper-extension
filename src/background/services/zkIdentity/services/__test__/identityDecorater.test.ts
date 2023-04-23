@@ -1,9 +1,8 @@
 import { Identity } from "@semaphore-protocol/identity";
 
+import { ZkIdentityDecorater } from "@src/background/services/zkIdentity/services/zkIdentityDecorater";
 import { ZERO_ADDRESS } from "@src/config/const";
 import { IdentityMetadata } from "@src/types";
-
-import ZkIdentityDecorater from "../identityDecorater";
 
 describe("background/identityDecorater", () => {
   const defaultIdentity = new Identity("1234");

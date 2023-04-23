@@ -1,4 +1,4 @@
-import ZkIdentityDecorater from "@src/background/identityDecorater";
+import { ZkIdentityDecorater } from "@src/background/services/zkIdentity/services/zkIdentityDecorater";
 import { RLNFullProof, RLNProofRequest, SemaphoreProof, SemaphoreProofRequest } from "@src/types";
 
 import { SemaphoreProofService, RLNProofService } from "./protocols";

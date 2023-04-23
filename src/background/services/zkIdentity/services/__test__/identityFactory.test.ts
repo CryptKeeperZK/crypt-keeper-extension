@@ -1,11 +1,18 @@
+import { ZkIdentityDecorater } from "@src/background/services/zkIdentity/services/zkIdentityDecorater";
+import { ZkIdentityFactoryService } from "@src/background/services/zkIdentity/services/zkIdentityFactory";
 import { ZERO_ADDRESS } from "@src/config/const";
+import { ICreateIdentityArgs, StrategiesMap } from "@src/types";
 
-import ZkIdentityDecorater from "../identityDecorater";
-import identityFactory from "../identityFactory";
+class MockIdentityService extends ZkIdentityFactoryService {
+  mockNewIdentity = (strategy: keyof StrategiesMap, config: ICreateIdentityArgs) =>
+    this.createNewIdentity(strategy, config);
+}
 
 describe("background/identityFactory", () => {
   test("should create a random identity", () => {
-    const identity1 = identityFactory("random", {
+    const mockIdentityService = new MockIdentityService();
+
+    const identity1 = mockIdentityService.mockNewIdentity("random", {
       name: "name",
       account: ZERO_ADDRESS,
       identityStrategy: "random",
@@ -17,7 +24,9 @@ describe("background/identityFactory", () => {
   });
 
   test("should create a twitter identity", () => {
-    const identity1 = identityFactory("interrep", {
+    const mockIdentityService = new MockIdentityService();
+
+    const identity1 = mockIdentityService.mockNewIdentity("interrep", {
       name: "name",
       account: ZERO_ADDRESS,
       identityStrategy: "interrep",
@@ -31,8 +40,10 @@ describe("background/identityFactory", () => {
   });
 
   test("should not create an interrep identity without the required parameters", () => {
+    const mockIdentityService = new MockIdentityService();
+
     const fun = () =>
-      identityFactory("interrep", {
+      mockIdentityService.mockNewIdentity("interrep", {
         name: "name",
         account: ZERO_ADDRESS,
         identityStrategy: "interrep",

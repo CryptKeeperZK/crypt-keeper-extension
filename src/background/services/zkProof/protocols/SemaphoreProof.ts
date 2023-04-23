@@ -1,6 +1,6 @@
 import { generateProof } from "@semaphore-protocol/proof";
 
-import ZkIdentityDecorater from "@src/background/identityDecorater";
+import { ZkIdentityDecorater } from "@src/background/services/zkIdentity/services/zkIdentityDecorater";
 import { SemaphoreProof, SemaphoreProofRequest } from "@src/types";
 
 import { IZkProof } from "./IZkProof";

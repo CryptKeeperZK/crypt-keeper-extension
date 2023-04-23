@@ -1,23 +1,26 @@
 import { bigintToHex } from "bigint-conversion";
 import { browser } from "webextension-polyfill-ts";
 
+import BrowserUtils from "@src/background/controllers/browserUtils";
+import { ZkIdentityDecorater } from "@src/background/services/zkIdentity/services/zkIdentityDecorater";
 import { getEnabledFeatures } from "@src/config/features";
-import { IdentityMetadata, IdentityName, OperationType } from "@src/types";
+import { Paths } from "@src/constants";
+import { IdentityMetadata, IdentityName, NewIdentityRequest, OperationType } from "@src/types";
 import { SelectedIdentity, setIdentities, setSelectedCommitment } from "@src/ui/ducks/identities";
 import { ellipsify } from "@src/util/account";
 import pushMessage from "@src/util/pushMessage";
 
-import ZkIdentityDecorater from "../identityDecorater";
+import HistoryService from "../history";
+import LockService from "../lock";
+import NotificationService from "../notification";
+import SimpleStorage from "../simpleStorage";
 
-import HistoryService from "./history";
-import LockService from "./lock";
-import NotificationService from "./notification";
-import SimpleStorage from "./simpleStorage";
+import { ZkIdentityFactoryService } from "./services/zkIdentityFactory";
 
 const IDENTITY_KEY = "@@ID@@";
 const ACTIVE_IDENTITY_KEY = "@@AID@@";
 
-export default class IdentityService {
+export default class ZkIdentityService extends ZkIdentityFactoryService {
   private activeIdentity?: ZkIdentityDecorater;
 
   private identitiesStore: SimpleStorage;
@@ -30,13 +33,17 @@ export default class IdentityService {
 
   private historyService: HistoryService;
 
+  private browsercontroller: BrowserUtils;
+
   constructor() {
+    super();
     this.activeIdentity = undefined;
     this.identitiesStore = new SimpleStorage(IDENTITY_KEY);
     this.activeIdentityStore = new SimpleStorage(ACTIVE_IDENTITY_KEY);
     this.lockService = LockService.getInstance();
     this.notificationService = NotificationService.getInstance();
     this.historyService = HistoryService.getInstance();
+    this.browsercontroller = BrowserUtils.getInstance();
   }
 
   unlock = async (): Promise<boolean> => {
@@ -45,10 +52,45 @@ export default class IdentityService {
     return true;
   };
 
-  setActiveIdentity = async ({ identityCommitment }: { identityCommitment: string }): Promise<boolean> => {
+  private setDefaultIdentity = async (): Promise<void> => {
     const identities = await this.getIdentitiesFromStore();
 
-    return this.updateActiveIdentity({ identities, identityCommitment });
+    if (!identities.size) {
+      await this.clearActiveIdentity();
+      return;
+    }
+
+    const identity = identities.keys().next();
+    await this.updateActiveIdentity({ identities, identityCommitment: identity.value as string });
+  };
+
+  private getIdentitiesFromStore = async (): Promise<Map<string, string>> => {
+    const cipherText = await this.identitiesStore.get<string>();
+
+    if (!cipherText) {
+      return new Map();
+    }
+
+    const features = getEnabledFeatures();
+    const identitesDecrypted = this.lockService.decrypt(cipherText);
+    const iterableIdentities = JSON.parse(identitesDecrypted) as Iterable<readonly [string, string]>;
+
+    return new Map(
+      features.RANDOM_IDENTITY
+        ? iterableIdentities
+        : [...iterableIdentities].filter(
+            ([, identity]) => ZkIdentityDecorater.genFromSerialized(identity).metadata.identityStrategy !== "random",
+          ),
+    );
+  };
+
+  private clearActiveIdentity = async (): Promise<void> => {
+    if (!this.activeIdentity) {
+      return;
+    }
+
+    this.activeIdentity = undefined;
+    await this.writeActiveIdentity("", "");
   };
 
   private updateActiveIdentity = async ({
@@ -71,6 +113,117 @@ export default class IdentityService {
     await this.writeActiveIdentity(identityCommitment, activeIdentityWeb2Provider);
 
     return true;
+  };
+
+  private writeActiveIdentity = async (commitment: string, web2Provider?: string): Promise<void> => {
+    const cipherText = this.lockService.encrypt(commitment);
+    await this.activeIdentityStore.set(cipherText);
+
+    const [tabs] = await Promise.all([
+      browser.tabs.query({ active: true }),
+      pushMessage(
+        setSelectedCommitment({
+          commitment,
+          web2Provider,
+        }),
+      ),
+    ]);
+
+    tabs.map((tab) =>
+      browser.tabs
+        .sendMessage(
+          tab.id as number,
+          setSelectedCommitment({
+            commitment,
+            web2Provider,
+          }),
+        )
+        .catch(() => undefined),
+    );
+  };
+
+  createIdentityRequest = async (): Promise<void> => {
+    await this.browsercontroller.openPopup({ params: { redirect: Paths.CREATE_IDENTITY } });
+  };
+
+  createIdentity = async ({
+    strategy,
+    messageSignature,
+    options,
+  }: NewIdentityRequest): Promise<{ status: boolean; identityCommitment?: bigint }> => {
+    if (!strategy) {
+      throw new Error("strategy not provided");
+    }
+
+    const numOfIdentites = await this.getNumOfIdentites();
+
+    const config = {
+      ...options,
+      account: options.account ?? "",
+      identityStrategy: strategy,
+      name: options?.name || `Account # ${numOfIdentites}`,
+      messageSignature: strategy === "interrep" ? messageSignature : undefined,
+    };
+
+    const identity = this.createNewIdentity(strategy, config);
+
+    if (!identity) {
+      throw new Error("Identity not created, make sure to check strategy");
+    }
+
+    const status = await this.insertIdentity(identity);
+
+    await this.browsercontroller.closePopup();
+
+    return {
+      status,
+      identityCommitment: identity.genIdentityCommitment(),
+    };
+  };
+
+  private insertIdentity = async (newIdentity: ZkIdentityDecorater): Promise<boolean> => {
+    const identities = await this.getIdentitiesFromStore();
+    const identityCommitment = bigintToHex(newIdentity.genIdentityCommitment());
+
+    if (identities.has(identityCommitment)) {
+      return false;
+    }
+
+    identities.set(identityCommitment, newIdentity.serialize());
+    await this.writeIdentities(identities);
+    await this.updateActiveIdentity({ identities, identityCommitment });
+    await this.refresh();
+    await this.historyService.trackOperation(OperationType.CREATE_IDENTITY, {
+      identity: { commitment: identityCommitment, metadata: newIdentity.metadata },
+    });
+
+    await this.notificationService.create({
+      options: {
+        title: "New identity has been created.",
+        message: `Identity commitment: ${ellipsify(identityCommitment)}`,
+        iconUrl: browser.runtime.getURL("/logo.png"),
+        type: "basic",
+      },
+    });
+
+    return true;
+  };
+
+  private writeIdentities = async (identities: Map<string, string>): Promise<void> => {
+    const serializedIdentities = JSON.stringify(Array.from(identities.entries()));
+    const cipherText = this.lockService.encrypt(serializedIdentities);
+    await this.identitiesStore.set(cipherText);
+  };
+
+  private refresh = async (): Promise<void> => {
+    const identities = await this.getIdentities();
+    await pushMessage(setIdentities(identities));
+  };
+
+  setActiveIdentity = async ({ identityCommitment }: { identityCommitment: string }): Promise<boolean> => {
+    const identities = await this.getIdentitiesFromStore();
+
+    return this.updateActiveIdentity({ identities, identityCommitment });
   };
 
   setIdentityName = async (payload: IdentityName): Promise<boolean> => {
@@ -185,115 +338,8 @@ export default class IdentityService {
       });
   };
 
-  insert = async (newIdentity: ZkIdentityDecorater): Promise<boolean> => {
-    const identities = await this.getIdentitiesFromStore();
-    const identityCommitment = bigintToHex(newIdentity.genIdentityCommitment());
-
-    if (identities.has(identityCommitment)) {
-      return false;
-    }
-
-    identities.set(identityCommitment, newIdentity.serialize());
-    await this.writeIdentities(identities);
-    await this.updateActiveIdentity({ identities, identityCommitment });
-    await this.refresh();
-    await this.historyService.trackOperation(OperationType.CREATE_IDENTITY, {
-      identity: { commitment: identityCommitment, metadata: newIdentity.metadata },
-    });
-
-    await this.notificationService.create({
-      options: {
-        title: "New identity has been created.",
-        message: `Identity commitment: ${ellipsify(identityCommitment)}`,
-        iconUrl: browser.runtime.getURL("/logo.png"),
-        type: "basic",
-      },
-    });
-
-    return true;
-  };
-
   getNumOfIdentites = async (): Promise<number> => {
     const identities = await this.getIdentitiesFromStore();
     return identities.size;
-  };
-
-  private setDefaultIdentity = async (): Promise<void> => {
-    const identities = await this.getIdentitiesFromStore();
-
-    if (!identities.size) {
-      await this.clearActiveIdentity();
-      return;
-    }
-
-    const identity = identities.keys().next();
-    await this.updateActiveIdentity({ identities, identityCommitment: identity.value as string });
-  };
-
-  private clearActiveIdentity = async (): Promise<void> => {
-    if (!this.activeIdentity) {
-      return;
-    }
-
-    this.activeIdentity = undefined;
-    await this.writeActiveIdentity("", "");
-  };
-
-  private writeIdentities = async (identities: Map<string, string>): Promise<void> => {
-    const serializedIdentities = JSON.stringify(Array.from(identities.entries()));
-    const cipherText = this.lockService.encrypt(serializedIdentities);
-    await this.identitiesStore.set(cipherText);
-  };
-
-  private writeActiveIdentity = async (commitment: string, web2Provider?: string): Promise<void> => {
-    const cipherText = this.lockService.encrypt(commitment);
-    await this.activeIdentityStore.set(cipherText);
-
-    const [tabs] = await Promise.all([
-      browser.tabs.query({ active: true }),
-      pushMessage(
-        setSelectedCommitment({
-          commitment,
-          web2Provider,
-        }),
-      ),
-    ]);
-
-    tabs.map((tab) =>
-      browser.tabs
-        .sendMessage(
-          tab.id as number,
-          setSelectedCommitment({
-            commitment,
-            web2Provider,
-          }),
-        )
-        .catch(() => undefined),
-    );
-  };
-
-  private getIdentitiesFromStore = async (): Promise<Map<string, string>> => {
-    const cipherText = await this.identitiesStore.get<string>();
-
-    if (!cipherText) {
-      return new Map();
-    }
-
-    const features = getEnabledFeatures();
-    const identitesDecrypted = this.lockService.decrypt(cipherText);
-    const iterableIdentities = JSON.parse(identitesDecrypted) as Iterable<readonly [string, string]>;
-
-    return new Map(
-      features.RANDOM_IDENTITY
-        ? iterableIdentities
-        : [...iterableIdentities].filter(
-            ([, identity]) => ZkIdentityDecorater.genFromSerialized(identity).metadata.identityStrategy !== "random",
-          ),
-    );
-  };
-
-  private refresh = async (): Promise<void> => {
-    const identities = await this.getIdentities();
-    await pushMessage(setIdentities(identities));
   };
 }
