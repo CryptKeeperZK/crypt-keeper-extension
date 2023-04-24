@@ -2,13 +2,13 @@ import log from "loglevel";
 import "subworkers";
 import { browser } from "webextension-polyfill-ts";
 
+import CryptKeeperController from "@src/background/cryptKeeper";
 import { deferredPromise } from "@src/background/shared/utils";
 import { isDebugMode } from "@src/config/env";
 import { RequestHandler } from "@src/types";
 
 import "./appInit";
 import "./shared/initGlobals";
-import CryptKeeperController from "./cryptKeeper";
 
 log.setDefaultLevel(isDebugMode() ? "debug" : "info");
 
