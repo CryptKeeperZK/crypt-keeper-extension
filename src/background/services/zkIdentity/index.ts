@@ -164,16 +164,16 @@ export default class ZkIdentityService extends ZkIdentityFactoryService {
       ),
     ]);
 
-    tabs.map((tab) =>
-      browser.tabs
-        .sendMessage(
+    await Promise.all(
+      tabs.map((tab) =>
+        browser.tabs.sendMessage(
           tab.id as number,
           setSelectedCommitment({
             commitment,
             web2Provider,
           }),
-        )
-        .catch(() => undefined),
+        ),
+      ),
     );
   };
 
