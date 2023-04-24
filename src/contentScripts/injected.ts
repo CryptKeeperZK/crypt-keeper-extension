@@ -1,11 +1,11 @@
 import { MerkleProof } from "@zk-kit/incremental-merkle-tree";
 import log from "loglevel";
 
+import ZkIdentityDecorater from "@src/background/identityDecorater";
+import ZkProofService from "@src/background/services/zkProof";
 import { RPCAction } from "@src/constants";
-import { InjectedMessageData, MerkleProofArtifacts } from "@src/types";
+import { IRlnGenerateArgs, ISemaphoreGenerateArgs, InjectedMessageData, MerkleProofArtifacts } from "@src/types";
 import { SelectedIdentity } from "@src/ui/ducks/identities";
-
-import { IRlnGenerateArgs, ISemaphoreGenerateArgs, RlnProofGenerator, SemaphoreProofGenerator } from "./proof";
 
 export type IRequest = {
   method: string;
@@ -74,7 +74,9 @@ async function semaphoreProof(
   const merkleStorageAddress =
     typeof merkleProofArtifactsOrStorageAddress === "string" ? merkleProofArtifactsOrStorageAddress : undefined;
 
-  const request = await post({
+  const zkProofService = ZkProofService.getInstance();
+
+  const request = (await post({
     method: RPCAction.PREPARE_SEMAPHORE_PROOF_REQUEST,
     payload: {
       externalNullifier,
@@ -83,9 +85,12 @@ async function semaphoreProof(
       merkleProofArtifacts,
       merkleProof,
     },
-  });
+  })) as ISemaphoreGenerateArgs;
 
-  return SemaphoreProofGenerator.getInstance().generate(request as ISemaphoreGenerateArgs);
+  return zkProofService.generateSemaphoreProof(
+    ZkIdentityDecorater.genFromSerialized(request.identity),
+    request.payload,
+  );
 }
 
 async function rlnProof(
@@ -99,7 +104,9 @@ async function rlnProof(
   const merkleStorageAddress =
     typeof merkleProofArtifactsOrStorageAddress === "string" ? merkleProofArtifactsOrStorageAddress : undefined;
 
-  const request = await post({
+  const zkProofService = ZkProofService.getInstance();
+
+  const request = (await post({
     method: RPCAction.PREPARE_RLN_PROOF_REQUEST,
     payload: {
       externalNullifier,
@@ -108,9 +115,9 @@ async function rlnProof(
       merkleProofArtifacts,
       rlnIdentifier,
     },
-  });
+  })) as IRlnGenerateArgs;
 
-  return RlnProofGenerator.getInstance().generate(request as IRlnGenerateArgs);
+  return zkProofService.generateRLNProof(ZkIdentityDecorater.genFromSerialized(request.identity), request.payload);
 }
 
 // dev-only
