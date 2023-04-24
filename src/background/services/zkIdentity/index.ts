@@ -45,22 +45,33 @@ export default class ZkIdentityService extends ZkIdentityFactoryService {
     this.browsercontroller = BrowserUtils.getInstance();
   }
 
-  unlock = async (): Promise<boolean> => {
-    await this.setDefaultIdentity();
+  getActiveIdentityData = async (): Promise<SelectedIdentity> => {
+    const identity = await this.getActiveIdentity();
 
-    return true;
+    return {
+      commitment: identity ? bigintToHex(identity.genIdentityCommitment()) : "",
+      web2Provider: identity?.metadata.web2Provider || "",
+    };
   };
 
-  private setDefaultIdentity = async (): Promise<void> => {
-    const identities = await this.getIdentitiesFromStore();
+  getActiveIdentity = async (): Promise<ZkIdentitySemaphore | undefined> => {
+    const activeIdentityCommitmentCipher = await this.activeIdentityStore.get<string>();
 
-    if (!identities.size) {
-      await this.clearActiveIdentity();
-      return;
+    if (!activeIdentityCommitmentCipher) {
+      return undefined;
     }
 
-    const identity = identities.keys().next();
-    await this.updateActiveIdentity({ identities, identityCommitment: identity.value as string });
+    const activeIdentityCommitment = this.lockService.decrypt(activeIdentityCommitmentCipher);
+    const identities = await this.getIdentitiesFromStore();
+    const identity = identities.get(activeIdentityCommitment);
+
+    if (!identity) {
+      return undefined;
+    }
+
+    this.activeIdentity = ZkIdentitySemaphore.genFromSerialized(identity);
+
+    return this.activeIdentity;
   };
 
   private getIdentitiesFromStore = async (): Promise<Map<string, string>> => {
@@ -83,13 +94,38 @@ export default class ZkIdentityService extends ZkIdentityFactoryService {
     );
   };
 
-  private clearActiveIdentity = async (): Promise<void> => {
-    if (!this.activeIdentity) {
-      return;
-    }
+  getIdentityCommitments = async (): Promise<{ commitments: string[]; identities: Map<string, string> }> => {
+    const identities = await this.getIdentitiesFromStore();
+    const commitments = [...identities.keys()];
 
-    this.activeIdentity = undefined;
-    await this.writeActiveIdentity("", "");
+    return { commitments, identities };
+  };
+
+  getIdentities = async (): Promise<{ commitment: string; metadata: IdentityMetadata }[]> => {
+    const { commitments, identities } = await this.getIdentityCommitments();
+
+    return commitments
+      .filter((commitment) => identities.has(commitment))
+      .map((commitment) => {
+        const serializedIdentity = identities.get(commitment) as string;
+        const identity = ZkIdentitySemaphore.genFromSerialized(serializedIdentity);
+
+        return {
+          commitment,
+          metadata: identity?.metadata,
+        };
+      });
+  };
+
+  getNumOfIdentites = async (): Promise<number> => {
+    const identities = await this.getIdentitiesFromStore();
+    return identities.size;
+  };
+
+  setActiveIdentity = async ({ identityCommitment }: { identityCommitment: string }): Promise<boolean> => {
+    const identities = await this.getIdentitiesFromStore();
+
+    return this.updateActiveIdentity({ identities, identityCommitment });
   };
 
   private updateActiveIdentity = async ({
@@ -139,6 +175,51 @@ export default class ZkIdentityService extends ZkIdentityFactoryService {
         )
         .catch(() => undefined),
     );
+  };
+
+  setIdentityName = async (payload: IdentityName): Promise<boolean> => {
+    const identities = await this.getIdentitiesFromStore();
+    const { identityCommitment, name } = payload;
+    const rawIdentity = identities.get(identityCommitment);
+
+    if (!rawIdentity) {
+      return false;
+    }
+
+    const identity = ZkIdentitySemaphore.genFromSerialized(rawIdentity);
+    identity.setIdentityMetadataName(name);
+    identities.set(identityCommitment, identity.serialize());
+    await this.writeIdentities(identities);
+    await this.refresh();
+
+    return true;
+  };
+
+  unlock = async (): Promise<boolean> => {
+    await this.setDefaultIdentity();
+
+    return true;
+  };
+
+  private setDefaultIdentity = async (): Promise<void> => {
+    const identities = await this.getIdentitiesFromStore();
+
+    if (!identities.size) {
+      await this.clearActiveIdentity();
+      return;
+    }
+
+    const identity = identities.keys().next();
+    await this.updateActiveIdentity({ identities, identityCommitment: identity.value as string });
+  };
+
+  private clearActiveIdentity = async (): Promise<void> => {
+    if (!this.activeIdentity) {
+      return;
+    }
+
+    this.activeIdentity = undefined;
+    await this.writeActiveIdentity("", "");
   };
 
   createIdentityRequest = async (): Promise<void> => {
@@ -219,30 +300,6 @@ export default class ZkIdentityService extends ZkIdentityFactoryService {
     await pushMessage(setIdentities(identities));
   };
 
-  setActiveIdentity = async ({ identityCommitment }: { identityCommitment: string }): Promise<boolean> => {
-    const identities = await this.getIdentitiesFromStore();
-
-    return this.updateActiveIdentity({ identities, identityCommitment });
-  };
-
-  setIdentityName = async (payload: IdentityName): Promise<boolean> => {
-    const identities = await this.getIdentitiesFromStore();
-    const { identityCommitment, name } = payload;
-    const rawIdentity = identities.get(identityCommitment);
-
-    if (!rawIdentity) {
-      return false;
-    }
-
-    const identity = ZkIdentitySemaphore.genFromSerialized(rawIdentity);
-    identity.setIdentityMetadataName(name);
-    identities.set(identityCommitment, identity.serialize());
-    await this.writeIdentities(identities);
-    await this.refresh();
-
-    return true;
-  };
-
   deleteIdentity = async (payload: { identityCommitment: string }): Promise<boolean> => {
     const { identityCommitment } = payload;
     const activeIdentity = await this.getActiveIdentity();
@@ -283,62 +340,5 @@ export default class ZkIdentityService extends ZkIdentityFactoryService {
     await this.historyService.trackOperation(OperationType.DELETE_ALL_IDENTITIES, {});
 
     return true;
-  };
-
-  getActiveIdentity = async (): Promise<ZkIdentitySemaphore | undefined> => {
-    const activeIdentityCommitmentCipher = await this.activeIdentityStore.get<string>();
-
-    if (!activeIdentityCommitmentCipher) {
-      return undefined;
-    }
-
-    const activeIdentityCommitment = this.lockService.decrypt(activeIdentityCommitmentCipher);
-    const identities = await this.getIdentitiesFromStore();
-    const identity = identities.get(activeIdentityCommitment);
-
-    if (!identity) {
-      return undefined;
-    }
-
-    this.activeIdentity = ZkIdentitySemaphore.genFromSerialized(identity);
-
-    return this.activeIdentity;
-  };
-
-  getActiveIdentityData = async (): Promise<SelectedIdentity> => {
-    const identity = await this.getActiveIdentity();
-
-    return {
-      commitment: identity ? bigintToHex(identity.genIdentityCommitment()) : "",
-      web2Provider: identity?.metadata.web2Provider || "",
-    };
-  };
-
-  getIdentityCommitments = async (): Promise<{ commitments: string[]; identities: Map<string, string> }> => {
-    const identities = await this.getIdentitiesFromStore();
-    const commitments = [...identities.keys()];
-
-    return { commitments, identities };
-  };
-
-  getIdentities = async (): Promise<{ commitment: string; metadata: IdentityMetadata }[]> => {
-    const { commitments, identities } = await this.getIdentityCommitments();
-
-    return commitments
-      .filter((commitment) => identities.has(commitment))
-      .map((commitment) => {
-        const serializedIdentity = identities.get(commitment) as string;
-        const identity = ZkIdentitySemaphore.genFromSerialized(serializedIdentity);
-
-        return {
-          commitment,
-          metadata: identity?.metadata,
-        };
-      });
-  };
-
-  getNumOfIdentites = async (): Promise<number> => {
-    const identities = await this.getIdentitiesFromStore();
-    return identities.size;
   };
 }
