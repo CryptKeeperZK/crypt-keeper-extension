@@ -3,13 +3,13 @@ import { Identity } from "@semaphore-protocol/identity";
 import { ICreateIdentityArgs, StrategiesMap } from "@src/types";
 import checkParameter from "@src/util/checkParameter";
 
-import { ZkIdentityDecorater } from "./zkIdentityDecorater";
+import { ZkIdentitySemaphore } from "../protocols/ZkIdentitySemaphore";
 
 export class ZkIdentityFactoryService {
-  protected createNewIdentity = (strategy: keyof StrategiesMap, config: ICreateIdentityArgs): ZkIdentityDecorater =>
+  protected createNewIdentity = (strategy: keyof StrategiesMap, config: ICreateIdentityArgs): ZkIdentitySemaphore =>
     this.strategiesMap[strategy](config);
 
-  private createInterrepIdentity = (config: ICreateIdentityArgs): ZkIdentityDecorater => {
+  private createInterrepIdentity = (config: ICreateIdentityArgs): ZkIdentitySemaphore => {
     const { identityStrategy, web2Provider, name, messageSignature, account } = config;
 
     checkParameter(messageSignature, "messageSignature", "string");
@@ -18,7 +18,7 @@ export class ZkIdentityFactoryService {
 
     const identity = new Identity(messageSignature);
 
-    return new ZkIdentityDecorater(identity, {
+    return new ZkIdentitySemaphore(identity, {
       account,
       name,
       identityStrategy,
@@ -26,11 +26,11 @@ export class ZkIdentityFactoryService {
     });
   };
 
-  private createRandomIdentity = (config: ICreateIdentityArgs): ZkIdentityDecorater => {
+  private createRandomIdentity = (config: ICreateIdentityArgs): ZkIdentitySemaphore => {
     const { identityStrategy, name } = config;
     const identity = new Identity();
 
-    return new ZkIdentityDecorater(identity, {
+    return new ZkIdentitySemaphore(identity, {
       account: "",
       name,
       identityStrategy,

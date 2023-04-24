@@ -2,7 +2,8 @@ import { bigintToHex } from "bigint-conversion";
 import { browser } from "webextension-polyfill-ts";
 
 import BrowserUtils from "@src/background/controllers/browserUtils";
-import { ZkIdentityDecorater } from "@src/background/services/zkIdentity/services/zkIdentityDecorater";
+import { ZkIdentitySemaphore } from "@src/background/services/zkIdentity/protocols/ZkIdentitySemaphore";
+import { ZkIdentityFactoryService } from "@src/background/services/zkIdentity/services/ZkIdentityFactory";
 import { getEnabledFeatures } from "@src/config/features";
 import { Paths } from "@src/constants";
 import { IdentityMetadata, IdentityName, NewIdentityRequest, OperationType } from "@src/types";
@@ -15,13 +16,11 @@ import LockService from "../lock";
 import NotificationService from "../notification";
 import SimpleStorage from "../simpleStorage";
 
-import { ZkIdentityFactoryService } from "./services/zkIdentityFactory";
-
 const IDENTITY_KEY = "@@ID@@";
 const ACTIVE_IDENTITY_KEY = "@@AID@@";
 
 export default class ZkIdentityService extends ZkIdentityFactoryService {
-  private activeIdentity?: ZkIdentityDecorater;
+  private activeIdentity?: ZkIdentitySemaphore;
 
   private identitiesStore: SimpleStorage;
 
@@ -79,7 +78,7 @@ export default class ZkIdentityService extends ZkIdentityFactoryService {
       features.RANDOM_IDENTITY
         ? iterableIdentities
         : [...iterableIdentities].filter(
-            ([, identity]) => ZkIdentityDecorater.genFromSerialized(identity).metadata.identityStrategy !== "random",
+            ([, identity]) => ZkIdentitySemaphore.genFromSerialized(identity).metadata.identityStrategy !== "random",
           ),
     );
   };
@@ -106,7 +105,7 @@ export default class ZkIdentityService extends ZkIdentityFactoryService {
       return false;
     }
 
-    this.activeIdentity = ZkIdentityDecorater.genFromSerialized(identity);
+    this.activeIdentity = ZkIdentitySemaphore.genFromSerialized(identity);
 
     const activeIdentityWeb2Provider = this.activeIdentity.metadata.web2Provider;
 
@@ -181,7 +180,7 @@ export default class ZkIdentityService extends ZkIdentityFactoryService {
     };
   };
 
-  private insertIdentity = async (newIdentity: ZkIdentityDecorater): Promise<boolean> => {
+  private insertIdentity = async (newIdentity: ZkIdentitySemaphore): Promise<boolean> => {
     const identities = await this.getIdentitiesFromStore();
     const identityCommitment = bigintToHex(newIdentity.genIdentityCommitment());
 
@@ -235,7 +234,7 @@ export default class ZkIdentityService extends ZkIdentityFactoryService {
       return false;
     }
 
-    const identity = ZkIdentityDecorater.genFromSerialized(rawIdentity);
+    const identity = ZkIdentitySemaphore.genFromSerialized(rawIdentity);
     identity.setIdentityMetadataName(name);
     identities.set(identityCommitment, identity.serialize());
     await this.writeIdentities(identities);
@@ -260,7 +259,7 @@ export default class ZkIdentityService extends ZkIdentityFactoryService {
     await this.historyService.trackOperation(OperationType.DELETE_IDENTITY, {
       identity: {
         commitment: identityCommitment,
-        metadata: ZkIdentityDecorater.genFromSerialized(identity).metadata,
+        metadata: ZkIdentitySemaphore.genFromSerialized(identity).metadata,
       },
     });
 
@@ -286,7 +285,7 @@ export default class ZkIdentityService extends ZkIdentityFactoryService {
     return true;
   };
 
-  getActiveIdentity = async (): Promise<ZkIdentityDecorater | undefined> => {
+  getActiveIdentity = async (): Promise<ZkIdentitySemaphore | undefined> => {
     const activeIdentityCommitmentCipher = await this.activeIdentityStore.get<string>();
 
     if (!activeIdentityCommitmentCipher) {
@@ -301,7 +300,7 @@ export default class ZkIdentityService extends ZkIdentityFactoryService {
       return undefined;
     }
 
-    this.activeIdentity = ZkIdentityDecorater.genFromSerialized(identity);
+    this.activeIdentity = ZkIdentitySemaphore.genFromSerialized(identity);
 
     return this.activeIdentity;
   };
@@ -329,7 +328,7 @@ export default class ZkIdentityService extends ZkIdentityFactoryService {
       .filter((commitment) => identities.has(commitment))
       .map((commitment) => {
         const serializedIdentity = identities.get(commitment) as string;
-        const identity = ZkIdentityDecorater.genFromSerialized(serializedIdentity);
+        const identity = ZkIdentitySemaphore.genFromSerialized(serializedIdentity);
 
         return {
           commitment,

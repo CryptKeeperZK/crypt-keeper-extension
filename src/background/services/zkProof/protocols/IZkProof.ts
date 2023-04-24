@@ -1,5 +1,5 @@
-import { ZkIdentityDecorater } from "@src/background/services/zkIdentity/services/zkIdentityDecorater";
+import { ZkIdentitySemaphore } from "@src/background/services/zkIdentity/protocols/ZkIdentitySemaphore";
 
 export interface IZkProof<Request, Return> {
-  genProof(identityCommitment: ZkIdentityDecorater, request: Request): Promise<Return>;
+  genProof(identityCommitment: ZkIdentitySemaphore, request: Request): Promise<Return>;
 }

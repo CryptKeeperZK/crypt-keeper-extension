@@ -26,7 +26,7 @@ jest.mock("@src/background/services/notification");
 
 type MockStorage = { get: jest.Mock; set: jest.Mock; clear: jest.Mock };
 
-describe("background/services/identity", () => {
+describe("background/services/zkIdentity", () => {
   const defaultTabs = [{ id: 1 }, { id: 2 }];
   const defaultIdentityCommitment =
     bigintToHex(15206603389158210388485662342360617949291660595274505642693885456541816400294n);

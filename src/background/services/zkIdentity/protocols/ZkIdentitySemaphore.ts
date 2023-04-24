@@ -2,7 +2,7 @@ import { Identity } from "@semaphore-protocol/identity";
 
 import { SerializedIdentity, IdentityMetadata } from "@src/types";
 
-export class ZkIdentityDecorater {
+export class ZkIdentitySemaphore {
   zkIdentity: Identity;
 
   metadata: IdentityMetadata;
@@ -25,7 +25,7 @@ export class ZkIdentityDecorater {
       metadata: this.metadata,
     });
 
-  static genFromSerialized = (serialized: string): ZkIdentityDecorater => {
+  static genFromSerialized = (serialized: string): ZkIdentitySemaphore => {
     const data = JSON.parse(serialized) as SerializedIdentity;
 
     if (!data.metadata) {
@@ -36,6 +36,6 @@ export class ZkIdentityDecorater {
       throw new Error("Secret missing");
     }
 
-    return new ZkIdentityDecorater(new Identity(data.secret), data.metadata);
+    return new ZkIdentitySemaphore(new Identity(data.secret), data.metadata);
   };
 }

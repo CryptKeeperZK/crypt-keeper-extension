@@ -1,6 +1,6 @@
 import { RLN, RLNFullProof } from "rlnjs";
 
-import { ZkIdentityDecorater } from "@src/background/services/zkIdentity/services/zkIdentityDecorater";
+import { ZkIdentitySemaphore } from "@src/background/services/zkIdentity/protocols/ZkIdentitySemaphore";
 import { RLNProofRequest } from "@src/types";
 
 import { IZkProof } from "./IZkProof";
@@ -8,7 +8,7 @@ import { getMerkleProof, getRlnVerficationKeyJson } from "./utils";
 
 export class RLNProofService implements IZkProof<RLNProofRequest, RLNFullProof> {
   async genProof(
-    identity: ZkIdentityDecorater,
+    identity: ZkIdentitySemaphore,
     {
       circuitFilePath,
       zkeyFilePath,
