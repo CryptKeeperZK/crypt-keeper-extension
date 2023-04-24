@@ -28,14 +28,6 @@ Are there any issues, Slack conversations, Zendesk issues, user stories, etc. re
 
 <!-- If you're making a change to the UI, make sure to capture a screenshot or a short video showing off your work! -->
 
-### Before
-
-<!-- How did the UI you changed look before your changes? Drag your file(s) below this line: -->
-
-### After
-
-<!-- How does it look now? Drag your file(s) below this line: -->
-
 ## Manual Testing Steps
 
 <!--
@@ -52,10 +44,5 @@ How should reviewers and QA manually test your changes? For instance:
 - [ ] **IF** this PR fixes a bug, a test that _would have_ caught the bug has been added
 - [ ] PR is linked to the appropriate GitHub issue
 - [ ] PR has been added to the appropriate release Milestone
-
-### + If there are functional changes:
-
-- [ ] Manual testing complete & passed
-- [ ] "Extension QA Board" label has been applied
 
 > PR template source from [github.com/MetaMask](https://github.com/MetaMask)

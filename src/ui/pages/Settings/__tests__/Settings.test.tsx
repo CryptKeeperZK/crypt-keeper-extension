@@ -38,6 +38,7 @@ describe("ui/pages/Settings", () => {
     onEnableHistory: jest.fn(),
     onTabChange: jest.fn(),
     onGoBack: jest.fn(),
+    onDeleteAllIdentities: jest.fn(),
   };
 
   beforeEach(() => {
@@ -62,6 +63,22 @@ describe("ui/pages/Settings", () => {
     await waitFor(() => container.firstChild !== null);
 
     const section = await findByTestId("general-settings");
+
+    expect(section).toBeInTheDocument();
+  });
+
+  test("should render advanced settings properly", async () => {
+    (useSettings as jest.Mock).mockReturnValue({ ...defaultHookData, tab: SettingsTabs.ADVANCED });
+
+    const { container, findByTestId } = render(
+      <Suspense>
+        <Settings />
+      </Suspense>,
+    );
+
+    await waitFor(() => container.firstChild !== null);
+
+    const section = await findByTestId("advanced-settings");
 
     expect(section).toBeInTheDocument();
   });
