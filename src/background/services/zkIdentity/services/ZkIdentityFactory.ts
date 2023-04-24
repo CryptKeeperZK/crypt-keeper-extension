@@ -7,7 +7,10 @@ import { ZkIdentitySemaphore } from "../protocols/ZkIdentitySemaphore";
 
 export class ZkIdentityFactoryService {
   protected createNewIdentity = (strategy: keyof StrategiesMap, config: ICreateIdentityArgs): ZkIdentitySemaphore =>
-    this.strategiesMap[strategy](config);
+    ({
+      random: this.createRandomIdentity,
+      interrep: this.createInterrepIdentity,
+    }[strategy](config));
 
   private createInterrepIdentity = (config: ICreateIdentityArgs): ZkIdentitySemaphore => {
     const { identityStrategy, web2Provider, name, messageSignature, account } = config;
@@ -35,10 +38,5 @@ export class ZkIdentityFactoryService {
       name,
       identityStrategy,
     });
-  };
-
-  private readonly strategiesMap = {
-    random: this.createRandomIdentity,
-    interrep: this.createInterrepIdentity,
   };
 }
