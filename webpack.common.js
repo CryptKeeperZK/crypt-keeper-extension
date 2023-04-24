@@ -1,14 +1,11 @@
 const CopyPlugin = require("copy-webpack-plugin");
-const dotenv = require("dotenv");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const webpack = require("webpack");
 
 const path = require("path");
 
-dotenv.config({ path: "./.env" });
-
 const envPlugin = new webpack.EnvironmentPlugin({
-  NODE_ENV: "development",
+  NODE_ENV: process.env.NODE_ENV,
   TARGET: "chrome",
   CRYPTKEEPER_DEBUG: false,
   RANDOM_IDENTITY: false,
@@ -23,13 +20,13 @@ const TARGET = process.env.TARGET || "chrome";
 
 module.exports = {
   entry: {
-    injected: path.join(__dirname, "src/contentScripts/injected.ts"),
-    content: path.join(__dirname, "src/contentScripts/index.ts"),
-    backgroundPage: path.join(__dirname, "src/background/backgroundPage.ts"),
-    popup: path.join(__dirname, "src/ui/popup.tsx"),
+    injected: path.resolve(__dirname, "src/contentScripts/injected.ts"),
+    content: path.resolve(__dirname, "src/contentScripts/index.ts"),
+    backgroundPage: path.resolve(__dirname, "src/background/backgroundPage.ts"),
+    popup: path.resolve(__dirname, "src/ui/popup.tsx"),
   },
   output: {
-    path: path.join(__dirname, "dist/js"),
+    path: path.resolve(__dirname, "dist/js"),
     filename: "[name].js",
     clean: true,
   },
@@ -43,16 +40,16 @@ module.exports = {
     }),
     new CopyPlugin({
       patterns: [
-        { from: path.join(__dirname, "./src/static/icons/*"), to: path.join(__dirname, "./dist/[name][ext]") },
+        { from: path.resolve(__dirname, "./src/static/icons"), to: path.resolve(__dirname, "./dist/[name][ext]") },
         {
-          from: path.join(__dirname, `./src/manifest.${TARGET}.json`),
-          to: path.join(__dirname, "./dist/manifest.json"),
+          from: path.resolve(__dirname, `./src/manifest.${TARGET}.json`),
+          to: path.resolve(__dirname, "./dist/manifest.json"),
         },
-        { from: path.join(__dirname, "./zkeyFiles"), to: path.join(__dirname, "./dist/js/zkeyFiles") },
+        { from: path.resolve(__dirname, "./zkeyFiles"), to: path.resolve(__dirname, "./dist/js/zkeyFiles") },
       ],
     }),
     new HtmlWebpackPlugin({
-      template: path.join(__dirname, "./src/popup.html"),
+      template: path.resolve(__dirname, "./src/popup.html"),
       filename: "../popup.html",
       chunks: ["popup"],
       minify: true,

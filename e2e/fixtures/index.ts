@@ -8,9 +8,9 @@ import path from "path";
 import { METAMASK_PASSWORD, METAMASK_SEED_PHRASE, NETWORK } from "../constants";
 
 export interface TestExtension {
+  page: Page;
   context: BrowserContext;
   cryptKeeperExtensionId: string;
-  app: Page;
 }
 
 export const test = base.extend<TestExtension>({
@@ -34,7 +34,14 @@ export const test = base.extend<TestExtension>({
 
       await waitForExpect(() => {
         test.expect(context.backgroundPages()).toHaveLength(1);
+        test.expect(context.serviceWorkers()).toHaveLength(1);
       });
+
+      let [background] = context.serviceWorkers();
+      if (!background) {
+        background = await context.waitForEvent("serviceworker");
+      }
+
       const [metamaskBackground] = context.backgroundPages();
       await metamaskBackground.waitForTimeout(2000);
       // eslint-disable-next-line no-console
@@ -62,19 +69,17 @@ export const test = base.extend<TestExtension>({
 
       const extensionId = background.url().split("/")[2];
       await use(extensionId);
-      await context.close();
     },
     { scope: "test" },
   ],
 
-  app: [
-    async ({ context }, use) => {
-      const [page] = context.pages();
+  page: [
+    async ({ page }, use) => {
       await page.goto("/");
       await page.bringToFront();
 
       await use(page);
-      await context.close();
+      await page.close();
     },
     { scope: "test" },
   ],

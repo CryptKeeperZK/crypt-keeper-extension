@@ -27,7 +27,7 @@ export default class Identities extends BasePage {
   }
 
   async createIdentity({ identityType, provider, nonce }: ICreateIdentityArgs | undefined = {}): Promise<void> {
-    await this.page.getByText(/Add Identity/).click();
+    await this.page.getByTestId("create-new-identity").click({ delay: 1000 });
 
     const cryptKeeper = await this.page.context().waitForEvent("page");
 

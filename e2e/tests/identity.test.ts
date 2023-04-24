@@ -3,18 +3,18 @@ import { connectWallet, createAccount } from "../helpers/account";
 import { CryptKeeper } from "../pages";
 
 test.describe("identity", () => {
-  test.beforeEach(async ({ app, cryptKeeperExtensionId, context }) => {
-    await createAccount({ app, cryptKeeperExtensionId, context });
+  test.beforeEach(async ({ page, cryptKeeperExtensionId, context }) => {
+    await createAccount({ page, cryptKeeperExtensionId, context });
 
-    await app.goto(`chrome-extension://${cryptKeeperExtensionId}/popup.html`);
-    await expect(app.getByTestId("home-page")).toBeVisible();
+    await page.goto(`chrome-extension://${cryptKeeperExtensionId}/popup.html`);
+    await expect(page.getByTestId("home-page")).toBeVisible();
 
-    await connectWallet({ app, cryptKeeperExtensionId, context });
-    await expect(app.getByText("Ethereum mainnet")).toBeVisible();
+    await connectWallet({ page, cryptKeeperExtensionId, context });
+    await expect(page.getByText("Ethereum mainnet")).toBeVisible();
   });
 
-  test("should create and delete different types of identities properly", async ({ app }) => {
-    const extension = new CryptKeeper(app);
+  test("should create and delete different types of identities properly", async ({ page }) => {
+    const extension = new CryptKeeper(page);
     await extension.focus();
 
     await extension.identitiesTab.createIdentity();
@@ -41,8 +41,8 @@ test.describe("identity", () => {
     await expect(extension.getByText(/Account/)).toHaveCount(0);
   });
 
-  test("should create and rename identity properly", async ({ app }) => {
-    const extension = new CryptKeeper(app);
+  test("should create and rename identity properly", async ({ page }) => {
+    const extension = new CryptKeeper(page);
     await extension.focus();
 
     await extension.identitiesTab.createIdentity();
@@ -53,8 +53,8 @@ test.describe("identity", () => {
     await expect(extension.getByText("My twitter identity")).toBeVisible();
   });
 
-  test("should track activity operations properly", async ({ app }) => {
-    const extension = new CryptKeeper(app);
+  test("should track activity create and delete operations properly", async ({ page }) => {
+    const extension = new CryptKeeper(page);
     await extension.focus();
 
     await extension.identitiesTab.createIdentity();
@@ -78,17 +78,33 @@ test.describe("identity", () => {
 
     await extension.activityTab.openTab();
     await expect(extension.activityTab.getByText("All identities removed")).toBeVisible();
+  });
 
-    await extension.activityTab.deleteOperation();
-    await extension.activityTab.deleteOperation();
+  test("should track activity clear operations properly", async ({ page }) => {
+    const extension = new CryptKeeper(page);
+    await extension.focus();
+
+    await extension.identitiesTab.createIdentity();
+    await expect(extension.getByText(/Account/)).toHaveCount(1);
+
+    await extension.activityTab.openTab();
+    await expect(extension.activityTab.getByText("Identity created")).toBeVisible();
+
+    await extension.identitiesTab.openTab();
+    await extension.identitiesTab.deleteIdentity(0);
+    await expect(extension.getByText(/Account/)).toHaveCount(0);
+
+    await extension.activityTab.openTab();
+    await expect(extension.activityTab.getByText("Identity removed")).toBeVisible();
+
     await extension.activityTab.deleteOperation();
     await extension.activityTab.deleteOperation();
 
     await expect(extension.activityTab.getByText("No records found")).toBeVisible();
   });
 
-  test("should setup settings for tracking operations", async ({ app }) => {
-    const extension = new CryptKeeper(app);
+  test("should setup settings for tracking operations", async ({ page }) => {
+    const extension = new CryptKeeper(page);
     await extension.focus();
 
     await extension.settingsPage.openPage();

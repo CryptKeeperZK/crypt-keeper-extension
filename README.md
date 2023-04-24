@@ -33,3 +33,12 @@ Proof generation is enabled in two ways:
 1. `npm run dev`
 2. `npm run merkle`
 3. `cd demo && npm run start`
+
+# E2E
+
+1. Run `npx playwright install --with-deps chromium` to install playwright dependencies
+2. Run `npm install` for extension and for demo
+3. Make sure you have `.env.test` file with `METAMASK_EXTENSION_ID`.
+4. `METAMASK_EXTENSION_ID` can be found in log output for `npm run e2e`. For different environments `METAMASK_EXTENSION_ID` is also different so we need to specify it explicitly.
+5. Run `npm run build:e2e` to build the extension
+6. Run `npm run e2e` to run playwright e2e tests
