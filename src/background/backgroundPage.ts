@@ -8,7 +8,7 @@ import { RequestHandler } from "@src/types";
 
 import "./appInit";
 import "./shared/initGlobals";
-import ZkKeeperController from "./zkKeeper";
+import CryptKeeperController from "./cryptKeeper";
 
 log.setDefaultLevel(isDebugMode() ? "debug" : "info");
 
@@ -31,7 +31,7 @@ browser.runtime.onConnect.addListener(async () => {
 });
 
 try {
-  const app = new ZkKeeperController();
+  const app = new CryptKeeperController();
 
   app.initialize();
 

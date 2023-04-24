@@ -1,12 +1,12 @@
 /* eslint-disable @typescript-eslint/unbound-method */
-import ZkIdentityService from "@src/background/services/zkIdentity";
-import SimpleStorage from "@src/background/services/simpleStorage";
 import { bigintToHex } from "bigint-conversion";
 import { browser } from "webextension-polyfill-ts";
 
 import HistoryService from "@src/background/services/history";
 import LockService from "@src/background/services/lock";
 import NotificationService from "@src/background/services/notification";
+import SimpleStorage from "@src/background/services/simpleStorage";
+import ZkIdentityService from "@src/background/services/zkIdentity";
 import { ZERO_ADDRESS } from "@src/config/const";
 import { getEnabledFeatures } from "@src/config/features";
 import { CreateIdentityOptions, IdentityStrategy } from "@src/types";

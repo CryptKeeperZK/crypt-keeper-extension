@@ -5,7 +5,9 @@ import ZkProofService from "..";
 import { RLNProofService } from "../protocols";
 
 jest.mock("@src/background/services/zkIdentity/services/zkIdentityDecorater", (): unknown => ({
-  genFromSerialized: jest.fn(),
+  ZkIdentityDecorater: {
+    genFromSerialized: jest.fn(),
+  },
 }));
 
 jest.mock("@src/background/services/zkProof/protocols/RLNProof");

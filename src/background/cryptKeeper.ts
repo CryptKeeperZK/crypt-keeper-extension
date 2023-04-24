@@ -14,7 +14,7 @@ import WalletService from "./services/wallet";
 import ZkIdentityService from "./services/zkIdentity";
 import { validateZkInputs } from "./services/zkValidator";
 
-export default class ZkKeeperController extends Handler {
+export default class CryptKeeperController extends Handler {
   private zkIdentityService: ZkIdentityService;
 
   private requestManager: RequestManager;
@@ -38,11 +38,9 @@ export default class ZkKeeperController extends Handler {
     this.lockService = LockService.getInstance();
     this.browserService = BrowserUtils.getInstance();
     this.historyService = HistoryService.getInstance();
-
-    log.debug("Inside ZkKepperController");
   }
 
-  initialize = (): ZkKeeperController => {
+  initialize = (): CryptKeeperController => {
     // common
     this.add(
       RPCAction.UNLOCK,

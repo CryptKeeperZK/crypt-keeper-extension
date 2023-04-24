@@ -4,9 +4,10 @@ import { ISemaphoreGenerateArgs } from "@src/types";
 import ZkProofService from "..";
 import { SemaphoreProofService } from "../protocols";
 
-jest.mock("@src/background/services/zkIdentity/services/zkIdentityDecorater", (): unknown => ({  ZkIdentityDecorater: jest.fn(() => ({
+jest.mock("@src/background/services/zkIdentity/services/zkIdentityDecorater", (): unknown => ({
+  ZkIdentityDecorater: {
     genFromSerialized: jest.fn(),
-  }))
+  },
 }));
 
 jest.mock("@src/background/services/zkProof/protocols/SemaphoreProof");
