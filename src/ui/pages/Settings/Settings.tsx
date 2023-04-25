@@ -7,7 +7,11 @@ import { ConfirmDangerModal } from "@src/ui/components/ConfirmDangerModal";
 import { Header } from "@src/ui/components/Header";
 import { Icon } from "@src/ui/components/Icon";
 
+<<<<<<< HEAD
 import { General, Advanced } from "./components";
+=======
+import { Backup, General } from "./components";
+>>>>>>> e82e892 (feat: backup tab in the settings page (WIP))
 import { SettingsTabs, useSettings } from "./useSettings";
 
 const Settings = (): JSX.Element => {
@@ -43,8 +47,9 @@ const Settings = (): JSX.Element => {
             onChange={onTabChange}
           >
             <Tab label={<Typography>General</Typography>} sx={{ alignItems: "flex-start" }} />
-
+            <Tab label={<Typography>Backup</Typography>} sx={{ alignItems: "flex-start" }} />
             <Tab label={<Typography>Advanced</Typography>} sx={{ alignItems: "flex-start" }} />
+            {/* <Tab label={<Typography>Advanced</Typography>} sx={{ alignItems: "flex-start" }} /> */}
           </Tabs>
 
           <Box sx={{ width: "100%", px: 2 }}>
@@ -64,6 +69,8 @@ const Settings = (): JSX.Element => {
                 />
               </>
             )}
+            
+            {tab === SettingsTabs.BACKUP && <Backup isLoading={isLoading} />}
 
             {tab === SettingsTabs.ADVANCED && (
               <>

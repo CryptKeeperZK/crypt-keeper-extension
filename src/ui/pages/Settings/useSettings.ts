@@ -26,7 +26,8 @@ export interface IUseSettingsData {
 
 export enum SettingsTabs {
   GENERAL = 0,
-  ADVANCED = 1,
+  BACKUP = 1,
+  ADVANCED = 2,
 }
 
 export const useSettings = (): IUseSettingsData => {
