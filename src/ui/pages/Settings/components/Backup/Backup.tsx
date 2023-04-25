@@ -15,7 +15,7 @@ const Backup = ({ isLoading }: IBackupProps): JSX.Element => {
     return (
         <Box data-testid="general-settings">
             <Box sx={{ mb: 3 }}>
-                <Typography variant="h6">Import</Typography>
+                <Typography variant="h6">Import <i className="fa fa-download" aria-hidden="true" /></Typography>
 
                 <Typography color="text.secondary" variant="body2">
                     This imports identities from an external encrypted JSON file. Your identities will not be affected.
@@ -26,16 +26,13 @@ const Backup = ({ isLoading }: IBackupProps): JSX.Element => {
                         sx={{ textTransform: "none", width: 200 }}
                         variant="contained"
                     >
-                        Import Identities 
-                        <span>
-                            <i className="fa fa-download" aria-hidden="true" />
-                        </span>
+                        Import Identities
                     </Button>
                 </FormGroup>
             </Box>
 
             <Box sx={{ mb: 3 }}>
-                <Typography variant="h6">Export</Typography>
+                <Typography variant="h6">Export <i className="fa fa-upload" aria-hidden="true" /></Typography>
 
                 <Typography color="text.secondary" variant="body2">
                     This exports current identities in an encrypted JSON file. Your identities will not be affected.
@@ -46,10 +43,7 @@ const Backup = ({ isLoading }: IBackupProps): JSX.Element => {
                         sx={{ textTransform: "none", width: 200 }}
                         variant="contained"
                     >
-                        Export Identities 
-                        <span className="span_icon">
-                            <i className="fa fa-upload" aria-hidden="true" />
-                        </span>
+                        Export Identities
                     </Button>
                 </FormGroup>
             </Box>
