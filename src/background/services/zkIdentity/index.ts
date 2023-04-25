@@ -231,10 +231,6 @@ export default class ZkIdentityService extends ZkIdentityFactoryService {
     messageSignature,
     options,
   }: NewIdentityRequest): Promise<{ status: boolean; identityCommitment?: bigint }> => {
-    if (!strategy) {
-      throw new Error("strategy not provided");
-    }
-
     const numOfIdentites = await this.getNumOfIdentites();
 
     const config = {

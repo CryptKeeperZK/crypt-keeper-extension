@@ -47,13 +47,25 @@ describe("background/services/zkIdentity", () => {
     trackOperation: jest.fn(),
   };
 
+  const defaultBrowserUtils = {
+    openPopup: jest.fn(),
+  };
+
+  const defaultPopupTab = { id: 3, active: true, highlighted: true };
+
+  const defaultWindow = { id: 1 };
+
   beforeEach(() => {
+    defaultBrowserUtils.openPopup.mockResolvedValue(defaultWindow);
+
     defaultLockService.encrypt.mockReturnValue(serializedDefaultIdentities);
     defaultLockService.decrypt.mockReturnValue(serializedDefaultIdentities);
 
     (LockService.getInstance as jest.Mock).mockReturnValue(defaultLockService);
 
     (HistoryService.getInstance as jest.Mock).mockReturnValue(defaultHistoryService);
+
+    (browser.tabs.create as jest.Mock).mockResolvedValue(defaultPopupTab);
 
     (browser.tabs.query as jest.Mock).mockResolvedValue(defaultTabs);
 
@@ -356,6 +368,24 @@ describe("background/services/zkIdentity", () => {
   });
 
   describe("create", () => {
+    test("Should be able to request a create identity modal", async () => {
+      const service = new ZkIdentityService();
+
+      await service.createIdentityRequest();
+
+      expect(browser.tabs.query).toBeCalledWith({ lastFocusedWindow: true });
+
+      const defaultOptions = {
+        tabId: defaultPopupTab.id,
+        type: "popup",
+        focused: true,
+        width: 357,
+        height: 600,
+      };
+
+      expect(browser.windows.create).toBeCalledWith(defaultOptions);
+    });
+
     test("should create a new identity properly", async () => {
       const service = new ZkIdentityService();
 
