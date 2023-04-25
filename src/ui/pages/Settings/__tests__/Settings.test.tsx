@@ -39,6 +39,8 @@ describe("ui/pages/Settings", () => {
     onTabChange: jest.fn(),
     onGoBack: jest.fn(),
     onDeleteAllIdentities: jest.fn(),
+    onImportIdentities: jest.fn(),
+    onExportIdentities: jest.fn()
   };
 
   beforeEach(() => {

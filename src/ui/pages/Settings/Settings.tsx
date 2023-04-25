@@ -7,11 +7,7 @@ import { ConfirmDangerModal } from "@src/ui/components/ConfirmDangerModal";
 import { Header } from "@src/ui/components/Header";
 import { Icon } from "@src/ui/components/Icon";
 
-<<<<<<< HEAD
-import { General, Advanced } from "./components";
-=======
-import { Backup, General } from "./components";
->>>>>>> e82e892 (feat: backup tab in the settings page (WIP))
+import { General, Advanced, Backup } from "./components";
 import { SettingsTabs, useSettings } from "./useSettings";
 
 const Settings = (): JSX.Element => {
@@ -26,6 +22,8 @@ const Settings = (): JSX.Element => {
     onDeleteAllHistory,
     onGoBack,
     onDeleteAllIdentities,
+    onImportIdentities,
+    onExportIdentities,
   } = useSettings();
 
   return (
@@ -69,9 +67,7 @@ const Settings = (): JSX.Element => {
                 />
               </>
             )}
-            
-            {tab === SettingsTabs.BACKUP && <Backup isLoading={isLoading} />}
-
+      
             {tab === SettingsTabs.ADVANCED && (
               <>
                 <Advanced isLoading={isLoading} onDeleteIdentities={onDeleteAllIdentities} />
@@ -81,7 +77,14 @@ const Settings = (): JSX.Element => {
                   isOpenModal={isConfirmModalOpen}
                   reject={onConfirmModalShow}
                 />
-              </>
+              </>}
+
+            {tab === SettingsTabs.BACKUP && (
+              <Backup
+                onImportIdentities={onImportIdentities}
+                onExportIdentities={onExportIdentities}
+                isLoading={isLoading}
+              />
             )}
           </Box>
         </Box>

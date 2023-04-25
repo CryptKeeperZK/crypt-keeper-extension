@@ -14,6 +14,8 @@ export enum RPCAction {
   GET_COMMITMENTS = "rpc/identity/getIdentityCommitments",
   GET_IDENTITIES = "rpc/identity/getIdentities",
   GET_REQUEST_PENDING_STATUS = "rpc/identity/getRequestPendingStatus",
+  IMPORT_IDENTITIES = "rpc/identity/importIdentities",
+  EXPORT_IDENTITIES = "rpc/identity/exportIdentities",
   FINALIZE_REQUEST = "rpc/requests/finalize",
   GET_PENDING_REQUESTS = "rpc/requests/get",
   PREPARE_SEMAPHORE_PROOF_REQUEST = "rpc/protocols/semaphore/prepareProofRequest",

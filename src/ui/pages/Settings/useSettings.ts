@@ -10,6 +10,8 @@ import {
   fetchHistory,
   useHistorySettings,
 } from "@src/ui/ducks/identities";
+import postMessage from "@src/util/postMessage";
+import { RPCAction } from "@src/constants";
 
 export interface IUseSettingsData {
   isLoading: boolean;
@@ -22,6 +24,8 @@ export interface IUseSettingsData {
   onTabChange: (event: SyntheticEvent, value: number) => void;
   onGoBack: () => void;
   onDeleteAllIdentities: () => void;
+  onImportIdentities: () => void;
+  onExportIdentities: () => void;
 }
 
 export enum SettingsTabs {
@@ -64,6 +68,17 @@ export const useSettings = (): IUseSettingsData => {
   const onDeleteAllIdentities = useCallback(() => {
     dispatch(deleteAllIdentities()).then(() => onConfirmModalShow());
   }, [dispatch, onConfirmModalShow]);
+  const onImportIdentities = () => {
+    postMessage({
+      method: RPCAction.IMPORT_IDENTITIES,
+    });
+  };
+
+  const onExportIdentities = () => {
+    postMessage({
+      method: RPCAction.EXPORT_IDENTITIES,
+    });
+  };
 
   useEffect(() => {
     setIsLoading(true);
@@ -81,5 +96,7 @@ export const useSettings = (): IUseSettingsData => {
     onTabChange,
     onGoBack,
     onDeleteAllIdentities,
+    onImportIdentities,
+    onExportIdentities,
   };
 };

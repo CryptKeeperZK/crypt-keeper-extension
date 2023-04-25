@@ -15,6 +15,8 @@ export enum PendingRequestType {
   RLN_PROOF,
   APPROVE,
   INJECT,
+  BACKUP_IMPORT,
+  BACKUP_EXPORT,
 }
 
 export interface PendingRequest<P = unknown> {

@@ -95,6 +95,13 @@ export default class CryptKeeperController extends Handler {
     // Backup
     this.add(RPCAction.DOWNLOAD_BACKUP, this.lockService.ensure, this.backupService.download);
     this.add(RPCAction.UPLOAD_BACKUP, this.backupService.upload);
+    this.add(RPCAction.IMPORT_IDENTITIES, this.lockService.ensure, async () => {
+      await this.requestManager.newRequest(PendingRequestType.BACKUP_IMPORT);
+    });
+
+    this.add(RPCAction.EXPORT_IDENTITIES, this.lockService.ensure, async () => {
+      await this.requestManager.newRequest(PendingRequestType.BACKUP_EXPORT);
+    });
 
     // Protocols
     this.add(

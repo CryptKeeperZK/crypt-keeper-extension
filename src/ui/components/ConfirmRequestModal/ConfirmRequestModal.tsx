@@ -1,6 +1,6 @@
 import { PendingRequest, PendingRequestType, ZKProofPayload } from "@src/types";
 
-import { ProofModal, ConnectionApprovalModal, DefaultApprovalModal } from "./components";
+import { ProofModal, ConnectionApprovalModal, DefaultApprovalModal, ImportModal, ExportModal } from "./components";
 import "./confirmModal.scss";
 import { useConfirmRequestModal } from "./useConfirmRequestModal";
 
@@ -25,6 +25,28 @@ const ConfirmRequestModal = (): JSX.Element | null => {
     case PendingRequestType.RLN_PROOF:
       return (
         <ProofModal
+          accept={accept}
+          error={error}
+          len={pendingRequests.length}
+          loading={loading}
+          pendingRequest={pendingRequest as PendingRequest<ZKProofPayload>}
+          reject={reject}
+        />
+      );
+    case PendingRequestType.BACKUP_IMPORT:
+      return (
+        <ImportModal
+          accept={accept}
+          error={error}
+          len={pendingRequests.length}
+          loading={loading}
+          pendingRequest={pendingRequest as PendingRequest<ZKProofPayload>}
+          reject={reject}
+        />
+      );
+    case PendingRequestType.BACKUP_EXPORT:
+      return (
+        <ExportModal
           accept={accept}
           error={error}
           len={pendingRequests.length}
