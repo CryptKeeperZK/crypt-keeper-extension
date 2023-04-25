@@ -5,6 +5,7 @@ import Typography from "@mui/material/Typography";
 
 import { ConfirmDangerModal } from "@src/ui/components/ConfirmDangerModal";
 import { Header } from "@src/ui/components/Header";
+import { Icon } from "@src/ui/components/Icon";
 
 import { General } from "./components";
 import { SettingsTabs, useSettings } from "./useSettings";
@@ -19,6 +20,7 @@ const Settings = (): JSX.Element => {
     onEnableHistory,
     onConfirmModalShow,
     onDeleteAllHistory,
+    onGoBack,
   } = useSettings();
 
   return (
@@ -26,8 +28,10 @@ const Settings = (): JSX.Element => {
       <Header />
 
       <Box p={2}>
-        <Box>
+        <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
           <Typography variant="h4">Settings</Typography>
+
+          <Icon data-testid="close-icon" fontAwesome="fas fa-times" size={1.25} onClick={onGoBack} />
         </Box>
 
         <Box sx={{ flexGrow: 1, display: "flex", mt: 3 }}>

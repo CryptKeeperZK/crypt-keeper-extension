@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState, SyntheticEvent } from "react";
+import { useNavigate } from "react-router-dom";
 
 import { HistorySettings } from "@src/types";
 import { useAppDispatch } from "@src/ui/ducks/hooks";
@@ -13,6 +14,7 @@ export interface IUseSettingsData {
   onDeleteAllHistory: () => void;
   onEnableHistory: () => void;
   onTabChange: (event: SyntheticEvent, value: number) => void;
+  onGoBack: () => void;
 }
 
 export enum SettingsTabs {
@@ -22,6 +24,7 @@ export enum SettingsTabs {
 
 export const useSettings = (): IUseSettingsData => {
   const dispatch = useAppDispatch();
+  const navigate = useNavigate();
   const settings = useHistorySettings();
   const [isConfirmModalOpen, setConfirmModalOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -46,6 +49,10 @@ export const useSettings = (): IUseSettingsData => {
     dispatch(clearHistory()).then(() => onConfirmModalShow());
   }, [dispatch, onConfirmModalShow]);
 
+  const onGoBack = useCallback(() => {
+    navigate(-1);
+  }, [navigate]);
+
   useEffect(() => {
     setIsLoading(true);
     dispatch(fetchHistory()).finally(() => setIsLoading(false));
@@ -60,5 +67,6 @@ export const useSettings = (): IUseSettingsData => {
     onDeleteAllHistory,
     onEnableHistory,
     onTabChange,
+    onGoBack,
   };
 };

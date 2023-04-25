@@ -3,6 +3,7 @@
  */
 
 import { act, renderHook, waitFor } from "@testing-library/react";
+import { useNavigate } from "react-router-dom";
 
 import { HistorySettings } from "@src/types";
 import { useAppDispatch } from "@src/ui/ducks/hooks";
@@ -11,6 +12,10 @@ import { clearHistory, enableHistory, fetchHistory, useHistorySettings } from "@
 import type { SyntheticEvent } from "react";
 
 import { useSettings, SettingsTabs } from "../useSettings";
+
+jest.mock("react-router-dom", (): unknown => ({
+  useNavigate: jest.fn(),
+}));
 
 jest.mock("@src/ui/ducks/identities", (): unknown => ({
   clearHistory: jest.fn(),
@@ -24,6 +29,7 @@ jest.mock("@src/ui/ducks/hooks", (): unknown => ({
 }));
 
 describe("ui/pages/Settings/useSettings", () => {
+  const mockNavigate = jest.fn();
   const mockDispatch = jest.fn(() => Promise.resolve());
 
   const defaultHistorySettings: HistorySettings = {
@@ -32,6 +38,8 @@ describe("ui/pages/Settings/useSettings", () => {
 
   beforeEach(() => {
     (useAppDispatch as jest.Mock).mockReturnValue(mockDispatch);
+
+    (useNavigate as jest.Mock).mockReturnValue(mockNavigate);
 
     (useHistorySettings as jest.Mock).mockReturnValue(defaultHistorySettings);
   });
@@ -101,5 +109,16 @@ describe("ui/pages/Settings/useSettings", () => {
     await act(async () => Promise.resolve(result.current.onTabChange({} as SyntheticEvent, SettingsTabs.ADVANCED)));
 
     expect(result.current.tab).toBe(SettingsTabs.ADVANCED);
+  });
+
+  test("should change tab properly", async () => {
+    const { result } = renderHook(() => useSettings());
+
+    await waitFor(() => result.current.isLoading === false);
+
+    await act(async () => Promise.resolve(result.current.onGoBack()));
+
+    expect(mockNavigate).toBeCalledTimes(1);
+    expect(mockNavigate).toBeCalledWith(-1);
   });
 });
