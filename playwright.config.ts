@@ -10,13 +10,13 @@ dotenv.config({ path: "./.env.test" });
  */
 export default defineConfig({
   testDir: "./e2e/tests",
-  timeout: 60_000,
+  timeout: process.env.CI ? 120_000 : 60_000,
   expect: {
     timeout: 5_000,
   },
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
-  retries: process.env.CI ? 1 : 0,
+  retries: process.env.CI ? 0 : 0,
   workers: 1,
   reporter: [["github"], ["list"], ["html"]],
   use: {

@@ -2,15 +2,15 @@ import { expect, test } from "../fixtures";
 import { connectWallet, createAccount, lockAccount, unlockAccount } from "../helpers/account";
 
 test.describe("initialization", () => {
-  test("should load demo and unlock account", async ({ app, cryptKeeperExtensionId, context }) => {
-    await createAccount({ app, cryptKeeperExtensionId, context });
-    await lockAccount({ app, cryptKeeperExtensionId, context });
-    await unlockAccount({ app, cryptKeeperExtensionId, context });
+  test("should load demo and unlock account", async ({ page, cryptKeeperExtensionId, context }) => {
+    await createAccount({ page, cryptKeeperExtensionId, context });
+    await lockAccount({ page, cryptKeeperExtensionId, context });
+    await unlockAccount({ page, cryptKeeperExtensionId, context });
 
-    await expect(app.getByTestId("home-page")).toBeVisible();
+    await expect(page.getByTestId("home-page")).toBeVisible();
 
-    await connectWallet({ app, cryptKeeperExtensionId, context });
+    await connectWallet({ page, cryptKeeperExtensionId, context });
 
-    await expect(app.getByText("Ethereum mainnet")).toBeVisible();
+    await expect(page.getByText("Ethereum mainnet")).toBeVisible();
   });
 });

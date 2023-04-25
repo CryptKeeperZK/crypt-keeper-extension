@@ -2,8 +2,10 @@ name: Build
 
 on:
   push:
-    branches: master
+    branches: [master]
+
   pull_request:
+    branches: [master]
 
 env:
   CRYPTKEEPER_DEBUG: false
@@ -19,12 +21,14 @@ concurrency:
 
 jobs:
   build:
-    runs-on: ubuntu-22.04
     strategy:
       fail-fast: false
       matrix:
         node-version: [18]
-        env: ["build:chrome", "dev:chrome", "build:firefox", "dev:firefox"]
+        env: ["build:chrome", "build:firefox"]
+        os: [ubuntu-22.04, windows-2022, macos-12]
+
+    runs-on: ${{ matrix.os }}
 
     steps:
       - uses: actions/checkout@v3
@@ -36,6 +40,7 @@ jobs:
 
       - name: Cache node modules
         uses: actions/cache@v3
+        continue-on-error: true
         with:
           path: |
             ~/.npm
