@@ -1,11 +1,13 @@
-import ZkIdentityDecorater from "@src/background/identityDecorater";
+import { ZkIdentitySemaphore } from "@src/background/services/zkIdentity/protocols/ZkIdentitySemaphore";
 import { ISemaphoreGenerateArgs } from "@src/types";
 
 import ZkProofService from "..";
 import { SemaphoreProofService } from "../protocols";
 
-jest.mock("@src/background/identityDecorater", (): unknown => ({
-  genFromSerialized: jest.fn(),
+jest.mock("@src/background/services/zkIdentity/protocols/ZkIdentitySemaphore", (): unknown => ({
+  ZkIdentitySemaphore: {
+    genFromSerialized: jest.fn(),
+  },
 }));
 
 jest.mock("@src/background/services/zkProof/protocols/SemaphoreProof");
@@ -31,7 +33,7 @@ describe("background/services/zkProof", () => {
     };
 
     beforeEach(() => {
-      (ZkIdentityDecorater.genFromSerialized as jest.Mock).mockReturnValue("serialized");
+      (ZkIdentitySemaphore.genFromSerialized as jest.Mock).mockReturnValue("serialized");
     });
 
     afterEach(() => {
@@ -46,7 +48,7 @@ describe("background/services/zkProof", () => {
       semaphoreServiceInstance.genProof.mockResolvedValue(emptyFullProof);
 
       const result = await zkProofGenerator.generateSemaphoreProof(
-        ZkIdentityDecorater.genFromSerialized(defaultGenerateArgs.identity),
+        ZkIdentitySemaphore.genFromSerialized(defaultGenerateArgs.identity),
         defaultGenerateArgs.payload,
       );
 

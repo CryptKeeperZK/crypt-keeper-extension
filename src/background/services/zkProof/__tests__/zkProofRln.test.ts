@@ -1,11 +1,13 @@
-import ZkIdentityDecorater from "@src/background/identityDecorater";
+import { ZkIdentitySemaphore } from "@src/background/services/zkIdentity/protocols/ZkIdentitySemaphore";
 import { IRlnGenerateArgs } from "@src/types";
 
 import ZkProofService from "..";
 import { RLNProofService } from "../protocols";
 
-jest.mock("@src/background/identityDecorater", (): unknown => ({
-  genFromSerialized: jest.fn(),
+jest.mock("@src/background/services/zkIdentity/protocols/ZkIdentitySemaphore", (): unknown => ({
+  ZkIdentitySemaphore: {
+    genFromSerialized: jest.fn(),
+  },
 }));
 
 jest.mock("@src/background/services/zkProof/protocols/RLNProof");
@@ -30,7 +32,7 @@ describe("background/services/zkProof", () => {
     };
 
     beforeEach(() => {
-      (ZkIdentityDecorater.genFromSerialized as jest.Mock).mockReturnValue("serialized");
+      (ZkIdentitySemaphore.genFromSerialized as jest.Mock).mockReturnValue("serialized");
     });
 
     afterEach(() => {
@@ -43,7 +45,7 @@ describe("background/services/zkProof", () => {
       rlnServiceInstance.genProof.mockResolvedValue(emptyFullProof);
 
       const result = await zkProofGenerator.generateRLNProof(
-        ZkIdentityDecorater.genFromSerialized(defaultGenerateArgs.identity),
+        ZkIdentitySemaphore.genFromSerialized(defaultGenerateArgs.identity),
         defaultGenerateArgs.payload,
       );
 

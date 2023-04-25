@@ -1,7 +1,7 @@
 import { MerkleProof } from "@zk-kit/incremental-merkle-tree";
 import log from "loglevel";
 
-import ZkIdentityDecorater from "@src/background/identityDecorater";
+import { ZkIdentitySemaphore } from "@src/background/services/zkIdentity/protocols/ZkIdentitySemaphore";
 import ZkProofService from "@src/background/services/zkProof";
 import { RPCAction } from "@src/constants";
 import { IRlnGenerateArgs, ISemaphoreGenerateArgs, InjectedMessageData, MerkleProofArtifacts } from "@src/types";
@@ -88,7 +88,7 @@ async function semaphoreProof(
   })) as ISemaphoreGenerateArgs;
 
   return zkProofService.generateSemaphoreProof(
-    ZkIdentityDecorater.genFromSerialized(request.identity),
+    ZkIdentitySemaphore.genFromSerialized(request.identity),
     request.payload,
   );
 }
@@ -117,7 +117,7 @@ async function rlnProof(
     },
   })) as IRlnGenerateArgs;
 
-  return zkProofService.generateRLNProof(ZkIdentityDecorater.genFromSerialized(request.identity), request.payload);
+  return zkProofService.generateRLNProof(ZkIdentitySemaphore.genFromSerialized(request.identity), request.payload);
 }
 
 // dev-only

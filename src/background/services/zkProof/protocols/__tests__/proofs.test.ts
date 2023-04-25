@@ -3,7 +3,7 @@ import { generateProof } from "@semaphore-protocol/proof";
 import { MerkleProof } from "@zk-kit/incremental-merkle-tree";
 import { RLN } from "rlnjs";
 
-import ZkIdentityDecorater from "@src/background/identityDecorater";
+import { ZkIdentitySemaphore } from "@src/background/services/zkIdentity/protocols/ZkIdentitySemaphore";
 import { ZERO_ADDRESS } from "@src/config/const";
 import { IdentityMetadata, RLNProofRequest } from "@src/types";
 
@@ -43,7 +43,7 @@ describe("background/services/protocols", () => {
     pathIndices: [],
   };
 
-  const identityDecorater = new ZkIdentityDecorater(defaultIdentity, defaultIdentityMetadata);
+  const identityDecorater = new ZkIdentitySemaphore(defaultIdentity, defaultIdentityMetadata);
 
   beforeEach(() => {
     (getMerkleProof as jest.Mock).mockReturnValue(defaultMerkleProof);

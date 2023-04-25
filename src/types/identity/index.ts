@@ -36,3 +36,16 @@ export type SerializedIdentity = {
   metadata: IdentityMetadata;
   secret: string;
 };
+
+export interface ICreateIdentityArgs {
+  identityStrategy: IdentityStrategy;
+  name: string;
+  account: string;
+  messageSignature?: string;
+  web2Provider?: IdentityWeb2Provider;
+}
+
+export type StrategiesMap = {
+  random: (config: ICreateIdentityArgs) => void;
+  interrep: (config: ICreateIdentityArgs) => void;
+};
