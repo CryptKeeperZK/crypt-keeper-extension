@@ -1,7 +1,6 @@
 import { Identity } from "@semaphore-protocol/identity";
 
 import { ICreateIdentityArgs, StrategiesMap } from "@src/types";
-import checkParameter from "@src/util/checkParameter";
 
 import { ZkIdentitySemaphore } from "../protocols/ZkIdentitySemaphore";
 
@@ -14,10 +13,6 @@ export class ZkIdentityFactoryService {
 
   private createInterrepIdentity = (config: ICreateIdentityArgs): ZkIdentitySemaphore => {
     const { identityStrategy, web2Provider, name, messageSignature, account } = config;
-
-    checkParameter(messageSignature, "messageSignature", "string");
-    checkParameter(account, "account", "string");
-    checkParameter(web2Provider, "web2Provider", "string");
 
     const identity = new Identity(messageSignature);
 
