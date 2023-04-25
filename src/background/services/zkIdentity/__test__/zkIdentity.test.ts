@@ -429,7 +429,6 @@ describe("background/services/zkIdentity", () => {
         name: "Name",
       };
 
-      // First successful creation
       const successResult = await service.createIdentity({
         strategy: identityStrategy,
         messageSignature: identityMessageSignature,
@@ -447,14 +446,21 @@ describe("background/services/zkIdentity", () => {
       defaultLockService.decrypt.mockReturnValue(newIdentities);
       identityStorage.get.mockReturnValue(newIdentities);
 
-      // Second failed creation
-      const result = await service.createIdentity({
+      const failedResult = await service.createIdentity({
         strategy: identityStrategy,
         messageSignature: identityMessageSignature,
         options: identityOptions,
       });
 
-      expect(result.status).toBe(false);
+      expect(failedResult.status).toBe(false);
+
+      const emptyResult = await service.createIdentity({
+        strategy: identityStrategy,
+        messageSignature: identityMessageSignature,
+        options: {},
+      });
+
+      expect(emptyResult.status).toBe(false);
     });
   });
 });

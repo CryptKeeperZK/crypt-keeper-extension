@@ -164,16 +164,18 @@ export default class ZkIdentityService extends ZkIdentityFactoryService {
       ),
     ]);
 
-    tabs.map((tab) =>
-      browser.tabs
-        .sendMessage(
-          tab.id as number,
-          setSelectedCommitment({
-            commitment,
-            web2Provider,
-          }),
-        )
-        .catch(() => undefined),
+    await Promise.all(
+      tabs.map((tab) =>
+        browser.tabs
+          .sendMessage(
+            tab.id as number,
+            setSelectedCommitment({
+              commitment,
+              web2Provider,
+            }),
+          )
+          .catch(() => undefined),
+      ),
     );
   };
 
@@ -242,10 +244,6 @@ export default class ZkIdentityService extends ZkIdentityFactoryService {
     };
 
     const identity = this.createNewIdentity(strategy, config);
-
-    if (!identity) {
-      throw new Error("Identity not created, make sure to check strategy");
-    }
 
     const status = await this.insertIdentity(identity);
 
