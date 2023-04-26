@@ -3,7 +3,7 @@ import { getEnabledFeatures } from "@src/config/features";
 import { Operation, OperationType } from "@src/types";
 
 import HistoryService from "..";
-import SimpleStorage from "../../simpleStorage";
+import SimpleStorage from "../../storage";
 
 const mockDefaultOperations: Operation[] = [
   {
@@ -58,7 +58,7 @@ jest.mock("@src/background/services/lock", (): unknown => ({
   },
 }));
 
-jest.mock("@src/background/services/simpleStorage");
+jest.mock("@src/background/services/storage");
 
 type MockStorage = { get: jest.Mock; set: jest.Mock; clear: jest.Mock };
 

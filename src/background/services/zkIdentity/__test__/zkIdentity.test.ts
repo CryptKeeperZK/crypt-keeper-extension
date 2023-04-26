@@ -5,7 +5,7 @@ import { browser } from "webextension-polyfill-ts";
 import HistoryService from "@src/background/services/history";
 import LockService from "@src/background/services/lock";
 import NotificationService from "@src/background/services/notification";
-import SimpleStorage from "@src/background/services/simpleStorage";
+import SimpleStorage from "@src/background/services/storage";
 import ZkIdentityService from "@src/background/services/zkIdentity";
 import { ZERO_ADDRESS } from "@src/config/const";
 import { getEnabledFeatures } from "@src/config/features";
@@ -20,7 +20,7 @@ jest.mock("@src/background/services/lock");
 
 jest.mock("@src/background/services/history");
 
-jest.mock("@src/background/services/simpleStorage");
+jest.mock("@src/background/services/storage");
 
 jest.mock("@src/background/services/notification");
 
@@ -368,7 +368,7 @@ describe("background/services/zkIdentity", () => {
   });
 
   describe("create", () => {
-    test("Should be able to request a create identity modal", async () => {
+    test("should be able to request a create identity modal", async () => {
       const service = new ZkIdentityService();
 
       await service.createIdentityRequest();
@@ -461,6 +461,32 @@ describe("background/services/zkIdentity", () => {
       });
 
       expect(emptyResult.status).toBe(false);
+    });
+  });
+
+  describe("backup", () => {
+    test("should download encrypted identities", async () => {
+      const service = new ZkIdentityService();
+
+      const [identityStorage] = (SimpleStorage as jest.Mock).mock.instances as [MockStorage];
+      identityStorage.get.mockReturnValue(serializedDefaultIdentities);
+
+      const result = await service.downloadEncryptedStorage();
+
+      expect(result).toBeDefined();
+      expect(identityStorage.get).toBeCalledTimes(1);
+    });
+
+    test("should upload encrypted identities", async () => {
+      const service = new ZkIdentityService();
+
+      const [identityStorage] = (SimpleStorage as jest.Mock).mock.instances as [MockStorage];
+      identityStorage.set.mockReturnValue(undefined);
+
+      await service.uploadEncryptedStorage("encrypted");
+
+      expect(identityStorage.set).toBeCalledTimes(1);
+      expect(identityStorage.set).toBeCalledWith("encrypted");
     });
   });
 });

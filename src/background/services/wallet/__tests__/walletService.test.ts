@@ -1,7 +1,7 @@
-import SimpleStorage from "../simpleStorage";
-import WalletService from "../wallet";
+import WalletService from "..";
+import SimpleStorage from "../../storage";
 
-jest.mock("../simpleStorage");
+jest.mock("../../storage");
 
 describe("background/services/wallet", () => {
   const service = new WalletService();

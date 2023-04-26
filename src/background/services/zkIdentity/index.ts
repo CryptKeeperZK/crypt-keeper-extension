@@ -10,17 +10,19 @@ import { SelectedIdentity, setIdentities, setSelectedCommitment } from "@src/ui/
 import { ellipsify } from "@src/util/account";
 import pushMessage from "@src/util/pushMessage";
 
+import type { IBackupable } from "../backup";
+
 import HistoryService from "../history";
 import LockService from "../lock";
 import NotificationService from "../notification";
-import SimpleStorage from "../simpleStorage";
+import SimpleStorage from "../storage";
 
 import { createNewIdentity } from "./factory";
 
 const IDENTITY_KEY = "@@ID@@";
 const ACTIVE_IDENTITY_KEY = "@@AID@@";
 
-export default class ZkIdentityService {
+export default class ZkIdentityService implements IBackupable {
   private activeIdentity?: ZkIdentitySemaphore;
 
   private identitiesStore: SimpleStorage;
@@ -33,7 +35,7 @@ export default class ZkIdentityService {
 
   private historyService: HistoryService;
 
-  private browsercontroller: BrowserUtils;
+  private browserController: BrowserUtils;
 
   constructor() {
     this.activeIdentity = undefined;
@@ -42,7 +44,7 @@ export default class ZkIdentityService {
     this.lockService = LockService.getInstance();
     this.notificationService = NotificationService.getInstance();
     this.historyService = HistoryService.getInstance();
-    this.browsercontroller = BrowserUtils.getInstance();
+    this.browserController = BrowserUtils.getInstance();
   }
 
   getActiveIdentityData = async (): Promise<SelectedIdentity> => {
@@ -225,7 +227,7 @@ export default class ZkIdentityService {
   };
 
   createIdentityRequest = async (): Promise<void> => {
-    await this.browsercontroller.openPopup({ params: { redirect: Paths.CREATE_IDENTITY } });
+    await this.browserController.openPopup({ params: { redirect: Paths.CREATE_IDENTITY } });
   };
 
   createIdentity = async ({
@@ -247,7 +249,7 @@ export default class ZkIdentityService {
 
     const status = await this.insertIdentity(identity);
 
-    await this.browsercontroller.closePopup();
+    await this.browserController.closePopup();
 
     return {
       status,
@@ -344,4 +346,8 @@ export default class ZkIdentityService {
 
     return true;
   };
+
+  downloadEncryptedStorage = async (): Promise<string | null> => this.identitiesStore.get<string>();
+
+  uploadEncryptedStorage = async (encrypted: string): Promise<void> => this.identitiesStore.set<string>(encrypted);
 }

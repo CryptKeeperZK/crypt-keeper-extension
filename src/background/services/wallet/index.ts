@@ -1,4 +1,4 @@
-import SimpleStorage from "./simpleStorage";
+import SimpleStorage from "../storage";
 
 const WALLET_STORAGE_KEY = "@@WALLET@@";
 

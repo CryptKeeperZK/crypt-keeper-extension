@@ -4,7 +4,9 @@ import { browser } from "webextension-polyfill-ts";
 import { setStatus } from "@src/ui/ducks/app";
 import pushMessage from "@src/util/pushMessage";
 
-import SimpleStorage from "./simpleStorage";
+import type { IBackupable } from "../backup";
+
+import SimpleStorage from "../storage";
 
 const PASSWORD_DB_KEY = "@password@";
 
@@ -13,7 +15,7 @@ interface LockStatus {
   isUnlocked: boolean;
 }
 
-export default class LockService {
+export default class LockService implements IBackupable {
   private static INSTANCE: LockService;
 
   private isUnlocked: boolean;
@@ -110,12 +112,6 @@ export default class LockService {
     return true;
   };
 
-  logout = async (): Promise<boolean> => {
-    await this.internalLogout();
-
-    return true;
-  };
-
   ensure = (payload: unknown = null): unknown | null | false => {
     if (!this.isUnlocked || !this.password) {
       return false;
@@ -141,6 +137,12 @@ export default class LockService {
     return bytes.toString(CryptoJS.enc.Utf8);
   };
 
+  logout = async (): Promise<boolean> => {
+    await this.internalLogout();
+
+    return true;
+  };
+
   private internalLogout = async (): Promise<LockStatus> => {
     this.isUnlocked = false;
     this.password = undefined;
@@ -161,4 +163,8 @@ export default class LockService {
 
     return status;
   };
+
+  downloadEncryptedStorage = (): Promise<string | null> => this.passwordStorage.get<string>();
+
+  uploadEncryptedStorage = (encryptedStorage: string): Promise<void> => this.passwordStorage.set(encryptedStorage);
 }

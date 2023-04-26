@@ -3,7 +3,7 @@ import { generateProof } from "@semaphore-protocol/proof";
 import { ZkIdentitySemaphore } from "@src/background/services/zkIdentity/protocols/ZkIdentitySemaphore";
 import { SemaphoreProof, SemaphoreProofRequest } from "@src/types";
 
-import { IZkProof } from "./IZkProof";
+import { IZkProof } from "./types";
 import { getMerkleProof } from "./utils";
 
 export class SemaphoreProofService implements IZkProof<SemaphoreProofRequest, SemaphoreProof> {

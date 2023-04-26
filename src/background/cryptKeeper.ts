@@ -10,9 +10,9 @@ import RequestManager from "./controllers/requestManager";
 import ApprovalService from "./services/approval";
 import HistoryService from "./services/history";
 import LockService from "./services/lock";
+import { validateZkInputs } from "./services/validation";
 import WalletService from "./services/wallet";
 import ZkIdentityService from "./services/zkIdentity";
-import { validateZkInputs } from "./services/zkValidator";
 
 export default class CryptKeeperController extends Handler {
   private zkIdentityService: ZkIdentityService;

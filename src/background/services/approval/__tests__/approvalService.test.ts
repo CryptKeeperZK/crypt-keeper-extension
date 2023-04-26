@@ -1,10 +1,10 @@
-import ApprovalService from "../approval";
-import LockService from "../lock";
-import SimpleStorage from "../simpleStorage";
+import ApprovalService from "..";
+import LockService from "../../lock";
+import SimpleStorage from "../../storage";
 
-jest.mock("../lock");
+jest.mock("../../lock");
 
-jest.mock("../simpleStorage");
+jest.mock("../../storage");
 
 type MockStorage = { get: jest.Mock; set: jest.Mock; clear: jest.Mock };
 
@@ -188,6 +188,32 @@ describe("background/services/approval", () => {
 
       expect(hosts).toStrictEqual(defaultHosts);
       expect(approvalStorage.set).not.toBeCalled();
+    });
+  });
+
+  describe("backup", () => {
+    test("should download encrypted approvals", async () => {
+      const service = new ApprovalService();
+
+      const [approvalStorage] = (SimpleStorage as jest.Mock).mock.instances as [MockStorage];
+      approvalStorage.get.mockReturnValue(serializedApprovals);
+
+      const result = await service.downloadEncryptedStorage();
+
+      expect(result).toBeDefined();
+      expect(approvalStorage.get).toBeCalledTimes(1);
+    });
+
+    test("should upload encrypted approvals", async () => {
+      const service = new ApprovalService();
+
+      const [approvalStorage] = (SimpleStorage as jest.Mock).mock.instances as [MockStorage];
+      approvalStorage.set.mockReturnValue(undefined);
+
+      await service.uploadEncryptedStorage("encrypted");
+
+      expect(approvalStorage.set).toBeCalledTimes(1);
+      expect(approvalStorage.set).toBeCalledWith("encrypted");
     });
   });
 });

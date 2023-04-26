@@ -3,7 +3,7 @@ import { RLN, RLNFullProof } from "rlnjs";
 import { ZkIdentitySemaphore } from "@src/background/services/zkIdentity/protocols/ZkIdentitySemaphore";
 import { RLNProofRequest } from "@src/types";
 
-import { IZkProof } from "./IZkProof";
+import { IZkProof } from "./types";
 import { getMerkleProof, getRlnVerficationKeyJson } from "./utils";
 
 export class RLNProofService implements IZkProof<RLNProofRequest, RLNFullProof> {
