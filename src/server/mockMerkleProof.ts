@@ -33,6 +33,8 @@ for (let i = 0; i < 2; i += 1) {
   identityCommitments.push(mockIdentity.getCommitment());
 }
 
+app.get("/", (_, res) => res.send(true));
+
 app.post(
   "/merkleProof/:type",
   (req: ExpressRequest<{ type: string }, unknown, { identityCommitment: string }>, res) => {
@@ -64,6 +66,5 @@ app.post(
   },
 );
 
-app.listen(8090, () => {
-  log.debug("Merkle service is listening");
-});
+// eslint-disable-next-line no-console
+app.listen(8090, () => console.log("Merkle service is listening"));

@@ -34,12 +34,12 @@ export default defineConfig({
   ],
 
   webServer: [
-    // {
-    //   command: "npm run merkle",
-    //   url: "http://127.0.0.1:8090",
-    //   timeout: 120 * 1000,
-    //   reuseExistingServer: !process.env.CI,
-    // },
+    {
+      command: "npm run merkle",
+      url: "http://localhost:8090",
+      timeout: 120 * 1000,
+      reuseExistingServer: !process.env.CI,
+    },
     {
       command: "npm run start",
       cwd: path.resolve(__dirname, "./demo"),
