@@ -10,17 +10,27 @@ interface HostPermission {
 }
 
 export default class ApprovalService implements IBackupable {
+  private static INSTANCE: ApprovalService;
+
   private allowedHosts: Map<string, HostPermission>;
 
   private approvals: SimpleStorage;
 
   private lockService: LockService;
 
-  constructor() {
+  private constructor() {
     this.allowedHosts = new Map();
     this.approvals = new SimpleStorage(APPPROVALS_DB_KEY);
     this.lockService = LockService.getInstance();
   }
+
+  static getInstance = (): ApprovalService => {
+    if (!ApprovalService.INSTANCE) {
+      ApprovalService.INSTANCE = new ApprovalService();
+    }
+
+    return ApprovalService.INSTANCE;
+  };
 
   getAllowedHosts = (): string[] =>
     [...this.allowedHosts.entries()].filter(([, isApproved]) => isApproved).map(([key]) => key);

@@ -31,10 +31,10 @@ export default class CryptKeeperController extends Handler {
 
   constructor() {
     super();
-    this.zkIdentityService = new ZkIdentityService();
     this.requestManager = new RequestManager();
-    this.approvalService = new ApprovalService();
-    this.walletService = new WalletService();
+    this.zkIdentityService = ZkIdentityService.getInstance();
+    this.approvalService = ApprovalService.getInstance();
+    this.walletService = WalletService.getInstance();
     this.lockService = LockService.getInstance();
     this.browserService = BrowserUtils.getInstance();
     this.historyService = HistoryService.getInstance();

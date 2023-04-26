@@ -23,7 +23,7 @@ const IDENTITY_KEY = "@@ID@@";
 const ACTIVE_IDENTITY_KEY = "@@AID@@";
 
 export default class ZkIdentityService implements IBackupable {
-  private activeIdentity?: ZkIdentitySemaphore;
+  private static INSTANCE: ZkIdentityService;
 
   private identitiesStore: SimpleStorage;
 
@@ -37,7 +37,9 @@ export default class ZkIdentityService implements IBackupable {
 
   private browserController: BrowserUtils;
 
-  constructor() {
+  private activeIdentity?: ZkIdentitySemaphore;
+
+  private constructor() {
     this.activeIdentity = undefined;
     this.identitiesStore = new SimpleStorage(IDENTITY_KEY);
     this.activeIdentityStore = new SimpleStorage(ACTIVE_IDENTITY_KEY);
@@ -46,6 +48,14 @@ export default class ZkIdentityService implements IBackupable {
     this.historyService = HistoryService.getInstance();
     this.browserController = BrowserUtils.getInstance();
   }
+
+  static getInstance = (): ZkIdentityService => {
+    if (!ZkIdentityService.INSTANCE) {
+      ZkIdentityService.INSTANCE = new ZkIdentityService();
+    }
+
+    return ZkIdentityService.INSTANCE;
+  };
 
   getActiveIdentityData = async (): Promise<SelectedIdentity> => {
     const identity = await this.getActiveIdentity();
@@ -246,9 +256,7 @@ export default class ZkIdentityService implements IBackupable {
     };
 
     const identity = createNewIdentity(strategy, config);
-
     const status = await this.insertIdentity(identity);
-
     await this.browserController.closePopup();
 
     return {
