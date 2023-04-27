@@ -3,7 +3,6 @@ import { browser } from "webextension-polyfill-ts";
 
 import BrowserUtils from "@src/background/controllers/browserUtils";
 import { ZkIdentitySemaphore } from "@src/background/services/zkIdentity/protocols/ZkIdentitySemaphore";
-import { ZkIdentityFactoryService } from "@src/background/services/zkIdentity/services/ZkIdentityFactory";
 import { getEnabledFeatures } from "@src/config/features";
 import { Paths } from "@src/constants";
 import { IdentityMetadata, IdentityName, NewIdentityRequest, OperationType } from "@src/types";
@@ -16,10 +15,12 @@ import LockService from "../lock";
 import NotificationService from "../notification";
 import SimpleStorage from "../simpleStorage";
 
+import { createNewIdentity } from "./factory";
+
 const IDENTITY_KEY = "@@ID@@";
 const ACTIVE_IDENTITY_KEY = "@@AID@@";
 
-export default class ZkIdentityService extends ZkIdentityFactoryService {
+export default class ZkIdentityService {
   private activeIdentity?: ZkIdentitySemaphore;
 
   private identitiesStore: SimpleStorage;
@@ -35,7 +36,6 @@ export default class ZkIdentityService extends ZkIdentityFactoryService {
   private browsercontroller: BrowserUtils;
 
   constructor() {
-    super();
     this.activeIdentity = undefined;
     this.identitiesStore = new SimpleStorage(IDENTITY_KEY);
     this.activeIdentityStore = new SimpleStorage(ACTIVE_IDENTITY_KEY);
@@ -243,7 +243,7 @@ export default class ZkIdentityService extends ZkIdentityFactoryService {
       messageSignature: strategy === "interrep" ? messageSignature : undefined,
     };
 
-    const identity = this.createNewIdentity(strategy, config);
+    const identity = createNewIdentity(strategy, config);
 
     const status = await this.insertIdentity(identity);
 
@@ -332,6 +332,15 @@ export default class ZkIdentityService extends ZkIdentityFactoryService {
 
     await Promise.all([this.clearActiveIdentity(), this.identitiesStore.clear(), pushMessage(setIdentities([]))]);
     await this.historyService.trackOperation(OperationType.DELETE_ALL_IDENTITIES, {});
+
+    await this.notificationService.create({
+      options: {
+        title: "Identities removed",
+        message: `Identity storage has been cleared`,
+        iconUrl: browser.runtime.getURL("/logo.png"),
+        type: "basic",
+      },
+    });
 
     return true;
   };

@@ -7,7 +7,7 @@ import { ConfirmDangerModal } from "@src/ui/components/ConfirmDangerModal";
 import { Header } from "@src/ui/components/Header";
 import { Icon } from "@src/ui/components/Icon";
 
-import { General } from "./components";
+import { General, Advanced } from "./components";
 import { SettingsTabs, useSettings } from "./useSettings";
 
 const Settings = (): JSX.Element => {
@@ -21,6 +21,7 @@ const Settings = (): JSX.Element => {
     onConfirmModalShow,
     onDeleteAllHistory,
     onGoBack,
+    onDeleteAllIdentities,
   } = useSettings();
 
   return (
@@ -37,13 +38,13 @@ const Settings = (): JSX.Element => {
         <Box sx={{ flexGrow: 1, display: "flex", mt: 3 }}>
           <Tabs
             orientation="vertical"
-            sx={{ borderRight: 1, borderColor: "divider", width: 200 }}
+            sx={{ borderRight: 1, borderColor: "divider", minWidth: 100, width: 200 }}
             value={tab}
             onChange={onTabChange}
           >
             <Tab label={<Typography>General</Typography>} sx={{ alignItems: "flex-start" }} />
 
-            {/* <Tab label={<Typography>Advanced</Typography>} sx={{ alignItems: "flex-start" }} /> */}
+            <Tab label={<Typography>Advanced</Typography>} sx={{ alignItems: "flex-start" }} />
           </Tabs>
 
           <Box sx={{ width: "100%", px: 2 }}>
@@ -58,6 +59,18 @@ const Settings = (): JSX.Element => {
 
                 <ConfirmDangerModal
                   accept={onDeleteAllHistory}
+                  isOpenModal={isConfirmModalOpen}
+                  reject={onConfirmModalShow}
+                />
+              </>
+            )}
+
+            {tab === SettingsTabs.ADVANCED && (
+              <>
+                <Advanced isLoading={isLoading} onDeleteIdentities={onDeleteAllIdentities} />
+
+                <ConfirmDangerModal
+                  accept={onDeleteAllIdentities}
                   isOpenModal={isConfirmModalOpen}
                   reject={onConfirmModalShow}
                 />

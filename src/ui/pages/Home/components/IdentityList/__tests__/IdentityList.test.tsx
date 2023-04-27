@@ -7,7 +7,6 @@ import { faTwitter, faGithub, faReddit } from "@fortawesome/free-brands-svg-icon
 import { act, render, screen, fireEvent } from "@testing-library/react";
 
 import { ZERO_ADDRESS } from "@src/config/const";
-import { createModalRoot, deleteModalRoot } from "@src/config/mock/modal";
 import { defaultWalletHookData } from "@src/config/mock/wallet";
 import { IdentityData } from "@src/types";
 import { useAppDispatch } from "@src/ui/ducks/hooks";
@@ -33,7 +32,6 @@ jest.mock("@src/ui/ducks/identities", (): unknown => ({
   useIdentities: jest.fn(),
   useSelectedIdentity: jest.fn(),
   createIdentityRequest: jest.fn(),
-  deleteAllIdentities: jest.fn(),
 }));
 
 jest.mock("@src/ui/hooks/wallet", (): unknown => ({
@@ -73,14 +71,10 @@ describe("ui/pages/Home/components/IdentityList", () => {
     (useSelectedIdentity as jest.Mock).mockReturnValue(defaultIdentities[0]);
 
     (useWallet as jest.Mock).mockReturnValue(defaultWalletHookData);
-
-    createModalRoot();
   });
 
   afterEach(() => {
     jest.clearAllMocks();
-
-    deleteModalRoot();
   });
 
   test("should render properly", async () => {
@@ -184,21 +178,6 @@ describe("ui/pages/Home/components/IdentityList", () => {
 
     const createIdentityButton = await screen.findByTestId("create-new-identity");
     await act(async () => Promise.resolve(createIdentityButton.click()));
-
-    expect(mockDispatch).toBeCalledTimes(1);
-  });
-
-  test("should delete all the identities properly", async () => {
-    render(<IdentityList identities={defaultIdentities} />);
-
-    const clearIdentitiesButton = await screen.findByTestId("clear-all-identities");
-    await act(async () => Promise.resolve(clearIdentitiesButton.click()));
-
-    const modal = await screen.findByTestId("danger-modal");
-    expect(modal).toBeInTheDocument();
-
-    const yesButton = await screen.findByText("Yes");
-    await act(async () => Promise.resolve(yesButton.click()));
 
     expect(mockDispatch).toBeCalledTimes(1);
   });

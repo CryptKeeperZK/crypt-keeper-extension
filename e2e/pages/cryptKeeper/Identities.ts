@@ -70,9 +70,4 @@ export default class Identities extends BasePage {
     await this.page.getByText("Delete").click();
     await this.page.getByText("Yes").click();
   }
-
-  async deleteAllIdentities(): Promise<void> {
-    await this.page.getByText("Clear all identities").click();
-    await this.page.getByText("Yes").click();
-  }
 }

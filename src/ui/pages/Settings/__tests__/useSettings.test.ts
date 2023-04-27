@@ -7,7 +7,13 @@ import { useNavigate } from "react-router-dom";
 
 import { HistorySettings } from "@src/types";
 import { useAppDispatch } from "@src/ui/ducks/hooks";
-import { clearHistory, enableHistory, fetchHistory, useHistorySettings } from "@src/ui/ducks/identities";
+import {
+  clearHistory,
+  deleteAllIdentities,
+  enableHistory,
+  fetchHistory,
+  useHistorySettings,
+} from "@src/ui/ducks/identities";
 
 import type { SyntheticEvent } from "react";
 
@@ -21,6 +27,7 @@ jest.mock("@src/ui/ducks/identities", (): unknown => ({
   clearHistory: jest.fn(),
   fetchHistory: jest.fn(),
   enableHistory: jest.fn(),
+  deleteAllIdentities: jest.fn(),
   useHistorySettings: jest.fn(),
 }));
 
@@ -111,7 +118,7 @@ describe("ui/pages/Settings/useSettings", () => {
     expect(result.current.tab).toBe(SettingsTabs.ADVANCED);
   });
 
-  test("should change tab properly", async () => {
+  test("should go back properly", async () => {
     const { result } = renderHook(() => useSettings());
 
     await waitFor(() => result.current.isLoading === false);
@@ -120,5 +127,17 @@ describe("ui/pages/Settings/useSettings", () => {
 
     expect(mockNavigate).toBeCalledTimes(1);
     expect(mockNavigate).toBeCalledWith(-1);
+  });
+
+  test("should delete all identities properly", async () => {
+    const { result } = renderHook(() => useSettings());
+
+    await waitFor(() => result.current.isLoading === false);
+
+    await act(async () => Promise.resolve(result.current.onDeleteAllIdentities()));
+
+    expect(mockDispatch).toBeCalledTimes(2);
+    expect(fetchHistory).toBeCalledTimes(1);
+    expect(deleteAllIdentities).toBeCalledTimes(1);
   });
 });

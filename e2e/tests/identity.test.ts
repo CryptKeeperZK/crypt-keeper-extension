@@ -37,7 +37,12 @@ test.describe("identity", () => {
     await extension.identitiesTab.deleteIdentity(0);
     await expect(extension.getByText(/Account/)).toHaveCount(4);
 
-    await extension.identitiesTab.deleteAllIdentities();
+    await extension.settingsPage.openPage();
+    await extension.settingsPage.openTab("Advanced");
+    await extension.settingsPage.deleteAllIdentities();
+
+    await extension.goHome();
+
     await expect(extension.getByText(/Account/)).toHaveCount(0);
   });
 
@@ -74,7 +79,11 @@ test.describe("identity", () => {
     await extension.identitiesTab.createIdentity();
     await expect(extension.getByText(/Account/)).toHaveCount(1);
 
-    await extension.identitiesTab.deleteAllIdentities();
+    await extension.settingsPage.openPage();
+    await extension.settingsPage.openTab("Advanced");
+    await extension.settingsPage.deleteAllIdentities();
+
+    await extension.goHome();
 
     await extension.activityTab.openTab();
     await expect(extension.activityTab.getByText("All identities removed")).toBeVisible();

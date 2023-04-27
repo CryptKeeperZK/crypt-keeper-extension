@@ -3,7 +3,13 @@ import { useNavigate } from "react-router-dom";
 
 import { HistorySettings } from "@src/types";
 import { useAppDispatch } from "@src/ui/ducks/hooks";
-import { clearHistory, enableHistory, fetchHistory, useHistorySettings } from "@src/ui/ducks/identities";
+import {
+  clearHistory,
+  deleteAllIdentities,
+  enableHistory,
+  fetchHistory,
+  useHistorySettings,
+} from "@src/ui/ducks/identities";
 
 export interface IUseSettingsData {
   isLoading: boolean;
@@ -15,6 +21,7 @@ export interface IUseSettingsData {
   onEnableHistory: () => void;
   onTabChange: (event: SyntheticEvent, value: number) => void;
   onGoBack: () => void;
+  onDeleteAllIdentities: () => void;
 }
 
 export enum SettingsTabs {
@@ -53,6 +60,10 @@ export const useSettings = (): IUseSettingsData => {
     navigate(-1);
   }, [navigate]);
 
+  const onDeleteAllIdentities = useCallback(() => {
+    dispatch(deleteAllIdentities()).then(() => onConfirmModalShow());
+  }, [dispatch, onConfirmModalShow]);
+
   useEffect(() => {
     setIsLoading(true);
     dispatch(fetchHistory()).finally(() => setIsLoading(false));
@@ -68,5 +79,6 @@ export const useSettings = (): IUseSettingsData => {
     onEnableHistory,
     onTabChange,
     onGoBack,
+    onDeleteAllIdentities,
   };
 };
