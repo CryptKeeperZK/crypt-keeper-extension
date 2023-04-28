@@ -86,22 +86,7 @@ export default class LockService implements IBackupable {
       return true;
     }
 
-    const ciphertext = await this.passwordStorage.get<string>();
-
-    if (!ciphertext) {
-      throw new Error("Something badly gone wrong (reinstallation probably required)");
-    }
-
-    if (!password) {
-      throw new Error("Password is not provided");
-    }
-
-    const bytes = CryptoJS.AES.decrypt(ciphertext, password);
-    const retrievedPasswordChecker = bytes.toString(CryptoJS.enc.Utf8);
-
-    if (retrievedPasswordChecker !== this.passwordChecker) {
-      throw new Error("Incorrect password");
-    }
+    await this.checkPassword(password);
 
     this.password = password;
     this.isUnlocked = true;
@@ -110,6 +95,32 @@ export default class LockService implements IBackupable {
     this.onUnlocked();
 
     return true;
+  };
+
+  downloadEncryptedStorage = (): Promise<string | null> => this.passwordStorage.get<string>();
+
+  uploadEncryptedStorage = async (encryptedStorage: string, password: string): Promise<void> => {
+    await this.checkPassword(password);
+    await this.passwordStorage.set(encryptedStorage);
+  };
+
+  checkPassword = async (password: string): Promise<void> => {
+    const cipherText = await this.passwordStorage.get<string>();
+
+    if (!cipherText) {
+      throw new Error("Something badly gone wrong (reinstallation probably required)");
+    }
+
+    if (!password) {
+      throw new Error("Password is not provided");
+    }
+
+    const bytes = CryptoJS.AES.decrypt(cipherText, password);
+    const retrievedPasswordChecker = bytes.toString(CryptoJS.enc.Utf8);
+
+    if (retrievedPasswordChecker !== this.passwordChecker) {
+      throw new Error("Incorrect password");
+    }
   };
 
   ensure = (payload: unknown = null): unknown | null | false => {
@@ -163,8 +174,4 @@ export default class LockService implements IBackupable {
 
     return status;
   };
-
-  downloadEncryptedStorage = (): Promise<string | null> => this.passwordStorage.get<string>();
-
-  uploadEncryptedStorage = (encryptedStorage: string): Promise<void> => this.passwordStorage.set(encryptedStorage);
 }

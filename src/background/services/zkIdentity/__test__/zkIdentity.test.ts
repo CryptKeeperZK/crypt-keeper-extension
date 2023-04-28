@@ -27,6 +27,7 @@ jest.mock("@src/background/services/lock", (): unknown => ({
         ? mockDefaultIdentityCommitment.toString()
         : mockSerializedDefaultIdentities,
     ),
+    checkPassword: jest.fn(),
   })),
 }));
 
@@ -413,7 +414,7 @@ describe("background/services/zkIdentity", () => {
     });
 
     test("should upload encrypted identities", async () => {
-      await zkIdentityService.uploadEncryptedStorage("encrypted");
+      await zkIdentityService.uploadEncryptedStorage("encrypted", "password");
 
       const [instance] = (SimpleStorage as jest.Mock).mock.instances as [MockStorage, MockStorage];
       expect(instance.set).toBeCalledTimes(1);

@@ -97,5 +97,8 @@ export default class ApprovalService implements IBackupable {
 
   downloadEncryptedStorage = (): Promise<string | null> => this.approvals.get<string>();
 
-  uploadEncryptedStorage = (encryptedApprovals: string): Promise<void> => this.approvals.set(encryptedApprovals);
+  uploadEncryptedStorage = async (encryptedApprovals: string, password: string): Promise<void> => {
+    await this.lockService.checkPassword(password);
+    await this.approvals.set(encryptedApprovals);
+  };
 }

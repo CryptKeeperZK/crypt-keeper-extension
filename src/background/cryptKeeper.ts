@@ -2,12 +2,13 @@ import log from "loglevel";
 import { browser } from "webextension-polyfill-ts";
 
 import { RPCAction } from "@src/constants";
-import { PendingRequestType, RLNProofRequest, SemaphoreProofRequest } from "@src/types";
+import { PendingRequestType, RLNProofRequest, SemaphoreProofRequest, BackupableServices } from "@src/types";
 
 import BrowserUtils from "./controllers/browserUtils";
 import Handler from "./controllers/handler";
 import RequestManager from "./controllers/requestManager";
 import ApprovalService from "./services/approval";
+import BackupService from "./services/backup";
 import HistoryService from "./services/history";
 import LockService from "./services/lock";
 import { validateZkInputs } from "./services/validation";
@@ -29,6 +30,8 @@ export default class CryptKeeperController extends Handler {
 
   private historyService: HistoryService;
 
+  private backupService: BackupService;
+
   constructor() {
     super();
     this.requestManager = new RequestManager();
@@ -38,6 +41,10 @@ export default class CryptKeeperController extends Handler {
     this.lockService = LockService.getInstance();
     this.browserService = BrowserUtils.getInstance();
     this.historyService = HistoryService.getInstance();
+    this.backupService = BackupService.getInstance()
+      .add(BackupableServices.APPROVAL, this.approvalService)
+      .add(BackupableServices.IDENTITY, this.zkIdentityService)
+      .add(BackupableServices.LOCK, this.lockService);
   }
 
   initialize = (): CryptKeeperController => {
@@ -84,6 +91,10 @@ export default class CryptKeeperController extends Handler {
     this.add(RPCAction.DELETE_HISTORY_OPERATION, this.lockService.ensure, this.historyService.removeOperation);
     this.add(RPCAction.DELETE_ALL_HISTORY_OPERATIONS, this.lockService.ensure, this.historyService.clear);
     this.add(RPCAction.ENABLE_OPERATION_HISTORY, this.lockService.ensure, this.historyService.enableHistory);
+
+    // Backup
+    this.add(RPCAction.DOWNLOAD_BACKUP, this.lockService.ensure, this.backupService.download);
+    this.add(RPCAction.UPLOAD_BACKUP, this.backupService.upload);
 
     // Protocols
     this.add(
