@@ -1,6 +1,6 @@
 import { ZkInputs } from "@src/types";
 
-import { validateZkInputs } from "../zkValidator";
+import { validateZkInputs } from "..";
 
 describe("background/services/zkValidator", () => {
   test("should validate proof properly", () => {

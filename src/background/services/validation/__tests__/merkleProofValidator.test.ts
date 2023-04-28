@@ -1,4 +1,4 @@
-import { MerkleProofValidator, MerkleProofValidatorErrors } from "..";
+import { MerkleProofValidator, MerkleProofValidatorErrors } from "../merkle";
 
 describe("background/services/validation/merkle", () => {
   test("should validate proof properly", () => {

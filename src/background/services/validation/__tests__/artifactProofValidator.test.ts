@@ -1,4 +1,4 @@
-import { ArtifactsProofValidator, ArtifactsProofValidatorErrors } from "..";
+import { ArtifactsProofValidator, ArtifactsProofValidatorErrors } from "../artifact";
 
 describe("background/services/validation/artifact", () => {
   test("should validate proof properly", () => {

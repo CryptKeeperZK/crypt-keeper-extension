@@ -1,5 +1,7 @@
-import LockService from "./lock";
-import SimpleStorage from "./simpleStorage";
+import type { IBackupable } from "../backup";
+
+import LockService from "../lock";
+import SimpleStorage from "../storage";
 
 const APPPROVALS_DB_KEY = "@APPROVED@";
 
@@ -7,18 +9,28 @@ interface HostPermission {
   noApproval: boolean;
 }
 
-export default class ApprovalService {
+export default class ApprovalService implements IBackupable {
+  private static INSTANCE: ApprovalService;
+
   private allowedHosts: Map<string, HostPermission>;
 
   private approvals: SimpleStorage;
 
   private lockService: LockService;
 
-  constructor() {
+  private constructor() {
     this.allowedHosts = new Map();
     this.approvals = new SimpleStorage(APPPROVALS_DB_KEY);
     this.lockService = LockService.getInstance();
   }
+
+  static getInstance = (): ApprovalService => {
+    if (!ApprovalService.INSTANCE) {
+      ApprovalService.INSTANCE = new ApprovalService();
+    }
+
+    return ApprovalService.INSTANCE;
+  };
 
   getAllowedHosts = (): string[] =>
     [...this.allowedHosts.entries()].filter(([, isApproved]) => isApproved).map(([key]) => key);
@@ -82,4 +94,8 @@ export default class ApprovalService {
     const newApprovals = this.lockService.encrypt(serializedApprovals);
     await this.approvals.set(newApprovals);
   }
+
+  downloadEncryptedStorage = (): Promise<string | null> => this.approvals.get<string>();
+
+  uploadEncryptedStorage = (encryptedApprovals: string): Promise<void> => this.approvals.set(encryptedApprovals);
 }

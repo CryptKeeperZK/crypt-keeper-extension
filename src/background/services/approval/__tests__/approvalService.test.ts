@@ -1,0 +1,193 @@
+import ApprovalService from "..";
+import SimpleStorage from "../../storage";
+
+const mockDefaultHosts = ["https://localhost:3000"];
+const mockSerializedApprovals = JSON.stringify([[mockDefaultHosts[0], { noApproval: true }]]);
+
+jest.mock("../../lock", (): unknown => ({
+  getInstance: jest.fn(() => ({
+    encrypt: jest.fn(() => mockSerializedApprovals),
+    decrypt: jest.fn(() => mockSerializedApprovals),
+  })),
+}));
+
+jest.mock("../../storage");
+
+type MockStorage = { get: jest.Mock; set: jest.Mock; clear: jest.Mock };
+
+describe("background/services/approval", () => {
+  const approvalService = ApprovalService.getInstance();
+
+  beforeEach(() => {
+    process.env.NODE_ENV = "test";
+
+    (SimpleStorage as jest.Mock).mock.instances.forEach((instance: MockStorage) => {
+      instance.get.mockReturnValue(mockSerializedApprovals);
+      instance.set.mockReturnValue(undefined);
+      instance.clear.mockReturnValue(undefined);
+    });
+  });
+
+  afterEach(async () => {
+    process.env.NODE_ENV = "test";
+    await approvalService.clear();
+
+    (SimpleStorage as jest.Mock).mock.instances.forEach((instance: MockStorage) => {
+      instance.get.mockClear();
+      instance.set.mockClear();
+      instance.clear.mockClear();
+    });
+  });
+
+  describe("clear", () => {
+    test("should clear approved service properly", async () => {
+      await approvalService.unlock();
+      await approvalService.clear();
+      const hosts = approvalService.getAllowedHosts();
+
+      expect(hosts).toHaveLength(0);
+    });
+
+    test("should not clear for production env", async () => {
+      process.env.NODE_ENV = "production";
+
+      await approvalService.clear();
+
+      (SimpleStorage as jest.Mock).mock.instances.forEach((instance: MockStorage) => {
+        expect(instance.clear).not.toBeCalled();
+      });
+    });
+  });
+
+  describe("unlock", () => {
+    test("should unlock properly without stored data", async () => {
+      (SimpleStorage as jest.Mock).mock.instances.forEach((instance: MockStorage) => {
+        instance.get.mockReturnValue(undefined);
+      });
+
+      const result = await approvalService.unlock();
+      const hosts = approvalService.getAllowedHosts();
+      const isApproved = approvalService.isApproved(mockDefaultHosts[0]);
+
+      expect(result).toBe(true);
+      expect(hosts).toHaveLength(0);
+      expect(isApproved).toBe(false);
+    });
+
+    test("should unlock properly", async () => {
+      const result = await approvalService.unlock();
+      const hosts = approvalService.getAllowedHosts();
+      const isApproved = approvalService.isApproved(mockDefaultHosts[0]);
+
+      expect(result).toBe(true);
+      expect(isApproved).toBe(true);
+      expect(hosts).toHaveLength(1);
+      expect(hosts).toStrictEqual(mockDefaultHosts);
+    });
+  });
+
+  describe("permissions", () => {
+    test("should get permissions properly", async () => {
+      await approvalService.unlock();
+      const result = approvalService.getPermission(mockDefaultHosts[0]);
+
+      expect(result).toStrictEqual({ noApproval: true });
+    });
+
+    test("should get permissions for unknown host", () => {
+      const result = approvalService.getPermission("unknown");
+
+      expect(result).toStrictEqual({ noApproval: false });
+    });
+
+    test("should set permission", async () => {
+      const result = await approvalService.setPermission(mockDefaultHosts[0], { noApproval: true });
+      const canSkipApprove = approvalService.canSkipApprove(mockDefaultHosts[0]);
+
+      expect(result).toStrictEqual({ noApproval: true });
+      expect(canSkipApprove).toBe(true);
+
+      (SimpleStorage as jest.Mock).mock.instances.forEach((instance: MockStorage) => {
+        expect(instance.set).toBeCalledTimes(1);
+        expect(instance.set).toBeCalledWith(mockSerializedApprovals);
+      });
+    });
+
+    test("should set permission for unknown host", async () => {
+      const result = await approvalService.setPermission("unknown", { noApproval: false });
+
+      expect(result).toStrictEqual({ noApproval: false });
+
+      (SimpleStorage as jest.Mock).mock.instances.forEach((instance: MockStorage) => {
+        expect(instance.set).toBeCalledTimes(1);
+      });
+    });
+  });
+
+  describe("approvals", () => {
+    test("should add new approval properly", async () => {
+      await approvalService.add({ host: mockDefaultHosts[0], noApproval: true });
+      const hosts = approvalService.getAllowedHosts();
+
+      expect(hosts).toStrictEqual(mockDefaultHosts);
+
+      (SimpleStorage as jest.Mock).mock.instances.forEach((instance: MockStorage) => {
+        expect(instance.set).toBeCalledTimes(1);
+        expect(instance.set).toBeCalledWith(mockSerializedApprovals);
+      });
+    });
+
+    test("should not approve duplicated host after unlock", async () => {
+      await approvalService.unlock();
+      await approvalService.add({ host: mockDefaultHosts[0], noApproval: true });
+      const hosts = approvalService.getAllowedHosts();
+
+      expect(hosts).toStrictEqual(mockDefaultHosts);
+
+      (SimpleStorage as jest.Mock).mock.instances.forEach((instance: MockStorage) => {
+        expect(instance.set).not.toBeCalled();
+      });
+    });
+
+    test("should remove approved host properly", async () => {
+      await approvalService.unlock();
+      await approvalService.remove({ host: mockDefaultHosts[0] });
+      const hosts = approvalService.getAllowedHosts();
+
+      expect(hosts).toHaveLength(0);
+
+      (SimpleStorage as jest.Mock).mock.instances.forEach((instance: MockStorage) => {
+        expect(instance.set).toBeCalledTimes(1);
+      });
+    });
+
+    test("should not remove if there's no such approved host", async () => {
+      await approvalService.unlock();
+      await approvalService.remove({ host: "unknown" });
+      const hosts = approvalService.getAllowedHosts();
+
+      expect(hosts).toStrictEqual(mockDefaultHosts);
+
+      (SimpleStorage as jest.Mock).mock.instances.forEach((instance: MockStorage) => {
+        expect(instance.set).not.toBeCalled();
+      });
+    });
+  });
+
+  describe("backup", () => {
+    test("should download encrypted approvals", async () => {
+      const result = await approvalService.downloadEncryptedStorage();
+
+      expect(result).toBeDefined();
+    });
+
+    test("should upload encrypted approvals", async () => {
+      await approvalService.uploadEncryptedStorage("encrypted");
+
+      (SimpleStorage as jest.Mock).mock.instances.forEach((instance: MockStorage) => {
+        expect(instance.set).toBeCalledTimes(1);
+        expect(instance.set).toBeCalledWith("encrypted");
+      });
+    });
+  });
+});

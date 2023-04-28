@@ -1,10 +1,10 @@
-import SimpleStorage from "../simpleStorage";
-import WalletService from "../wallet";
+import WalletService from "..";
+import SimpleStorage from "../../storage";
 
-jest.mock("../simpleStorage");
+jest.mock("../../storage");
 
 describe("background/services/wallet", () => {
-  const service = new WalletService();
+  const service = WalletService.getInstance();
   const [walletStorage] = (SimpleStorage as jest.Mock).mock.instances as [{ get: jest.Mock; set: jest.Mock }];
   const defaultStorageValue = { isDisconnectedPermanently: false };
 

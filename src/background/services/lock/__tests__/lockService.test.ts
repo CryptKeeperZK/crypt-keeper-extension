@@ -5,8 +5,8 @@ import { browser } from "webextension-polyfill-ts";
 import { setStatus } from "@src/ui/ducks/app";
 import pushMessage from "@src/util/pushMessage";
 
-import LockService from "../lock";
-import SimpleStorage from "../simpleStorage";
+import LockService from "..";
+import SimpleStorage from "../../storage";
 
 jest.mock("crypto-js", (): unknown => ({
   ...jest.requireActual("crypto-js"),
@@ -18,7 +18,9 @@ jest.mock("crypto-js", (): unknown => ({
 
 jest.mock("@src/util/pushMessage");
 
-jest.mock("../simpleStorage");
+jest.mock("../../storage");
+
+type MockStorage = { get: jest.Mock; set: jest.Mock };
 
 describe("background/services/lock", () => {
   const lockService = LockService.getInstance();
@@ -39,7 +41,7 @@ describe("background/services/lock", () => {
     (pushMessage as jest.Mock).mockReset();
     (browser.tabs.sendMessage as jest.Mock).mockRejectedValueOnce(false).mockResolvedValue(true);
 
-    (SimpleStorage as jest.Mock).mock.instances.forEach((instance: { get: jest.Mock }) => {
+    (SimpleStorage as jest.Mock).mock.instances.forEach((instance: MockStorage) => {
       instance.get.mockReturnValue(defaultPassword);
     });
   });
@@ -139,7 +141,7 @@ describe("background/services/lock", () => {
     });
 
     test("should not unlock if there is no cipher text", async () => {
-      (SimpleStorage as jest.Mock).mock.instances.forEach((instance: { get: jest.Mock }) => {
+      (SimpleStorage as jest.Mock).mock.instances.forEach((instance: MockStorage) => {
         instance.get.mockReturnValue(undefined);
       });
 
@@ -152,6 +154,28 @@ describe("background/services/lock", () => {
       (CryptoJS.AES.decrypt as jest.Mock).mockReturnValue({ toString: () => "" });
 
       await expect(lockService.unlock(defaultPassword)).rejects.toThrowError("Incorrect password");
+    });
+  });
+
+  describe("backup", () => {
+    test("should download encrypted password storage", async () => {
+      const [{ get: mockGet }] = (SimpleStorage as jest.Mock).mock.instances as [MockStorage];
+      mockGet.mockClear();
+
+      const result = await lockService.downloadEncryptedStorage();
+
+      expect(result).toBeDefined();
+
+      expect(mockGet).toBeCalledTimes(1);
+    });
+
+    test("should upload encrypted password storage", async () => {
+      const [{ set: mockSet }] = (SimpleStorage as jest.Mock).mock.instances as [MockStorage];
+      mockSet.mockClear();
+
+      await lockService.uploadEncryptedStorage("encrypted");
+
+      expect(mockSet).toBeCalledTimes(1);
     });
   });
 });

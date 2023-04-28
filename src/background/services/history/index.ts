@@ -3,7 +3,7 @@ import { browser } from "webextension-polyfill-ts";
 
 import LockService from "@src/background/services/lock";
 import NotificationService from "@src/background/services/notification";
-import SimpleStorage from "@src/background/services/simpleStorage";
+import SimpleStorage from "@src/background/services/storage";
 import { getEnabledFeatures } from "@src/config/features";
 import { HistorySettings, Operation, OperationType } from "@src/types";
 
