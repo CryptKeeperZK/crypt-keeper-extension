@@ -7,6 +7,7 @@ import { Input } from "@src/ui/components/Input";
 import "../../confirmModal.scss";
 
 import { useImportModal } from "./useImportModal";
+import { Dropbox } from "@src/ui/components/Dropbox/Dropbox";
 
 export interface ImportModalProps {
   len: number;
@@ -38,7 +39,10 @@ export const ImportModal = ({ pendingRequest, len, reject, accept, loading, erro
     <FullModal className="confirm-modal" data-testid="proof-modal" onClose={onReject}>
       <FullModalHeader>{operation}</FullModalHeader>
 
-      <FullModalContent className="flex flex-col items-center" children={undefined}></FullModalContent>
+      <FullModalContent className="flex flex-col items-center">
+        <div className="text-lg font-semibold mb-2 text-center">{`${host} is requesting a semaphore proof`}</div>
+        <Dropbox />
+      </FullModalContent>
 
       <FullModalFooter>
         <Button buttonType={ButtonType.SECONDARY} loading={loading} onClick={onReject}>

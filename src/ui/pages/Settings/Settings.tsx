@@ -77,7 +77,7 @@ const Settings = (): JSX.Element => {
                   isOpenModal={isConfirmModalOpen}
                   reject={onConfirmModalShow}
                 />
-              </>}
+              </>)}
 
             {tab === SettingsTabs.BACKUP && (
               <Backup
