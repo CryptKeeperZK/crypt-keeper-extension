@@ -8,6 +8,7 @@ jest.mock("../../lock", (): unknown => ({
   getInstance: jest.fn(() => ({
     encrypt: jest.fn(() => mockSerializedApprovals),
     decrypt: jest.fn(() => mockSerializedApprovals),
+    checkPassword: jest.fn(),
   })),
 }));
 
@@ -182,7 +183,7 @@ describe("background/services/approval", () => {
     });
 
     test("should upload encrypted approvals", async () => {
-      await approvalService.uploadEncryptedStorage("encrypted");
+      await approvalService.uploadEncryptedStorage("encrypted", "password");
 
       (SimpleStorage as jest.Mock).mock.instances.forEach((instance: MockStorage) => {
         expect(instance.set).toBeCalledTimes(1);

@@ -173,9 +173,21 @@ describe("background/services/lock", () => {
       const [{ set: mockSet }] = (SimpleStorage as jest.Mock).mock.instances as [MockStorage];
       mockSet.mockClear();
 
-      await lockService.uploadEncryptedStorage("encrypted");
+      await lockService.uploadEncryptedStorage("encrypted", defaultPassword);
 
       expect(mockSet).toBeCalledTimes(1);
+    });
+
+    test("should throw error if uploading invalid data", async () => {
+      (CryptoJS.AES.decrypt as jest.Mock).mockReturnValue({ toString: () => "" });
+
+      const [{ set: mockSet }] = (SimpleStorage as jest.Mock).mock.instances as [MockStorage];
+      mockSet.mockClear();
+
+      await expect(lockService.uploadEncryptedStorage("encrypted", "wrong-password")).rejects.toThrow(
+        "Incorrect password",
+      );
+      expect(mockSet).toBeCalledTimes(0);
     });
   });
 });
