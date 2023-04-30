@@ -13,7 +13,7 @@ import pushMessage from "@src/util/pushMessage";
 import type { IBackupable } from "../backup";
 
 import HistoryService from "../history";
-import LockService from "../lock";
+import LockerService from "../locker";
 import NotificationService from "../notification";
 import SimpleStorage from "../storage";
 
@@ -29,7 +29,7 @@ export default class ZkIdentityService implements IBackupable {
 
   private activeIdentityStore: SimpleStorage;
 
-  private lockService: LockService;
+  private lockService: LockerService;
 
   private notificationService: NotificationService;
 
@@ -43,7 +43,7 @@ export default class ZkIdentityService implements IBackupable {
     this.activeIdentity = undefined;
     this.identitiesStore = new SimpleStorage(IDENTITY_KEY);
     this.activeIdentityStore = new SimpleStorage(ACTIVE_IDENTITY_KEY);
-    this.lockService = LockService.getInstance();
+    this.lockService = LockerService.getInstance();
     this.notificationService = NotificationService.getInstance();
     this.historyService = HistoryService.getInstance();
     this.browserController = BrowserUtils.getInstance();
@@ -87,14 +87,9 @@ export default class ZkIdentityService implements IBackupable {
   };
 
   private getIdentitiesFromStore = async (): Promise<Map<string, string>> => {
-    const cipherText = await this.identitiesStore.get<string>();
-
-    if (!cipherText) {
-      return new Map();
-    }
-
     const features = getEnabledFeatures();
-    const identitesDecrypted = this.lockService.decrypt(cipherText);
+    const identitesDecrypted = await this.getDecryptedStore(this.identitiesStore);
+    if (!identitesDecrypted) return new Map();
     const iterableIdentities = JSON.parse(identitesDecrypted) as Iterable<readonly [string, string]>;
 
     return new Map(
@@ -104,6 +99,14 @@ export default class ZkIdentityService implements IBackupable {
             ([, identity]) => ZkIdentitySemaphore.genFromSerialized(identity).metadata.identityStrategy !== "random",
           ),
     );
+  };
+
+  private getDecryptedStore = async (store: SimpleStorage): Promise<string | null> => {
+    const cipherText = await store.get<string>();
+
+    if (!cipherText) return null;
+
+    return this.lockService.decrypt(cipherText);
   };
 
   getIdentityCommitments = async (): Promise<{ commitments: string[]; identities: Map<string, string> }> => {
@@ -355,10 +358,12 @@ export default class ZkIdentityService implements IBackupable {
     return true;
   };
 
-  downloadEncryptedStorage = async (): Promise<string | null> => this.identitiesStore.get<string>();
+  downloadDecryptedStorage = async (): Promise<string | null> => {
+    return await this.getDecryptedStore(this.identitiesStore);
+  };
 
-  uploadEncryptedStorage = async (encrypted: string, password: string): Promise<void> => {
-    await this.lockService.checkPassword(password);
-    await this.identitiesStore.set<string>(encrypted);
+  uploadDecryptedStorage = async (decrypted: string): Promise<void> => {
+    const ciphertext = this.lockService.encrypt(decrypted);
+    await this.identitiesStore.set<string>(ciphertext);
   };
 }

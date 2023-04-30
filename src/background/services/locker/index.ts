@@ -1,8 +1,8 @@
-import CryptoJS from "crypto-js";
 import { browser } from "webextension-polyfill-ts";
 
 import { setStatus } from "@src/ui/ducks/app";
 import pushMessage from "@src/util/pushMessage";
+import { cryptoDecrypt, cryptoEncrypt } from "@src/background/services/crypto";
 
 import type { IBackupable } from "../backup";
 
@@ -15,8 +15,8 @@ interface LockStatus {
   isUnlocked: boolean;
 }
 
-export default class LockService implements IBackupable {
-  private static INSTANCE: LockService;
+export default class LockerService implements IBackupable {
+  private static INSTANCE: LockerService;
 
   private isUnlocked: boolean;
 
@@ -30,27 +30,37 @@ export default class LockService implements IBackupable {
 
   private constructor() {
     this.isUnlocked = false;
-    this.passwordChecker = "Password is correct";
+    this.passwordChecker = "Locker password is correct";
     this.passwordStorage = new SimpleStorage(PASSWORD_DB_KEY);
     this.password = undefined;
     this.unlockCB = undefined;
   }
 
-  static getInstance(): LockService {
-    if (!LockService.INSTANCE) {
-      LockService.INSTANCE = new LockService();
+  static getInstance(): LockerService {
+    if (!LockerService.INSTANCE) {
+      LockerService.INSTANCE = new LockerService();
     }
 
-    return LockService.INSTANCE;
+    return LockerService.INSTANCE;
   }
 
   /**
    *  This method is called when install event occurs
    */
   setupPassword = async (password: string): Promise<void> => {
-    const cipherText = CryptoJS.AES.encrypt(this.passwordChecker, password).toString();
+    const cipherText = this.encrypt(password).toString();
     await this.passwordStorage.set(cipherText);
     await this.unlock(password);
+  };
+
+  checkPassword = async (password: string): Promise<void> => {
+    const cipherText = await this.passwordStorage.get<string>();
+
+    if (!cipherText) throw new Error("Something badly gone wrong (reinstallation probably required)");
+
+    const decryptedPasswordChecker = cryptoDecrypt(cipherText, password);
+
+    if (decryptedPasswordChecker !== this.passwordChecker) throw new Error("Incorrect password");
   };
 
   getStatus = async (): Promise<LockStatus> => {
@@ -97,30 +107,21 @@ export default class LockService implements IBackupable {
     return true;
   };
 
-  downloadEncryptedStorage = (): Promise<string | null> => this.passwordStorage.get<string>();
-
-  uploadEncryptedStorage = async (encryptedStorage: string, password: string): Promise<void> => {
-    await this.checkPassword(password);
-    await this.passwordStorage.set(encryptedStorage);
+  encrypt = (payload: string): string => {
+    if (!this.password) throw new Error("Password is not provided");
+    return cryptoEncrypt(payload, this.password);
   };
 
-  checkPassword = async (password: string): Promise<void> => {
-    const cipherText = await this.passwordStorage.get<string>();
+  decrypt = (ciphertext: string): string => {
+    if (!this.password) throw new Error("Password is not provided");
+    return cryptoDecrypt(ciphertext, this.password);
+  };
 
-    if (!cipherText) {
-      throw new Error("Something badly gone wrong (reinstallation probably required)");
-    }
+  downloadDecryptedStorage = (): Promise<string | null> => this.passwordStorage.get<string>();
 
-    if (!password) {
-      throw new Error("Password is not provided");
-    }
-
-    const bytes = CryptoJS.AES.decrypt(cipherText, password);
-    const retrievedPasswordChecker = bytes.toString(CryptoJS.enc.Utf8);
-
-    if (retrievedPasswordChecker !== this.passwordChecker) {
-      throw new Error("Incorrect password");
-    }
+  uploadDecryptedStorage = async (decryptedBackup: string): Promise<void> => {
+    const cipherText = this.encrypt(decryptedBackup);
+    await this.passwordStorage.set(cipherText);
   };
 
   ensure = (payload: unknown = null): unknown | null | false => {
@@ -129,23 +130,6 @@ export default class LockService implements IBackupable {
     }
 
     return payload;
-  };
-
-  encrypt = (payload: string): string => {
-    if (!this.password) {
-      throw new Error("Password is not provided");
-    }
-
-    return CryptoJS.AES.encrypt(payload, this.password).toString();
-  };
-
-  decrypt = (ciphertext: string): string => {
-    if (!this.password) {
-      throw new Error("Password is not provided");
-    }
-
-    const bytes = CryptoJS.AES.decrypt(ciphertext, this.password);
-    return bytes.toString(CryptoJS.enc.Utf8);
   };
 
   logout = async (): Promise<boolean> => {

@@ -1,6 +1,6 @@
 import type { IBackupable } from "../backup";
 
-import LockService from "../lock";
+import LockerService from "../locker";
 import SimpleStorage from "../storage";
 
 const APPPROVALS_DB_KEY = "@APPROVED@";
@@ -16,12 +16,12 @@ export default class ApprovalService implements IBackupable {
 
   private approvals: SimpleStorage;
 
-  private lockService: LockService;
+  private lockService: LockerService;
 
   private constructor() {
     this.allowedHosts = new Map();
     this.approvals = new SimpleStorage(APPPROVALS_DB_KEY);
-    this.lockService = LockService.getInstance();
+    this.lockService = LockerService.getInstance();
   }
 
   static getInstance = (): ApprovalService => {
@@ -95,10 +95,10 @@ export default class ApprovalService implements IBackupable {
     await this.approvals.set(newApprovals);
   }
 
-  downloadEncryptedStorage = (): Promise<string | null> => this.approvals.get<string>();
+  downloadDecryptedStorage = (): Promise<string | null> => this.approvals.get<string>();
 
-  uploadEncryptedStorage = async (encryptedApprovals: string, password: string): Promise<void> => {
-    await this.lockService.checkPassword(password);
-    await this.approvals.set(encryptedApprovals);
+  uploadDecryptedStorage = async (decrypted: string): Promise<void> => {
+    const ciphertext = this.lockService.encrypt(decrypted);
+    await this.approvals.set(decrypted);
   };
 }

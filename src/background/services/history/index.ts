@@ -1,7 +1,7 @@
 import { nanoid } from "nanoid";
 import { browser } from "webextension-polyfill-ts";
 
-import LockService from "@src/background/services/lock";
+import LockerService from "@src/background/services/locker";
 import NotificationService from "@src/background/services/notification";
 import SimpleStorage from "@src/background/services/storage";
 import { getEnabledFeatures } from "@src/config/features";
@@ -19,7 +19,7 @@ export default class HistoryService {
 
   private historySettingsStore: SimpleStorage;
 
-  private lockService: LockService;
+  private lockService: LockerService;
 
   private notificationService: NotificationService;
 
@@ -30,7 +30,7 @@ export default class HistoryService {
   private constructor() {
     this.historyStore = new SimpleStorage(HISTORY_KEY);
     this.historySettingsStore = new SimpleStorage(HISTORY_SETTINGS_KEY);
-    this.lockService = LockService.getInstance();
+    this.lockService = LockerService.getInstance();
     this.notificationService = NotificationService.getInstance();
     this.operations = [];
     this.settings = undefined;

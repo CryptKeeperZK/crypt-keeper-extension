@@ -4,13 +4,13 @@ describe("background/services/backup/BackupService", () => {
   const backupService = BackupService.getInstance();
 
   const defaultBackupable: IBackupable = {
-    downloadEncryptedStorage: jest.fn(() => Promise.resolve("encrypted")),
-    uploadEncryptedStorage: jest.fn(),
+    downloadDecryptedStorage: jest.fn(() => Promise.resolve("encrypted")),
+    uploadDecryptedStorage: jest.fn(),
   };
 
   const nullBackupable: IBackupable = {
-    downloadEncryptedStorage: jest.fn(() => Promise.resolve(null)),
-    uploadEncryptedStorage: jest.fn(),
+    downloadDecryptedStorage: jest.fn(() => Promise.resolve(null)),
+    uploadDecryptedStorage: jest.fn(),
   };
 
   afterEach(() => {

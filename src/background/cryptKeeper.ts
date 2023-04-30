@@ -10,7 +10,7 @@ import RequestManager from "./controllers/requestManager";
 import ApprovalService from "./services/approval";
 import BackupService from "./services/backup";
 import HistoryService from "./services/history";
-import LockService from "./services/lock";
+import LockerService from "./services/locker";
 import { validateZkInputs } from "./services/validation";
 import WalletService from "./services/wallet";
 import ZkIdentityService from "./services/zkIdentity";
@@ -24,7 +24,7 @@ export default class CryptKeeperController extends Handler {
 
   private walletService: WalletService;
 
-  private lockService: LockService;
+  private lockService: LockerService;
 
   private browserService: BrowserUtils;
 
@@ -38,7 +38,7 @@ export default class CryptKeeperController extends Handler {
     this.zkIdentityService = ZkIdentityService.getInstance();
     this.approvalService = ApprovalService.getInstance();
     this.walletService = WalletService.getInstance();
-    this.lockService = LockService.getInstance();
+    this.lockService = LockerService.getInstance();
     this.browserService = BrowserUtils.getInstance();
     this.historyService = HistoryService.getInstance();
     this.backupService = BackupService.getInstance()

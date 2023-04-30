@@ -5,7 +5,7 @@ import { browser } from "webextension-polyfill-ts";
 import { setStatus } from "@src/ui/ducks/app";
 import pushMessage from "@src/util/pushMessage";
 
-import LockService from "..";
+import LockerService from "..";
 import SimpleStorage from "../../storage";
 
 jest.mock("crypto-js", (): unknown => ({
@@ -23,7 +23,7 @@ jest.mock("../../storage");
 type MockStorage = { get: jest.Mock; set: jest.Mock };
 
 describe("background/services/lock", () => {
-  const lockService = LockService.getInstance();
+  const lockService = LockerService.getInstance();
   const defaultPassword = "password";
   const defaultTabs = [{ id: "1" }, { id: "2" }, { id: "3" }];
   const passwordChecker = "Password is correct";
@@ -162,7 +162,7 @@ describe("background/services/lock", () => {
       const [{ get: mockGet }] = (SimpleStorage as jest.Mock).mock.instances as [MockStorage];
       mockGet.mockClear();
 
-      const result = await lockService.downloadEncryptedStorage();
+      const result = await lockService.downloadDecryptedStorage();
 
       expect(result).toBeDefined();
 
@@ -173,7 +173,7 @@ describe("background/services/lock", () => {
       const [{ set: mockSet }] = (SimpleStorage as jest.Mock).mock.instances as [MockStorage];
       mockSet.mockClear();
 
-      await lockService.uploadEncryptedStorage("encrypted", defaultPassword);
+      await lockService.uploadDecryptedStorage("encrypted", defaultPassword);
 
       expect(mockSet).toBeCalledTimes(1);
     });
@@ -184,7 +184,7 @@ describe("background/services/lock", () => {
       const [{ set: mockSet }] = (SimpleStorage as jest.Mock).mock.instances as [MockStorage];
       mockSet.mockClear();
 
-      await expect(lockService.uploadEncryptedStorage("encrypted", "wrong-password")).rejects.toThrow(
+      await expect(lockService.uploadDecryptedStorage("encrypted", "wrong-password")).rejects.toThrow(
         "Incorrect password",
       );
       expect(mockSet).toBeCalledTimes(0);

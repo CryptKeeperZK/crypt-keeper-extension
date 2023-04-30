@@ -408,13 +408,13 @@ describe("background/services/zkIdentity", () => {
 
   describe("backup", () => {
     test("should download encrypted identities", async () => {
-      const result = await zkIdentityService.downloadEncryptedStorage();
+      const result = await zkIdentityService.downloadDecryptedStorage();
 
       expect(result).toBeDefined();
     });
 
     test("should upload encrypted identities", async () => {
-      await zkIdentityService.uploadEncryptedStorage("encrypted", "password");
+      await zkIdentityService.uploadDecryptedStorage("encrypted", "password");
 
       const [instance] = (SimpleStorage as jest.Mock).mock.instances as [MockStorage, MockStorage];
       expect(instance.set).toBeCalledTimes(1);

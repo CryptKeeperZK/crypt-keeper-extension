@@ -177,13 +177,13 @@ describe("background/services/approval", () => {
 
   describe("backup", () => {
     test("should download encrypted approvals", async () => {
-      const result = await approvalService.downloadEncryptedStorage();
+      const result = await approvalService.downloadDecryptedStorage();
 
       expect(result).toBeDefined();
     });
 
     test("should upload encrypted approvals", async () => {
-      await approvalService.uploadEncryptedStorage("encrypted", "password");
+      await approvalService.uploadDecryptedStorage("encrypted", "password");
 
       (SimpleStorage as jest.Mock).mock.instances.forEach((instance: MockStorage) => {
         expect(instance.set).toBeCalledTimes(1);
