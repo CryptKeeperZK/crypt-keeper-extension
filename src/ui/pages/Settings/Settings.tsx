@@ -67,7 +67,7 @@ const Settings = (): JSX.Element => {
                 />
               </>
             )}
-      
+
             {tab === SettingsTabs.ADVANCED && (
               <>
                 <Advanced isLoading={isLoading} onDeleteIdentities={onDeleteAllIdentities} />
@@ -77,7 +77,8 @@ const Settings = (): JSX.Element => {
                   isOpenModal={isConfirmModalOpen}
                   reject={onConfirmModalShow}
                 />
-              </>)}
+              </>
+            )}
 
             {tab === SettingsTabs.BACKUP && (
               <Backup

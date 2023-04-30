@@ -40,7 +40,7 @@ describe("ui/pages/Settings", () => {
     onGoBack: jest.fn(),
     onDeleteAllIdentities: jest.fn(),
     onImportIdentities: jest.fn(),
-    onExportIdentities: jest.fn()
+    onExportIdentities: jest.fn(),
   };
 
   beforeEach(() => {

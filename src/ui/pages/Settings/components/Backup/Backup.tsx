@@ -29,7 +29,7 @@ const Backup = ({ isLoading, onImportIdentities, onExportIdentities }: IBackupPr
 
         <FormGroup sx={{ mt: 2 }}>
           <Button sx={{ textTransform: "none", width: 200 }} variant="contained" onClick={onImportIdentities}>
-            Import Identities
+            Import
           </Button>
         </FormGroup>
       </Box>
@@ -45,7 +45,7 @@ const Backup = ({ isLoading, onImportIdentities, onExportIdentities }: IBackupPr
 
         <FormGroup sx={{ mt: 2 }}>
           <Button sx={{ textTransform: "none", width: 200 }} variant="contained" onClick={onExportIdentities}>
-            Export Identities
+            Export
           </Button>
         </FormGroup>
       </Box>

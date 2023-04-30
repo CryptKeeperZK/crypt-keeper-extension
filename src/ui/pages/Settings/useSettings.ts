@@ -74,11 +74,11 @@ export const useSettings = (): IUseSettingsData => {
     });
   };
 
-  const onExportIdentities = () => {
-    postMessage({
-      method: RPCAction.EXPORT_IDENTITIES,
+  const onExportIdentities = useCallback(async () => {
+    const response = await postMessage({
+      method: RPCAction.DOWNLOAD_BACKUP,
     });
-  };
+  }, []);
 
   useEffect(() => {
     setIsLoading(true);
