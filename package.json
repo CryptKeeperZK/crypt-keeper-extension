@@ -125,7 +125,7 @@
     "@interep/identity": "^0.3.0",
     "@metamask/providers": "^10.2.1",
     "@mui/material": "^5.12.2",
-    "@reduxjs/toolkit": "^1.9.3",
+    "@reduxjs/toolkit": "^1.9.5",
     "@semaphore-protocol/group": "^3.9.0",
     "@semaphore-protocol/identity": "^3.9.0",
     "@semaphore-protocol/proof": "^3.9.0",
