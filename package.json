@@ -117,7 +117,7 @@
     "webpack-merge": "^5.8.0"
   },
   "dependencies": {
-    "@emotion/styled": "^11.10.6",
+    "@emotion/styled": "^11.10.8",
     "@fortawesome/fontawesome-common-types": "^6.4.0",
     "@fortawesome/fontawesome-svg-core": "^6.4.0",
     "@fortawesome/free-brands-svg-icons": "^6.4.0",
