@@ -8,14 +8,14 @@ updates:
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
-      interval: "monthly"
+      interval: "daily"
 
   - package-ecosystem: "npm"
     directory: "/"
     schedule:
-      interval: "monthly"
+      interval: "daily"
 
   - package-ecosystem: "npm"
     directory: "/demo"
     schedule:
-      interval: "monthly"
+      interval: "daily"
