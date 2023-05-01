@@ -134,7 +134,7 @@
     "@web3-react/metamask": "^8.2.1",
     "@web3-react/types": "^8.2.0",
     "@zk-kit/incremental-merkle-tree": "^1.0.0",
-    "bigint-conversion": "^2.3.0",
+    "bigint-conversion": "^2.4.1",
     "bignumber.js": "^9.1.1",
     "classnames": "^2.3.2",
     "copy-to-clipboard": "^3.3.2",
