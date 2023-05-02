@@ -24,12 +24,12 @@ const DownloadBackup = (): JSX.Element => {
           <Icon data-testid="close-icon" fontAwesome="fas fa-times" size={1.25} onClick={onGoBack} />
         </Box>
 
-        <Box component="form" sx={{ my: 3 }} onSubmit={onSubmit}>
+        <Box
+          component="form"
+          sx={{ mt: 3, height: 430, display: "flex", flexDirection: "column", justifyContent: "space-between" }}
+          onSubmit={onSubmit}
+        >
           <Box>
-            <Typography fontWeight="bold" sx={{ my: 2 }} variant="body1">
-              To download your backup, please enter your current password
-            </Typography>
-
             <Typography variant="body1">Backup contains encrypted data:</Typography>
 
             <List dense>
@@ -39,29 +39,33 @@ const DownloadBackup = (): JSX.Element => {
 
               <ListItem>- Your site approvals</ListItem>
             </List>
-
-            <Box sx={{ mt: 2 }}>
-              <PasswordInput
-                isShowEye
-                errorMessage={errors.password}
-                id="password"
-                isShowPassword={isShowPassword}
-                label="Password"
-                onShowPassword={onShowPassword}
-                {...register("password")}
-              />
-            </Box>
           </Box>
 
-          <Button
-            data-testid="download-button"
-            disabled={isLoading}
-            sx={{ textTransform: "none", mt: 2, width: "100%" }}
-            type="submit"
-            variant="contained"
-          >
-            Download
-          </Button>
+          <Box>
+            <Typography fontWeight="bold" sx={{ my: 2 }} variant="body1">
+              To download your backup, please enter your current password
+            </Typography>
+
+            <PasswordInput
+              isShowEye
+              errorMessage={errors.password}
+              id="password"
+              isShowPassword={isShowPassword}
+              label="Password"
+              onShowPassword={onShowPassword}
+              {...register("password")}
+            />
+
+            <Button
+              data-testid="download-button"
+              disabled={isLoading}
+              sx={{ textTransform: "none", mt: 2, width: "100%" }}
+              type="submit"
+              variant="contained"
+            >
+              Download
+            </Button>
+          </Box>
         </Box>
       </Box>
     </Box>
