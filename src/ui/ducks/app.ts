@@ -51,7 +51,7 @@ export const unlock = (password: string) => async (): Promise<boolean> =>
   postMessage<boolean>({ method: RPCAction.UNLOCK, payload: password });
 
 export const setupPassword = (password: string) => async (): Promise<boolean> =>
-  postMessage<boolean>({ method: RPCAction.SETUP_PASSWORD, payload: password });
+  postMessage<boolean>({ method: RPCAction.SETUP_LOCKER_PASSWORD, payload: password });
 
 export const fetchStatus = (): TypedThunk => async (dispatch) => {
   const status = await postMessage<AppState>({ method: RPCAction.GET_STATUS });

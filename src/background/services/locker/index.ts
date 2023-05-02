@@ -47,7 +47,7 @@ export default class LockerService {
   /**
    *  This method is called when install event occurs
    */
-  setupLockerPassword = async (password: string): Promise<void> => {
+  setupPassword = async (password: string): Promise<void> => {
     const cipherText = this.encrypt(password).toString();
     await this.passwordStorage.set(cipherText);
     await this.unlock(password);

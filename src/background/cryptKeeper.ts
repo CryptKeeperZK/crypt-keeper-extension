@@ -70,8 +70,8 @@ export default class CryptKeeperController extends Handler {
     this.add(RPCAction.GET_PENDING_REQUESTS, this.lockService.ensure, this.requestManager.getRequests);
     this.add(RPCAction.FINALIZE_REQUEST, this.lockService.ensure, this.requestManager.finalizeRequest);
 
-    // lock
-    this.add(RPCAction.SETUP_PASSWORD, (payload: string) => this.lockService.setupLockerPassword(payload));
+    // locker
+    this.add(RPCAction.SETUP_LOCKER_PASSWORD, (payload: string) => this.lockService.setupPassword(payload));
 
     // Identities
     this.add(RPCAction.GET_COMMITMENTS, this.lockService.ensure, this.zkIdentityService.getIdentityCommitments);
@@ -94,7 +94,7 @@ export default class CryptKeeperController extends Handler {
     // Backup
     this.add(RPCAction.DOWNLOAD_BACKUP, this.lockService.ensure, this.backupService.download);
     this.add(RPCAction.UPLOAD_BACKUP, this.lockService.ensure, this.backupService.upload);
-    
+
     // Protocols
     this.add(
       RPCAction.PREPARE_SEMAPHORE_PROOF_REQUEST,

@@ -90,7 +90,7 @@ describe("background/services/lock", () => {
 
   describe("unlock", () => {
     test("should setup password and unlock properly", async () => {
-      await lockService.setupLockerPassword(defaultPassword);
+      await lockService.setupPassword(defaultPassword);
       const status = await lockService.getStatus();
 
       expect(status).toStrictEqual({

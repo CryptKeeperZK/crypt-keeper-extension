@@ -3,7 +3,7 @@ export enum RPCAction {
   LOCK = "rpc/lock",
   GET_STATUS = "rpc/getStatus",
   TRY_INJECT = "rpc/inject",
-  SETUP_PASSWORD = "rpc/lock/setupPassword",
+  SETUP_LOCKER_PASSWORD = "rpc/locker/setupPassword",
   CREATE_IDENTITY = "rpc/identity/createIdentity",
   CREATE_IDENTITY_REQ = "rpc/identity/createIdentityRequest",
   SET_ACTIVE_IDENTITY = "rpc/identity/setActiveIdentity",
@@ -37,6 +37,7 @@ export enum RPCAction {
   ENABLE_OPERATION_HISTORY = "rpc/identity/historyEnable",
   DOWNLOAD_BACKUP = "rpc/backup/download",
   UPLOAD_BACKUP = "rpc/backup/upload",
+  SETUP_BACKUP_PASSWORD = "rpc/backup/setupPassword",
   // DEV RPCS
   CLEAR_APPROVED_HOSTS = "rpc/hosts/clear",
 }

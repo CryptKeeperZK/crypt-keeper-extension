@@ -113,6 +113,6 @@ describe("ui/ducks/app", () => {
     await Promise.resolve(store.dispatch(setupPassword("password")));
 
     expect(postMessage).toBeCalledTimes(1);
-    expect(postMessage).toBeCalledWith({ method: RPCAction.SETUP_PASSWORD, payload: "password" });
+    expect(postMessage).toBeCalledWith({ method: RPCAction.SETUP_LOCKER_PASSWORD, payload: "password" });
   });
 });
