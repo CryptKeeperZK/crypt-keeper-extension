@@ -19,8 +19,8 @@ function generateHmac(ciphertext: string, password: string): string {
   return HmacSHA256(ciphertext, SHA256(password)).toString();
 }
 
-export function isHmacAuthentic(ciphertext: string, password: string): boolean {
-  const { transitHmac, transitCipherContent } = subHmacCiphertext(ciphertext);
+export function isCryptoHmacAuthentic(ciphertext: string, password: string): boolean {
+  const { transitHmac, transitCipherContent } = cryptoSubHmacCiphertext(ciphertext);
 
   const decryptedHmac = generateHmac(transitCipherContent, password);
 
@@ -29,7 +29,7 @@ export function isHmacAuthentic(ciphertext: string, password: string): boolean {
   return true;
 }
 
-export function subHmacCiphertext(ciphertext: string): { transitHmac: string; transitCipherContent: string } {
+export function cryptoSubHmacCiphertext(ciphertext: string): { transitHmac: string; transitCipherContent: string } {
   const transitHmac = ciphertext.substring(0, 64);
   const transitCipherContent = ciphertext.substring(64);
 

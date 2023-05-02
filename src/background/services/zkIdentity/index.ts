@@ -100,8 +100,8 @@ export default class ZkIdentityService implements IBackupable {
       features.RANDOM_IDENTITY
         ? iterableIdentities
         : [...iterableIdentities].filter(
-            ([, identity]) => ZkIdentitySemaphore.genFromSerialized(identity).metadata.identityStrategy !== "random",
-          ),
+          ([, identity]) => ZkIdentitySemaphore.genFromSerialized(identity).metadata.identityStrategy !== "random",
+        ),
     );
   };
 
@@ -356,8 +356,8 @@ export default class ZkIdentityService implements IBackupable {
 
   downloadEncryptedStorage = async (): Promise<string | null> => this.identitiesStore.get<string>();
 
-  uploadEncryptedStorage = async (encrypted: string, password: string): Promise<void> => {
-    await this.lockService.checkPassword(password);
-    await this.identitiesStore.set<string>(encrypted);
+  uploadEncryptedStorage = async (encryptedBackup: string, password: string): Promise<void> => {
+    const { authenticBackupCiphertext } = await this.lockService.isAuthenticated(password, encryptedBackup);
+    if (authenticBackupCiphertext) await this.identitiesStore.set<string>(authenticBackupCiphertext);
   };
 }

@@ -1,6 +1,11 @@
 import { browser } from "webextension-polyfill-ts";
 
-import { cryptoDecrypt, cryptoEncrypt } from "@src/background/services/crypto";
+import {
+  cryptoDecrypt,
+  cryptoEncrypt,
+  isCryptoHmacAuthentic,
+  cryptoSubHmacCiphertext,
+} from "@src/background/services/crypto";
 import SimpleStorage from "@src/background/services/storage";
 import { setStatus } from "@src/ui/ducks/app";
 import pushMessage from "@src/util/pushMessage";
@@ -85,7 +90,7 @@ export default class LockerService implements IBackupable {
       return true;
     }
 
-    await this.checkPassword(password);
+    await this.isAuthenticated(password);
 
     this.password = password;
     this.isUnlocked = true;
@@ -98,20 +103,59 @@ export default class LockerService implements IBackupable {
 
   downloadEncryptedStorage = (): Promise<string | null> => this.passwordStorage.get<string>();
 
-  uploadEncryptedStorage = async (encryptedStorage: string, password: string): Promise<void> => {
-    await this.checkPassword(password);
-    await this.passwordStorage.set(encryptedStorage);
+  uploadEncryptedStorage = async (encryptedBackup: string, password: string): Promise<void> => {
+    const { isNew, authenticBackupCiphertext } = await this.isAuthenticated(password, encryptedBackup);
+    if (isNew && authenticBackupCiphertext) await this.passwordStorage.set(authenticBackupCiphertext);
   };
 
-  checkPassword = async (password: string): Promise<void> => {
+  // TODO: Unit test needed, it is meant to replace checkPassword
+  isAuthenticated = async (
+    password: string,
+    backupCiphertext?: string,
+  ): Promise<{ isAuthentic: boolean; isBackup?: boolean; isNew?: boolean; authenticBackupCiphertext?: string }> => {
     const cipherText = await this.passwordStorage.get<string>();
 
-    if (!cipherText) throw new Error("Something badly gone wrong (reinstallation probably required)");
     if (!password) throw new Error("Password is not provided");
 
-    const decryptedPasswordChecker = cryptoDecrypt(cipherText, password);
+    // Normal check
+    if (cipherText) {
+      const decryptedPasswordChecker = cryptoDecrypt(cipherText, password);
 
-    if (decryptedPasswordChecker !== this.passwordChecker) throw new Error("Incorrect password");
+      if (decryptedPasswordChecker !== this.passwordChecker) throw new Error("Incorrect password");
+      else {
+        if (backupCiphertext)
+          return {
+            isAuthentic: true,
+            isNew: false,
+            authenticBackupCiphertext: this.isBackupCiphertextAutentic(backupCiphertext),
+          };
+
+        return {
+          isAuthentic: true,
+        };
+      }
+    }
+    // Newly installed CK
+    // We should return an object if it
+    else {
+      if (backupCiphertext) {
+        return {
+          isAuthentic: true, // Becuase a new installed wallet
+          isNew: true,
+          authenticBackupCiphertext: this.isBackupCiphertextAutentic(backupCiphertext),
+        };
+      }
+
+      throw new Error("Something badly gone wrong (reinstallation probably required)");
+    }
+  };
+
+  private isBackupCiphertextAutentic = (backupCiphertext: string): string => {
+    const { isHmacAuthentic, authenticCiphertext: authenticBackupCiphertext } = this.isHmacAuthentic(backupCiphertext);
+    if (!isHmacAuthentic || !authenticBackupCiphertext) throw new Error("This backup file is not authentic.");
+    else {
+      return authenticBackupCiphertext;
+    }
   };
 
   ensure = (payload: unknown = null): unknown | null | false => {
@@ -130,6 +174,19 @@ export default class LockerService implements IBackupable {
   decrypt = (ciphertext: string): string => {
     if (!this.password) throw new Error("Password is not provided");
     return cryptoDecrypt(ciphertext, this.password);
+  };
+
+  private isHmacAuthentic = (ciphertext: string): { isHmacAuthentic: boolean; authenticCiphertext?: string } => {
+    if (!this.password) throw new Error("Password is not provided");
+    const isHmacAuthentic = isCryptoHmacAuthentic(ciphertext, this.password);
+    if (!isHmacAuthentic) return { isHmacAuthentic };
+    else {
+      const { transitCipherContent: authenticCiphertext } = cryptoSubHmacCiphertext(ciphertext);
+      return {
+        isHmacAuthentic,
+        authenticCiphertext,
+      };
+    }
   };
 
   logout = async (): Promise<boolean> => {
