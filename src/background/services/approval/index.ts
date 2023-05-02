@@ -1,4 +1,4 @@
-import LockerService from "@src/background/services/locker";
+import LockerService from "@src/background/services/lock";
 import SimpleStorage from "@src/background/services/storage";
 
 import type { IBackupable } from "@src/background/services/backup";

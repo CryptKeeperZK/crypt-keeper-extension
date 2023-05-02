@@ -10,7 +10,7 @@ import RequestManager from "./controllers/requestManager";
 import ApprovalService from "./services/approval";
 import BackupService from "./services/backup";
 import HistoryService from "./services/history";
-import LockerService from "./services/locker";
+import LockerService from "./services/lock";
 import { validateZkInputs } from "./services/validation";
 import WalletService from "./services/wallet";
 import ZkIdentityService from "./services/zkIdentity";

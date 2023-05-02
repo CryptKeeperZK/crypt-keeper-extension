@@ -5,7 +5,7 @@ import ApprovalService from "..";
 const mockDefaultHosts = ["https://localhost:3000"];
 const mockSerializedApprovals = JSON.stringify([[mockDefaultHosts[0], { noApproval: true }]]);
 
-jest.mock("@src/background/services/locker", (): unknown => ({
+jest.mock("@src/background/services/lock", (): unknown => ({
   getInstance: jest.fn(() => ({
     encrypt: jest.fn(() => mockSerializedApprovals),
     decrypt: jest.fn(() => mockSerializedApprovals),
