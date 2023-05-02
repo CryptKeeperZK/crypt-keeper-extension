@@ -15,7 +15,7 @@ interface LockStatus {
   isUnlocked: boolean;
 }
 
-export default class LockerService implements IBackupable {
+export default class LockerService {
   private static INSTANCE: LockerService;
 
   private isUnlocked: boolean;
@@ -47,7 +47,7 @@ export default class LockerService implements IBackupable {
   /**
    *  This method is called when install event occurs
    */
-  setupPassword = async (password: string): Promise<void> => {
+  setupLockerPassword = async (password: string): Promise<void> => {
     const cipherText = this.encrypt(password).toString();
     await this.passwordStorage.set(cipherText);
     await this.unlock(password);
@@ -115,13 +115,6 @@ export default class LockerService implements IBackupable {
   decrypt = (ciphertext: string): string => {
     if (!this.password) throw new Error("Password is not provided");
     return cryptoDecrypt(ciphertext, this.password);
-  };
-
-  downloadDecryptedStorage = (): Promise<string | null> => this.passwordStorage.get<string>();
-
-  uploadDecryptedStorage = async (decryptedBackup: string): Promise<void> => {
-    const cipherText = this.encrypt(decryptedBackup);
-    await this.passwordStorage.set(cipherText);
   };
 
   ensure = (payload: unknown = null): unknown | null | false => {

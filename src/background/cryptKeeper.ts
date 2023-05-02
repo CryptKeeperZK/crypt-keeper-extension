@@ -43,8 +43,7 @@ export default class CryptKeeperController extends Handler {
     this.historyService = HistoryService.getInstance();
     this.backupService = BackupService.getInstance()
       .add(BackupableServices.APPROVAL, this.approvalService)
-      .add(BackupableServices.IDENTITY, this.zkIdentityService)
-      .add(BackupableServices.LOCK, this.lockService);
+      .add(BackupableServices.IDENTITY, this.zkIdentityService);
   }
 
   initialize = (): CryptKeeperController => {
@@ -72,7 +71,7 @@ export default class CryptKeeperController extends Handler {
     this.add(RPCAction.FINALIZE_REQUEST, this.lockService.ensure, this.requestManager.finalizeRequest);
 
     // lock
-    this.add(RPCAction.SETUP_PASSWORD, (payload: string) => this.lockService.setupPassword(payload));
+    this.add(RPCAction.SETUP_PASSWORD, (payload: string) => this.lockService.setupLockerPassword(payload));
 
     // Identities
     this.add(RPCAction.GET_COMMITMENTS, this.lockService.ensure, this.zkIdentityService.getIdentityCommitments);
@@ -94,15 +93,8 @@ export default class CryptKeeperController extends Handler {
 
     // Backup
     this.add(RPCAction.DOWNLOAD_BACKUP, this.lockService.ensure, this.backupService.download);
-    this.add(RPCAction.UPLOAD_BACKUP, this.backupService.upload);
-    this.add(RPCAction.IMPORT_IDENTITIES, this.lockService.ensure, async () => {
-      await this.requestManager.newRequest(PendingRequestType.BACKUP_IMPORT);
-    });
-
-    this.add(RPCAction.EXPORT_IDENTITIES, this.lockService.ensure, async () => {
-      await this.requestManager.newRequest(PendingRequestType.BACKUP_EXPORT);
-    });
-
+    this.add(RPCAction.UPLOAD_BACKUP, this.lockService.ensure, this.backupService.upload);
+    
     // Protocols
     this.add(
       RPCAction.PREPARE_SEMAPHORE_PROOF_REQUEST,

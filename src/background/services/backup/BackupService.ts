@@ -17,15 +17,15 @@ export default class BackupService {
 
   private backupables: Map<string, IBackupable>;
 
-  private password?: string;
+  private backupPassword?: string;
 
-  private passwordChecker: string;
+  private backupPasswordChecker: string;
 
   private passwordStorage: SimpleStorage;
 
   private constructor() {
     this.backupables = new Map();
-    this.passwordChecker = "Backup password is correct";
+    this.backupPasswordChecker = "Backup password is correct";
     this.passwordStorage = new SimpleStorage(PASSWORD_DB_KEY);
   }
 
@@ -37,9 +37,9 @@ export default class BackupService {
     return BackupService.INSTANCE;
   };
 
-  setupPassword = async (password: string): Promise<void> => {
-    const cipherText = cryptoEncrypt(this.passwordChecker, password);
-    this.password = password;
+  setupBackupPassword = async (password: string): Promise<void> => {
+    const cipherText = cryptoEncrypt(this.backupPasswordChecker, password);
+    this.backupPassword = password;
     await this.passwordStorage.set(cipherText);
   };
 
@@ -50,9 +50,9 @@ export default class BackupService {
     const data = await Promise.all(
       services.map(async (service) => {
         const serviceDecryptedData = await service.downloadDecryptedStorage();
-        if (!serviceDecryptedData || !this.password) return null;
-        const cipherText = cryptoEncrypt(serviceDecryptedData, this.password);
-        return generateEncryptedHmac(cipherText, this.password);
+        if (!serviceDecryptedData || !this.backupPassword) return null;
+        const cipherText = cryptoEncrypt(serviceDecryptedData, this.backupPassword);
+        return generateEncryptedHmac(cipherText, this.backupPassword);
       }),
     );
     const prepared = data.reduce<Record<string, string | null>>((acc, x, index) => ({ ...acc, [keys[index]]: x }), {});
@@ -70,12 +70,12 @@ export default class BackupService {
 
     await Promise.all(
       entries.map(([key, ciphertext]) => {
-        if (ciphertext && this.backupables.get(key) && this.password) {
-          const isAuthentic = isHmacAuthentic(ciphertext, this.password);
+        if (ciphertext && this.backupables.get(key) && this.backupPassword) {
+          const isAuthentic = isHmacAuthentic(ciphertext, this.backupPassword);
           if (!isAuthentic) throw new Error("This backup file is not authentic.");
           else {
             const { transitCipherContent } = subHmacCiphertext(ciphertext);
-            const encryptedContent = cryptoDecrypt(transitCipherContent, this.password);
+            const encryptedContent = cryptoDecrypt(transitCipherContent, this.backupPassword);
             const service = this.backupables.get(key);
             service?.uploadDecryptedStorage(encryptedContent);
           }

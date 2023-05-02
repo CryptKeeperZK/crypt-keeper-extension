@@ -14,8 +14,8 @@ export function generateEncryptedHmac(ciphertext: string, password: string): str
   return hmac + ciphertext;
 }
 
-function generateHmac(cipherPayload: string, password: string): string {
-  return HmacSHA256(cipherPayload, SHA256(password)).toString();
+function generateHmac(ciphertext: string, password: string): string {
+  return HmacSHA256(ciphertext, SHA256(password)).toString();
 }
 
 export function isHmacAuthentic(ciphertext: string, password: string): boolean {
