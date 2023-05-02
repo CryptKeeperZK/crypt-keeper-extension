@@ -19,7 +19,7 @@ const mockDefaultIdentities = [
 ];
 const mockSerializedDefaultIdentities = JSON.stringify(mockDefaultIdentities);
 
-jest.mock("@src/background/services/lock", (): unknown => ({
+jest.mock("@src/background/services/locker", (): unknown => ({
   getInstance: jest.fn(() => ({
     encrypt: jest.fn(() => mockSerializedDefaultIdentities),
     decrypt: jest.fn((value) =>

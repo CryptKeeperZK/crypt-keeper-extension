@@ -2,11 +2,11 @@
 import CryptoJS from "crypto-js";
 import { browser } from "webextension-polyfill-ts";
 
+import SimpleStorage from "@src/background/services/storage";
 import { setStatus } from "@src/ui/ducks/app";
 import pushMessage from "@src/util/pushMessage";
 
-import LockService from "..";
-import SimpleStorage from "../../storage";
+import LockerService from "..";
 
 jest.mock("crypto-js", (): unknown => ({
   ...jest.requireActual("crypto-js"),
@@ -18,12 +18,12 @@ jest.mock("crypto-js", (): unknown => ({
 
 jest.mock("@src/util/pushMessage");
 
-jest.mock("../../storage");
+jest.mock("@src/background/services/storage");
 
 type MockStorage = { get: jest.Mock; set: jest.Mock };
 
-describe("background/services/lock", () => {
-  const lockService = LockService.getInstance();
+describe("background/services/locker", () => {
+  const lockService = LockerService.getInstance();
   const defaultPassword = "password";
   const defaultTabs = [{ id: "1" }, { id: "2" }, { id: "3" }];
   const passwordChecker = "Password is correct";

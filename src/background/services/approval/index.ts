@@ -1,7 +1,7 @@
-import type { IBackupable } from "../backup";
+import LockerService from "@src/background/services/locker";
+import SimpleStorage from "@src/background/services/storage";
 
-import LockService from "../lock";
-import SimpleStorage from "../storage";
+import type { IBackupable } from "@src/background/services/backup";
 
 const APPPROVALS_DB_KEY = "@APPROVED@";
 
@@ -16,12 +16,12 @@ export default class ApprovalService implements IBackupable {
 
   private approvals: SimpleStorage;
 
-  private lockService: LockService;
+  private lockService: LockerService;
 
   private constructor() {
     this.allowedHosts = new Map();
     this.approvals = new SimpleStorage(APPPROVALS_DB_KEY);
-    this.lockService = LockService.getInstance();
+    this.lockService = LockerService.getInstance();
   }
 
   static getInstance = (): ApprovalService => {

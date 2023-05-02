@@ -1,12 +1,11 @@
-import CryptoJS from "crypto-js";
 import { browser } from "webextension-polyfill-ts";
 
+import { cryptoDecrypt, cryptoEncrypt } from "@src/background/services/crypto";
+import SimpleStorage from "@src/background/services/storage";
 import { setStatus } from "@src/ui/ducks/app";
 import pushMessage from "@src/util/pushMessage";
 
-import type { IBackupable } from "../backup";
-
-import SimpleStorage from "../storage";
+import type { IBackupable } from "@src/background/services/backup";
 
 const PASSWORD_DB_KEY = "@password@";
 
@@ -15,8 +14,8 @@ interface LockStatus {
   isUnlocked: boolean;
 }
 
-export default class LockService implements IBackupable {
-  private static INSTANCE: LockService;
+export default class LockerService implements IBackupable {
+  private static INSTANCE: LockerService;
 
   private isUnlocked: boolean;
 
@@ -36,19 +35,19 @@ export default class LockService implements IBackupable {
     this.unlockCB = undefined;
   }
 
-  static getInstance(): LockService {
-    if (!LockService.INSTANCE) {
-      LockService.INSTANCE = new LockService();
+  static getInstance(): LockerService {
+    if (!LockerService.INSTANCE) {
+      LockerService.INSTANCE = new LockerService();
     }
 
-    return LockService.INSTANCE;
+    return LockerService.INSTANCE;
   }
 
   /**
    *  This method is called when install event occurs
    */
   setupPassword = async (password: string): Promise<void> => {
-    const cipherText = CryptoJS.AES.encrypt(this.passwordChecker, password).toString();
+    const cipherText = cryptoEncrypt(this.passwordChecker, password);
     await this.passwordStorage.set(cipherText);
     await this.unlock(password);
   };
@@ -107,20 +106,12 @@ export default class LockService implements IBackupable {
   checkPassword = async (password: string): Promise<void> => {
     const cipherText = await this.passwordStorage.get<string>();
 
-    if (!cipherText) {
-      throw new Error("Something badly gone wrong (reinstallation probably required)");
-    }
+    if (!cipherText) throw new Error("Something badly gone wrong (reinstallation probably required)");
+    if (!password) throw new Error("Password is not provided");
 
-    if (!password) {
-      throw new Error("Password is not provided");
-    }
+    const decryptedPasswordChecker = cryptoDecrypt(cipherText, password);
 
-    const bytes = CryptoJS.AES.decrypt(cipherText, password);
-    const retrievedPasswordChecker = bytes.toString(CryptoJS.enc.Utf8);
-
-    if (retrievedPasswordChecker !== this.passwordChecker) {
-      throw new Error("Incorrect password");
-    }
+    if (decryptedPasswordChecker !== this.passwordChecker) throw new Error("Incorrect password");
   };
 
   ensure = (payload: unknown = null): unknown | null | false => {
@@ -132,20 +123,13 @@ export default class LockService implements IBackupable {
   };
 
   encrypt = (payload: string): string => {
-    if (!this.password) {
-      throw new Error("Password is not provided");
-    }
-
-    return CryptoJS.AES.encrypt(payload, this.password).toString();
+    if (!this.password) throw new Error("Password is not provided");
+    return cryptoEncrypt(payload, this.password);
   };
 
   decrypt = (ciphertext: string): string => {
-    if (!this.password) {
-      throw new Error("Password is not provided");
-    }
-
-    const bytes = CryptoJS.AES.decrypt(ciphertext, this.password);
-    return bytes.toString(CryptoJS.enc.Utf8);
+    if (!this.password) throw new Error("Password is not provided");
+    return cryptoDecrypt(ciphertext, this.password);
   };
 
   logout = async (): Promise<boolean> => {

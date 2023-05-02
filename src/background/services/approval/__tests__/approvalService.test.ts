@@ -1,10 +1,11 @@
+import SimpleStorage from "@src/background/services/storage";
+
 import ApprovalService from "..";
-import SimpleStorage from "../../storage";
 
 const mockDefaultHosts = ["https://localhost:3000"];
 const mockSerializedApprovals = JSON.stringify([[mockDefaultHosts[0], { noApproval: true }]]);
 
-jest.mock("../../lock", (): unknown => ({
+jest.mock("@src/background/services/locker", (): unknown => ({
   getInstance: jest.fn(() => ({
     encrypt: jest.fn(() => mockSerializedApprovals),
     decrypt: jest.fn(() => mockSerializedApprovals),
@@ -12,7 +13,7 @@ jest.mock("../../lock", (): unknown => ({
   })),
 }));
 
-jest.mock("../../storage");
+jest.mock("@src/background/services/storage");
 
 type MockStorage = { get: jest.Mock; set: jest.Mock; clear: jest.Mock };
 

@@ -1,3 +1,4 @@
+// TODO: write unit tests for Crypto service
 import { AES, enc, HmacSHA256, SHA256 } from "crypto-js";
 
 export function cryptoEncrypt(text: string, password: string): string {

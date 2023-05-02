@@ -48,7 +48,7 @@ jest.mock("@src/background/services/notification", (): unknown => ({
   },
 }));
 
-jest.mock("@src/background/services/lock", (): unknown => ({
+jest.mock("@src/background/services/locker", (): unknown => ({
   __esModule: true,
   default: {
     getInstance: jest.fn(() => ({
