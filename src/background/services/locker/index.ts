@@ -180,13 +180,12 @@ export default class LockerService implements IBackupable {
     if (!this.password) throw new Error("Password is not provided");
     const isHmacAuthentic = isCryptoHmacAuthentic(ciphertext, this.password);
     if (!isHmacAuthentic) return { isHmacAuthentic };
-    else {
-      const { transitCipherContent: authenticCiphertext } = cryptoSubHmacCiphertext(ciphertext);
-      return {
-        isHmacAuthentic,
-        authenticCiphertext,
-      };
-    }
+
+    const { transitCipherContent: authenticCiphertext } = cryptoSubHmacCiphertext(ciphertext);
+    return {
+      isHmacAuthentic,
+      authenticCiphertext,
+    };
   };
 
   logout = async (): Promise<boolean> => {
