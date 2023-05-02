@@ -21,6 +21,7 @@ const Settings = (): JSX.Element => {
     onConfirmModalShow,
     onDeleteAllHistory,
     onGoBack,
+    onGoToBackup,
     onDeleteAllIdentities,
   } = useSettings();
 
@@ -67,7 +68,11 @@ const Settings = (): JSX.Element => {
 
             {tab === SettingsTabs.ADVANCED && (
               <>
-                <Advanced isLoading={isLoading} onDeleteIdentities={onDeleteAllIdentities} />
+                <Advanced
+                  isLoading={isLoading}
+                  onDeleteIdentities={onDeleteAllIdentities}
+                  onGoToBackup={onGoToBackup}
+                />
 
                 <ConfirmDangerModal
                   accept={onDeleteAllIdentities}

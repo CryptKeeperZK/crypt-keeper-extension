@@ -37,7 +37,7 @@ jest.mock("@src/util/pushMessage");
 
 jest.mock("@src/config/features", (): unknown => ({
   ...jest.requireActual("@src/config/features"),
-  getEnabledFeatures: jest.fn().mockReturnValue({ RANDOM_IDENTITY: true }),
+  getEnabledFeatures: jest.fn().mockReturnValue({ RANDOM_IDENTITY: true, BACKUP: true }),
 }));
 
 type Changes = Record<string, { oldValue: string | null; newValue: string | null }>;

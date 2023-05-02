@@ -2,23 +2,23 @@ import { BaseSyntheticEvent, useCallback, useState } from "react";
 import { UseFormRegister, useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 
-import { Paths } from "@src/constants";
 import { PasswordFormFields } from "@src/types";
-import { unlock } from "@src/ui/ducks/app";
+import { downloadBackup } from "@src/ui/ducks/backup";
 import { useAppDispatch } from "@src/ui/ducks/hooks";
 
-export interface IUseLoginData {
+export interface IUseDownloadBackupData {
   isLoading: boolean;
-  errors: Partial<LoginFields>;
-  register: UseFormRegister<LoginFields>;
-  onSubmit: (event?: BaseSyntheticEvent) => Promise<void>;
   isShowPassword: boolean;
+  errors: Partial<DownloadBackupFields>;
+  register: UseFormRegister<DownloadBackupFields>;
+  onSubmit: (event?: BaseSyntheticEvent) => Promise<void>;
   onShowPassword: () => void;
+  onGoBack: () => void;
 }
 
-type LoginFields = Pick<PasswordFormFields, "password">;
+type DownloadBackupFields = Pick<PasswordFormFields, "password">;
 
-export const useLogin = (): IUseLoginData => {
+export const useDownloadBackup = (): IUseDownloadBackupData => {
   const [isShowPassword, setIsShowPassword] = useState(false);
 
   const {
@@ -26,7 +26,7 @@ export const useLogin = (): IUseLoginData => {
     setError,
     register,
     handleSubmit,
-  } = useForm<LoginFields>({
+  } = useForm<DownloadBackupFields>({
     defaultValues: {
       password: "",
     },
@@ -36,13 +36,18 @@ export const useLogin = (): IUseLoginData => {
 
   const dispatch = useAppDispatch();
 
+  const onGoBack = useCallback(() => {
+    navigate(-1);
+  }, [navigate]);
+
   const onSubmit = useCallback(
-    (data: LoginFields) => {
-      dispatch(unlock(data.password))
-        .then(() => navigate(Paths.HOME))
+    (data: DownloadBackupFields) => {
+      // TODO: implement file download
+      dispatch(downloadBackup(data.password))
+        .then(() => onGoBack())
         .catch((error: Error) => setError("password", { type: "submit", message: error.message }));
     },
-    [dispatch, navigate, setError],
+    [dispatch, onGoBack, setError],
   );
 
   const onShowPassword = useCallback(() => {
@@ -58,5 +63,6 @@ export const useLogin = (): IUseLoginData => {
     onSubmit: handleSubmit(onSubmit),
     isShowPassword,
     onShowPassword,
+    onGoBack,
   };
 };

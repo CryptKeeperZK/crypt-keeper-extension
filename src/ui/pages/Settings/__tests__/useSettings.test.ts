@@ -5,6 +5,7 @@
 import { act, renderHook, waitFor } from "@testing-library/react";
 import { useNavigate } from "react-router-dom";
 
+import { Paths } from "@src/constants";
 import { HistorySettings } from "@src/types";
 import { useAppDispatch } from "@src/ui/ducks/hooks";
 import {
@@ -127,6 +128,17 @@ describe("ui/pages/Settings/useSettings", () => {
 
     expect(mockNavigate).toBeCalledTimes(1);
     expect(mockNavigate).toBeCalledWith(-1);
+  });
+
+  test("should go to download backup page properly", async () => {
+    const { result } = renderHook(() => useSettings());
+
+    await waitFor(() => result.current.isLoading === false);
+
+    await act(async () => Promise.resolve(result.current.onGoToBackup()));
+
+    expect(mockNavigate).toBeCalledTimes(1);
+    expect(mockNavigate).toBeCalledWith(Paths.DOWNLOAD_BACKUP);
   });
 
   test("should delete all identities properly", async () => {

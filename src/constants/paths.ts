@@ -6,4 +6,5 @@ export enum Paths {
   ONBOARDING = "/onboarding",
   REQUESTS = "/requests",
   SETTINGS = "/settings",
+  DOWNLOAD_BACKUP = "/download-backup",
 }

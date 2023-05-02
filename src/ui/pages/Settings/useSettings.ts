@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState, SyntheticEvent } from "react";
 import { useNavigate } from "react-router-dom";
 
+import { Paths } from "@src/constants";
 import { HistorySettings } from "@src/types";
 import { useAppDispatch } from "@src/ui/ducks/hooks";
 import {
@@ -21,6 +22,7 @@ export interface IUseSettingsData {
   onEnableHistory: () => void;
   onTabChange: (event: SyntheticEvent, value: number) => void;
   onGoBack: () => void;
+  onGoToBackup: () => void;
   onDeleteAllIdentities: () => void;
 }
 
@@ -60,6 +62,10 @@ export const useSettings = (): IUseSettingsData => {
     navigate(-1);
   }, [navigate]);
 
+  const onGoToBackup = useCallback(() => {
+    navigate(Paths.DOWNLOAD_BACKUP);
+  }, [navigate]);
+
   const onDeleteAllIdentities = useCallback(() => {
     dispatch(deleteAllIdentities()).then(() => onConfirmModalShow());
   }, [dispatch, onConfirmModalShow]);
@@ -79,6 +85,7 @@ export const useSettings = (): IUseSettingsData => {
     onEnableHistory,
     onTabChange,
     onGoBack,
+    onGoToBackup,
     onDeleteAllIdentities,
   };
 };

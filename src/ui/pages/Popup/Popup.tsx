@@ -3,6 +3,7 @@ import { Navigate, RouteObject, useRoutes } from "react-router-dom";
 import { Paths } from "@src/constants";
 import ConfirmRequestModal from "@src/ui/components/ConfirmRequestModal";
 import CreateIdentity from "@src/ui/pages/CreateIdentity";
+import DownloadBackup from "@src/ui/pages/DownloadBackup";
 import Home from "@src/ui/pages/Home";
 import Login from "@src/ui/pages/Login";
 import Onboarding from "@src/ui/pages/Onboarding";
@@ -19,6 +20,7 @@ const routeConfig: RouteObject[] = [
   { path: Paths.ONBOARDING, element: <Onboarding /> },
   { path: Paths.REQUESTS, element: <ConfirmRequestModal /> },
   { path: Paths.SETTINGS, element: <Settings /> },
+  { path: Paths.DOWNLOAD_BACKUP, element: <DownloadBackup /> },
   {
     path: "*",
     element: <Navigate to={Paths.HOME} />,
