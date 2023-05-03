@@ -11,3 +11,15 @@ export const redirectToNewTab = async (url: string): Promise<void> => {
 };
 
 export const getExtensionUrl = (path: string): string => browser.runtime.getURL(path);
+
+export const downloadFile = (content: string, filename: string): Promise<void> => {
+  const element = document.createElement("a");
+  element.style.display = "none";
+  element.setAttribute("href", content);
+  element.setAttribute("download", filename);
+  document.body.appendChild(element);
+  element.click();
+  document.body.removeChild(element);
+
+  return Promise.resolve();
+};

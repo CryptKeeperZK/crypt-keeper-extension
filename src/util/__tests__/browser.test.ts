@@ -1,7 +1,11 @@
+/**
+ * @jest-environment jsdom
+ */
+
 /* eslint-disable @typescript-eslint/unbound-method */
 import { browser } from "webextension-polyfill-ts";
 
-import { getLastActiveTabUrl, redirectToNewTab, getExtensionUrl } from "../browser";
+import { getLastActiveTabUrl, redirectToNewTab, getExtensionUrl, downloadFile } from "../browser";
 
 describe("util/browser", () => {
   const defaultTabs = [{ url: "http://localhost:3000" }];
@@ -40,5 +44,17 @@ describe("util/browser", () => {
 
     expect(browser.runtime.getURL).toBeCalledTimes(1);
     expect(browser.runtime.getURL).toBeCalledWith("url");
+  });
+
+  test("should download file properly", async () => {
+    const element = document.createElement("a");
+    element.click = jest.fn();
+
+    const spyCreateElement = jest.spyOn(document, "createElement").mockReturnValue(element);
+
+    await downloadFile("content", "filename");
+
+    expect(spyCreateElement).toBeCalledTimes(1);
+    expect(element.click).toBeCalledTimes(1);
   });
 });
