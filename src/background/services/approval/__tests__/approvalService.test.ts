@@ -178,7 +178,7 @@ describe("background/services/approval", () => {
 
   describe("backup", () => {
     test("should download encrypted approvals", async () => {
-      const result = await approvalService.downloadEncryptedStorage();
+      const result = await approvalService.downloadEncryptedStorage("password");
 
       expect(result).toBeDefined();
     });
