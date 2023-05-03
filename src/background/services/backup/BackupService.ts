@@ -19,6 +19,7 @@ export default class BackupService {
     return BackupService.INSTANCE;
   };
 
+  // TODO: support password check
   download = async (): Promise<string> => {
     const keys = [...this.backupables.keys()];
     const services = [...this.backupables.values()];

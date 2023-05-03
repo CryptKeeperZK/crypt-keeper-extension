@@ -38,6 +38,7 @@ describe("ui/pages/Settings", () => {
     onEnableHistory: jest.fn(),
     onTabChange: jest.fn(),
     onGoBack: jest.fn(),
+    onGoToBackup: jest.fn(),
     onDeleteAllIdentities: jest.fn(),
   };
 
