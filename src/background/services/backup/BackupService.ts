@@ -20,12 +20,11 @@ export default class BackupService {
     return BackupService.INSTANCE;
   };
 
-  // TODO: support password check
-  download = async (): Promise<string> => {
+  download = async (backupPassword: string): Promise<string> => {
     const keys = [...this.backupables.keys()];
     const services = [...this.backupables.values()];
 
-    const data = await Promise.all(services.map((service) => service.downloadEncryptedStorage()));
+    const data = await Promise.all(services.map((service) => service.downloadEncryptedStorage(backupPassword)));
     const prepared = data.reduce<Record<string, string | null>>((acc, x, index) => ({ ...acc, [keys[index]]: x }), {});
 
     return `data:application/json;charset=utf-8,${encodeURIComponent(JSON.stringify(prepared, null, 4))}`;

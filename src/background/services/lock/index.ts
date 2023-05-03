@@ -1,7 +1,7 @@
 import { browser } from "webextension-polyfill-ts";
 
 import BackupService from "@src/background/services/backup";
-import { cryptoDecrypt, cryptoEncrypt } from "@src/background/services/crypto";
+import { cryptoDecrypt, cryptoEncrypt, cryptoGenerateEncryptedHmac } from "@src/background/services/crypto";
 import SimpleStorage from "@src/background/services/storage";
 import { setStatus } from "@src/ui/ducks/app";
 import pushMessage from "@src/util/pushMessage";
@@ -102,7 +102,15 @@ export default class LockerService implements IBackupable {
     return true;
   };
 
-  downloadEncryptedStorage = (): Promise<string | null> => this.passwordStorage.get<string>();
+  downloadEncryptedStorage = async (backupPassword: string): Promise<string | null> => {
+    const backupEncryptedData = await this.passwordStorage.get<string>();
+    const { isLockerAuthentic } = await this.isAuthentic(backupPassword, backupEncryptedData);
+
+    if (isLockerAuthentic && backupEncryptedData) {
+      return cryptoGenerateEncryptedHmac(backupEncryptedData, backupPassword);
+    }
+    return null;
+  };
 
   uploadEncryptedStorage = async (backupEncryptedData: string, backupPassword: string): Promise<void> => {
     const { isNewOnboarding, isBackupAvaiable } = await this.isAuthentic(backupPassword, backupEncryptedData);
@@ -116,7 +124,7 @@ export default class LockerService implements IBackupable {
     }
   };
 
-  isAuthentic = async (password: string, backupEncryptedData?: string): Promise<AuthenticityCheckData> => {
+  isAuthentic = async (password: string, backupEncryptedData?: string | null): Promise<AuthenticityCheckData> => {
     const isLockerAuthentic = await this.isLockerPasswordAuthentic(password);
     const isNewOnboarding = await this.isNewOnboarding();
     const isBackupAvaiable = this.isBackupAvaiable(backupEncryptedData);
@@ -130,7 +138,7 @@ export default class LockerService implements IBackupable {
     };
   };
 
-  private isBackupAvaiable = (backupCiphertext?: string) => {
+  private isBackupAvaiable = (backupCiphertext?: string | null) => {
     if (!backupCiphertext) return false;
     return true;
   };

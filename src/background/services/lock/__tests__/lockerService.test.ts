@@ -162,7 +162,7 @@ describe("background/services/locker", () => {
       const [{ get: mockGet }] = (SimpleStorage as jest.Mock).mock.instances as [MockStorage];
       mockGet.mockClear();
 
-      const result = await lockService.downloadEncryptedStorage();
+      const result = await lockService.downloadEncryptedStorage(defaultPassword);
 
       expect(result).toBeDefined();
 

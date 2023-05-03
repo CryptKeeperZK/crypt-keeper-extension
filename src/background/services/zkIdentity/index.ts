@@ -3,6 +3,7 @@ import { browser } from "webextension-polyfill-ts";
 
 import BrowserUtils from "@src/background/controllers/browserUtils";
 import BackupService from "@src/background/services/backup";
+import { cryptoGenerateEncryptedHmac } from "@src/background/services/crypto";
 import HistoryService from "@src/background/services/history";
 import LockerService from "@src/background/services/lock";
 import NotificationService from "@src/background/services/notification";
@@ -358,7 +359,16 @@ export default class ZkIdentityService implements IBackupable {
     return true;
   };
 
-  downloadEncryptedStorage = async (): Promise<string | null> => this.identitiesStore.get<string>();
+  downloadEncryptedStorage = async (backupPassword: string): Promise<string | null> => {
+    const backupEncryptedData = await this.identitiesStore.get<string>();
+
+    const { isLockerAuthentic } = await this.lockService.isAuthentic(backupPassword, backupEncryptedData);
+
+    if (isLockerAuthentic && backupEncryptedData) {
+      return cryptoGenerateEncryptedHmac(backupEncryptedData, backupPassword);
+    }
+    return null;
+  };
 
   uploadEncryptedStorage = async (backupEncryptedData: string, backupPassword: string): Promise<void> => {
     const { isBackupAvaiable } = await this.lockService.isAuthentic(backupPassword, backupEncryptedData);

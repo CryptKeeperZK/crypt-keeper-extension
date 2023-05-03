@@ -10,7 +10,7 @@ export function cryptoDecrypt(ciphertext: string, password: string): string {
   return bytes.toString(enc.Utf8);
 }
 
-export function generateEncryptedHmac(ciphertext: string, password: string): string {
+export function cryptoGenerateEncryptedHmac(ciphertext: string, password: string): string {
   const hmac = generateHmac(ciphertext, password);
   return `${hmac}${ciphertext}`;
 }
