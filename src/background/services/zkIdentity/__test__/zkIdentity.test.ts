@@ -422,12 +422,28 @@ describe("background/services/zkIdentity", () => {
       expect(result).toBeDefined();
     });
 
+    test("should not download encrypted identities if storage is empty", async () => {
+      const [identityStorage] = (SimpleStorage as jest.Mock).mock.instances as [MockStorage];
+      identityStorage.get.mockReturnValue(undefined);
+
+      const result = await zkIdentityService.downloadEncryptedStorage("password");
+
+      expect(result).toBeNull();
+    });
+
     test("should upload encrypted identities", async () => {
       await zkIdentityService.uploadEncryptedStorage("encrypted", "password");
 
       const [instance] = (SimpleStorage as jest.Mock).mock.instances as [MockStorage, MockStorage];
       expect(instance.set).toBeCalledTimes(1);
       expect(instance.set).toBeCalledWith("encrypted");
+    });
+
+    test("should not upload encrypted identities if there is no data", async () => {
+      await zkIdentityService.uploadEncryptedStorage("", "");
+
+      const [instance] = (SimpleStorage as jest.Mock).mock.instances as [MockStorage, MockStorage];
+      expect(instance.set).toBeCalledTimes(0);
     });
   });
 });

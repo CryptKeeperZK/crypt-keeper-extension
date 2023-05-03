@@ -139,6 +139,7 @@ module.exports = {
     "react/function-component-definition": ["error", { namedComponents: ["arrow-function"] }],
     "no-use-before-define": ["off"],
     "no-shadow": "off",
+    curly: ["error", "all"],
   },
   overrides: [
     {

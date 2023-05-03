@@ -191,12 +191,30 @@ describe("background/services/approval", () => {
       expect(result).toBeDefined();
     });
 
+    test("should not download encrypted approvals if storage is empty", async () => {
+      (SimpleStorage as jest.Mock).mock.instances.forEach((instance: MockStorage) => {
+        instance.get.mockReturnValue(undefined);
+      });
+
+      const result = await approvalService.downloadEncryptedStorage("password");
+
+      expect(result).toBeNull();
+    });
+
     test("should upload encrypted approvals", async () => {
       await approvalService.uploadEncryptedStorage("encrypted", "password");
 
       (SimpleStorage as jest.Mock).mock.instances.forEach((instance: MockStorage) => {
         expect(instance.set).toBeCalledTimes(1);
         expect(instance.set).toBeCalledWith("encrypted");
+      });
+    });
+
+    test("should not upload encrypted approvals if there is no data", async () => {
+      await approvalService.uploadEncryptedStorage("", "");
+
+      (SimpleStorage as jest.Mock).mock.instances.forEach((instance: MockStorage) => {
+        expect(instance.set).toBeCalledTimes(0);
       });
     });
   });

@@ -98,15 +98,21 @@ export default class ApprovalService implements IBackupable {
 
   downloadEncryptedStorage = async (backupPassword: string): Promise<string | null> => {
     const backupEncryptedData = await this.approvals.get<string>();
-    await this.lockService.isAuthentic(backupPassword, true);
 
-    if (backupEncryptedData) return cryptoGenerateEncryptedHmac(backupEncryptedData, backupPassword);
-    return null;
+    if (!backupEncryptedData) {
+      return null;
+    }
+
+    await this.lockService.isAuthentic(backupPassword, true);
+    return cryptoGenerateEncryptedHmac(backupEncryptedData, backupPassword);
   };
 
   uploadEncryptedStorage = async (backupEncryptedData: string, backupPassword: string): Promise<void> => {
+    if (!backupEncryptedData) {
+      return;
+    }
+
     await this.lockService.isAuthentic(backupPassword, true);
-    if (backupEncryptedData)
-      await this.approvals.set<string>(cryptoGetAuthenticBackupCiphertext(backupEncryptedData, backupPassword));
+    await this.approvals.set<string>(cryptoGetAuthenticBackupCiphertext(backupEncryptedData, backupPassword));
   };
 }

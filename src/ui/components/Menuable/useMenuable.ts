@@ -73,7 +73,10 @@ export const useMenuable = ({ opened, items, onOpen, onClose }: IUseMenuableArgs
 
   const onItemClick = useCallback(
     (e: ReactMouseEvent, item: ItemProps, i: number) => {
-      if (item.disabled) return;
+      if (item.disabled) {
+        return;
+      }
+
       if (item.children) {
         setPath([...path, i]);
       } else if (item.onClick) {
@@ -111,7 +114,10 @@ export const useMenuable = ({ opened, items, onOpen, onClose }: IUseMenuableArgs
   const handleDangerAction = useCallback(
     (e: ReactMouseEvent) => {
       e.stopPropagation();
-      if (dangerItem) onItemClick(e, dangerItem, number);
+      if (dangerItem) {
+        onItemClick(e, dangerItem, number);
+      }
+
       setOpenDangerModal(false);
     },
     [dangerItem],
