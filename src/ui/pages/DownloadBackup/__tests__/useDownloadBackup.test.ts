@@ -7,6 +7,7 @@ import { useNavigate } from "react-router-dom";
 
 import { downloadBackup } from "@src/ui/ducks/backup";
 import { useAppDispatch } from "@src/ui/ducks/hooks";
+import { downloadFile } from "@src/util/browser";
 
 import type { ChangeEvent, FormEvent } from "react";
 
@@ -24,6 +25,10 @@ jest.mock("@src/ui/ducks/backup", (): unknown => ({
   downloadBackup: jest.fn(),
 }));
 
+jest.mock("@src/util/browser", (): unknown => ({
+  downloadFile: jest.fn(),
+}));
+
 describe("ui/pages/DownloadBackup/useDownloadBackup", () => {
   const mockDispatch = jest.fn(() => Promise.resolve());
 
@@ -35,6 +40,8 @@ describe("ui/pages/DownloadBackup/useDownloadBackup", () => {
     (useNavigate as jest.Mock).mockReturnValue(mockNavigate);
 
     (downloadBackup as jest.Mock).mockReturnValue("content");
+
+    (downloadFile as jest.Mock).mockResolvedValue(undefined);
   });
 
   afterEach(() => {
@@ -68,6 +75,7 @@ describe("ui/pages/DownloadBackup/useDownloadBackup", () => {
     expect(result.current.isLoading).toBe(false);
     expect(mockDispatch).toBeCalledTimes(1);
     expect(downloadBackup).toBeCalledTimes(1);
+    expect(downloadFile).toBeCalledTimes(1);
     expect(mockNavigate).toBeCalledTimes(1);
     expect(mockNavigate).toBeCalledWith(-1);
   });

@@ -5,6 +5,8 @@ import { useNavigate } from "react-router-dom";
 import { PasswordFormFields } from "@src/types";
 import { downloadBackup } from "@src/ui/ducks/backup";
 import { useAppDispatch } from "@src/ui/ducks/hooks";
+import { downloadFile } from "@src/util/browser";
+import { formatDate } from "@src/util/date";
 
 export interface IUseDownloadBackupData {
   isLoading: boolean;
@@ -42,8 +44,8 @@ export const useDownloadBackup = (): IUseDownloadBackupData => {
 
   const onSubmit = useCallback(
     (data: DownloadBackupFields) => {
-      // TODO: implement file download
       dispatch(downloadBackup(data.password))
+        .then((content: string) => downloadFile(content, `ck-backup-${formatDate(new Date())}.json`))
         .then(() => onGoBack())
         .catch((error: Error) => setError("password", { type: "submit", message: error.message }));
     },
