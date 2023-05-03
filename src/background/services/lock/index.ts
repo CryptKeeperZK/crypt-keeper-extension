@@ -149,10 +149,7 @@ export default class LockerService implements IBackupable {
   };
 
   ensure = (payload: unknown = null): unknown | null | false => {
-    if (!this.isUnlocked || !this.password) {
-      return false;
-    }
-
+    if (!this.isUnlocked || !this.password) return false;
     return payload;
   };
 
