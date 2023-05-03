@@ -145,8 +145,8 @@ export default class LockerService implements IBackupable {
 
   private isNewOnboarding = async () => {
     const cipherText = await this.passwordStorage.get<string>();
-    if (!cipherText) return true;
-    return false;
+    
+    return !cipherText;
   };
 
   private isLockerPasswordAuthentic = async (password: string): Promise<boolean> => {
