@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { PasswordFormFields } from "@src/types";
 import { downloadBackup } from "@src/ui/ducks/backup";
 import { useAppDispatch } from "@src/ui/ducks/hooks";
+import { formatDate } from "@src/util/date";
 
 export interface IUseDownloadBackupData {
   isLoading: boolean;
@@ -44,7 +45,7 @@ export const useDownloadBackup = (): IUseDownloadBackupData => {
     const element = document.createElement("a");
     element.style.display = "none";
     element.setAttribute("href", content);
-    element.setAttribute("download", "ck-backup.json");
+    element.setAttribute("download", `ck-backup-${formatDate(new Date())}.json`);
     document.body.appendChild(element);
     element.click();
     document.body.removeChild(element);
