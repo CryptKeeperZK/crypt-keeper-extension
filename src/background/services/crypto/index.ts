@@ -24,9 +24,7 @@ export function isCryptoHmacAuthentic(ciphertext: string, password: string): boo
 
   const decryptedHmac = generateHmac(transitCipherContent, password);
 
-  if (transitHmac !== decryptedHmac) return false;
-
-  return true;
+  return transitHmac === decryptedHmac;
 }
 
 export function cryptoSubHmacCiphertext(ciphertext: string): { transitHmac: string; transitCipherContent: string } {
