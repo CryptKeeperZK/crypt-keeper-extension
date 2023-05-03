@@ -47,7 +47,7 @@
   },
   "homepage": "https://github.com/privacy-scaling-explorations/crypt-keeper-extension",
   "devDependencies": {
-    "@babel/eslint-parser": "^7.21.3",
+    "@babel/eslint-parser": "^7.21.8",
     "@commitlint/cli": "^17.6.1",
     "@commitlint/config-conventional": "^17.6.1",
     "@playwright/test": "^1.33.0",
