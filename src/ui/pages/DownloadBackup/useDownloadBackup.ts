@@ -40,10 +40,22 @@ export const useDownloadBackup = (): IUseDownloadBackupData => {
     navigate(-1);
   }, [navigate]);
 
+  const downloadFile = useCallback((content: string) => {
+    const element = document.createElement("a");
+    element.style.display = "none";
+    element.setAttribute("href", content);
+    element.setAttribute("download", "ck-backup.json");
+    document.body.appendChild(element);
+    element.click();
+    document.body.removeChild(element);
+
+    return Promise.resolve();
+  }, []);
+
   const onSubmit = useCallback(
     (data: DownloadBackupFields) => {
-      // TODO: implement file download
       dispatch(downloadBackup(data.password))
+        .then((content: string) => downloadFile(content))
         .then(() => onGoBack())
         .catch((error: Error) => setError("password", { type: "submit", message: error.message }));
     },

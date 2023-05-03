@@ -50,6 +50,7 @@ describe("ui/pages/DownloadBackup/useDownloadBackup", () => {
   });
 
   test("should submit form properly", async () => {
+    const spyCreateElement = jest.spyOn(document, "createElement");
     const { result } = renderHook(() => useDownloadBackup());
 
     await act(async () =>
@@ -68,6 +69,9 @@ describe("ui/pages/DownloadBackup/useDownloadBackup", () => {
     expect(result.current.isLoading).toBe(false);
     expect(mockDispatch).toBeCalledTimes(1);
     expect(downloadBackup).toBeCalledTimes(1);
+    expect(spyCreateElement).toBeCalledTimes(2);
+    expect(spyCreateElement).toHaveBeenNthCalledWith(1, "div");
+    expect(spyCreateElement).toHaveBeenNthCalledWith(2, "a");
     expect(mockNavigate).toBeCalledTimes(1);
     expect(mockNavigate).toBeCalledWith(-1);
   });
