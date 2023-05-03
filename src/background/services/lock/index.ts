@@ -105,45 +105,35 @@ export default class LockerService implements IBackupable {
 
   downloadEncryptedStorage = async (backupPassword: string): Promise<string | null> => {
     const backupEncryptedData = await this.passwordStorage.get<string>();
-    const { isLockerAuthentic } = await this.isAuthentic(backupPassword, backupEncryptedData);
+    await this.isAuthentic(backupPassword);
 
-    if (isLockerAuthentic && backupEncryptedData) {
-      return cryptoGenerateEncryptedHmac(backupEncryptedData, backupPassword);
-    }
+    if (backupEncryptedData) return cryptoGenerateEncryptedHmac(backupEncryptedData, backupPassword);
     return null;
   };
 
   uploadEncryptedStorage = async (backupEncryptedData: string, backupPassword: string): Promise<void> => {
-    const { isNewOnboarding, isBackupAvaiable } = await this.isAuthentic(backupPassword, backupEncryptedData);
+    const { isNewOnboarding } = await this.isAuthentic(backupPassword);
 
-    if (isNewOnboarding && isBackupAvaiable) {
+    if (isNewOnboarding && backupEncryptedData) {
       const authenticBackupCiphertext = cryptoGetAuthenticBackupCiphertext(backupEncryptedData, backupPassword);
       await this.passwordStorage.set(authenticBackupCiphertext);
     }
   };
 
-  isAuthentic = async (password: string, backupEncryptedData?: string | null): Promise<AuthenticityCheckData> => {
+  isAuthentic = async (password: string): Promise<AuthenticityCheckData> => {
     const isLockerAuthentic = await this.isLockerPasswordAuthentic(password);
     const isNewOnboarding = await this.isNewOnboarding();
-    const isBackupAvaiable = this.isBackupAvaiable(backupEncryptedData);
 
-    if (!isNewOnboarding && !isLockerAuthentic && !isBackupAvaiable) throw new Error("Incorrect password");
+    if (!isNewOnboarding && !isLockerAuthentic) throw new Error("Incorrect password");
 
     return {
-      isLockerAuthentic,
       isNewOnboarding,
-      isBackupAvaiable,
     };
-  };
-
-  private isBackupAvaiable = (backupCiphertext?: string | null) => {
-    if (!backupCiphertext) return false;
-    return true;
   };
 
   private isNewOnboarding = async () => {
     const cipherText = await this.passwordStorage.get<string>();
-    
+
     return !cipherText;
   };
 
@@ -151,11 +141,9 @@ export default class LockerService implements IBackupable {
     if (!password) throw new Error("Password is not provided");
 
     const cipherText = await this.passwordStorage.get<string>();
-    
-    if (!cipherText) {
-      return false;
-    }
-    
+
+    if (!cipherText) return false;
+
     const decryptedPasswordChecker = cryptoDecrypt(cipherText, password);
     return decryptedPasswordChecker === this.passwordChecker;
   };
