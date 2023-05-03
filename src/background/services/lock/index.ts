@@ -92,7 +92,7 @@ export default class LockerService implements IBackupable {
       return true;
     }
 
-    await this.isAuthentic(password);
+    await this.isAuthentic(password, false);
 
     this.password = password;
     this.isUnlocked = true;
@@ -105,14 +105,14 @@ export default class LockerService implements IBackupable {
 
   downloadEncryptedStorage = async (backupPassword: string): Promise<string | null> => {
     const backupEncryptedData = await this.passwordStorage.get<string>();
-    await this.isAuthentic(backupPassword);
+    await this.isAuthentic(backupPassword, true);
 
     if (backupEncryptedData) return cryptoGenerateEncryptedHmac(backupEncryptedData, backupPassword);
     return null;
   };
 
   uploadEncryptedStorage = async (backupEncryptedData: string, backupPassword: string): Promise<void> => {
-    const { isNewOnboarding } = await this.isAuthentic(backupPassword);
+    const { isNewOnboarding } = await this.isAuthentic(backupPassword, true);
 
     if (isNewOnboarding && backupEncryptedData) {
       const authenticBackupCiphertext = cryptoGetAuthenticBackupCiphertext(backupEncryptedData, backupPassword);
@@ -120,11 +120,13 @@ export default class LockerService implements IBackupable {
     }
   };
 
-  isAuthentic = async (password: string): Promise<AuthenticityCheckData> => {
+  isAuthentic = async (password: string, isBackupAvaiable: boolean): Promise<AuthenticityCheckData> => {
     const isLockerAuthentic = await this.isLockerPasswordAuthentic(password);
     const isNewOnboarding = await this.isNewOnboarding();
 
     if (!isNewOnboarding && !isLockerAuthentic) throw new Error("Incorrect password");
+    if (isNewOnboarding && !isBackupAvaiable)
+      throw new Error("Something badly gone wrong (reinstallation probably required)");
 
     return {
       isNewOnboarding,

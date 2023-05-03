@@ -20,9 +20,7 @@ const mockDefaultIdentities = [
 const mockSerializedDefaultIdentities = JSON.stringify(mockDefaultIdentities);
 
 const mockAuthenticityCheckData = {
-  isLockerAuthentic: false,
   isNewOnboarding: false,
-  isBackupAvaiable: true,
 };
 
 jest.mock("@src/background/services/lock", (): unknown => ({
@@ -37,12 +35,9 @@ jest.mock("@src/background/services/lock", (): unknown => ({
   })),
 }));
 
-jest.mock("@src/background/services/backup", (): unknown => ({
-  BackupService: {
-    getAuthenticBackupCiphertext: jest.fn(() => ({
-      isAuthentic: jest.fn(() => mockAuthenticityCheckData),
-    })),
-  },
+jest.mock("@src/background/services/crypto", (): unknown => ({
+  cryptoGenerateEncryptedHmac: jest.fn(() => "encrypted"),
+  cryptoGetAuthenticBackupCiphertext: jest.fn(() => "encrypted"),
 }));
 
 jest.mock("@src/background/services/history", (): unknown => ({
