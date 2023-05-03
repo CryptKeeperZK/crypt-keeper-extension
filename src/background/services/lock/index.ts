@@ -153,13 +153,13 @@ export default class LockerService implements IBackupable {
     if (!password) throw new Error("Password is not provided");
 
     const cipherText = await this.passwordStorage.get<string>();
-    if (cipherText) {
-      const decryptedPasswordChecker = cryptoDecrypt(cipherText, password);
-
-      return decryptedPasswordChecker === this.passwordChecker;
+    
+    if (!cipherText) {
+      return false;
     }
-
-    return false;
+    
+    const decryptedPasswordChecker = cryptoDecrypt(cipherText, password);
+    return decryptedPasswordChecker === this.passwordChecker;
   };
 
   ensure = (payload: unknown = null): unknown | null | false => {
