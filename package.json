@@ -153,7 +153,7 @@
     "react-jazzicon": "^1.0.4",
     "react-redux": "^8.0.5",
     "react-router-dom": "^6.11.0",
-    "react-select": "^5.7.2",
+    "react-select": "^5.7.3",
     "redux-logger": "^3.0.6",
     "redux-thunk": "^2.4.2",
     "rlnjs": "^2.0.8",
