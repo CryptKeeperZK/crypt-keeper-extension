@@ -2,8 +2,7 @@ import { bigintToHex } from "bigint-conversion";
 import { browser } from "webextension-polyfill-ts";
 
 import BrowserUtils from "@src/background/controllers/browserUtils";
-import BackupService from "@src/background/services/backup";
-import { cryptoGenerateEncryptedHmac } from "@src/background/services/crypto";
+import { cryptoGenerateEncryptedHmac, cryptoGetAuthenticBackupCiphertext } from "@src/background/services/crypto";
 import HistoryService from "@src/background/services/history";
 import LockerService from "@src/background/services/lock";
 import NotificationService from "@src/background/services/notification";
@@ -34,8 +33,6 @@ export default class ZkIdentityService implements IBackupable {
 
   private notificationService: NotificationService;
 
-  private backupService: BackupService;
-
   private historyService: HistoryService;
 
   private browserController: BrowserUtils;
@@ -50,7 +47,6 @@ export default class ZkIdentityService implements IBackupable {
     this.notificationService = NotificationService.getInstance();
     this.historyService = HistoryService.getInstance();
     this.browserController = BrowserUtils.getInstance();
-    this.backupService = BackupService.getInstance();
   }
 
   static getInstance = (): ZkIdentityService => {
@@ -373,10 +369,7 @@ export default class ZkIdentityService implements IBackupable {
   uploadEncryptedStorage = async (backupEncryptedData: string, backupPassword: string): Promise<void> => {
     const { isBackupAvaiable } = await this.lockService.isAuthentic(backupPassword, backupEncryptedData);
     if (isBackupAvaiable) {
-      const authenticBackupCiphertext = this.backupService.getAuthenticBackupCiphertext(
-        backupEncryptedData,
-        backupPassword,
-      );
+      const authenticBackupCiphertext = cryptoGetAuthenticBackupCiphertext(backupEncryptedData, backupPassword);
       await this.identitiesStore.set<string>(authenticBackupCiphertext);
     }
   };

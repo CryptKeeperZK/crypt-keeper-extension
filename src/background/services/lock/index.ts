@@ -1,7 +1,11 @@
 import { browser } from "webextension-polyfill-ts";
 
-import BackupService from "@src/background/services/backup";
-import { cryptoDecrypt, cryptoEncrypt, cryptoGenerateEncryptedHmac } from "@src/background/services/crypto";
+import {
+  cryptoDecrypt,
+  cryptoEncrypt,
+  cryptoGenerateEncryptedHmac,
+  cryptoGetAuthenticBackupCiphertext,
+} from "@src/background/services/crypto";
 import SimpleStorage from "@src/background/services/storage";
 import { setStatus } from "@src/ui/ducks/app";
 import pushMessage from "@src/util/pushMessage";
@@ -30,15 +34,12 @@ export default class LockerService implements IBackupable {
 
   private unlockCB?: () => void;
 
-  private backupService: BackupService;
-
   private constructor() {
     this.isUnlocked = false;
     this.passwordChecker = "Password is correct";
     this.passwordStorage = new SimpleStorage(PASSWORD_DB_KEY);
     this.password = undefined;
     this.unlockCB = undefined;
-    this.backupService = BackupService.getInstance();
   }
 
   static getInstance(): LockerService {
@@ -116,10 +117,7 @@ export default class LockerService implements IBackupable {
     const { isNewOnboarding, isBackupAvaiable } = await this.isAuthentic(backupPassword, backupEncryptedData);
 
     if (isNewOnboarding && isBackupAvaiable) {
-      const authenticBackupCiphertext = this.backupService.getAuthenticBackupCiphertext(
-        backupEncryptedData,
-        backupPassword,
-      );
+      const authenticBackupCiphertext = cryptoGetAuthenticBackupCiphertext(backupEncryptedData, backupPassword);
       await this.passwordStorage.set(authenticBackupCiphertext);
     }
   };

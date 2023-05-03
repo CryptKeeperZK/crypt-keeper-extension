@@ -36,3 +36,15 @@ export function cryptoSubHmacCiphertext(ciphertext: string): { transitHmac: stri
     transitCipherContent,
   };
 }
+
+export function cryptoGetAuthenticBackupCiphertext(backupCiphertext: string, backupPassword: string): string {
+  const isAuthentic = isBackupHmacAuthentic(backupCiphertext, backupPassword);
+  if (!isAuthentic) throw new Error("This backup file is not authentic.");
+  const { transitCipherContent: authenticCiphertext } = cryptoSubHmacCiphertext(backupCiphertext);
+  return authenticCiphertext;
+}
+
+function isBackupHmacAuthentic(ciphertext: string, backupPassword: string): boolean {
+  if (!backupPassword) throw new Error("Backup Password is not provided");
+  return isCryptoHmacAuthentic(ciphertext, backupPassword);
+}
