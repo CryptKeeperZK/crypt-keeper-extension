@@ -2,6 +2,7 @@ import { bigintToHex } from "bigint-conversion";
 import { browser } from "webextension-polyfill-ts";
 
 import BrowserUtils from "@src/background/controllers/browserUtils";
+import BackupService from "@src/background/services/backup";
 import HistoryService from "@src/background/services/history";
 import LockerService from "@src/background/services/lock";
 import NotificationService from "@src/background/services/notification";
@@ -32,6 +33,8 @@ export default class ZkIdentityService implements IBackupable {
 
   private notificationService: NotificationService;
 
+  private backupService: BackupService;
+
   private historyService: HistoryService;
 
   private browserController: BrowserUtils;
@@ -46,6 +49,7 @@ export default class ZkIdentityService implements IBackupable {
     this.notificationService = NotificationService.getInstance();
     this.historyService = HistoryService.getInstance();
     this.browserController = BrowserUtils.getInstance();
+    this.backupService = BackupService.getInstance();
   }
 
   static getInstance = (): ZkIdentityService => {
@@ -356,8 +360,14 @@ export default class ZkIdentityService implements IBackupable {
 
   downloadEncryptedStorage = async (): Promise<string | null> => this.identitiesStore.get<string>();
 
-  uploadEncryptedStorage = async (encryptedBackup: string, password: string): Promise<void> => {
-    const { authenticBackupCiphertext } = await this.lockService.isAuthenticated(password, encryptedBackup);
-    if (authenticBackupCiphertext) await this.identitiesStore.set<string>(authenticBackupCiphertext);
+  uploadEncryptedStorage = async (backupEncryptedData: string, backupPassword: string): Promise<void> => {
+    const { isBackupAvaiable } = await this.lockService.isAuthentic(backupPassword, backupEncryptedData);
+    if (isBackupAvaiable) {
+      const authenticBackupCiphertext = this.backupService.getAuthenticBackupCiphertext(
+        backupEncryptedData,
+        backupPassword,
+      );
+      await this.identitiesStore.set<string>(authenticBackupCiphertext);
+    }
   };
 }

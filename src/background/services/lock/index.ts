@@ -1,16 +1,14 @@
 import { browser } from "webextension-polyfill-ts";
 
-import {
-  cryptoDecrypt,
-  cryptoEncrypt,
-  isCryptoHmacAuthentic,
-  cryptoSubHmacCiphertext,
-} from "@src/background/services/crypto";
+import BackupService from "@src/background/services/backup";
+import { cryptoDecrypt, cryptoEncrypt } from "@src/background/services/crypto";
 import SimpleStorage from "@src/background/services/storage";
 import { setStatus } from "@src/ui/ducks/app";
 import pushMessage from "@src/util/pushMessage";
 
 import type { IBackupable } from "@src/background/services/backup";
+
+import { AuthenticityCheckData } from "./types";
 
 const PASSWORD_DB_KEY = "@password@";
 
@@ -32,12 +30,15 @@ export default class LockerService implements IBackupable {
 
   private unlockCB?: () => void;
 
+  private backupService: BackupService;
+
   private constructor() {
     this.isUnlocked = false;
     this.passwordChecker = "Password is correct";
     this.passwordStorage = new SimpleStorage(PASSWORD_DB_KEY);
     this.password = undefined;
     this.unlockCB = undefined;
+    this.backupService = BackupService.getInstance();
   }
 
   static getInstance(): LockerService {
@@ -90,7 +91,7 @@ export default class LockerService implements IBackupable {
       return true;
     }
 
-    await this.isAuthenticated(password);
+    await this.isAuthentic(password);
 
     this.password = password;
     this.isUnlocked = true;
@@ -103,59 +104,54 @@ export default class LockerService implements IBackupable {
 
   downloadEncryptedStorage = (): Promise<string | null> => this.passwordStorage.get<string>();
 
-  uploadEncryptedStorage = async (encryptedBackup: string, password: string): Promise<void> => {
-    const { isNew, authenticBackupCiphertext } = await this.isAuthenticated(password, encryptedBackup);
-    if (isNew && authenticBackupCiphertext) await this.passwordStorage.set(authenticBackupCiphertext);
+  uploadEncryptedStorage = async (backupEncryptedData: string, backupPassword: string): Promise<void> => {
+    const { isNewOnboarding, isBackupAvaiable } = await this.isAuthentic(backupPassword, backupEncryptedData);
+
+    if (isNewOnboarding && isBackupAvaiable) {
+      const authenticBackupCiphertext = this.backupService.getAuthenticBackupCiphertext(
+        backupEncryptedData,
+        backupPassword,
+      );
+      await this.passwordStorage.set(authenticBackupCiphertext);
+    }
   };
 
-  // TODO: Unit test needed, it is meant to replace checkPassword
-  isAuthenticated = async (
-    password: string,
-    backupCiphertext?: string,
-  ): Promise<{ isAuthentic: boolean; isBackup?: boolean; isNew?: boolean; authenticBackupCiphertext?: string }> => {
-    const cipherText = await this.passwordStorage.get<string>();
+  isAuthentic = async (password: string, backupEncryptedData?: string): Promise<AuthenticityCheckData> => {
+    const isLockerAuthentic = await this.isLockerPasswordAuthentic(password);
+    const isNewOnboarding = await this.isNewOnboarding();
+    const isBackupAvaiable = this.isBackupAvaiable(backupEncryptedData);
 
+    if (!isNewOnboarding && !isLockerAuthentic && !isBackupAvaiable) throw new Error("Incorrect password");
+
+    return {
+      isLockerAuthentic,
+      isNewOnboarding,
+      isBackupAvaiable,
+    };
+  };
+
+  private isBackupAvaiable = (backupCiphertext?: string) => {
+    if (!backupCiphertext) return false;
+    return true;
+  };
+
+  private isNewOnboarding = async () => {
+    const cipherText = await this.passwordStorage.get<string>();
+    if (!cipherText) return true;
+    return false;
+  };
+
+  private isLockerPasswordAuthentic = async (password: string): Promise<boolean> => {
     if (!password) throw new Error("Password is not provided");
 
-    // Normal check
+    const cipherText = await this.passwordStorage.get<string>();
     if (cipherText) {
       const decryptedPasswordChecker = cryptoDecrypt(cipherText, password);
 
-      if (decryptedPasswordChecker !== this.passwordChecker) throw new Error("Incorrect password");
-      else {
-        if (backupCiphertext)
-          return {
-            isAuthentic: true,
-            isNew: false,
-            authenticBackupCiphertext: this.isBackupCiphertextAutentic(backupCiphertext),
-          };
-
-        return {
-          isAuthentic: true,
-        };
-      }
+      return decryptedPasswordChecker === this.passwordChecker;
     }
-    // Newly installed CK
-    // We should return an object if it
-    else {
-      if (backupCiphertext) {
-        return {
-          isAuthentic: true, // Becuase a new installed wallet
-          isNew: true,
-          authenticBackupCiphertext: this.isBackupCiphertextAutentic(backupCiphertext),
-        };
-      }
 
-      throw new Error("Something badly gone wrong (reinstallation probably required)");
-    }
-  };
-
-  private isBackupCiphertextAutentic = (backupCiphertext: string): string => {
-    const { isHmacAuthentic, authenticCiphertext: authenticBackupCiphertext } = this.isHmacAuthentic(backupCiphertext);
-    if (!isHmacAuthentic || !authenticBackupCiphertext) throw new Error("This backup file is not authentic.");
-    else {
-      return authenticBackupCiphertext;
-    }
+    return false;
   };
 
   ensure = (payload: unknown = null): unknown | null | false => {
@@ -174,18 +170,6 @@ export default class LockerService implements IBackupable {
   decrypt = (ciphertext: string): string => {
     if (!this.password) throw new Error("Password is not provided");
     return cryptoDecrypt(ciphertext, this.password);
-  };
-
-  private isHmacAuthentic = (ciphertext: string): { isHmacAuthentic: boolean; authenticCiphertext?: string } => {
-    if (!this.password) throw new Error("Password is not provided");
-    const isHmacAuthentic = isCryptoHmacAuthentic(ciphertext, this.password);
-    if (!isHmacAuthentic) return { isHmacAuthentic };
-
-    const { transitCipherContent: authenticCiphertext } = cryptoSubHmacCiphertext(ciphertext);
-    return {
-      isHmacAuthentic,
-      authenticCiphertext,
-    };
   };
 
   logout = async (): Promise<boolean> => {

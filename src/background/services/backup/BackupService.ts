@@ -1,3 +1,4 @@
+import { cryptoSubHmacCiphertext, isCryptoHmacAuthentic } from "@src/background/services/crypto";
 import { type IUploadArgs } from "@src/types";
 
 import { type IBackupable } from "./types";
@@ -60,5 +61,17 @@ export default class BackupService {
   clear = (): BackupService => {
     this.backupables.clear();
     return this;
+  };
+
+  getAuthenticBackupCiphertext = (backupCiphertext: string, backupPassword: string): string => {
+    const isAuthentic = this.isBackupHmacAuthentic(backupCiphertext, backupPassword);
+    if (!isAuthentic) throw new Error("This backup file is not authentic.");
+    const { transitCipherContent: authenticCiphertext } = cryptoSubHmacCiphertext(backupCiphertext);
+    return authenticCiphertext;
+  };
+
+  private isBackupHmacAuthentic = (ciphertext: string, backupPassword: string): boolean => {
+    if (!backupPassword) throw new Error("Backup Password is not provided");
+    return isCryptoHmacAuthentic(ciphertext, backupPassword);
   };
 }

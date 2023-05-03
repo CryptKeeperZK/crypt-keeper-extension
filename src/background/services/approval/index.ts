@@ -1,3 +1,4 @@
+import BackupService from "@src/background/services/backup";
 import LockerService from "@src/background/services/lock";
 import SimpleStorage from "@src/background/services/storage";
 
@@ -18,10 +19,13 @@ export default class ApprovalService implements IBackupable {
 
   private lockService: LockerService;
 
+  private backupService: BackupService;
+
   private constructor() {
     this.allowedHosts = new Map();
     this.approvals = new SimpleStorage(APPPROVALS_DB_KEY);
     this.lockService = LockerService.getInstance();
+    this.backupService = BackupService.getInstance();
   }
 
   static getInstance = (): ApprovalService => {
@@ -97,8 +101,14 @@ export default class ApprovalService implements IBackupable {
 
   downloadEncryptedStorage = (): Promise<string | null> => this.approvals.get<string>();
 
-  uploadEncryptedStorage = async (encryptedBackup: string, password: string): Promise<void> => {
-    const { authenticBackupCiphertext } = await this.lockService.isAuthenticated(password, encryptedBackup);
-    if (authenticBackupCiphertext) await this.approvals.set(authenticBackupCiphertext);
+  uploadEncryptedStorage = async (backupEncryptedData: string, backupPassword: string): Promise<void> => {
+    const { isBackupAvaiable } = await this.lockService.isAuthentic(backupPassword, backupEncryptedData);
+    if (isBackupAvaiable) {
+      const authenticBackupCiphertext = this.backupService.getAuthenticBackupCiphertext(
+        backupEncryptedData,
+        backupPassword,
+      );
+      await this.approvals.set(authenticBackupCiphertext);
+    }
   };
 }
