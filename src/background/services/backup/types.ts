@@ -1,4 +1,4 @@
 export interface IBackupable {
-  downloadEncryptedStorage: () => Promise<string | null>;
-  uploadEncryptedStorage: (encrypted: string, password: string) => Promise<void>;
+  downloadEncryptedStorage: (backupPassword: string) => Promise<string | null>;
+  uploadEncryptedStorage: (backupEncryptedData: string, backupPassword: string) => Promise<void>;
 }

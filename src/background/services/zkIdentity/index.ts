@@ -2,6 +2,11 @@ import { bigintToHex } from "bigint-conversion";
 import { browser } from "webextension-polyfill-ts";
 
 import BrowserUtils from "@src/background/controllers/browserUtils";
+import { cryptoGenerateEncryptedHmac, cryptoGetAuthenticBackupCiphertext } from "@src/background/services/crypto";
+import HistoryService from "@src/background/services/history";
+import LockerService from "@src/background/services/lock";
+import NotificationService from "@src/background/services/notification";
+import SimpleStorage from "@src/background/services/storage";
 import { ZkIdentitySemaphore } from "@src/background/services/zkIdentity/protocols/ZkIdentitySemaphore";
 import { getEnabledFeatures } from "@src/config/features";
 import { Paths } from "@src/constants";
@@ -10,12 +15,7 @@ import { SelectedIdentity, setIdentities, setSelectedCommitment } from "@src/ui/
 import { ellipsify } from "@src/util/account";
 import pushMessage from "@src/util/pushMessage";
 
-import type { IBackupable } from "../backup";
-
-import HistoryService from "../history";
-import LockService from "../lock";
-import NotificationService from "../notification";
-import SimpleStorage from "../storage";
+import type { IBackupable } from "@src/background/services/backup";
 
 import { createNewIdentity } from "./factory";
 
@@ -29,7 +29,7 @@ export default class ZkIdentityService implements IBackupable {
 
   private activeIdentityStore: SimpleStorage;
 
-  private lockService: LockService;
+  private lockService: LockerService;
 
   private notificationService: NotificationService;
 
@@ -43,7 +43,7 @@ export default class ZkIdentityService implements IBackupable {
     this.activeIdentity = undefined;
     this.identitiesStore = new SimpleStorage(IDENTITY_KEY);
     this.activeIdentityStore = new SimpleStorage(ACTIVE_IDENTITY_KEY);
-    this.lockService = LockService.getInstance();
+    this.lockService = LockerService.getInstance();
     this.notificationService = NotificationService.getInstance();
     this.historyService = HistoryService.getInstance();
     this.browserController = BrowserUtils.getInstance();
@@ -355,10 +355,18 @@ export default class ZkIdentityService implements IBackupable {
     return true;
   };
 
-  downloadEncryptedStorage = async (): Promise<string | null> => this.identitiesStore.get<string>();
+  downloadEncryptedStorage = async (backupPassword: string): Promise<string | null> => {
+    const backupEncryptedData = await this.identitiesStore.get<string>();
 
-  uploadEncryptedStorage = async (encrypted: string, password: string): Promise<void> => {
-    await this.lockService.checkPassword(password);
-    await this.identitiesStore.set<string>(encrypted);
+    await this.lockService.isAuthentic(backupPassword, true);
+
+    if (backupEncryptedData) return cryptoGenerateEncryptedHmac(backupEncryptedData, backupPassword);
+    return null;
+  };
+
+  uploadEncryptedStorage = async (backupEncryptedData: string, backupPassword: string): Promise<void> => {
+    await this.lockService.isAuthentic(backupPassword, true);
+    if (backupEncryptedData)
+      await this.identitiesStore.set<string>(cryptoGetAuthenticBackupCiphertext(backupEncryptedData, backupPassword));
   };
 }

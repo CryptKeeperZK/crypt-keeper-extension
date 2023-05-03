@@ -19,6 +19,10 @@ const mockDefaultIdentities = [
 ];
 const mockSerializedDefaultIdentities = JSON.stringify(mockDefaultIdentities);
 
+const mockAuthenticityCheckData = {
+  isNewOnboarding: false,
+};
+
 jest.mock("@src/background/services/lock", (): unknown => ({
   getInstance: jest.fn(() => ({
     encrypt: jest.fn(() => mockSerializedDefaultIdentities),
@@ -27,8 +31,13 @@ jest.mock("@src/background/services/lock", (): unknown => ({
         ? mockDefaultIdentityCommitment.toString()
         : mockSerializedDefaultIdentities,
     ),
-    checkPassword: jest.fn(),
+    isAuthentic: jest.fn(() => mockAuthenticityCheckData),
   })),
+}));
+
+jest.mock("@src/background/services/crypto", (): unknown => ({
+  cryptoGenerateEncryptedHmac: jest.fn(() => "encrypted"),
+  cryptoGetAuthenticBackupCiphertext: jest.fn(() => "encrypted"),
 }));
 
 jest.mock("@src/background/services/history", (): unknown => ({
@@ -408,7 +417,7 @@ describe("background/services/zkIdentity", () => {
 
   describe("backup", () => {
     test("should download encrypted identities", async () => {
-      const result = await zkIdentityService.downloadEncryptedStorage();
+      const result = await zkIdentityService.downloadEncryptedStorage("password");
 
       expect(result).toBeDefined();
     });

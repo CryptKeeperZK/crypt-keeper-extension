@@ -1,7 +1,8 @@
-import type { IBackupable } from "../backup";
+import { cryptoGenerateEncryptedHmac, cryptoGetAuthenticBackupCiphertext } from "@src/background/services/crypto";
+import LockerService from "@src/background/services/lock";
+import SimpleStorage from "@src/background/services/storage";
 
-import LockService from "../lock";
-import SimpleStorage from "../storage";
+import type { IBackupable } from "@src/background/services/backup";
 
 const APPPROVALS_DB_KEY = "@APPROVED@";
 
@@ -16,12 +17,12 @@ export default class ApprovalService implements IBackupable {
 
   private approvals: SimpleStorage;
 
-  private lockService: LockService;
+  private lockService: LockerService;
 
   private constructor() {
     this.allowedHosts = new Map();
     this.approvals = new SimpleStorage(APPPROVALS_DB_KEY);
-    this.lockService = LockService.getInstance();
+    this.lockService = LockerService.getInstance();
   }
 
   static getInstance = (): ApprovalService => {
@@ -95,10 +96,17 @@ export default class ApprovalService implements IBackupable {
     await this.approvals.set(newApprovals);
   }
 
-  downloadEncryptedStorage = (): Promise<string | null> => this.approvals.get<string>();
+  downloadEncryptedStorage = async (backupPassword: string): Promise<string | null> => {
+    const backupEncryptedData = await this.approvals.get<string>();
+    await this.lockService.isAuthentic(backupPassword, true);
 
-  uploadEncryptedStorage = async (encryptedApprovals: string, password: string): Promise<void> => {
-    await this.lockService.checkPassword(password);
-    await this.approvals.set(encryptedApprovals);
+    if (backupEncryptedData) return cryptoGenerateEncryptedHmac(backupEncryptedData, backupPassword);
+    return null;
+  };
+
+  uploadEncryptedStorage = async (backupEncryptedData: string, backupPassword: string): Promise<void> => {
+    await this.lockService.isAuthentic(backupPassword, true);
+    if (backupEncryptedData)
+      await this.approvals.set<string>(cryptoGetAuthenticBackupCiphertext(backupEncryptedData, backupPassword));
   };
 }

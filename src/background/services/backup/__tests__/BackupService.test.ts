@@ -38,7 +38,10 @@ describe("background/services/backup/BackupService", () => {
 
   test("should download backup data properly", async () => {
     const expectedData = JSON.stringify({ key1: "encrypted", key2: null }, null, 4);
-    const backupFileContent = await backupService.add("key1", defaultBackupable).add("key2", nullBackupable).download();
+    const backupFileContent = await backupService
+      .add("key1", defaultBackupable)
+      .add("key2", nullBackupable)
+      .download("password");
 
     expect(backupFileContent).toBe(`data:application/json;charset=utf-8,${encodeURIComponent(expectedData)}`);
   });
@@ -56,7 +59,10 @@ describe("background/services/backup/BackupService", () => {
   test("should download and upload the same backup data properly", async () => {
     const expectedData = JSON.stringify({ key1: "encrypted", key2: null }, null, 4);
 
-    const backupFileContent = await backupService.add("key1", defaultBackupable).add("key2", nullBackupable).download();
+    const backupFileContent = await backupService
+      .add("key1", defaultBackupable)
+      .add("key2", nullBackupable)
+      .download("password");
     const result = await backupService
       .add("key1", defaultBackupable)
       .add("key2", nullBackupable)

@@ -1,12 +1,15 @@
 /* eslint-disable @typescript-eslint/unbound-method */
-import CryptoJS from "crypto-js";
 import { browser } from "webextension-polyfill-ts";
 
+import SimpleStorage from "@src/background/services/storage";
 import { setStatus } from "@src/ui/ducks/app";
 import pushMessage from "@src/util/pushMessage";
 
-import LockService from "..";
-import SimpleStorage from "../../storage";
+import LockerService from "..";
+import { cryptoDecrypt } from "../../crypto";
+
+const defaultPassword = "password";
+const passwordChecker = "Password is correct";
 
 jest.mock("crypto-js", (): unknown => ({
   ...jest.requireActual("crypto-js"),
@@ -16,26 +19,27 @@ jest.mock("crypto-js", (): unknown => ({
   },
 }));
 
+jest.mock("@src/background/services/crypto", (): unknown => ({
+  cryptoEncrypt: jest.fn(() => defaultPassword),
+  cryptoDecrypt: jest.fn(() => passwordChecker),
+  cryptoGenerateEncryptedHmac: jest.fn(() => "encrypted"),
+  cryptoGetAuthenticBackupCiphertext: jest.fn(() => "encrypted"),
+}));
+
 jest.mock("@src/util/pushMessage");
 
-jest.mock("../../storage");
+jest.mock("@src/background/services/storage");
 
 type MockStorage = { get: jest.Mock; set: jest.Mock };
 
-describe("background/services/lock", () => {
-  const lockService = LockService.getInstance();
-  const defaultPassword = "password";
+describe("background/services/locker", () => {
+  const lockService = LockerService.getInstance();
   const defaultTabs = [{ id: "1" }, { id: "2" }, { id: "3" }];
-  const passwordChecker = "Password is correct";
 
   beforeEach(async () => {
     (browser.tabs.query as jest.Mock).mockResolvedValue(defaultTabs);
 
     await lockService.logout();
-
-    (CryptoJS.AES.encrypt as jest.Mock).mockReturnValue(defaultPassword);
-
-    (CryptoJS.AES.decrypt as jest.Mock).mockReturnValue({ toString: () => passwordChecker });
 
     (browser.tabs.sendMessage as jest.Mock).mockClear();
     (pushMessage as jest.Mock).mockReset();
@@ -151,7 +155,7 @@ describe("background/services/lock", () => {
     });
 
     test("should not unlock if there is wrong password", async () => {
-      (CryptoJS.AES.decrypt as jest.Mock).mockReturnValue({ toString: () => "" });
+      (cryptoDecrypt as jest.Mock).mockReturnValue({ toString: () => "" });
 
       await expect(lockService.unlock(defaultPassword)).rejects.toThrowError("Incorrect password");
     });
@@ -161,17 +165,31 @@ describe("background/services/lock", () => {
     test("should download encrypted password storage", async () => {
       const [{ get: mockGet }] = (SimpleStorage as jest.Mock).mock.instances as [MockStorage];
       mockGet.mockClear();
+      (cryptoDecrypt as jest.Mock).mockReturnValue(passwordChecker);
 
-      const result = await lockService.downloadEncryptedStorage();
+      const result = await lockService.downloadEncryptedStorage(defaultPassword);
 
       expect(result).toBeDefined();
 
-      expect(mockGet).toBeCalledTimes(1);
+      expect(mockGet).toBeCalledTimes(3);
     });
 
-    test("should upload encrypted password storage", async () => {
+    test("should not upload encrypted password storage if existing user", async () => {
       const [{ set: mockSet }] = (SimpleStorage as jest.Mock).mock.instances as [MockStorage];
       mockSet.mockClear();
+
+      await lockService.uploadEncryptedStorage("encrypted", defaultPassword);
+
+      expect(mockSet).toBeCalledTimes(0);
+    });
+
+    test("should upload encrypted password storage if new user", async () => {
+      const [{ set: mockSet }] = (SimpleStorage as jest.Mock).mock.instances as [MockStorage];
+      mockSet.mockClear();
+
+      (SimpleStorage as jest.Mock).mock.instances.forEach((instance: MockStorage) => {
+        instance.get.mockReturnValue(undefined);
+      });
 
       await lockService.uploadEncryptedStorage("encrypted", defaultPassword);
 
@@ -179,7 +197,7 @@ describe("background/services/lock", () => {
     });
 
     test("should throw error if uploading invalid data", async () => {
-      (CryptoJS.AES.decrypt as jest.Mock).mockReturnValue({ toString: () => "" });
+      (cryptoDecrypt as jest.Mock).mockReturnValue({ toString: () => "" });
 
       const [{ set: mockSet }] = (SimpleStorage as jest.Mock).mock.instances as [MockStorage];
       mockSet.mockClear();
