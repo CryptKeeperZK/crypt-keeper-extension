@@ -1,5 +1,17 @@
 import BackupService, { type IBackupable } from "..";
 
+jest.mock("@src/background/services/history", (): unknown => ({
+  getInstance: jest.fn(() => ({
+    trackOperation: jest.fn(),
+  })),
+}));
+
+jest.mock("@src/background/services/notification", (): unknown => ({
+  getInstance: jest.fn(() => ({
+    create: jest.fn(),
+  })),
+}));
+
 describe("background/services/backup/BackupService", () => {
   const backupService = BackupService.getInstance();
 
@@ -74,10 +86,14 @@ describe("background/services/backup/BackupService", () => {
 
   test("should throw errors when uploading invalid data", async () => {
     const fileContent = JSON.stringify({ unknown: "encrypted" }, null, 4);
+    const nullableContent = JSON.stringify({ key1: null, key2: null });
     backupService.add("key1", defaultBackupable).add("key2", nullBackupable);
 
     await expect(backupService.upload({ content: fileContent, password: "password" })).rejects.toThrowError(
       "File content is corrupted",
+    );
+    await expect(backupService.upload({ content: nullableContent, password: "password" })).rejects.toThrowError(
+      "File doesn't have any data",
     );
     await expect(backupService.upload({ content: "", password: "password" })).rejects.toThrowError();
   });

@@ -21,6 +21,8 @@ const OPERATIONS: Record<OperationType, string> = {
   [OperationType.CREATE_IDENTITY]: "Identity created",
   [OperationType.DELETE_IDENTITY]: "Identity removed",
   [OperationType.DELETE_ALL_IDENTITIES]: "All identities removed",
+  [OperationType.DOWNLOAD_BACKUP]: "Backup download",
+  [OperationType.UPLOAD_BACKUP]: "Backup upload",
 };
 
 const web2ProvidersIcons: IconWeb2Providers = {

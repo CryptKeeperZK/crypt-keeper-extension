@@ -87,14 +87,14 @@ export default class ZkIdentityService implements IBackupable {
   };
 
   private getIdentitiesFromStore = async (): Promise<Map<string, string>> => {
-    const cipherText = await this.identitiesStore.get<string>();
+    const ciphertext = await this.identitiesStore.get<string>();
 
-    if (!cipherText) {
+    if (!ciphertext) {
       return new Map();
     }
 
     const features = getEnabledFeatures();
-    const identitesDecrypted = this.lockService.decrypt(cipherText);
+    const identitesDecrypted = this.lockService.decrypt(ciphertext);
     const iterableIdentities = JSON.parse(identitesDecrypted) as Iterable<readonly [string, string]>;
 
     return new Map(
@@ -163,8 +163,8 @@ export default class ZkIdentityService implements IBackupable {
   };
 
   private writeActiveIdentity = async (commitment: string, web2Provider?: string): Promise<void> => {
-    const cipherText = this.lockService.encrypt(commitment);
-    await this.activeIdentityStore.set(cipherText);
+    const ciphertext = this.lockService.encrypt(commitment);
+    await this.activeIdentityStore.set(ciphertext);
 
     const [tabs] = await Promise.all([
       browser.tabs.query({ active: true }),
@@ -295,8 +295,8 @@ export default class ZkIdentityService implements IBackupable {
 
   private writeIdentities = async (identities: Map<string, string>): Promise<void> => {
     const serializedIdentities = JSON.stringify(Array.from(identities.entries()));
-    const cipherText = this.lockService.encrypt(serializedIdentities);
-    await this.identitiesStore.set(cipherText);
+    const ciphertext = this.lockService.encrypt(serializedIdentities);
+    await this.identitiesStore.set(ciphertext);
   };
 
   private refresh = async (): Promise<void> => {
