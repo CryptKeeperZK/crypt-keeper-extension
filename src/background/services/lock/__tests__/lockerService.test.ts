@@ -159,6 +159,50 @@ describe("background/services/locker", () => {
 
       await expect(lockService.unlock(defaultPassword)).rejects.toThrowError("Incorrect password");
     });
+
+    test("should check password is correct", async () => {
+      (SimpleStorage as jest.Mock).mock.instances.forEach((instance: MockStorage) => {
+        instance.get.mockReturnValue(undefined);
+      });
+
+      (cryptoDecrypt as jest.Mock).mockReturnValue(passwordChecker);
+
+      const result = await lockService.isAuthentic(defaultPassword, true);
+
+      expect(result).toStrictEqual({ isNewOnboarding: true });
+    });
+
+    test("should check password is correct with filled storage", async () => {
+      (cryptoDecrypt as jest.Mock).mockReturnValue(passwordChecker);
+
+      const result = await lockService.isAuthentic(defaultPassword, true);
+
+      expect(result).toStrictEqual({ isNewOnboarding: false });
+    });
+
+    test("should throw error if trying to check empty password", async () => {
+      (cryptoDecrypt as jest.Mock).mockReturnValue(passwordChecker);
+
+      await expect(lockService.isAuthentic("", false)).rejects.toThrowError("Password is not provided");
+    });
+
+    test("should throw error if password is incorrect", async () => {
+      (cryptoDecrypt as jest.Mock).mockReturnValue("");
+
+      await expect(lockService.isAuthentic(defaultPassword, false)).rejects.toThrowError("Incorrect password");
+    });
+
+    test("should throw error if data is corrupted", async () => {
+      (SimpleStorage as jest.Mock).mock.instances.forEach((instance: MockStorage) => {
+        instance.get.mockReturnValue(undefined);
+      });
+
+      (cryptoDecrypt as jest.Mock).mockReturnValue(passwordChecker);
+
+      await expect(lockService.isAuthentic(defaultPassword, false)).rejects.toThrowError(
+        "Something badly gone wrong (reinstallation probably required)",
+      );
+    });
   });
 
   describe("backup", () => {
@@ -172,6 +216,16 @@ describe("background/services/locker", () => {
       expect(result).toBeDefined();
 
       expect(mockGet).toBeCalledTimes(3);
+    });
+
+    test("should not download encrypted password storage if storage is empty", async () => {
+      (SimpleStorage as jest.Mock).mock.instances.forEach((instance: MockStorage) => {
+        instance.get.mockReturnValue(undefined);
+      });
+
+      const result = await lockService.downloadEncryptedStorage(defaultPassword);
+
+      expect(result).toBeNull();
     });
 
     test("should not upload encrypted password storage if existing user", async () => {

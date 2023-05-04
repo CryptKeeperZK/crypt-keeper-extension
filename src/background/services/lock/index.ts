@@ -10,9 +10,8 @@ import SimpleStorage from "@src/background/services/storage";
 import { setStatus } from "@src/ui/ducks/app";
 import pushMessage from "@src/util/pushMessage";
 
+import type { AuthenticityCheckData } from "./types";
 import type { IBackupable } from "@src/background/services/backup";
-
-import { AuthenticityCheckData } from "./types";
 
 const PASSWORD_DB_KEY = "@password@";
 
@@ -105,10 +104,13 @@ export default class LockerService implements IBackupable {
 
   downloadEncryptedStorage = async (backupPassword: string): Promise<string | null> => {
     const backupEncryptedData = await this.passwordStorage.get<string>();
-    await this.isAuthentic(backupPassword, true);
 
-    if (backupEncryptedData) return cryptoGenerateEncryptedHmac(backupEncryptedData, backupPassword);
-    return null;
+    if (!backupEncryptedData) {
+      return null;
+    }
+
+    await this.isAuthentic(backupPassword, true);
+    return cryptoGenerateEncryptedHmac(backupEncryptedData, backupPassword);
   };
 
   uploadEncryptedStorage = async (backupEncryptedData: string, backupPassword: string): Promise<void> => {
@@ -124,9 +126,13 @@ export default class LockerService implements IBackupable {
     const isLockerAuthentic = await this.isLockerPasswordAuthentic(password);
     const isNewOnboarding = await this.isNewOnboarding();
 
-    if (!isNewOnboarding && !isLockerAuthentic) throw new Error("Incorrect password");
-    if (isNewOnboarding && !isBackupAvaiable)
+    if (!isNewOnboarding && !isLockerAuthentic) {
+      throw new Error("Incorrect password");
+    }
+
+    if (isNewOnboarding && !isBackupAvaiable) {
       throw new Error("Something badly gone wrong (reinstallation probably required)");
+    }
 
     return {
       isNewOnboarding,
@@ -140,28 +146,41 @@ export default class LockerService implements IBackupable {
   };
 
   private isLockerPasswordAuthentic = async (password: string): Promise<boolean> => {
-    if (!password) throw new Error("Password is not provided");
+    if (!password) {
+      throw new Error("Password is not provided");
+    }
 
     const cipherText = await this.passwordStorage.get<string>();
 
-    if (!cipherText) return false;
+    if (!cipherText) {
+      return false;
+    }
 
     const decryptedPasswordChecker = cryptoDecrypt(cipherText, password);
     return decryptedPasswordChecker === this.passwordChecker;
   };
 
   ensure = (payload: unknown = null): unknown | null | false => {
-    if (!this.isUnlocked || !this.password) return false;
+    if (!this.isUnlocked || !this.password) {
+      return false;
+    }
+
     return payload;
   };
 
   encrypt = (payload: string): string => {
-    if (!this.password) throw new Error("Password is not provided");
+    if (!this.password) {
+      throw new Error("Password is not provided");
+    }
+
     return cryptoEncrypt(payload, this.password);
   };
 
   decrypt = (ciphertext: string): string => {
-    if (!this.password) throw new Error("Password is not provided");
+    if (!this.password) {
+      throw new Error("Password is not provided");
+    }
+
     return cryptoDecrypt(ciphertext, this.password);
   };
 

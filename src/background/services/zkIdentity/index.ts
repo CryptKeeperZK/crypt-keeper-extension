@@ -358,15 +358,20 @@ export default class ZkIdentityService implements IBackupable {
   downloadEncryptedStorage = async (backupPassword: string): Promise<string | null> => {
     const backupEncryptedData = await this.identitiesStore.get<string>();
 
-    await this.lockService.isAuthentic(backupPassword, true);
+    if (!backupEncryptedData) {
+      return null;
+    }
 
-    if (backupEncryptedData) return cryptoGenerateEncryptedHmac(backupEncryptedData, backupPassword);
-    return null;
+    await this.lockService.isAuthentic(backupPassword, true);
+    return cryptoGenerateEncryptedHmac(backupEncryptedData, backupPassword);
   };
 
   uploadEncryptedStorage = async (backupEncryptedData: string, backupPassword: string): Promise<void> => {
+    if (!backupEncryptedData) {
+      return;
+    }
+
     await this.lockService.isAuthentic(backupPassword, true);
-    if (backupEncryptedData)
-      await this.identitiesStore.set<string>(cryptoGetAuthenticBackupCiphertext(backupEncryptedData, backupPassword));
+    await this.identitiesStore.set<string>(cryptoGetAuthenticBackupCiphertext(backupEncryptedData, backupPassword));
   };
 }

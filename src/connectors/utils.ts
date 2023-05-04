@@ -11,8 +11,13 @@ export enum ConnectorNames {
 }
 
 export function getConnectorName(connector: Connector): ConnectorNames {
-  if (connector instanceof MetaMask) return ConnectorNames.METAMASK;
-  if (connector instanceof MockConnector) return ConnectorNames.MOCK;
+  if (connector instanceof MetaMask) {
+    return ConnectorNames.METAMASK;
+  }
+
+  if (connector instanceof MockConnector) {
+    return ConnectorNames.MOCK;
+  }
 
   return ConnectorNames.UNKNOWN;
 }

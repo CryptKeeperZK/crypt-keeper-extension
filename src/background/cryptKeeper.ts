@@ -119,8 +119,13 @@ export default class CryptKeeperController extends Handler {
         const approved = this.approvalService.isApproved(meta.origin);
         const permission = this.approvalService.getPermission(meta.origin);
 
-        if (!identity) throw new Error("active identity not found");
-        if (!approved) throw new Error(`${meta.origin} is not approved`);
+        if (!identity) {
+          throw new Error("active identity not found");
+        }
+
+        if (!approved) {
+          throw new Error(`${meta.origin} is not approved`);
+        }
 
         try {
           const request = {
@@ -159,8 +164,12 @@ export default class CryptKeeperController extends Handler {
           verificationKey: browser.runtime.getURL("js/zkeyFiles/rln/rln.json"),
         };
 
-        if (!identity) throw new Error("active identity not found");
-        if (!approved) throw new Error(`${meta.origin} is not approved`);
+        if (!identity) {
+          throw new Error("active identity not found");
+        }
+        if (!approved) {
+          throw new Error(`${meta.origin} is not approved`);
+        }
 
         try {
           const request = {
@@ -187,7 +196,9 @@ export default class CryptKeeperController extends Handler {
     // Injecting
     this.add(RPCAction.TRY_INJECT, async (payload: { origin: string }) => {
       const { origin: host } = payload;
-      if (!host) throw new Error("Origin not provided");
+      if (!host) {
+        throw new Error("Origin not provided");
+      }
 
       const { isUnlocked } = await this.lockService.getStatus();
 
@@ -199,7 +210,9 @@ export default class CryptKeeperController extends Handler {
       const isApproved = this.approvalService.isApproved(host);
       const canSkipApprove = this.approvalService.canSkipApprove(host);
 
-      if (isApproved) return { isApproved, canSkipApprove };
+      if (isApproved) {
+        return { isApproved, canSkipApprove };
+      }
 
       try {
         await this.requestManager.newRequest(PendingRequestType.INJECT, { origin: host });

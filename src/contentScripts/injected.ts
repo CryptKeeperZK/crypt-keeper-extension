@@ -279,7 +279,9 @@ window.addEventListener("message", (event: MessageEvent<InjectedMessageData>) =>
       return;
     }
 
-    if (!promises[data.nonce]) return;
+    if (!promises[data.nonce]) {
+      return;
+    }
 
     const [err, res] = data.payload;
     const { resolve, reject } = promises[data.nonce];
