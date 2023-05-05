@@ -103,8 +103,8 @@ export default class HistoryService {
   };
 
   private writeOperations = async (operations: Operation[]) => {
-    const cipherText = this.lockService.encrypt(JSON.stringify(operations));
-    await this.historyStore.set(cipherText);
+    const ciphertext = this.lockService.encrypt(JSON.stringify(operations));
+    await this.historyStore.set(ciphertext);
   };
 
   removeOperation = async (id: string): Promise<Operation[]> => {

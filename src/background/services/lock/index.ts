@@ -53,16 +53,16 @@ export default class LockerService implements IBackupable {
    *  This method is called when install event occurs
    */
   setupPassword = async (password: string): Promise<void> => {
-    const cipherText = cryptoEncrypt(this.passwordChecker, password);
-    await this.passwordStorage.set(cipherText);
+    const ciphertext = cryptoEncrypt(this.passwordChecker, password);
+    await this.passwordStorage.set(ciphertext);
     await this.unlock(password);
   };
 
   getStatus = async (): Promise<LockStatus> => {
-    const cipherText = await this.passwordStorage.get();
+    const ciphertext = await this.passwordStorage.get();
 
     return {
-      isInitialized: !!cipherText,
+      isInitialized: !!ciphertext,
       isUnlocked: this.isUnlocked,
     };
   };
@@ -140,9 +140,9 @@ export default class LockerService implements IBackupable {
   };
 
   private isNewOnboarding = async () => {
-    const cipherText = await this.passwordStorage.get<string>();
+    const ciphertext = await this.passwordStorage.get<string>();
 
-    return !cipherText;
+    return !ciphertext;
   };
 
   private isLockerPasswordAuthentic = async (password: string): Promise<boolean> => {
@@ -150,13 +150,13 @@ export default class LockerService implements IBackupable {
       throw new Error("Password is not provided");
     }
 
-    const cipherText = await this.passwordStorage.get<string>();
+    const ciphertext = await this.passwordStorage.get<string>();
 
-    if (!cipherText) {
+    if (!ciphertext) {
       return false;
     }
 
-    const decryptedPasswordChecker = cryptoDecrypt(cipherText, password);
+    const decryptedPasswordChecker = cryptoDecrypt(ciphertext, password);
     return decryptedPasswordChecker === this.passwordChecker;
   };
 

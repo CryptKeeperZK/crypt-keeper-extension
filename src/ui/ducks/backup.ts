@@ -8,7 +8,5 @@ export const downloadBackup =
   async () =>
     postMessage({
       method: RPCAction.DOWNLOAD_BACKUP,
-      payload: {
-        password,
-      },
+      payload: password,
     });

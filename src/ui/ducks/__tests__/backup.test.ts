@@ -21,7 +21,7 @@ describe("ui/ducks/backup", () => {
     const result = await Promise.resolve(store.dispatch(downloadBackup("password")));
 
     expect(postMessage).toBeCalledTimes(1);
-    expect(postMessage).toBeCalledWith({ method: RPCAction.DOWNLOAD_BACKUP, payload: { password: "password" } });
+    expect(postMessage).toBeCalledWith({ method: RPCAction.DOWNLOAD_BACKUP, payload: "password" });
     expect(result).toBe("content");
   });
 });
