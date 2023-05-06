@@ -137,6 +137,7 @@
     "@zk-kit/incremental-merkle-tree": "^1.0.0",
     "bigint-conversion": "^2.4.1",
     "bignumber.js": "^9.1.1",
+    "bip39": "^3.1.0",
     "classnames": "^2.3.2",
     "copy-to-clipboard": "^3.3.2",
     "crypto-js": "^4.1.1",
@@ -159,6 +160,8 @@
     "redux-thunk": "^2.4.2",
     "rlnjs": "^2.0.8",
     "subworkers": "^1.0.1",
+    "tweetnacl": "^1.0.3",
+    "tweetnacl-util": "^0.15.1",
     "webextension-polyfill-ts": "^0.26.0",
     "yup": "^1.1.1"
   },
