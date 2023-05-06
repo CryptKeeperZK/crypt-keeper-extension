@@ -10,6 +10,8 @@ import {
   InjectedMessageData,
   MerkleProofArtifacts,
   InjectedProviderRequest,
+  RLNFullProof,
+  SemaphoreProof,
 } from "@src/types";
 import { SelectedIdentity } from "@src/ui/ducks/identities";
 
@@ -60,7 +62,7 @@ export class CryptKeeperInjectedProvider extends EventEmitter {
 
   // Connect injected script messages with content script messages
   // TODO: (#75) enhance by moving towards long-lived conenctions #75
-  private async post(message: InjectedProviderRequest) {
+  private async post(message: InjectedProviderRequest): Promise<unknown> {
     return new Promise((resolve, reject) => {
       // eslint-disable-next-line no-plusplus
       const messageNonce = this.nonce++;
@@ -84,7 +86,7 @@ export class CryptKeeperInjectedProvider extends EventEmitter {
     });
   }
 
-  private async addHost(host: string, noApproval: boolean) {
+  private async addHost(host: string, noApproval: boolean): Promise<unknown> {
     return this.post({
       method: RPCAction.APPROVE_HOST,
       payload: { host, noApproval },
@@ -92,13 +94,13 @@ export class CryptKeeperInjectedProvider extends EventEmitter {
   }
 
   // Open Popup
-  async openPopup() {
+  async openPopup(): Promise<unknown> {
     return this.post({
       method: "OPEN_POPUP",
     });
   }
 
-  async eventResponser(event: MessageEvent<InjectedMessageData>) {
+  eventResponser(event: MessageEvent<InjectedMessageData>): unknown {
     const { data } = event;
 
     if (data && data.target === "injected-injectedscript") {
@@ -139,25 +141,25 @@ export class CryptKeeperInjectedProvider extends EventEmitter {
   }
 
   // dev-only
-  async clearApproved() {
+  async clearApproved(): Promise<unknown> {
     return this.post({
       method: RPCAction.CLEAR_APPROVED_HOSTS,
     });
   }
 
-  async getIdentityCommitments() {
+  async getIdentityCommitments(): Promise<unknown> {
     return this.post({
       method: RPCAction.GET_COMMITMENTS,
     });
   }
 
-  async getActiveIdentity() {
+  async getActiveIdentity(): Promise<SelectedIdentity> {
     return this.post({
       method: RPCAction.GET_ACTIVE_IDENTITY_DATA,
     }) as Promise<SelectedIdentity>;
   }
 
-  async getHostPermissions(host: string) {
+  async getHostPermissions(host: string): Promise<unknown> {
     return this.post({
       method: RPCAction.GET_HOST_PERMISSIONS,
       payload: host,
@@ -169,7 +171,7 @@ export class CryptKeeperInjectedProvider extends EventEmitter {
     permissions?: {
       noApproval?: boolean;
     },
-  ) {
+  ): Promise<unknown> {
     return this.post({
       method: RPCAction.SET_HOST_PERMISSIONS,
       payload: {
@@ -179,7 +181,7 @@ export class CryptKeeperInjectedProvider extends EventEmitter {
     });
   }
 
-  async createIdentity() {
+  async createIdentity(): Promise<unknown> {
     return this.post({
       method: RPCAction.CREATE_IDENTITY_REQ,
     });
@@ -190,7 +192,7 @@ export class CryptKeeperInjectedProvider extends EventEmitter {
     signal: string,
     merkleProofArtifactsOrStorageAddress: string | MerkleProofArtifacts,
     merkleProof?: MerkleProof,
-  ) {
+  ): Promise<SemaphoreProof> {
     const merkleProofArtifacts =
       typeof merkleProofArtifactsOrStorageAddress === "string" ? undefined : merkleProofArtifactsOrStorageAddress;
     const merkleStorageAddress =
@@ -220,7 +222,7 @@ export class CryptKeeperInjectedProvider extends EventEmitter {
     signal: string,
     merkleProofArtifactsOrStorageAddress: string | MerkleProofArtifacts,
     rlnIdentifier: string,
-  ) {
+  ): Promise<RLNFullProof> {
     const merkleProofArtifacts =
       typeof merkleProofArtifactsOrStorageAddress === "string" ? undefined : merkleProofArtifactsOrStorageAddress;
     const merkleStorageAddress =

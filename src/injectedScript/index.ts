@@ -5,22 +5,22 @@ import { isDebugMode } from "@src/config/env";
 
 import { CryptKeeperInjectedProvider } from "./providers/Base";
 
-log.setDefaultLevel(isDebugMode() ? "debug" : "info");
-
 declare global {
   interface Window {
-    cryptkeeper?: CryptKeeperInjectedProvider
+    cryptkeeper?: CryptKeeperInjectedProvider;
   }
 }
 
-function initializeInjectedProvider() {
+log.setDefaultLevel(isDebugMode() ? "debug" : "info");
+
+function initializeInjectedProvider(): void {
   const injectedProvider = new CryptKeeperInjectedProvider();
   setGlobalInjectedPrivider(injectedProvider);
   window.addEventListener("message", injectedProvider.eventResponser);
 }
 
 function setGlobalInjectedPrivider(injectedProvider: CryptKeeperInjectedProvider): void {
-  (window as Record<string, any>).cryptkeeper = injectedProvider;
+  window.cryptkeeper = injectedProvider;
   window.dispatchEvent(new Event(`CryptKeeper Injected Provider has been succssfully intialized.`));
 }
 

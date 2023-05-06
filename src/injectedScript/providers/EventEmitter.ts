@@ -1,4 +1,4 @@
-import { Emitter, Unsubscribe, createNanoEvents } from "nanoevents";
+import { Emitter, createNanoEvents } from "nanoevents";
 
 import { EventHandler, EventName } from "./types";
 
