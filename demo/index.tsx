@@ -5,11 +5,11 @@ import { RLN } from "rlnjs";
 import { bigintToHex } from "bigint-conversion";
 import { Identity } from "@semaphore-protocol/identity";
 import { encodeBytes32String } from "ethers";
-
 import { ToastContainer, toast } from "react-toastify";
+
 import "react-toastify/dist/ReactToastify.css";
 
-import type { Client } from "../src/contentScripts/injected";
+import type { CryptKeeperInjectedProvider } from "../src/injectedScript/providers/Base";
 
 const SERVER_URL = "http://localhost:8090";
 
@@ -22,9 +22,7 @@ enum MerkleProofType {
 
 declare global {
   interface Window {
-    zkpr?: {
-      connect: () => Promise<Client | null>;
-    };
+    cryptkeeper?: CryptKeeperInjectedProvider;
   }
 }
 
@@ -53,6 +51,7 @@ function NotConnected({ onClick }: INotConnectedProps) {
   return (
     <div>
       Please connect to Crypt-Keeper to continue. <button onClick={onClick}>Connect</button>
+      <ToastContainer newestOnTop={true} />
     </div>
   );
 }
@@ -62,13 +61,18 @@ function NoActiveIDCommitment() {
 }
 
 function App() {
-  const [client, setClient] = useState<Client | null>(null);
+  const [client, setClient] = useState<CryptKeeperInjectedProvider>();
   const [isLocked, setIsLocked] = useState(true);
   const [selectedIdentity, setSelectedIdentity] = useState<SelectedIdentity>({
     commitment: "",
     web2Provider: "",
   });
   const mockIdentityCommitments: string[] = genMockIdentityCommitments();
+
+  const connect = useCallback(async () => {
+    await client?.connect();
+    setIsLocked(false);
+  }, []);
 
   const genSemaphoreProof = async (proofType: MerkleProofType = MerkleProofType.STORAGE_ADDRESS) => {
     const externalNullifier = encodeBytes32String("voting-1");
@@ -171,15 +175,6 @@ function App() {
     client?.createIdentity();
   }, [client]);
 
-  const initClient = useCallback(async () => {
-    const client = await window.zkpr?.connect();
-
-    if (client) {
-      setClient(client);
-      setIsLocked(false);
-    }
-  }, [setClient, setIsLocked]);
-
   const onIdentityChanged = useCallback(
     (payload: unknown) => {
       const { commitment, web2Provider } = payload as SelectedIdentity;
@@ -203,27 +198,29 @@ function App() {
     setIsLocked(true);
   }, [setSelectedIdentity, setIsLocked]);
 
+  // Connect to CK
   useEffect(() => {
-    if (!client) {
-      initClient();
-      return undefined;
-    }
+    (() => {
+      const { cryptkeeper } = window;
 
-    getIdentityCommitment();
+      if (!cryptkeeper) {
+        toast(`CryptKeeper is not installed in the browser`, { type: "error" });
+      }
 
-    client?.on("login", onLogin);
-    client?.on("identityChanged", onIdentityChanged);
-    client?.on("logout", onLogout);
+      setClient(cryptkeeper);
 
-    return () => {
-      client?.off("login", onLogin);
-      client?.off("identityChanged", onIdentityChanged);
-      client?.off("logout", onLogout);
-    };
-  }, [Boolean(client), onLogout, onIdentityChanged, onLogin]);
+      getIdentityCommitment();
+
+      client?.on("login", onLogin);
+      client?.on("identityChanged", onIdentityChanged);
+      client?.on("logout", onLogout);
+
+      return client?.cleanListeners();
+    })();
+  }, [onLogout, onIdentityChanged, onLogin, setClient, setIsLocked]);
 
   if (!client || isLocked) {
-    return <NotConnected onClick={initClient} />;
+    return <NotConnected onClick={connect} />;
   }
 
   if (!selectedIdentity) {

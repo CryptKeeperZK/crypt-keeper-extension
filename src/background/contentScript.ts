@@ -5,7 +5,7 @@ import { InjectedMessageData, ReduxAction } from "@src/types";
 import { setStatus } from "@src/ui/ducks/app";
 import { SelectedIdentity, setSelectedCommitment } from "@src/ui/ducks/identities";
 
-try {
+function injectScript() {
   const url = browser.runtime.getURL("js/injected.js");
   const container = document.head || document.documentElement;
   const scriptTag = document.createElement("script");
@@ -13,7 +13,10 @@ try {
   scriptTag.setAttribute("async", "false");
   container.insertBefore(scriptTag, container.children[0]);
   container.removeChild(scriptTag);
+}
 
+try {
+  injectScript();
   window.addEventListener("message", (event: MessageEvent<InjectedMessageData>) => {
     const { data } = event;
     if (data && data.target === "injected-contentscript") {

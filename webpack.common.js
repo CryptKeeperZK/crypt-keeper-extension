@@ -21,8 +21,8 @@ const TARGET = process.env.TARGET || "chrome";
 
 module.exports = {
   entry: {
-    injected: path.resolve(__dirname, "src/contentScripts/injected.ts"),
-    content: path.resolve(__dirname, "src/contentScripts/index.ts"),
+    injected: path.resolve(__dirname, "src/injectedScript/index.ts"),
+    content: path.resolve(__dirname, "src/background/contentScript.ts"),
     backgroundPage: path.resolve(__dirname, "src/background/backgroundPage.ts"),
     popup: path.resolve(__dirname, "src/ui/popup.tsx"),
   },
