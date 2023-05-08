@@ -55,6 +55,11 @@ module.exports = {
       chunks: ["popup"],
       minify: true,
     }),
+    new webpack.IgnorePlugin({
+      checkResource(resource) {
+        return /.*\/wordlists\/(?!english).*\.json/.test(resource);
+      },
+    }),
   ],
   module: {
     rules: [
