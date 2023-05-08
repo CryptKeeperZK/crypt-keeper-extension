@@ -20,6 +20,7 @@ enum MerkleProofType {
   ARTIFACTS,
 }
 
+// TODO: remove this from the demo, after finishing from publishing `@cryptkeeper/providers` package
 declare global {
   interface Window {
     cryptkeeper?: CryptKeeperInjectedProvider;
