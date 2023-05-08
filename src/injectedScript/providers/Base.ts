@@ -103,7 +103,7 @@ export class CryptKeeperInjectedProvider extends EventEmitter {
     });
   }
 
-  eventResponser(event: MessageEvent<InjectedMessageData>): unknown {
+  eventResponser = (event: MessageEvent<InjectedMessageData>): unknown => {
     const { data } = event;
 
     if (data && data.target === "injected-injectedscript") {
