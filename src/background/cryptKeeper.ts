@@ -2,7 +2,7 @@ import log from "loglevel";
 import { browser } from "webextension-polyfill-ts";
 
 import { RPCAction } from "@src/constants";
-import { PendingRequestType, RLNProofRequest, SemaphoreProofRequest, BackupableServices } from "@src/types";
+import { PendingRequestType, RLNProofRequest, SemaphoreProofRequest, BackupableServices, Approvals } from "@src/types";
 
 import BrowserUtils from "./controllers/browserUtils";
 import Handler from "./controllers/handler";
@@ -194,7 +194,7 @@ export default class CryptKeeperController extends Handler {
     );
 
     // Injecting
-    this.add(RPCAction.TRY_INJECT, async (payload: { origin: string }) => {
+    this.add(RPCAction.TRY_INJECT, async (payload: { origin: string }): Promise<Approvals> => {
       const { origin: host } = payload;
       if (!host) {
         throw new Error("Origin not provided");

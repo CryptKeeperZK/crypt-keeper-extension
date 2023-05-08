@@ -1,6 +1,8 @@
 const CopyPlugin = require("copy-webpack-plugin");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const webpack = require("webpack");
+const pathsTransformer = require("ts-transform-paths").default;
+const TsconfigPathsPlugin = require('tsconfig-paths-webpack-plugin');
 
 const path = require("path");
 
@@ -21,7 +23,7 @@ const TARGET = process.env.TARGET || "chrome";
 
 module.exports = {
   entry: {
-    injected: path.resolve(__dirname, "src/injectedScript/index.ts"),
+    injected: path.resolve(__dirname, "src/background/injectedScript.ts"),
     content: path.resolve(__dirname, "src/background/contentScript.ts"),
     backgroundPage: path.resolve(__dirname, "src/background/backgroundPage.ts"),
     popup: path.resolve(__dirname, "src/ui/popup.tsx"),
@@ -66,7 +68,12 @@ module.exports = {
       {
         exclude: /node_modules/,
         test: /\.tsx?$/,
-        use: "ts-loader",
+        use: {
+          loader: "ts-loader",
+          options: {
+            getCustomTransformers: (program) => pathsTransformer()
+          }
+        },
       },
       {
         exclude: /node_modules/,
@@ -111,5 +118,6 @@ module.exports = {
       zlib: false,
       constants: false,
     },
+    plugins: [new TsconfigPathsPlugin()]
   },
 };

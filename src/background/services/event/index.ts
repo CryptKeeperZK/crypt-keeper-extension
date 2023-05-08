@@ -2,7 +2,7 @@ import { Emitter, createNanoEvents } from "nanoevents";
 
 import { EventHandler, EventName } from "./types";
 
-export class EventEmitter {
+export default class EventEmitter {
   private emitter: Emitter;
 
   constructor() {

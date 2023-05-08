@@ -3,6 +3,8 @@ import log from "loglevel";
 
 import { ZkIdentitySemaphore } from "@src/background/services/zkIdentity/protocols/ZkIdentitySemaphore";
 import ZkProofService from "@src/background/services/zkProof";
+// TODO: convert to seperate service pacakges @cryptkeeper/services TBD
+import EventEmitter from "@src/background/services/event";
 import { RPCAction } from "@src/constants";
 import {
   IRlnGenerateArgs,
@@ -12,11 +14,9 @@ import {
   InjectedProviderRequest,
   RLNFullProof,
   SemaphoreProof,
+  SelectedIdentity,
+  Approvals
 } from "@src/types";
-import { SelectedIdentity } from "@src/ui/ducks/identities";
-
-import { EventEmitter } from "./EventEmitter";
-import { Approvals } from "./types";
 
 const promises: {
   [k: string]: {
@@ -141,7 +141,7 @@ export class CryptKeeperInjectedProvider extends EventEmitter {
 
       delete promises[data.nonce];
     }
-  }
+  };
 
   // dev-only
   async clearApproved(): Promise<unknown> {

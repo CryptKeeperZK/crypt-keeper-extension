@@ -9,7 +9,10 @@ import { ToastContainer, toast } from "react-toastify";
 
 import "react-toastify/dist/ReactToastify.css";
 
-import type { CryptKeeperInjectedProvider } from "../src/injectedScript/providers/Base";
+// TODO: convert this after finishing from publishing `@cryptkeeper/providers` package 
+import { CryptKeeperInjectedProvider } from "@cryptkeeper/providers"
+// TODO: convert this after finishing from publishing `@cryptkeeper/providers` package and export the used types 
+import { SelectedIdentity } from "@cryptkeeper/types";
 
 const SERVER_URL = "http://localhost:8090";
 
@@ -18,19 +21,6 @@ const merkleStorageAddress = `${SERVER_URL}/merkleProof`;
 enum MerkleProofType {
   STORAGE_ADDRESS,
   ARTIFACTS,
-}
-
-// TODO: remove this from the demo, after finishing from publishing `@cryptkeeper/providers` package
-declare global {
-  interface Window {
-    cryptkeeper?: CryptKeeperInjectedProvider;
-  }
-}
-
-// TODO: we should import this from CK types package @types/cryptkeeper
-interface SelectedIdentity {
-  commitment: string;
-  web2Provider?: string;
 }
 
 const genMockIdentityCommitments = (): string[] => {
@@ -152,7 +142,7 @@ function App() {
   };
 
   const getIdentityCommitment = useCallback(async () => {
-    const payload: SelectedIdentity = await client?.getActiveIdentity();
+    const payload = await client?.getActiveIdentity();
 
     if (!payload) {
       return;

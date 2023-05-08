@@ -1,9 +1,9 @@
 import log from "loglevel";
 import { browser } from "webextension-polyfill-ts";
 
-import { InjectedMessageData, ReduxAction } from "@src/types";
+import { InjectedMessageData, ReduxAction, SelectedIdentity } from "@src/types";
 import { setStatus } from "@src/ui/ducks/app";
-import { SelectedIdentity, setSelectedCommitment } from "@src/ui/ducks/identities";
+import { setSelectedCommitment } from "@src/ui/ducks/identities";
 
 function injectScript() {
   const url = browser.runtime.getURL("js/injected.js");

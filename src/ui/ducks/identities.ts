@@ -3,7 +3,7 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import deepEqual from "fast-deep-equal";
 
 import { RPCAction } from "@src/constants";
-import { CreateIdentityOptions, HistorySettings, IdentityData, IdentityStrategy, Operation } from "@src/types";
+import { CreateIdentityOptions, HistorySettings, IdentityData, IdentityStrategy, Operation, SelectedIdentity } from "@src/types";
 import postMessage from "@src/util/postMessage";
 
 import type { TypedThunk } from "@src/ui/store/configureAppStore";
@@ -16,11 +16,6 @@ export interface IdentitiesState {
   requestPending: boolean;
   selected: SelectedIdentity; // This aim to be a short-term solution to the integration with Zkitter
   settings?: HistorySettings;
-}
-
-export interface SelectedIdentity {
-  commitment: string;
-  web2Provider?: string;
 }
 
 const initialState: IdentitiesState = {

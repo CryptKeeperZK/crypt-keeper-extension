@@ -19,3 +19,5 @@ export type ReduxAction = {
   error?: boolean;
   meta?: unknown;
 };
+
+export type { SelectedIdentity } from "./identities";
