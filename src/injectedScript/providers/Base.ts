@@ -26,13 +26,16 @@ const promises: {
 } = {};
 
 export class CryptKeeperInjectedProvider extends EventEmitter {
+  readonly isCryptKeeper = true;
+
   private nonce: number;
 
-  readonly isCryptKeeper = true;
+  private zkProofService: ZkProofService;
 
   constructor() {
     super();
     this.nonce = 0;
+    this.zkProofService = ZkProofService.getInstance();
   }
 
   /**
@@ -198,8 +201,6 @@ export class CryptKeeperInjectedProvider extends EventEmitter {
     const merkleStorageAddress =
       typeof merkleProofArtifactsOrStorageAddress === "string" ? merkleProofArtifactsOrStorageAddress : undefined;
 
-    const zkProofService = ZkProofService.getInstance();
-
     const request = (await this.post({
       method: RPCAction.PREPARE_SEMAPHORE_PROOF_REQUEST,
       payload: {
@@ -211,7 +212,7 @@ export class CryptKeeperInjectedProvider extends EventEmitter {
       },
     })) as ISemaphoreGenerateArgs;
 
-    return zkProofService.generateSemaphoreProof(
+    return this.zkProofService.generateSemaphoreProof(
       ZkIdentitySemaphore.genFromSerialized(request.identity),
       request.payload,
     );
@@ -228,8 +229,6 @@ export class CryptKeeperInjectedProvider extends EventEmitter {
     const merkleStorageAddress =
       typeof merkleProofArtifactsOrStorageAddress === "string" ? merkleProofArtifactsOrStorageAddress : undefined;
 
-    const zkProofService = ZkProofService.getInstance();
-
     const request = (await this.post({
       method: RPCAction.PREPARE_RLN_PROOF_REQUEST,
       payload: {
@@ -241,6 +240,9 @@ export class CryptKeeperInjectedProvider extends EventEmitter {
       },
     })) as IRlnGenerateArgs;
 
-    return zkProofService.generateRLNProof(ZkIdentitySemaphore.genFromSerialized(request.identity), request.payload);
+    return this.zkProofService.generateRLNProof(
+      ZkIdentitySemaphore.genFromSerialized(request.identity),
+      request.payload,
+    );
   }
 }
