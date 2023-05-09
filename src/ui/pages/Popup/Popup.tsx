@@ -6,6 +6,7 @@ import CreateIdentity from "@src/ui/pages/CreateIdentity";
 import DownloadBackup from "@src/ui/pages/DownloadBackup";
 import Home from "@src/ui/pages/Home";
 import Login from "@src/ui/pages/Login";
+import Mnemonic from "@src/ui/pages/Mnemonic";
 import Onboarding from "@src/ui/pages/Onboarding";
 import Settings from "@src/ui/pages/Settings";
 
@@ -21,6 +22,7 @@ const routeConfig: RouteObject[] = [
   { path: Paths.REQUESTS, element: <ConfirmRequestModal /> },
   { path: Paths.SETTINGS, element: <Settings /> },
   { path: Paths.DOWNLOAD_BACKUP, element: <DownloadBackup /> },
+  { path: Paths.MNEMONIC, element: <Mnemonic /> },
   {
     path: "*",
     element: <Navigate to={Paths.HOME} />,

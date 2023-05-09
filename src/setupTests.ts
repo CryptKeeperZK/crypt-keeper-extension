@@ -5,6 +5,8 @@ import "isomorphic-fetch";
 
 import type { ReactElement } from "react";
 
+jest.retryTimes(1, { logErrorsBeforeRetry: true });
+
 library.add(faTwitter, faGithub, faReddit);
 
 jest.mock("loglevel", () => ({

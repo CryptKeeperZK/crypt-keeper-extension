@@ -5,10 +5,17 @@
 /* eslint-disable @typescript-eslint/unbound-method */
 import { browser } from "webextension-polyfill-ts";
 
-import { getLastActiveTabUrl, redirectToNewTab, getExtensionUrl, downloadFile } from "../browser";
+import { getLastActiveTabUrl, redirectToNewTab, getExtensionUrl, downloadFile, copyToClipboard } from "../browser";
 
 describe("util/browser", () => {
   const defaultTabs = [{ url: "http://localhost:3000" }];
+  const oldClipboard = navigator.clipboard;
+
+  beforeAll(() => {
+    Object.assign(navigator, {
+      clipboard: { writeText: jest.fn() },
+    });
+  });
 
   beforeEach(() => {
     (browser.tabs.query as jest.Mock).mockResolvedValue(defaultTabs);
@@ -16,6 +23,12 @@ describe("util/browser", () => {
 
   afterEach(() => {
     jest.clearAllMocks();
+  });
+
+  afterAll(() => {
+    Object.assign(navigator, {
+      clipboard: oldClipboard,
+    });
   });
 
   test("should get last active tab url properly", async () => {
@@ -56,5 +69,14 @@ describe("util/browser", () => {
 
     expect(spyCreateElement).toBeCalledTimes(1);
     expect(element.click).toBeCalledTimes(1);
+  });
+
+  test("should copy to clipboard properly", async () => {
+    const spyCopy = jest.spyOn(navigator.clipboard, "writeText");
+
+    await copyToClipboard("content");
+
+    expect(spyCopy).toBeCalledTimes(1);
+    expect(spyCopy).toBeCalledWith("content");
   });
 });
