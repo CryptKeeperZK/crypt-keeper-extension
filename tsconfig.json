@@ -26,5 +26,5 @@
     "strictPropertyInitialization": true
   },
   "include": ["src", "e2e"],
-  "exclude": ["node_modules", "coverage"]
+  "exclude": ["node_modules", "coverage", "dist"]
 }

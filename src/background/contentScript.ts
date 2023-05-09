@@ -13,10 +13,7 @@ function injectScript() {
   scriptTag.setAttribute("async", "false");
   container.insertBefore(scriptTag, container.children[0]);
   container.removeChild(scriptTag);
-}
 
-try {
-  injectScript();
   window.addEventListener("message", (event: MessageEvent<InjectedMessageData>) => {
     const { data } = event;
     if (data && data.target === "injected-contentscript") {
@@ -61,6 +58,10 @@ try {
         log.warn("unknown action in content script");
     }
   });
+}
+
+try {
+  injectScript();
 } catch (e) {
   log.error("error occured", e);
 }
