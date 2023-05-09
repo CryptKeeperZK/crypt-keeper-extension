@@ -3,7 +3,7 @@
   "compilerOptions": {
     "declaration": true,
     "inlineSources": true,
-    "noEmit": false,
+    "noEmit": false
   },
   "exclude": ["e2e", "**/*.test.ts", "**/*.test.tsx"]
 }

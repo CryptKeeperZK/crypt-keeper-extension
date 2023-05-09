@@ -19,8 +19,8 @@ const envPlugin = new webpack.EnvironmentPlugin({
 });
 
 const TARGET = process.env.TARGET || "chrome";
-const tsconfigFilePath = process.env.NODE_ENV === "production" ? path.resolve('./tsconfig.build.json') :
-  path.resolve('./tsconfig.json');
+const tsconfigFilePath =
+  process.env.NODE_ENV === "production" ? path.resolve("./tsconfig.build.json") : path.resolve("./tsconfig.json");
 
 module.exports = {
   entry: {
