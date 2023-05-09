@@ -2,8 +2,7 @@ const CopyPlugin = require("copy-webpack-plugin");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const webpack = require("webpack");
 const pathsTransformer = require("ts-transform-paths").default;
-const TsconfigPathsPlugin = require('tsconfig-paths-webpack-plugin');
-
+const TsconfigPathsPlugin = require("tsconfig-paths-webpack-plugin");
 const path = require("path");
 
 const envPlugin = new webpack.EnvironmentPlugin({
@@ -20,6 +19,7 @@ const envPlugin = new webpack.EnvironmentPlugin({
 });
 
 const TARGET = process.env.TARGET || "chrome";
+const tsconfigFilePath = process.env.NODE_ENV === "production" ? "./tsconfig.build.json" : "./tsconfig.json";
 
 module.exports = {
   entry: {
@@ -71,8 +71,8 @@ module.exports = {
         use: {
           loader: "ts-loader",
           options: {
-            getCustomTransformers: (program) => pathsTransformer()
-          }
+            getCustomTransformers: () => pathsTransformer(),
+          },
         },
       },
       {
@@ -118,6 +118,6 @@ module.exports = {
       zlib: false,
       constants: false,
     },
-    plugins: [new TsconfigPathsPlugin()]
+    plugins: [new TsconfigPathsPlugin({ configFile: tsconfigFilePath })],
   },
 };

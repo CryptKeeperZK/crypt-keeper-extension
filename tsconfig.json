@@ -27,5 +27,5 @@
     "declaration": true
   },
   "include": ["src", "e2e"],
-  "exclude": ["node_modules", "coverage", "**/*.test.ts", "**/*.test.tsx"]
+  "exclude": ["node_modules", "coverage"]
 }

@@ -3,7 +3,14 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import deepEqual from "fast-deep-equal";
 
 import { RPCAction } from "@src/constants";
-import { CreateIdentityOptions, HistorySettings, IdentityData, IdentityStrategy, Operation, SelectedIdentity } from "@src/types";
+import {
+  CreateIdentityOptions,
+  HistorySettings,
+  IdentityData,
+  IdentityStrategy,
+  Operation,
+  SelectedIdentity,
+} from "@src/types";
 import postMessage from "@src/util/postMessage";
 
 import type { TypedThunk } from "@src/ui/store/configureAppStore";

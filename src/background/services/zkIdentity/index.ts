@@ -101,8 +101,8 @@ export default class ZkIdentityService implements IBackupable {
       features.RANDOM_IDENTITY
         ? iterableIdentities
         : [...iterableIdentities].filter(
-          ([, identity]) => ZkIdentitySemaphore.genFromSerialized(identity).metadata.identityStrategy !== "random",
-        ),
+            ([, identity]) => ZkIdentitySemaphore.genFromSerialized(identity).metadata.identityStrategy !== "random",
+          ),
     );
   };
 

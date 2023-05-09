@@ -9,9 +9,9 @@ import { ToastContainer, toast } from "react-toastify";
 
 import "react-toastify/dist/ReactToastify.css";
 
-// TODO: convert this after finishing from publishing `@cryptkeeper/providers` package 
-import { CryptKeeperInjectedProvider } from "@cryptkeeper/providers"
-// TODO: convert this after finishing from publishing `@cryptkeeper/providers` package and export the used types 
+// TODO: convert this after finishing from publishing `@cryptkeeper/providers` package
+import { CryptKeeperInjectedProvider } from "@cryptkeeper/providers";
+// TODO: convert this after finishing from publishing `@cryptkeeper/providers` package and export the used types
 import { SelectedIdentity } from "@cryptkeeper/types";
 
 const SERVER_URL = "http://localhost:8090";

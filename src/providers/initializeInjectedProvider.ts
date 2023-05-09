@@ -3,7 +3,7 @@ import { CryptKeeperInjectedProvider } from "./sdk/Base";
 
 declare global {
   interface Window {
-      cryptkeeper: CryptKeeperInjectedProvider;
+    cryptkeeper: CryptKeeperInjectedProvider;
   }
 }
 
