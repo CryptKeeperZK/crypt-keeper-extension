@@ -19,7 +19,8 @@ const envPlugin = new webpack.EnvironmentPlugin({
 });
 
 const TARGET = process.env.TARGET || "chrome";
-const tsconfigFilePath = process.env.NODE_ENV === "production" ? "./tsconfig.build.json" : "./tsconfig.json";
+const tsconfigFilePath = process.env.NODE_ENV === "production" ? path.resolve('./tsconfig.build.json') :
+  path.resolve('./tsconfig.json');
 
 module.exports = {
   entry: {
@@ -71,6 +72,7 @@ module.exports = {
         use: {
           loader: "ts-loader",
           options: {
+            configFile: tsconfigFilePath,
             getCustomTransformers: () => pathsTransformer(),
           },
         },

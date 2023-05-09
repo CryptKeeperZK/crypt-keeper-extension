@@ -23,8 +23,7 @@
     "allowSyntheticDefaultImports": true,
     "resolveJsonModule": true,
     "noImplicitAny": true,
-    "strictPropertyInitialization": true,
-    "declaration": true
+    "strictPropertyInitialization": true
   },
   "include": ["src", "e2e"],
   "exclude": ["node_modules", "coverage"]
