@@ -35,6 +35,7 @@ export enum RPCAction {
   ENABLE_OPERATION_HISTORY = "rpc/identity/historyEnable",
   DOWNLOAD_BACKUP = "rpc/backup/download",
   UPLOAD_BACKUP = "rpc/backup/upload",
+  SAVE_MNEMONIC = "rpc/mnemonic/save",
   // DEV RPCS
   CLEAR_APPROVED_HOSTS = "rpc/hosts/clear",
 }

@@ -7,6 +7,7 @@ import pushMessage from "@src/util/pushMessage";
 
 import LockerService from "..";
 import { cryptoDecrypt } from "../../crypto";
+import { InitializationStep } from "../../misc";
 
 const defaultPassword = "password";
 const passwordChecker = "Password is correct";
@@ -24,6 +25,14 @@ jest.mock("@src/background/services/crypto", (): unknown => ({
   cryptoDecrypt: jest.fn(() => passwordChecker),
   cryptoGenerateEncryptedHmac: jest.fn(() => "encrypted"),
   cryptoGetAuthenticBackupCiphertext: jest.fn(() => "encrypted"),
+}));
+
+jest.mock("@src/background/services/misc", (): unknown => ({
+  ...jest.requireActual("@src/background/services/misc"),
+  getInstance: jest.fn(() => ({
+    getInitialization: jest.fn(() => InitializationStep.MNEMONIC),
+    setInitialization: jest.fn(),
+  })),
 }));
 
 jest.mock("@src/util/pushMessage");
@@ -99,6 +108,7 @@ describe("background/services/locker", () => {
 
       expect(status).toStrictEqual({
         isInitialized: true,
+        isMnemonicGenerated: true,
         isUnlocked: true,
       });
     });
@@ -111,6 +121,7 @@ describe("background/services/locker", () => {
       expect(status).toStrictEqual({
         isInitialized: true,
         isUnlocked: true,
+        isMnemonicGenerated: true,
       });
 
       expect(pushMessage).toBeCalledTimes(1);

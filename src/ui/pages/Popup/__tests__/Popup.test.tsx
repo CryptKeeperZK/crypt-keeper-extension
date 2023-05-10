@@ -74,6 +74,22 @@ describe("ui/pages/Popup", () => {
     expect(onboarding).toBeInTheDocument();
   });
 
+  test("should render mnemonic page properly", async () => {
+    const { container, findByTestId } = render(
+      <MemoryRouter initialEntries={[Paths.MNEMONIC]}>
+        <Suspense>
+          <Popup />
+        </Suspense>
+      </MemoryRouter>,
+    );
+
+    await waitFor(() => container.firstChild !== null);
+
+    const page = await findByTestId("mnemonic-page");
+
+    expect(page).toBeInTheDocument();
+  });
+
   test("should render login page properly", async () => {
     const { container, findByTestId } = render(
       <MemoryRouter initialEntries={[Paths.LOGIN]}>

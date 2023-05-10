@@ -1,25 +1,46 @@
-import { useCallback } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
+import { generateMnemonic } from "@src/background/services/mnemonic";
 import { Paths } from "@src/constants";
+import { saveMnemonic, useAppStatus } from "@src/ui/ducks/app";
+import { useAppDispatch } from "@src/ui/ducks/hooks";
 
 export interface IUseMnemonicData {
+  isLoading: boolean;
+  error: string;
   mnemonic: string;
-  onGoHome: () => void;
+  onSaveMnemonic: () => void;
 }
 
-// TODO: update app status, generate mnemonic, save root key
 export const useMnemonic = (): IUseMnemonicData => {
-  const mnemonic = "test test test test test test test test test test test junk";
+  const { isMnemonicGenerated } = useAppStatus();
 
+  const [isLoading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const mnemonic = useMemo(() => generateMnemonic(), []);
+
+  const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
-  const onGoHome = useCallback(() => {
-    navigate(Paths.HOME);
-  }, [navigate]);
+  const onSaveMnemonic = useCallback(() => {
+    setLoading(true);
+    dispatch(saveMnemonic(mnemonic))
+      .then(() => navigate(Paths.HOME))
+      .catch((err: Error) => setError(err.message))
+      .finally(() => setLoading(false));
+  }, [mnemonic, navigate, setLoading]);
+
+  useEffect(() => {
+    if (isMnemonicGenerated) {
+      navigate(Paths.HOME);
+    }
+  }, [isMnemonicGenerated, navigate]);
 
   return {
+    isLoading,
+    error,
     mnemonic,
-    onGoHome,
+    onSaveMnemonic,
   };
 };

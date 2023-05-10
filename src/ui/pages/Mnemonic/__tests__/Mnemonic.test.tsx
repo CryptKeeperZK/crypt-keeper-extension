@@ -13,8 +13,10 @@ jest.mock("../useMnemonic", (): unknown => ({
 
 describe("ui/pages/Mnemonic", () => {
   const defaultHookData: IUseMnemonicData = {
+    isLoading: false,
+    error: "",
     mnemonic: "mnemonic",
-    onGoHome: jest.fn(),
+    onSaveMnemonic: jest.fn(),
   };
 
   beforeEach(() => {
@@ -34,6 +36,17 @@ describe("ui/pages/Mnemonic", () => {
     expect(page).toBeInTheDocument();
   });
 
+  test("should render error properly", async () => {
+    (useMnemonic as jest.Mock).mockReturnValue({ ...defaultHookData, error: "error" });
+
+    const { container, findByText } = render(<Mnemonic />);
+    await waitFor(() => container.firstChild !== null);
+
+    const error = await findByText("error");
+
+    expect(error).toBeInTheDocument();
+  });
+
   test("should go home properly", async () => {
     const { container, findByTestId } = render(<Mnemonic />);
     await waitFor(() => container.firstChild !== null);
@@ -41,6 +54,6 @@ describe("ui/pages/Mnemonic", () => {
     const button = await findByTestId("submit-button");
     await act(() => Promise.resolve(button.click()));
 
-    expect(defaultHookData.onGoHome).toBeCalledTimes(1);
+    expect(defaultHookData.onSaveMnemonic).toBeCalledTimes(1);
   });
 });

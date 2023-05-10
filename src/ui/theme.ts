@@ -12,6 +12,11 @@ const PALETTE = {
     white: "#fff",
   },
 
+  action: {
+    disabledBackground: "#94febf",
+    disabled: lighten("#94febf", 0.75),
+  },
+
   primary: {
     main: "#94febf",
   },

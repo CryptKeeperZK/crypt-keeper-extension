@@ -14,6 +14,7 @@ import {
   fetchStatus,
   getWalletConnection,
   lock,
+  saveMnemonic,
   setStatus,
   setWalletConnection,
   setupPassword,
@@ -37,7 +38,12 @@ describe("ui/ducks/app", () => {
   });
 
   test("should fetch status properly", async () => {
-    const expectedState = { isInitialized: true, isUnlocked: true, isDisconnectedPermanently: undefined };
+    const expectedState = {
+      isInitialized: true,
+      isUnlocked: true,
+      isMnemonicGenerated: true,
+      isDisconnectedPermanently: undefined,
+    };
     (postMessage as jest.Mock).mockResolvedValue(expectedState);
 
     await Promise.resolve(store.dispatch(fetchStatus()));
@@ -51,7 +57,12 @@ describe("ui/ducks/app", () => {
   });
 
   test("should set status properly", async () => {
-    const expectedState = { isInitialized: true, isUnlocked: true, isDisconnectedPermanently: undefined };
+    const expectedState = {
+      isInitialized: true,
+      isUnlocked: true,
+      isMnemonicGenerated: true,
+      isDisconnectedPermanently: undefined,
+    };
 
     await Promise.resolve(store.dispatch(setStatus(expectedState)));
     const { app } = store.getState();
@@ -60,7 +71,12 @@ describe("ui/ducks/app", () => {
   });
 
   test("should set wallet connection properly", async () => {
-    const expectedState = { isInitialized: true, isUnlocked: true, isDisconnectedPermanently: true };
+    const expectedState = {
+      isInitialized: true,
+      isUnlocked: true,
+      isMnemonicGenerated: true,
+      isDisconnectedPermanently: true,
+    };
 
     await Promise.resolve(store.dispatch(setWalletConnection(true)));
     const { app } = store.getState();
@@ -76,7 +92,12 @@ describe("ui/ducks/app", () => {
   test("should get wallet connection properly", async () => {
     (postMessage as jest.Mock).mockResolvedValue({ isDisconnectedPermanently: true });
 
-    const expectedState = { isInitialized: true, isUnlocked: true, isDisconnectedPermanently: true };
+    const expectedState = {
+      isInitialized: true,
+      isUnlocked: true,
+      isMnemonicGenerated: true,
+      isDisconnectedPermanently: true,
+    };
 
     await Promise.resolve(store.dispatch(getWalletConnection()));
     const { app } = store.getState();
@@ -114,5 +135,19 @@ describe("ui/ducks/app", () => {
 
     expect(postMessage).toBeCalledTimes(1);
     expect(postMessage).toBeCalledWith({ method: RPCAction.SETUP_PASSWORD, payload: "password" });
+  });
+
+  test("should call save mnemonic action properly", async () => {
+    await Promise.resolve(store.dispatch(saveMnemonic("mnemonic")));
+    const { app } = store.getState();
+
+    expect(app).toStrictEqual({
+      isInitialized: true,
+      isUnlocked: true,
+      isMnemonicGenerated: true,
+      isDisconnectedPermanently: true,
+    });
+    expect(postMessage).toBeCalledTimes(1);
+    expect(postMessage).toBeCalledWith({ method: RPCAction.SAVE_MNEMONIC, payload: "mnemonic" });
   });
 });

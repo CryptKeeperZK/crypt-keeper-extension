@@ -50,11 +50,21 @@ export const RevealMnemonicInput = ({ mnemonic }: IRevealMnemonicInputProps): JS
       />
 
       <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between", my: 2, width: "100%" }}>
-        <Button sx={{ mr: 1, textTransform: "none", width: "100%" }} variant="outlined" onClick={onCopy}>
-          {isCopied ? "Copied!" : "Copy to clipboard"}
+        <Button
+          disabled={isCopied}
+          sx={{ mr: 1, textTransform: "none", width: "100%" }}
+          variant="outlined"
+          onClick={onCopy}
+        >
+          {isCopied ? "Copied!" : "Copy"}
         </Button>
 
-        <Button sx={{ ml: 1, textTransform: "none", width: "100%" }} variant="outlined" onClick={onDownload}>
+        <Button
+          disabled={isDownloaded}
+          sx={{ ml: 1, textTransform: "none", width: "100%" }}
+          variant="outlined"
+          onClick={onDownload}
+        >
           {isDownloaded ? "Downloaded!" : "Download"}
         </Button>
       </Box>

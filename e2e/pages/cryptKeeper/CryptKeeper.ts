@@ -42,6 +42,7 @@ export default class CryptKeeper extends BasePage {
     await this.page.getByLabel("Password", { exact: true }).type(password);
     await this.page.getByLabel("Confirm Password", { exact: true }).type(confirmPassword ?? password);
     await this.page.getByText("Continue", { exact: true }).click();
+    await this.page.getByText("Get started!", { exact: true }).click();
   }
 
   async approve(): Promise<void> {

@@ -70,7 +70,7 @@ describe("ui/pages/Onboarding/useOnboarding", () => {
     expect(result.current.isLoading).toBe(false);
     expect(mockDispatch).toBeCalledTimes(1);
     expect(mockNavigate).toBeCalledTimes(1);
-    expect(mockNavigate).toBeCalledWith(Paths.HOME);
+    expect(mockNavigate).toBeCalledWith(Paths.MNEMONIC);
   });
 
   test("should handle submit error", async () => {
