@@ -2,7 +2,13 @@
 // @src Metamask https://github.com/MetaMask/metamask-extension/blob/develop/app/scripts/app-init.js
 
 // TODO: importing scripts better using importScritps() check MM
+import log from "loglevel";
+
+import { isDebugMode } from "@src/config/env";
+
 import { importAllScripts } from "./shared/importScripts";
+
+log.setDefaultLevel(isDebugMode() ? "debug" : "info");
 
 declare global {
   // eslint-disable-next-line no-var,vars-on-top
@@ -44,14 +50,14 @@ const registerInjectedScript = async () => {
   try {
     await chrome.scripting.registerContentScripts([
       {
-        id: 'injectedProvider',
-        matches: ['file://*/*', 'http://*/*', 'https://*/*'],
-        js: ['js/injected.js'],
-        runAt: 'document_start',
-        world: 'MAIN',
+        id: "injectedProvider",
+        matches: ["file://*/*", "http://*/*", "https://*/*"],
+        js: ["js/injected.js"],
+        runAt: "document_start",
+        world: "MAIN",
       },
     ]);
-  } catch (err) {
+  } catch (err: unknown | string) {
     /**
      * An error occurs when app-init.js is reloaded. Attempts to avoid the duplicate script error:
      * 1. registeringContentScripts inside runtime.onInstalled - This caused a race condition
@@ -59,7 +65,8 @@ const registerInjectedScript = async () => {
      * 2. await chrome.scripting.getRegisteredContentScripts() to check for an existing
      *    inpage script before registering - The provider is not loaded on time.
      */
-    console.warn(`Dropped attempt to register inpage content script. ${err}`);
+    // eslint-disable-next-line
+    log.warn(`Dropped attempt to register inpage content script. ${err}`);
   }
 };
 
