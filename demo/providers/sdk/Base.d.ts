@@ -1,6 +1,6 @@
 import { MerkleProof } from "@zk-kit/incremental-merkle-tree";
-import EventEmitter from "../../background/services/event";
-import { InjectedMessageData, MerkleProofArtifacts, RLNFullProof, SemaphoreProof, SelectedIdentity } from "../../types";
+import EventEmitter from "../event";
+import { InjectedMessageData, MerkleProofArtifacts, RLNFullProof, SemaphoreProof, SelectedIdentity } from "../types";
 export declare class CryptKeeperInjectedProvider extends EventEmitter {
     readonly isCryptKeeper = true;
     private nonce;
