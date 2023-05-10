@@ -1,12 +1,12 @@
 import { Emitter, createNanoEvents } from "nanoevents";
 
-import { EventHandler, EventName } from "./types";
+import { Events, EventHandler, EventName } from "./types";
 
 export default class EventEmitter {
-  private emitter: Emitter;
+  private emitter: Emitter<Events>;
 
   constructor() {
-    this.emitter = createNanoEvents();
+    this.emitter = createNanoEvents<Events>();
   }
 
   on(eventName: EventName, cb: EventHandler): void {
