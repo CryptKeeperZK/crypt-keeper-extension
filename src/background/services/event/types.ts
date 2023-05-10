@@ -1,5 +1,3 @@
 export type EventHandler = (data: unknown) => void;
 export type EventName = "login" | "identityChanged" | "logout";
-export type Events = {
-  [eventName in EventName]: EventHandler[];
-};
+export type Events = Record<EventName, EventHandler[]>;
