@@ -14,8 +14,8 @@
   "devDependencies": {
     "@types/react": "^18.2.6",
     "@types/react-dom": "^18.2.4",
-    "@cryptkeeper/providers": "../dist/js/src/providers",
     "@cryptkeeper/types": "../dist/js/src/types",
+    "@cryptkeeper/providers": "./providers",
     "assert": "^2.0.0",
     "parcel": "^2.8.3"
   }

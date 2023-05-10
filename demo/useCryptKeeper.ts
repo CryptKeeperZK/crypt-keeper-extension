@@ -11,7 +11,11 @@ import "react-toastify/dist/ReactToastify.css";
 // TODO: convert this after finishing from publishing `@cryptkeeper/providers` package
 import { CryptKeeperInjectedProvider } from "@cryptkeeper/providers";
 // TODO: convert this after finishing from publishing `@cryptkeeper/providers` package and export the used types
-import { SelectedIdentity } from "@cryptkeeper/types";
+// import { SelectedIdentity } from "@cryptkeeper/types";
+interface SelectedIdentity {
+    commitment: string;
+    web2Provider?: string;
+}
 
 const SERVER_URL = "http://localhost:8090";
 
@@ -188,12 +192,15 @@ export const useCryptKeeper = (): IUseCryptKeeperData => {
 
     if (!client) {
       setClient(cryptkeeper);
-      return undefined;
     }
 
     client?.on("login", onLogin);
     client?.on("identityChanged", onIdentityChanged);
     client?.on("logout", onLogout);
+
+    return () => {
+        client?.cleanListeners();
+    }
   }, [Boolean(client), onLogout, onIdentityChanged, onLogin, setClient, setIsLocked]);
 
   return {
