@@ -11,11 +11,7 @@ import "react-toastify/dist/ReactToastify.css";
 // TODO: convert this after finishing from publishing `@cryptkeeper/providers` package
 import { CryptKeeperInjectedProvider } from "@cryptkeeper/providers";
 // TODO: convert this after finishing from publishing `@cryptkeeper/providers` package and export the used types
-// import { SelectedIdentity } from "@cryptkeeper/types";
-interface SelectedIdentity {
-  commitment: string;
-  web2Provider?: string;
-}
+import { SelectedIdentity } from "@cryptkeeper/types";
 
 const SERVER_URL = "http://localhost:8090";
 

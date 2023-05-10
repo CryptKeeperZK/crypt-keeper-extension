@@ -5,4 +5,3 @@ coverage/
 /playwright-report/
 /playwright/.cache/
 tmp/
-/demo/providers
