@@ -15,5 +15,5 @@ export function initializeInjectedProvider(): void {
 
 export function setGlobalInjectedPrivider(injectedProvider: CryptKeeperInjectedProvider): void {
   window.cryptkeeper = injectedProvider;
-  window.dispatchEvent(new Event(`CryptKeeper Injected Provider has been succssfully intialized.`));
+  window.dispatchEvent(new Event(`cryptkeeper#initialized`));
 }
