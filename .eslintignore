@@ -6,3 +6,4 @@ zkeyFiles/
 /playwright-report/
 /playwright/.cache/
 tmp/
+/demo/providers

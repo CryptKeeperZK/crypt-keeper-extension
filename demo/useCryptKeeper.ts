@@ -13,8 +13,8 @@ import { CryptKeeperInjectedProvider } from "@cryptkeeper/providers";
 // TODO: convert this after finishing from publishing `@cryptkeeper/providers` package and export the used types
 // import { SelectedIdentity } from "@cryptkeeper/types";
 interface SelectedIdentity {
-    commitment: string;
-    web2Provider?: string;
+  commitment: string;
+  web2Provider?: string;
 }
 
 const SERVER_URL = "http://localhost:8090";
@@ -199,8 +199,8 @@ export const useCryptKeeper = (): IUseCryptKeeperData => {
     client?.on("logout", onLogout);
 
     return () => {
-        client?.cleanListeners();
-    }
+      client?.cleanListeners();
+    };
   }, [Boolean(client), onLogout, onIdentityChanged, onLogin, setClient, setIsLocked]);
 
   return {
