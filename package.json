@@ -54,6 +54,7 @@
     "@synthetixio/synpress": "^3.5.1",
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^14.0.0",
+    "@types/chrome": "^0.0.235",
     "@types/classnames": "^2.3.1",
     "@types/cors": "^2.8.13",
     "@types/crypto-js": "^4.1.1",
