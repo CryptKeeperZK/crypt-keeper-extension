@@ -23,3 +23,7 @@ export const downloadFile = (content: string, filename: string): Promise<void> =
 
   return Promise.resolve();
 };
+
+export const copyToClipboard = async (content: string): Promise<void> => {
+  await navigator.clipboard.writeText(content);
+};
