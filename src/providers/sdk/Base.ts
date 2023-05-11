@@ -7,15 +7,15 @@ import ZkProofService from "@src/background/services/zkProof";
 // TODO: convert to seperate service pacakges @cryptkeeper/services TBD
 import { RPCAction } from "@src/constants";
 import {
+  Approvals,
   IRlnGenerateArgs,
   ISemaphoreGenerateArgs,
   InjectedMessageData,
-  MerkleProofArtifacts,
   InjectedProviderRequest,
+  MerkleProofArtifacts,
   RLNFullProof,
-  SemaphoreProof,
   SelectedIdentity,
-  Approvals,
+  SemaphoreProof,
 } from "@src/types";
 
 const promises: {

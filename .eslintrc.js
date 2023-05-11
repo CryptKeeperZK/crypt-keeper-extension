@@ -18,8 +18,8 @@ module.exports = {
     "commitlint.config.js",
     "playwright.config.ts",
     "webpack.*.js",
-    "demo/index.tsx",
-    "demo/useCryptKeeper.ts",
+    "demo/*.tsx",
+    "demo/*.ts",
   ],
   root: true,
   env: {

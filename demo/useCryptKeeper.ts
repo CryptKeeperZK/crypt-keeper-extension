@@ -7,11 +7,7 @@ import { encodeBytes32String } from "ethers";
 import { toast } from "react-toastify";
 
 import "react-toastify/dist/ReactToastify.css";
-
-// TODO: convert this after finishing from publishing `@cryptkeeper/providers` package
-import { CryptKeeperInjectedProvider } from "@cryptkeeper/providers";
-// TODO: convert this after finishing from publishing `@cryptkeeper/providers` package and export the used types
-import { SelectedIdentity } from "@cryptkeeper/types";
+import { CryptKeeperInjectedProvider, SelectedIdentity } from "./types";
 
 const SERVER_URL = "http://localhost:8090";
 
@@ -55,8 +51,14 @@ export const useCryptKeeper = (): IUseCryptKeeperData => {
   const mockIdentityCommitments: string[] = genMockIdentityCommitments();
 
   const connect = useCallback(async () => {
-    await client?.connect();
-    setIsLocked(false);
+    const client = await window.cryptkeeper?.connect();
+
+    if (client) {
+      setIsLocked(false);
+      setClient(client);
+    } else {
+      toast(`CryptKeeper is not installed in the browser`, { type: "error" });
+    }
   }, [client]);
 
   const genSemaphoreProof = async (proofType: MerkleProofType = MerkleProofType.STORAGE_ADDRESS) => {
@@ -177,17 +179,10 @@ export const useCryptKeeper = (): IUseCryptKeeperData => {
     setIsLocked(true);
   }, [setSelectedIdentity, setIsLocked]);
 
-  // Connect to CK
   useEffect(() => {
-    const { cryptkeeper } = window;
-
-    if (!cryptkeeper) {
-      toast(`CryptKeeper is not installed in the browser`, { type: "error" });
-      return undefined;
-    }
-
     if (!client) {
-      setClient(cryptkeeper);
+      connect();
+      return undefined;
     }
 
     client?.on("login", onLogin);
@@ -197,7 +192,7 @@ export const useCryptKeeper = (): IUseCryptKeeperData => {
     return () => {
       client?.cleanListeners();
     };
-  }, [Boolean(client), onLogout, onIdentityChanged, onLogin, setClient, setIsLocked]);
+  }, [Boolean(client), connect, onLogout, onIdentityChanged, onLogin]);
 
   return {
     client,
