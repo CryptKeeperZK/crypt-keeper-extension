@@ -73,6 +73,10 @@ jobs:
 
       - name: Install dependencies
         run: npm ci --prefer-offline --no-audit
+        
+      - name: Setup demo
+        working-directory: ./demo
+        run: npm ci --prefer-offline --no-audit
 
       - name: Build extension (Linux)
         if: runner.os == 'Linux'
@@ -91,10 +95,6 @@ jobs:
         run: npm run build
         env:
           METAMASK_EXTENSION_ID: "jkmpgeehaghmacekpnefomipbnkkbnlo"
-          
-      - name: Setup demo
-        working-directory: ./demo
-        run: npm ci --prefer-offline --no-audit
 
       - name: Install Playwright Browsers
         if: steps.playwright-cache.outputs.cache-hit != 'true'
