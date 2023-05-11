@@ -73,7 +73,7 @@ jobs:
 
       - name: Install dependencies
         run: npm ci --prefer-offline --no-audit
-        
+
       - name: Setup demo
         working-directory: ./demo
         run: npm ci --prefer-offline --no-audit
