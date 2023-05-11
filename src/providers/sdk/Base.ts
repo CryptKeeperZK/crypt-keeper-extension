@@ -42,7 +42,7 @@ export class CryptKeeperInjectedProvider extends EventEmitter {
    * Connect to Extension
    * @returns injected client
    */
-  async connect(): Promise<void> {
+  async connect(): Promise<CryptKeeperInjectedProvider> {
     try {
       const { isApproved, canSkipApprove } = await this.tryInject(window.location.origin);
 
@@ -54,6 +54,8 @@ export class CryptKeeperInjectedProvider extends EventEmitter {
     }
 
     await this.post({ method: RPCAction.CLOSE_POPUP });
+
+    return this;
   }
 
   private async tryInject(host: string): Promise<Approvals> {

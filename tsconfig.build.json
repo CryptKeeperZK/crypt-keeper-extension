@@ -1,9 +1,0 @@
-{
-  "extends": "./tsconfig.json",
-  "compilerOptions": {
-    "declaration": true,
-    "inlineSources": true,
-    "noEmit": false
-  },
-  "exclude": ["e2e", "**/*.test.ts", "**/*.test.tsx"]
-}

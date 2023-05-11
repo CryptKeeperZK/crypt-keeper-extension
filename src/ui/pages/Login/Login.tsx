@@ -22,6 +22,7 @@ const Login = (): JSX.Element => {
 
         <div className="py-4 w-full password-input">
           <PasswordInput
+            autoFocus
             isShowEye
             errorMessage={errors.password}
             id="password"

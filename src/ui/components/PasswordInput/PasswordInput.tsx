@@ -31,7 +31,6 @@ const PasswordInputUI = (
   ref: Ref<HTMLInputElement>,
 ): JSX.Element => (
   <Input
-    autoFocus
     className="mb-4 password-input__content"
     endAdornment={
       <InputAdornment position="end">

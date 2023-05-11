@@ -41,6 +41,8 @@ interface IUseCryptKeeperData {
   genRLNProof: (proofType: MerkleProofType) => void;
 }
 
+const initializeClient = (): Promise<CryptKeeperInjectedProvider | undefined> => window.cryptkeeper?.connect();
+
 export const useCryptKeeper = (): IUseCryptKeeperData => {
   const [client, setClient] = useState<CryptKeeperInjectedProvider>();
   const [isLocked, setIsLocked] = useState(true);
@@ -51,7 +53,7 @@ export const useCryptKeeper = (): IUseCryptKeeperData => {
   const mockIdentityCommitments: string[] = genMockIdentityCommitments();
 
   const connect = useCallback(async () => {
-    const client = await window.cryptkeeper?.connect();
+    const client = await initializeClient();
 
     if (client) {
       setIsLocked(false);
@@ -59,7 +61,7 @@ export const useCryptKeeper = (): IUseCryptKeeperData => {
     } else {
       toast(`CryptKeeper is not installed in the browser`, { type: "error" });
     }
-  }, [client]);
+  }, [setIsLocked, setClient]);
 
   const genSemaphoreProof = async (proofType: MerkleProofType = MerkleProofType.STORAGE_ADDRESS) => {
     const externalNullifier = encodeBytes32String("voting-1");
@@ -181,7 +183,6 @@ export const useCryptKeeper = (): IUseCryptKeeperData => {
 
   useEffect(() => {
     if (!client) {
-      connect();
       return undefined;
     }
 
@@ -189,10 +190,8 @@ export const useCryptKeeper = (): IUseCryptKeeperData => {
     client?.on("identityChanged", onIdentityChanged);
     client?.on("logout", onLogout);
 
-    return () => {
-      client?.cleanListeners();
-    };
-  }, [Boolean(client), connect, onLogout, onIdentityChanged, onLogin]);
+    return () => client?.cleanListeners();
+  }, [client, onLogout, onIdentityChanged, onLogin]);
 
   return {
     client,

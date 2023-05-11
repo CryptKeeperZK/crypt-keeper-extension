@@ -1,5 +1,5 @@
 /* eslint-disable no-console */
-import React from "react";
+import React, { useEffect } from "react";
 import { createRoot } from "react-dom/client";
 import { ToastContainer } from "react-toastify";
 
@@ -36,6 +36,10 @@ function App() {
     genSemaphoreProof,
     genRLNProof,
   } = useCryptKeeper();
+
+  useEffect(() => {
+    connect();
+  }, [connect]);
 
   if (!client || isLocked) {
     return <NotConnected onClick={connect} />;
