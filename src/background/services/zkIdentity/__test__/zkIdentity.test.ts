@@ -349,8 +349,8 @@ describe("background/services/zkIdentity", () => {
         tabId: defaultPopupTab.id,
         type: "popup",
         focused: true,
-        width: 357,
-        height: 600,
+        width: 385,
+        height: 610,
       };
 
       expect(browser.windows.create).toBeCalledWith(defaultOptions);

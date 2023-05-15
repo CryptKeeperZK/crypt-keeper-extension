@@ -14,8 +14,8 @@ body {
 html,
 body {
   font-size: 16px;
-  width: 357px;
-  height: 600px;
+  width: 385px;
+  min-height: 580px;
   cursor: default;
 }
 
@@ -61,7 +61,7 @@ a {
     width: 36rem;
     height: 40rem;
     border: 1px solid $gray-700;
-    margin: 3rem auto;
+    margin: 2rem auto;
     box-shadow: 0 2px 4px 0px $header-gray;
   }
 
@@ -69,7 +69,7 @@ a {
     width: 36rem;
     height: 40rem;
     border: 1px solid $gray-700;
-    margin: 3rem auto;
+    margin: 2rem auto;
     box-shadow: 0 2px 4px 0px $header-gray;
   }
 }

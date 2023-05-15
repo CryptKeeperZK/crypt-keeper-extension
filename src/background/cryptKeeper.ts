@@ -44,11 +44,11 @@ export default class CryptKeeperController extends Handler {
     this.lockService = LockerService.getInstance();
     this.browserService = BrowserUtils.getInstance();
     this.historyService = HistoryService.getInstance();
+    this.keyStorageService = KeyStorageService.getInstance();
     this.backupService = BackupService.getInstance()
       .add(BackupableServices.APPROVAL, this.approvalService)
       .add(BackupableServices.IDENTITY, this.zkIdentityService)
       .add(BackupableServices.LOCK, this.lockService);
-    this.keyStorageService = KeyStorageService.getInstance();
   }
 
   initialize = (): CryptKeeperController => {
