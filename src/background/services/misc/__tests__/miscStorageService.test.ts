@@ -1,4 +1,6 @@
-import MiscStorageService, { InitializationStep } from "..";
+import { InitializationStep } from "@src/types";
+
+import MiscStorageService from "..";
 import SimpleStorage from "../../storage";
 
 jest.mock("../../storage");
@@ -17,7 +19,7 @@ describe("background/services/wallet", () => {
   test("should get connection", async () => {
     walletStorage.get.mockReturnValue(defaultWalletStorageValue);
 
-    const result = await service.getConnection();
+    const result = await service.getExternalWalletConnection();
 
     expect(result).toStrictEqual(defaultWalletStorageValue);
   });
@@ -25,7 +27,7 @@ describe("background/services/wallet", () => {
   test("should set connection", async () => {
     const newStorageValue = { isDisconnectedPermanently: true };
 
-    await service.setConnection(newStorageValue);
+    await service.setExternalWalletConnection(newStorageValue);
 
     expect(walletStorage.set).toBeCalledTimes(1);
     expect(walletStorage.set).toBeCalledWith(newStorageValue);

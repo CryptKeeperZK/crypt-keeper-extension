@@ -6,8 +6,9 @@ import {
   cryptoGenerateEncryptedHmac,
   cryptoGetAuthenticBackupCiphertext,
 } from "@src/background/services/crypto";
-import MiscStorageService, { InitializationStep } from "@src/background/services/misc";
+import MiscStorageService from "@src/background/services/misc";
 import SimpleStorage from "@src/background/services/storage";
+import { InitializationStep } from "@src/types";
 import { setStatus } from "@src/ui/ducks/app";
 import pushMessage from "@src/util/pushMessage";
 

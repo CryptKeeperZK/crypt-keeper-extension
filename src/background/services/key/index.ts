@@ -4,9 +4,10 @@ import util from "tweetnacl-util";
 
 import { cryptoGenerateEncryptedHmac, cryptoGetAuthenticBackupCiphertext } from "@src/background/services/crypto";
 import LockerService from "@src/background/services/lock";
-import MiscStorageService, { InitializationStep } from "@src/background/services/misc";
+import MiscStorageService from "@src/background/services/misc";
 import { mnemonicToSeed } from "@src/background/services/mnemonic";
 import SimpleStorage from "@src/background/services/storage";
+import { InitializationStep } from "@src/types";
 
 import type { KeyPair } from "./types";
 import type { IBackupable } from "../backup";

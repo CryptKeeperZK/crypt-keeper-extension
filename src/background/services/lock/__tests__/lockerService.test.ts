@@ -2,12 +2,12 @@
 import { browser } from "webextension-polyfill-ts";
 
 import SimpleStorage from "@src/background/services/storage";
+import { InitializationStep } from "@src/types";
 import { setStatus } from "@src/ui/ducks/app";
 import pushMessage from "@src/util/pushMessage";
 
 import LockerService from "..";
 import { cryptoDecrypt } from "../../crypto";
-import { InitializationStep } from "../../misc";
 
 const defaultPassword = "password";
 const passwordChecker = "Password is correct";
