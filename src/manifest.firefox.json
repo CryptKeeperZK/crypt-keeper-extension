@@ -26,7 +26,7 @@
   "content_security_policy": {
     "extension_pages": "script-src 'self' 'wasm-unsafe-eval'; object-src 'self';"
   },
-  "permissions": ["clipboardWrite", "activeTab", "storage", "notifications"],
+  "permissions": ["scripting", "clipboardWrite", "activeTab", "storage", "notifications"],
   "host_permissions": ["http://*/", "https://*/"],
   "web_accessible_resources": [
     {

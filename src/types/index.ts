@@ -7,3 +7,4 @@ export * from "./reactComponent";
 export * from "./duck";
 export * from "./utility";
 export * from "./backup";
+export * from "./approval";

@@ -10,8 +10,8 @@ import SimpleStorage from "@src/background/services/storage";
 import { ZkIdentitySemaphore } from "@src/background/services/zkIdentity/protocols/ZkIdentitySemaphore";
 import { getEnabledFeatures } from "@src/config/features";
 import { Paths } from "@src/constants";
-import { IdentityMetadata, IdentityName, NewIdentityRequest, OperationType } from "@src/types";
-import { SelectedIdentity, setIdentities, setSelectedCommitment } from "@src/ui/ducks/identities";
+import { IdentityMetadata, IdentityName, NewIdentityRequest, OperationType, SelectedIdentity } from "@src/types";
+import { setIdentities, setSelectedCommitment } from "@src/ui/ducks/identities";
 import { ellipsify } from "@src/util/account";
 import pushMessage from "@src/util/pushMessage";
 

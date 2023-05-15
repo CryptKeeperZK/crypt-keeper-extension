@@ -13,7 +13,14 @@ module.exports = {
     "plugin:import/recommended",
     "plugin:playwright/playwright-test",
   ],
-  ignorePatterns: [".eslintrc.js", "commitlint.config.js", "playwright.config.ts", "webpack.*.js", "demo/index.tsx"],
+  ignorePatterns: [
+    ".eslintrc.js",
+    "commitlint.config.js",
+    "playwright.config.ts",
+    "webpack.*.js",
+    "demo/*.tsx",
+    "demo/*.ts",
+  ],
   root: true,
   env: {
     browser: true,

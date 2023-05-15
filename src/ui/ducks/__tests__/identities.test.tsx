@@ -7,7 +7,7 @@ import { Provider } from "react-redux";
 
 import { ZERO_ADDRESS } from "@src/config/const";
 import { RPCAction } from "@src/constants";
-import { HistorySettings, OperationType } from "@src/types";
+import { HistorySettings, OperationType, SelectedIdentity } from "@src/types";
 import { store } from "@src/ui/store/configureAppStore";
 import postMessage from "@src/util/postMessage";
 
@@ -26,7 +26,6 @@ import {
   useIdentities,
   useIdentityRequestPending,
   useSelectedIdentity,
-  SelectedIdentity,
   fetchHistory,
   useIdentityOperations,
   getHistory,

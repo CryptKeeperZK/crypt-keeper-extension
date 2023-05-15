@@ -30,9 +30,9 @@ Proof generation is enabled in two ways:
 
 # Demo
 
-1. `npm run dev`
+1. `npm run dev` or `npm run build`
 2. `npm run merkle`
-3. `cd demo && npm run start`
+3. `cd demo && npm install && npm run start`
 
 # E2E
 
