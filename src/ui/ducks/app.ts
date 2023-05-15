@@ -13,12 +13,14 @@ import { useAppSelector } from "./hooks";
 export interface AppState {
   isInitialized: boolean;
   isUnlocked: boolean;
+  isMnemonicGenerated: boolean;
   isDisconnectedPermanently?: boolean;
 }
 
 const initialState: AppState = {
   isInitialized: false,
   isUnlocked: false,
+  isMnemonicGenerated: false,
   isDisconnectedPermanently: undefined,
 };
 
@@ -29,6 +31,7 @@ const appSlice = createSlice({
     setStatus: (state: AppState, action: PayloadAction<Omit<AppState, "isDisconnectedPermanently">>) => {
       state.isInitialized = action.payload.isInitialized;
       state.isUnlocked = action.payload.isUnlocked;
+      state.isMnemonicGenerated = action.payload.isMnemonicGenerated;
     },
 
     setDisconnectedPermanently: (state: AppState, action: PayloadAction<boolean>) => {
@@ -72,6 +75,13 @@ export const getWalletConnection =
       method: RPCAction.GET_CONNECT_WALLET,
     });
     dispatch(appSlice.actions.setDisconnectedPermanently(Boolean(response?.isDisconnectedPermanently)));
+  };
+
+export const saveMnemonic =
+  (mnemonic: string): TypedThunk<Promise<void>> =>
+  async (dispatch) => {
+    await postMessage({ method: RPCAction.SAVE_MNEMONIC, payload: mnemonic });
+    dispatch(setStatus({ isInitialized: true, isUnlocked: true, isMnemonicGenerated: true }));
   };
 
 export const useAppStatus = (): AppState => useAppSelector((state) => state.app, deepEqual);

@@ -41,6 +41,7 @@ describe("ui/pages/Popup/usePopup", () => {
   const defaultStatusData = {
     isInitialized: false,
     isUnlocked: false,
+    isMnemonicGenerated: false,
   };
 
   const mockDispatch = jest.fn();
@@ -110,7 +111,7 @@ describe("ui/pages/Popup/usePopup", () => {
   });
 
   test("should redirect to create identity page", async () => {
-    (useAppStatus as jest.Mock).mockReturnValue({ isInitialized: true, isUnlocked: true });
+    (useAppStatus as jest.Mock).mockReturnValue({ isInitialized: true, isUnlocked: true, isMnemonicGenerated: true });
 
     const url = `${window.location.href}?redirect=${Paths.CREATE_IDENTITY}`;
     window.location.href = url;
@@ -125,7 +126,7 @@ describe("ui/pages/Popup/usePopup", () => {
   });
 
   test("should redirect to login page", async () => {
-    (useAppStatus as jest.Mock).mockReturnValue({ isInitialized: true, isUnlocked: false });
+    (useAppStatus as jest.Mock).mockReturnValue({ isInitialized: true, isMnemonicGenerated: true, isUnlocked: false });
 
     const { result } = renderHook(() => usePopup());
     await waitForData(result.current);
@@ -135,7 +136,11 @@ describe("ui/pages/Popup/usePopup", () => {
   });
 
   test("should redirect to onboarding page", async () => {
-    (useAppStatus as jest.Mock).mockReturnValue({ isInitialized: false, isUnlocked: false });
+    (useAppStatus as jest.Mock).mockReturnValue({
+      isInitialized: false,
+      isMnemonicGenerated: false,
+      isUnlocked: false,
+    });
 
     const { result } = renderHook(() => usePopup());
     await waitForData(result.current);
@@ -144,8 +149,22 @@ describe("ui/pages/Popup/usePopup", () => {
     expect(mockNavigate).toBeCalledWith(Paths.ONBOARDING);
   });
 
+  test("should redirect to mnemonic page", async () => {
+    (useAppStatus as jest.Mock).mockReturnValue({
+      isInitialized: true,
+      isMnemonicGenerated: false,
+      isUnlocked: true,
+    });
+
+    const { result } = renderHook(() => usePopup());
+    await waitForData(result.current);
+
+    expect(mockNavigate).toBeCalledTimes(1);
+    expect(mockNavigate).toBeCalledWith(Paths.MNEMONIC);
+  });
+
   test("should redirect to pending requests page", async () => {
-    (useAppStatus as jest.Mock).mockReturnValue({ isInitialized: true, isUnlocked: true });
+    (useAppStatus as jest.Mock).mockReturnValue({ isInitialized: true, isMnemonicGenerated: true, isUnlocked: true });
     (usePendingRequests as jest.Mock).mockReturnValue([{}]);
 
     const { result } = renderHook(() => usePopup());

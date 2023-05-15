@@ -6,7 +6,9 @@ import {
   cryptoGenerateEncryptedHmac,
   cryptoGetAuthenticBackupCiphertext,
 } from "@src/background/services/crypto";
+import MiscStorageService from "@src/background/services/misc";
 import SimpleStorage from "@src/background/services/storage";
+import { InitializationStep } from "@src/types";
 import { setStatus } from "@src/ui/ducks/app";
 import pushMessage from "@src/util/pushMessage";
 
@@ -18,6 +20,7 @@ const PASSWORD_DB_KEY = "@password@";
 interface LockStatus {
   isInitialized: boolean;
   isUnlocked: boolean;
+  isMnemonicGenerated: boolean;
 }
 
 export default class LockerService implements IBackupable {
@@ -29,6 +32,8 @@ export default class LockerService implements IBackupable {
 
   private passwordStorage: SimpleStorage;
 
+  private miscStorage: MiscStorageService;
+
   private password?: string;
 
   private unlockCB?: () => void;
@@ -37,6 +42,7 @@ export default class LockerService implements IBackupable {
     this.isUnlocked = false;
     this.passwordChecker = "Password is correct";
     this.passwordStorage = new SimpleStorage(PASSWORD_DB_KEY);
+    this.miscStorage = MiscStorageService.getInstance();
     this.password = undefined;
     this.unlockCB = undefined;
   }
@@ -56,14 +62,17 @@ export default class LockerService implements IBackupable {
     const ciphertext = cryptoEncrypt(this.passwordChecker, password);
     await this.passwordStorage.set(ciphertext);
     await this.unlock(password);
+    await this.miscStorage.setInitialization({ initializationStep: InitializationStep.PASSWORD });
   };
 
   getStatus = async (): Promise<LockStatus> => {
     const ciphertext = await this.passwordStorage.get();
+    const initializationStep = await this.miscStorage.getInitialization();
 
     return {
-      isInitialized: !!ciphertext,
+      isInitialized: Boolean(ciphertext) || initializationStep >= InitializationStep.PASSWORD,
       isUnlocked: this.isUnlocked,
+      isMnemonicGenerated: initializationStep >= InitializationStep.MNEMONIC,
     };
   };
 

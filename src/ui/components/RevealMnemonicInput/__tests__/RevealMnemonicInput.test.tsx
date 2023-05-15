@@ -36,7 +36,7 @@ describe("ui/components/RevealMnemonicInput", () => {
   test("should render properly", async () => {
     const { findByText } = render(<RevealMnemonicInput {...defaultArgs} />);
 
-    const copyButton = await findByText("Copy to clipboard");
+    const copyButton = await findByText("Copy");
     const downloadButton = await findByText("Download");
     const showButton = await findByText("Show");
 
@@ -65,10 +65,22 @@ describe("ui/components/RevealMnemonicInput", () => {
     expect(defaultHookData.onShowMnemonic).toBeCalledTimes(1);
   });
 
+  test("should render operation pending labels", async () => {
+    (useRevealMnemonic as jest.Mock).mockReturnValue({ ...defaultHookData, isCopied: true, isDownloaded: true });
+
+    const { findByText } = render(<RevealMnemonicInput {...defaultArgs} />);
+
+    const copyButton = await findByText("Copied!");
+    const downloadButton = await findByText("Downloaded!");
+
+    expect(copyButton).toBeInTheDocument();
+    expect(downloadButton).toBeInTheDocument();
+  });
+
   test("should call copy and download properly", async () => {
     const { findByText } = render(<RevealMnemonicInput {...defaultArgs} />);
 
-    const copyButton = await findByText("Copy to clipboard");
+    const copyButton = await findByText("Copy");
     const downloadButton = await findByText("Download");
 
     await act(() => Promise.resolve(copyButton.click()));

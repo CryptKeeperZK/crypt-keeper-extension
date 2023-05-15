@@ -57,8 +57,8 @@ export default class BrowserUtils {
       tabId: tab.id,
       type: "popup",
       focused: true,
-      width: 357,
-      height: 600,
+      width: 385,
+      height: 610,
     });
 
     this.cached = popup;

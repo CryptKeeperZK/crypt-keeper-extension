@@ -23,7 +23,7 @@ export const usePopup = (): IUsePopupData => {
   const dispatch = useAppDispatch();
   const { onConnectEagerly } = useWallet();
   const pendingRequests = usePendingRequests();
-  const { isInitialized, isUnlocked } = useAppStatus();
+  const { isInitialized, isUnlocked, isMnemonicGenerated } = useAppStatus();
   const isShowRequestModal = pendingRequests.length > 0;
 
   const url = new URL(window.location.href);
@@ -43,12 +43,14 @@ export const usePopup = (): IUsePopupData => {
       navigate(Paths.ONBOARDING);
     } else if (!isUnlocked) {
       navigate(Paths.LOGIN);
+    } else if (!isMnemonicGenerated) {
+      navigate(Paths.MNEMONIC);
     } else if (isShowRequestModal) {
       navigate(Paths.REQUESTS);
     } else if (redirect) {
       navigate(redirect);
     }
-  }, [isLoading, isInitialized, isUnlocked, isShowRequestModal, redirect, navigate]);
+  }, [isLoading, isInitialized, isUnlocked, isShowRequestModal, isMnemonicGenerated, redirect, navigate]);
 
   useEffect(() => {
     setIsLoading(true);

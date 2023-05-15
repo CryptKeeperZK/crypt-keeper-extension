@@ -10,9 +10,10 @@ import RequestManager from "./controllers/requestManager";
 import ApprovalService from "./services/approval";
 import BackupService from "./services/backup";
 import HistoryService from "./services/history";
+import KeyStorageService from "./services/key";
 import LockerService from "./services/lock";
+import MiscStorageService from "./services/misc";
 import { validateZkInputs } from "./services/validation";
-import WalletService from "./services/wallet";
 import ZkIdentityService from "./services/zkIdentity";
 
 export default class CryptKeeperController extends Handler {
@@ -22,7 +23,7 @@ export default class CryptKeeperController extends Handler {
 
   private approvalService: ApprovalService;
 
-  private walletService: WalletService;
+  private miscStorageService: MiscStorageService;
 
   private lockService: LockerService;
 
@@ -32,15 +33,18 @@ export default class CryptKeeperController extends Handler {
 
   private backupService: BackupService;
 
+  private keyStorageService: KeyStorageService;
+
   constructor() {
     super();
     this.requestManager = new RequestManager();
     this.zkIdentityService = ZkIdentityService.getInstance();
     this.approvalService = ApprovalService.getInstance();
-    this.walletService = WalletService.getInstance();
+    this.miscStorageService = MiscStorageService.getInstance();
     this.lockService = LockerService.getInstance();
     this.browserService = BrowserUtils.getInstance();
     this.historyService = HistoryService.getInstance();
+    this.keyStorageService = KeyStorageService.getInstance();
     this.backupService = BackupService.getInstance()
       .add(BackupableServices.APPROVAL, this.approvalService)
       .add(BackupableServices.IDENTITY, this.zkIdentityService)
@@ -72,7 +76,7 @@ export default class CryptKeeperController extends Handler {
     this.add(RPCAction.FINALIZE_REQUEST, this.lockService.ensure, this.requestManager.finalizeRequest);
 
     // lock
-    this.add(RPCAction.SETUP_PASSWORD, (payload: string) => this.lockService.setupPassword(payload));
+    this.add(RPCAction.SETUP_PASSWORD, this.lockService.setupPassword);
 
     // Identities
     this.add(RPCAction.GET_COMMITMENTS, this.lockService.ensure, this.zkIdentityService.getIdentityCommitments);
@@ -95,6 +99,9 @@ export default class CryptKeeperController extends Handler {
     // Backup
     this.add(RPCAction.DOWNLOAD_BACKUP, this.lockService.ensure, this.backupService.download);
     this.add(RPCAction.UPLOAD_BACKUP, this.backupService.upload);
+
+    // Keys
+    this.add(RPCAction.SAVE_MNEMONIC, this.lockService.ensure, this.keyStorageService.generateKeyPair);
 
     // Protocols
     this.add(
@@ -232,9 +239,17 @@ export default class CryptKeeperController extends Handler {
     // Approvals - DEV ONLY
     this.add(RPCAction.CLEAR_APPROVED_HOSTS, this.approvalService.clear);
 
-    this.add(RPCAction.SET_CONNECT_WALLET, this.lockService.ensure, this.walletService.setConnection);
+    this.add(
+      RPCAction.SET_CONNECT_WALLET,
+      this.lockService.ensure,
+      this.miscStorageService.setExternalWalletConnection,
+    );
 
-    this.add(RPCAction.GET_CONNECT_WALLET, this.lockService.ensure, this.walletService.getConnection);
+    this.add(
+      RPCAction.GET_CONNECT_WALLET,
+      this.lockService.ensure,
+      this.miscStorageService.getExternalWalletConnection,
+    );
 
     this.add(RPCAction.CLOSE_POPUP, async () => this.browserService.closePopup());
 

@@ -4,7 +4,10 @@ import util from "tweetnacl-util";
 
 import { cryptoGenerateEncryptedHmac, cryptoGetAuthenticBackupCiphertext } from "@src/background/services/crypto";
 import LockerService from "@src/background/services/lock";
+import MiscStorageService from "@src/background/services/misc";
+import { mnemonicToSeed } from "@src/background/services/mnemonic";
 import SimpleStorage from "@src/background/services/storage";
+import { InitializationStep } from "@src/types";
 
 import type { KeyPair } from "./types";
 import type { IBackupable } from "../backup";
@@ -18,9 +21,12 @@ export default class KeyStorageService implements IBackupable {
 
   private lockService: LockerService;
 
+  private miscStorage: MiscStorageService;
+
   private constructor() {
     this.keyStorage = new SimpleStorage(KEY_STORAGE_DB_KEY);
     this.lockService = LockerService.getInstance();
+    this.miscStorage = MiscStorageService.getInstance();
   }
 
   static getInstance = (): KeyStorageService => {
@@ -31,7 +37,8 @@ export default class KeyStorageService implements IBackupable {
     return KeyStorageService.INSTANCE;
   };
 
-  generateKeyPair = async (seed: string): Promise<void> => {
+  generateKeyPair = async (mnemonic: string): Promise<void> => {
+    const seed = await mnemonicToSeed(mnemonic);
     nacl.setPRNG(() => toUtf8Bytes(seed));
 
     const randomBytes = nacl.randomBytes(32);
@@ -43,6 +50,7 @@ export default class KeyStorageService implements IBackupable {
     });
     const encrypted = this.lockService.encrypt(serializedKeys);
     await this.keyStorage.set(encrypted);
+    await this.miscStorage.setInitialization({ initializationStep: InitializationStep.MNEMONIC });
   };
 
   signMessage = async (messageHex: string): Promise<string> => {

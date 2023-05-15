@@ -9,7 +9,7 @@ import { RevealMnemonicInput } from "@src/ui/components/RevealMnemonicInput";
 import { useMnemonic } from "./useMnemonic";
 
 const Mnemonic = (): JSX.Element => {
-  const { mnemonic, onGoHome } = useMnemonic();
+  const { isLoading, error, mnemonic, onSaveMnemonic } = useMnemonic();
 
   return (
     <Box
@@ -32,13 +32,20 @@ const Mnemonic = (): JSX.Element => {
 
       <Button
         data-testid="submit-button"
+        disabled={isLoading}
         sx={{ textTransform: "none" }}
         type="button"
         variant="contained"
-        onClick={onGoHome}
+        onClick={onSaveMnemonic}
       >
         Get started!
       </Button>
+
+      {error && (
+        <Typography color="error" sx={{ my: 2 }} variant="body1">
+          {error}
+        </Typography>
+      )}
     </Box>
   );
 };

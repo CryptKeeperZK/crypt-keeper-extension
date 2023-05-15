@@ -1,4 +1,3 @@
-import { mnemonicToSeed, generateMnemonic } from "@src/background/services/mnemonic";
 import SimpleStorage from "@src/background/services/storage";
 
 import KeyStorageService from "..";
@@ -20,6 +19,13 @@ jest.mock("@src/background/services/lock", (): unknown => ({
   })),
 }));
 
+jest.mock("@src/background/services/misc", (): unknown => ({
+  ...jest.requireActual("@src/background/services/misc"),
+  getInstance: jest.fn(() => ({
+    setInitialization: jest.fn(),
+  })),
+}));
+
 jest.mock("@src/background/services/crypto", (): unknown => ({
   cryptoGenerateEncryptedHmac: jest.fn(() => "encrypted"),
   cryptoGetAuthenticBackupCiphertext: jest.fn(() => "encrypted"),
@@ -31,7 +37,7 @@ type MockStorage = { get: jest.Mock; set: jest.Mock; clear: jest.Mock };
 
 describe("background/services/key", () => {
   const keyStorageService = KeyStorageService.getInstance();
-  const defaultMnemonic = generateMnemonic();
+  const defaultMnemonic = "test test test test test test test test test test test junk";
   const defaultSignedMessage =
     "0x24fbab0609c71311cd0f5c28a30f6707bc554232a47471acd739d06e0bf4b6d6703b3d7a3a53820c37ef5df284f1ed3151fb36bbbc229dabfc203c28eddd44056d657373616765";
 
@@ -55,8 +61,7 @@ describe("background/services/key", () => {
 
   describe("keys", () => {
     test("should generate key pair properly", async () => {
-      const seed = await mnemonicToSeed(defaultMnemonic);
-      await keyStorageService.generateKeyPair(seed);
+      await keyStorageService.generateKeyPair(defaultMnemonic);
 
       const [keyStorage] = (SimpleStorage as jest.Mock).mock.instances as [MockStorage];
 
@@ -64,8 +69,7 @@ describe("background/services/key", () => {
     });
 
     test("should sign message properly", async () => {
-      const seed = await mnemonicToSeed(defaultMnemonic);
-      await keyStorageService.generateKeyPair(seed);
+      await keyStorageService.generateKeyPair(defaultMnemonic);
 
       const result = await keyStorageService.signMessage("message");
 
@@ -73,8 +77,7 @@ describe("background/services/key", () => {
     });
 
     test("should sign message with nonce properly", async () => {
-      const seed = await mnemonicToSeed(defaultMnemonic);
-      await keyStorageService.generateKeyPair(seed);
+      await keyStorageService.generateKeyPair(defaultMnemonic);
 
       const result = await keyStorageService.signMessage("message nonce: 1");
 
