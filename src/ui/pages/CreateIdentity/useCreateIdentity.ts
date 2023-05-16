@@ -4,12 +4,12 @@ import { useNavigate } from "react-router-dom";
 
 import { getEnabledFeatures } from "@src/config/features";
 import { WEB2_PROVIDER_OPTIONS, IDENTITY_TYPES, Paths } from "@src/constants";
-import { IdentityStrategy, IdentityWeb2Provider, SelectOption } from "@src/types";
+import { EWallet, IdentityStrategy, IdentityWeb2Provider, SelectOption } from "@src/types";
 import { closePopup } from "@src/ui/ducks/app";
 import { useAppDispatch } from "@src/ui/ducks/hooks";
 import { createIdentity } from "@src/ui/ducks/identities";
 import { useWallet } from "@src/ui/hooks/wallet";
-import { signIdentityMessage } from "@src/ui/services/identity";
+import { getMessageTemplate, signWithSigner } from "@src/ui/services/identity";
 
 export interface IUseCreateIdentityData {
   isLoading: boolean;
@@ -59,23 +59,32 @@ export const useCreateIdentity = (): IUseCreateIdentityData => {
       const { identityStrategyType, web2Provider, nonce } = data;
 
       try {
-        const options =
-          identityStrategyType.value !== "random"
-            ? { nonce, web2Provider: web2Provider.value as IdentityWeb2Provider, account: address }
-            : {};
-        const signer = await provider?.getSigner();
-
-        const messageSignature = await signIdentityMessage({
+        const message = getMessageTemplate({
           web2Provider: web2Provider.value as IdentityWeb2Provider,
           nonce,
-          signer,
           identityStrategyType: identityStrategyType.value as IdentityStrategy,
         });
 
-        if (messageSignature) {
-          await dispatch(createIdentity(identityStrategyType.value as IdentityStrategy, messageSignature, options));
-          navigate(Paths.HOME);
-        }
+        const options =
+          identityStrategyType.value !== "random"
+            ? { nonce, web2Provider: web2Provider.value as IdentityWeb2Provider, account: address, message }
+            : { message };
+        const signer = await provider?.getSigner();
+
+        const messageSignature = await signWithSigner({
+          signer,
+          message,
+        });
+
+        await dispatch(
+          createIdentity({
+            strategy: identityStrategyType.value as IdentityStrategy,
+            messageSignature,
+            options,
+            walletType: EWallet.ETH_WALLET,
+          }),
+        );
+        navigate(Paths.HOME);
       } catch (err) {
         setError("root", { type: "submit", message: (err as Error).message });
       }

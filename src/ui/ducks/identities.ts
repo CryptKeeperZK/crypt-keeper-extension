@@ -5,6 +5,7 @@ import deepEqual from "fast-deep-equal";
 import { RPCAction } from "@src/constants";
 import {
   CreateIdentityOptions,
+  EWallet,
   HistorySettings,
   IdentityData,
   IdentityStrategy,
@@ -72,13 +73,21 @@ export const createIdentityRequest = () => async (): Promise<void> => {
   await postMessage({ method: RPCAction.CREATE_IDENTITY_REQ });
 };
 
+interface ICreateIdentityArgs {
+  strategy: IdentityStrategy;
+  options: CreateIdentityOptions;
+  walletType: EWallet;
+  messageSignature?: string;
+}
+
 export const createIdentity =
-  (strategy: IdentityStrategy, messageSignature: string, options: CreateIdentityOptions) =>
+  ({ walletType, strategy, messageSignature, options }: ICreateIdentityArgs) =>
   async (): Promise<boolean> =>
     postMessage({
       method: RPCAction.CREATE_IDENTITY,
       payload: {
         strategy,
+        walletType,
         messageSignature,
         options,
       },

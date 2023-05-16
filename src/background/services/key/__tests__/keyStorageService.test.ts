@@ -3,8 +3,8 @@ import SimpleStorage from "@src/background/services/storage";
 import KeyStorageService from "..";
 
 const mockSerializedKeys = JSON.stringify({
-  publicKey: "O2onvM62pC1io6jQKm8Nc2UyFXcd4kOmOsBIoYtZ2ik=",
-  secretKey: "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA7aie8zrakLWKjqNAqbw1zZTIVdx3iQ6Y6wEihi1naKQ==",
+  publicKey: "0x031bd64c030e0a6233ef38aed1df3922219e547a240c7dc8635749163ec1a0abe7",
+  secretKey: "0x046f3d3acae9e8babbfcbd5ecc962843e6eff65093d1bd086c6a738e87e51e41",
 });
 
 const mockAuthenticityCheckData = {
@@ -39,7 +39,7 @@ describe("background/services/key", () => {
   const keyStorageService = KeyStorageService.getInstance();
   const defaultMnemonic = "test test test test test test test test test test test junk";
   const defaultSignedMessage =
-    "0x24fbab0609c71311cd0f5c28a30f6707bc554232a47471acd739d06e0bf4b6d6703b3d7a3a53820c37ef5df284f1ed3151fb36bbbc229dabfc203c28eddd44056d657373616765";
+    "0x8b7a1e6c0638291c674af226dd97f5354bb3723d611128ad35fda772b9051eab5fec16aacf700ba186590b170a16bfff576078695ac26a3321f9636c6a4a6c051b";
 
   beforeEach(() => {
     (SimpleStorage as jest.Mock).mock.instances.forEach((instance: MockStorage) => {

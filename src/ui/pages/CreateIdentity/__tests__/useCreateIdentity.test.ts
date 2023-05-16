@@ -11,7 +11,7 @@ import { IDENTITY_TYPES, Paths } from "@src/constants";
 import { useAppDispatch } from "@src/ui/ducks/hooks";
 import { createIdentity } from "@src/ui/ducks/identities";
 import { useWallet } from "@src/ui/hooks/wallet";
-import { signIdentityMessage } from "@src/ui/services/identity";
+import { signWithSigner, getMessageTemplate } from "@src/ui/services/identity";
 
 import { useCreateIdentity } from "../useCreateIdentity";
 
@@ -24,7 +24,8 @@ jest.mock("@src/ui/ducks/hooks", (): unknown => ({
 }));
 
 jest.mock("@src/ui/services/identity", (): unknown => ({
-  signIdentityMessage: jest.fn(),
+  signWithSigner: jest.fn(),
+  getMessageTemplate: jest.fn(),
 }));
 
 jest.mock("@src/ui/ducks/app", (): unknown => ({
@@ -41,6 +42,7 @@ jest.mock("@src/ui/hooks/wallet", (): unknown => ({
 
 describe("ui/pages/CreateIdentity/useCreateIdentity", () => {
   const mockSignedMessage = "signed-message";
+  const mockMessage = "message";
 
   const mockDispatch = jest.fn();
 
@@ -49,7 +51,9 @@ describe("ui/pages/CreateIdentity/useCreateIdentity", () => {
   beforeEach(() => {
     (useAppDispatch as jest.Mock).mockReturnValue(mockDispatch);
 
-    (signIdentityMessage as jest.Mock).mockReturnValue(mockSignedMessage);
+    (signWithSigner as jest.Mock).mockReturnValue(mockSignedMessage);
+
+    (getMessageTemplate as jest.Mock).mockReturnValue(mockMessage);
 
     (createIdentity as jest.Mock).mockReturnValue(true);
 
@@ -82,13 +86,14 @@ describe("ui/pages/CreateIdentity/useCreateIdentity", () => {
     await act(async () => Promise.resolve(result.current.onSubmit()));
 
     expect(result.current.isLoading).toBe(false);
-    expect(signIdentityMessage).toBeCalledTimes(1);
+    expect(signWithSigner).toBeCalledTimes(1);
     expect(mockDispatch).toBeCalledTimes(1);
     expect(createIdentity).toBeCalledTimes(1);
-    expect(createIdentity).toBeCalledWith("interrep", mockSignedMessage, {
-      account: ZERO_ADDRESS,
-      nonce: 0,
-      web2Provider: "twitter",
+    expect(createIdentity).toBeCalledWith({
+      messageSignature: mockSignedMessage,
+      options: { account: ZERO_ADDRESS, message: mockMessage, nonce: 0, web2Provider: "twitter" },
+      strategy: "interrep",
+      walletType: 0,
     });
     expect(mockNavigate).toBeCalledTimes(1);
     expect(mockNavigate).toBeCalledWith(Paths.HOME);
