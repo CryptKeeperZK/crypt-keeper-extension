@@ -16,7 +16,7 @@ jest.mock("@src/background/services/zkProof", (): unknown => ({
   },
 }));
 
-describe("InitialzieInjectedProvider", () => {
+describe("providers/initialzieInjectedProvider", () => {
   test("Should be window.cryptkeeper undefined yet", () => {
     expect(window.cryptkeeper).not.toBeDefined();
   });
@@ -31,11 +31,11 @@ describe("InitialzieInjectedProvider", () => {
 
   test("Should be able to set global injected provider", () => {
     const injectedProvider = new CryptKeeperInjectedProvider();
+    const dispatchEventSpy = jest.spyOn(window, "dispatchEvent");
     setGlobalInjectedPrivider(injectedProvider);
     expect(window.cryptkeeper).toBeDefined();
     expect(window.cryptkeeper).toBe(injectedProvider);
     expect(window.cryptkeeper.isCryptKeeper).toBe(true);
-    const dispatchEventSpy = jest.spyOn(window, "dispatchEvent");
     expect(dispatchEventSpy).toHaveBeenCalledWith(new Event(`cryptkeeper#initialized`));
   });
 });
