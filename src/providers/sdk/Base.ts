@@ -54,7 +54,7 @@ export class CryptKeeperInjectedProvider extends EventEmitter {
       log.debug("Err: ", err);
     }
 
-    await this.post({ method: RPCAction.CLOSE_POPUP });
+    await this.closePopup();
 
     return this;
   }
@@ -104,10 +104,10 @@ export class CryptKeeperInjectedProvider extends EventEmitter {
     });
   }
 
-  // Open Popup
-  async openPopup(): Promise<unknown> {
+  // Close Popup
+  private async closePopup(): Promise<unknown> {
     return this.post({
-      method: "OPEN_POPUP",
+      method: RPCAction.CLOSE_POPUP,
     });
   }
 
