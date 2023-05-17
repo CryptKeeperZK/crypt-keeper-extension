@@ -130,7 +130,7 @@
     "@reduxjs/toolkit": "^1.9.5",
     "@semaphore-protocol/group": "^3.9.0",
     "@semaphore-protocol/identity": "^3.9.0",
-    "@semaphore-protocol/proof": "^3.10.0",
+    "@semaphore-protocol/proof": "^3.10.1",
     "@types/react-select": "^5.0.1",
     "@web3-react/core": "^8.2.0",
     "@web3-react/metamask": "^8.2.1",
