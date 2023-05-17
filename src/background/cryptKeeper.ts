@@ -10,10 +10,10 @@ import RequestManager from "./controllers/requestManager";
 import ApprovalService from "./services/approval";
 import BackupService from "./services/backup";
 import HistoryService from "./services/history";
-import KeyStorageService from "./services/key";
 import LockerService from "./services/lock";
 import MiscStorageService from "./services/misc";
 import { validateZkInputs } from "./services/validation";
+import WalletService from "./services/wallet";
 import ZkIdentityService from "./services/zkIdentity";
 
 export default class CryptKeeperController extends Handler {
@@ -33,7 +33,7 @@ export default class CryptKeeperController extends Handler {
 
   private backupService: BackupService;
 
-  private keyStorageService: KeyStorageService;
+  private walletService: WalletService;
 
   constructor() {
     super();
@@ -44,7 +44,7 @@ export default class CryptKeeperController extends Handler {
     this.lockService = LockerService.getInstance();
     this.browserService = BrowserUtils.getInstance();
     this.historyService = HistoryService.getInstance();
-    this.keyStorageService = KeyStorageService.getInstance();
+    this.walletService = WalletService.getInstance();
     this.backupService = BackupService.getInstance()
       .add(BackupableServices.APPROVAL, this.approvalService)
       .add(BackupableServices.IDENTITY, this.zkIdentityService)
@@ -101,7 +101,7 @@ export default class CryptKeeperController extends Handler {
     this.add(RPCAction.UPLOAD_BACKUP, this.backupService.upload);
 
     // Keys
-    this.add(RPCAction.SAVE_MNEMONIC, this.lockService.ensure, this.keyStorageService.generateKeyPair);
+    this.add(RPCAction.SAVE_MNEMONIC, this.lockService.ensure, this.walletService.generateKeyPair);
 
     // Protocols
     this.add(

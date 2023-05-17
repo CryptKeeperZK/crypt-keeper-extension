@@ -24,7 +24,7 @@ import pushMessage from "@src/util/pushMessage";
 
 import type { IBackupable } from "@src/background/services/backup";
 
-import KeyStorageService from "../key";
+import WalletService from "../wallet";
 
 import { createNewIdentity } from "./factory";
 
@@ -46,7 +46,7 @@ export default class ZkIdentityService implements IBackupable {
 
   private browserController: BrowserUtils;
 
-  private keyStorageService: KeyStorageService;
+  private walletService: WalletService;
 
   private activeIdentity?: ZkIdentitySemaphore;
 
@@ -58,7 +58,7 @@ export default class ZkIdentityService implements IBackupable {
     this.notificationService = NotificationService.getInstance();
     this.historyService = HistoryService.getInstance();
     this.browserController = BrowserUtils.getInstance();
-    this.keyStorageService = KeyStorageService.getInstance();
+    this.walletService = WalletService.getInstance();
   }
 
   static getInstance = (): ZkIdentityService => {
@@ -272,8 +272,8 @@ export default class ZkIdentityService implements IBackupable {
       messageSignature: strategy === "interrep" ? messageSignature : undefined,
     };
 
-    if (walletType === EWallet.CRYPT_KEEPER && strategy === "interrep") {
-      config.messageSignature = await this.keyStorageService.signMessage(options.message);
+    if (walletType === EWallet.CRYPT_KEEPER_WALLET && strategy === "interrep") {
+      config.messageSignature = await this.walletService.signMessage(options.message);
     }
 
     const identity = createNewIdentity(strategy, config);

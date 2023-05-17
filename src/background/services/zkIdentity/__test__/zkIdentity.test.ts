@@ -52,7 +52,7 @@ jest.mock("@src/background/services/notification", (): unknown => ({
   })),
 }));
 
-jest.mock("@src/background/services/key", (): unknown => ({
+jest.mock("@src/background/services/wallet", (): unknown => ({
   getInstance: jest.fn(() => ({
     signMessage: jest.fn(() => Promise.resolve("ck-signature")),
   })),
@@ -394,7 +394,7 @@ describe("background/services/zkIdentity", () => {
 
       const result = await zkIdentityService.createIdentity({
         strategy: identityStrategy,
-        walletType: EWallet.CRYPT_KEEPER,
+        walletType: EWallet.CRYPT_KEEPER_WALLET,
         options: identityOptions,
       });
 

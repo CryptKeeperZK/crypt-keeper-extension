@@ -19,7 +19,7 @@ export type NewIdentityRequest = {
 
 export enum EWallet {
   ETH_WALLET,
-  CRYPT_KEEPER,
+  CRYPT_KEEPER_WALLET,
 }
 
 export type IdentityMetadata = {

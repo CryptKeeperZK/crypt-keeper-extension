@@ -11,8 +11,8 @@ import type { IBackupable } from "../backup";
 
 const KEY_STORAGE_DB_KEY = "@KEY-STORAGE@";
 
-export default class KeyStorageService implements IBackupable {
-  private static INSTANCE: KeyStorageService;
+export default class WalletService implements IBackupable {
+  private static INSTANCE: WalletService;
 
   private keyStorage: SimpleStorage;
 
@@ -26,12 +26,12 @@ export default class KeyStorageService implements IBackupable {
     this.miscStorage = MiscStorageService.getInstance();
   }
 
-  static getInstance = (): KeyStorageService => {
-    if (!KeyStorageService.INSTANCE) {
-      KeyStorageService.INSTANCE = new KeyStorageService();
+  static getInstance = (): WalletService => {
+    if (!WalletService.INSTANCE) {
+      WalletService.INSTANCE = new WalletService();
     }
 
-    return KeyStorageService.INSTANCE;
+    return WalletService.INSTANCE;
   };
 
   generateKeyPair = async (mnemonic: string): Promise<void> => {
@@ -39,7 +39,7 @@ export default class KeyStorageService implements IBackupable {
 
     const serializedKeys = JSON.stringify({
       publicKey: wallet.publicKey,
-      secretKey: wallet.privateKey,
+      privateKey: wallet.privateKey,
     });
     const encrypted = this.lockService.encrypt(serializedKeys);
     await this.keyStorage.set(encrypted);
@@ -53,8 +53,8 @@ export default class KeyStorageService implements IBackupable {
       throw new Error("No key pair available");
     }
 
-    const { secretKey } = JSON.parse(this.lockService.decrypt(encrypted)) as KeyPair;
-    const wallet = new Wallet(secretKey);
+    const { privateKey } = JSON.parse(this.lockService.decrypt(encrypted)) as KeyPair;
+    const wallet = new Wallet(privateKey);
 
     return wallet.signMessage(message);
   };
