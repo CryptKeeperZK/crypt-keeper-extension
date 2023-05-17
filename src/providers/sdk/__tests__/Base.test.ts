@@ -1,7 +1,7 @@
-/* eslint @typescript-eslint/no-explicit-any: 0 */ // --> OFF
 /**
  * @jest-environment jsdom
  */
+/* eslint @typescript-eslint/no-explicit-any: 0 */ // --> OFF
 import { CryptKeeperInjectedProvider } from "..";
 
 jest.mock("@src/background/services/event", (): unknown => ({
