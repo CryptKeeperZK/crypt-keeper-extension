@@ -16,7 +16,7 @@ describe("ui/services/identity", () => {
 
     expect(mockSigner.signMessage).toBeCalledTimes(1);
     expect(mockSigner.signMessage).toBeCalledWith(
-      "Sign this message to generate your twitter identity with key nonce: 0",
+      "Sign this message to generate your twitter Semaphore identity with key nonce: 0",
     );
     expect(result).toBe("signed-interrep");
   });
@@ -33,7 +33,7 @@ describe("ui/services/identity", () => {
     });
 
     expect(mockSigner.signMessage).toBeCalledTimes(1);
-    expect(mockSigner.signMessage).toBeCalledWith("Sign this message to generate your random identity");
+    expect(mockSigner.signMessage).toBeCalledWith("Sign this message to generate your random Semaphore identity");
     expect(result).toBe("signed-random");
   });
 

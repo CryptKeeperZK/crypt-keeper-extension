@@ -19,5 +19,5 @@ export interface IGetMessageTemplateArgs {
 export function getMessageTemplate({ identityStrategyType, nonce, web2Provider }: IGetMessageTemplateArgs): string {
   const nonceEnd = nonce !== undefined ? `with key nonce: ${nonce}` : "";
   const type = identityStrategyType === "interrep" ? (web2Provider as string) : identityStrategyType;
-  return `Sign this message to generate your ${type} identity ${nonceEnd}`.trim();
+  return `Sign this message to generate your ${type} Semaphore identity ${nonceEnd}`.trim();
 }
