@@ -3,6 +3,7 @@ export type IdentityStrategy = "interrep" | "random";
 export type IdentityWeb2Provider = "twitter" | "github" | "reddit";
 
 export type CreateIdentityOptions = {
+  message: string;
   nonce?: number;
   web2Provider?: IdentityWeb2Provider;
   account?: string;
@@ -11,9 +12,15 @@ export type CreateIdentityOptions = {
 
 export type NewIdentityRequest = {
   strategy: IdentityStrategy;
-  messageSignature: string;
   options: CreateIdentityOptions;
+  walletType: EWallet;
+  messageSignature?: string;
 };
+
+export enum EWallet {
+  ETH_WALLET,
+  CRYPT_KEEPER_WALLET,
+}
 
 export type IdentityMetadata = {
   account: string;

@@ -10,12 +10,21 @@ import SimpleStorage from "@src/background/services/storage";
 import { ZkIdentitySemaphore } from "@src/background/services/zkIdentity/protocols/ZkIdentitySemaphore";
 import { getEnabledFeatures } from "@src/config/features";
 import { Paths } from "@src/constants";
-import { IdentityMetadata, IdentityName, NewIdentityRequest, OperationType, SelectedIdentity } from "@src/types";
+import {
+  EWallet,
+  IdentityMetadata,
+  IdentityName,
+  NewIdentityRequest,
+  OperationType,
+  SelectedIdentity,
+} from "@src/types";
 import { setIdentities, setSelectedCommitment } from "@src/ui/ducks/identities";
 import { ellipsify } from "@src/util/account";
 import pushMessage from "@src/util/pushMessage";
 
 import type { IBackupable } from "@src/background/services/backup";
+
+import WalletService from "../wallet";
 
 import { createNewIdentity } from "./factory";
 
@@ -37,6 +46,8 @@ export default class ZkIdentityService implements IBackupable {
 
   private browserController: BrowserUtils;
 
+  private walletService: WalletService;
+
   private activeIdentity?: ZkIdentitySemaphore;
 
   private constructor() {
@@ -47,6 +58,7 @@ export default class ZkIdentityService implements IBackupable {
     this.notificationService = NotificationService.getInstance();
     this.historyService = HistoryService.getInstance();
     this.browserController = BrowserUtils.getInstance();
+    this.walletService = WalletService.getInstance();
   }
 
   static getInstance = (): ZkIdentityService => {
@@ -242,9 +254,14 @@ export default class ZkIdentityService implements IBackupable {
 
   createIdentity = async ({
     strategy,
+    walletType,
     messageSignature,
     options,
   }: NewIdentityRequest): Promise<{ status: boolean; identityCommitment?: bigint }> => {
+    if (walletType === EWallet.ETH_WALLET && !messageSignature) {
+      throw new Error("No signature provided");
+    }
+
     const numOfIdentites = await this.getNumOfIdentites();
 
     const config = {
@@ -254,6 +271,10 @@ export default class ZkIdentityService implements IBackupable {
       name: options?.name || `Account # ${numOfIdentites}`,
       messageSignature: strategy === "interrep" ? messageSignature : undefined,
     };
+
+    if (walletType === EWallet.CRYPT_KEEPER_WALLET && strategy === "interrep") {
+      config.messageSignature = await this.walletService.signMessage(options.message);
+    }
 
     const identity = createNewIdentity(strategy, config);
     const status = await this.insertIdentity(identity);

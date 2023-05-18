@@ -2,27 +2,22 @@ import type { IdentityStrategy, IdentityWeb2Provider } from "@src/types";
 import type { JsonRpcSigner } from "ethers/types/providers";
 
 export interface ISignIdentityMessageArgs {
-  identityStrategyType: IdentityStrategy;
+  message: string;
   signer?: JsonRpcSigner;
+}
+
+export async function signWithSigner({ signer, message }: ISignIdentityMessageArgs): Promise<string | undefined> {
+  return signer?.signMessage(message);
+}
+
+export interface IGetMessageTemplateArgs {
+  identityStrategyType: IdentityStrategy;
   web2Provider?: IdentityWeb2Provider;
   nonce?: number;
 }
 
-export async function signIdentityMessage({
-  web2Provider,
-  signer,
-  nonce,
-  identityStrategyType,
-}: ISignIdentityMessageArgs): Promise<string | undefined> {
-  const message =
-    identityStrategyType === "interrep"
-      ? getMessageTemplate(web2Provider as string, nonce)
-      : getMessageTemplate(identityStrategyType);
-
-  return signer?.signMessage(message);
-}
-
-function getMessageTemplate(type: string, nonce?: number): string {
+export function getMessageTemplate({ identityStrategyType, nonce, web2Provider }: IGetMessageTemplateArgs): string {
   const nonceEnd = nonce !== undefined ? `with key nonce: ${nonce}` : "";
+  const type = identityStrategyType === "interrep" ? (web2Provider as string) : identityStrategyType;
   return `Sign this message to generate your ${type} Semaphore identity ${nonceEnd}`.trim();
 }

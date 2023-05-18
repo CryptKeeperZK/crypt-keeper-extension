@@ -20,4 +20,4 @@ export type ReduxAction = {
   meta?: unknown;
 };
 
-export type { SelectedIdentity } from "./identities";
+export type * from "./identities";

@@ -12,10 +12,11 @@ import { ZERO_ADDRESS } from "@src/config/const";
 import { createModalRoot, deleteModalRoot } from "@src/config/mock/modal";
 import { defaultWalletHookData } from "@src/config/mock/wallet";
 import { IDENTITY_TYPES, WEB2_PROVIDER_OPTIONS } from "@src/constants";
+import { EWallet } from "@src/types";
 import { useAppDispatch } from "@src/ui/ducks/hooks";
 import { createIdentity } from "@src/ui/ducks/identities";
 import { useWallet } from "@src/ui/hooks/wallet";
-import { signIdentityMessage } from "@src/ui/services/identity";
+import { signWithSigner, getMessageTemplate } from "@src/ui/services/identity";
 
 import CreateIdentity from "..";
 
@@ -28,7 +29,8 @@ jest.mock("@src/ui/ducks/hooks", (): unknown => ({
 }));
 
 jest.mock("@src/ui/services/identity", (): unknown => ({
-  signIdentityMessage: jest.fn(),
+  signWithSigner: jest.fn(),
+  getMessageTemplate: jest.fn(),
 }));
 
 jest.mock("@src/ui/ducks/app", (): unknown => ({
@@ -45,6 +47,7 @@ jest.mock("@src/ui/hooks/wallet", (): unknown => ({
 
 describe("ui/pages/CreateIdentity", () => {
   const mockSignedMessage = "signed-message";
+  const mockMessage = "message";
   const mockDispatch = jest.fn(() => Promise.resolve());
   const mockNavigate = jest.fn();
 
@@ -57,7 +60,9 @@ describe("ui/pages/CreateIdentity", () => {
 
     (useNavigate as jest.Mock).mockReturnValue(mockNavigate);
 
-    (signIdentityMessage as jest.Mock).mockResolvedValue(mockSignedMessage);
+    (signWithSigner as jest.Mock).mockResolvedValue(mockSignedMessage);
+
+    (getMessageTemplate as jest.Mock).mockReturnValue(mockMessage);
 
     (createIdentity as jest.Mock).mockResolvedValue(true);
 
@@ -96,10 +101,15 @@ describe("ui/pages/CreateIdentity", () => {
     const button = await screen.findByText("Create");
     await act(async () => Promise.resolve(fireEvent.submit(button)));
 
-    expect(signIdentityMessage).toBeCalledTimes(1);
+    expect(signWithSigner).toBeCalledTimes(1);
     expect(mockDispatch).toBeCalledTimes(1);
     expect(createIdentity).toBeCalledTimes(1);
-    expect(createIdentity).toBeCalledWith("random", mockSignedMessage, {});
+    expect(createIdentity).toBeCalledWith({
+      messageSignature: mockSignedMessage,
+      options: { message: mockMessage },
+      strategy: "random",
+      walletType: 0,
+    });
   });
 
   test("should render properly with interrep provider", async () => {
@@ -130,19 +140,25 @@ describe("ui/pages/CreateIdentity", () => {
     const button = await screen.findByText("Create");
     await act(async () => Promise.resolve(fireEvent.submit(button)));
 
-    expect(signIdentityMessage).toBeCalledTimes(1);
+    expect(signWithSigner).toBeCalledTimes(1);
     expect(mockDispatch).toBeCalledTimes(1);
     expect(createIdentity).toBeCalledTimes(1);
-    expect(createIdentity).toBeCalledWith("interrep", mockSignedMessage, {
-      account: ZERO_ADDRESS,
-      nonce: "1",
-      web2Provider: "github",
+    expect(createIdentity).toBeCalledWith({
+      strategy: "interrep",
+      messageSignature: mockSignedMessage,
+      walletType: EWallet.ETH_WALLET,
+      options: {
+        account: ZERO_ADDRESS,
+        message: mockMessage,
+        nonce: "1",
+        web2Provider: "github",
+      },
     });
   });
 
   test("should handle error properly", async () => {
     const err = new Error("Error");
-    (signIdentityMessage as jest.Mock).mockRejectedValue(err);
+    (signWithSigner as jest.Mock).mockRejectedValue(err);
     const { container } = render(<CreateIdentity />);
 
     await waitFor(() => container.firstChild !== null);

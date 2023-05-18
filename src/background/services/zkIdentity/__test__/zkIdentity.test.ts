@@ -6,7 +6,7 @@ import SimpleStorage from "@src/background/services/storage";
 import ZkIdentityService from "@src/background/services/zkIdentity";
 import { ZERO_ADDRESS } from "@src/config/const";
 import { getEnabledFeatures } from "@src/config/features";
-import { CreateIdentityOptions, IdentityStrategy } from "@src/types";
+import { CreateIdentityOptions, EWallet, IdentityStrategy } from "@src/types";
 import { setSelectedCommitment } from "@src/ui/ducks/identities";
 import pushMessage from "@src/util/pushMessage";
 
@@ -49,6 +49,12 @@ jest.mock("@src/background/services/history", (): unknown => ({
 jest.mock("@src/background/services/notification", (): unknown => ({
   getInstance: jest.fn(() => ({
     create: jest.fn(),
+  })),
+}));
+
+jest.mock("@src/background/services/wallet", (): unknown => ({
+  getInstance: jest.fn(() => ({
+    signMessage: jest.fn(() => Promise.resolve("ck-signature")),
   })),
 }));
 
@@ -356,23 +362,62 @@ describe("background/services/zkIdentity", () => {
       expect(browser.windows.create).toBeCalledWith(defaultOptions);
     });
 
-    test("should create a new identity properly", async () => {
+    test("should create a new identity with ethereum wallet properly", async () => {
       const identityMessageSignature = "0x000";
       const identityStrategy: IdentityStrategy = "random";
       const identityOptions: CreateIdentityOptions = {
         nonce: 0,
         account: ZERO_ADDRESS,
         name: "Name",
+        message: "message",
       };
 
       const result = await zkIdentityService.createIdentity({
         strategy: identityStrategy,
+        walletType: EWallet.ETH_WALLET,
         messageSignature: identityMessageSignature,
         options: identityOptions,
       });
 
       expect(result.status).toBe(true);
       expect(result.identityCommitment).toBeDefined();
+    });
+
+    test("should create a new identity with cryptkeeper properly", async () => {
+      const identityStrategy: IdentityStrategy = "interrep";
+      const identityOptions: CreateIdentityOptions = {
+        nonce: 0,
+        account: ZERO_ADDRESS,
+        name: "Name",
+        message: "message",
+      };
+
+      const result = await zkIdentityService.createIdentity({
+        strategy: identityStrategy,
+        walletType: EWallet.CRYPT_KEEPER_WALLET,
+        options: identityOptions,
+      });
+
+      expect(result.status).toBe(true);
+      expect(result.identityCommitment).toBeDefined();
+    });
+
+    test("should not create a new identity if there is no signature", async () => {
+      const identityStrategy: IdentityStrategy = "random";
+      const identityOptions: CreateIdentityOptions = {
+        nonce: 0,
+        account: ZERO_ADDRESS,
+        name: "Name",
+        message: "message",
+      };
+
+      const promise = zkIdentityService.createIdentity({
+        strategy: identityStrategy,
+        walletType: EWallet.ETH_WALLET,
+        options: identityOptions,
+      });
+
+      await expect(promise).rejects.toThrowError("No signature provided");
     });
 
     test("should not create a new identity if there is the same identity in the store", async () => {
@@ -383,10 +428,12 @@ describe("background/services/zkIdentity", () => {
         web2Provider: "twitter",
         account: ZERO_ADDRESS,
         name: "Name",
+        message: "message",
       };
 
       const successResult = await zkIdentityService.createIdentity({
         strategy: identityStrategy,
+        walletType: EWallet.ETH_WALLET,
         messageSignature: identityMessageSignature,
         options: identityOptions,
       });
@@ -399,6 +446,7 @@ describe("background/services/zkIdentity", () => {
 
       const failedResult = await zkIdentityService.createIdentity({
         strategy: identityStrategy,
+        walletType: EWallet.ETH_WALLET,
         messageSignature: identityMessageSignature,
         options: identityOptions,
       });
@@ -407,8 +455,9 @@ describe("background/services/zkIdentity", () => {
 
       const emptyResult = await zkIdentityService.createIdentity({
         strategy: identityStrategy,
+        walletType: EWallet.ETH_WALLET,
         messageSignature: identityMessageSignature,
-        options: {},
+        options: { message: "message" },
       });
 
       expect(emptyResult.status).toBe(false);

@@ -1,10 +1,10 @@
 import SimpleStorage from "@src/background/services/storage";
 
-import KeyStorageService from "..";
+import WalletService from "..";
 
 const mockSerializedKeys = JSON.stringify({
-  publicKey: "O2onvM62pC1io6jQKm8Nc2UyFXcd4kOmOsBIoYtZ2ik=",
-  secretKey: "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA7aie8zrakLWKjqNAqbw1zZTIVdx3iQ6Y6wEihi1naKQ==",
+  publicKey: "0x031bd64c030e0a6233ef38aed1df3922219e547a240c7dc8635749163ec1a0abe7",
+  privateKey: "0x046f3d3acae9e8babbfcbd5ecc962843e6eff65093d1bd086c6a738e87e51e41",
 });
 
 const mockAuthenticityCheckData = {
@@ -35,11 +35,11 @@ jest.mock("@src/background/services/storage");
 
 type MockStorage = { get: jest.Mock; set: jest.Mock; clear: jest.Mock };
 
-describe("background/services/key", () => {
-  const keyStorageService = KeyStorageService.getInstance();
+describe("background/services/wallet", () => {
+  const walletService = WalletService.getInstance();
   const defaultMnemonic = "test test test test test test test test test test test junk";
   const defaultSignedMessage =
-    "0x24fbab0609c71311cd0f5c28a30f6707bc554232a47471acd739d06e0bf4b6d6703b3d7a3a53820c37ef5df284f1ed3151fb36bbbc229dabfc203c28eddd44056d657373616765";
+    "0x8b7a1e6c0638291c674af226dd97f5354bb3723d611128ad35fda772b9051eab5fec16aacf700ba186590b170a16bfff576078695ac26a3321f9636c6a4a6c051b";
 
   beforeEach(() => {
     (SimpleStorage as jest.Mock).mock.instances.forEach((instance: MockStorage) => {
@@ -50,7 +50,7 @@ describe("background/services/key", () => {
   });
 
   afterEach(async () => {
-    await keyStorageService.clear();
+    await walletService.clear();
 
     (SimpleStorage as jest.Mock).mock.instances.forEach((instance: MockStorage) => {
       instance.get.mockClear();
@@ -61,7 +61,7 @@ describe("background/services/key", () => {
 
   describe("keys", () => {
     test("should generate key pair properly", async () => {
-      await keyStorageService.generateKeyPair(defaultMnemonic);
+      await walletService.generateKeyPair(defaultMnemonic);
 
       const [keyStorage] = (SimpleStorage as jest.Mock).mock.instances as [MockStorage];
 
@@ -69,17 +69,17 @@ describe("background/services/key", () => {
     });
 
     test("should sign message properly", async () => {
-      await keyStorageService.generateKeyPair(defaultMnemonic);
+      await walletService.generateKeyPair(defaultMnemonic);
 
-      const result = await keyStorageService.signMessage("message");
+      const result = await walletService.signMessage("message");
 
       expect(result).toBe(defaultSignedMessage);
     });
 
     test("should sign message with nonce properly", async () => {
-      await keyStorageService.generateKeyPair(defaultMnemonic);
+      await walletService.generateKeyPair(defaultMnemonic);
 
-      const result = await keyStorageService.signMessage("message nonce: 1");
+      const result = await walletService.signMessage("message nonce: 1");
 
       expect(result).not.toBe(defaultSignedMessage);
     });
@@ -89,13 +89,13 @@ describe("background/services/key", () => {
         instance.get.mockReturnValue(undefined);
       });
 
-      await expect(keyStorageService.signMessage("message")).rejects.toThrowError("No key pair available");
+      await expect(walletService.signMessage("message")).rejects.toThrowError("No key pair available");
     });
   });
 
   describe("backup", () => {
     test("should download encrypted keys", async () => {
-      const result = await keyStorageService.downloadEncryptedStorage("password");
+      const result = await walletService.downloadEncryptedStorage("password");
 
       expect(result).toBeDefined();
     });
@@ -105,13 +105,13 @@ describe("background/services/key", () => {
         instance.get.mockReturnValue(undefined);
       });
 
-      const result = await keyStorageService.downloadEncryptedStorage("password");
+      const result = await walletService.downloadEncryptedStorage("password");
 
       expect(result).toBeNull();
     });
 
     test("should upload encrypted keys", async () => {
-      await keyStorageService.uploadEncryptedStorage("encrypted", "password");
+      await walletService.uploadEncryptedStorage("encrypted", "password");
 
       (SimpleStorage as jest.Mock).mock.instances.forEach((instance: MockStorage) => {
         expect(instance.set).toBeCalledTimes(1);
@@ -120,7 +120,7 @@ describe("background/services/key", () => {
     });
 
     test("should not upload encrypted keys if there is no data", async () => {
-      await keyStorageService.uploadEncryptedStorage("", "");
+      await walletService.uploadEncryptedStorage("", "");
 
       (SimpleStorage as jest.Mock).mock.instances.forEach((instance: MockStorage) => {
         expect(instance.set).toBeCalledTimes(0);

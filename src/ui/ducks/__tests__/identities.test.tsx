@@ -7,7 +7,7 @@ import { Provider } from "react-redux";
 
 import { ZERO_ADDRESS } from "@src/config/const";
 import { RPCAction } from "@src/constants";
-import { HistorySettings, OperationType, SelectedIdentity } from "@src/types";
+import { EWallet, HistorySettings, OperationType, SelectedIdentity } from "@src/types";
 import { store } from "@src/ui/store/configureAppStore";
 import postMessage from "@src/util/postMessage";
 
@@ -182,13 +182,27 @@ describe("ui/ducks/identities", () => {
     expect(postMessage).toBeCalledWith({ method: RPCAction.CREATE_IDENTITY_REQ });
   });
 
-  test("should call create identity request action properly", async () => {
-    await Promise.resolve(store.dispatch(createIdentity("interrep", "signature", {})));
+  test("should call create identity action properly", async () => {
+    await Promise.resolve(
+      store.dispatch(
+        createIdentity({
+          walletType: EWallet.ETH_WALLET,
+          strategy: "interrep",
+          messageSignature: "signature",
+          options: { message: "message" },
+        }),
+      ),
+    );
 
     expect(postMessage).toBeCalledTimes(1);
     expect(postMessage).toBeCalledWith({
       method: RPCAction.CREATE_IDENTITY,
-      payload: { strategy: "interrep", messageSignature: "signature", options: {} },
+      payload: {
+        strategy: "interrep",
+        messageSignature: "signature",
+        walletType: EWallet.ETH_WALLET,
+        options: { message: "message" },
+      },
     });
   });
 

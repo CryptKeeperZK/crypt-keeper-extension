@@ -3,14 +3,7 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import deepEqual from "fast-deep-equal";
 
 import { RPCAction } from "@src/constants";
-import {
-  CreateIdentityOptions,
-  HistorySettings,
-  IdentityData,
-  IdentityStrategy,
-  Operation,
-  SelectedIdentity,
-} from "@src/types";
+import { HistorySettings, ICreateIdentityUiArgs, IdentityData, Operation, SelectedIdentity } from "@src/types";
 import postMessage from "@src/util/postMessage";
 
 import type { TypedThunk } from "@src/ui/store/configureAppStore";
@@ -73,12 +66,13 @@ export const createIdentityRequest = () => async (): Promise<void> => {
 };
 
 export const createIdentity =
-  (strategy: IdentityStrategy, messageSignature: string, options: CreateIdentityOptions) =>
+  ({ walletType, strategy, messageSignature, options }: ICreateIdentityUiArgs) =>
   async (): Promise<boolean> =>
     postMessage({
       method: RPCAction.CREATE_IDENTITY,
       payload: {
         strategy,
+        walletType,
         messageSignature,
         options,
       },
