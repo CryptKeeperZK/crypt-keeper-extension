@@ -44,7 +44,7 @@ export const createMockConnectorHooks = ({
   useENSNames: (): string[] => ensNames,
   useIsActivating: (): boolean => isActivating,
   useIsActive: (): boolean => isActive,
-  // eslint-disable-next-line
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
   useProvider: (): unknown | undefined => provider,
 });

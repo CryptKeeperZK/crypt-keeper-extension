@@ -83,10 +83,12 @@ describe("ui/pages/CreateIdentity", () => {
     const select = await screen.findByLabelText("Identity type");
     await selectEvent.select(select, IDENTITY_TYPES[1].label);
 
-    const button = await screen.findByText("Create");
+    const metamaskButton = await screen.findByText("Metamask");
+    const cryptkeeperButton = await screen.findByText("Cryptkeeper");
     const identityType = await screen.findByText("Random");
 
-    expect(button).toBeInTheDocument();
+    expect(metamaskButton).toBeInTheDocument();
+    expect(cryptkeeperButton).toBeInTheDocument();
     expect(identityType).toBeInTheDocument();
   });
 
@@ -98,17 +100,17 @@ describe("ui/pages/CreateIdentity", () => {
     const select = await screen.findByLabelText("Identity type");
     await selectEvent.select(select, IDENTITY_TYPES[1].label);
 
-    const button = await screen.findByText("Create");
-    await act(async () => Promise.resolve(fireEvent.submit(button)));
+    const button = await screen.findByText("Cryptkeeper");
+    await act(async () => Promise.resolve(fireEvent.click(button)));
 
-    expect(signWithSigner).toBeCalledTimes(1);
+    expect(signWithSigner).toBeCalledTimes(0);
     expect(mockDispatch).toBeCalledTimes(1);
     expect(createIdentity).toBeCalledTimes(1);
     expect(createIdentity).toBeCalledWith({
-      messageSignature: mockSignedMessage,
+      messageSignature: undefined,
       options: { message: mockMessage },
       strategy: "random",
-      walletType: 0,
+      walletType: EWallet.CRYPT_KEEPER_WALLET,
     });
   });
 
@@ -117,11 +119,13 @@ describe("ui/pages/CreateIdentity", () => {
 
     await waitFor(() => container.firstChild !== null);
 
-    const button = await screen.findByText("Create");
+    const metamaskButton = await screen.findByText("Metamask");
+    const cryptkeeperButton = await screen.findByText("Cryptkeeper");
     const provider = await screen.findByText("Twitter");
     const identityType = await screen.findByText("InterRep");
 
-    expect(button).toBeInTheDocument();
+    expect(metamaskButton).toBeInTheDocument();
+    expect(cryptkeeperButton).toBeInTheDocument();
     expect(provider).toBeInTheDocument();
     expect(identityType).toBeInTheDocument();
   });
@@ -137,8 +141,8 @@ describe("ui/pages/CreateIdentity", () => {
     const nonce = await screen.findByLabelText("Nonce");
     await act(async () => Promise.resolve(fireEvent.change(nonce, { target: { value: 1 } })));
 
-    const button = await screen.findByText("Create");
-    await act(async () => Promise.resolve(fireEvent.submit(button)));
+    const button = await screen.findByText("Metamask");
+    await act(async () => Promise.resolve(fireEvent.click(button)));
 
     expect(signWithSigner).toBeCalledTimes(1);
     expect(mockDispatch).toBeCalledTimes(1);
@@ -163,8 +167,8 @@ describe("ui/pages/CreateIdentity", () => {
 
     await waitFor(() => container.firstChild !== null);
 
-    const button = await screen.findByText("Create");
-    await act(async () => Promise.resolve(fireEvent.submit(button)));
+    const button = await screen.findByText("Metamask");
+    await act(async () => Promise.resolve(fireEvent.click(button)));
 
     const error = await screen.findByText(err.message);
     expect(error).toBeInTheDocument();

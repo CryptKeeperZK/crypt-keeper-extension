@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 import React, { useEffect } from "react";
 import { createRoot } from "react-dom/client";
 import { ToastContainer } from "react-toastify";
@@ -78,14 +77,17 @@ function App() {
       <hr />
       <div>
         <h2>Get Identity Commitment</h2>
-        <button onClick={() => getIdentityCommitment()}>Get</button> <br />
+        <button onClick={getIdentityCommitment}>Get</button> <br />
         <br />
       </div>
 
       <hr />
       <div>
         <h2>Create a new Identity</h2>
-        <button onClick={createIdentity}>Create</button> <br />
+        <button data-testid="create-new-identity" onClick={createIdentity}>
+          Create
+        </button>{" "}
+        <br />
         <br />
       </div>
 

@@ -10,7 +10,6 @@ import {
   setIdentityName,
   useSelectedIdentity,
 } from "@src/ui/ducks/identities";
-import { useWallet } from "@src/ui/hooks/wallet";
 
 import type { IdentityData } from "@src/types";
 
@@ -24,7 +23,6 @@ export interface IdentityListProps {
 export const IdentityList = ({ identities }: IdentityListProps): JSX.Element => {
   const selected = useSelectedIdentity();
   const dispatch = useAppDispatch();
-  const { address } = useWallet();
 
   const onSelectIdentity = useCallback(
     (identityCommitment: string) => {
@@ -48,10 +46,8 @@ export const IdentityList = ({ identities }: IdentityListProps): JSX.Element => 
   );
 
   const onCreateIdentityRequest = useCallback(() => {
-    if (address) {
-      dispatch(createIdentityRequest());
-    }
-  }, [address, dispatch]);
+    dispatch(createIdentityRequest());
+  }, [dispatch]);
 
   return (
     <>
@@ -73,7 +69,7 @@ export const IdentityList = ({ identities }: IdentityListProps): JSX.Element => 
         <button
           className={classNames(
             "flex flex-row items-center justify-center cursor-pointer text-gray-600",
-            `create-identity-row__${address ? "active" : "not-active"}`,
+            "create-identity-row__active",
           )}
           data-testid="create-new-identity"
           type="button"

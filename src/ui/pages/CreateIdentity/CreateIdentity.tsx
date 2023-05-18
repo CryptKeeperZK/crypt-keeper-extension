@@ -1,10 +1,14 @@
+import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
+import Tooltip from "@mui/material/Tooltip";
+import Typography from "@mui/material/Typography";
 import { Controller } from "react-hook-form";
 
 import { getEnabledFeatures } from "@src/config/features";
 import { IDENTITY_TYPES, WEB2_PROVIDER_OPTIONS } from "@src/constants";
-import { Button } from "@src/ui/components/Button";
 import { Dropdown } from "@src/ui/components/Dropdown";
 import { FullModal, FullModalContent, FullModalFooter, FullModalHeader } from "@src/ui/components/FullModal";
+import { Icon } from "@src/ui/components/Icon";
 import { Input } from "@src/ui/components/Input";
 
 import "./createIdentityStyles.scss";
@@ -12,11 +16,20 @@ import { useCreateIdentity } from "./useCreateIdentity";
 
 const CreateIdentity = (): JSX.Element => {
   const features = getEnabledFeatures();
-  const { isLoading, isProviderAvailable, errors, control, closeModal, onSubmit } = useCreateIdentity();
+  const {
+    isLoading,
+    isProviderAvailable,
+    isMetamaskConnected,
+    errors,
+    control,
+    closeModal,
+    onCreateWithCryptkeeper,
+    onCreateWithEthWallet,
+  } = useCreateIdentity();
 
   return (
     <FullModal data-testid="create-identity-page" onClose={closeModal}>
-      <form className="create-identity-form" onSubmit={onSubmit}>
+      <form className="create-identity-form">
         <FullModalHeader onClose={closeModal}>Create Identity</FullModalHeader>
 
         <FullModalContent>
@@ -72,10 +85,41 @@ const CreateIdentity = (): JSX.Element => {
 
         {errors.root && <div className="text-xs text-red-500 text-center pb-1">{errors.root}</div>}
 
+        <Box sx={{ p: "1rem", display: "flex", alignItems: "center" }}>
+          <Typography sx={{ mr: 1 }}>Choose wallet to create identity</Typography>
+
+          <Tooltip
+            followCursor
+            title="Identity creation can be done with your Cryptkeeper keys or with connected Ethereum wallet."
+          >
+            <Icon fontAwesome="fa-info" />
+          </Tooltip>
+        </Box>
+
         <FullModalFooter>
-          <Button loading={isLoading} type="submit">
-            Create
-          </Button>
+          <Box sx={{ alignItems: "center", display: "flex", justifyContent: "space-between", width: "100%" }}>
+            <Button
+              disabled={isLoading || !isMetamaskConnected}
+              name="metamask"
+              sx={{ textTransform: "none" }}
+              type="submit"
+              variant="outlined"
+              onClick={onCreateWithEthWallet}
+            >
+              Metamask
+            </Button>
+
+            <Button
+              disabled={isLoading}
+              name="cryptkeeper"
+              sx={{ textTransform: "none" }}
+              type="submit"
+              variant="contained"
+              onClick={onCreateWithCryptkeeper}
+            >
+              Cryptkeeper
+            </Button>
+          </Box>
         </FullModalFooter>
       </form>
     </FullModal>

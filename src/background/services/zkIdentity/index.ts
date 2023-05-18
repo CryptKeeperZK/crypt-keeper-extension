@@ -7,6 +7,7 @@ import HistoryService from "@src/background/services/history";
 import LockerService from "@src/background/services/lock";
 import NotificationService from "@src/background/services/notification";
 import SimpleStorage from "@src/background/services/storage";
+import WalletService from "@src/background/services/wallet";
 import { ZkIdentitySemaphore } from "@src/background/services/zkIdentity/protocols/ZkIdentitySemaphore";
 import { getEnabledFeatures } from "@src/config/features";
 import { Paths } from "@src/constants";
@@ -23,8 +24,6 @@ import { ellipsify } from "@src/util/account";
 import pushMessage from "@src/util/pushMessage";
 
 import type { IBackupable } from "@src/background/services/backup";
-
-import WalletService from "../wallet";
 
 import { createNewIdentity } from "./factory";
 
@@ -258,7 +257,7 @@ export default class ZkIdentityService implements IBackupable {
     messageSignature,
     options,
   }: NewIdentityRequest): Promise<{ status: boolean; identityCommitment?: bigint }> => {
-    if (walletType === EWallet.ETH_WALLET && !messageSignature) {
+    if (walletType === EWallet.ETH_WALLET && !messageSignature && strategy !== "random") {
       throw new Error("No signature provided");
     }
 

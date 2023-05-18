@@ -18,12 +18,4 @@
       }
     }
   }
-
-  &__not-active {
-    width: 100%;
-
-    &:disabled {
-      color: $gray-600;
-    }
-  }
 }

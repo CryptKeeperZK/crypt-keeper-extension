@@ -65,8 +65,7 @@ const registerInjectedScript = async () => {
      * 2. await chrome.scripting.getRegisteredContentScripts() to check for an existing
      *    inpage script before registering - The provider is not loaded on time.
      */
-    // eslint-disable-next-line
-    log.warn(`Dropped attempt to register inpage content script. ${err}`);
+    log.warn("Dropped attempt to register inpage content script.", err);
   }
 };
 

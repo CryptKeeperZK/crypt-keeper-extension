@@ -68,8 +68,8 @@ export default class RequestManager extends EventEmitter2 {
   };
 
   private addToQueue = async (type: PendingRequestType, windowId?: number, payload?: unknown): Promise<string> => {
-    // eslint-disable-next-line no-plusplus
-    const id = `${this.nonce++}`;
+    const id = this.nonce.toString();
+    this.nonce += 1;
     this.pendingRequests.push({ id, windowId, type, payload });
     await pushMessage(setPendingRequests(this.pendingRequests));
 

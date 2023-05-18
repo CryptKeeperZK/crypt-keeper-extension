@@ -14,6 +14,7 @@ import { getMessageTemplate, signWithSigner } from "@src/ui/services/identity";
 export interface IUseCreateIdentityData {
   isLoading: boolean;
   isProviderAvailable: boolean;
+  isMetamaskConnected: boolean;
   errors: Partial<{
     root: string;
     identityStrategyType: string;
@@ -23,7 +24,8 @@ export interface IUseCreateIdentityData {
   control: Control<FormFields, unknown>;
   closeModal: () => void;
   register: UseFormRegister<FormFields>;
-  onSubmit: (event?: BaseSyntheticEvent) => Promise<void>;
+  onCreateWithEthWallet: (event?: BaseSyntheticEvent) => Promise<void>;
+  onCreateWithCryptkeeper: (event?: BaseSyntheticEvent) => Promise<void>;
 }
 
 interface FormFields {
@@ -54,10 +56,8 @@ export const useCreateIdentity = (): IUseCreateIdentityData => {
   const dispatch = useAppDispatch();
   const values = watch();
 
-  const onCreateIdentity = useCallback(
-    async (data: FormFields) => {
-      const { identityStrategyType, web2Provider, nonce } = data;
-
+  const createNewIdentity = useCallback(
+    async ({ identityStrategyType, web2Provider, nonce }: FormFields, walletType: EWallet) => {
       try {
         const message = getMessageTemplate({
           web2Provider: web2Provider.value as IdentityWeb2Provider,
@@ -69,19 +69,18 @@ export const useCreateIdentity = (): IUseCreateIdentityData => {
           identityStrategyType.value !== "random"
             ? { nonce, web2Provider: web2Provider.value as IdentityWeb2Provider, account: address, message }
             : { message };
-        const signer = await provider?.getSigner();
 
-        const messageSignature = await signWithSigner({
-          signer,
-          message,
-        });
+        const messageSignature =
+          walletType === EWallet.ETH_WALLET && identityStrategyType.value !== "random"
+            ? await signWithSigner({ signer: await provider?.getSigner(), message })
+            : undefined;
 
         await dispatch(
           createIdentity({
             strategy: identityStrategyType.value as IdentityStrategy,
             messageSignature,
             options,
-            walletType: EWallet.ETH_WALLET,
+            walletType,
           }),
         );
         navigate(Paths.HOME);
@@ -92,12 +91,23 @@ export const useCreateIdentity = (): IUseCreateIdentityData => {
     [address, provider, dispatch, setError],
   );
 
+  const onCreateIdentityWithEthWallet = useCallback(
+    async (data: FormFields) => createNewIdentity(data, EWallet.ETH_WALLET),
+    [createNewIdentity],
+  );
+
+  const onCreateIdentityWithCryptkeeper = useCallback(
+    async (data: FormFields) => createNewIdentity(data, EWallet.CRYPT_KEEPER_WALLET),
+    [createNewIdentity],
+  );
+
   const closeModal = useCallback(() => {
     dispatch(closePopup());
   }, [dispatch]);
 
   return {
     isLoading: isLoading || isSubmitting,
+    isMetamaskConnected: Boolean(address),
     isProviderAvailable: values.identityStrategyType.value === "interrep" || !features.RANDOM_IDENTITY,
     errors: {
       web2Provider: errors.web2Provider?.message,
@@ -108,6 +118,7 @@ export const useCreateIdentity = (): IUseCreateIdentityData => {
     control,
     closeModal,
     register,
-    onSubmit: handleSubmit(onCreateIdentity),
+    onCreateWithEthWallet: handleSubmit(onCreateIdentityWithEthWallet),
+    onCreateWithCryptkeeper: handleSubmit(onCreateIdentityWithCryptkeeper),
   };
 };

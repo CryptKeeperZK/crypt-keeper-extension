@@ -403,7 +403,7 @@ describe("background/services/zkIdentity", () => {
     });
 
     test("should not create a new identity if there is no signature", async () => {
-      const identityStrategy: IdentityStrategy = "random";
+      const identityStrategy: IdentityStrategy = "interrep";
       const identityOptions: CreateIdentityOptions = {
         nonce: 0,
         account: ZERO_ADDRESS,

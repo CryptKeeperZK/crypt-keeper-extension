@@ -1,10 +1,13 @@
 import BasePage from "../BasePage";
 
 export interface ICreateIdentityArgs {
+  walletType: WalletType;
   identityType?: IdentityType;
   provider?: ProviderType;
   nonce?: number;
 }
+
+type WalletType = "eth" | "ck";
 
 type IdentityType = "InterRep" | "Random";
 
@@ -26,7 +29,7 @@ export default class Identities extends BasePage {
     await this.page.getByText("Identities", { exact: true }).click();
   }
 
-  async createIdentity({ identityType, provider, nonce }: ICreateIdentityArgs | undefined = {}): Promise<void> {
+  async createIdentity({ identityType, provider, nonce, walletType }: ICreateIdentityArgs): Promise<void> {
     await this.page.getByTestId("create-new-identity").click({ delay: 1000 });
 
     const cryptKeeper = await this.page.context().waitForEvent("page");
@@ -45,12 +48,14 @@ export default class Identities extends BasePage {
       await cryptKeeper.getByLabel("Nonce").fill(nonce.toString());
     }
 
-    await cryptKeeper.getByRole("button", { name: "Create" }).click();
+    await cryptKeeper.getByRole("button", { name: walletType === "eth" ? "Metamask" : "Cryptkeeper" }).click();
 
-    // TODO: synpress doesn't support new data-testid for metamask
-    const metamask = await this.page.context().waitForEvent("page");
+    if (identityType !== "Random" && walletType === "eth") {
+      // TODO: synpress doesn't support new data-testid for metamask
+      const metamask = await this.page.context().waitForEvent("page");
 
-    await metamask.getByTestId("page-container-footer-next").click();
+      await metamask.getByTestId("page-container-footer-next").click();
+    }
   }
 
   async renameIdentity(index: number, name: string): Promise<void> {
