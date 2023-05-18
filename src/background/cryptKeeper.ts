@@ -48,7 +48,8 @@ export default class CryptKeeperController extends Handler {
     this.backupService = BackupService.getInstance()
       .add(BackupableServices.APPROVAL, this.approvalService)
       .add(BackupableServices.IDENTITY, this.zkIdentityService)
-      .add(BackupableServices.LOCK, this.lockService);
+      .add(BackupableServices.LOCK, this.lockService)
+      .add(BackupableServices.WALLET, this.walletService);
   }
 
   initialize = (): CryptKeeperController => {

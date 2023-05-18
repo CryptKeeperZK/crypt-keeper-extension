@@ -1,27 +1,28 @@
 import { Wallet } from "ethers";
+import uniqBy from "lodash/uniqBy";
 
 import { cryptoGenerateEncryptedHmac, cryptoGetAuthenticBackupCiphertext } from "@src/background/services/crypto";
 import LockerService from "@src/background/services/lock";
 import MiscStorageService from "@src/background/services/misc";
 import SimpleStorage from "@src/background/services/storage";
-import { InitializationStep } from "@src/types";
+import { ISignMessageArgs, InitializationStep } from "@src/types";
 
-import type { KeyPair } from "./types";
+import type { IAccount } from "./types";
 import type { IBackupable } from "../backup";
 
-const KEY_STORAGE_DB_KEY = "@KEY-STORAGE@";
+const ACCOUNT_STORAGE_DB_KEY = "@ACCOUNT-STORAGE@";
 
 export default class WalletService implements IBackupable {
   private static INSTANCE: WalletService;
 
-  private keyStorage: SimpleStorage;
+  private accountStorage: SimpleStorage;
 
   private lockService: LockerService;
 
   private miscStorage: MiscStorageService;
 
   private constructor() {
-    this.keyStorage = new SimpleStorage(KEY_STORAGE_DB_KEY);
+    this.accountStorage = new SimpleStorage(ACCOUNT_STORAGE_DB_KEY);
     this.lockService = LockerService.getInstance();
     this.miscStorage = MiscStorageService.getInstance();
   }
@@ -36,35 +37,48 @@ export default class WalletService implements IBackupable {
 
   generateKeyPair = async (mnemonic: string): Promise<void> => {
     const wallet = Wallet.fromPhrase(mnemonic);
+    const rawData = await this.accountStorage.get<string>();
 
-    const serializedKeys = JSON.stringify({
-      publicKey: wallet.publicKey,
-      privateKey: wallet.privateKey,
-    });
-    const encrypted = this.lockService.encrypt(serializedKeys);
-    await this.keyStorage.set(encrypted);
+    const accounts: IAccount[] = rawData ? (JSON.parse(rawData) as IAccount[]) : [];
+    accounts.push({ publicKey: wallet.publicKey, privateKey: wallet.privateKey, address: wallet.address });
+
+    const encrypted = this.lockService.encrypt(JSON.stringify(accounts));
+    await this.accountStorage.set(encrypted);
     await this.miscStorage.setInitialization({ initializationStep: InitializationStep.MNEMONIC });
   };
 
-  signMessage = async (message: string): Promise<string> => {
-    const encrypted = await this.keyStorage.get<string>();
+  accounts = async (): Promise<string[]> => {
+    const encrypted = await this.accountStorage.get<string>();
+    const accounts = encrypted ? (JSON.parse(this.lockService.decrypt(encrypted)) as IAccount[]) : [];
+
+    return accounts.map(({ address }) => address);
+  };
+
+  signMessage = async ({ message, address }: ISignMessageArgs): Promise<string> => {
+    const encrypted = await this.accountStorage.get<string>();
 
     if (!encrypted) {
       throw new Error("No key pair available");
     }
 
-    const { privateKey } = JSON.parse(this.lockService.decrypt(encrypted)) as KeyPair;
-    const wallet = new Wallet(privateKey);
+    const accounts = JSON.parse(this.lockService.decrypt(encrypted)) as IAccount[];
+    const account = accounts.find((item) => item.address === address);
+
+    if (!account) {
+      throw new Error(`There is no ${address} account`);
+    }
+
+    const wallet = new Wallet(account.privateKey);
 
     return wallet.signMessage(message);
   };
 
   clear = async (): Promise<void> => {
-    await this.keyStorage.clear();
+    await this.accountStorage.clear();
   };
 
   downloadEncryptedStorage = async (backupPassword: string): Promise<string | null> => {
-    const backupEncryptedData = await this.keyStorage.get<string>();
+    const backupEncryptedData = await this.accountStorage.get<string>();
 
     if (!backupEncryptedData) {
       return null;
@@ -75,11 +89,19 @@ export default class WalletService implements IBackupable {
   };
 
   uploadEncryptedStorage = async (backupEncryptedData: string, backupPassword: string): Promise<void> => {
-    const { isNewOnboarding } = await this.lockService.isAuthentic(backupPassword, Boolean(backupEncryptedData));
+    await this.lockService.isAuthentic(backupPassword, Boolean(backupEncryptedData));
 
-    if (isNewOnboarding && backupEncryptedData) {
+    if (backupEncryptedData) {
+      const encrypted = await this.accountStorage.get<string>();
+      const accounts = encrypted ? (JSON.parse(this.lockService.decrypt(encrypted)) as IAccount[]) : [];
+
       const authenticBackupCiphertext = cryptoGetAuthenticBackupCiphertext(backupEncryptedData, backupPassword);
-      await this.keyStorage.set(authenticBackupCiphertext);
+      const newAccounts = JSON.parse(this.lockService.decrypt(authenticBackupCiphertext)) as IAccount[];
+      const mergedBackupData = this.lockService.encrypt(
+        JSON.stringify(uniqBy([...accounts, ...newAccounts], "privateKey")),
+      );
+
+      await this.accountStorage.set(mergedBackupData);
     }
   };
 }

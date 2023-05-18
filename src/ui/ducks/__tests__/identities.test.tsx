@@ -189,7 +189,7 @@ describe("ui/ducks/identities", () => {
           walletType: EWallet.ETH_WALLET,
           strategy: "interrep",
           messageSignature: "signature",
-          options: { message: "message" },
+          options: { message: "message", account: ZERO_ADDRESS },
         }),
       ),
     );
@@ -201,7 +201,7 @@ describe("ui/ducks/identities", () => {
         strategy: "interrep",
         messageSignature: "signature",
         walletType: EWallet.ETH_WALLET,
-        options: { message: "message" },
+        options: { message: "message", account: ZERO_ADDRESS },
       },
     });
   });

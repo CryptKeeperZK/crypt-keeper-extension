@@ -455,7 +455,7 @@ describe("background/services/zkIdentity", () => {
         strategy: identityStrategy,
         walletType: EWallet.ETH_WALLET,
         messageSignature: identityMessageSignature,
-        options: { message: "message" },
+        options: { message: "message", account: ZERO_ADDRESS },
       });
 
       expect(emptyResult).toBeUndefined();

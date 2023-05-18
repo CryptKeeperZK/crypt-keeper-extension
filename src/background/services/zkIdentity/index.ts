@@ -265,14 +265,16 @@ export default class ZkIdentityService implements IBackupable {
 
     const config = {
       ...options,
-      account: options.account ?? "",
       identityStrategy: strategy,
       name: options?.name || `Account # ${numOfIdentites}`,
       messageSignature: strategy === "interrep" ? messageSignature : undefined,
     };
 
     if (walletType === EWallet.CRYPT_KEEPER_WALLET && strategy === "interrep") {
-      config.messageSignature = await this.walletService.signMessage(options.message);
+      config.messageSignature = await this.walletService.signMessage({
+        message: options.message,
+        address: options.account,
+      });
     }
 
     const identity = createNewIdentity(strategy, config);
