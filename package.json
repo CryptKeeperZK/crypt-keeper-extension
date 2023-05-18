@@ -51,7 +51,7 @@
     "@commitlint/cli": "^17.6.3",
     "@commitlint/config-conventional": "^17.6.3",
     "@playwright/test": "^1.33.0",
-    "@synthetixio/synpress": "^3.6.4",
+    "@synthetixio/synpress": "^3.7.0",
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^14.0.0",
     "@types/chrome": "^0.0.236",
