@@ -62,11 +62,12 @@ export default class WalletService implements IBackupable {
     }
 
     const accounts = JSON.parse(this.lockService.decrypt(encrypted)) as IAccount[];
-    const account = accounts.find((item) => item.address === address);
+    // TODO: remove condition when account for ck is done
+    const account = accounts.find((item) => item.address === address) || accounts[0];
 
-    if (!account) {
-      throw new Error(`There is no ${address} account`);
-    }
+    // if (!account) {
+    //   throw new Error(`There is no ${address} account`);
+    // }
 
     const wallet = new Wallet(account.privateKey);
 

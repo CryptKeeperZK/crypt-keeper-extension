@@ -110,10 +110,10 @@ describe("background/services/wallet", () => {
       );
     });
 
-    test("should not sign message if there is no such account", async () => {
-      await expect(walletService.signMessage({ message: "message", address: "unknown" })).rejects.toThrowError(
-        "There is no unknown account",
-      );
+    test("should sign message with first account if there is no specified address", async () => {
+      const result = await walletService.signMessage({ message: "message", address: "unknown" });
+
+      expect(result).toBe(defaultSignedMessage);
     });
   });
 
