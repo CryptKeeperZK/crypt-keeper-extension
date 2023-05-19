@@ -108,7 +108,7 @@
     "sass": "^1.62.1",
     "sass-loader": "^13.2.2",
     "sharp": "^0.32.1",
-    "style-loader": "^3.3.2",
+    "style-loader": "^3.3.3",
     "svgo": "^3.0.2",
     "ts-jest": "^29.1.0",
     "ts-loader": "^9.4.2",
