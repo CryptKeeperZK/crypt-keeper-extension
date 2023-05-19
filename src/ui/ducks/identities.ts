@@ -67,7 +67,7 @@ export const createIdentityRequest = () => async (): Promise<void> => {
 
 export const createIdentity =
   ({ walletType, strategy, messageSignature, options }: ICreateIdentityUiArgs) =>
-  async (): Promise<boolean> =>
+  async (): Promise<string | undefined> =>
     postMessage({
       method: RPCAction.CREATE_IDENTITY,
       payload: {

@@ -256,7 +256,7 @@ export default class ZkIdentityService implements IBackupable {
     walletType,
     messageSignature,
     options,
-  }: NewIdentityRequest): Promise<{ status: boolean; identityCommitment?: bigint }> => {
+  }: NewIdentityRequest): Promise<string | undefined> => {
     if (walletType === EWallet.ETH_WALLET && !messageSignature && strategy !== "random") {
       throw new Error("No signature provided");
     }
@@ -279,10 +279,7 @@ export default class ZkIdentityService implements IBackupable {
     const status = await this.insertIdentity(identity);
     await this.browserController.closePopup();
 
-    return {
-      status,
-      identityCommitment: identity.genIdentityCommitment(),
-    };
+    return status ? identity.genIdentityCommitment().toString() : undefined;
   };
 
   private insertIdentity = async (newIdentity: ZkIdentitySemaphore): Promise<boolean> => {
