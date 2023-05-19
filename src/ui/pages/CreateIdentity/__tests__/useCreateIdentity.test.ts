@@ -58,7 +58,7 @@ describe("ui/pages/CreateIdentity/useCreateIdentity", () => {
 
     (createIdentity as jest.Mock).mockReturnValue(true);
 
-    (useWallet as jest.Mock).mockReturnValue(defaultWalletHookData);
+    (useWallet as jest.Mock).mockReturnValue({ ...defaultWalletHookData, isActive: true });
 
     (useNavigate as jest.Mock).mockReturnValue(mockNavigate);
   });
@@ -72,7 +72,8 @@ describe("ui/pages/CreateIdentity/useCreateIdentity", () => {
 
     expect(result.current.isLoading).toBe(false);
     expect(result.current.isProviderAvailable).toBe(true);
-    expect(result.current.isMetamaskConnected).toBe(true);
+    expect(result.current.isWalletConnected).toBe(true);
+    expect(result.current.isWalletInstalled).toBe(true);
     expect(result.current.control).toBeDefined();
     expect(result.current.errors).toStrictEqual({
       root: undefined,
@@ -99,6 +100,29 @@ describe("ui/pages/CreateIdentity/useCreateIdentity", () => {
     });
     expect(mockNavigate).toBeCalledTimes(1);
     expect(mockNavigate).toBeCalledWith(Paths.HOME);
+  });
+
+  test("should connect eth wallet properly", async () => {
+    const { result } = renderHook(() => useCreateIdentity());
+
+    await act(async () => Promise.resolve(result.current.onConnectWallet()));
+
+    expect(result.current.isLoading).toBe(false);
+    expect(defaultWalletHookData.onConnect).toBeCalledTimes(1);
+  });
+
+  test("should handle error when trying to connect with eth wallet", async () => {
+    (useWallet as jest.Mock).mockReturnValue({
+      ...defaultWalletHookData,
+      onConnect: jest.fn(() => Promise.reject()),
+    });
+
+    const { result } = renderHook(() => useCreateIdentity());
+
+    await act(async () => Promise.resolve(result.current.onConnectWallet()));
+
+    expect(result.current.isLoading).toBe(false);
+    expect(result.current.errors.root).toBe("Wallet connection error");
   });
 
   test("should create identity with cryptkeeper properly", async () => {

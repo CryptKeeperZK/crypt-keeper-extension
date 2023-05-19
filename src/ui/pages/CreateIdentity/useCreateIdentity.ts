@@ -14,7 +14,8 @@ import { getMessageTemplate, signWithSigner } from "@src/ui/services/identity";
 export interface IUseCreateIdentityData {
   isLoading: boolean;
   isProviderAvailable: boolean;
-  isMetamaskConnected: boolean;
+  isWalletConnected: boolean;
+  isWalletInstalled: boolean;
   errors: Partial<{
     root: string;
     identityStrategyType: string;
@@ -24,6 +25,7 @@ export interface IUseCreateIdentityData {
   control: Control<FormFields, unknown>;
   closeModal: () => void;
   register: UseFormRegister<FormFields>;
+  onConnectWallet: () => Promise<void>;
   onCreateWithEthWallet: (event?: BaseSyntheticEvent) => Promise<void>;
   onCreateWithCryptkeeper: (event?: BaseSyntheticEvent) => Promise<void>;
 }
@@ -52,7 +54,7 @@ export const useCreateIdentity = (): IUseCreateIdentityData => {
   });
   const navigate = useNavigate();
 
-  const { address, provider } = useWallet();
+  const { isActive, isActivating, address, provider, isInjectedWallet, onConnect } = useWallet();
   const dispatch = useAppDispatch();
   const values = watch();
 
@@ -88,26 +90,31 @@ export const useCreateIdentity = (): IUseCreateIdentityData => {
         setError("root", { type: "submit", message: (err as Error).message });
       }
     },
-    [address, provider, dispatch, setError],
+    [address, provider, dispatch],
   );
 
   const onCreateIdentityWithEthWallet = useCallback(
     async (data: FormFields) => createNewIdentity(data, EWallet.ETH_WALLET),
-    [createNewIdentity],
+    [isActive, createNewIdentity, setError, onConnect],
   );
 
   const onCreateIdentityWithCryptkeeper = useCallback(
     async (data: FormFields) => createNewIdentity(data, EWallet.CRYPT_KEEPER_WALLET),
-    [createNewIdentity],
+    [setError, createNewIdentity],
   );
+
+  const onConnectWallet = useCallback(async () => {
+    await onConnect().catch(() => setError("root", { type: "submit", message: "Wallet connection error" }));
+  }, [setError, onConnect]);
 
   const closeModal = useCallback(() => {
     dispatch(closePopup());
   }, [dispatch]);
 
   return {
-    isLoading: isLoading || isSubmitting,
-    isMetamaskConnected: Boolean(address),
+    isLoading: isActivating || isLoading || isSubmitting,
+    isWalletInstalled: isInjectedWallet,
+    isWalletConnected: isActive,
     isProviderAvailable: values.identityStrategyType.value === "interrep" || !features.RANDOM_IDENTITY,
     errors: {
       web2Provider: errors.web2Provider?.message,
@@ -118,6 +125,7 @@ export const useCreateIdentity = (): IUseCreateIdentityData => {
     control,
     closeModal,
     register,
+    onConnectWallet: handleSubmit(onConnectWallet),
     onCreateWithEthWallet: handleSubmit(onCreateIdentityWithEthWallet),
     onCreateWithCryptkeeper: handleSubmit(onCreateIdentityWithCryptkeeper),
   };

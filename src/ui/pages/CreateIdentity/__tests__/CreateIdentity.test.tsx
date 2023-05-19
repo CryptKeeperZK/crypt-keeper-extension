@@ -54,7 +54,7 @@ describe("ui/pages/CreateIdentity", () => {
   beforeEach(() => {
     library.add(faTwitter, faGithub, faReddit);
 
-    (useWallet as jest.Mock).mockReturnValue(defaultWalletHookData);
+    (useWallet as jest.Mock).mockReturnValue({ ...defaultWalletHookData, isActive: true });
 
     (useAppDispatch as jest.Mock).mockReturnValue(mockDispatch);
 
@@ -90,6 +90,42 @@ describe("ui/pages/CreateIdentity", () => {
     expect(metamaskButton).toBeInTheDocument();
     expect(cryptkeeperButton).toBeInTheDocument();
     expect(identityType).toBeInTheDocument();
+  });
+
+  test("should render properly without metamask installed", async () => {
+    (useWallet as jest.Mock).mockReturnValue({ ...defaultWalletHookData, isInjectedWallet: false });
+
+    const { container } = render(<CreateIdentity />);
+
+    await waitFor(() => container.firstChild !== null);
+
+    const select = await screen.findByLabelText("Identity type");
+    await selectEvent.select(select, IDENTITY_TYPES[1].label);
+
+    const metamaskButton = await screen.findByText("Install Metamask");
+    const cryptkeeperButton = await screen.findByText("Cryptkeeper");
+    const identityType = await screen.findByText("Random");
+
+    expect(metamaskButton).toBeInTheDocument();
+    expect(cryptkeeperButton).toBeInTheDocument();
+    expect(identityType).toBeInTheDocument();
+  });
+
+  test("should connect properly to eth wallet", async () => {
+    (useWallet as jest.Mock).mockReturnValue({ ...defaultWalletHookData, isActive: false });
+
+    const { container } = render(<CreateIdentity />);
+
+    await waitFor(() => container.firstChild !== null);
+
+    const select = await screen.findByLabelText("Identity type");
+    await selectEvent.select(select, IDENTITY_TYPES[1].label);
+
+    const metamaskButton = await screen.findByText("Connect to Metamask");
+
+    await act(async () => Promise.resolve(fireEvent.click(metamaskButton)));
+
+    expect(defaultWalletHookData.onConnect).toBeCalledTimes(1);
   });
 
   test("should create random identity properly", async () => {

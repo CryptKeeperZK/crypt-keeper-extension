@@ -19,13 +19,17 @@ const CreateIdentity = (): JSX.Element => {
   const {
     isLoading,
     isProviderAvailable,
-    isMetamaskConnected,
+    isWalletInstalled,
+    isWalletConnected,
     errors,
     control,
     closeModal,
+    onConnectWallet,
     onCreateWithCryptkeeper,
     onCreateWithEthWallet,
   } = useCreateIdentity();
+
+  const ethWalletTitle = isWalletConnected ? "Metamask" : "Connect to Metamask";
 
   return (
     <FullModal data-testid="create-identity-page" onClose={closeModal}>
@@ -99,14 +103,14 @@ const CreateIdentity = (): JSX.Element => {
         <FullModalFooter>
           <Box sx={{ alignItems: "center", display: "flex", justifyContent: "space-between", width: "100%" }}>
             <Button
-              disabled={isLoading || !isMetamaskConnected}
+              disabled={isLoading || !isWalletInstalled}
               name="metamask"
               sx={{ textTransform: "none" }}
               type="submit"
               variant="outlined"
-              onClick={onCreateWithEthWallet}
+              onClick={isWalletConnected ? onCreateWithEthWallet : onConnectWallet}
             >
-              Metamask
+              {isWalletInstalled ? ethWalletTitle : "Install Metamask"}
             </Button>
 
             <Button
