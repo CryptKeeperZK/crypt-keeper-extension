@@ -32,10 +32,10 @@ test.describe("identity", () => {
     await extension.identitiesTab.createIdentity({ identityType: "Random", nonce: 0, walletType: "ck" });
     await expect(extension.getByText("Account # 4")).toBeVisible();
 
-    await expect(extension.getByText(/Account/)).toHaveCount(5);
+    await expect(extension.getByText(/Account #/)).toHaveCount(5);
 
     await extension.identitiesTab.deleteIdentity(0);
-    await expect(extension.getByText(/Account/)).toHaveCount(4);
+    await expect(extension.getByText(/Account #/)).toHaveCount(4);
 
     await extension.settingsPage.openPage();
     await extension.settingsPage.openTab("Advanced");
@@ -43,7 +43,7 @@ test.describe("identity", () => {
 
     await extension.goHome();
 
-    await expect(extension.getByText(/Account/)).toHaveCount(0);
+    await expect(extension.getByText(/Account #/)).toHaveCount(0);
   });
 
   test("should create and rename identity properly", async ({ page }) => {
@@ -63,21 +63,21 @@ test.describe("identity", () => {
     await extension.focus();
 
     await extension.identitiesTab.createIdentity({ walletType: "eth" });
-    await expect(extension.getByText(/Account/)).toHaveCount(1);
+    await expect(extension.getByText(/Account #/)).toHaveCount(1);
 
     await extension.activityTab.openTab();
     await expect(extension.activityTab.getByText("Identity created")).toBeVisible();
 
     await extension.identitiesTab.openTab();
     await extension.identitiesTab.deleteIdentity(0);
-    await expect(extension.getByText(/Account/)).toHaveCount(0);
+    await expect(extension.getByText(/Account #/)).toHaveCount(0);
 
     await extension.activityTab.openTab();
     await expect(extension.activityTab.getByText("Identity removed")).toBeVisible();
 
     await extension.identitiesTab.openTab();
     await extension.identitiesTab.createIdentity({ walletType: "ck" });
-    await expect(extension.getByText(/Account/)).toHaveCount(1);
+    await expect(extension.getByText(/Account #/)).toHaveCount(1);
 
     await extension.settingsPage.openPage();
     await extension.settingsPage.openTab("Advanced");
@@ -94,14 +94,14 @@ test.describe("identity", () => {
     await extension.focus();
 
     await extension.identitiesTab.createIdentity({ walletType: "eth" });
-    await expect(extension.getByText(/Account/)).toHaveCount(1);
+    await expect(extension.getByText(/Account #/)).toHaveCount(1);
 
     await extension.activityTab.openTab();
     await expect(extension.activityTab.getByText("Identity created")).toBeVisible();
 
     await extension.identitiesTab.openTab();
     await extension.identitiesTab.deleteIdentity(0);
-    await expect(extension.getByText(/Account/)).toHaveCount(0);
+    await expect(extension.getByText(/Account #/)).toHaveCount(0);
 
     await extension.activityTab.openTab();
     await expect(extension.activityTab.getByText("Identity removed")).toBeVisible();
@@ -121,7 +121,7 @@ test.describe("identity", () => {
 
     await extension.goHome();
     await extension.identitiesTab.createIdentity({ walletType: "ck" });
-    await expect(extension.getByText(/Account/)).toHaveCount(1);
+    await expect(extension.getByText(/Account #/)).toHaveCount(1);
 
     await extension.activityTab.openTab();
     await expect(extension.activityTab.getByText("No records found")).toBeVisible();
@@ -131,7 +131,7 @@ test.describe("identity", () => {
 
     await extension.goHome();
     await extension.identitiesTab.deleteIdentity();
-    await expect(extension.getByText(/Account/)).toHaveCount(0);
+    await expect(extension.getByText(/Account #/)).toHaveCount(0);
 
     await extension.activityTab.openTab();
     await expect(extension.activityTab.getByText("Identity removed")).toBeVisible();
@@ -153,6 +153,6 @@ test.describe("identity", () => {
     await extension.identitiesTab.createIdentity({ walletType: "ck" });
 
     await page.goto(`chrome-extension://${cryptKeeperExtensionId}/popup.html`);
-    await expect(extension.getByText(/Account/)).toHaveCount(2);
+    await expect(extension.getByText(/Account #/)).toHaveCount(2);
   });
 });
