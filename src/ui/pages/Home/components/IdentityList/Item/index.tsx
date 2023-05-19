@@ -118,7 +118,7 @@ export const IdentityItem = ({
         <div className="text-base text-gray-300">Commitment: {ellipsify(commitment)}</div>
 
         {metadata.identityStrategy !== "random" && (
-          <div className="text-xs text-gray-500">Account: {ellipsify(metadata.account)}</div>
+          <div className="text-xs text-gray-500">Address: {ellipsify(metadata.account)}</div>
         )}
       </div>
 
