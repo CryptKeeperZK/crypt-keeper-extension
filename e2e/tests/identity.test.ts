@@ -17,19 +17,19 @@ test.describe("identity", () => {
     const extension = new CryptKeeper(page);
     await extension.focus();
 
-    await extension.identitiesTab.createIdentity();
+    await extension.identitiesTab.createIdentity({ walletType: "eth" });
     await expect(extension.getByText("Account # 0")).toBeVisible();
 
-    await extension.identitiesTab.createIdentity({ provider: "Github", nonce: 0 });
+    await extension.identitiesTab.createIdentity({ provider: "Github", nonce: 0, walletType: "eth" });
     await expect(extension.getByText("Account # 1")).toBeVisible();
 
-    await extension.identitiesTab.createIdentity({ provider: "Reddit", nonce: 0 });
+    await extension.identitiesTab.createIdentity({ provider: "Reddit", nonce: 0, walletType: "ck" });
     await expect(extension.getByText("Account # 2")).toBeVisible();
 
-    await extension.identitiesTab.createIdentity({ identityType: "Random", nonce: 0 });
+    await extension.identitiesTab.createIdentity({ identityType: "Random", nonce: 0, walletType: "eth" });
     await expect(extension.getByText("Account # 3")).toBeVisible();
 
-    await extension.identitiesTab.createIdentity({ identityType: "Random", nonce: 0 });
+    await extension.identitiesTab.createIdentity({ identityType: "Random", nonce: 0, walletType: "ck" });
     await expect(extension.getByText("Account # 4")).toBeVisible();
 
     await expect(extension.getByText(/Account/)).toHaveCount(5);
@@ -50,7 +50,7 @@ test.describe("identity", () => {
     const extension = new CryptKeeper(page);
     await extension.focus();
 
-    await extension.identitiesTab.createIdentity();
+    await extension.identitiesTab.createIdentity({ walletType: "eth" });
     await expect(extension.getByText("Account # 0")).toBeVisible();
 
     await extension.identitiesTab.renameIdentity(0, "My twitter identity");
@@ -62,7 +62,7 @@ test.describe("identity", () => {
     const extension = new CryptKeeper(page);
     await extension.focus();
 
-    await extension.identitiesTab.createIdentity();
+    await extension.identitiesTab.createIdentity({ walletType: "eth" });
     await expect(extension.getByText(/Account/)).toHaveCount(1);
 
     await extension.activityTab.openTab();
@@ -76,7 +76,7 @@ test.describe("identity", () => {
     await expect(extension.activityTab.getByText("Identity removed")).toBeVisible();
 
     await extension.identitiesTab.openTab();
-    await extension.identitiesTab.createIdentity();
+    await extension.identitiesTab.createIdentity({ walletType: "ck" });
     await expect(extension.getByText(/Account/)).toHaveCount(1);
 
     await extension.settingsPage.openPage();
@@ -93,7 +93,7 @@ test.describe("identity", () => {
     const extension = new CryptKeeper(page);
     await extension.focus();
 
-    await extension.identitiesTab.createIdentity();
+    await extension.identitiesTab.createIdentity({ walletType: "eth" });
     await expect(extension.getByText(/Account/)).toHaveCount(1);
 
     await extension.activityTab.openTab();
@@ -120,7 +120,7 @@ test.describe("identity", () => {
     await extension.settingsPage.toggleHistoryTracking();
 
     await extension.goHome();
-    await extension.identitiesTab.createIdentity();
+    await extension.identitiesTab.createIdentity({ walletType: "ck" });
     await expect(extension.getByText(/Account/)).toHaveCount(1);
 
     await extension.activityTab.openTab();
@@ -142,5 +142,17 @@ test.describe("identity", () => {
     await extension.goHome();
     await extension.activityTab.openTab();
     await expect(extension.activityTab.getByText("No records found")).toBeVisible();
+  });
+
+  test("should create identity from demo", async ({ page, cryptKeeperExtensionId }) => {
+    await page.goto("/");
+    const extension = new CryptKeeper(page);
+    await extension.focus();
+
+    await extension.identitiesTab.createIdentity({ walletType: "eth" });
+    await extension.identitiesTab.createIdentity({ walletType: "ck" });
+
+    await page.goto(`chrome-extension://${cryptKeeperExtensionId}/popup.html`);
+    await expect(extension.getByText(/Account/)).toHaveCount(2);
   });
 });

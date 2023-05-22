@@ -8,6 +8,7 @@ import { useNavigate } from "react-router-dom";
 import { ZERO_ADDRESS } from "@src/config/const";
 import { defaultWalletHookData } from "@src/config/mock/wallet";
 import { IDENTITY_TYPES, Paths } from "@src/constants";
+import { EWallet } from "@src/types";
 import { useAppDispatch } from "@src/ui/ducks/hooks";
 import { createIdentity } from "@src/ui/ducks/identities";
 import { useWallet } from "@src/ui/hooks/wallet";
@@ -57,7 +58,7 @@ describe("ui/pages/CreateIdentity/useCreateIdentity", () => {
 
     (createIdentity as jest.Mock).mockReturnValue(true);
 
-    (useWallet as jest.Mock).mockReturnValue(defaultWalletHookData);
+    (useWallet as jest.Mock).mockReturnValue({ ...defaultWalletHookData, isActive: true });
 
     (useNavigate as jest.Mock).mockReturnValue(mockNavigate);
   });
@@ -71,6 +72,8 @@ describe("ui/pages/CreateIdentity/useCreateIdentity", () => {
 
     expect(result.current.isLoading).toBe(false);
     expect(result.current.isProviderAvailable).toBe(true);
+    expect(result.current.isWalletConnected).toBe(true);
+    expect(result.current.isWalletInstalled).toBe(true);
     expect(result.current.control).toBeDefined();
     expect(result.current.errors).toStrictEqual({
       root: undefined,
@@ -80,10 +83,10 @@ describe("ui/pages/CreateIdentity/useCreateIdentity", () => {
     });
   });
 
-  test("should create identity properly", async () => {
+  test("should create identity with eth wallet properly", async () => {
     const { result } = renderHook(() => useCreateIdentity());
 
-    await act(async () => Promise.resolve(result.current.onSubmit()));
+    await act(async () => Promise.resolve(result.current.onCreateWithEthWallet()));
 
     expect(result.current.isLoading).toBe(false);
     expect(signWithSigner).toBeCalledTimes(1);
@@ -93,7 +96,49 @@ describe("ui/pages/CreateIdentity/useCreateIdentity", () => {
       messageSignature: mockSignedMessage,
       options: { account: ZERO_ADDRESS, message: mockMessage, nonce: 0, web2Provider: "twitter" },
       strategy: "interrep",
-      walletType: 0,
+      walletType: EWallet.ETH_WALLET,
+    });
+    expect(mockNavigate).toBeCalledTimes(1);
+    expect(mockNavigate).toBeCalledWith(Paths.HOME);
+  });
+
+  test("should connect eth wallet properly", async () => {
+    const { result } = renderHook(() => useCreateIdentity());
+
+    await act(async () => Promise.resolve(result.current.onConnectWallet()));
+
+    expect(result.current.isLoading).toBe(false);
+    expect(defaultWalletHookData.onConnect).toBeCalledTimes(1);
+  });
+
+  test("should handle error when trying to connect with eth wallet", async () => {
+    (useWallet as jest.Mock).mockReturnValue({
+      ...defaultWalletHookData,
+      onConnect: jest.fn(() => Promise.reject()),
+    });
+
+    const { result } = renderHook(() => useCreateIdentity());
+
+    await act(async () => Promise.resolve(result.current.onConnectWallet()));
+
+    expect(result.current.isLoading).toBe(false);
+    expect(result.current.errors.root).toBe("Wallet connection error");
+  });
+
+  test("should create identity with cryptkeeper properly", async () => {
+    const { result } = renderHook(() => useCreateIdentity());
+
+    await act(async () => Promise.resolve(result.current.onCreateWithCryptkeeper()));
+
+    expect(result.current.isLoading).toBe(false);
+    expect(signWithSigner).toBeCalledTimes(0);
+    expect(mockDispatch).toBeCalledTimes(1);
+    expect(createIdentity).toBeCalledTimes(1);
+    expect(createIdentity).toBeCalledWith({
+      messageSignature: undefined,
+      options: { account: ZERO_ADDRESS, message: mockMessage, nonce: 0, web2Provider: "twitter" },
+      strategy: "interrep",
+      walletType: EWallet.CRYPT_KEEPER_WALLET,
     });
     expect(mockNavigate).toBeCalledTimes(1);
     expect(mockNavigate).toBeCalledWith(Paths.HOME);
@@ -122,7 +167,7 @@ describe("ui/pages/CreateIdentity/useCreateIdentity", () => {
       ),
     );
 
-    await act(async () => Promise.resolve(result.current.onSubmit()));
+    await act(async () => Promise.resolve(result.current.onCreateWithCryptkeeper()));
 
     expect(result.current.isLoading).toBe(false);
     expect(result.current.errors.root).toBe(error.message);

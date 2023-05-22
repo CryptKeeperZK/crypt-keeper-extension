@@ -17,7 +17,7 @@ test.describe("backup", () => {
     const extension = new CryptKeeper(page);
     await extension.focus();
 
-    await extension.identitiesTab.createIdentity();
+    await extension.identitiesTab.createIdentity({ walletType: "eth" });
     await expect(extension.getByText("Account # 0")).toBeVisible();
 
     await extension.settingsPage.openPage();

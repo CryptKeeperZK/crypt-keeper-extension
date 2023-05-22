@@ -69,8 +69,9 @@ export class CryptKeeperInjectedProvider extends EventEmitter {
   // TODO: (#75) enhance by moving towards long-lived conenctions #75
   private async post(message: InjectedProviderRequest): Promise<unknown> {
     return new Promise((resolve, reject) => {
-      // eslint-disable-next-line no-plusplus
-      const messageNonce = this.nonce++;
+      const messageNonce = this.nonce;
+      this.nonce += 1;
+
       window.postMessage(
         {
           target: "injected-contentscript",
@@ -135,8 +136,8 @@ export class CryptKeeperInjectedProvider extends EventEmitter {
       const { resolve, reject } = promises[data.nonce];
 
       if (err) {
-        // eslint-disable-next-line consistent-return
-        return reject(new Error(err));
+        reject(new Error(err));
+        return;
       }
 
       resolve(res);

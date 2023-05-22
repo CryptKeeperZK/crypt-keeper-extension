@@ -14,6 +14,8 @@ import { getMessageTemplate, signWithSigner } from "@src/ui/services/identity";
 export interface IUseCreateIdentityData {
   isLoading: boolean;
   isProviderAvailable: boolean;
+  isWalletConnected: boolean;
+  isWalletInstalled: boolean;
   errors: Partial<{
     root: string;
     identityStrategyType: string;
@@ -23,7 +25,9 @@ export interface IUseCreateIdentityData {
   control: Control<FormFields, unknown>;
   closeModal: () => void;
   register: UseFormRegister<FormFields>;
-  onSubmit: (event?: BaseSyntheticEvent) => Promise<void>;
+  onConnectWallet: () => Promise<void>;
+  onCreateWithEthWallet: (event?: BaseSyntheticEvent) => Promise<void>;
+  onCreateWithCryptkeeper: (event?: BaseSyntheticEvent) => Promise<void>;
 }
 
 interface FormFields {
@@ -50,14 +54,12 @@ export const useCreateIdentity = (): IUseCreateIdentityData => {
   });
   const navigate = useNavigate();
 
-  const { address, provider } = useWallet();
+  const { isActive, isActivating, address, provider, isInjectedWallet, onConnect } = useWallet();
   const dispatch = useAppDispatch();
   const values = watch();
 
-  const onCreateIdentity = useCallback(
-    async (data: FormFields) => {
-      const { identityStrategyType, web2Provider, nonce } = data;
-
+  const createNewIdentity = useCallback(
+    async ({ identityStrategyType, web2Provider, nonce }: FormFields, walletType: EWallet) => {
       try {
         const message = getMessageTemplate({
           web2Provider: web2Provider.value as IdentityWeb2Provider,
@@ -69,19 +71,18 @@ export const useCreateIdentity = (): IUseCreateIdentityData => {
           identityStrategyType.value !== "random"
             ? { nonce, web2Provider: web2Provider.value as IdentityWeb2Provider, account: address, message }
             : { message };
-        const signer = await provider?.getSigner();
 
-        const messageSignature = await signWithSigner({
-          signer,
-          message,
-        });
+        const messageSignature =
+          walletType === EWallet.ETH_WALLET && identityStrategyType.value !== "random"
+            ? await signWithSigner({ signer: await provider?.getSigner(), message })
+            : undefined;
 
         await dispatch(
           createIdentity({
             strategy: identityStrategyType.value as IdentityStrategy,
             messageSignature,
             options,
-            walletType: EWallet.ETH_WALLET,
+            walletType,
           }),
         );
         navigate(Paths.HOME);
@@ -89,15 +90,31 @@ export const useCreateIdentity = (): IUseCreateIdentityData => {
         setError("root", { type: "submit", message: (err as Error).message });
       }
     },
-    [address, provider, dispatch, setError],
+    [address, provider, dispatch],
   );
+
+  const onCreateIdentityWithEthWallet = useCallback(
+    async (data: FormFields) => createNewIdentity(data, EWallet.ETH_WALLET),
+    [isActive, createNewIdentity, setError, onConnect],
+  );
+
+  const onCreateIdentityWithCryptkeeper = useCallback(
+    async (data: FormFields) => createNewIdentity(data, EWallet.CRYPT_KEEPER_WALLET),
+    [setError, createNewIdentity],
+  );
+
+  const onConnectWallet = useCallback(async () => {
+    await onConnect().catch(() => setError("root", { type: "submit", message: "Wallet connection error" }));
+  }, [setError, onConnect]);
 
   const closeModal = useCallback(() => {
     dispatch(closePopup());
   }, [dispatch]);
 
   return {
-    isLoading: isLoading || isSubmitting,
+    isLoading: isActivating || isLoading || isSubmitting,
+    isWalletInstalled: isInjectedWallet,
+    isWalletConnected: isActive,
     isProviderAvailable: values.identityStrategyType.value === "interrep" || !features.RANDOM_IDENTITY,
     errors: {
       web2Provider: errors.web2Provider?.message,
@@ -108,6 +125,8 @@ export const useCreateIdentity = (): IUseCreateIdentityData => {
     control,
     closeModal,
     register,
-    onSubmit: handleSubmit(onCreateIdentity),
+    onConnectWallet: handleSubmit(onConnectWallet),
+    onCreateWithEthWallet: handleSubmit(onCreateIdentityWithEthWallet),
+    onCreateWithCryptkeeper: handleSubmit(onCreateIdentityWithCryptkeeper),
   };
 };

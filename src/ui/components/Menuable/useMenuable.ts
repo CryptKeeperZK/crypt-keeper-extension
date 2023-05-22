@@ -1,56 +1,38 @@
-import { useState, useEffect, useCallback, MouseEvent as ReactMouseEvent, ReactNode, useRef, RefObject } from "react";
+import { useState, useEffect, useCallback, MouseEvent as ReactMouseEvent, useRef, RefObject } from "react";
 
 export interface ItemProps {
   label: string;
   isDangerItem: boolean;
-  iconUrl?: string;
-  iconFA?: string;
-  iconClassName?: string;
-  className?: string;
-  disabled?: boolean;
-  children?: ItemProps[];
-  component?: ReactNode;
-  onClick?: (e: ReactMouseEvent, reset: () => void) => Promise<void> | void;
+  onClick: (e: ReactMouseEvent) => Promise<void> | void;
 }
 
 export interface IUseMenuableArgs {
-  opened?: boolean;
   items: ItemProps[];
-  onOpen?: () => void;
-  onClose?: () => void;
 }
 
 export interface IUseMenuableData {
-  menuRef: RefObject<HTMLDivElement>;
+  menuRef: RefObject<HTMLButtonElement>;
   isShowing: boolean;
-  path: number[];
   menuItems: ItemProps[];
   isOpenDangerModal: boolean;
-  onItemClick: (e: ReactMouseEvent, item: ItemProps, i: number) => void;
-  handleClose: () => void;
-  handleGoBack: (e: ReactMouseEvent) => void;
-  handleOpen: () => void;
-  handleSetDangerItem: (item: ItemProps, i: number) => void;
-  handleDangerAction: (e: ReactMouseEvent) => void;
-  handleDangerModalOpen: (e: ReactMouseEvent) => void;
-  handleDangerModalClose: (e: ReactMouseEvent) => void;
+  onItemClick: (event: ReactMouseEvent, item: ItemProps) => void;
+  onShow: (event: ReactMouseEvent) => void;
+  onSetDangerItem: (event: ReactMouseEvent, item: ItemProps) => void;
+  onDangerAction: (event: ReactMouseEvent) => void;
+  onDangerModalShow: (event: ReactMouseEvent) => void;
 }
 
-export const useMenuable = ({ opened, items, onOpen, onClose }: IUseMenuableArgs): IUseMenuableData => {
-  const [isShowing, setShowing] = useState(!!opened);
-  const [path, setPath] = useState<number[]>([]);
+export const useMenuable = ({ items }: IUseMenuableArgs): IUseMenuableData => {
+  const [isShowing, setShowing] = useState(false);
   const [dangerItem, setDangerItem] = useState<ItemProps>();
-  const [number, setNumber] = useState<number>(0);
   const [isOpenDangerModal, setOpenDangerModal] = useState(false);
-  const menuRef = useRef<HTMLDivElement>(null);
+  const menuRef = useRef<HTMLButtonElement>(null);
 
   const handleClose = useCallback(() => {
-    onClose?.();
     setShowing(false);
-  }, []);
+  }, [setShowing]);
 
   const handleOpen = useCallback(() => {
-    onOpen?.();
     setShowing(true);
 
     const cb = () => {
@@ -59,111 +41,83 @@ export const useMenuable = ({ opened, items, onOpen, onClose }: IUseMenuableArgs
     };
 
     window.addEventListener("click", cb);
-  }, [handleClose]);
+  }, [setShowing, handleClose]);
 
-  const handleGoBack = useCallback(
-    (e: ReactMouseEvent) => {
-      e.stopPropagation();
-      const newPath = [...path];
-      newPath.pop();
-      setPath(newPath);
+  const onShow = useCallback(
+    (event: ReactMouseEvent) => {
+      event.stopPropagation();
+
+      if (isShowing) {
+        handleClose();
+      } else {
+        handleOpen();
+      }
     },
-    [path],
+    [isShowing, handleOpen, handleClose],
   );
 
   const onItemClick = useCallback(
-    (e: ReactMouseEvent, item: ItemProps, i: number) => {
-      if (item.disabled) {
-        return;
-      }
-
-      if (item.children) {
-        setPath([...path, i]);
-      } else if (item.onClick) {
-        item.onClick(e, () => setPath([]));
-        handleClose();
-      }
+    (event: ReactMouseEvent, item: ItemProps) => {
+      item.onClick(event);
+      handleClose();
     },
-    [path, handleClose, setPath],
+    [handleClose],
   );
 
-  const handleDangerModalOpen = useCallback(
-    (e: ReactMouseEvent) => {
-      e.stopPropagation();
-      setOpenDangerModal(true);
+  const onDangerModalShow = useCallback(
+    (event: ReactMouseEvent) => {
+      event.stopPropagation();
+      setOpenDangerModal((show) => !show);
     },
-    [isOpenDangerModal],
+    [setOpenDangerModal],
   );
 
-  const handleDangerModalClose = useCallback(
-    (e: ReactMouseEvent) => {
-      e.stopPropagation();
-      setOpenDangerModal(false);
-    },
-    [isOpenDangerModal],
-  );
-
-  const handleSetDangerItem = useCallback(
-    (item: ItemProps, i: number) => {
-      setNumber(i);
+  const onSetDangerItem = useCallback(
+    (event: ReactMouseEvent, item: ItemProps) => {
+      handleClose();
       setDangerItem(item);
+      onDangerModalShow(event);
     },
-    [dangerItem, number],
+    [setDangerItem, handleClose, onDangerModalShow],
   );
 
-  const handleDangerAction = useCallback(
-    (e: ReactMouseEvent) => {
-      e.stopPropagation();
+  const onDangerAction = useCallback(
+    (event: ReactMouseEvent) => {
       if (dangerItem) {
-        onItemClick(e, dangerItem, number);
+        onItemClick(event, dangerItem);
       }
 
-      setOpenDangerModal(false);
+      onDangerModalShow(event);
     },
-    [dangerItem],
+    [dangerItem, onItemClick, onDangerModalShow],
   );
 
-  useEffect(() => {
-    if (typeof opened !== "undefined") {
-      setShowing(opened);
-      if (!opened) {
-        setPath([]);
-      }
-    }
-  }, [opened]);
-
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
+  const handleClickOutside = useCallback(
+    (event: MouseEvent) => {
       if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
         handleClose();
       }
-    };
+    },
+    [menuRef, handleClose],
+  );
+
+  useEffect(() => {
     document.addEventListener("click", handleClickOutside, true);
+
     return () => {
       document.removeEventListener("click", handleClickOutside, true);
     };
-  }, [isShowing]);
-
-  let menuItems: ItemProps[] = items;
-  path?.forEach((index) => {
-    if (items[index].children) {
-      menuItems = items[index].children as ItemProps[];
-    }
-  });
+  }, [isShowing, handleClickOutside]);
 
   return {
     menuRef,
     isShowing,
-    path,
-    menuItems,
+    menuItems: items,
     isOpenDangerModal,
     onItemClick,
-    handleClose,
-    handleGoBack,
-    handleOpen,
-    handleSetDangerItem,
-    handleDangerAction,
-    handleDangerModalOpen,
-    handleDangerModalClose,
+    onShow,
+    onSetDangerItem,
+    onDangerAction,
+    onDangerModalShow,
   };
 };

@@ -1,3 +1,4 @@
+import Box from "@mui/material/Box";
 import { MouseEventHandler, ReactNode, useCallback } from "react";
 import ReactDOM from "react-dom";
 
@@ -17,11 +18,11 @@ export const Modal = ({ className, onClose, children, ...rest }: ModalProps): JS
   const onClick: MouseEventHandler = useCallback((e) => e.stopPropagation(), []);
 
   return ReactDOM.createPortal(
-    <div {...rest} className="modal__overlay" onClick={onClose}>
-      <div className={`modal__wrapper ${className as string}`} onClick={onClick}>
+    <Box {...rest} className="modal__overlay" role="none" onClick={onClose}>
+      <Box className={`modal__wrapper ${className as string}`} role="dialog" onClick={onClick}>
         {children}
-      </div>
-    </div>,
+      </Box>
+    </Box>,
     modalRoot as HTMLDivElement,
   );
 };

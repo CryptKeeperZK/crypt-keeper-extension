@@ -14,7 +14,7 @@ test.describe("proof generation", () => {
 
     const extension = new CryptKeeper(page);
 
-    await extension.identitiesTab.createIdentity();
+    await extension.identitiesTab.createIdentity({ walletType: "eth" });
     await expect(extension.getByText("Account # 0")).toBeVisible();
 
     await page.goto("/");

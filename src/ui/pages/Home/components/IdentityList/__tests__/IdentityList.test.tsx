@@ -7,7 +7,6 @@ import { faTwitter, faGithub, faReddit } from "@fortawesome/free-brands-svg-icon
 import { act, render, screen, fireEvent } from "@testing-library/react";
 
 import { ZERO_ADDRESS } from "@src/config/const";
-import { defaultWalletHookData } from "@src/config/mock/wallet";
 import { IdentityData } from "@src/types";
 import { useAppDispatch } from "@src/ui/ducks/hooks";
 import {
@@ -17,7 +16,6 @@ import {
   useIdentities,
   useSelectedIdentity,
 } from "@src/ui/ducks/identities";
-import { useWallet } from "@src/ui/hooks/wallet";
 
 import { IdentityList } from "..";
 
@@ -32,10 +30,6 @@ jest.mock("@src/ui/ducks/identities", (): unknown => ({
   useIdentities: jest.fn(),
   useSelectedIdentity: jest.fn(),
   createIdentityRequest: jest.fn(),
-}));
-
-jest.mock("@src/ui/hooks/wallet", (): unknown => ({
-  useWallet: jest.fn(),
 }));
 
 describe("ui/pages/Home/components/IdentityList", () => {
@@ -69,8 +63,6 @@ describe("ui/pages/Home/components/IdentityList", () => {
     (useIdentities as jest.Mock).mockReturnValue(defaultIdentities);
 
     (useSelectedIdentity as jest.Mock).mockReturnValue(defaultIdentities[0]);
-
-    (useWallet as jest.Mock).mockReturnValue(defaultWalletHookData);
   });
 
   afterEach(() => {
@@ -78,18 +70,6 @@ describe("ui/pages/Home/components/IdentityList", () => {
   });
 
   test("should render properly", async () => {
-    render(<IdentityList identities={defaultIdentities} />);
-
-    const identityName1 = await screen.findByText(defaultIdentities[0].metadata.name);
-    const identityName2 = await screen.findByText(defaultIdentities[1].metadata.name);
-
-    expect(identityName1).toBeInTheDocument();
-    expect(identityName2).toBeInTheDocument();
-  });
-
-  test("should render properly without connected wallet", async () => {
-    (useWallet as jest.Mock).mockReturnValue({ ...defaultWalletHookData, address: undefined });
-
     render(<IdentityList identities={defaultIdentities} />);
 
     const identityName1 = await screen.findByText(defaultIdentities[0].metadata.name);

@@ -379,8 +379,7 @@ describe("background/services/zkIdentity", () => {
         options: identityOptions,
       });
 
-      expect(result.status).toBe(true);
-      expect(result.identityCommitment).toBeDefined();
+      expect(result).toBeDefined();
     });
 
     test("should create a new identity with cryptkeeper properly", async () => {
@@ -398,12 +397,11 @@ describe("background/services/zkIdentity", () => {
         options: identityOptions,
       });
 
-      expect(result.status).toBe(true);
-      expect(result.identityCommitment).toBeDefined();
+      expect(result).toBeDefined();
     });
 
     test("should not create a new identity if there is no signature", async () => {
-      const identityStrategy: IdentityStrategy = "random";
+      const identityStrategy: IdentityStrategy = "interrep";
       const identityOptions: CreateIdentityOptions = {
         nonce: 0,
         account: ZERO_ADDRESS,
@@ -438,7 +436,7 @@ describe("background/services/zkIdentity", () => {
         options: identityOptions,
       });
 
-      expect(successResult.status).toBe(true);
+      expect(successResult).toBeDefined();
 
       (createNewIdentity as jest.Mock).mockReturnValue({
         genIdentityCommitment: () => mockDefaultIdentityCommitment,
@@ -451,7 +449,7 @@ describe("background/services/zkIdentity", () => {
         options: identityOptions,
       });
 
-      expect(failedResult.status).toBe(false);
+      expect(failedResult).toBeUndefined();
 
       const emptyResult = await zkIdentityService.createIdentity({
         strategy: identityStrategy,
@@ -460,7 +458,7 @@ describe("background/services/zkIdentity", () => {
         options: { message: "message" },
       });
 
-      expect(emptyResult.status).toBe(false);
+      expect(emptyResult).toBeUndefined();
     });
   });
 

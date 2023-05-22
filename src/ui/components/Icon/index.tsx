@@ -1,3 +1,4 @@
+import Box from "@mui/material/Box";
 import classNames from "classnames";
 import { forwardRef, MouseEventHandler, Ref } from "react";
 
@@ -24,13 +25,14 @@ const IconUI = (
   }: IconProps,
   ref: Ref<HTMLDivElement>,
 ): JSX.Element => (
-  <div
+  <Box
     ref={ref}
     {...rest}
     className={classNames("icon", className, {
       "icon--disabled": disabled,
       "icon--clickable": onClick,
     })}
+    role="img"
     style={{
       backgroundImage: url ? `url(${url})` : undefined,
       width: !fontAwesome ? `${size}rem` : undefined,
@@ -40,7 +42,7 @@ const IconUI = (
     onClick={onClick}
   >
     {fontAwesome && <i className={`fas ${fontAwesome}`} />}
-  </div>
+  </Box>
 );
 
 export const Icon = forwardRef(IconUI);
