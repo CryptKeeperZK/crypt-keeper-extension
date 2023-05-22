@@ -1,19 +1,34 @@
+import { HDNodeWallet, Wallet } from "ethers";
+
+import { generateMnemonic } from "@src/background/services/mnemonic";
 import SimpleStorage from "@src/background/services/storage";
 import { ZERO_ADDRESS } from "@src/config/const";
 
 import WalletService from "..";
 
-const mockSerializedAccounts = JSON.stringify([
+const mockAccounts = [
   {
     publicKey: "0x031bd64c030e0a6233ef38aed1df3922219e547a240c7dc8635749163ec1a0abe7",
     privateKey: "0x046f3d3acae9e8babbfcbd5ecc962843e6eff65093d1bd086c6a738e87e51e41",
     address: ZERO_ADDRESS,
   },
-]);
+];
+
+const mockSerializedAccounts = JSON.stringify(mockAccounts);
 
 const mockAuthenticityCheckData = {
   isNewOnboarding: true,
 };
+
+const mockSignedMessage =
+  "0x8b7a1e6c0638291c674af226dd97f5354bb3723d611128ad35fda772b9051eab5fec16aacf700ba186590b170a16bfff576078695ac26a3321f9636c6a4a6c051b";
+
+jest.mock("ethers", (): unknown => ({
+  ...jest.requireActual("ethers"),
+  Wallet: jest.fn(() => ({
+    signMessage: jest.fn(() => Promise.resolve(mockSignedMessage)),
+  })),
+}));
 
 jest.mock("@src/background/services/lock", (): unknown => ({
   getInstance: jest.fn(() => ({
@@ -37,13 +52,15 @@ jest.mock("@src/background/services/crypto", (): unknown => ({
 
 jest.mock("@src/background/services/storage");
 
+jest.mock("@src/background/services/mnemonic", (): unknown => ({
+  generateMnemonic: jest.fn(),
+}));
+
 type MockStorage = { get: jest.Mock; set: jest.Mock; clear: jest.Mock };
 
 describe("background/services/wallet", () => {
   const walletService = WalletService.getInstance();
   const defaultMnemonic = "test test test test test test test test test test test junk";
-  const defaultSignedMessage =
-    "0x8b7a1e6c0638291c674af226dd97f5354bb3723d611128ad35fda772b9051eab5fec16aacf700ba186590b170a16bfff576078695ac26a3321f9636c6a4a6c051b";
 
   beforeEach(() => {
     (SimpleStorage as jest.Mock).mock.instances.forEach((instance: MockStorage) => {
@@ -51,6 +68,10 @@ describe("background/services/wallet", () => {
       instance.set.mockReturnValue(undefined);
       instance.clear.mockReturnValue(undefined);
     });
+
+    Wallet.fromPhrase = jest.fn(() => mockAccounts[0] as unknown as HDNodeWallet);
+
+    (generateMnemonic as jest.Mock).mockReturnValue(defaultMnemonic);
   });
 
   afterEach(async () => {
@@ -65,39 +86,39 @@ describe("background/services/wallet", () => {
 
   describe("keys", () => {
     test("should generate key pair properly with empty store", async () => {
-      (SimpleStorage as jest.Mock).mock.instances.forEach((instance: MockStorage) => {
-        instance.get.mockReturnValue(undefined);
-      });
+      const [keyStorage, mnemonicStorage] = (SimpleStorage as jest.Mock).mock.instances as [MockStorage, MockStorage];
+      keyStorage.get.mockReturnValue(undefined);
+      mnemonicStorage.get.mockReturnValue(defaultMnemonic);
 
-      await walletService.generateKeyPair(defaultMnemonic);
-
-      const [keyStorage] = (SimpleStorage as jest.Mock).mock.instances as [MockStorage];
+      await walletService.generateKeyPair();
 
       expect(keyStorage.set).toBeCalledTimes(1);
     });
 
     test("should generate key pair properly", async () => {
-      await walletService.generateKeyPair(defaultMnemonic);
+      await walletService.generateKeyPair();
 
-      const [keyStorage] = (SimpleStorage as jest.Mock).mock.instances as [MockStorage];
+      const [keyStorage, mnemonicStorage] = (SimpleStorage as jest.Mock).mock.instances as [MockStorage, MockStorage];
 
       expect(keyStorage.set).toBeCalledTimes(1);
+      expect(mnemonicStorage.get).toBeCalledTimes(1);
+      expect(mnemonicStorage.clear).toBeCalledTimes(1);
+    });
+
+    test("should not generate key pair if there is no mnemonic", async () => {
+      (SimpleStorage as jest.Mock).mock.instances.forEach((instance: MockStorage) => {
+        instance.get.mockReturnValue(undefined);
+      });
+
+      await expect(walletService.generateKeyPair()).rejects.toThrowError("Generate mnemonic first");
     });
 
     test("should sign message properly", async () => {
-      await walletService.generateKeyPair(defaultMnemonic);
+      await walletService.generateKeyPair();
 
       const result = await walletService.signMessage({ message: "message", address: ZERO_ADDRESS });
 
-      expect(result).toBe(defaultSignedMessage);
-    });
-
-    test("should sign message with nonce properly", async () => {
-      await walletService.generateKeyPair(defaultMnemonic);
-
-      const result = await walletService.signMessage({ message: "message nonce: 1", address: ZERO_ADDRESS });
-
-      expect(result).not.toBe(defaultSignedMessage);
+      expect(result).toBe(mockSignedMessage);
     });
 
     test("should not sign message if there is no key pair", async () => {
@@ -113,7 +134,36 @@ describe("background/services/wallet", () => {
     test("should sign message with first account if there is no specified address", async () => {
       const result = await walletService.signMessage({ message: "message", address: "unknown" });
 
-      expect(result).toBe(defaultSignedMessage);
+      expect(result).toBe(mockSignedMessage);
+    });
+  });
+
+  describe("mnemonic", () => {
+    test("should generate mnemonic properly", async () => {
+      (SimpleStorage as jest.Mock).mock.instances.forEach((instance: MockStorage) => {
+        instance.get.mockReturnValue(undefined);
+      });
+
+      const mnemonic = await walletService.generateMnemonic();
+
+      expect(mnemonic).toBe(defaultMnemonic);
+    });
+
+    test("should throw an error if key pair is already created", async () => {
+      await expect(walletService.generateMnemonic()).rejects.toThrowError("Key pair is already generated");
+    });
+
+    test("should return already generated mnemonic properly", async () => {
+      const [accountStorage, mnemonicStorage] = (SimpleStorage as jest.Mock).mock.instances as [
+        MockStorage,
+        MockStorage,
+      ];
+      accountStorage.get.mockReturnValue(undefined);
+      mnemonicStorage.get.mockReturnValue(defaultMnemonic);
+
+      const mnemonic = await walletService.generateMnemonic();
+
+      expect(mnemonic).toBeDefined();
     });
   });
 
@@ -155,10 +205,9 @@ describe("background/services/wallet", () => {
     test("should upload encrypted keys", async () => {
       await walletService.uploadEncryptedStorage(mockSerializedAccounts, "password");
 
-      (SimpleStorage as jest.Mock).mock.instances.forEach((instance: MockStorage) => {
-        expect(instance.set).toBeCalledTimes(1);
-        expect(instance.set).toBeCalledWith(mockSerializedAccounts);
-      });
+      const [accountStorage] = (SimpleStorage as jest.Mock).mock.instances as [MockStorage];
+      expect(accountStorage.set).toBeCalledTimes(1);
+      expect(accountStorage.set).toBeCalledWith(mockSerializedAccounts);
     });
 
     test("should upload encrypted data with empty storage", async () => {
@@ -168,10 +217,9 @@ describe("background/services/wallet", () => {
 
       await walletService.uploadEncryptedStorage(mockSerializedAccounts, "password");
 
-      (SimpleStorage as jest.Mock).mock.instances.forEach((instance: MockStorage) => {
-        expect(instance.set).toBeCalledTimes(1);
-        expect(instance.set).toBeCalledWith(mockSerializedAccounts);
-      });
+      const [accountStorage] = (SimpleStorage as jest.Mock).mock.instances as [MockStorage];
+      expect(accountStorage.set).toBeCalledTimes(1);
+      expect(accountStorage.set).toBeCalledWith(mockSerializedAccounts);
     });
 
     test("should not upload encrypted keys if there is no data", async () => {

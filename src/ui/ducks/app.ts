@@ -1,6 +1,7 @@
 /* eslint-disable no-param-reassign */
 import { createSlice } from "@reduxjs/toolkit";
 import deepEqual from "fast-deep-equal";
+import omit from "lodash/omit";
 
 import { RPCAction } from "@src/constants";
 import postMessage from "@src/util/postMessage";
@@ -14,6 +15,7 @@ export interface AppState {
   isInitialized: boolean;
   isUnlocked: boolean;
   isMnemonicGenerated: boolean;
+  mnemonic?: string;
   isDisconnectedPermanently?: boolean;
 }
 
@@ -21,6 +23,7 @@ const initialState: AppState = {
   isInitialized: false,
   isUnlocked: false,
   isMnemonicGenerated: false,
+  mnemonic: undefined,
   isDisconnectedPermanently: undefined,
 };
 
@@ -32,6 +35,10 @@ const appSlice = createSlice({
       state.isInitialized = action.payload.isInitialized;
       state.isUnlocked = action.payload.isUnlocked;
       state.isMnemonicGenerated = action.payload.isMnemonicGenerated;
+    },
+
+    setMnemonic: (state: AppState, action: PayloadAction<string>) => {
+      state.mnemonic = action.payload;
     },
 
     setDisconnectedPermanently: (state: AppState, action: PayloadAction<boolean>) => {
@@ -77,13 +84,20 @@ export const getWalletConnection =
     dispatch(appSlice.actions.setDisconnectedPermanently(Boolean(response?.isDisconnectedPermanently)));
   };
 
-export const saveMnemonic =
-  (mnemonic: string): TypedThunk<Promise<void>> =>
-  async (dispatch) => {
-    await postMessage({ method: RPCAction.SAVE_MNEMONIC, payload: mnemonic });
-    dispatch(setStatus({ isInitialized: true, isUnlocked: true, isMnemonicGenerated: true }));
-  };
+export const generateMnemonic = (): TypedThunk<Promise<void>> => async (dispatch) => {
+  const mnemonic = await postMessage<string>({ method: RPCAction.GENERATE_MNEMONIC });
+  dispatch(appSlice.actions.setMnemonic(mnemonic));
+};
 
-export const useAppStatus = (): AppState => useAppSelector((state) => state.app, deepEqual);
+export const saveMnemonic = (): TypedThunk<Promise<void>> => async (dispatch) => {
+  await postMessage({ method: RPCAction.SAVE_MNEMONIC });
+  dispatch(setStatus({ isInitialized: true, isUnlocked: true, isMnemonicGenerated: true }));
+  dispatch(appSlice.actions.setMnemonic(""));
+};
+
+export const useGeneratedMnemonic = (): string | undefined => useAppSelector((state) => state.app.mnemonic, deepEqual);
+
+export const useAppStatus = (): Omit<AppState, "mnemonic"> =>
+  useAppSelector((state) => omit(state.app, ["mnemonic"]), deepEqual);
 
 export default appSlice.reducer;

@@ -4,6 +4,7 @@ import uniqBy from "lodash/uniqBy";
 import { cryptoGenerateEncryptedHmac, cryptoGetAuthenticBackupCiphertext } from "@src/background/services/crypto";
 import LockerService from "@src/background/services/lock";
 import MiscStorageService from "@src/background/services/misc";
+import { generateMnemonic } from "@src/background/services/mnemonic";
 import SimpleStorage from "@src/background/services/storage";
 import { ISignMessageArgs, InitializationStep } from "@src/types";
 
@@ -11,11 +12,14 @@ import type { IAccount } from "./types";
 import type { IBackupable } from "../backup";
 
 const ACCOUNT_STORAGE_DB_KEY = "@ACCOUNT-STORAGE@";
+const MNEMONIC_STORAGE_DB_KEY = "@MNEMONIC-STORAGE@";
 
 export default class WalletService implements IBackupable {
   private static INSTANCE: WalletService;
 
   private accountStorage: SimpleStorage;
+
+  private mnemonicStorage: SimpleStorage;
 
   private lockService: LockerService;
 
@@ -23,6 +27,7 @@ export default class WalletService implements IBackupable {
 
   private constructor() {
     this.accountStorage = new SimpleStorage(ACCOUNT_STORAGE_DB_KEY);
+    this.mnemonicStorage = new SimpleStorage(MNEMONIC_STORAGE_DB_KEY);
     this.lockService = LockerService.getInstance();
     this.miscStorage = MiscStorageService.getInstance();
   }
@@ -35,7 +40,34 @@ export default class WalletService implements IBackupable {
     return WalletService.INSTANCE;
   };
 
-  generateKeyPair = async (mnemonic: string): Promise<void> => {
+  generateMnemonic = async (): Promise<string> => {
+    const accounts = await this.accountStorage.get<string>();
+
+    if (accounts) {
+      throw new Error("Key pair is already generated");
+    }
+
+    const encryptedMnemonic = await this.mnemonicStorage.get<string>();
+
+    if (encryptedMnemonic) {
+      return this.lockService.decrypt(encryptedMnemonic);
+    }
+
+    const mnemonic = generateMnemonic();
+    const encrypted = this.lockService.encrypt(mnemonic);
+    await this.mnemonicStorage.set(encrypted);
+
+    return mnemonic;
+  };
+
+  generateKeyPair = async (): Promise<void> => {
+    const encryptedMnemonic = await this.mnemonicStorage.get<string>();
+
+    if (!encryptedMnemonic) {
+      throw new Error("Generate mnemonic first");
+    }
+
+    const mnemonic = this.lockService.decrypt(encryptedMnemonic);
     const wallet = Wallet.fromPhrase(mnemonic);
     const rawData = await this.accountStorage.get<string>();
 
@@ -45,6 +77,7 @@ export default class WalletService implements IBackupable {
     const encrypted = this.lockService.encrypt(JSON.stringify(accounts));
     await this.accountStorage.set(encrypted);
     await this.miscStorage.setInitialization({ initializationStep: InitializationStep.MNEMONIC });
+    await this.mnemonicStorage.clear();
   };
 
   accounts = async (): Promise<string[]> => {
