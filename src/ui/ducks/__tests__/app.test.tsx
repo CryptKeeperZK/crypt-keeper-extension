@@ -12,6 +12,7 @@ import postMessage from "@src/util/postMessage";
 import {
   closePopup,
   fetchStatus,
+  generateMnemonic,
   getWalletConnection,
   lock,
   saveMnemonic,
@@ -20,6 +21,7 @@ import {
   setupPassword,
   unlock,
   useAppStatus,
+  useGeneratedMnemonic,
 } from "../app";
 
 jest.mock("redux-logger", (): unknown => ({
@@ -42,7 +44,6 @@ describe("ui/ducks/app", () => {
       isInitialized: true,
       isUnlocked: true,
       isMnemonicGenerated: true,
-      isDisconnectedPermanently: undefined,
     };
     (postMessage as jest.Mock).mockResolvedValue(expectedState);
 
@@ -52,8 +53,12 @@ describe("ui/ducks/app", () => {
       wrapper: ({ children }) => <Provider store={store}>{children}</Provider>,
     });
 
-    expect(app).toStrictEqual(expectedState);
-    expect(result.current).toStrictEqual(expectedState);
+    expect(app.isInitialized).toStrictEqual(expectedState.isInitialized);
+    expect(app.isUnlocked).toStrictEqual(expectedState.isUnlocked);
+    expect(app.isMnemonicGenerated).toStrictEqual(expectedState.isMnemonicGenerated);
+    expect(result.current.isInitialized).toStrictEqual(expectedState.isInitialized);
+    expect(result.current.isUnlocked).toStrictEqual(expectedState.isUnlocked);
+    expect(result.current.isMnemonicGenerated).toStrictEqual(expectedState.isMnemonicGenerated);
   });
 
   test("should set status properly", async () => {
@@ -62,6 +67,7 @@ describe("ui/ducks/app", () => {
       isUnlocked: true,
       isMnemonicGenerated: true,
       isDisconnectedPermanently: undefined,
+      mnemonic: undefined,
     };
 
     await Promise.resolve(store.dispatch(setStatus(expectedState)));
@@ -76,6 +82,7 @@ describe("ui/ducks/app", () => {
       isUnlocked: true,
       isMnemonicGenerated: true,
       isDisconnectedPermanently: true,
+      mnemonic: undefined,
     };
 
     await Promise.resolve(store.dispatch(setWalletConnection(true)));
@@ -97,6 +104,7 @@ describe("ui/ducks/app", () => {
       isUnlocked: true,
       isMnemonicGenerated: true,
       isDisconnectedPermanently: true,
+      mnemonic: undefined,
     };
 
     await Promise.resolve(store.dispatch(getWalletConnection()));
@@ -138,7 +146,7 @@ describe("ui/ducks/app", () => {
   });
 
   test("should call save mnemonic action properly", async () => {
-    await Promise.resolve(store.dispatch(saveMnemonic("mnemonic")));
+    await Promise.resolve(store.dispatch(saveMnemonic()));
     const { app } = store.getState();
 
     expect(app).toStrictEqual({
@@ -146,8 +154,29 @@ describe("ui/ducks/app", () => {
       isUnlocked: true,
       isMnemonicGenerated: true,
       isDisconnectedPermanently: true,
+      mnemonic: "",
     });
     expect(postMessage).toBeCalledTimes(1);
-    expect(postMessage).toBeCalledWith({ method: RPCAction.SAVE_MNEMONIC, payload: "mnemonic" });
+    expect(postMessage).toBeCalledWith({ method: RPCAction.SAVE_MNEMONIC });
+  });
+
+  test("should generate mnemonic properly", async () => {
+    const expectedState = {
+      isInitialized: true,
+      isUnlocked: true,
+      isMnemonicGenerated: true,
+      mnemonic: "mnemonic",
+      isDisconnectedPermanently: undefined,
+    };
+    (postMessage as jest.Mock).mockResolvedValue(expectedState.mnemonic);
+
+    await Promise.resolve(store.dispatch(generateMnemonic()));
+    const { app } = store.getState();
+    const { result } = renderHook(() => useGeneratedMnemonic(), {
+      wrapper: ({ children }) => <Provider store={store}>{children}</Provider>,
+    });
+
+    expect(app.mnemonic).toStrictEqual(expectedState.mnemonic);
+    expect(result.current).toStrictEqual(expectedState.mnemonic);
   });
 });

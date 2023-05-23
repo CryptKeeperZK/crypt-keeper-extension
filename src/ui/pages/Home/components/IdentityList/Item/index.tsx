@@ -115,7 +115,11 @@ export const IdentityItem = ({
           </div>
         )}
 
-        <div className="text-base text-gray-500">{ellipsify(commitment)}</div>
+        <div className="text-base text-gray-300">Commitment: {ellipsify(commitment)}</div>
+
+        {metadata.identityStrategy !== "random" && (
+          <div className="text-xs text-gray-500">Address: {ellipsify(metadata.account)}</div>
+        )}
       </div>
 
       <Menuable

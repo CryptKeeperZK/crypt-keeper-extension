@@ -2,6 +2,7 @@ import { BaseSyntheticEvent, useCallback } from "react";
 import { Control, useForm, UseFormRegister } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 
+import { ZERO_ADDRESS } from "@src/config/const";
 import { getEnabledFeatures } from "@src/config/features";
 import { WEB2_PROVIDER_OPTIONS, IDENTITY_TYPES, Paths } from "@src/constants";
 import { EWallet, IdentityStrategy, IdentityWeb2Provider, SelectOption } from "@src/types";
@@ -61,16 +62,19 @@ export const useCreateIdentity = (): IUseCreateIdentityData => {
   const createNewIdentity = useCallback(
     async ({ identityStrategyType, web2Provider, nonce }: FormFields, walletType: EWallet) => {
       try {
+        // TODO: add connector and provider for cryptkeeper and replace empty string with address
+        const account = walletType === EWallet.ETH_WALLET ? (address as string) : "";
         const message = getMessageTemplate({
           web2Provider: web2Provider.value as IdentityWeb2Provider,
           nonce,
           identityStrategyType: identityStrategyType.value as IdentityStrategy,
+          account: identityStrategyType.value !== "random" ? account : ZERO_ADDRESS,
         });
 
         const options =
           identityStrategyType.value !== "random"
-            ? { nonce, web2Provider: web2Provider.value as IdentityWeb2Provider, account: address, message }
-            : { message };
+            ? { nonce, web2Provider: web2Provider.value as IdentityWeb2Provider, account, message }
+            : { message, account: ZERO_ADDRESS };
 
         const messageSignature =
           walletType === EWallet.ETH_WALLET && identityStrategyType.value !== "random"

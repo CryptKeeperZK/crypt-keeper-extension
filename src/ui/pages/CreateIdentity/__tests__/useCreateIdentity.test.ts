@@ -136,7 +136,7 @@ describe("ui/pages/CreateIdentity/useCreateIdentity", () => {
     expect(createIdentity).toBeCalledTimes(1);
     expect(createIdentity).toBeCalledWith({
       messageSignature: undefined,
-      options: { account: ZERO_ADDRESS, message: mockMessage, nonce: 0, web2Provider: "twitter" },
+      options: { account: "", message: mockMessage, nonce: 0, web2Provider: "twitter" },
       strategy: "interrep",
       walletType: EWallet.CRYPT_KEEPER_WALLET,
     });

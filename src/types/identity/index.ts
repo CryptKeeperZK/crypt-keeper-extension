@@ -4,9 +4,9 @@ export type IdentityWeb2Provider = "twitter" | "github" | "reddit";
 
 export type CreateIdentityOptions = {
   message: string;
+  account: string;
   nonce?: number;
   web2Provider?: IdentityWeb2Provider;
-  account?: string;
   name?: string;
 };
 

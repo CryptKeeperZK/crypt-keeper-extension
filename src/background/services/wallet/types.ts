@@ -1,4 +1,5 @@
-export interface KeyPair {
+export interface IAccount {
   publicKey: string;
   privateKey: string;
+  address: string;
 }

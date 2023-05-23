@@ -9,3 +9,4 @@ export * from "./utility";
 export * from "./backup";
 export * from "./approval";
 export * from "./misc";
+export * from "./wallet";

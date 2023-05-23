@@ -144,7 +144,7 @@ describe("ui/pages/CreateIdentity", () => {
     expect(createIdentity).toBeCalledTimes(1);
     expect(createIdentity).toBeCalledWith({
       messageSignature: undefined,
-      options: { message: mockMessage },
+      options: { message: mockMessage, account: ZERO_ADDRESS },
       strategy: "random",
       walletType: EWallet.CRYPT_KEEPER_WALLET,
     });
