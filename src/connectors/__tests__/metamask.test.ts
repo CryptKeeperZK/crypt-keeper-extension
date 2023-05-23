@@ -1,3 +1,7 @@
+/**
+ * @jest-environment jsdom
+ */
+
 import { metamask, metamaskHooks } from "..";
 
 describe("connectors/metamask", () => {

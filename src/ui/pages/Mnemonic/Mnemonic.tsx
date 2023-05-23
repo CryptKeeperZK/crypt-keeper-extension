@@ -1,5 +1,6 @@
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
+import Skeleton from "@mui/material/Skeleton";
 import Typography from "@mui/material/Typography";
 
 import logoSVG from "@src/static/icons/logo.svg";
@@ -27,7 +28,11 @@ const Mnemonic = (): JSX.Element => {
           Please keep your mnemonic phrase safely
         </Typography>
 
-        <RevealMnemonicInput mnemonic={mnemonic} />
+        {mnemonic ? (
+          <RevealMnemonicInput mnemonic={mnemonic} />
+        ) : (
+          <Skeleton height={175} variant="rectangular" width={337} />
+        )}
       </Box>
 
       <Button

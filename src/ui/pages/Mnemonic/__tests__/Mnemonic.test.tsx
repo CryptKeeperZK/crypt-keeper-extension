@@ -37,7 +37,7 @@ describe("ui/pages/Mnemonic", () => {
   });
 
   test("should render error properly", async () => {
-    (useMnemonic as jest.Mock).mockReturnValue({ ...defaultHookData, error: "error" });
+    (useMnemonic as jest.Mock).mockReturnValue({ ...defaultHookData, mnemonic: undefined, error: "error" });
 
     const { container, findByText } = render(<Mnemonic />);
     await waitFor(() => container.firstChild !== null);

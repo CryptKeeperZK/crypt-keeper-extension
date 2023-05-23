@@ -7,10 +7,12 @@ declare global {
   }
 }
 
-export function initializeInjectedProvider(): void {
+export function initializeInjectedProvider(): CryptKeeperInjectedProvider {
   const injectedProvider = new CryptKeeperInjectedProvider();
   setGlobalInjectedPrivider(injectedProvider);
   window.addEventListener("message", injectedProvider.eventResponser);
+
+  return injectedProvider;
 }
 
 export function setGlobalInjectedPrivider(injectedProvider: CryptKeeperInjectedProvider): void {

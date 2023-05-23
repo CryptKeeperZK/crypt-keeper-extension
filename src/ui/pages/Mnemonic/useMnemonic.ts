@@ -8,7 +8,7 @@ import { useAppDispatch } from "@src/ui/ducks/hooks";
 export interface IUseMnemonicData {
   isLoading: boolean;
   error: string;
-  mnemonic: string;
+  mnemonic?: string;
   onSaveMnemonic: () => void;
 }
 
@@ -39,9 +39,9 @@ export const useMnemonic = (): IUseMnemonicData => {
   }, [isMnemonicGenerated, navigate, dispatch]);
 
   return {
-    isLoading: isLoading || !mnemonic,
+    isLoading,
     error,
-    mnemonic: mnemonic as string,
+    mnemonic,
     onSaveMnemonic,
   };
 };
