@@ -4,7 +4,7 @@ import { ConnectorNames } from "@src/connectors";
 import { mockConnector } from "@src/connectors/mock";
 
 import type { IUseWalletData } from "@src/ui/hooks/wallet";
-import type { BrowserProvider } from "ethers/types/providers";
+import type { BrowserProvider } from "ethers";
 
 import { ZERO_ADDRESS } from "../const";
 import { getChains } from "../rpc";
