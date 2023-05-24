@@ -1,6 +1,6 @@
 import { ZERO_ADDRESS } from "@src/config/const";
 
-import type { JsonRpcSigner } from "ethers/types/providers";
+import type { JsonRpcSigner } from "ethers";
 
 import { getMessageTemplate, signWithSigner } from "..";
 

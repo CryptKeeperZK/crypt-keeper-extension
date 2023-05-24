@@ -9,7 +9,7 @@ import { useAppStatus, getWalletConnection, setWalletConnection, lock } from "@s
 import { useAppDispatch } from "@src/ui/ducks/hooks";
 
 import type { Connector } from "@web3-react/types";
-import type { BrowserProvider } from "ethers/types/providers";
+import type { BrowserProvider } from "ethers";
 
 export interface IUseWalletData {
   isActive: boolean;
