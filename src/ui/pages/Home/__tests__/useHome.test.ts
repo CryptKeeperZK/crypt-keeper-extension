@@ -10,7 +10,7 @@ import { IdentityData } from "@src/types";
 import { useAppDispatch } from "@src/ui/ducks/hooks";
 import { useIdentities, fetchIdentities, fetchHistory } from "@src/ui/ducks/identities";
 import { checkHostApproval } from "@src/ui/ducks/permissions";
-import { useWallet } from "@src/ui/hooks/wallet";
+import { useEthWallet } from "@src/ui/hooks/wallet";
 import { getLastActiveTabUrl } from "@src/util/browser";
 
 import { useHome } from "../useHome";
@@ -21,7 +21,7 @@ jest.mock("react", (): unknown => ({
 }));
 
 jest.mock("@src/ui/hooks/wallet", (): unknown => ({
-  useWallet: jest.fn(),
+  useEthWallet: jest.fn(),
 }));
 
 jest.mock("@src/ui/ducks/hooks", (): unknown => ({
@@ -74,7 +74,7 @@ describe("ui/pages/Home/useHome", () => {
 
     (useAppDispatch as jest.Mock).mockReturnValue(mockDispatch);
 
-    (useWallet as jest.Mock).mockReturnValue(defaultWalletHookData);
+    (useEthWallet as jest.Mock).mockReturnValue(defaultWalletHookData);
 
     (useIdentities as jest.Mock).mockReturnValue(defaultIdentities);
 

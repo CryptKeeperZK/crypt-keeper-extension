@@ -15,7 +15,7 @@ import { IDENTITY_TYPES, WEB2_PROVIDER_OPTIONS } from "@src/constants";
 import { EWallet } from "@src/types";
 import { useAppDispatch } from "@src/ui/ducks/hooks";
 import { createIdentity } from "@src/ui/ducks/identities";
-import { useWallet } from "@src/ui/hooks/wallet";
+import { useEthWallet } from "@src/ui/hooks/wallet";
 import { signWithSigner, getMessageTemplate } from "@src/ui/services/identity";
 
 import CreateIdentity from "..";
@@ -42,7 +42,7 @@ jest.mock("@src/ui/ducks/identities", (): unknown => ({
 }));
 
 jest.mock("@src/ui/hooks/wallet", (): unknown => ({
-  useWallet: jest.fn(),
+  useEthWallet: jest.fn(),
 }));
 
 describe("ui/pages/CreateIdentity", () => {
@@ -54,7 +54,7 @@ describe("ui/pages/CreateIdentity", () => {
   beforeEach(() => {
     library.add(faTwitter, faGithub, faReddit);
 
-    (useWallet as jest.Mock).mockReturnValue({ ...defaultWalletHookData, isActive: true });
+    (useEthWallet as jest.Mock).mockReturnValue({ ...defaultWalletHookData, isActive: true });
 
     (useAppDispatch as jest.Mock).mockReturnValue(mockDispatch);
 
@@ -93,7 +93,7 @@ describe("ui/pages/CreateIdentity", () => {
   });
 
   test("should render properly without metamask installed", async () => {
-    (useWallet as jest.Mock).mockReturnValue({ ...defaultWalletHookData, isInjectedWallet: false });
+    (useEthWallet as jest.Mock).mockReturnValue({ ...defaultWalletHookData, isInjectedWallet: false });
 
     const { container } = render(<CreateIdentity />);
 
@@ -112,7 +112,7 @@ describe("ui/pages/CreateIdentity", () => {
   });
 
   test("should connect properly to eth wallet", async () => {
-    (useWallet as jest.Mock).mockReturnValue({ ...defaultWalletHookData, isActive: false });
+    (useEthWallet as jest.Mock).mockReturnValue({ ...defaultWalletHookData, isActive: false });
 
     const { container } = render(<CreateIdentity />);
 

@@ -7,7 +7,7 @@ import { useNavigate } from "react-router-dom";
 
 import { defaultWalletHookData } from "@src/config/mock/wallet";
 import { Paths } from "@src/constants";
-import { useWallet } from "@src/ui/hooks/wallet";
+import { useEthWallet } from "@src/ui/hooks/wallet";
 import { getExtensionUrl, redirectToNewTab } from "@src/util/browser";
 
 import { Header } from "..";
@@ -17,7 +17,7 @@ jest.mock("react-router-dom", () => ({
 }));
 
 jest.mock("@src/ui/hooks/wallet", (): unknown => ({
-  useWallet: jest.fn(),
+  useEthWallet: jest.fn(),
 }));
 
 jest.mock("@src/util/browser", (): unknown => ({
@@ -29,7 +29,7 @@ describe("ui/components/Header", () => {
   const mockNavigate = jest.fn();
 
   beforeEach(() => {
-    (useWallet as jest.Mock).mockReturnValue(defaultWalletHookData);
+    (useEthWallet as jest.Mock).mockReturnValue(defaultWalletHookData);
 
     (useNavigate as jest.Mock).mockReturnValue(mockNavigate);
 
@@ -41,7 +41,7 @@ describe("ui/components/Header", () => {
   });
 
   test("should render properly", async () => {
-    (useWallet as jest.Mock).mockReturnValue({
+    (useEthWallet as jest.Mock).mockReturnValue({
       ...defaultWalletHookData,
       isActive: true,
     });
@@ -54,7 +54,7 @@ describe("ui/components/Header", () => {
   });
 
   test("should render properly without connected wallet", async () => {
-    (useWallet as jest.Mock).mockReturnValue({
+    (useEthWallet as jest.Mock).mockReturnValue({
       ...defaultWalletHookData,
       address: undefined,
       chain: undefined,
@@ -70,7 +70,7 @@ describe("ui/components/Header", () => {
   });
 
   test("should render properly activating state", async () => {
-    (useWallet as jest.Mock).mockReturnValue({
+    (useEthWallet as jest.Mock).mockReturnValue({
       ...defaultWalletHookData,
       address: undefined,
       chain: undefined,
@@ -86,7 +86,7 @@ describe("ui/components/Header", () => {
   });
 
   test("should render without installed wallet", async () => {
-    (useWallet as jest.Mock).mockReturnValue({
+    (useEthWallet as jest.Mock).mockReturnValue({
       ...defaultWalletHookData,
       isInjectedWallet: false,
     });

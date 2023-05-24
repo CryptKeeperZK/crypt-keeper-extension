@@ -9,7 +9,7 @@ import { EWallet, IdentityStrategy, IdentityWeb2Provider, SelectOption } from "@
 import { closePopup } from "@src/ui/ducks/app";
 import { useAppDispatch } from "@src/ui/ducks/hooks";
 import { createIdentity } from "@src/ui/ducks/identities";
-import { useWallet } from "@src/ui/hooks/wallet";
+import { useEthWallet } from "@src/ui/hooks/wallet";
 import { getMessageTemplate, signWithSigner } from "@src/ui/services/identity";
 
 export interface IUseCreateIdentityData {
@@ -55,7 +55,7 @@ export const useCreateIdentity = (): IUseCreateIdentityData => {
   });
   const navigate = useNavigate();
 
-  const { isActive, isActivating, address, provider, isInjectedWallet, onConnect } = useWallet();
+  const { isActive, isActivating, address, provider, isInjectedWallet, onConnect } = useEthWallet();
   const dispatch = useAppDispatch();
   const values = watch();
 
