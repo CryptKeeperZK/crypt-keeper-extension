@@ -3,13 +3,13 @@ import BigNumber from "bignumber.js";
 import { ConnectorNames } from "@src/connectors";
 import { mockConnector } from "@src/connectors/mock";
 
-import type { IUseWalletData } from "@src/ui/hooks/wallet";
+import type { IUseEthWalletData } from "@src/ui/hooks/wallet";
 import type { BrowserProvider } from "ethers";
 
 import { ZERO_ADDRESS } from "../const";
 import { getChains } from "../rpc";
 
-export const defaultWalletHookData: IUseWalletData = {
+export const defaultWalletHookData: IUseEthWalletData = {
   isActive: false,
   isActivating: false,
   isInjectedWallet: true,

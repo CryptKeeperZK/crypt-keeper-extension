@@ -8,7 +8,7 @@ import loaderSvg from "@src/static/icons/loader.svg";
 import logoSvg from "@src/static/icons/logo.svg";
 import { Icon } from "@src/ui/components/Icon";
 import { Menuable } from "@src/ui/components/Menuable";
-import { useWallet } from "@src/ui/hooks/wallet";
+import { useEthWallet } from "@src/ui/hooks/wallet";
 import { redirectToNewTab } from "@src/util/browser";
 
 import "./header.scss";
@@ -16,7 +16,7 @@ import "./header.scss";
 const METAMASK_INSTALL_URL = "https://metamask.io/";
 
 export const Header = (): JSX.Element => {
-  const { address, isActivating, isActive, isInjectedWallet, chain, onConnect, onDisconnect, onLock } = useWallet();
+  const { address, isActivating, isActive, isInjectedWallet, chain, onConnect, onDisconnect, onLock } = useEthWallet();
   const navigate = useNavigate();
   const isLoading = isActivating && isInjectedWallet;
 

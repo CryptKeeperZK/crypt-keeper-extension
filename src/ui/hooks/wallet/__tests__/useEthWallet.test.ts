@@ -6,12 +6,12 @@ import { act, renderHook, waitFor } from "@testing-library/react";
 import { useWeb3React } from "@web3-react/core";
 
 import { defaultWalletHookData } from "@src/config/mock/wallet";
-import { ConnectorNames, metamask } from "@src/connectors";
+import { ConnectorNames, metamask, metamaskHooks } from "@src/connectors";
 import { mockConnector } from "@src/connectors/mock";
 import { getWalletConnection, lock, setWalletConnection, useAppStatus } from "@src/ui/ducks/app";
 import { useAppDispatch } from "@src/ui/ducks/hooks";
 
-import { useWallet } from "..";
+import { useEthWallet } from "..";
 
 jest.mock("@web3-react/core", (): unknown => ({
   ...jest.requireActual("@web3-react/core"),
@@ -29,9 +29,16 @@ jest.mock("@src/ui/ducks/hooks", (): unknown => ({
   useAppDispatch: jest.fn(),
 }));
 
-describe("ui/hooks/wallet", () => {
+jest.mock("@src/connectors", (): unknown => ({
+  ...jest.requireActual("@src/connectors"),
+  metamaskHooks: {
+    useChainId: jest.fn(),
+    useAccount: jest.fn(),
+  },
+}));
+
+describe("ui/hooks/useEthWallet", () => {
   const mockDispatch = jest.fn(() => Promise.resolve());
-  const defaultHooks = { usePriorityChainId: jest.fn(), usePriorityAccount: jest.fn(), usePriorityProvider: jest.fn() };
 
   beforeEach(() => {
     (defaultWalletHookData.provider?.getBalance as jest.Mock).mockResolvedValue(
@@ -43,32 +50,29 @@ describe("ui/hooks/wallet", () => {
       provider: defaultWalletHookData.provider,
       isActive: true,
       isActivating: false,
-      hooks: defaultHooks,
     });
 
     (useAppStatus as jest.Mock).mockReturnValue({ isDisconnectedPermanently: false });
 
     (useAppDispatch as jest.Mock).mockReturnValue(mockDispatch);
 
-    defaultHooks.usePriorityChainId.mockReturnValue(1);
+    (metamaskHooks.useAccount as jest.Mock).mockReturnValue(defaultWalletHookData.address);
 
-    defaultHooks.usePriorityAccount.mockReturnValue(defaultWalletHookData.address);
+    (metamaskHooks.useChainId as jest.Mock).mockReturnValue(defaultWalletHookData.chain?.chainId);
   });
 
   afterEach(() => {
     jest.resetAllMocks();
   });
 
-  test("should return connected data", async () => {
-    const { result } = renderHook(() => useWallet());
-
-    await waitFor(() => expect(result.current.balance).toBeDefined());
+  test("should return mock connected data", () => {
+    const { result } = renderHook(() => useEthWallet());
 
     expect(result.current.isActive).toBe(true);
     expect(result.current.isActivating).toBe(false);
     expect(result.current.isInjectedWallet).toBe(false);
-    expect(result.current.chain).toStrictEqual(defaultWalletHookData.chain);
-    expect(result.current.address).toBe(defaultWalletHookData.address);
+    expect(result.current.chain).toBeUndefined();
+    expect(result.current.address).toBeUndefined();
     expect(result.current.connectorName).toBe(ConnectorNames.MOCK);
     expect(result.current.connector).toBeDefined();
     expect(result.current.provider).toBeDefined();
@@ -80,10 +84,9 @@ describe("ui/hooks/wallet", () => {
       provider: defaultWalletHookData.provider,
       isActive: true,
       isActivating: false,
-      hooks: defaultHooks,
     });
 
-    const { result } = renderHook(() => useWallet());
+    const { result } = renderHook(() => useEthWallet());
 
     await waitFor(() => expect(result.current.balance).toBeDefined());
 
@@ -104,7 +107,7 @@ describe("ui/hooks/wallet", () => {
       isActivating: false,
     });
 
-    const { result } = renderHook(() => useWallet());
+    const { result } = renderHook(() => useEthWallet());
 
     expect(result.current.isActive).toBe(false);
     expect(result.current.isActivating).toBe(false);
@@ -118,7 +121,7 @@ describe("ui/hooks/wallet", () => {
 
   test("should connect properly", async () => {
     const activateSpy = jest.spyOn(mockConnector, "activate");
-    const { result } = renderHook(() => useWallet());
+    const { result } = renderHook(() => useEthWallet());
 
     await act(async () => result.current.onConnect());
 
@@ -130,7 +133,7 @@ describe("ui/hooks/wallet", () => {
   test("should connect eagerly properly", async () => {
     (useAppStatus as jest.Mock).mockReturnValue({ isDisconnectedPermanently: false });
     const connectEagerlySpy = jest.spyOn(mockConnector, "connectEagerly");
-    const { result } = renderHook(() => useWallet());
+    const { result } = renderHook(() => useEthWallet());
 
     await act(async () => result.current.onConnectEagerly());
 
@@ -140,7 +143,7 @@ describe("ui/hooks/wallet", () => {
 
   test("should disconnect properly", async () => {
     const resetStateSpy = jest.spyOn(mockConnector, "resetState");
-    const { result } = renderHook(() => useWallet());
+    const { result } = renderHook(() => useEthWallet());
 
     await act(async () => result.current.onDisconnect());
 
@@ -150,7 +153,7 @@ describe("ui/hooks/wallet", () => {
   });
 
   test("should lock properly", async () => {
-    const { result } = renderHook(() => useWallet());
+    const { result } = renderHook(() => useEthWallet());
 
     await act(async () => Promise.resolve(result.current.onLock()));
 

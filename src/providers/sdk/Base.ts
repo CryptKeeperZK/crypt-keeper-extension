@@ -58,6 +58,10 @@ export class CryptKeeperInjectedProvider extends EventEmitter {
     return this;
   }
 
+  async accounts(): Promise<string[]> {
+    return this.post({ method: RPCAction.GET_ACCOUNTS }) as Promise<string[]>;
+  }
+
   private async tryInject(host: string): Promise<Approvals> {
     return this.post({
       method: RPCAction.TRY_INJECT,

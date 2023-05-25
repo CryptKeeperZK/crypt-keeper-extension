@@ -11,7 +11,7 @@ import { Paths } from "@src/constants";
 import { fetchStatus, useAppStatus } from "@src/ui/ducks/app";
 import { useAppDispatch } from "@src/ui/ducks/hooks";
 import { fetchPendingRequests, usePendingRequests } from "@src/ui/ducks/requests";
-import { useWallet } from "@src/ui/hooks/wallet";
+import { useEthWallet } from "@src/ui/hooks/wallet";
 
 import { IUsePopupData, usePopup } from "../usePopup";
 
@@ -34,7 +34,7 @@ jest.mock("@src/ui/ducks/requests", (): unknown => ({
 }));
 
 jest.mock("@src/ui/hooks/wallet", (): unknown => ({
-  useWallet: jest.fn(),
+  useEthWallet: jest.fn(),
 }));
 
 describe("ui/pages/Popup/usePopup", () => {
@@ -72,7 +72,7 @@ describe("ui/pages/Popup/usePopup", () => {
 
     (useAppDispatch as jest.Mock).mockReturnValue(mockDispatch);
 
-    (useWallet as jest.Mock).mockReturnValue(defaultWalletHookData);
+    (useEthWallet as jest.Mock).mockReturnValue(defaultWalletHookData);
   });
 
   afterEach(() => {

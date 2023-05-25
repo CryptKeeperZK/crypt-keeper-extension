@@ -11,7 +11,7 @@ import { IDENTITY_TYPES, Paths } from "@src/constants";
 import { EWallet } from "@src/types";
 import { useAppDispatch } from "@src/ui/ducks/hooks";
 import { createIdentity } from "@src/ui/ducks/identities";
-import { useWallet } from "@src/ui/hooks/wallet";
+import { useEthWallet } from "@src/ui/hooks/wallet";
 import { signWithSigner, getMessageTemplate } from "@src/ui/services/identity";
 
 import { useCreateIdentity } from "../useCreateIdentity";
@@ -38,7 +38,7 @@ jest.mock("@src/ui/ducks/identities", (): unknown => ({
 }));
 
 jest.mock("@src/ui/hooks/wallet", (): unknown => ({
-  useWallet: jest.fn(),
+  useEthWallet: jest.fn(),
 }));
 
 describe("ui/pages/CreateIdentity/useCreateIdentity", () => {
@@ -58,7 +58,7 @@ describe("ui/pages/CreateIdentity/useCreateIdentity", () => {
 
     (createIdentity as jest.Mock).mockReturnValue(true);
 
-    (useWallet as jest.Mock).mockReturnValue({ ...defaultWalletHookData, isActive: true });
+    (useEthWallet as jest.Mock).mockReturnValue({ ...defaultWalletHookData, isActive: true });
 
     (useNavigate as jest.Mock).mockReturnValue(mockNavigate);
   });
@@ -112,7 +112,7 @@ describe("ui/pages/CreateIdentity/useCreateIdentity", () => {
   });
 
   test("should handle error when trying to connect with eth wallet", async () => {
-    (useWallet as jest.Mock).mockReturnValue({
+    (useEthWallet as jest.Mock).mockReturnValue({
       ...defaultWalletHookData,
       onConnect: jest.fn(() => Promise.reject()),
     });

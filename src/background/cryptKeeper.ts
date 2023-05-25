@@ -104,6 +104,7 @@ export default class CryptKeeperController extends Handler {
     // Wallet
     this.add(RPCAction.GENERATE_MNEMONIC, this.lockService.ensure, this.walletService.generateMnemonic);
     this.add(RPCAction.SAVE_MNEMONIC, this.lockService.ensure, this.walletService.generateKeyPair);
+    this.add(RPCAction.GET_ACCOUNTS, this.lockService.ensure, this.walletService.accounts);
 
     // Protocols
     this.add(
