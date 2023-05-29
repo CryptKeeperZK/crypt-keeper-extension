@@ -2,10 +2,11 @@ import BigNumber from "bignumber.js";
 import classNames from "classnames";
 import { useCallback, useEffect, useState } from "react";
 
-import { Chain } from "@src/config/chains";
 import { DEFAULT_ROUND } from "@src/config/const";
 import { ConnectionModal } from "@src/ui/components/ConnectionModal";
 import { sliceAddress } from "@src/util/account";
+
+import type { Chain } from "@src/types";
 
 import "./infoStyles.scss";
 

@@ -1,7 +1,9 @@
 import { initializeConnector } from "@web3-react/core";
 import { Connector } from "@web3-react/types";
 
+import { RPCAction } from "@src/constants";
 import { type CryptKeeperInjectedProvider, initializeInjectedProvider } from "@src/providers";
+import postMessage from "@src/util/postMessage";
 
 export class CryptKeeperConnector extends Connector {
   private eagerConnection?: Promise<void>;
@@ -21,7 +23,7 @@ export class CryptKeeperConnector extends Connector {
           throw new Error("No cryptkeeper installed");
         }
 
-        const accounts = await this.customProvider.accounts();
+        const accounts = await this.loadAccounts();
         this.actions.update({ accounts });
       })
       .catch((error) => {
@@ -41,7 +43,7 @@ export class CryptKeeperConnector extends Connector {
         return;
       }
 
-      const accounts = await this.customProvider.accounts();
+      const accounts = await this.loadAccounts();
       this.actions.update({ accounts });
     } catch (error) {
       cancelActivation();
@@ -57,8 +59,8 @@ export class CryptKeeperConnector extends Connector {
     this.customProvider = initializeInjectedProvider();
     this.eagerConnection = this.customProvider?.connect().then(() => {
       this.customProvider?.on("login", async () => {
-        const accounts = await this.customProvider?.accounts();
-        this.actions.update({ accounts: accounts as string[] });
+        const accounts = await this.loadAccounts();
+        this.actions.update({ accounts });
       });
 
       this.customProvider?.on("logout", () => {
@@ -67,6 +69,11 @@ export class CryptKeeperConnector extends Connector {
     });
 
     return this.eagerConnection;
+  }
+
+  // TODO: create web3 provider
+  private async loadAccounts(): Promise<string[]> {
+    return postMessage<string[]>({ method: RPCAction.GET_ACCOUNTS });
   }
 }
 

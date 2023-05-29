@@ -1,6 +1,6 @@
-import { getChainsConfig, Chain } from "./chains";
+import type { Chain } from "@src/types";
 
-export type { Chain };
+import { getChainsConfig } from "./chains";
 
 export function getChains(): Record<number, Chain> {
   const chainsConfig = getChainsConfig();

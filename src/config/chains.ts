@@ -1,18 +1,6 @@
-import { getApiKeys } from "./env";
+import type { Chain } from "@src/types";
 
-export interface Chain {
-  name: string;
-  shortName: string;
-  chainId: number;
-  networkId: number;
-  infoURL: string;
-  rpc: string[];
-  nativeCurrency: {
-    name: string;
-    symbol: string;
-    decimals: number;
-  };
-}
+import { getApiKeys } from "./env";
 
 export function getChainsConfig(): Chain[] {
   const {

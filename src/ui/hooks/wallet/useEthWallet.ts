@@ -3,49 +3,33 @@ import BigNumber from "bignumber.js";
 import { formatUnits } from "ethers";
 import { useCallback, useEffect, useState } from "react";
 
-import { Chain, getChains } from "@src/config/rpc";
-import { ConnectorNames, getConnectorName, metamaskHooks } from "@src/connectors";
+import { getChains } from "@src/config/rpc";
+import { metamask, metamaskHooks } from "@src/connectors";
+import { ConnectorNames, IUseWalletData } from "@src/types";
 import { useAppStatus, getWalletConnection, setWalletConnection, lock } from "@src/ui/ducks/app";
 import { useAppDispatch } from "@src/ui/ducks/hooks";
 
-import type { Connector } from "@web3-react/types";
 import type { BrowserProvider } from "ethers";
 
-export interface IUseEthWalletData {
-  isActive: boolean;
-  isActivating: boolean;
-  isInjectedWallet: boolean;
-  address?: string;
-  balance?: BigNumber;
-  chain?: Chain;
-  connectorName?: ConnectorNames;
-  connector?: Connector;
-  provider?: BrowserProvider;
-  onConnect: () => Promise<void>;
-  onConnectEagerly: () => Promise<void>;
-  onLock: () => void;
-  onDisconnect: () => Promise<void>;
-}
-
 const hooksByConnectorName = {
-  [ConnectorNames.METAMASK]: metamaskHooks,
+  [ConnectorNames.METAMASK]: { connector: metamask, hooks: metamaskHooks },
   [ConnectorNames.MOCK]: undefined,
   [ConnectorNames.CRYPT_KEEPER]: undefined,
   [ConnectorNames.UNKNOWN]: undefined,
 };
 
-export const useEthWallet = (): IUseEthWalletData => {
+export const useEthWallet = (connectorName = ConnectorNames.METAMASK): IUseWalletData => {
   const [balance, setBalance] = useState<BigNumber>();
-  const { connector, isActive, isActivating, provider } = useWeb3React();
+  const { isActive, isActivating, provider } = useWeb3React();
   const { isDisconnectedPermanently } = useAppStatus();
   const dispatch = useAppDispatch();
-  const connectorName = getConnectorName(connector);
-  const hooks = hooksByConnectorName[connectorName];
+  const connection = hooksByConnectorName[connectorName];
+  const connector = connection?.connector;
 
   const chains = getChains();
 
-  const chainId = hooks?.useChainId();
-  const address = hooks?.useAccount();
+  const chainId = connection?.hooks.useChainId();
+  const address = connection?.hooks.useAccount();
   const chain = chainId ? chains[chainId] : undefined;
   const decimals = chain?.nativeCurrency.decimals;
 
@@ -66,19 +50,19 @@ export const useEthWallet = (): IUseEthWalletData => {
 
   const onConnect = useCallback(async () => {
     dispatch(setWalletConnection(false));
-    await connector.activate();
+    await connector?.activate();
   }, [connector, dispatch]);
 
   const onConnectEagerly = useCallback(async () => {
     if (isDisconnectedPermanently === false) {
-      await connector.connectEagerly?.();
+      await connector?.connectEagerly?.();
     }
   }, [connector, isDisconnectedPermanently]);
 
   const onDisconnect = useCallback(async () => {
     dispatch(setWalletConnection(true));
-    await connector.deactivate?.();
-    await connector.resetState();
+    await connector?.deactivate?.();
+    await connector?.resetState();
   }, [connector, dispatch]);
 
   const onLock = useCallback(() => {
@@ -94,7 +78,7 @@ export const useEthWallet = (): IUseEthWalletData => {
     chain,
     connectorName,
     connector,
-    provider: provider as unknown as BrowserProvider,
+    provider: connector ? (provider as unknown as BrowserProvider) : undefined,
     onConnect,
     onConnectEagerly,
     onDisconnect,

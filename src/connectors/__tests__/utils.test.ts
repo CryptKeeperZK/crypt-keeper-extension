@@ -1,8 +1,10 @@
 import { MetaMask, MetaMaskConstructorArgs } from "@web3-react/metamask";
 
+import { ConnectorNames } from "@src/types";
+
 import type { Actions, Connector } from "@web3-react/types";
 
-import { getConnectorName, ConnectorNames, CryptKeeperConnector } from "..";
+import { getConnectorName, CryptKeeperConnector } from "..";
 import { MockConnector } from "../mock";
 
 describe("connectors/utils", () => {
