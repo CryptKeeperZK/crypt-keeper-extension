@@ -11,7 +11,7 @@ import { IDENTITY_TYPES, Paths } from "@src/constants";
 import { EWallet } from "@src/types";
 import { useAppDispatch } from "@src/ui/ducks/hooks";
 import { createIdentity } from "@src/ui/ducks/identities";
-import { useEthWallet } from "@src/ui/hooks/wallet";
+import { useCryptKeeperWallet, useEthWallet } from "@src/ui/hooks/wallet";
 import { signWithSigner, getMessageTemplate } from "@src/ui/services/identity";
 
 import { useCreateIdentity } from "../useCreateIdentity";
@@ -39,6 +39,7 @@ jest.mock("@src/ui/ducks/identities", (): unknown => ({
 
 jest.mock("@src/ui/hooks/wallet", (): unknown => ({
   useEthWallet: jest.fn(),
+  useCryptKeeperWallet: jest.fn(),
 }));
 
 describe("ui/pages/CreateIdentity/useCreateIdentity", () => {
@@ -59,6 +60,8 @@ describe("ui/pages/CreateIdentity/useCreateIdentity", () => {
     (createIdentity as jest.Mock).mockReturnValue(true);
 
     (useEthWallet as jest.Mock).mockReturnValue({ ...defaultWalletHookData, isActive: true });
+
+    (useCryptKeeperWallet as jest.Mock).mockReturnValue({ ...defaultWalletHookData, isActive: true });
 
     (useNavigate as jest.Mock).mockReturnValue(mockNavigate);
   });
@@ -136,7 +139,7 @@ describe("ui/pages/CreateIdentity/useCreateIdentity", () => {
     expect(createIdentity).toBeCalledTimes(1);
     expect(createIdentity).toBeCalledWith({
       messageSignature: undefined,
-      options: { account: "", message: mockMessage, nonce: 0, web2Provider: "twitter" },
+      options: { account: defaultWalletHookData.address, message: mockMessage, nonce: 0, web2Provider: "twitter" },
       strategy: "interrep",
       walletType: EWallet.CRYPT_KEEPER_WALLET,
     });

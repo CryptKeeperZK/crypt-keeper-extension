@@ -33,7 +33,7 @@ export default class CryptKeeper extends BasePage {
 
   async connectWallet(): Promise<void> {
     await this.page.getByTestId("menu").click();
-    await this.page.getByText("Connect wallet", { exact: true }).click();
+    await this.page.getByText("Connect Metamask", { exact: true }).click();
 
     await metamaskCommands.acceptAccess();
   }

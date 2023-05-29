@@ -30,6 +30,7 @@ export const useEthWallet = (connectorName = ConnectorNames.METAMASK): IUseWalle
 
   const chainId = connection?.hooks.useChainId();
   const address = connection?.hooks.useAccount();
+  const addresses = connection?.hooks.useAccounts();
   const chain = chainId ? chains[chainId] : undefined;
   const decimals = chain?.nativeCurrency.decimals;
 
@@ -74,6 +75,7 @@ export const useEthWallet = (connectorName = ConnectorNames.METAMASK): IUseWalle
     isActivating,
     isInjectedWallet: Boolean(window.ethereum),
     address,
+    addresses,
     balance,
     chain,
     connectorName,

@@ -11,7 +11,7 @@ import { defaultWalletHookData } from "@src/config/mock/wallet";
 import { Paths } from "@src/constants";
 import { useAppDispatch, useAppSelector } from "@src/ui/ducks/hooks";
 import { usePendingRequests } from "@src/ui/ducks/requests";
-import { useEthWallet } from "@src/ui/hooks/wallet";
+import { useCryptKeeperWallet, useEthWallet } from "@src/ui/hooks/wallet";
 
 import Popup from "..";
 import { IUsePopupData, usePopup } from "../usePopup";
@@ -27,6 +27,7 @@ jest.mock("@src/ui/ducks/requests", (): unknown => ({
 
 jest.mock("@src/ui/hooks/wallet", (): unknown => ({
   useEthWallet: jest.fn(),
+  useCryptKeeperWallet: jest.fn(),
 }));
 
 jest.mock("../usePopup", (): unknown => ({
@@ -42,6 +43,8 @@ describe("ui/pages/Popup", () => {
     (usePopup as jest.Mock).mockReturnValue(defaultHookData);
 
     (useEthWallet as jest.Mock).mockReturnValue(defaultWalletHookData);
+
+    (useCryptKeeperWallet as jest.Mock).mockReturnValue(defaultWalletHookData);
 
     (usePendingRequests as jest.Mock).mockReturnValue([{ type: "unknown" }]);
 

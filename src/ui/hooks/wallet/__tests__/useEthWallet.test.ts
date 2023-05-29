@@ -40,6 +40,7 @@ jest.mock("@src/connectors", (): unknown => ({
   metamaskHooks: {
     useChainId: jest.fn(),
     useAccount: jest.fn(),
+    useAccounts: jest.fn(),
   },
 }));
 
@@ -62,6 +63,8 @@ describe("ui/hooks/useEthWallet", () => {
     (useAppDispatch as jest.Mock).mockReturnValue(mockDispatch);
 
     (metamaskHooks.useAccount as jest.Mock).mockReturnValue(defaultWalletHookData.address);
+
+    (metamaskHooks.useAccounts as jest.Mock).mockReturnValue(defaultWalletHookData.addresses);
 
     (metamaskHooks.useChainId as jest.Mock).mockReturnValue(defaultWalletHookData.chain?.chainId);
   });

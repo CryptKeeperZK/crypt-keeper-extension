@@ -13,6 +13,7 @@ export const defaultWalletHookData: IUseWalletData = {
   isActivating: false,
   isInjectedWallet: true,
   address: ZERO_ADDRESS,
+  addresses: [ZERO_ADDRESS],
   balance: new BigNumber(1000),
   chain: getChains()[1],
   connectorName: ConnectorNames.MOCK,

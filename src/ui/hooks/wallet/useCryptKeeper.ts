@@ -10,7 +10,8 @@ export const useCryptKeeperWallet = (): IUseWalletData => {
   const { isActive, isActivating } = useWeb3React();
   const dispatch = useAppDispatch();
 
-  const address = cryptKeeperHooks?.useAccount();
+  const address = cryptKeeperHooks.useAccount();
+  const addresses = cryptKeeperHooks.useAccounts();
 
   const onConnect = useCallback(async () => {
     await cryptKeeper.activate();
@@ -27,13 +28,15 @@ export const useCryptKeeperWallet = (): IUseWalletData => {
 
   const onLock = useCallback(() => {
     dispatch(lock());
-  }, [dispatch]);
+    onDisconnect();
+  }, [dispatch, onDisconnect]);
 
   return {
     isActive,
     isActivating,
     isInjectedWallet: Boolean(window.cryptkeeper),
     address,
+    addresses,
     connectorName: ConnectorNames.CRYPT_KEEPER,
     connector: cryptKeeper,
     balance: undefined,

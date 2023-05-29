@@ -15,7 +15,7 @@ import { IDENTITY_TYPES, WEB2_PROVIDER_OPTIONS } from "@src/constants";
 import { EWallet } from "@src/types";
 import { useAppDispatch } from "@src/ui/ducks/hooks";
 import { createIdentity } from "@src/ui/ducks/identities";
-import { useEthWallet } from "@src/ui/hooks/wallet";
+import { useCryptKeeperWallet, useEthWallet } from "@src/ui/hooks/wallet";
 import { signWithSigner, getMessageTemplate } from "@src/ui/services/identity";
 
 import CreateIdentity from "..";
@@ -43,6 +43,7 @@ jest.mock("@src/ui/ducks/identities", (): unknown => ({
 
 jest.mock("@src/ui/hooks/wallet", (): unknown => ({
   useEthWallet: jest.fn(),
+  useCryptKeeperWallet: jest.fn(),
 }));
 
 describe("ui/pages/CreateIdentity", () => {
@@ -55,6 +56,8 @@ describe("ui/pages/CreateIdentity", () => {
     library.add(faTwitter, faGithub, faReddit);
 
     (useEthWallet as jest.Mock).mockReturnValue({ ...defaultWalletHookData, isActive: true });
+
+    (useCryptKeeperWallet as jest.Mock).mockReturnValue({ ...defaultWalletHookData, isActive: true });
 
     (useAppDispatch as jest.Mock).mockReturnValue(mockDispatch);
 
