@@ -48,6 +48,7 @@ export class CryptKeeperInjectedProvider extends EventEmitter {
 
       if (isApproved) {
         await this.addHost(window.location.origin, canSkipApprove);
+        await this.accounts();
       }
     } catch (err) {
       log.debug("Err: ", err);

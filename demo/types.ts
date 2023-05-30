@@ -5,6 +5,7 @@ export interface SelectedIdentity {
 }
 
 export interface CryptKeeperInjectedProvider {
+  accounts: () => Promise<string[]>;
   connect: () => Promise<CryptKeeperInjectedProvider>;
   createIdentity: () => Promise<void>;
   getActiveIdentity: () => Promise<SelectedIdentity>;

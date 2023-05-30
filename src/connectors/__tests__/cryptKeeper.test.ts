@@ -5,6 +5,7 @@
 import EventEmitter from "@src/background/services/event";
 import { ZERO_ADDRESS } from "@src/config/const";
 import { initializeInjectedProvider } from "@src/providers";
+import postMessage from "@src/util/postMessage";
 
 import { cryptKeeper, cryptKeeperHooks, CryptKeeperConnector } from "..";
 
@@ -50,6 +51,8 @@ describe("connectors/cryptKeeper", () => {
   });
 
   test("should activate connector properly", async () => {
+    (postMessage as jest.Mock).mockResolvedValue(mockAddresses);
+
     const connector = new CryptKeeperConnector(mockActions);
 
     await connector.activate();
@@ -91,6 +94,8 @@ describe("connectors/cryptKeeper", () => {
   });
 
   test("should handle incomming events properly", async () => {
+    (postMessage as jest.Mock).mockResolvedValue(mockAddresses);
+
     const connector = new CryptKeeperConnector(mockActions);
 
     await connector.activate();
@@ -98,9 +103,8 @@ describe("connectors/cryptKeeper", () => {
     await Promise.resolve(mockProvider.emit("login"));
     await Promise.resolve(mockProvider.emit("logout"));
 
-    expect(mockActions.update).toBeCalledTimes(2);
-    expect(mockActions.update).toHaveBeenNthCalledWith(1, { accounts: mockAddresses });
-    expect(mockActions.update).toHaveBeenNthCalledWith(2, { accounts: mockAddresses });
+    expect(mockActions.update).toBeCalledTimes(1);
+    expect(mockActions.update).toBeCalledWith({ accounts: mockAddresses });
     expect(mockActions.resetState).toBeCalledTimes(1);
   });
 
@@ -128,6 +132,8 @@ describe("connectors/cryptKeeper", () => {
   });
 
   test("should connect eagerly and set accounts properly", async () => {
+    (postMessage as jest.Mock).mockResolvedValue(mockAddresses);
+
     const connector = new CryptKeeperConnector(mockActions);
 
     await connector.connectEagerly();

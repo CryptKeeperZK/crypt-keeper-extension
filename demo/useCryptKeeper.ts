@@ -30,6 +30,7 @@ enum MerkleProofType {
 }
 
 interface IUseCryptKeeperData {
+  accounts: string[];
   client?: CryptKeeperInjectedProvider;
   isLocked: boolean;
   selectedIdentity: SelectedIdentity;
@@ -45,6 +46,7 @@ const initializeClient = (): Promise<CryptKeeperInjectedProvider | undefined> =>
 
 export const useCryptKeeper = (): IUseCryptKeeperData => {
   const [client, setClient] = useState<CryptKeeperInjectedProvider>();
+  const [accounts, setAccounts] = useState<string[]>([]);
   const [isLocked, setIsLocked] = useState(true);
   const [selectedIdentity, setSelectedIdentity] = useState<SelectedIdentity>({
     commitment: "",
@@ -186,14 +188,17 @@ export const useCryptKeeper = (): IUseCryptKeeperData => {
       return undefined;
     }
 
+    client.accounts().then((data) => setAccounts(data));
+
     client?.on("login", onLogin);
     client?.on("identityChanged", onIdentityChanged);
     client?.on("logout", onLogout);
 
     return () => client?.cleanListeners();
-  }, [client, onLogout, onIdentityChanged, onLogin]);
+  }, [client, setAccounts, onLogout, onIdentityChanged, onLogin]);
 
   return {
+    accounts,
     client,
     isLocked,
     selectedIdentity,

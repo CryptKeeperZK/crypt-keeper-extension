@@ -11,7 +11,7 @@ import { Paths } from "@src/constants";
 import { fetchStatus, useAppStatus } from "@src/ui/ducks/app";
 import { useAppDispatch } from "@src/ui/ducks/hooks";
 import { fetchPendingRequests, usePendingRequests } from "@src/ui/ducks/requests";
-import { useEthWallet } from "@src/ui/hooks/wallet";
+import { useCryptKeeperWallet, useEthWallet } from "@src/ui/hooks/wallet";
 
 import { IUsePopupData, usePopup } from "../usePopup";
 
@@ -35,6 +35,7 @@ jest.mock("@src/ui/ducks/requests", (): unknown => ({
 
 jest.mock("@src/ui/hooks/wallet", (): unknown => ({
   useEthWallet: jest.fn(),
+  useCryptKeeperWallet: jest.fn(),
 }));
 
 describe("ui/pages/Popup/usePopup", () => {
@@ -73,6 +74,8 @@ describe("ui/pages/Popup/usePopup", () => {
     (useAppDispatch as jest.Mock).mockReturnValue(mockDispatch);
 
     (useEthWallet as jest.Mock).mockReturnValue(defaultWalletHookData);
+
+    (useCryptKeeperWallet as jest.Mock).mockReturnValue(defaultWalletHookData);
   });
 
   afterEach(() => {
@@ -94,7 +97,7 @@ describe("ui/pages/Popup/usePopup", () => {
     expect(mockDispatch).toBeCalledTimes(2);
     expect(fetchStatus).toBeCalledTimes(1);
     expect(fetchPendingRequests).toBeCalledTimes(1);
-    expect(defaultWalletHookData.onConnectEagerly).toBeCalledTimes(1);
+    expect(defaultWalletHookData.onConnectEagerly).toBeCalledTimes(2);
   });
 
   test("should handle load data error", async () => {

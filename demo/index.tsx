@@ -25,6 +25,7 @@ function NoActiveIDCommitment() {
 
 function App() {
   const {
+    accounts,
     client,
     isLocked,
     selectedIdentity,
@@ -95,6 +96,14 @@ function App() {
       <div>
         <h2>Identity commitment for active identity:</h2>
         <p>{selectedIdentity.commitment}</p>
+      </div>
+
+      <hr />
+      <div>
+        <h2>Accounts</h2>
+        {accounts.map((account) => (
+          <p key={account}>{account}</p>
+        ))}
       </div>
 
       <ToastContainer newestOnTop={true} />

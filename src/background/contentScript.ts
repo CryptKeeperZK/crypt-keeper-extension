@@ -16,6 +16,7 @@ function injectScript() {
 
   window.addEventListener("message", (event: MessageEvent<InjectedMessageData>) => {
     const { data } = event;
+
     if (data && data.target === "injected-contentscript") {
       browser.runtime.sendMessage(data.message).then((res: unknown) => {
         window.postMessage(

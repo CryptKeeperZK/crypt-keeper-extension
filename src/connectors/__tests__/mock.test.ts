@@ -9,6 +9,9 @@ describe("connectors/mock", () => {
     });
 
     expect(mock.activate()).resolves.not.toThrow();
+    expect(mock.connectEagerly()).resolves.not.toThrow();
+    expect(mock.deactivate()).resolves.not.toThrow();
+    expect(mock.resetState()).resolves.not.toThrow();
     expect(mockConnector).toBeDefined();
   });
 

@@ -6,7 +6,7 @@ import { Paths } from "@src/constants";
 import { fetchStatus, useAppStatus } from "@src/ui/ducks/app";
 import { useAppDispatch } from "@src/ui/ducks/hooks";
 import { fetchPendingRequests, usePendingRequests } from "@src/ui/ducks/requests";
-import { useEthWallet } from "@src/ui/hooks/wallet";
+import { useCryptKeeperWallet, useEthWallet } from "@src/ui/hooks/wallet";
 
 export interface IUsePopupData {
   isLoading: boolean;
@@ -21,7 +21,8 @@ export const usePopup = (): IUsePopupData => {
   const navigate = useNavigate();
 
   const dispatch = useAppDispatch();
-  const { onConnectEagerly } = useEthWallet();
+  const ethWallet = useEthWallet();
+  const cryptKeeperWallet = useCryptKeeperWallet();
   const pendingRequests = usePendingRequests();
   const { isInitialized, isUnlocked, isMnemonicGenerated } = useAppStatus();
   const isShowRequestModal = pendingRequests.length > 0;
@@ -60,8 +61,9 @@ export const usePopup = (): IUsePopupData => {
   }, [isUnlocked, fetchData, setIsLoading]);
 
   useEffect(() => {
-    onConnectEagerly();
-  }, [onConnectEagerly]);
+    ethWallet.onConnectEagerly();
+    cryptKeeperWallet.onConnectEagerly();
+  }, [isUnlocked, isMnemonicGenerated, ethWallet.onConnectEagerly, cryptKeeperWallet.onConnectEagerly]);
 
   return {
     isLoading,

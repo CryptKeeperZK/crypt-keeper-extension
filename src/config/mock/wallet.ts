@@ -1,15 +1,14 @@
 import BigNumber from "bignumber.js";
 
-import { ConnectorNames } from "@src/connectors";
 import { mockConnector } from "@src/connectors/mock";
+import { ConnectorNames, IUseWalletData } from "@src/types";
 
-import type { IUseEthWalletData } from "@src/ui/hooks/wallet";
 import type { BrowserProvider } from "ethers";
 
 import { ZERO_ADDRESS } from "../const";
 import { getChains } from "../rpc";
 
-export const defaultWalletHookData: IUseEthWalletData = {
+export const defaultWalletHookData: IUseWalletData = {
   isActive: false,
   isActivating: false,
   isInjectedWallet: true,
