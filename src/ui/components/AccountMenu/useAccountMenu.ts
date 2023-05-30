@@ -72,7 +72,7 @@ export const useAccountMenu = ({ ethWallet, cryptKeeperWallet }: IUseAccountMenu
     () =>
       ethWallet.addresses?.map((address) => ({
         type: EWallet.ETH_WALLET,
-        address,
+        address: address.toLowerCase(),
         active: ethWallet.address === address,
       })) ?? [],
     [ethWallet.addresses, ethWallet.address],
@@ -82,7 +82,7 @@ export const useAccountMenu = ({ ethWallet, cryptKeeperWallet }: IUseAccountMenu
     () =>
       cryptKeeperWallet.addresses?.map((address) => ({
         type: EWallet.CRYPT_KEEPER_WALLET,
-        address,
+        address: address.toLowerCase(),
         active: cryptKeeperWallet.address === address,
       })) ?? [],
     [cryptKeeperWallet.addresses, cryptKeeperWallet.address],
