@@ -32,8 +32,12 @@ export const usePopup = (): IUsePopupData => {
   const redirect = useMemo(() => redirectParam && REDIRECT_PATHS[redirectParam], [redirectParam, window.location.href]);
 
   const fetchData = useCallback(async () => {
-    await Promise.all([dispatch(fetchStatus()), dispatch(fetchPendingRequests()), dispatch(getSelectedAccount())]);
-  }, [dispatch]);
+    await Promise.all([dispatch(fetchStatus()), dispatch(fetchPendingRequests())]);
+
+    if (isUnlocked && isMnemonicGenerated) {
+      await dispatch(getSelectedAccount());
+    }
+  }, [isUnlocked, isMnemonicGenerated, dispatch]);
 
   useEffect(() => {
     if (isLoading) {
