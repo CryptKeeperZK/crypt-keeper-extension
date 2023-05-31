@@ -3,6 +3,8 @@ import { HDNodeWallet, Wallet } from "ethers";
 import { generateMnemonic } from "@src/background/services/mnemonic";
 import SimpleStorage from "@src/background/services/storage";
 import { ZERO_ADDRESS } from "@src/config/const";
+import { setSelectedAccount } from "@src/ui/ducks/app";
+import pushMessage from "@src/util/pushMessage";
 
 import WalletService from "..";
 
@@ -33,7 +35,7 @@ jest.mock("ethers", (): unknown => ({
 jest.mock("@src/background/services/lock", (): unknown => ({
   getInstance: jest.fn(() => ({
     encrypt: jest.fn(() => mockSerializedAccounts),
-    decrypt: jest.fn(() => mockSerializedAccounts),
+    decrypt: jest.fn((arg) => (arg === ZERO_ADDRESS ? ZERO_ADDRESS : mockSerializedAccounts)),
     isAuthentic: jest.fn(() => mockAuthenticityCheckData),
   })),
 }));
@@ -77,6 +79,8 @@ describe("background/services/wallet", () => {
   afterEach(async () => {
     await walletService.clear();
 
+    (pushMessage as jest.Mock).mockClear();
+
     (SimpleStorage as jest.Mock).mock.instances.forEach((instance: MockStorage) => {
       instance.get.mockClear();
       instance.set.mockClear();
@@ -87,7 +91,7 @@ describe("background/services/wallet", () => {
   describe("keys", () => {
     test("should generate key pair properly with empty store", async () => {
       const [keyStorage, mnemonicStorage] = (SimpleStorage as jest.Mock).mock.instances as [MockStorage, MockStorage];
-      keyStorage.get.mockReturnValue(undefined);
+      keyStorage.get.mockReturnValueOnce(undefined).mockResolvedValue(mockAccounts);
       mnemonicStorage.get.mockReturnValue(defaultMnemonic);
 
       await walletService.generateKeyPair();
@@ -131,10 +135,10 @@ describe("background/services/wallet", () => {
       );
     });
 
-    test("should sign message with first account if there is no specified address", async () => {
-      const result = await walletService.signMessage({ message: "message", address: "unknown" });
-
-      expect(result).toBe(mockSignedMessage);
+    test("should not sign message if there is no such address", async () => {
+      await expect(walletService.signMessage({ message: "message", address: "unknown" })).rejects.toThrowError(
+        "There is no unknown account",
+      );
     });
   });
 
@@ -169,6 +173,14 @@ describe("background/services/wallet", () => {
 
   describe("accounts", () => {
     test("should get wallet addresses properly", async () => {
+      const [accountStorage, , selectedAccountStorage] = (SimpleStorage as jest.Mock).mock.instances as [
+        MockStorage,
+        MockStorage,
+        MockStorage,
+      ];
+      accountStorage.get.mockReturnValue(mockAccounts);
+      selectedAccountStorage.get.mockReturnValue(ZERO_ADDRESS);
+
       const accounts = await walletService.accounts();
 
       expect(accounts).toStrictEqual([ZERO_ADDRESS]);
@@ -182,6 +194,51 @@ describe("background/services/wallet", () => {
       const accounts = await walletService.accounts();
 
       expect(accounts).toHaveLength(0);
+    });
+
+    test("should select account properly", async () => {
+      const [accountStorage, , selectedAccountStorage] = (SimpleStorage as jest.Mock).mock.instances as [
+        MockStorage,
+        MockStorage,
+        MockStorage,
+      ];
+      accountStorage.get.mockResolvedValue(mockAccounts);
+
+      const selected = await walletService.selectAccount(ZERO_ADDRESS);
+
+      expect(selected).toBe(ZERO_ADDRESS);
+      expect(selectedAccountStorage.set).toBeCalledTimes(1);
+      expect(pushMessage).toBeCalledTimes(1);
+      expect(pushMessage).toBeCalledWith(setSelectedAccount(ZERO_ADDRESS));
+    });
+
+    test("should get selected account", async () => {
+      const [accountStorage, , selectedAccountStorage] = (SimpleStorage as jest.Mock).mock.instances as [
+        MockStorage,
+        MockStorage,
+        MockStorage,
+      ];
+      accountStorage.get.mockResolvedValue(mockAccounts);
+      selectedAccountStorage.get.mockResolvedValue(ZERO_ADDRESS);
+
+      const selected = await walletService.getSelectedAccount();
+
+      expect(selected).toBe(ZERO_ADDRESS);
+    });
+
+    test("should throw error if no address provided", async () => {
+      await expect(walletService.selectAccount("")).rejects.toThrow("No address provided");
+    });
+
+    test("should throw error if there is no accounts to select", async () => {
+      const [accountStorage] = (SimpleStorage as jest.Mock).mock.instances as [MockStorage];
+      accountStorage.get.mockResolvedValue(undefined);
+
+      await expect(walletService.selectAccount("unknown")).rejects.toThrow("Account unknown not found");
+    });
+
+    test("should throw error if there is no such account to select", async () => {
+      await expect(walletService.selectAccount("unknown")).rejects.toThrow("Account unknown not found");
     });
   });
 

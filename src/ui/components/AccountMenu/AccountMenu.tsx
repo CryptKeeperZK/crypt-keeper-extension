@@ -35,6 +35,7 @@ export const AccountMenu = ({ ethWallet, cryptKeeperWallet }: IAccountMenuProps)
     onLock,
     onGoToSettings,
     onGoToMetamaskPage,
+    onSelectAccount,
   } = useAccountMenu({
     ethWallet,
     cryptKeeperWallet,
@@ -54,7 +55,9 @@ export const AccountMenu = ({ ethWallet, cryptKeeperWallet }: IAccountMenuProps)
         {accounts.map((account) => (
           <MenuItem
             key={`${account.type}-${account.address}`}
+            data-testid={`${account.type}-${account.address}`}
             sx={{ display: "flex", alignItems: "center", width: 200 }}
+            onClick={account.type === EWallet.CRYPT_KEEPER_WALLET ? () => onSelectAccount(account.address) : undefined}
           >
             <Jazzicon diameter={16} seed={jsNumberForAddress(account.address)} />
 

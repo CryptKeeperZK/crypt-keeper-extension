@@ -35,6 +35,7 @@ describe("ui/components/Header", () => {
     onClose: jest.fn(),
     onGoToMetamaskPage: jest.fn(),
     onGoToSettings: jest.fn(),
+    onSelectAccount: jest.fn(),
   };
 
   beforeEach(() => {
@@ -115,5 +116,16 @@ describe("ui/components/Header", () => {
     await act(async () => Promise.resolve(disconnect.click()));
 
     expect(defaultHookData.onDisconnect).toBeCalledTimes(1);
+  });
+
+  test("should select account properly", async () => {
+    const { findByTestId } = render(<AccountMenu {...defaulltProps} />);
+
+    const [cryptKeeperAccount] = defaultHookData.accounts;
+    const account = await findByTestId(`${cryptKeeperAccount.type}-${cryptKeeperAccount.address}`);
+    await act(async () => Promise.resolve(account.click()));
+
+    expect(defaultHookData.onSelectAccount).toBeCalledTimes(1);
+    expect(defaultHookData.onSelectAccount).toBeCalledWith(cryptKeeperAccount.address);
   });
 });

@@ -38,6 +38,8 @@ export enum RPCAction {
   SAVE_MNEMONIC = "rpc/mnemonic/save",
   GENERATE_MNEMONIC = "rpc/mnemonic/generate",
   GET_ACCOUNTS = "rpc/accounts/get",
+  SELECT_ACCOUNT = "rpc/accounts/select-account",
+  GET_SELECTED_ACCOUNT = "rpc/accounts/get-selected-account",
   // DEV RPCS
   CLEAR_APPROVED_HOSTS = "rpc/hosts/clear",
 }

@@ -121,6 +121,12 @@ export class CryptKeeperInjectedProvider extends EventEmitter {
         return;
       }
 
+      if (data.nonce === "accountChanged") {
+        const [, res] = data.payload;
+        this.emit("accountChanged", res);
+        return;
+      }
+
       if (data.nonce === "logout") {
         const [, res] = data.payload;
         this.emit("logout", res);

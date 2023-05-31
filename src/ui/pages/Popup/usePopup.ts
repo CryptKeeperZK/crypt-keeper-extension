@@ -3,7 +3,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import { Paths } from "@src/constants";
-import { fetchStatus, useAppStatus } from "@src/ui/ducks/app";
+import { fetchStatus, getSelectedAccount, useAppStatus } from "@src/ui/ducks/app";
 import { useAppDispatch } from "@src/ui/ducks/hooks";
 import { fetchPendingRequests, usePendingRequests } from "@src/ui/ducks/requests";
 import { useCryptKeeperWallet, useEthWallet } from "@src/ui/hooks/wallet";
@@ -32,7 +32,7 @@ export const usePopup = (): IUsePopupData => {
   const redirect = useMemo(() => redirectParam && REDIRECT_PATHS[redirectParam], [redirectParam, window.location.href]);
 
   const fetchData = useCallback(async () => {
-    await Promise.all([dispatch(fetchStatus()), dispatch(fetchPendingRequests())]);
+    await Promise.all([dispatch(fetchStatus()), dispatch(fetchPendingRequests()), dispatch(getSelectedAccount())]);
   }, [dispatch]);
 
   useEffect(() => {

@@ -3,6 +3,8 @@ import { useNavigate } from "react-router-dom";
 
 import { Paths } from "@src/constants";
 import { EWallet, IUseWalletData } from "@src/types";
+import { selectAccount } from "@src/ui/ducks/app";
+import { useAppDispatch } from "@src/ui/ducks/hooks";
 import { redirectToNewTab } from "@src/util/browser";
 
 export interface IUseAccountMenuArgs {
@@ -21,6 +23,7 @@ export interface IUseAccountMenuData {
   onClose: () => void;
   onGoToMetamaskPage: () => void;
   onGoToSettings: () => void;
+  onSelectAccount: (address: string) => void;
 }
 
 const METAMASK_INSTALL_URL = "https://metamask.io/";
@@ -29,6 +32,7 @@ export const useAccountMenu = ({ ethWallet, cryptKeeperWallet }: IUseAccountMenu
   const [anchorEl, setAnchorEl] = useState<HTMLElement>();
 
   const navigate = useNavigate();
+  const dispatch = useAppDispatch();
 
   const onOpen = useCallback(
     (event: ReactMouseEvent<HTMLButtonElement>) => {
@@ -66,6 +70,13 @@ export const useAccountMenu = ({ ethWallet, cryptKeeperWallet }: IUseAccountMenu
     onClose();
   }, [ethWallet.onDisconnect, onClose]);
 
+  const onSelectAccount = useCallback(
+    (address: string) => {
+      dispatch(selectAccount(address));
+    },
+    [dispatch],
+  );
+
   const isOpen = useMemo(() => Boolean(anchorEl), [Boolean(anchorEl)]);
 
   const ethAddresses = useMemo(
@@ -101,5 +112,6 @@ export const useAccountMenu = ({ ethWallet, cryptKeeperWallet }: IUseAccountMenu
     onClose,
     onGoToSettings,
     onGoToMetamaskPage,
+    onSelectAccount,
   };
 };

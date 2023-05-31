@@ -8,7 +8,7 @@ import { useNavigate } from "react-router-dom";
 
 import { defaultWalletHookData } from "@src/config/mock/wallet";
 import { Paths } from "@src/constants";
-import { fetchStatus, useAppStatus } from "@src/ui/ducks/app";
+import { fetchStatus, getSelectedAccount, useAppStatus } from "@src/ui/ducks/app";
 import { useAppDispatch } from "@src/ui/ducks/hooks";
 import { fetchPendingRequests, usePendingRequests } from "@src/ui/ducks/requests";
 import { useCryptKeeperWallet, useEthWallet } from "@src/ui/hooks/wallet";
@@ -21,6 +21,7 @@ jest.mock("react-router-dom", (): unknown => ({
 
 jest.mock("@src/ui/ducks/app", (): unknown => ({
   fetchStatus: jest.fn(),
+  getSelectedAccount: jest.fn(),
   useAppStatus: jest.fn(),
 }));
 
@@ -51,7 +52,7 @@ describe("ui/pages/Popup/usePopup", () => {
 
   const waitForData = async (current: IUsePopupData) => {
     await waitFor(() => current.isLoading === true);
-    await waitFor(() => expect(mockDispatch).toBeCalledTimes(2));
+    await waitFor(() => expect(mockDispatch).toBeCalledTimes(3));
     await waitFor(() => current.isLoading === false);
   };
 
@@ -94,9 +95,10 @@ describe("ui/pages/Popup/usePopup", () => {
     await waitForData(result.current);
 
     expect(result.current.isLoading).toBe(false);
-    expect(mockDispatch).toBeCalledTimes(2);
+    expect(mockDispatch).toBeCalledTimes(3);
     expect(fetchStatus).toBeCalledTimes(1);
     expect(fetchPendingRequests).toBeCalledTimes(1);
+    expect(getSelectedAccount).toBeCalledTimes(1);
     expect(defaultWalletHookData.onConnectEagerly).toBeCalledTimes(2);
   });
 

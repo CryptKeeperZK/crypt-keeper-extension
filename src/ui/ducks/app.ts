@@ -16,6 +16,7 @@ export interface AppState {
   isUnlocked: boolean;
   isMnemonicGenerated: boolean;
   mnemonic?: string;
+  selectedAccount?: string;
   isDisconnectedPermanently?: boolean;
 }
 
@@ -44,10 +45,14 @@ const appSlice = createSlice({
     setDisconnectedPermanently: (state: AppState, action: PayloadAction<boolean>) => {
       state.isDisconnectedPermanently = action.payload;
     },
+
+    setSelectedAccount: (state: AppState, action: PayloadAction<string>) => {
+      state.selectedAccount = action.payload;
+    },
   },
 });
 
-export const { setStatus } = appSlice.actions;
+export const { setStatus, setSelectedAccount } = appSlice.actions;
 
 export const lock = () => async (): Promise<void> => {
   await postMessage({ method: RPCAction.LOCK });
@@ -94,6 +99,18 @@ export const saveMnemonic = (): TypedThunk<Promise<void>> => async (dispatch) =>
   dispatch(setStatus({ isInitialized: true, isUnlocked: true, isMnemonicGenerated: true }));
   dispatch(appSlice.actions.setMnemonic(""));
 };
+
+export const getSelectedAccount = (): TypedThunk<Promise<void>> => async (dispatch) => {
+  const account = await postMessage<string>({ method: RPCAction.GET_SELECTED_ACCOUNT });
+  dispatch(setSelectedAccount(account));
+};
+
+export const selectAccount =
+  (address: string): TypedThunk<Promise<void>> =>
+  async (dispatch) => {
+    await postMessage({ method: RPCAction.SELECT_ACCOUNT, payload: address });
+    dispatch(setSelectedAccount(address));
+  };
 
 export const useGeneratedMnemonic = (): string | undefined => useAppSelector((state) => state.app.mnemonic, deepEqual);
 

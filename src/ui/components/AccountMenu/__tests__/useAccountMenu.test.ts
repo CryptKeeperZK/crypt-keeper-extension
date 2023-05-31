@@ -6,15 +6,26 @@ import { act, renderHook, waitFor } from "@testing-library/react";
 import { MouseEvent as ReactMouseEvent } from "react";
 import { useNavigate } from "react-router-dom";
 
+import { ZERO_ADDRESS } from "@src/config/const";
 import { defaultWalletHookData } from "@src/config/mock/wallet";
 import { Paths } from "@src/constants";
 import { EWallet } from "@src/types";
+import { selectAccount } from "@src/ui/ducks/app";
+import { useAppDispatch } from "@src/ui/ducks/hooks";
 import { getExtensionUrl, redirectToNewTab } from "@src/util/browser";
 
 import { IUseAccountMenuArgs, useAccountMenu } from "../useAccountMenu";
 
 jest.mock("react-router-dom", () => ({
   useNavigate: jest.fn(),
+}));
+
+jest.mock("@src/ui/ducks/hooks", (): unknown => ({
+  useAppDispatch: jest.fn(),
+}));
+
+jest.mock("@src/ui/ducks/app", (): unknown => ({
+  selectAccount: jest.fn(),
 }));
 
 jest.mock("@src/ui/hooks/wallet", (): unknown => ({
@@ -29,6 +40,7 @@ jest.mock("@src/util/browser", (): unknown => ({
 
 describe("ui/components/AccountMenu/useAccountMenu", () => {
   const mockNavigate = jest.fn();
+  const mockDispatch = jest.fn();
 
   const defaultArgs: IUseAccountMenuArgs = {
     ethWallet: defaultWalletHookData,
@@ -37,6 +49,8 @@ describe("ui/components/AccountMenu/useAccountMenu", () => {
 
   beforeEach(() => {
     (useNavigate as jest.Mock).mockReturnValue(mockNavigate);
+
+    (useAppDispatch as jest.Mock).mockReturnValue(mockDispatch);
 
     (getExtensionUrl as jest.Mock).mockReturnValue("options.html");
   });
@@ -125,5 +139,15 @@ describe("ui/components/AccountMenu/useAccountMenu", () => {
     await act(async () => Promise.resolve(result.current.onDisconnect()));
 
     expect(defaultWalletHookData.onDisconnect).toBeCalledTimes(1);
+  });
+
+  test("should select account properly", async () => {
+    const { result } = renderHook(() => useAccountMenu(defaultArgs));
+
+    await act(async () => Promise.resolve(result.current.onSelectAccount(ZERO_ADDRESS)));
+
+    expect(mockDispatch).toBeCalledTimes(1);
+    expect(selectAccount).toBeCalledTimes(1);
+    expect(selectAccount).toBeCalledWith(ZERO_ADDRESS);
   });
 });
