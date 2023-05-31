@@ -52,7 +52,7 @@ describe("ui/pages/Popup/usePopup", () => {
 
   const waitForData = async (current: IUsePopupData) => {
     await waitFor(() => current.isLoading === true);
-    await waitFor(() => expect(mockDispatch).toBeCalledTimes(3));
+    await waitFor(() => expect(mockDispatch).toBeCalledTimes(2));
     await waitFor(() => current.isLoading === false);
   };
 
@@ -95,11 +95,26 @@ describe("ui/pages/Popup/usePopup", () => {
     await waitForData(result.current);
 
     expect(result.current.isLoading).toBe(false);
+    expect(mockDispatch).toBeCalledTimes(2);
+    expect(fetchStatus).toBeCalledTimes(1);
+    expect(fetchPendingRequests).toBeCalledTimes(1);
+    expect(defaultWalletHookData.onConnectEagerly).toBeCalledTimes(2);
+  });
+
+  test("should get selected account properly when mnemonic generated", async () => {
+    (useAppStatus as jest.Mock).mockReturnValue({ isInitialized: true, isUnlocked: true, isMnemonicGenerated: true });
+
+    const { result } = renderHook(() => usePopup());
+
+    await waitFor(() => result.current.isLoading === true);
+    await waitFor(() => expect(mockDispatch).toBeCalledTimes(3));
+    await waitFor(() => result.current.isLoading === false);
+
+    expect(result.current.isLoading).toBe(false);
     expect(mockDispatch).toBeCalledTimes(3);
     expect(fetchStatus).toBeCalledTimes(1);
     expect(fetchPendingRequests).toBeCalledTimes(1);
     expect(getSelectedAccount).toBeCalledTimes(1);
-    expect(defaultWalletHookData.onConnectEagerly).toBeCalledTimes(2);
   });
 
   test("should get selected account properly when mnemonic generated", async () => {
