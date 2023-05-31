@@ -52,7 +52,7 @@ describe("ui/pages/Popup/usePopup", () => {
 
   const waitForData = async (current: IUsePopupData) => {
     await waitFor(() => current.isLoading === true);
-    await waitFor(() => expect(mockDispatch).toBeCalledTimes(2));
+    await waitFor(() => expect(mockDispatch).toBeCalledTimes(3));
     await waitFor(() => current.isLoading === false);
   };
 
@@ -95,9 +95,10 @@ describe("ui/pages/Popup/usePopup", () => {
     await waitForData(result.current);
 
     expect(result.current.isLoading).toBe(false);
-    expect(mockDispatch).toBeCalledTimes(2);
+    expect(mockDispatch).toBeCalledTimes(3);
     expect(fetchStatus).toBeCalledTimes(1);
     expect(fetchPendingRequests).toBeCalledTimes(1);
+    expect(getSelectedAccount).toBeCalledTimes(1);
     expect(defaultWalletHookData.onConnectEagerly).toBeCalledTimes(2);
   });
 
