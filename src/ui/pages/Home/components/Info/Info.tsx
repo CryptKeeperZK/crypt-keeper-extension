@@ -4,25 +4,18 @@ import { useCallback, useEffect, useState } from "react";
 
 import { DEFAULT_ROUND } from "@src/config/const";
 import { ConnectionModal } from "@src/ui/components/ConnectionModal";
-import { sliceAddress } from "@src/util/account";
 
 import type { Chain } from "@src/types";
 
 import "./infoStyles.scss";
 
 export interface InfoProps {
-  address?: string;
   balance?: BigNumber;
   chain?: Chain;
   refreshConnectionStatus: () => Promise<boolean>;
 }
 
-export const Info = ({
-  address = "",
-  balance = undefined,
-  chain = undefined,
-  refreshConnectionStatus,
-}: InfoProps): JSX.Element => {
+export const Info = ({ balance = undefined, chain = undefined, refreshConnectionStatus }: InfoProps): JSX.Element => {
   const [isConnected, setIsConnected] = useState(false);
   const [isModalShow, setIsModalShow] = useState(false);
 
@@ -64,8 +57,6 @@ export const Info = ({
           <div className="text-xs home__info__connection-button__text">
             {isConnected ? "Connected" : "Not Connected"}
           </div>
-
-          {address && <div className="text-sm home__info__account-button">{sliceAddress(address)}</div>}
         </button>
 
         <div>
