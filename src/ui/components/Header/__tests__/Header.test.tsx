@@ -7,7 +7,7 @@ import { useNavigate } from "react-router-dom";
 
 import { defaultWalletHookData } from "@src/config/mock/wallet";
 import { Paths } from "@src/constants";
-import { useEthWallet } from "@src/ui/hooks/wallet";
+import { useCryptKeeperWallet, useEthWallet } from "@src/ui/hooks/wallet";
 import { getExtensionUrl, redirectToNewTab } from "@src/util/browser";
 
 import { Header } from "..";
@@ -18,6 +18,7 @@ jest.mock("react-router-dom", () => ({
 
 jest.mock("@src/ui/hooks/wallet", (): unknown => ({
   useEthWallet: jest.fn(),
+  useCryptKeeperWallet: jest.fn(),
 }));
 
 jest.mock("@src/util/browser", (): unknown => ({
@@ -30,6 +31,8 @@ describe("ui/components/Header", () => {
 
   beforeEach(() => {
     (useEthWallet as jest.Mock).mockReturnValue(defaultWalletHookData);
+
+    (useCryptKeeperWallet as jest.Mock).mockReturnValue(defaultWalletHookData);
 
     (useNavigate as jest.Mock).mockReturnValue(mockNavigate);
 
@@ -64,9 +67,9 @@ describe("ui/components/Header", () => {
 
     const { findByTestId } = render(<Header />);
 
-    const icon = await findByTestId("inactive-wallet-icon");
+    const menu = await findByTestId("menu");
 
-    expect(icon).toBeInTheDocument();
+    expect(menu).toBeInTheDocument();
   });
 
   test("should render properly activating state", async () => {
@@ -80,9 +83,9 @@ describe("ui/components/Header", () => {
 
     const { findByTestId } = render(<Header />);
 
-    const icon = await findByTestId("inactive-wallet-icon-activating");
+    const menu = await findByTestId("menu");
 
-    expect(icon).toBeInTheDocument();
+    expect(menu).toBeInTheDocument();
   });
 
   test("should render without installed wallet", async () => {
@@ -96,7 +99,7 @@ describe("ui/components/Header", () => {
     const menu = await findByTestId("menu");
     await act(async () => Promise.resolve(menu.click()));
 
-    const metamaskInstall = await findByText("Install metamask");
+    const metamaskInstall = await findByText("Install Metamask");
     await act(async () => Promise.resolve(metamaskInstall.click()));
 
     expect(redirectToNewTab).toBeCalledTimes(1);

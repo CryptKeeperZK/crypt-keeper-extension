@@ -7,7 +7,7 @@ import { Suspense } from "react";
 import { useNavigate } from "react-router-dom";
 
 import { defaultWalletHookData } from "@src/config/mock/wallet";
-import { useEthWallet } from "@src/ui/hooks/wallet";
+import { useCryptKeeperWallet, useEthWallet } from "@src/ui/hooks/wallet";
 
 import Settings from "..";
 import { IUseSettingsData, SettingsTabs, useSettings } from "../useSettings";
@@ -18,6 +18,7 @@ jest.mock("react-router-dom", (): unknown => ({
 
 jest.mock("@src/ui/hooks/wallet", (): unknown => ({
   useEthWallet: jest.fn(),
+  useCryptKeeperWallet: jest.fn(),
 }));
 
 jest.mock("../useSettings", (): unknown => ({
@@ -44,6 +45,8 @@ describe("ui/pages/Settings", () => {
 
   beforeEach(() => {
     (useEthWallet as jest.Mock).mockReturnValue(defaultWalletHookData);
+
+    (useCryptKeeperWallet as jest.Mock).mockReturnValue(defaultWalletHookData);
 
     (useNavigate as jest.Mock).mockReturnValue(mockNavigate);
 

@@ -14,6 +14,7 @@ export interface IUseWalletData {
   isActive: boolean;
   isActivating: boolean;
   isInjectedWallet: boolean;
+  addresses?: string[];
   address?: string;
   balance?: BigNumber;
   chain?: Chain;

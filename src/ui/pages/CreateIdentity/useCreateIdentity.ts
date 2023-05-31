@@ -9,7 +9,7 @@ import { EWallet, IdentityStrategy, IdentityWeb2Provider, SelectOption } from "@
 import { closePopup } from "@src/ui/ducks/app";
 import { useAppDispatch } from "@src/ui/ducks/hooks";
 import { createIdentity } from "@src/ui/ducks/identities";
-import { useEthWallet } from "@src/ui/hooks/wallet";
+import { useCryptKeeperWallet, useEthWallet } from "@src/ui/hooks/wallet";
 import { getMessageTemplate, signWithSigner } from "@src/ui/services/identity";
 
 export interface IUseCreateIdentityData {
@@ -55,30 +55,30 @@ export const useCreateIdentity = (): IUseCreateIdentityData => {
   });
   const navigate = useNavigate();
 
-  const { isActive, isActivating, address, provider, isInjectedWallet, onConnect } = useEthWallet();
+  const ethWallet = useEthWallet();
+  const cryptKeeperWallet = useCryptKeeperWallet();
   const dispatch = useAppDispatch();
   const values = watch();
 
   const createNewIdentity = useCallback(
     async ({ identityStrategyType, web2Provider, nonce }: FormFields, walletType: EWallet) => {
       try {
-        // TODO: add connector and provider for cryptkeeper and replace empty string with address
-        const account = walletType === EWallet.ETH_WALLET ? (address as string) : "";
+        const account = walletType === EWallet.ETH_WALLET ? ethWallet.address : cryptKeeperWallet.address;
         const message = getMessageTemplate({
           web2Provider: web2Provider.value as IdentityWeb2Provider,
           nonce,
           identityStrategyType: identityStrategyType.value as IdentityStrategy,
-          account: identityStrategyType.value !== "random" ? account : ZERO_ADDRESS,
+          account: identityStrategyType.value !== "random" ? (account as string) : ZERO_ADDRESS,
         });
 
         const options =
           identityStrategyType.value !== "random"
-            ? { nonce, web2Provider: web2Provider.value as IdentityWeb2Provider, account, message }
+            ? { nonce, web2Provider: web2Provider.value as IdentityWeb2Provider, account: account as string, message }
             : { message, account: ZERO_ADDRESS };
 
         const messageSignature =
           walletType === EWallet.ETH_WALLET && identityStrategyType.value !== "random"
-            ? await signWithSigner({ signer: await provider?.getSigner(), message })
+            ? await signWithSigner({ signer: await ethWallet.provider?.getSigner(), message })
             : undefined;
 
         await dispatch(
@@ -94,12 +94,12 @@ export const useCreateIdentity = (): IUseCreateIdentityData => {
         setError("root", { type: "submit", message: (err as Error).message });
       }
     },
-    [address, provider, dispatch],
+    [ethWallet.address, ethWallet.provider, cryptKeeperWallet.address, dispatch],
   );
 
   const onCreateIdentityWithEthWallet = useCallback(
     async (data: FormFields) => createNewIdentity(data, EWallet.ETH_WALLET),
-    [isActive, createNewIdentity, setError, onConnect],
+    [ethWallet.isActive, createNewIdentity, setError],
   );
 
   const onCreateIdentityWithCryptkeeper = useCallback(
@@ -108,17 +108,17 @@ export const useCreateIdentity = (): IUseCreateIdentityData => {
   );
 
   const onConnectWallet = useCallback(async () => {
-    await onConnect().catch(() => setError("root", { type: "submit", message: "Wallet connection error" }));
-  }, [setError, onConnect]);
+    await ethWallet.onConnect().catch(() => setError("root", { type: "submit", message: "Wallet connection error" }));
+  }, [setError, ethWallet.onConnect]);
 
   const closeModal = useCallback(() => {
     dispatch(closePopup());
   }, [dispatch]);
 
   return {
-    isLoading: isActivating || isLoading || isSubmitting,
-    isWalletInstalled: isInjectedWallet,
-    isWalletConnected: isActive,
+    isLoading: ethWallet.isActivating || cryptKeeperWallet.isActivating || isLoading || isSubmitting,
+    isWalletInstalled: ethWallet.isInjectedWallet,
+    isWalletConnected: ethWallet.isActive,
     isProviderAvailable: values.identityStrategyType.value === "interrep" || !features.RANDOM_IDENTITY,
     errors: {
       web2Provider: errors.web2Provider?.message,

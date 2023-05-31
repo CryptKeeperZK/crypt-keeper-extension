@@ -55,5 +55,43 @@ export const theme = createTheme({
         },
       },
     },
+
+    MuiButton: {
+      styleOverrides: {
+        root: {
+          textTransform: "none",
+        },
+      },
+    },
+
+    MuiMenu: {
+      styleOverrides: {
+        paper: ({ theme: { palette } }) => ({
+          backgroundColor: palette.background.default,
+          border: `1px solid ${grey[700]}`,
+          borderRadius: "0.75rem",
+        }),
+      },
+    },
+
+    MuiMenuItem: {
+      styleOverrides: {
+        root: ({ theme: { palette } }) => ({
+          transition: "all 200ms",
+
+          "&:hover": {
+            backgroundColor: lighten(palette.background.default, 0.06),
+          },
+        }),
+
+        focusVisible: ({ theme: { palette } }) => ({
+          backgroundColor: lighten(palette.background.default, 0.06),
+        }),
+
+        selected: ({ theme: { palette } }) => ({
+          backgroundColor: lighten(palette.background.default, 0.06),
+        }),
+      },
+    },
   },
 });

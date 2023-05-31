@@ -8,7 +8,7 @@ import { useNavigate } from "react-router-dom";
 import { defaultWalletHookData } from "@src/config/mock/wallet";
 import { downloadBackup } from "@src/ui/ducks/backup";
 import { useAppDispatch } from "@src/ui/ducks/hooks";
-import { useEthWallet } from "@src/ui/hooks/wallet";
+import { useCryptKeeperWallet, useEthWallet } from "@src/ui/hooks/wallet";
 
 import DownloadBackup from "..";
 
@@ -18,6 +18,7 @@ jest.mock("react-router-dom", () => ({
 
 jest.mock("@src/ui/hooks/wallet", (): unknown => ({
   useEthWallet: jest.fn(),
+  useCryptKeeperWallet: jest.fn(),
 }));
 
 jest.mock("@src/ui/ducks/backup", (): unknown => ({
@@ -34,6 +35,8 @@ describe("ui/pages/DownloadBackup", () => {
 
   beforeEach(() => {
     (useEthWallet as jest.Mock).mockReturnValue(defaultWalletHookData);
+
+    (useCryptKeeperWallet as jest.Mock).mockReturnValue(defaultWalletHookData);
 
     (useAppDispatch as jest.Mock).mockReturnValue(mockDispatch);
 

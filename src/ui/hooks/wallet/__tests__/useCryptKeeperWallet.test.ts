@@ -37,6 +37,7 @@ jest.mock("@src/connectors", (): unknown => ({
   cryptKeeperHooks: {
     useChainId: jest.fn(),
     useAccount: jest.fn(),
+    useAccounts: jest.fn(),
   },
 }));
 
@@ -53,6 +54,8 @@ describe("ui/hooks/useCryptKeeperWallet", () => {
     (useAppDispatch as jest.Mock).mockReturnValue(mockDispatch);
 
     (cryptKeeperHooks.useAccount as jest.Mock).mockReturnValue(defaultWalletHookData.address);
+
+    (cryptKeeperHooks.useAccounts as jest.Mock).mockReturnValue(defaultWalletHookData.addresses);
   });
 
   afterEach(() => {
