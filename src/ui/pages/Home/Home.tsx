@@ -7,14 +7,14 @@ import "./home.scss";
 import { useHome } from "./useHome";
 
 const Home = (): JSX.Element => {
-  const { chain, balance, identities, refreshConnectionStatus } = useHome();
+  const { identities, refreshConnectionStatus } = useHome();
 
   return (
     <div className="w-full h-full flex flex-col home" data-testid="home-page">
       <Header />
 
       <div className={classNames("flex flex-col flex-grow flex-shrink overflow-y-auto home__scroller")}>
-        <Info balance={balance} chain={chain} refreshConnectionStatus={refreshConnectionStatus} />
+        <Info refreshConnectionStatus={refreshConnectionStatus} />
 
         <TabList>
           <IdentityList identities={identities} />

@@ -1,21 +1,15 @@
-import BigNumber from "bignumber.js";
 import classNames from "classnames";
 import { useCallback, useEffect, useState } from "react";
 
-import { DEFAULT_ROUND } from "@src/config/const";
 import { ConnectionModal } from "@src/ui/components/ConnectionModal";
-
-import type { Chain } from "@src/types";
 
 import "./infoStyles.scss";
 
 export interface InfoProps {
-  balance?: BigNumber;
-  chain?: Chain;
   refreshConnectionStatus: () => Promise<boolean>;
 }
 
-export const Info = ({ balance = undefined, chain = undefined, refreshConnectionStatus }: InfoProps): JSX.Element => {
+export const Info = ({ refreshConnectionStatus }: InfoProps): JSX.Element => {
   const [isConnected, setIsConnected] = useState(false);
   const [isModalShow, setIsModalShow] = useState(false);
 
@@ -58,12 +52,6 @@ export const Info = ({ balance = undefined, chain = undefined, refreshConnection
             {isConnected ? "Connected" : "Not Connected"}
           </div>
         </button>
-
-        <div>
-          <div className="text-3xl font-semibold">
-            {chain && balance ? `${balance.toFormat(DEFAULT_ROUND)} ${chain.nativeCurrency.symbol}` : "-"}
-          </div>
-        </div>
       </div>
     </>
   );
