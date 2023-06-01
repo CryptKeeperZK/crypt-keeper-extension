@@ -7,7 +7,7 @@ const envPlugin = new webpack.EnvironmentPlugin({
   NODE_ENV: process.env.NODE_ENV,
   TARGET: "chrome",
   CRYPTKEEPER_DEBUG: false,
-  RANDOM_IDENTITY: false,
+  INTERREP_IDENTITY: false,
   BACKUP: false,
   METAMASK_EXTENSION_ID: "",
   INFURA_API_KEY: "",

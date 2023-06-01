@@ -9,6 +9,7 @@ import { useNavigate } from "react-router-dom";
 import selectEvent from "react-select-event";
 
 import { ZERO_ADDRESS } from "@src/config/const";
+import { getEnabledFeatures } from "@src/config/features";
 import { createModalRoot, deleteModalRoot } from "@src/config/mock/modal";
 import { defaultWalletHookData } from "@src/config/mock/wallet";
 import { IDENTITY_TYPES, WEB2_PROVIDER_OPTIONS } from "@src/constants";
@@ -68,6 +69,8 @@ describe("ui/pages/CreateIdentity", () => {
     (getMessageTemplate as jest.Mock).mockReturnValue(mockMessage);
 
     (createIdentity as jest.Mock).mockResolvedValue(true);
+
+    (getEnabledFeatures as jest.Mock).mockReturnValue({ INTERREP_IDENTITY: true });
 
     createModalRoot();
   });
@@ -138,6 +141,27 @@ describe("ui/pages/CreateIdentity", () => {
 
     const select = await screen.findByLabelText("Identity type");
     await selectEvent.select(select, IDENTITY_TYPES[1].label);
+
+    const button = await screen.findByText("Cryptkeeper");
+    await act(async () => Promise.resolve(fireEvent.click(button)));
+
+    expect(signWithSigner).toBeCalledTimes(0);
+    expect(mockDispatch).toBeCalledTimes(1);
+    expect(createIdentity).toBeCalledTimes(1);
+    expect(createIdentity).toBeCalledWith({
+      messageSignature: undefined,
+      options: { message: mockMessage, account: ZERO_ADDRESS },
+      strategy: "random",
+      walletType: EWallet.CRYPT_KEEPER_WALLET,
+    });
+  });
+
+  test("should create random identity with disabled interrep identity feature properly", async () => {
+    (getEnabledFeatures as jest.Mock).mockReturnValue({ INTERREP_IDENTITY: false });
+
+    const { container } = render(<CreateIdentity />);
+
+    await waitFor(() => container.firstChild !== null);
 
     const button = await screen.findByText("Cryptkeeper");
     await act(async () => Promise.resolve(fireEvent.click(button)));

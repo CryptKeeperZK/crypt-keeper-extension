@@ -7,6 +7,7 @@ import { faTwitter } from "@fortawesome/free-brands-svg-icons";
 import { act, render, screen, fireEvent } from "@testing-library/react";
 
 import { ZERO_ADDRESS } from "@src/config/const";
+import { getEnabledFeatures } from "@src/config/features";
 
 import { IdentityItem, IdentityItemProps } from "../Item";
 
@@ -25,6 +26,10 @@ describe("ui/pages/Home/components/IdentityList/Item", () => {
     onUpdateIdentityName: jest.fn(),
   };
 
+  beforeEach(() => {
+    (getEnabledFeatures as jest.Mock).mockReturnValue({ INTERREP_IDENTITY: true });
+  });
+
   afterEach(() => {
     jest.resetAllMocks();
   });
@@ -39,6 +44,24 @@ describe("ui/pages/Home/components/IdentityList/Item", () => {
 
     expect(name).toBeInTheDocument();
     expect(provider).toBeInTheDocument();
+  });
+
+  test("should render identity properly with disabled interrep identity", async () => {
+    (getEnabledFeatures as jest.Mock).mockReturnValue({ INTERREP_IDENTITY: false });
+
+    render(
+      <IdentityItem
+        {...defaultProps}
+        metadata={{
+          ...defaultProps.metadata,
+          identityStrategy: "random",
+        }}
+      />,
+    );
+
+    const name = await screen.findByText(defaultProps.metadata.name);
+
+    expect(name).toBeInTheDocument();
   });
 
   test("should accept to delete identity properly", async () => {

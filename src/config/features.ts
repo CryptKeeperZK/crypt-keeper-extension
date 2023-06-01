@@ -1,11 +1,11 @@
 export enum Features {
-  RANDOM_IDENTITY = "RANDOM_IDENTITY",
+  INTERREP_IDENTITY = "INTERREP_IDENTITY",
   BACKUP = "BACKUP",
 }
 
 export function getEnabledFeatures(): Record<Features, boolean> {
   return {
-    [Features.RANDOM_IDENTITY]: isFeatureEnabled(process.env.RANDOM_IDENTITY),
+    [Features.INTERREP_IDENTITY]: isFeatureEnabled(process.env.INTERREP_IDENTITY),
     [Features.BACKUP]: isFeatureEnabled(process.env.BACKUP),
   };
 }
