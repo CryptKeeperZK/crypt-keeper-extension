@@ -13,13 +13,14 @@ import { getEnabledFeatures } from "@src/config/features";
 import { Paths } from "@src/constants";
 import {
   EWallet,
+  IdentityHost,
   IdentityMetadata,
   IdentityName,
   NewIdentityRequest,
   OperationType,
   SelectedIdentity,
 } from "@src/types";
-import { setIdentities, setSelectedCommitment } from "@src/ui/ducks/identities";
+import { setIdentities, setIdentityHost, setSelectedCommitment } from "@src/ui/ducks/identities";
 import { ellipsify } from "@src/util/account";
 import pushMessage from "@src/util/pushMessage";
 
@@ -112,8 +113,8 @@ export default class ZkIdentityService implements IBackupable {
       features.INTERREP_IDENTITY
         ? iterableIdentities
         : [...iterableIdentities].filter(
-            ([, identity]) => ZkIdentitySemaphore.genFromSerialized(identity).metadata.identityStrategy !== "interrep",
-          ),
+          ([, identity]) => ZkIdentitySemaphore.genFromSerialized(identity).metadata.identityStrategy !== "interrep",
+        ),
     );
   };
 
@@ -247,8 +248,15 @@ export default class ZkIdentityService implements IBackupable {
     await this.writeActiveIdentity("", "");
   };
 
-  createIdentityRequest = async ({ host }: { host: string }): Promise<void> => {
-    console.log("host", host)
+  setIdentityHost = ({ host }: IdentityHost): void => {
+    if (host) {
+      pushMessage(
+        setIdentityHost(host),
+      )
+    }
+  }
+
+  createIdentityRequest = async ({ host }: IdentityHost): Promise<void> => {
     await this.browserController.openPopup({ params: { redirect: Paths.CREATE_IDENTITY } });
   };
 
@@ -257,6 +265,7 @@ export default class ZkIdentityService implements IBackupable {
     walletType,
     messageSignature,
     options,
+    host
   }: NewIdentityRequest): Promise<string | undefined> => {
     if (walletType === EWallet.ETH_WALLET && !messageSignature) {
       throw new Error("No signature provided");
@@ -269,6 +278,7 @@ export default class ZkIdentityService implements IBackupable {
       identityStrategy: strategy,
       name: options?.name || `Account # ${numOfIdentites}`,
       messageSignature: strategy === "interrep" ? messageSignature : undefined,
+      host
     };
 
     if (walletType === EWallet.CRYPT_KEEPER_WALLET && strategy === "interrep") {

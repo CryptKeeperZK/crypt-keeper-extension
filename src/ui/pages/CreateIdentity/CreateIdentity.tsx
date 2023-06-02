@@ -23,6 +23,7 @@ const CreateIdentity = (): JSX.Element => {
     isWalletConnected,
     errors,
     control,
+    host,
     closeModal,
     onConnectWallet,
     onCreateWithCryptkeeper,
@@ -92,7 +93,11 @@ const CreateIdentity = (): JSX.Element => {
               )}
             </>
           ) : (
-            <Typography>Create your Semaphore identity</Typography>
+            host ? (
+              <Typography>Create your Semaphore identity for `{host}` host</Typography>
+            ) : (
+              <Typography>Create your Semaphore identity.</Typography>
+            )
           )}
         </FullModalContent>
 

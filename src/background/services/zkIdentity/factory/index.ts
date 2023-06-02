@@ -27,12 +27,13 @@ function createInterrepIdentity(config: ICreateIdentityArgs): ZkIdentitySemaphor
 }
 
 function createRandomIdentity(config: ICreateIdentityArgs): ZkIdentitySemaphore {
-  const { identityStrategy, name, account } = config;
+  const { identityStrategy, name, account, host } = config;
   const identity = new Identity();
 
   return new ZkIdentitySemaphore(identity, {
     account,
     name,
     identityStrategy,
+    host
   });
 }

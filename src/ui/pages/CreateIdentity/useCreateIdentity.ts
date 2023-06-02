@@ -7,7 +7,7 @@ import { WEB2_PROVIDER_OPTIONS, IDENTITY_TYPES, Paths } from "@src/constants";
 import { EWallet, IdentityStrategy, IdentityWeb2Provider, SelectOption } from "@src/types";
 import { closePopup } from "@src/ui/ducks/app";
 import { useAppDispatch } from "@src/ui/ducks/hooks";
-import { createIdentity } from "@src/ui/ducks/identities";
+import { createIdentity, useIdentityHost } from "@src/ui/ducks/identities";
 import { useCryptKeeperWallet, useEthWallet } from "@src/ui/hooks/wallet";
 import { getMessageTemplate, signWithSigner } from "@src/ui/services/identity";
 
@@ -23,6 +23,7 @@ export interface IUseCreateIdentityData {
     nonce: string;
   }>;
   control: Control<FormFields, unknown>;
+  host?: string;
   closeModal: () => void;
   register: UseFormRegister<FormFields>;
   onConnectWallet: () => Promise<void>;
@@ -58,6 +59,7 @@ export const useCreateIdentity = (): IUseCreateIdentityData => {
   const cryptKeeperWallet = useCryptKeeperWallet();
   const dispatch = useAppDispatch();
   const values = watch();
+  const host = useIdentityHost();
 
   const createNewIdentity = useCallback(
     async ({ identityStrategyType, web2Provider, nonce }: FormFields, walletType: EWallet) => {
@@ -122,6 +124,11 @@ export const useCreateIdentity = (): IUseCreateIdentityData => {
     dispatch(closePopup());
   }, [dispatch]);
 
+  // useEffect(() => {
+  //   dispatch(());
+  //   dispatch(fetchHistory());
+  // }, [dispatch]);
+
   return {
     isLoading: ethWallet.isActivating || cryptKeeperWallet.isActivating || isLoading || isSubmitting,
     isWalletInstalled: ethWallet.isInjectedWallet,
@@ -134,6 +141,7 @@ export const useCreateIdentity = (): IUseCreateIdentityData => {
       root: errors.root?.message,
     },
     control,
+    host,
     closeModal,
     register,
     onConnectWallet: handleSubmit(onConnectWallet),

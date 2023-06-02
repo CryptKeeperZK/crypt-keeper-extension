@@ -14,6 +14,7 @@ export type NewIdentityRequest = {
   strategy: IdentityStrategy;
   options: CreateIdentityOptions;
   walletType: EWallet;
+  host?: string;
   messageSignature?: string;
 };
 
@@ -26,6 +27,7 @@ export type IdentityMetadata = {
   account: string;
   name: string;
   identityStrategy: IdentityStrategy;
+  host?: string;
   web2Provider?: IdentityWeb2Provider;
 };
 
@@ -50,9 +52,14 @@ export interface ICreateIdentityArgs {
   account: string;
   messageSignature?: string;
   web2Provider?: IdentityWeb2Provider;
+  host?: string;
 }
 
 export type StrategiesMap = {
   random: (config: ICreateIdentityArgs) => void;
   interrep: (config: ICreateIdentityArgs) => void;
 };
+
+export interface IdentityHost {
+  host: string | undefined 
+}

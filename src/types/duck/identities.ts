@@ -3,6 +3,7 @@ import type { CreateIdentityOptions, EWallet, IdentityStrategy } from "../identi
 export interface SelectedIdentity {
   commitment: string;
   web2Provider?: string;
+  host?: string;
 }
 
 export interface ICreateIdentityUiArgs {
@@ -10,4 +11,5 @@ export interface ICreateIdentityUiArgs {
   options: CreateIdentityOptions;
   walletType: EWallet;
   messageSignature?: string;
+  host?: string;
 }

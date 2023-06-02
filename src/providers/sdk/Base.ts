@@ -50,7 +50,8 @@ export class CryptKeeperInjectedProvider extends EventEmitter {
 
       if (isApproved) {
         await this.addHost(host, canSkipApprove);
-        await this.createIdentity(host)
+        //await this.setIdentityHost(host)
+        await this.createIdentity();
       }
     } catch (err) {
       log.debug("Err: ", err);
@@ -190,10 +191,16 @@ export class CryptKeeperInjectedProvider extends EventEmitter {
     });
   }
 
-  private async createIdentity(host: string): Promise<unknown> {
+  private async setIdentityHost(host: string): Promise<unknown> {
+    return this.post({
+      method: RPCAction.SET_IDENTITY_HOST,
+      payload: { host },
+    });
+  }
+
+  private async createIdentity(): Promise<unknown> {
     return this.post({
       method: RPCAction.CREATE_IDENTITY_REQ,
-      payload: { origin: host },
     });
   }
 

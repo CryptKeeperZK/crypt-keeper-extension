@@ -3,7 +3,7 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import deepEqual from "fast-deep-equal";
 
 import { RPCAction } from "@src/constants";
-import { HistorySettings, ICreateIdentityUiArgs, IdentityData, Operation, SelectedIdentity } from "@src/types";
+import { HistorySettings, ICreateIdentityUiArgs, IdentityData, IdentityHost, Operation, SelectedIdentity } from "@src/types";
 import postMessage from "@src/util/postMessage";
 
 import type { TypedThunk } from "@src/ui/store/configureAppStore";
@@ -16,6 +16,7 @@ export interface IdentitiesState {
   requestPending: boolean;
   selected: SelectedIdentity; // This aim to be a short-term solution to the integration with Zkitter
   settings?: HistorySettings;
+  host?: string;
 }
 
 const initialState: IdentitiesState = {
@@ -26,7 +27,9 @@ const initialState: IdentitiesState = {
   selected: {
     commitment: "",
     web2Provider: "",
+    host: ""
   },
+  host: ""
 };
 
 const identitiesSlice = createSlice({
@@ -55,18 +58,22 @@ const identitiesSlice = createSlice({
     setSettings: (state: IdentitiesState, action: PayloadAction<HistorySettings>) => {
       state.settings = action.payload;
     },
+
+    setIdentityHost: (state: IdentitiesState, action: PayloadAction<string | undefined>) => {
+      state.host = action.payload;
+    },
   },
 });
 
-export const { setSelectedCommitment, setIdentities, setIdentityRequestPending, setOperations, setSettings } =
+export const { setSelectedCommitment, setIdentities, setIdentityRequestPending, setOperations, setSettings, setIdentityHost } =
   identitiesSlice.actions;
 
-export const createIdentityRequest = () => async (): Promise<void> => {
-  await postMessage({ method: RPCAction.CREATE_IDENTITY_REQ });
+export const createIdentityRequest = ({host}: IdentityHost) => async (): Promise<void> => {
+  await postMessage({ method: RPCAction.CREATE_IDENTITY_REQ, payload: { host }  });
 };
 
 export const createIdentity =
-  ({ walletType, strategy, messageSignature, options }: ICreateIdentityUiArgs) =>
+  ({ walletType, strategy, messageSignature, options, host }: ICreateIdentityUiArgs) =>
   async (): Promise<string | undefined> =>
     postMessage({
       method: RPCAction.CREATE_IDENTITY,
@@ -75,6 +82,7 @@ export const createIdentity =
         walletType,
         messageSignature,
         options,
+        host
       },
     });
 
@@ -170,5 +178,7 @@ export const useIdentityOperations = (): Operation[] =>
 
 export const useHistorySettings = (): HistorySettings | undefined =>
   useAppSelector((state) => state.identities.settings, deepEqual);
+
+export const useIdentityHost = (): string | undefined => useAppSelector((state) => state.identities.host, deepEqual);
 
 export default identitiesSlice.reducer;
