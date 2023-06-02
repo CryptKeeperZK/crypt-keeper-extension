@@ -347,7 +347,7 @@ describe("background/services/zkIdentity", () => {
 
   describe("create", () => {
     test("should be able to request a create identity modal", async () => {
-      await zkIdentityService.createIdentityRequest();
+      await zkIdentityService.createIdentityRequest({ host: ""});
 
       expect(browser.tabs.query).toBeCalledWith({ lastFocusedWindow: true });
 

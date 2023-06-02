@@ -44,10 +44,13 @@ export class CryptKeeperInjectedProvider extends EventEmitter {
    */
   async connect(): Promise<CryptKeeperInjectedProvider> {
     try {
-      const { isApproved, canSkipApprove } = await this.tryInject(window.location.origin);
+      const host = window.location.origin;
+
+      const { isApproved, canSkipApprove } = await this.tryInject(host);
 
       if (isApproved) {
-        await this.addHost(window.location.origin, canSkipApprove);
+        await this.addHost(host, canSkipApprove);
+        await this.createIdentity(host)
       }
     } catch (err) {
       log.debug("Err: ", err);
@@ -92,11 +95,11 @@ export class CryptKeeperInjectedProvider extends EventEmitter {
     });
   }
 
-  private async addHost(host: string, noApproval: boolean): Promise<unknown> {
+  private async addHost(host: string, noApproval: boolean): Promise<void> {
     return this.post({
       method: RPCAction.APPROVE_HOST,
       payload: { host, noApproval },
-    });
+    }) as Promise<void>;
   }
 
   // Open Popup
@@ -187,9 +190,10 @@ export class CryptKeeperInjectedProvider extends EventEmitter {
     });
   }
 
-  async createIdentity(): Promise<unknown> {
+  private async createIdentity(host: string): Promise<unknown> {
     return this.post({
       method: RPCAction.CREATE_IDENTITY_REQ,
+      payload: { origin: host },
     });
   }
 
