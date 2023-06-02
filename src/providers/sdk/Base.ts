@@ -1,3 +1,4 @@
+/* eslint no-console: 0 */ // --> OFF
 import { MerkleProof } from "@zk-kit/incremental-merkle-tree";
 import log from "loglevel";
 
@@ -44,10 +45,12 @@ export class CryptKeeperInjectedProvider extends EventEmitter {
    */
   async connect(): Promise<CryptKeeperInjectedProvider> {
     try {
-      const { isApproved, canSkipApprove } = await this.tryInject(window.location.origin);
+      const host = window.location.origin;
+
+      const { isApproved, canSkipApprove } = await this.tryInject(host);
 
       if (isApproved) {
-        await this.addHost(window.location.origin, canSkipApprove);
+        await this.addHost(host, canSkipApprove);
         await this.accounts();
       }
     } catch (err) {
@@ -115,6 +118,8 @@ export class CryptKeeperInjectedProvider extends EventEmitter {
     const { data } = event;
 
     if (data && data.target === "injected-injectedscript") {
+      console.log("eventResponser", data);
+
       if (data.nonce === "identityChanged") {
         const [, res] = data.payload;
         this.emit("identityChanged", res);
@@ -152,6 +157,8 @@ export class CryptKeeperInjectedProvider extends EventEmitter {
       }
 
       resolve(res);
+
+      console.log("eventResponser resolved");
 
       delete promises[data.nonce];
     }

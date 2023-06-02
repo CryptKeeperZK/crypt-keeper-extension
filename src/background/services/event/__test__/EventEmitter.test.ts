@@ -3,6 +3,7 @@ import { Events, EventHandler, EventName } from "../types";
 
 const events: Events = {
   identityChanged: () => false,
+  accountChanged: () => false,
   login: () => false,
   logout: () => false,
 };
