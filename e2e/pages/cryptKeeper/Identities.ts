@@ -50,7 +50,7 @@ export default class Identities extends BasePage {
 
     await cryptKeeper.getByRole("button", { name: walletType === "eth" ? "Metamask" : "Cryptkeeper" }).click();
 
-    if (identityType !== "Random" && walletType === "eth") {
+    if (walletType === "eth") {
       // TODO: synpress doesn't support new data-testid for metamask
       const metamask = await this.page.context().waitForEvent("page");
 

@@ -84,7 +84,7 @@ export const useCreateIdentity = (): IUseCreateIdentityData => {
             : { message, account: account as string };
 
         const messageSignature =
-          walletType === EWallet.ETH_WALLET && identityStrategyType.value !== "random"
+          walletType === EWallet.ETH_WALLET
             ? await signWithSigner({ signer: await ethWallet.provider?.getSigner(), message })
             : undefined;
 

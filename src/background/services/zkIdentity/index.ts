@@ -257,7 +257,7 @@ export default class ZkIdentityService implements IBackupable {
     messageSignature,
     options,
   }: NewIdentityRequest): Promise<string | undefined> => {
-    if (walletType === EWallet.ETH_WALLET && !messageSignature && strategy !== "random") {
+    if (walletType === EWallet.ETH_WALLET && !messageSignature) {
       throw new Error("No signature provided");
     }
 
