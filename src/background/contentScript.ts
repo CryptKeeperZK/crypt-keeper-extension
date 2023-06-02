@@ -2,7 +2,7 @@ import log from "loglevel";
 import { browser } from "webextension-polyfill-ts";
 
 import { InjectedMessageData, ReduxAction, SelectedIdentity } from "@src/types";
-import { setStatus } from "@src/ui/ducks/app";
+import { setSelectedAccount, setStatus } from "@src/ui/ducks/app";
 import { setSelectedCommitment } from "@src/ui/ducks/identities";
 
 function injectScript() {
@@ -50,6 +50,17 @@ function injectScript() {
             target: "injected-injectedscript",
             payload: [null],
             nonce: !(action.payload as { isUnlocked: boolean }).isUnlocked ? "logout" : "login",
+          },
+          "*",
+        );
+        return;
+      }
+      case setSelectedAccount.type: {
+        window.postMessage(
+          {
+            target: "injected-injectedscript",
+            payload: [null, action.payload],
+            nonce: "accountChanged",
           },
           "*",
         );

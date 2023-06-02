@@ -5,9 +5,7 @@
 import { act, render, screen } from "@testing-library/react";
 
 import { createModalRoot, deleteModalRoot } from "@src/config/mock/modal";
-import { defaultWalletHookData } from "@src/config/mock/wallet";
 import { IUseConnectionModalData, useConnectionModal } from "@src/ui/components/ConnectionModal/useConnectionModal";
-import { sliceAddress } from "@src/util/account";
 
 import { Info, InfoProps } from "..";
 
@@ -17,9 +15,6 @@ jest.mock("@src/ui/components/ConnectionModal/useConnectionModal", (): unknown =
 
 describe("ui/pages/Home/components/Info", () => {
   const defaultProps: InfoProps = {
-    address: defaultWalletHookData.address,
-    balance: defaultWalletHookData.balance,
-    chain: defaultWalletHookData.chain,
     refreshConnectionStatus: jest.fn().mockResolvedValue(true),
   };
 
@@ -47,30 +42,16 @@ describe("ui/pages/Home/components/Info", () => {
     render(<Info {...defaultProps} />);
 
     const component = await screen.findByTestId("home-info");
-    const balance = await screen.findByText("1,000.0000 ETH");
-    const address = await screen.findByText(sliceAddress(defaultWalletHookData.address as string));
 
     expect(component).toBeInTheDocument();
-    expect(balance).toBeInTheDocument();
-    expect(address).toBeInTheDocument();
   });
 
   test("should render properly without wallet data", async () => {
     const mockRefreshConnectionStatus = jest.fn().mockRejectedValue(false);
-    render(
-      <Info
-        {...defaultProps}
-        address={undefined}
-        balance={undefined}
-        chain={undefined}
-        refreshConnectionStatus={mockRefreshConnectionStatus}
-      />,
-    );
+    render(<Info {...defaultProps} refreshConnectionStatus={mockRefreshConnectionStatus} />);
 
-    const balance = await screen.findByText("-");
     const connectedTitle = await screen.findByText("Not Connected");
 
-    expect(balance).toBeInTheDocument();
     expect(connectedTitle).toBeInTheDocument();
   });
 

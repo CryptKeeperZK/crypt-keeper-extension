@@ -7,17 +7,22 @@ import MiscStorageService from "@src/background/services/misc";
 import { generateMnemonic } from "@src/background/services/mnemonic";
 import SimpleStorage from "@src/background/services/storage";
 import { ISignMessageArgs, InitializationStep } from "@src/types";
+import { setSelectedAccount } from "@src/ui/ducks/app";
+import pushMessage from "@src/util/pushMessage";
 
 import type { IAccount } from "./types";
 import type { IBackupable } from "../backup";
 
 const ACCOUNT_STORAGE_DB_KEY = "@ACCOUNT-STORAGE@";
 const MNEMONIC_STORAGE_DB_KEY = "@MNEMONIC-STORAGE@";
+const SELECTED_ACCOUNT_STORAGE_DB_KEY = "@SELECTED-ACCOUNT-STORAGE@";
 
 export default class WalletService implements IBackupable {
   private static INSTANCE: WalletService;
 
   private accountStorage: SimpleStorage;
+
+  private selectedAccountStorage: SimpleStorage;
 
   private mnemonicStorage: SimpleStorage;
 
@@ -28,6 +33,7 @@ export default class WalletService implements IBackupable {
   private constructor() {
     this.accountStorage = new SimpleStorage(ACCOUNT_STORAGE_DB_KEY);
     this.mnemonicStorage = new SimpleStorage(MNEMONIC_STORAGE_DB_KEY);
+    this.selectedAccountStorage = new SimpleStorage(SELECTED_ACCOUNT_STORAGE_DB_KEY);
     this.lockService = LockerService.getInstance();
     this.miscStorage = MiscStorageService.getInstance();
   }
@@ -76,15 +82,45 @@ export default class WalletService implements IBackupable {
 
     const encrypted = this.lockService.encrypt(JSON.stringify(accounts));
     await this.accountStorage.set(encrypted);
+    await this.selectAccount(wallet.address);
     await this.miscStorage.setInitialization({ initializationStep: InitializationStep.MNEMONIC });
     await this.mnemonicStorage.clear();
   };
 
-  accounts = async (): Promise<string[]> => {
-    const encrypted = await this.accountStorage.get<string>();
-    const accounts = encrypted ? (JSON.parse(this.lockService.decrypt(encrypted)) as IAccount[]) : [];
+  selectAccount = async (address: string): Promise<string> => {
+    if (!address) {
+      throw new Error("No address provided");
+    }
 
-    return accounts.map(({ address }) => address);
+    const encryptedAccounts = await this.accountStorage.get<string>();
+    const accounts = encryptedAccounts ? (JSON.parse(this.lockService.decrypt(encryptedAccounts)) as IAccount[]) : [];
+    const isFound = accounts.some((account) => account.address.toLowerCase() === address.toLowerCase());
+
+    if (!isFound) {
+      throw new Error(`Account ${address} not found`);
+    }
+
+    const encrypted = this.lockService.encrypt(address.toLowerCase());
+    await this.selectedAccountStorage.set(encrypted);
+    await pushMessage(setSelectedAccount(address.toLowerCase()));
+
+    return address.toLowerCase();
+  };
+
+  getSelectedAccount = async (): Promise<string | null> => {
+    const encryped = await this.selectedAccountStorage.get<string>();
+    return encryped && this.lockService.decrypt(encryped);
+  };
+
+  accounts = async (): Promise<string[]> => {
+    const encryptedAccounts = await this.accountStorage.get<string>();
+    const accounts = encryptedAccounts ? (JSON.parse(this.lockService.decrypt(encryptedAccounts)) as IAccount[]) : [];
+    const selectedAddress = await this.getSelectedAccount();
+    const addresses = accounts.map(({ address }) => address.toLowerCase());
+
+    return selectedAddress
+      ? [selectedAddress.toLowerCase()].concat(addresses.filter((address) => address !== selectedAddress.toLowerCase()))
+      : addresses;
   };
 
   signMessage = async ({ message, address }: ISignMessageArgs): Promise<string> => {
@@ -95,12 +131,11 @@ export default class WalletService implements IBackupable {
     }
 
     const accounts = JSON.parse(this.lockService.decrypt(encrypted)) as IAccount[];
-    // TODO: remove condition when account for ck is done
-    const account = accounts.find((item) => item.address === address) || accounts[0];
+    const account = accounts.find((item) => item.address.toLowerCase() === address.toLowerCase());
 
-    // if (!account) {
-    //   throw new Error(`There is no ${address} account`);
-    // }
+    if (!account) {
+      throw new Error(`There is no ${address} account`);
+    }
 
     const wallet = new Wallet(account.privateKey);
 

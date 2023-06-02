@@ -170,6 +170,14 @@ export const useCryptKeeper = (): IUseCryptKeeperData => {
     [setSelectedIdentity],
   );
 
+  const onAccountChanged = useCallback(
+    (address: unknown) => {
+      const newAccounts = [address as string].concat(accounts.filter((account) => account !== address));
+      setAccounts(newAccounts);
+    },
+    [accounts, setAccounts],
+  );
+
   const onLogin = useCallback(() => {
     setIsLocked(false);
     getIdentityCommitment();
@@ -193,9 +201,10 @@ export const useCryptKeeper = (): IUseCryptKeeperData => {
     client?.on("login", onLogin);
     client?.on("identityChanged", onIdentityChanged);
     client?.on("logout", onLogout);
+    client?.on("accountChanged", onAccountChanged);
 
     return () => client?.cleanListeners();
-  }, [client, setAccounts, onLogout, onIdentityChanged, onLogin]);
+  }, [client, setAccounts, onLogout, onIdentityChanged, onAccountChanged, onLogin]);
 
   return {
     accounts,

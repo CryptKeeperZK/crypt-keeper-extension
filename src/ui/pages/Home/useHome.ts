@@ -1,4 +1,3 @@
-import BigNumber from "bignumber.js";
 import { useEffect, useCallback } from "react";
 
 import { useAppDispatch } from "@src/ui/ducks/hooks";
@@ -7,13 +6,11 @@ import { checkHostApproval } from "@src/ui/ducks/permissions";
 import { useEthWallet } from "@src/ui/hooks/wallet";
 import { getLastActiveTabUrl } from "@src/util/browser";
 
-import type { Chain, IdentityData } from "@src/types";
+import type { IdentityData } from "@src/types";
 
 export interface IUseHomeData {
   identities: IdentityData[];
   address?: string;
-  balance?: BigNumber;
-  chain?: Chain;
   refreshConnectionStatus: () => Promise<boolean>;
 }
 
@@ -21,7 +18,7 @@ export const useHome = (): IUseHomeData => {
   const dispatch = useAppDispatch();
   const identities = useIdentities();
 
-  const { address, chain, balance } = useEthWallet();
+  const { address } = useEthWallet();
 
   const refreshConnectionStatus = useCallback(async () => {
     const tabUrl = await getLastActiveTabUrl();
@@ -40,8 +37,6 @@ export const useHome = (): IUseHomeData => {
 
   return {
     address,
-    chain,
-    balance,
     identities,
     refreshConnectionStatus,
   };

@@ -89,8 +89,6 @@ describe("ui/pages/Home/useHome", () => {
     const { result } = renderHook(() => useHome());
 
     expect(result.current.address).toBe(defaultWalletHookData.address);
-    expect(result.current.balance).toStrictEqual(defaultWalletHookData.balance);
-    expect(result.current.chain).toStrictEqual(defaultWalletHookData.chain);
     expect(result.current.identities).toStrictEqual(defaultIdentities);
     expect(fetchIdentities).toBeCalledTimes(1);
     expect(fetchHistory).toBeCalledTimes(1);

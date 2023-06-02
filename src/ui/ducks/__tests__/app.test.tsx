@@ -5,6 +5,7 @@
 import { renderHook } from "@testing-library/react";
 import { Provider } from "react-redux";
 
+import { ZERO_ADDRESS } from "@src/config/const";
 import { RPCAction } from "@src/constants";
 import { store } from "@src/ui/store/configureAppStore";
 import postMessage from "@src/util/postMessage";
@@ -13,9 +14,11 @@ import {
   closePopup,
   fetchStatus,
   generateMnemonic,
+  getSelectedAccount,
   getWalletConnection,
   lock,
   saveMnemonic,
+  selectAccount,
   setStatus,
   setWalletConnection,
   setupPassword,
@@ -158,6 +161,42 @@ describe("ui/ducks/app", () => {
     });
     expect(postMessage).toBeCalledTimes(1);
     expect(postMessage).toBeCalledWith({ method: RPCAction.SAVE_MNEMONIC });
+  });
+
+  test("should select account properly", async () => {
+    await Promise.resolve(store.dispatch(selectAccount(ZERO_ADDRESS)));
+    const { app } = store.getState();
+
+    expect(app).toStrictEqual({
+      isInitialized: true,
+      isUnlocked: true,
+      isMnemonicGenerated: true,
+      isDisconnectedPermanently: true,
+      mnemonic: "",
+      selectedAccount: ZERO_ADDRESS,
+    });
+
+    expect(postMessage).toBeCalledTimes(1);
+    expect(postMessage).toBeCalledWith({ method: RPCAction.SELECT_ACCOUNT, payload: ZERO_ADDRESS });
+  });
+
+  test("should get selected account properly", async () => {
+    (postMessage as jest.Mock).mockResolvedValue(ZERO_ADDRESS);
+
+    await Promise.resolve(store.dispatch(getSelectedAccount()));
+    const { app } = store.getState();
+
+    expect(app).toStrictEqual({
+      isInitialized: true,
+      isUnlocked: true,
+      isMnemonicGenerated: true,
+      isDisconnectedPermanently: true,
+      mnemonic: "",
+      selectedAccount: ZERO_ADDRESS,
+    });
+
+    expect(postMessage).toBeCalledTimes(1);
+    expect(postMessage).toBeCalledWith({ method: RPCAction.GET_SELECTED_ACCOUNT });
   });
 
   test("should generate mnemonic properly", async () => {

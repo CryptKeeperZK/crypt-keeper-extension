@@ -68,12 +68,17 @@ export const useCreateIdentity = (): IUseCreateIdentityData => {
           web2Provider: web2Provider.value as IdentityWeb2Provider,
           nonce,
           identityStrategyType: identityStrategyType.value as IdentityStrategy,
-          account: identityStrategyType.value !== "random" ? (account as string) : ZERO_ADDRESS,
+          account: identityStrategyType.value !== "random" ? (account as string).toLowerCase() : ZERO_ADDRESS,
         });
 
         const options =
           identityStrategyType.value !== "random"
-            ? { nonce, web2Provider: web2Provider.value as IdentityWeb2Provider, account: account as string, message }
+            ? {
+                nonce,
+                web2Provider: web2Provider.value as IdentityWeb2Provider,
+                account: (account as string).toLowerCase(),
+                message,
+              }
             : { message, account: ZERO_ADDRESS };
 
         const messageSignature =

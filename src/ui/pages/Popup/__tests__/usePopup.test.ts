@@ -8,7 +8,7 @@ import { useNavigate } from "react-router-dom";
 
 import { defaultWalletHookData } from "@src/config/mock/wallet";
 import { Paths } from "@src/constants";
-import { fetchStatus, useAppStatus } from "@src/ui/ducks/app";
+import { fetchStatus, getSelectedAccount, useAppStatus } from "@src/ui/ducks/app";
 import { useAppDispatch } from "@src/ui/ducks/hooks";
 import { fetchPendingRequests, usePendingRequests } from "@src/ui/ducks/requests";
 import { useCryptKeeperWallet, useEthWallet } from "@src/ui/hooks/wallet";
@@ -21,6 +21,7 @@ jest.mock("react-router-dom", (): unknown => ({
 
 jest.mock("@src/ui/ducks/app", (): unknown => ({
   fetchStatus: jest.fn(),
+  getSelectedAccount: jest.fn(),
   useAppStatus: jest.fn(),
 }));
 
@@ -98,6 +99,22 @@ describe("ui/pages/Popup/usePopup", () => {
     expect(fetchStatus).toBeCalledTimes(1);
     expect(fetchPendingRequests).toBeCalledTimes(1);
     expect(defaultWalletHookData.onConnectEagerly).toBeCalledTimes(2);
+  });
+
+  test("should get selected account properly when mnemonic generated", async () => {
+    (useAppStatus as jest.Mock).mockReturnValue({ isInitialized: true, isUnlocked: true, isMnemonicGenerated: true });
+
+    const { result } = renderHook(() => usePopup());
+
+    await waitFor(() => result.current.isLoading === true);
+    await waitFor(() => expect(mockDispatch).toBeCalledTimes(3));
+    await waitFor(() => result.current.isLoading === false);
+
+    expect(result.current.isLoading).toBe(false);
+    expect(mockDispatch).toBeCalledTimes(3);
+    expect(fetchStatus).toBeCalledTimes(1);
+    expect(fetchPendingRequests).toBeCalledTimes(1);
+    expect(getSelectedAccount).toBeCalledTimes(1);
   });
 
   test("should handle load data error", async () => {

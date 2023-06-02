@@ -36,8 +36,6 @@ describe("ui/pages/Home", () => {
   const defaultHookData: IUseHomeData = {
     identities: [],
     address: defaultWalletHookData.address,
-    balance: defaultWalletHookData.balance,
-    chain: defaultWalletHookData.chain,
     refreshConnectionStatus: jest.fn().mockResolvedValue(true),
   };
 
