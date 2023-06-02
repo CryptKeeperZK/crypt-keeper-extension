@@ -6,6 +6,7 @@ import { act, renderHook } from "@testing-library/react";
 import { useNavigate } from "react-router-dom";
 
 import { ZERO_ADDRESS } from "@src/config/const";
+import { getEnabledFeatures } from "@src/config/features";
 import { defaultWalletHookData } from "@src/config/mock/wallet";
 import { IDENTITY_TYPES, Paths } from "@src/constants";
 import { EWallet } from "@src/types";
@@ -64,6 +65,8 @@ describe("ui/pages/CreateIdentity/useCreateIdentity", () => {
     (useCryptKeeperWallet as jest.Mock).mockReturnValue({ ...defaultWalletHookData, isActive: true });
 
     (useNavigate as jest.Mock).mockReturnValue(mockNavigate);
+
+    (getEnabledFeatures as jest.Mock).mockReturnValue({ INTERREP_IDENTITY: true });
   });
 
   afterEach(() => {
@@ -99,6 +102,27 @@ describe("ui/pages/CreateIdentity/useCreateIdentity", () => {
       messageSignature: mockSignedMessage,
       options: { account: ZERO_ADDRESS, message: mockMessage, nonce: 0, web2Provider: "twitter" },
       strategy: "interrep",
+      walletType: EWallet.ETH_WALLET,
+    });
+    expect(mockNavigate).toBeCalledTimes(1);
+    expect(mockNavigate).toBeCalledWith(Paths.HOME);
+  });
+
+  test("should create identity with eth wallet and disabled interrep identity properly", async () => {
+    (getEnabledFeatures as jest.Mock).mockReturnValue({ INTERREP_IDENTITY: false });
+
+    const { result } = renderHook(() => useCreateIdentity());
+
+    await act(async () => Promise.resolve(result.current.onCreateWithEthWallet()));
+
+    expect(result.current.isLoading).toBe(false);
+    expect(signWithSigner).toBeCalledTimes(0);
+    expect(mockDispatch).toBeCalledTimes(1);
+    expect(createIdentity).toBeCalledTimes(1);
+    expect(createIdentity).toBeCalledWith({
+      messageSignature: undefined,
+      options: { account: ZERO_ADDRESS, message: mockMessage },
+      strategy: "random",
       walletType: EWallet.ETH_WALLET,
     });
     expect(mockNavigate).toBeCalledTimes(1);

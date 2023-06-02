@@ -2,7 +2,6 @@ import { BaseSyntheticEvent, useCallback } from "react";
 import { Control, useForm, UseFormRegister } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 
-import { ZERO_ADDRESS } from "@src/config/const";
 import { getEnabledFeatures } from "@src/config/features";
 import { WEB2_PROVIDER_OPTIONS, IDENTITY_TYPES, Paths } from "@src/constants";
 import { EWallet, IdentityStrategy, IdentityWeb2Provider, SelectOption } from "@src/types";
@@ -48,7 +47,7 @@ export const useCreateIdentity = (): IUseCreateIdentityData => {
     handleSubmit,
   } = useForm({
     defaultValues: {
-      identityStrategyType: IDENTITY_TYPES[0],
+      identityStrategyType: features.INTERREP_IDENTITY ? IDENTITY_TYPES[0] : IDENTITY_TYPES[1],
       web2Provider: WEB2_PROVIDER_OPTIONS[0],
       nonce: 0,
     },
@@ -63,12 +62,15 @@ export const useCreateIdentity = (): IUseCreateIdentityData => {
   const createNewIdentity = useCallback(
     async ({ identityStrategyType, web2Provider, nonce }: FormFields, walletType: EWallet) => {
       try {
-        const account = walletType === EWallet.ETH_WALLET ? ethWallet.address : cryptKeeperWallet.address;
+        const account =
+          walletType === EWallet.ETH_WALLET
+            ? ethWallet.address?.toLowerCase()
+            : cryptKeeperWallet.address?.toLowerCase();
         const message = getMessageTemplate({
           web2Provider: web2Provider.value as IdentityWeb2Provider,
           nonce,
           identityStrategyType: identityStrategyType.value as IdentityStrategy,
-          account: identityStrategyType.value !== "random" ? (account as string).toLowerCase() : ZERO_ADDRESS,
+          account: account as string,
         });
 
         const options =
@@ -76,10 +78,10 @@ export const useCreateIdentity = (): IUseCreateIdentityData => {
             ? {
                 nonce,
                 web2Provider: web2Provider.value as IdentityWeb2Provider,
-                account: (account as string).toLowerCase(),
+                account: account as string,
                 message,
               }
-            : { message, account: ZERO_ADDRESS };
+            : { message, account: account as string };
 
         const messageSignature =
           walletType === EWallet.ETH_WALLET && identityStrategyType.value !== "random"
@@ -124,7 +126,7 @@ export const useCreateIdentity = (): IUseCreateIdentityData => {
     isLoading: ethWallet.isActivating || cryptKeeperWallet.isActivating || isLoading || isSubmitting,
     isWalletInstalled: ethWallet.isInjectedWallet,
     isWalletConnected: ethWallet.isActive,
-    isProviderAvailable: values.identityStrategyType.value === "interrep" || !features.RANDOM_IDENTITY,
+    isProviderAvailable: values.identityStrategyType.value === "interrep",
     errors: {
       web2Provider: errors.web2Provider?.message,
       identityStrategyType: errors.identityStrategyType?.message,

@@ -13,7 +13,7 @@ on:
 
 env:
   CRYPTKEEPER_DEBUG: false
-  RANDOM_IDENTITY: true
+  INTERREP_IDENTITY: true
   BACKUP: true
   METAMASK_VERSION: "10.28.1"
   INFURA_API_KEY: ${{ secrets.INFURA_API_KEY }}

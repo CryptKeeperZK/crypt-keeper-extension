@@ -109,10 +109,10 @@ export default class ZkIdentityService implements IBackupable {
     const iterableIdentities = JSON.parse(identitesDecrypted) as Iterable<readonly [string, string]>;
 
     return new Map(
-      features.RANDOM_IDENTITY
+      features.INTERREP_IDENTITY
         ? iterableIdentities
         : [...iterableIdentities].filter(
-            ([, identity]) => ZkIdentitySemaphore.genFromSerialized(identity).metadata.identityStrategy !== "random",
+            ([, identity]) => ZkIdentitySemaphore.genFromSerialized(identity).metadata.identityStrategy !== "interrep",
           ),
     );
   };

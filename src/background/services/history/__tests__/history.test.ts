@@ -66,7 +66,7 @@ describe("background/services/history", () => {
   const service = HistoryService.getInstance();
 
   beforeEach(() => {
-    (getEnabledFeatures as jest.Mock).mockReturnValue({ RANDOM_IDENTITY: true });
+    (getEnabledFeatures as jest.Mock).mockReturnValue({ INTERREP_IDENTITY: true });
   });
 
   afterEach(async () => {
@@ -98,8 +98,8 @@ describe("background/services/history", () => {
     expect(service.getSettings()).toStrictEqual(mockDefaultSettings);
   });
 
-  test("should load history operations without random identities", async () => {
-    (getEnabledFeatures as jest.Mock).mockReturnValue({ RANDOM_IDENTITY: false });
+  test("should load history operations without interrep identities", async () => {
+    (getEnabledFeatures as jest.Mock).mockReturnValue({ INTERREP_IDENTITY: false });
 
     const [historyStore, settingsStore] = (SimpleStorage as jest.Mock).mock.instances as [MockStorage, MockStorage];
     historyStore.get.mockResolvedValue(mockSerializedDefaultOperations);
@@ -107,7 +107,7 @@ describe("background/services/history", () => {
 
     const { operations, settings } = await service.loadOperations();
 
-    expect(operations).toHaveLength(2);
+    expect(operations).toHaveLength(1);
     expect(settings).toStrictEqual(mockDefaultSettings);
     expect(service.getOperations()).toStrictEqual(operations);
   });

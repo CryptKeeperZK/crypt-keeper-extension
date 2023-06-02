@@ -117,6 +117,22 @@ describe("ui/pages/Popup/usePopup", () => {
     expect(getSelectedAccount).toBeCalledTimes(1);
   });
 
+  test("should get selected account properly when mnemonic generated", async () => {
+    (useAppStatus as jest.Mock).mockReturnValue({ isInitialized: true, isUnlocked: true, isMnemonicGenerated: true });
+
+    const { result } = renderHook(() => usePopup());
+
+    await waitFor(() => result.current.isLoading === true);
+    await waitFor(() => expect(mockDispatch).toBeCalledTimes(3));
+    await waitFor(() => result.current.isLoading === false);
+
+    expect(result.current.isLoading).toBe(false);
+    expect(mockDispatch).toBeCalledTimes(3);
+    expect(fetchStatus).toBeCalledTimes(1);
+    expect(fetchPendingRequests).toBeCalledTimes(1);
+    expect(getSelectedAccount).toBeCalledTimes(1);
+  });
+
   test("should handle load data error", async () => {
     const err = new Error("error");
     mockDispatch.mockRejectedValue(err);

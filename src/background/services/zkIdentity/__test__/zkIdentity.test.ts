@@ -15,7 +15,7 @@ import { createNewIdentity } from "../factory";
 const mockDefaultIdentityCommitment =
   bigintToHex(15206603389158210388485662342360617949291660595274505642693885456541816400294n);
 const mockDefaultIdentities = [
-  [mockDefaultIdentityCommitment, JSON.stringify({ secret: "1234", metadata: { identityStrategy: "random" } })],
+  [mockDefaultIdentityCommitment, JSON.stringify({ secret: "1234", metadata: { identityStrategy: "interrep" } })],
 ];
 const mockSerializedDefaultIdentities = JSON.stringify(mockDefaultIdentities);
 
@@ -85,7 +85,7 @@ describe("background/services/zkIdentity", () => {
 
     (browser.tabs.sendMessage as jest.Mock).mockRejectedValueOnce(false).mockResolvedValue(true);
 
-    (getEnabledFeatures as jest.Mock).mockReturnValue({ RANDOM_IDENTITY: true });
+    (getEnabledFeatures as jest.Mock).mockReturnValue({ INTERREP_IDENTITY: true });
 
     (SimpleStorage as jest.Mock).mock.instances.forEach((instance: MockStorage) => {
       instance.get.mockReturnValue(mockSerializedDefaultIdentities);
@@ -330,8 +330,8 @@ describe("background/services/zkIdentity", () => {
       expect(identities).toHaveLength(mockDefaultIdentities.length);
     });
 
-    test("should get identities properly with disabled random identities", async () => {
-      (getEnabledFeatures as jest.Mock).mockReturnValue({ RANDOM_IDENTITY: false });
+    test("should get identities properly with disabled interrep identities", async () => {
+      (getEnabledFeatures as jest.Mock).mockReturnValue({ INTERREP_IDENTITY: false });
 
       const identities = await zkIdentityService.getIdentities();
 

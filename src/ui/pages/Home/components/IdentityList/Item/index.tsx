@@ -3,6 +3,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import classNames from "classnames";
 import { ChangeEvent, FormEvent, MouseEvent as ReactMouseEvent, useCallback, useState } from "react";
 
+import { getEnabledFeatures } from "@src/config/features";
 import { IdentityMetadata, IdentityWeb2Provider } from "@src/types";
 import { Icon } from "@src/ui/components/Icon";
 import { Input } from "@src/ui/components/Input";
@@ -68,6 +69,9 @@ export const IdentityItem = ({
     [commitment, name, onUpdateIdentityName],
   );
 
+  const features = getEnabledFeatures();
+  const identityTitle = features.INTERREP_IDENTITY ? "random" : "";
+
   return (
     <div key={commitment} className="p-4 identity-row">
       <Icon
@@ -109,7 +113,7 @@ export const IdentityItem = ({
               {metadata.web2Provider ? (
                 <FontAwesomeIcon icon={web2ProvidersIcons[metadata.web2Provider]} title={metadata.web2Provider} />
               ) : (
-                "random"
+                identityTitle
               )}
             </span>
           </div>
