@@ -105,7 +105,6 @@ jest.mock("webextension-polyfill-ts", (): unknown => {
 
 export const events: Events = {
   identityChanged: () => false,
-  accountChanged: () => false,
   login: () => false,
   logout: () => false,
 };

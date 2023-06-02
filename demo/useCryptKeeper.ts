@@ -30,7 +30,6 @@ enum MerkleProofType {
 }
 
 interface IUseCryptKeeperData {
-  accounts: string[];
   client?: CryptKeeperInjectedProvider;
   isLocked: boolean;
   selectedIdentity: SelectedIdentity;
@@ -46,7 +45,6 @@ const initializeClient = (): Promise<CryptKeeperInjectedProvider | undefined> =>
 
 export const useCryptKeeper = (): IUseCryptKeeperData => {
   const [client, setClient] = useState<CryptKeeperInjectedProvider>();
-  const [accounts, setAccounts] = useState<string[]>([]);
   const [isLocked, setIsLocked] = useState(true);
   const [selectedIdentity, setSelectedIdentity] = useState<SelectedIdentity>({
     commitment: "",
@@ -170,14 +168,6 @@ export const useCryptKeeper = (): IUseCryptKeeperData => {
     [setSelectedIdentity],
   );
 
-  const onAccountChanged = useCallback(
-    (address: unknown) => {
-      const newAccounts = [address as string].concat(accounts.filter((account) => account !== address));
-      setAccounts(newAccounts);
-    },
-    [accounts, setAccounts],
-  );
-
   const onLogin = useCallback(() => {
     setIsLocked(false);
     getIdentityCommitment();
@@ -196,18 +186,14 @@ export const useCryptKeeper = (): IUseCryptKeeperData => {
       return undefined;
     }
 
-    client.accounts().then((data) => setAccounts(data));
-
     client?.on("login", onLogin);
     client?.on("identityChanged", onIdentityChanged);
     client?.on("logout", onLogout);
-    client?.on("accountChanged", onAccountChanged);
 
     return () => client?.cleanListeners();
-  }, [client, setAccounts, onLogout, onIdentityChanged, onAccountChanged, onLogin]);
+  }, [client, onLogout, onIdentityChanged, onLogin]);
 
   return {
-    accounts,
     client,
     isLocked,
     selectedIdentity,

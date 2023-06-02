@@ -48,7 +48,6 @@ export class CryptKeeperInjectedProvider extends EventEmitter {
 
       if (isApproved) {
         await this.addHost(window.location.origin, canSkipApprove);
-        await this.accounts();
       }
     } catch (err) {
       log.debug("Err: ", err);
@@ -57,10 +56,6 @@ export class CryptKeeperInjectedProvider extends EventEmitter {
     await this.post({ method: RPCAction.CLOSE_POPUP });
 
     return this;
-  }
-
-  async accounts(): Promise<string[]> {
-    return this.post({ method: RPCAction.GET_ACCOUNTS }) as Promise<string[]>;
   }
 
   private async tryInject(host: string): Promise<Approvals> {
@@ -118,12 +113,6 @@ export class CryptKeeperInjectedProvider extends EventEmitter {
       if (data.nonce === "identityChanged") {
         const [, res] = data.payload;
         this.emit("identityChanged", res);
-        return;
-      }
-
-      if (data.nonce === "accountChanged") {
-        const [, res] = data.payload;
-        this.emit("accountChanged", res);
         return;
       }
 
