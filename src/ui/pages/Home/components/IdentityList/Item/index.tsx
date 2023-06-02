@@ -71,6 +71,7 @@ export const IdentityItem = ({
 
   const features = getEnabledFeatures();
   const identityTitle = features.INTERREP_IDENTITY ? "random" : "";
+  const canShowIdentityType = Boolean(metadata.web2Provider || identityTitle);
 
   return (
     <div key={commitment} className="p-4 identity-row">
@@ -109,21 +110,21 @@ export const IdentityItem = ({
           <div className="flex flex-row items-center text-lg font-semibold">
             {`${metadata.name}`}
 
-            <span className="text-xs py-1 px-2 ml-2 rounded-full bg-gray-500 text-gray-800">
-              {metadata.web2Provider ? (
-                <FontAwesomeIcon icon={web2ProvidersIcons[metadata.web2Provider]} title={metadata.web2Provider} />
-              ) : (
-                identityTitle
-              )}
-            </span>
+            {canShowIdentityType && (
+              <span className="text-xs py-1 px-2 ml-2 rounded-full bg-gray-500 text-gray-800">
+                {metadata.web2Provider ? (
+                  <FontAwesomeIcon icon={web2ProvidersIcons[metadata.web2Provider]} title={metadata.web2Provider} />
+                ) : (
+                  identityTitle
+                )}
+              </span>
+            )}
           </div>
         )}
 
         <div className="text-base text-gray-300">Commitment: {ellipsify(commitment)}</div>
 
-        {metadata.identityStrategy !== "random" && metadata.account && (
-          <div className="text-xs text-gray-500">Address: {ellipsify(metadata.account)}</div>
-        )}
+        {metadata.account && <div className="text-xs text-gray-500">Address: {ellipsify(metadata.account)}</div>}
       </div>
 
       <Menuable

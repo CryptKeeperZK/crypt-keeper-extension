@@ -29,7 +29,7 @@ describe("background/services/zkIdentity/factory", () => {
     });
 
     expect(identity.metadata).toStrictEqual({
-      account: "",
+      account: ZERO_ADDRESS,
       identityStrategy: "random",
       name: "name",
     });

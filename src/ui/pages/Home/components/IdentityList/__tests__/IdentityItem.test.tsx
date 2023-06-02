@@ -64,6 +64,25 @@ describe("ui/pages/Home/components/IdentityList/Item", () => {
     expect(name).toBeInTheDocument();
   });
 
+  test("should render random identity properly with enabled interrep identity", async () => {
+    render(
+      <IdentityItem
+        {...defaultProps}
+        metadata={{
+          ...defaultProps.metadata,
+          web2Provider: undefined,
+          identityStrategy: "random",
+        }}
+      />,
+    );
+
+    const name = await screen.findByText(defaultProps.metadata.name);
+    const random = await screen.findByText("random");
+
+    expect(name).toBeInTheDocument();
+    expect(random).toBeInTheDocument();
+  });
+
   test("should accept to delete identity properly", async () => {
     render(<IdentityItem {...defaultProps} />);
 

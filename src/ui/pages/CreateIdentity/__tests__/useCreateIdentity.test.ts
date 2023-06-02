@@ -116,11 +116,11 @@ describe("ui/pages/CreateIdentity/useCreateIdentity", () => {
     await act(async () => Promise.resolve(result.current.onCreateWithEthWallet()));
 
     expect(result.current.isLoading).toBe(false);
-    expect(signWithSigner).toBeCalledTimes(0);
+    expect(signWithSigner).toBeCalledTimes(1);
     expect(mockDispatch).toBeCalledTimes(1);
     expect(createIdentity).toBeCalledTimes(1);
     expect(createIdentity).toBeCalledWith({
-      messageSignature: undefined,
+      messageSignature: mockSignedMessage,
       options: { account: ZERO_ADDRESS, message: mockMessage },
       strategy: "random",
       walletType: EWallet.ETH_WALLET,
