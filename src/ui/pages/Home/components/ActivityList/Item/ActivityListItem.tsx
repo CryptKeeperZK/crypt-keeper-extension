@@ -48,6 +48,8 @@ export const ActivityItem = ({ operation, onDelete }: IActivityItemProps): JSX.E
             <span className="text-xs py-1 px-2 ml-2 rounded-full bg-gray-500 text-gray-800">
               {metadata.web2Provider ? (
                 <FontAwesomeIcon icon={web2ProvidersIcons[metadata.web2Provider]} title={metadata.web2Provider} />
+              ) : metadata.host ? (
+                metadata.host
               ) : (
                 "random"
               )}

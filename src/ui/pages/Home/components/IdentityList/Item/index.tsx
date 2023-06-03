@@ -110,6 +110,12 @@ export const IdentityItem = ({
           <div className="flex flex-row items-center text-lg font-semibold">
             {`${metadata.name}`}
 
+            {metadata.host && (
+              <span className="text-xs py-1 px-2 ml-2 rounded-full bg-gray-500 text-gray-800">
+                {metadata.host}
+              </span>
+            )}
+
             {canShowIdentityType && (
               <span className="text-xs py-1 px-2 ml-2 rounded-full bg-gray-500 text-gray-800">
                 {metadata.web2Provider ? (

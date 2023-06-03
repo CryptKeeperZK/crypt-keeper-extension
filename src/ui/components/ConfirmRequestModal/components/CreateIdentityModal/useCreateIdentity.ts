@@ -106,6 +106,7 @@ export const useCreateIdentity = ({ pendingRequest }: IUseConnectionIdentityModa
             messageSignature,
             options,
             walletType,
+            host
           }),
         );
         navigate(Paths.HOME);
