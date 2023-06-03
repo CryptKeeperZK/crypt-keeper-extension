@@ -111,7 +111,7 @@ describe("background/services/approval", () => {
     });
 
     test("should set permission", async () => {
-      const result = await approvalService.setPermission(mockDefaultHosts[0], { noApproval: true });
+      const result = await approvalService.setPermission(mockDefaultHosts[0], { canSkipApprove: true });
       const canSkipApprove = approvalService.canSkipApprove(mockDefaultHosts[0]);
 
       expect(result).toStrictEqual({ noApproval: true });
@@ -124,7 +124,7 @@ describe("background/services/approval", () => {
     });
 
     test("should set permission for unknown host", async () => {
-      const result = await approvalService.setPermission("unknown", { noApproval: false });
+      const result = await approvalService.setPermission("unknown", { canSkipApprove: false });
 
       expect(result).toStrictEqual({ noApproval: false });
 
@@ -136,7 +136,7 @@ describe("background/services/approval", () => {
 
   describe("approvals", () => {
     test("should add new approval properly", async () => {
-      await approvalService.add({ host: mockDefaultHosts[0], noApproval: true });
+      await approvalService.add({ host: mockDefaultHosts[0], canSkipApprove: true });
       const hosts = approvalService.getAllowedHosts();
 
       expect(hosts).toStrictEqual(mockDefaultHosts);
@@ -149,7 +149,7 @@ describe("background/services/approval", () => {
 
     test("should not approve duplicated host after unlock", async () => {
       await approvalService.unlock();
-      await approvalService.add({ host: mockDefaultHosts[0], noApproval: true });
+      await approvalService.add({ host: mockDefaultHosts[0], canSkipApprove: true });
       const hosts = approvalService.getAllowedHosts();
 
       expect(hosts).toStrictEqual(mockDefaultHosts);

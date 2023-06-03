@@ -46,7 +46,7 @@ export const IdentityList = ({ identities }: IdentityListProps): JSX.Element => 
   );
 
   const onCreateIdentityRequest = useCallback(() => {
-    dispatch(createIdentityRequest({ host:  undefined}));
+    dispatch(createIdentityRequest());
   }, [dispatch]);
 
   return (

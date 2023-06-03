@@ -13,8 +13,15 @@ import { Input } from "@src/ui/components/Input";
 
 import "./createIdentityStyles.scss";
 import { useCreateIdentity } from "./useCreateIdentity";
+import { PendingRequest } from "@src/types";
 
-const CreateIdentity = (): JSX.Element => {
+export interface CreateIdentityModalProps {
+  pendingRequest?: PendingRequest<{ host: string }>;
+}
+
+const CreateIdentityModal = ({
+  pendingRequest
+}: CreateIdentityModalProps): JSX.Element => {
   const features = getEnabledFeatures();
   const {
     isLoading,
@@ -28,7 +35,7 @@ const CreateIdentity = (): JSX.Element => {
     onConnectWallet,
     onCreateWithCryptkeeper,
     onCreateWithEthWallet,
-  } = useCreateIdentity();
+  } = useCreateIdentity({pendingRequest});
 
   const ethWalletTitle = isWalletConnected ? "Metamask" : "Connect to Metamask";
 
@@ -144,4 +151,4 @@ const CreateIdentity = (): JSX.Element => {
   );
 };
 
-export default CreateIdentity;
+export default CreateIdentityModal;

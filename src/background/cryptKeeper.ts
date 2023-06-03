@@ -1,7 +1,7 @@
 import log from "loglevel";
 import { browser } from "webextension-polyfill-ts";
 
-import { RPCAction } from "@src/constants";
+import { Paths, RPCAction } from "@src/constants";
 import { PendingRequestType, RLNProofRequest, SemaphoreProofRequest, BackupableServices, Approvals } from "@src/types";
 
 import BrowserUtils from "./controllers/browserUtils";
@@ -148,7 +148,7 @@ export default class CryptKeeperController extends Handler {
             verificationKey: semaphorePath.verificationKey,
           };
 
-          if (!permission.noApproval) {
+          if (!permission.canSkipApprove) {
             await this.requestManager.newRequest(PendingRequestType.SEMAPHORE_PROOF, {
               ...request,
               origin: meta.origin,
@@ -192,7 +192,7 @@ export default class CryptKeeperController extends Handler {
             verificationKey: rlnPath.verificationKey,
           };
 
-          if (!permission.noApproval) {
+          if (!permission.canSkipApprove) {
             await this.requestManager.newRequest(PendingRequestType.RLN_PROOF, {
               ...request,
               origin: meta.origin,
@@ -213,6 +213,7 @@ export default class CryptKeeperController extends Handler {
         throw new Error("Origin not provided");
       }
 
+      // Check Locker
       const { isUnlocked } = await this.lockService.getStatus();
 
       if (!isUnlocked) {
@@ -220,20 +221,36 @@ export default class CryptKeeperController extends Handler {
         await this.lockService.awaitUnlock();
       }
 
+      // Check Approval
       const isApproved = this.approvalService.isApproved(host);
-      const canSkipApprove = this.approvalService.canSkipApprove(host);
 
-      if (isApproved) {
-        return { isApproved, canSkipApprove };
+      let approvalResponse: Approvals = {
+        isApproved: false,
+        canSkipApprove: false
       }
 
-      try {
-        await this.requestManager.newRequest(PendingRequestType.INJECT, { origin: host });
-        return { isApproved: true, canSkipApprove: false };
-      } catch (e) {
-        log.error(e);
-        return { isApproved: false, canSkipApprove: false };
+      if (!isApproved) {
+        try {
+          await this.requestManager.newRequest(PendingRequestType.INJECT, { origin: host });
+          const canSkipApproveResponse = await this.approvalService.canSkipApprove(host);
+          approvalResponse = { isApproved: true, canSkipApprove: canSkipApproveResponse }
+        } catch (e) {
+          log.error(e);
+        }
       }
+
+      if (isApproved || approvalResponse.isApproved) {
+        await this.approvalService.add({host, canSkipApprove: approvalResponse.canSkipApprove});
+        await this.zkIdentityService.setIdentityHost({host});
+        
+        // Make sure to close the approval popup
+        await this.browserService.closePopup();
+
+        // Check Identity
+        await this.requestManager.newRequest(PendingRequestType.CREATE_IDENTITY, { host: host });
+      }
+
+      return approvalResponse;
     });
 
     // Approvals

@@ -19,7 +19,7 @@ import { createIdentity } from "@src/ui/ducks/identities";
 import { useCryptKeeperWallet, useEthWallet } from "@src/ui/hooks/wallet";
 import { signWithSigner, getMessageTemplate } from "@src/ui/services/identity";
 
-import CreateIdentity from "..";
+import CreateIdentityModal from "../CreateIdentityModal";
 
 jest.mock("react-router-dom", () => ({
   useNavigate: jest.fn(),
@@ -82,7 +82,7 @@ describe("ui/pages/CreateIdentity", () => {
   });
 
   test("should render properly with random", async () => {
-    const { container } = render(<CreateIdentity />);
+    const { container } = render(<CreateIdentityModal />);
 
     await waitFor(() => container.firstChild !== null);
 
@@ -101,7 +101,7 @@ describe("ui/pages/CreateIdentity", () => {
   test("should render properly without metamask installed", async () => {
     (useEthWallet as jest.Mock).mockReturnValue({ ...defaultWalletHookData, isInjectedWallet: false });
 
-    const { container } = render(<CreateIdentity />);
+    const { container } = render(<CreateIdentityModal />);
 
     await waitFor(() => container.firstChild !== null);
 
@@ -120,7 +120,7 @@ describe("ui/pages/CreateIdentity", () => {
   test("should connect properly to eth wallet", async () => {
     (useEthWallet as jest.Mock).mockReturnValue({ ...defaultWalletHookData, isActive: false });
 
-    const { container } = render(<CreateIdentity />);
+    const { container } = render(<CreateIdentityModal />);
 
     await waitFor(() => container.firstChild !== null);
 
@@ -135,7 +135,7 @@ describe("ui/pages/CreateIdentity", () => {
   });
 
   test("should create random identity properly", async () => {
-    const { container } = render(<CreateIdentity />);
+    const { container } = render(<CreateIdentityModal />);
 
     await waitFor(() => container.firstChild !== null);
 
@@ -159,7 +159,7 @@ describe("ui/pages/CreateIdentity", () => {
   test("should create random identity with disabled interrep identity feature properly", async () => {
     (getEnabledFeatures as jest.Mock).mockReturnValue({ INTERREP_IDENTITY: false });
 
-    const { container } = render(<CreateIdentity />);
+    const { container } = render(<CreateIdentityModal />);
 
     await waitFor(() => container.firstChild !== null);
 
@@ -178,7 +178,7 @@ describe("ui/pages/CreateIdentity", () => {
   });
 
   test("should render properly with interrep provider", async () => {
-    const { container } = render(<CreateIdentity />);
+    const { container } = render(<CreateIdentityModal />);
 
     await waitFor(() => container.firstChild !== null);
 
@@ -194,7 +194,7 @@ describe("ui/pages/CreateIdentity", () => {
   });
 
   test("should create interrep github identity properly", async () => {
-    const { container } = render(<CreateIdentity />);
+    const { container } = render(<CreateIdentityModal />);
 
     await waitFor(() => container.firstChild !== null);
 
@@ -226,7 +226,7 @@ describe("ui/pages/CreateIdentity", () => {
   test("should handle error properly", async () => {
     const err = new Error("Error");
     (signWithSigner as jest.Mock).mockRejectedValue(err);
-    const { container } = render(<CreateIdentity />);
+    const { container } = render(<CreateIdentityModal />);
 
     await waitFor(() => container.firstChild !== null);
 

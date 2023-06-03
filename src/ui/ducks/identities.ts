@@ -68,8 +68,8 @@ const identitiesSlice = createSlice({
 export const { setSelectedCommitment, setIdentities, setIdentityRequestPending, setOperations, setSettings, setIdentityHost } =
   identitiesSlice.actions;
 
-export const createIdentityRequest = ({host}: IdentityHost) => async (): Promise<void> => {
-  await postMessage({ method: RPCAction.CREATE_IDENTITY_REQ, payload: { host }  });
+export const createIdentityRequest = () => async (): Promise<void> => {
+  await postMessage({ method: RPCAction.CREATE_IDENTITY_REQ });
 };
 
 export const createIdentity =

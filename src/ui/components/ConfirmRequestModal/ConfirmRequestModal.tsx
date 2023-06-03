@@ -3,6 +3,7 @@ import { PendingRequest, PendingRequestType, ZKProofPayload } from "@src/types";
 import { ProofModal, ConnectionApprovalModal, DefaultApprovalModal } from "./components";
 import "./confirmModal.scss";
 import { useConfirmRequestModal } from "./useConfirmRequestModal";
+import CreateIdentityModal from "./components/CreateIdentityModal/CreateIdentityModal";
 
 const ConfirmRequestModal = (): JSX.Element | null => {
   const { pendingRequests, loading, error, accept, reject } = useConfirmRequestModal();
@@ -32,6 +33,10 @@ const ConfirmRequestModal = (): JSX.Element | null => {
           pendingRequest={pendingRequest as PendingRequest<ZKProofPayload>}
           reject={reject}
         />
+      );
+    case PendingRequestType.CREATE_IDENTITY:
+      return (
+        <CreateIdentityModal pendingRequest={pendingRequest as PendingRequest<{ host: string }>} />
       );
     default:
       return (

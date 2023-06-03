@@ -248,15 +248,15 @@ export default class ZkIdentityService implements IBackupable {
     await this.writeActiveIdentity("", "");
   };
 
-  setIdentityHost = ({ host }: IdentityHost): void => {
+  setIdentityHost = async ({ host }: IdentityHost): Promise<void> => {
     if (host) {
-      pushMessage(
+      await pushMessage(
         setIdentityHost(host),
       )
     }
   }
 
-  createIdentityRequest = async ({ host }: IdentityHost): Promise<void> => {
+  createIdentityRequest = async (): Promise<void> => {
     await this.browserController.openPopup({ params: { redirect: Paths.CREATE_IDENTITY } });
   };
 

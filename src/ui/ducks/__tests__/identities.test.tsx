@@ -176,7 +176,7 @@ describe("ui/ducks/identities", () => {
   });
 
   test("should call create identity request action properly", async () => {
-    await Promise.resolve(store.dispatch(createIdentityRequest({ host: undefined})));
+    await Promise.resolve(store.dispatch(createIdentityRequest()));
 
     expect(postMessage).toBeCalledTimes(1);
     expect(postMessage).toBeCalledWith({ method: RPCAction.CREATE_IDENTITY_REQ });
