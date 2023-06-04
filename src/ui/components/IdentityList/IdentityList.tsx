@@ -14,7 +14,6 @@ import {
 import type { IdentityData } from "@src/types";
 
 import "./identityListStyles.scss";
-import { IdentityItem } from "./Item";
 import { IdentitiesContent } from "../IdentitiesContent";
 
 export interface IdentityListProps {

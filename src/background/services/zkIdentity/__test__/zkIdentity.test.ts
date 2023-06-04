@@ -182,7 +182,7 @@ describe("background/services/zkIdentity", () => {
 
   describe("set identity name", () => {
     test("should set identity name properly", async () => {
-      const result = await zkIdentityService.setIdentityName({
+      const result = await zkIdentityService.updateIdentityName({
         identityCommitment: mockDefaultIdentityCommitment,
         name: "New name",
       });
@@ -191,7 +191,7 @@ describe("background/services/zkIdentity", () => {
     });
 
     test("should not set identity name if there is no such identity", async () => {
-      const result = await zkIdentityService.setIdentityName({
+      const result = await zkIdentityService.updateIdentityName({
         identityCommitment: "unknown",
         name: "New name",
       });

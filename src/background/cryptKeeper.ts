@@ -87,9 +87,13 @@ export default class CryptKeeperController extends Handler {
     this.add(RPCAction.GET_IDENTITIES, this.lockService.ensure, this.zkIdentityService.getIdentities);
     this.add(RPCAction.GET_HOST_IDENTITIES, this.lockService.ensure, this.zkIdentityService.getHostIdentitis);
     this.add(RPCAction.GET_RANDOM_IDENTITIES, this.lockService.ensure, this.zkIdentityService.getRandomIdentitis);
+    // TODO: `RPCAction.GET_ACTIVE_IDENTITY_DATA` should be deprecated and converted to `RPCAction.GET_CONNECTED_IDENTITY_DATA`
     this.add(RPCAction.GET_ACTIVE_IDENTITY_DATA, this.lockService.ensure, this.zkIdentityService.getActiveIdentityData);
+    this.add(RPCAction.GET_CONNECTED_IDENTITY_DATA, this.lockService.ensure, this.zkIdentityService.getConnectedIdentityData);
+    // TODO: `RPCAction.SET_ACTIVE_IDENTITY` should be deprecated and converted to `RPCAction.SET_CONNECTED_IDENTITY`
     this.add(RPCAction.SET_ACTIVE_IDENTITY, this.lockService.ensure, this.zkIdentityService.setActiveIdentity);
-    this.add(RPCAction.SET_IDENTITY_NAME, this.lockService.ensure, this.zkIdentityService.setIdentityName);
+    this.add(RPCAction.SET_CONNECTED_IDENTITY, this.lockService.ensure, this.zkIdentityService.setConnectedIdentity);
+    this.add(RPCAction.SET_IDENTITY_NAME, this.lockService.ensure, this.zkIdentityService.updateIdentityName);
     this.add(RPCAction.SET_IDENTITY_HOST, this.lockService.ensure, this.zkIdentityService.setIdentityHost);
     this.add(RPCAction.CREATE_IDENTITY_REQ, this.lockService.ensure, this.zkIdentityService.createIdentityRequest);
     this.add(RPCAction.CREATE_IDENTITY, this.lockService.ensure, this.zkIdentityService.createIdentity);

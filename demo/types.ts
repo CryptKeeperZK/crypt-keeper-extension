@@ -4,9 +4,24 @@ export interface SelectedIdentity {
   web2Provider?: string;
 }
 
+export interface GroupData {
+  id: string;
+  name: string;
+  favicon?: string;
+  description?: string;
+  api?: string;
+  contract?: string;
+}
+
+export interface ConnectedIdentityData {
+  identityCommitment: string;
+  host: string;
+  groups: GroupData[] | [];
+}
+
 export interface CryptKeeperInjectedProvider {
   accounts: () => Promise<string[]>;
-  connect: () => Promise<CryptKeeperInjectedProvider>;
+  connect: () => Promise<ConnectedIdentityData>;
   createIdentity: () => Promise<void>;
   getActiveIdentity: () => Promise<SelectedIdentity>;
   cleanListeners: () => void;

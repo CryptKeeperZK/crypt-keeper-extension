@@ -1,4 +1,4 @@
-import { Approvals, PendingRequestType, RLNProofRequest, SemaphoreProofRequest } from "@src/types";
+import { Approvals, ConnectedIdentityData, PendingRequestType, RLNProofRequest, SemaphoreProofRequest } from "@src/types";
 import log from "loglevel";
 import LockerService from "../lock";
 import BrowserUtils from "@src/background/controllers/browserUtils";
@@ -37,7 +37,8 @@ export default class InjectorService {
     return InjectorService.INSTANCE;
   }
 
-  connect = async (payload: { origin: string }): Promise<Approvals> => {
+  // TODO: This function is complicated and needs to be simplified in smaller private functions, that will be done in another PR. 
+  connect = async (payload: { origin: string }): Promise<ConnectedIdentityData> => {
     const { origin: host } = payload;
     if (!host) {
       throw new Error("Origin not provided");
@@ -62,10 +63,10 @@ export default class InjectorService {
     if (!isApproved) {
       try {
         await this.requestManager.newRequest(PendingRequestType.INJECT, { origin: host });
-        const canSkipApproveResponse = await this.approvalService.canSkipApprove(host);
+        const canSkipApproveResponse = this.approvalService.canSkipApprove(host);
         approvalResponse = { isApproved: true, canSkipApprove: canSkipApproveResponse };
       } catch (e) {
-        log.error(e);
+        throw new Error("User rejected to connect!")
       }
     }
 
@@ -81,23 +82,34 @@ export default class InjectorService {
       // 1.1 Check available identities
       const availableIdentities = await this.zkIdentityService.getHostIdentitis({ host });
 
-      // 1.2 If there are aviaable identities
-      //     This option means that user requesting either `NewIdentityData` or `IdentityMetadata`
-      if (availableIdentities) {
+      // 1.2 If there are available identities
+      //     This option means that user requesting either `ConnectedIdentityData` or `IdentityMetadata`
+      if (availableIdentities.length !== 0) {
         try {
           await this.requestManager.newRequest(PendingRequestType.CHECK_AVIABLE_IDENTITIES, { host });
+          // 1.3 If all the above are passed successfully, that means there is a successful connected identity.
+          const data = await this.zkIdentityService.getConnectedIdentityData()
+          console.log(`Inside provider:`)
+          console.log(data)
+          return data;
         } catch (error) {
           // That means the user clicks on the (x) button to close the window.
-          return approvalResponse;
+          throw new Error("User rejected to connect!");
         }
       }
 
-      // 1.3 If there are no aviaable identities
-      //     This option means that user requesting `NewIdentityData`
-      await this.requestManager.newRequest(PendingRequestType.CREATE_IDENTITY, { host });
+      // 1.4 If there are no available identities
+      //     This option means that user requesting `ConnectedIdentityData`
+      try {
+        await this.requestManager.newRequest(PendingRequestType.CREATE_IDENTITY, { host });
+        // 1.5 If all the above are passed successfully, that means there is a successful connected identity.
+        return this.zkIdentityService.getConnectedIdentityData();
+      } catch (error) {
+        throw new Error("User rejected to connect!");
+      }
+    } else {
+        throw new Error("User rejected to connect!");
     }
-
-    return approvalResponse;
   };
 
   prepareSemaphoreProofRequest = async (payload: SemaphoreProofRequest, meta: { origin: string }) => {

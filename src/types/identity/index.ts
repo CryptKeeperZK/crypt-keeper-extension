@@ -41,10 +41,13 @@ export interface GroupData {
   contract?: string;
 }
 
-export interface NewIdentityData {
-  host: string;
-  nonce: number;
+// TODO: now it always returns `identityCommitment` but we should eliminate this, so this feature will be done in another PR 
+//       becuase it needs to build `cryptkeeper.requestIdentityCommitment()` which is out of the scope of this PR. 
+export interface ConnectedIdentityData {
   identityCommitment: string;
+  // nonce: number; // TODO: will be supported in another PR
+  host: string;
+  groups: GroupData[] | [];
 }
 
 export interface IdentityData {
@@ -55,6 +58,11 @@ export interface IdentityData {
 export type IdentityName = {
   identityCommitment: string;
   name: string;
+};
+
+export type IdentityHost = {
+  identityCommitment: string;
+  host: string;
 };
 
 export type SerializedIdentity = {
@@ -76,7 +84,3 @@ export type StrategiesMap = {
   random: (config: ICreateIdentityArgs) => void;
   interrep: (config: ICreateIdentityArgs) => void;
 };
-
-export interface IdentityHost {
-  host: string | undefined;
-}

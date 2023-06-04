@@ -12,6 +12,7 @@ import { ZkIdentitySemaphore } from "@src/background/services/zkIdentity/protoco
 import { getEnabledFeatures } from "@src/config/features";
 import { Paths } from "@src/constants";
 import {
+  ConnectedIdentityData,
   EWallet,
   IdentityHost,
   IdentityMetadata,
@@ -20,7 +21,7 @@ import {
   OperationType,
   SelectedIdentity,
 } from "@src/types";
-import { setIdentities, setIdentityHost, setSelectedCommitment } from "@src/ui/ducks/identities";
+import { setConnectedCommitment, setIdentities, setIdentityHost, setSelectedCommitment } from "@src/ui/ducks/identities";
 import { ellipsify } from "@src/util/account";
 import pushMessage from "@src/util/pushMessage";
 
@@ -30,6 +31,7 @@ import { createNewIdentity } from "./factory";
 
 const IDENTITY_KEY = "@@ID@@";
 const ACTIVE_IDENTITY_KEY = "@@AID@@";
+const CONNECTED_IDENTITY_KEY = "@@AID@@";
 
 export default class ZkIdentityService implements IBackupable {
   private static INSTANCE: ZkIdentityService;
@@ -37,6 +39,8 @@ export default class ZkIdentityService implements IBackupable {
   private identitiesStore: SimpleStorage;
 
   private activeIdentityStore: SimpleStorage;
+
+  private connectedIdentityStore: SimpleStorage;
 
   private lockService: LockerService;
 
@@ -50,10 +54,14 @@ export default class ZkIdentityService implements IBackupable {
 
   private activeIdentity?: ZkIdentitySemaphore;
 
+  private connectedIdentity?: ZkIdentitySemaphore;
+
   private constructor() {
     this.activeIdentity = undefined;
+    this.connectedIdentity = undefined;
     this.identitiesStore = new SimpleStorage(IDENTITY_KEY);
     this.activeIdentityStore = new SimpleStorage(ACTIVE_IDENTITY_KEY);
+    this.connectedIdentityStore = new SimpleStorage(CONNECTED_IDENTITY_KEY);
     this.lockService = LockerService.getInstance();
     this.notificationService = NotificationService.getInstance();
     this.historyService = HistoryService.getInstance();
@@ -118,6 +126,47 @@ export default class ZkIdentityService implements IBackupable {
     );
   };
 
+  getConnectedIdentityData = async (): Promise<ConnectedIdentityData> => {
+    const identity = await this.getConnectedIdentity();
+
+    if (!identity) {
+      throw new Error("This identity doesn't exist!");
+    }
+
+    const identityCommitment = bigintToHex(identity.genIdentityCommitment());
+    const host =  identity?.metadata.host;
+    
+    if (!host) {
+      throw new Error("This host is not connected to this host")
+    }
+
+    return {
+      identityCommitment,
+      host,
+      groups: []
+    };
+  };
+
+  getConnectedIdentity = async (): Promise<ZkIdentitySemaphore | undefined> => {
+    const activeIdentityCommitmentCipher = await this.connectedIdentityStore.get<string>();
+
+    if (!activeIdentityCommitmentCipher) {
+      return undefined;
+    }
+
+    const activeIdentityCommitment = this.lockService.decrypt(activeIdentityCommitmentCipher);
+    const identities = await this.getIdentitiesFromStore();
+    const identity = identities.get(activeIdentityCommitment);
+
+    if (!identity) {
+      return undefined;
+    }
+
+    this.connectedIdentity = ZkIdentitySemaphore.genFromSerialized(identity);
+
+    return this.connectedIdentity;
+  };
+
   getIdentityCommitments = async (): Promise<{ commitments: string[]; identities: Map<string, string> }> => {
     const identities = await this.getIdentitiesFromStore();
     const commitments = [...identities.keys()];
@@ -141,7 +190,7 @@ export default class ZkIdentityService implements IBackupable {
       });
   };
 
-  getHostIdentitis = async ({ host }: IdentityHost): Promise<{ commitment: string; metadata: IdentityMetadata }[]> => {
+  getHostIdentitis = async ({ host }: { host: string}): Promise<{ commitment: string; metadata: IdentityMetadata }[]> => {
     const identitis = await this.getIdentities();
 
     return identitis.filter((identity) => identity.metadata.host === host);
@@ -215,7 +264,74 @@ export default class ZkIdentityService implements IBackupable {
     );
   };
 
-  setIdentityName = async (payload: IdentityName): Promise<boolean> => {
+  setConnectedIdentity = async ({ identityCommitment, host }: { identityCommitment: string, host: string }): Promise<boolean> => {
+    const identities = await this.getIdentitiesFromStore();
+
+    return this.updateConnectedIdentity({ identities, identityCommitment, host });
+  };
+
+  private updateConnectedIdentity = async ({
+    identities,
+    identityCommitment,
+    host
+  }: {
+    identities: Map<string, string>;
+    identityCommitment: string;
+    host: string;
+  }): Promise<boolean> => {
+    const identity = identities.get(identityCommitment);
+
+    if (!identity) {
+      return false;
+    }
+
+    this.connectedIdentity = ZkIdentitySemaphore.genFromSerialized(identity);
+
+    const storedIdentityHost = this.connectedIdentity.metadata.host;
+
+    // Update connected identity host
+    if (!storedIdentityHost) {
+      await this.updateIdentityHost({ identityCommitment, host })
+    }
+
+    await this.writeConnectedIdentity(identityCommitment, host);
+
+    return true;
+  };
+
+  private updateIdentityHost = async ({
+    identityCommitment,
+    host
+  }: IdentityHost): Promise<boolean> => {
+    const identities = await this.getIdentitiesFromStore();
+    const rawIdentity = identities.get(identityCommitment);
+
+    if (!rawIdentity) {
+      return false;
+    }
+
+    const identity = ZkIdentitySemaphore.genFromSerialized(rawIdentity);
+    identity.setIdentityMetadataHost(host);
+    identities.set(identityCommitment, identity.serialize());
+    await this.writeIdentities(identities);
+    await this.refresh();
+
+    return true;
+  };
+
+  private writeConnectedIdentity = async (commitment: string, host?: string): Promise<void> => {
+    const ciphertext = this.lockService.encrypt(commitment);
+    await this.connectedIdentityStore.set(ciphertext);
+    await pushMessage(
+      setConnectedCommitment({
+        commitment,
+        host,
+      }),
+    )
+  };
+
+  // TODO: this should be more genaric to be updateIdentity()
+  updateIdentityName = async (payload: IdentityName): Promise<boolean> => {
     const identities = await this.getIdentitiesFromStore();
     const { identityCommitment, name } = payload;
     const rawIdentity = identities.get(identityCommitment);
@@ -260,7 +376,7 @@ export default class ZkIdentityService implements IBackupable {
     await this.writeActiveIdentity("", "");
   };
 
-  setIdentityHost = async ({ host }: IdentityHost): Promise<void> => {
+  setIdentityHost = async ({ host }: { host: string }): Promise<void> => {
     if (host) {
       await pushMessage(setIdentityHost(host));
     }

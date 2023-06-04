@@ -9,7 +9,7 @@ import { act, render, screen, fireEvent } from "@testing-library/react";
 import { ZERO_ADDRESS } from "@src/config/const";
 import { getEnabledFeatures } from "@src/config/features";
 
-import { IdentityItem, IdentityItemProps } from "../Item";
+import { IdentityItem, IdentityItemProps } from "../../IdentitiesContent/Item";
 
 describe("ui/pages/Home/components/IdentityList/Item", () => {
   const defaultProps: IdentityItemProps = {
@@ -25,6 +25,7 @@ describe("ui/pages/Home/components/IdentityList/Item", () => {
     },
     onDeleteIdentity: jest.fn(),
     onSelectIdentity: jest.fn(),
+    onConenctIdentity: jest.fn(),
     onUpdateIdentityName: jest.fn(),
   };
 

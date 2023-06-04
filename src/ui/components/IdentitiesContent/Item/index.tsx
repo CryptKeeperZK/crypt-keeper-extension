@@ -22,21 +22,25 @@ const web2ProvidersIcons: IconWeb2Providers = {
 
 export interface IdentityItemProps {
   commitment: string;
+  host?: string;
   metadata: IdentityMetadata;
   selected?: string;
   isShowSettings: boolean;
   onDeleteIdentity: (commitment: string) => Promise<void>;
   onSelectIdentity: (commitment: string) => void;
+  onConenctIdentity: (commitment: string, host: string) => void;
   onUpdateIdentityName: (commitment: string, name: string) => Promise<void>;
 }
 
 export const IdentityItem = ({
   commitment,
+  host,
   selected = "",
   metadata,
   isShowSettings = true,
   onDeleteIdentity,
   onSelectIdentity,
+  onConenctIdentity,
   onUpdateIdentityName,
 }: IdentityItemProps): JSX.Element => {
   const [name, setName] = useState(metadata.name);
@@ -48,6 +52,13 @@ export const IdentityItem = ({
 
   const handleSelectIdentity = useCallback(() => {
     onSelectIdentity(commitment);
+  }, [commitment, onSelectIdentity]);
+
+  const handleConnectIdentity = useCallback(() => {
+    if (!host) {
+      throw new Error("Please set host in order to continue this action.")
+    }
+    onConenctIdentity(commitment, host);
   }, [commitment, onSelectIdentity]);
 
   const handleChangeName = useCallback(
@@ -77,13 +88,22 @@ export const IdentityItem = ({
 
   return (
     <div key={commitment} className="p-4 identity-row">
-      <Icon
+      {/* <Icon
         className={classNames("identity-row__select-icon", {
           "identity-row__select-icon--selected": selected === commitment,
         })}
         data-testid={`identity-select-${commitment}`}
         fontAwesome="fas fa-check"
         onClick={handleSelectIdentity}
+      /> */}
+
+      <Icon
+        className={classNames("identity-row__select-icon", {
+          "identity-row__select-icon--selected": selected === commitment,
+        })}
+        data-testid={`identity-connect-${commitment}`}
+        fontAwesome="fas fa-check"
+        onClick={handleConnectIdentity}
       />
 
       <div className="flex flex-col flex-grow">

@@ -8,6 +8,7 @@ import ZkProofService from "@src/background/services/zkProof";
 import { RPCAction } from "@src/constants";
 import {
   Approvals,
+  ConnectedIdentityData,
   IRlnGenerateArgs,
   ISemaphoreGenerateArgs,
   InjectedMessageData,
@@ -42,25 +43,22 @@ export class CryptKeeperInjectedProvider extends EventEmitter {
    * Connect to Extension
    * @returns injected client
    */
-  async connect(): Promise<CryptKeeperInjectedProvider> {
+  async connect(): Promise<ConnectedIdentityData> {
     try {
       const host = window.location.origin;
-
-      await this.tryConnect(host);
+      const connectedIdentityData = await this.tryConnect(host);
+      await this.post({ method: RPCAction.CLOSE_POPUP });
+      return connectedIdentityData;
     } catch (err) {
-      log.debug("User rejected to connect. ", err);
+      throw new Error(`Cryptkeeper: ${err}`)
     }
-
-    await this.post({ method: RPCAction.CLOSE_POPUP });
-
-    return this;
   }
 
-  private async tryConnect(host: string): Promise<Approvals> {
+  private async tryConnect(host: string): Promise<ConnectedIdentityData> {
     return this.post({
       method: RPCAction.CONNECT,
       payload: { origin: host },
-    }) as Promise<Approvals>;
+    }) as Promise<ConnectedIdentityData>;
   }
 
   // Connect injected script messages with content script messages

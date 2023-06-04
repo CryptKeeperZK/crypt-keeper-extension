@@ -24,6 +24,7 @@ export interface IdentitiesState {
   operations: Operation[];
   requestPending: boolean;
   selected: SelectedIdentity; // This aim to be a short-term solution to the integration with Zkitter
+  connected: SelectedIdentity; // This aim to be a short-term solution to the integration with Zkitter
   settings?: HistorySettings;
   host?: string;
 }
@@ -40,6 +41,10 @@ const initialState: IdentitiesState = {
     web2Provider: "",
     host: "",
   },
+  connected: {
+    commitment: "",
+    host: "",
+  },
   host: "",
 };
 
@@ -51,6 +56,13 @@ const identitiesSlice = createSlice({
       state.selected = {
         commitment: action.payload.commitment,
         web2Provider: action.payload.web2Provider,
+      };
+    },
+
+    setConnectedCommitment: (state: IdentitiesState, action: PayloadAction<SelectedIdentity>) => {
+      state.selected = {
+        commitment: action.payload.commitment,
+        host: action.payload.host,
       };
     },
 
@@ -86,6 +98,7 @@ const identitiesSlice = createSlice({
 
 export const {
   setSelectedCommitment,
+  setConnectedCommitment,
   setIdentities,
   setHostIdentities,
   setIdentityRequestPending,
@@ -121,6 +134,15 @@ export const setActiveIdentity = (identityCommitment: string) => async (): Promi
     },
   });
 
+export const setConnectedIdentity = (identityCommitment: string, host: string) => async (): Promise<boolean> =>
+  postMessage({
+    method: RPCAction.SET_CONNECTED_IDENTITY,
+    payload: {
+      identityCommitment,
+      host
+    },
+  });
+
 export const setIdentityName = (identityCommitment: string, name: string) => async (): Promise<boolean> =>
   postMessage({
     method: RPCAction.SET_IDENTITY_NAME,
@@ -145,16 +167,23 @@ export const deleteAllIdentities = () => async (): Promise<boolean> =>
 
 export const fetchIdentities = (): TypedThunk => async (dispatch) => {
   const data = await postMessage<IdentityData[]>({ method: RPCAction.GET_IDENTITIES });
-  const { commitment, web2Provider } = await postMessage<SelectedIdentity>({
-    method: RPCAction.GET_ACTIVE_IDENTITY_DATA,
-  });
   dispatch(setIdentities(data));
-  dispatch(
-    setSelectedCommitment({
-      commitment,
-      web2Provider,
-    }),
-  );
+
+  // TODO `RPCAction.GET_ACTIVE_IDENTITY_DATA` will be deprecated and moved to connected identity depending on the host opened.
+  //      After the user connected to an app (host), the connected identity will be marked automatically. 
+  //      And when the user open the extension to another pagw (window) (host):
+  //       - if this host is connected, the connected identity will be selected. 
+  //       - if not connected, no identity will be selected for this host, until the user make a connection with this host first.
+  //      This feature would be implemented in another PR depending on the team discussion. 
+  // const { commitment, web2Provider } = await postMessage<SelectedIdentity>({
+  //   method: RPCAction.GET_ACTIVE_IDENTITY_DATA,
+  // });
+  // dispatch(
+  //   setSelectedCommitment({
+  //     commitment,
+  //     web2Provider,
+  //   }),
+  // );
 };
 
 export const fetchHostIdentities =
@@ -226,6 +255,12 @@ export const useSelectedIdentity = (): IdentityData | undefined =>
   useAppSelector((state) => {
     const { identities, selected } = state.identities;
     return identities.find(({ commitment }) => commitment === selected.commitment);
+  }, deepEqual);
+
+export const useConnectedIdentity = (): IdentityData | undefined =>
+  useAppSelector((state) => {
+    const { identities, connected } = state.identities;
+    return identities.find(({ commitment }) => commitment === connected.commitment);
   }, deepEqual);
 
 export const useIdentityRequestPending = (): boolean =>

@@ -1,17 +1,20 @@
-import { IdentityData } from "@src/types";
+import { IdentityData, RequestResolutionAction, RequestResolutionStatus } from "@src/types";
 
 import "./identitiesContent.scss";
-import { IdentityItem } from "../IdentityList/Item";
-import { deleteIdentity, setActiveIdentity, setIdentityName, useSelectedIdentity } from "@src/ui/ducks/identities";
+import { IdentityItem } from "./Item";
+import { deleteIdentity, setActiveIdentity, setConnectedIdentity, setIdentityName, useSelectedIdentity } from "@src/ui/ducks/identities";
 import { useCallback } from "react";
 import { useAppDispatch } from "@src/ui/ducks/hooks";
+import { finalizeRequest, usePendingRequests } from "@src/ui/ducks/requests";
 
 export interface IdentityListProps {
   identities: IdentityData[];
+  host?: string;
   isShowSettings: boolean;
+  accept?: (data?: unknown) => void;
 }
 
-export const IdentitiesContent = ({ identities, isShowSettings }: IdentityListProps): JSX.Element => {
+export const IdentitiesContent = ({ identities, host, isShowSettings, accept }: IdentityListProps): JSX.Element => {
   const selected = useSelectedIdentity();
   const dispatch = useAppDispatch();
 
@@ -20,6 +23,18 @@ export const IdentitiesContent = ({ identities, isShowSettings }: IdentityListPr
       dispatch(setActiveIdentity(identityCommitment));
     },
     [dispatch],
+  );
+
+
+  const onConenctIdentity = useCallback(
+    async (identityCommitment: string, host: string) => {
+        if (!accept) {
+            throw new Error("Please set accept to be able to continue")
+        }
+        await dispatch(setConnectedIdentity(identityCommitment, host));
+        accept();
+    },
+    [accept],
   );
 
   const onUpdateIdentityName = useCallback(
@@ -41,11 +56,13 @@ export const IdentitiesContent = ({ identities, isShowSettings }: IdentityListPr
         <IdentityItem
           isShowSettings={isShowSettings}
           key={commitment}
+          host={host}
           commitment={commitment}
           metadata={metadata}
           selected={selected?.commitment}
           onDeleteIdentity={onDeleteIdentity}
           onSelectIdentity={onSelectIdentity}
+          onConenctIdentity={onConenctIdentity}
           onUpdateIdentityName={onUpdateIdentityName}
         />
       ))}

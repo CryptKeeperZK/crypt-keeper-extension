@@ -5,7 +5,6 @@ import { FullModalContent, FullModalFooter, FullModalHeader } from "@src/ui/comp
 import { style } from "./style";
 import { Typography, Tooltip, Button } from "@mui/material";
 import { Icon } from "@src/ui/components/Icon";
-import { ButtonType, Button as CustomButton } from "@src/ui/components/Button";
 import { BaseSyntheticEvent } from "react";
 
 export interface BasicModalProps {
@@ -20,6 +19,7 @@ export interface BasicModalProps {
   reject: () => void;
 }
 
+// TODO: replace wallet names with icons
 export const WalletModal = ({ host, isOpenModal, isLoading, isWalletConnected, isWalletInstalled, onConnectWallet, onCreateWithEthWallet, onCreateWithCryptkeeper, reject }: BasicModalProps): JSX.Element => {
   const ethWalletTitle = isWalletConnected ? "Metamask" : "Connect to Metamask";
   
@@ -56,7 +56,7 @@ export const WalletModal = ({ host, isOpenModal, isLoading, isWalletConnected, i
               name="metamask"
               sx={{ textTransform: "none" }}
               type="submit"
-              variant="contained"
+              variant="outlined"
               onClick={isWalletConnected ? onCreateWithEthWallet : onConnectWallet}
             >
               {isWalletInstalled ? ethWalletTitle : "Install Metamask"}
@@ -67,18 +67,25 @@ export const WalletModal = ({ host, isOpenModal, isLoading, isWalletConnected, i
               name="cryptkeeper"
               sx={{ textTransform: "none" }}
               type="submit"
-              variant="contained"
+              variant="outlined"
               onClick={onCreateWithCryptkeeper}
             >
-              Cryptkeeper
+              Cryptkeeper 
             </Button>
           </Box>
         </FullModalContent>
 
         <FullModalFooter>
-          <CustomButton buttonType={ButtonType.SECONDARY} data-testid="danger-modal-reject" onClick={reject}>
-            Reject
-          </CustomButton>
+          <Button
+              disabled={isLoading}
+              name="close"
+              sx={{ textTransform: "none" }}
+              type="submit"
+              variant="contained"
+              onClick={reject}
+            >
+              Close
+            </Button>
       </FullModalFooter>
       </Box>
     </Modal>

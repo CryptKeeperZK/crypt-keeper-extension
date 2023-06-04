@@ -11,9 +11,10 @@ import { useEffect } from "react";
 
 export interface ConnectionApprovalModalProps {
   pendingRequest: PendingRequest<{ host: string }>;
+  accept: () => void;
 }
 
-export const ConnectHostIdentitiesModal = ({ pendingRequest }: ConnectionApprovalModalProps): JSX.Element => {
+export const ConnectHostIdentitiesModal = ({ pendingRequest, accept }: ConnectionApprovalModalProps): JSX.Element => {
   const { availableHostIdentities, host, faviconUrl, onCreateIdentityRequest } = useConnectHostIdentitiesModal({
     pendingRequest,
   });
@@ -41,7 +42,7 @@ export const ConnectHostIdentitiesModal = ({ pendingRequest }: ConnectionApprova
           This site is already attached to {availableHostIdentities.length} identities. Please choose one to connect
           with, or choose to create a new identity.
         </div>
-        <IdentitiesContent identities={availableHostIdentities} isShowSettings={false} />
+        <IdentitiesContent identities={availableHostIdentities} host={host} isShowSettings={false} accept={accept} />
       </FullModalContent>
 
       <FullModalFooter>

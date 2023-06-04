@@ -73,11 +73,12 @@ export const useCryptKeeper = (): IUseCryptKeeperData => {
     }
 
     try {
-      await client.connect();
+      const connectedIdentityData = await client.connect();
+      console.log("connectedIdentityData")
+      console.log(connectedIdentityData)
       //setIsLocked(false);
     } catch (error) {
-      console.log("Error", error)
-      toast(`CryptKeeper failed to connect`, { type: "error" });
+      toast(`CryptKeeper: ${error}`, { type: "error" });
     }
   }, [client]);
 
