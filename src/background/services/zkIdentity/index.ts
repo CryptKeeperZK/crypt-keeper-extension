@@ -147,6 +147,12 @@ export default class ZkIdentityService implements IBackupable {
     return identitis.filter((identity) => identity.metadata.host === host);
   };
 
+  getRandomIdentitis = async (): Promise<{ commitment: string; metadata: IdentityMetadata }[]> => {
+    const identitis = await this.getIdentities();
+
+    return identitis.filter((identity) => identity.metadata.host === undefined);
+  };
+
   getNumOfIdentites = async (): Promise<number> => {
     const identities = await this.getIdentitiesFromStore();
     return identities.size;

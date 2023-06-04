@@ -1,8 +1,8 @@
 import Box from "@mui/material/Box";
-import Button from "@mui/material/Button";
 import Tooltip from "@mui/material/Tooltip";
 import Typography from "@mui/material/Typography";
 import { Controller } from "react-hook-form";
+import { ButtonType, Button } from "@src/ui/components/Button";
 
 import { getEnabledFeatures } from "@src/config/features";
 import { IDENTITY_TYPES, WEB2_PROVIDER_OPTIONS } from "@src/constants";
@@ -12,8 +12,11 @@ import { Icon } from "@src/ui/components/Icon";
 import { Input } from "@src/ui/components/Input";
 
 import "./createIdentityStyles.scss";
+import "../../confirmModal.scss";
 import { useCreateIdentity } from "./useCreateIdentity";
 import { PendingRequest } from "@src/types";
+import { IdentitiesContent } from "@src/ui/components/IdentitiesContent";
+import { WalletModal } from "@src/ui/components/WalletModal";
 
 export interface CreateIdentityModalProps {
   pendingRequest?: PendingRequest<{ host: string }>;
@@ -29,7 +32,11 @@ const CreateIdentityModal = ({ pendingRequest }: CreateIdentityModalProps): JSX.
     errors,
     control,
     host,
+    faviconUrl,
+    randomIdentities,
+    isWalletModalOpen,
     closeModal,
+    onWalletModalShow,
     onConnectWallet,
     onCreateWithCryptkeeper,
     onCreateWithEthWallet,
@@ -40,7 +47,7 @@ const CreateIdentityModal = ({ pendingRequest }: CreateIdentityModalProps): JSX.
   return (
     <FullModal data-testid="create-identity-page" onClose={closeModal}>
       <form className="create-identity-form">
-        <FullModalHeader onClose={closeModal}>Create Identity</FullModalHeader>
+        <FullModalHeader onClose={closeModal}>Create a new Identity</FullModalHeader>
 
         <FullModalContent>
           {features.INTERREP_IDENTITY ? (
@@ -98,49 +105,46 @@ const CreateIdentityModal = ({ pendingRequest }: CreateIdentityModalProps): JSX.
               )}
             </>
           ) : host ? (
-            <Typography>Create your Semaphore identity for `{host}` host</Typography>
+            <div>
+              <div className="w-16 h-16 rounded-full my-6 border border-gray-800 p-2 flex-shrink-0">
+                <div
+                  className="w-16 h-16"
+                  style={{
+                    backgroundSize: "contain",
+                    backgroundPosition: "center",
+                    backgroundRepeat: "no-repeat",
+                    backgroundImage: `url(${faviconUrl})`,
+                  }}
+                />
+              </div>
+
+              <Typography></Typography>
+
+              <div className="text-lg font-semibold mb-2 text-center">Create your Semaphore identity for `{host}` host</div>
+
+              <div className="text-sm text-gray-500 text-center">
+                You have already {randomIdentities.length} random identities. Please choose one to connect
+                with, or choose to create a new identity.
+              </div>
+              <IdentitiesContent identities={randomIdentities} isShowSettings={false} />
+            </div>
           ) : (
-            <Typography>Create your Semaphore identity.</Typography>
+            <Typography>Create your Semaphore random identity.</Typography>
           )}
         </FullModalContent>
 
         {errors.root && <div className="text-xs text-red-500 text-center pb-1">{errors.root}</div>}
-
-        <Box sx={{ p: "1rem", display: "flex", alignItems: "center" }}>
-          <Typography sx={{ mr: 1 }}>Choose wallet to create identity</Typography>
-
-          <Tooltip
-            followCursor
-            title="Identity creation can be done with your Cryptkeeper keys or with connected Ethereum wallet."
-          >
-            <Icon fontAwesome="fa-info" />
-          </Tooltip>
-        </Box>
-
         <FullModalFooter>
-          <Box sx={{ alignItems: "center", display: "flex", justifyContent: "space-between", width: "100%" }}>
-            <Button
-              disabled={isLoading || !isWalletInstalled}
-              name="metamask"
-              sx={{ textTransform: "none" }}
-              type="submit"
-              variant="outlined"
-              onClick={isWalletConnected ? onCreateWithEthWallet : onConnectWallet}
-            >
-              {isWalletInstalled ? ethWalletTitle : "Install Metamask"}
-            </Button>
 
-            <Button
-              disabled={isLoading}
-              name="cryptkeeper"
-              sx={{ textTransform: "none" }}
-              type="submit"
-              variant="contained"
-              onClick={onCreateWithCryptkeeper}
-            >
-              Cryptkeeper
-            </Button>
-          </Box>
+          <WalletModal host={host} isOpenModal={isWalletModalOpen} isLoading={isLoading} isWalletConnected={isWalletConnected} isWalletInstalled={isWalletInstalled} onConnectWallet={onConnectWallet} onCreateWithEthWallet={onCreateWithEthWallet} onCreateWithCryptkeeper={onCreateWithCryptkeeper} reject={() => console.log("Help")} />
+
+          <Button buttonType={ButtonType.SECONDARY} onClick={() => console.log("Help")}>
+            Reject
+          </Button>
+
+          <Button className="ml-2" onClick={onWalletModalShow}>
+            Create new identity
+          </Button>
         </FullModalFooter>
       </form>
     </FullModal>

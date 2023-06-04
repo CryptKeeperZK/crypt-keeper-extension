@@ -1,15 +1,16 @@
-import { BaseSyntheticEvent, useCallback } from "react";
+import { BaseSyntheticEvent, useCallback, useEffect, useState } from "react";
 import { Control, useForm, UseFormRegister } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 
 import { getEnabledFeatures } from "@src/config/features";
 import { WEB2_PROVIDER_OPTIONS, IDENTITY_TYPES, Paths } from "@src/constants";
-import { EWallet, IdentityStrategy, IdentityWeb2Provider, PendingRequest, SelectOption } from "@src/types";
+import { EWallet, IdentityData, IdentityStrategy, IdentityWeb2Provider, PendingRequest, SelectOption } from "@src/types";
 import { closePopup } from "@src/ui/ducks/app";
 import { useAppDispatch } from "@src/ui/ducks/hooks";
-import { createIdentity, useIdentityHost } from "@src/ui/ducks/identities";
+import { createIdentity, fetchHostIdentities, fetchRandomIdentities, useIdentityHost, useRandomIdentities } from "@src/ui/ducks/identities";
 import { useCryptKeeperWallet, useEthWallet } from "@src/ui/hooks/wallet";
 import { getMessageTemplate, signWithSigner } from "@src/ui/services/identity";
+import { getLinkPreview } from "link-preview-js";
 
 export interface IUseConnectionIdentityModalArgs {
   pendingRequest?: PendingRequest<{ host: string }>;
@@ -28,7 +29,11 @@ export interface IUseCreateIdentityData {
   }>;
   control: Control<FormFields, unknown>;
   host?: string;
+  faviconUrl: string;
+  randomIdentities: IdentityData[];
+  isWalletModalOpen: boolean;
   closeModal: () => void;
+  onWalletModalShow: () => void;
   register: UseFormRegister<FormFields>;
   onConnectWallet: () => Promise<void>;
   onCreateWithEthWallet: (event?: BaseSyntheticEvent) => Promise<void>;
@@ -42,6 +47,9 @@ interface FormFields {
 }
 
 export const useCreateIdentity = ({ pendingRequest }: IUseConnectionIdentityModalArgs): IUseCreateIdentityData => {
+  const [faviconUrl, setFaviconUrl] = useState("");
+  const [isWalletModalOpen, setWalletModalOpen] = useState(false);
+  const randomIdentities = useRandomIdentities();
   const features = getEnabledFeatures();
   const {
     formState: { isSubmitting, isLoading, errors },
@@ -71,6 +79,10 @@ export const useCreateIdentity = ({ pendingRequest }: IUseConnectionIdentityModa
     host = payload?.host ?? undefined;
   }
 
+  const onWalletModalShow = useCallback(() => {
+    setWalletModalOpen((value) => !value);
+  }, [setWalletModalOpen]);
+
   const createNewIdentity = useCallback(
     async ({ identityStrategyType, web2Provider, nonce }: FormFields, walletType: EWallet) => {
       try {
@@ -88,11 +100,11 @@ export const useCreateIdentity = ({ pendingRequest }: IUseConnectionIdentityModa
         const options =
           identityStrategyType.value !== "random"
             ? {
-                nonce,
-                web2Provider: web2Provider.value as IdentityWeb2Provider,
-                account: account as string,
-                message,
-              }
+              nonce,
+              web2Provider: web2Provider.value as IdentityWeb2Provider,
+              account: account as string,
+              message,
+            }
             : { message, account: account as string };
 
         const messageSignature =
@@ -135,6 +147,19 @@ export const useCreateIdentity = ({ pendingRequest }: IUseConnectionIdentityModa
     dispatch(closePopup());
   }, [dispatch]);
 
+  useEffect(() => {
+    if (!host) {
+      return;
+    }
+
+    getLinkPreview(host).then((data) => {
+      const [favicon] = data.favicons;
+      setFaviconUrl(favicon);
+    });
+
+    dispatch(fetchRandomIdentities());
+  }, [dispatch]);
+
   return {
     isLoading: ethWallet.isActivating || cryptKeeperWallet.isActivating || isLoading || isSubmitting,
     isWalletInstalled: ethWallet.isInjectedWallet,
@@ -148,7 +173,11 @@ export const useCreateIdentity = ({ pendingRequest }: IUseConnectionIdentityModa
     },
     control,
     host,
+    randomIdentities,
+    faviconUrl,
+    isWalletModalOpen,
     closeModal,
+    onWalletModalShow,
     register,
     onConnectWallet: handleSubmit(onConnectWallet),
     onCreateWithEthWallet: handleSubmit(onCreateIdentityWithEthWallet),

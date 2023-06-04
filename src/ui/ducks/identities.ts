@@ -20,6 +20,7 @@ import { useAppSelector } from "./hooks";
 export interface IdentitiesState {
   identities: IdentityData[];
   hostIdentities: IdentityData[];
+  randomIdentities: IdentityData[];
   operations: Operation[];
   requestPending: boolean;
   selected: SelectedIdentity; // This aim to be a short-term solution to the integration with Zkitter
@@ -30,6 +31,7 @@ export interface IdentitiesState {
 const initialState: IdentitiesState = {
   identities: [],
   hostIdentities: [],
+  randomIdentities: [],
   operations: [],
   settings: undefined,
   requestPending: false,
@@ -64,6 +66,10 @@ const identitiesSlice = createSlice({
       state.hostIdentities = action.payload;
     },
 
+    setRandomIdentities: (state: IdentitiesState, action: PayloadAction<IdentityData[]>) => {
+      state.randomIdentities = action.payload;
+    },
+
     setOperations: (state: IdentitiesState, action: PayloadAction<Operation[]>) => {
       state.operations = action.payload;
     },
@@ -86,6 +92,7 @@ export const {
   setOperations,
   setSettings,
   setIdentityHost,
+  setRandomIdentities,
 } = identitiesSlice.actions;
 
 export const createIdentityRequest = () => async (): Promise<void> => {
@@ -94,17 +101,17 @@ export const createIdentityRequest = () => async (): Promise<void> => {
 
 export const createIdentity =
   ({ walletType, strategy, messageSignature, options, host }: ICreateIdentityUiArgs) =>
-  async (): Promise<string | undefined> =>
-    postMessage({
-      method: RPCAction.CREATE_IDENTITY,
-      payload: {
-        strategy,
-        walletType,
-        messageSignature,
-        options,
-        host,
-      },
-    });
+    async (): Promise<string | undefined> =>
+      postMessage({
+        method: RPCAction.CREATE_IDENTITY,
+        payload: {
+          strategy,
+          walletType,
+          messageSignature,
+          options,
+          host,
+        },
+      });
 
 export const setActiveIdentity = (identityCommitment: string) => async (): Promise<boolean> =>
   postMessage({
@@ -152,17 +159,28 @@ export const fetchIdentities = (): TypedThunk => async (dispatch) => {
 
 export const fetchHostIdentities =
   (host: string): TypedThunk =>
-  async (dispatch) => {
-    const data = await postMessage<IdentityData[]>({
-      method: RPCAction.GET_HOST_IDENTITIES,
-      payload: {
-        host,
-      },
-    });
+    async (dispatch) => {
+      const data = await postMessage<IdentityData[]>({
+        method: RPCAction.GET_HOST_IDENTITIES,
+        payload: {
+          host,
+        },
+      });
 
-    console.log("Data", data);
-    dispatch(setHostIdentities(data));
-  };
+      console.log("Data", data);
+      dispatch(setHostIdentities(data));
+    };
+
+
+export const fetchRandomIdentities =
+  (): TypedThunk =>
+    async (dispatch) => {
+      const data = await postMessage<IdentityData[]>({
+        method: RPCAction.GET_RANDOM_IDENTITIES
+      });
+
+      dispatch(setRandomIdentities(data));
+    };
 
 export const fetchHistory = (): TypedThunk<Promise<void>> => async (dispatch) => {
   const { operations, settings } = await postMessage<{ operations: Operation[]; settings: HistorySettings }>({
@@ -179,10 +197,10 @@ export const getHistory = (): TypedThunk => async (dispatch) => {
 
 export const deleteHistoryOperation =
   (id: string): TypedThunk<Promise<void>> =>
-  async (dispatch) => {
-    const operations = await postMessage<Operation[]>({ method: RPCAction.DELETE_HISTORY_OPERATION, payload: id });
-    dispatch(setOperations(operations));
-  };
+    async (dispatch) => {
+      const operations = await postMessage<Operation[]>({ method: RPCAction.DELETE_HISTORY_OPERATION, payload: id });
+      dispatch(setOperations(operations));
+    };
 
 export const clearHistory = (): TypedThunk<Promise<void>> => async (dispatch) => {
   await postMessage<Operation[]>({ method: RPCAction.DELETE_ALL_HISTORY_OPERATIONS });
@@ -191,15 +209,18 @@ export const clearHistory = (): TypedThunk<Promise<void>> => async (dispatch) =>
 
 export const enableHistory =
   (isEnabled: boolean): TypedThunk<Promise<void>> =>
-  async (dispatch) => {
-    await postMessage<HistorySettings>({ method: RPCAction.ENABLE_OPERATION_HISTORY, payload: isEnabled });
-    dispatch(setSettings({ isEnabled }));
-  };
+    async (dispatch) => {
+      await postMessage<HistorySettings>({ method: RPCAction.ENABLE_OPERATION_HISTORY, payload: isEnabled });
+      dispatch(setSettings({ isEnabled }));
+    };
 
 export const useIdentities = (): IdentityData[] => useAppSelector((state) => state.identities.identities, deepEqual);
 
 export const useHostIdentities = (): IdentityData[] =>
   useAppSelector((state) => state.identities.hostIdentities, deepEqual);
+
+export const useRandomIdentities = (): IdentityData[] =>
+  useAppSelector((state) => state.identities.randomIdentities, deepEqual);
 
 export const useSelectedIdentity = (): IdentityData | undefined =>
   useAppSelector((state) => {

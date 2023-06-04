@@ -45,12 +45,12 @@ export const ConnectHostIdentitiesModal = ({ pendingRequest }: ConnectionApprova
       </FullModalContent>
 
       <FullModalFooter>
-        <Button buttonType={ButtonType.SECONDARY} onClick={onCreateIdentityRequest}>
-          Create new identity
+        <Button buttonType={ButtonType.SECONDARY} onClick={() => console.log("Help")}>
+            Reject
         </Button>
 
-        <Button className="ml-2" onClick={() => console.log("hi")}>
-          Connect
+        <Button className="ml-2" onClick={onCreateIdentityRequest}>
+            Create new identity
         </Button>
       </FullModalFooter>
     </FullModal>

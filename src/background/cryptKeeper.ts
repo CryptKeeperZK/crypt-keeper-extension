@@ -86,6 +86,7 @@ export default class CryptKeeperController extends Handler {
     this.add(RPCAction.GET_COMMITMENTS, this.lockService.ensure, this.zkIdentityService.getIdentityCommitments);
     this.add(RPCAction.GET_IDENTITIES, this.lockService.ensure, this.zkIdentityService.getIdentities);
     this.add(RPCAction.GET_HOST_IDENTITIES, this.lockService.ensure, this.zkIdentityService.getHostIdentitis);
+    this.add(RPCAction.GET_RANDOM_IDENTITIES, this.lockService.ensure, this.zkIdentityService.getRandomIdentitis);
     this.add(RPCAction.GET_ACTIVE_IDENTITY_DATA, this.lockService.ensure, this.zkIdentityService.getActiveIdentityData);
     this.add(RPCAction.SET_ACTIVE_IDENTITY, this.lockService.ensure, this.zkIdentityService.setActiveIdentity);
     this.add(RPCAction.SET_IDENTITY_NAME, this.lockService.ensure, this.zkIdentityService.setIdentityName);

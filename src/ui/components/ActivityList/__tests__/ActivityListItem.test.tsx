@@ -21,6 +21,7 @@ describe("ui/pages/Home/components/ActivityList/Item", () => {
           name: "Account #1",
           identityStrategy: "interrep",
           web2Provider: "twitter",
+          groups: []
         },
       },
       createdAt: new Date().toISOString(),

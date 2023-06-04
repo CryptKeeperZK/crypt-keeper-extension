@@ -79,7 +79,7 @@ export const useCryptKeeper = (): IUseCryptKeeperData => {
       console.log("Error", error)
       toast(`CryptKeeper failed to connect`, { type: "error" });
     }
-  }, [setIsLocked,  setClient]);
+  }, [client]);
 
   const genSemaphoreProof = async (proofType: MerkleProofType = MerkleProofType.STORAGE_ADDRESS) => {
     const externalNullifier = encodeBytes32String("voting-1");

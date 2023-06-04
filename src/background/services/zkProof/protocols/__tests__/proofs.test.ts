@@ -25,6 +25,7 @@ describe("background/services/protocols", () => {
     name: "Identity #1",
     identityStrategy: "interrep",
     web2Provider: "twitter",
+    groups: []
   };
 
   const proofRequest: RLNProofRequest = {
