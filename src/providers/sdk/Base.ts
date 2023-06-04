@@ -46,9 +46,9 @@ export class CryptKeeperInjectedProvider extends EventEmitter {
     try {
       const host = window.location.origin;
 
-      await this.tryInject(host);
+      await this.tryConnect(host);
     } catch (err) {
-      log.debug("Err: ", err);
+      log.debug("User rejected to connect. ", err);
     }
 
     await this.post({ method: RPCAction.CLOSE_POPUP });
@@ -56,7 +56,7 @@ export class CryptKeeperInjectedProvider extends EventEmitter {
     return this;
   }
 
-  private async tryInject(host: string): Promise<Approvals> {
+  private async tryConnect(host: string): Promise<Approvals> {
     return this.post({
       method: RPCAction.CONNECT,
       payload: { origin: host },

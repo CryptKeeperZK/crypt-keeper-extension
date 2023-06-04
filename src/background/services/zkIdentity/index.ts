@@ -283,6 +283,7 @@ export default class ZkIdentityService implements IBackupable {
       name: options?.name || `Account ${numOfIdentites}`,
       messageSignature: strategy === "interrep" ? messageSignature : undefined,
       host,
+      groups: [] // Groups would be empty first because its still a new identity
     };
 
     if (walletType === EWallet.CRYPT_KEEPER_WALLET && strategy === "interrep") {

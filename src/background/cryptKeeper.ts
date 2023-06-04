@@ -137,18 +137,19 @@ export default class CryptKeeperController extends Handler {
     // Approvals - DEV ONLY
     this.add(RPCAction.CLEAR_APPROVED_HOSTS, this.approvalService.clear);
 
+    // Misc
     this.add(
       RPCAction.SET_CONNECT_WALLET,
       this.lockService.ensure,
       this.miscStorageService.setExternalWalletConnection,
     );
-
     this.add(
       RPCAction.GET_CONNECT_WALLET,
       this.lockService.ensure,
       this.miscStorageService.getExternalWalletConnection,
     );
 
+    // Browser
     this.add(RPCAction.CLOSE_POPUP, async () => this.browserService.closePopup());
 
     return this;

@@ -82,6 +82,7 @@ export default class InjectorService {
       const availableIdentities = await this.zkIdentityService.getHostIdentitis({ host });
 
       // 1.2 If there are aviaable identities
+      //     This option means that user requesting either `NewIdentityData` or `IdentityMetadata`
       if (availableIdentities) {
         try {
           await this.requestManager.newRequest(PendingRequestType.CHECK_AVIABLE_IDENTITIES, { host });
@@ -92,6 +93,7 @@ export default class InjectorService {
       }
 
       // 1.3 If there are no aviaable identities
+      //     This option means that user requesting `NewIdentityData`
       await this.requestManager.newRequest(PendingRequestType.CREATE_IDENTITY, { host });
     }
 

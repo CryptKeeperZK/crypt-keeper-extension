@@ -23,13 +23,29 @@ export enum EWallet {
   CRYPT_KEEPER_WALLET,
 }
 
-export type IdentityMetadata = {
+export interface IdentityMetadata {
   account: string;
   name: string;
   identityStrategy: IdentityStrategy;
   host?: string;
   web2Provider?: IdentityWeb2Provider;
+  groups: GroupData[] | [];
 };
+
+export interface GroupData {
+  id: string;
+  name: string;
+  favicon?: string;
+  description?: string;
+  api?: string;
+  contract?: string;
+}
+
+export interface NewIdentityData {
+  host: string;
+  nonce: number;
+  identityCommitment: string;
+}
 
 export interface IdentityData {
   commitment: string;
@@ -53,6 +69,7 @@ export interface ICreateIdentityArgs {
   messageSignature?: string;
   web2Provider?: IdentityWeb2Provider;
   host?: string;
+  groups: GroupData[] | []
 }
 
 export type StrategiesMap = {
