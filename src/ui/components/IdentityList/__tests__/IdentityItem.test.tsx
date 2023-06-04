@@ -15,6 +15,7 @@ describe("ui/pages/Home/components/IdentityList/Item", () => {
   const defaultProps: IdentityItemProps = {
     commitment: "1",
     selected: "0",
+    isShowSettings: true,
     metadata: {
       account: ZERO_ADDRESS,
       name: "Account #0",

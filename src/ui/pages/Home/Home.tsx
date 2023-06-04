@@ -1,8 +1,11 @@
 import classNames from "classnames";
 
 import { Header } from "@src/ui/components/Header";
+import { ActivityList } from "@src/ui/components/ActivityList";
+import { IdentityList } from "@src/ui/components/IdentityList";
+import { Info } from "@src/ui/components/Info";
+import { TabList } from "@src/ui/components/TabList";
 
-import { IdentityList, TabList, Info, ActivityList } from "./components";
 import "./home.scss";
 import { useHome } from "./useHome";
 
@@ -18,7 +21,6 @@ const Home = (): JSX.Element => {
 
         <TabList>
           <IdentityList identities={identities} />
-
           <ActivityList />
         </TabList>
       </div>

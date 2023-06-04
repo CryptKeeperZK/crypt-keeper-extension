@@ -15,35 +15,14 @@ import type { IdentityData } from "@src/types";
 
 import "./identityListStyles.scss";
 import { IdentityItem } from "./Item";
+import { IdentitiesContent } from "../IdentitiesContent";
 
 export interface IdentityListProps {
   identities: IdentityData[];
 }
 
 export const IdentityList = ({ identities }: IdentityListProps): JSX.Element => {
-  const selected = useSelectedIdentity();
   const dispatch = useAppDispatch();
-
-  const onSelectIdentity = useCallback(
-    (identityCommitment: string) => {
-      dispatch(setActiveIdentity(identityCommitment));
-    },
-    [dispatch],
-  );
-
-  const onUpdateIdentityName = useCallback(
-    async (identityCommitment: string, name: string) => {
-      await dispatch(setIdentityName(identityCommitment, name));
-    },
-    [dispatch],
-  );
-
-  const onDeleteIdentity = useCallback(
-    async (identityCommitment: string) => {
-      await dispatch(deleteIdentity(identityCommitment));
-    },
-    [dispatch],
-  );
 
   const onCreateIdentityRequest = useCallback(() => {
     dispatch(createIdentityRequest());
@@ -51,19 +30,7 @@ export const IdentityList = ({ identities }: IdentityListProps): JSX.Element => 
 
   return (
     <>
-      <div className="identities-content">
-        {identities.map(({ commitment, metadata }) => (
-          <IdentityItem
-            key={commitment}
-            commitment={commitment}
-            metadata={metadata}
-            selected={selected?.commitment}
-            onDeleteIdentity={onDeleteIdentity}
-            onSelectIdentity={onSelectIdentity}
-            onUpdateIdentityName={onUpdateIdentityName}
-          />
-        ))}
-      </div>
+      <IdentitiesContent identities={identities} isShowSettings={true} />
 
       <div className="flex flex-row items-center p-4">
         <button

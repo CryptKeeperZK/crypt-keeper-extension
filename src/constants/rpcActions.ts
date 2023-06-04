@@ -14,6 +14,7 @@ export enum RPCAction {
   GET_ACTIVE_IDENTITY_DATA = "rpc/identity/getActiveidentityData",
   GET_COMMITMENTS = "rpc/identity/getIdentityCommitments",
   GET_IDENTITIES = "rpc/identity/getIdentities",
+  GET_HOST_IDENTITIES = "rpc/identity/getHostIdentities",
   GET_REQUEST_PENDING_STATUS = "rpc/identity/getRequestPendingStatus",
   FINALIZE_REQUEST = "rpc/requests/finalize",
   GET_PENDING_REQUESTS = "rpc/requests/get",

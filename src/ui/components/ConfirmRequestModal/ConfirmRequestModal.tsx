@@ -4,6 +4,7 @@ import { ProofModal, ConnectionApprovalModal, DefaultApprovalModal } from "./com
 import "./confirmModal.scss";
 import { useConfirmRequestModal } from "./useConfirmRequestModal";
 import CreateIdentityModal from "./components/CreateIdentityModal/CreateIdentityModal";
+import { ConnectHostIdentitiesModal } from "./components/ConnectHostIdentitiesModal/ConnectHostIdentitiesModal";
 
 const ConfirmRequestModal = (): JSX.Element | null => {
   const { pendingRequests, loading, error, accept, reject } = useConfirmRequestModal();
@@ -38,6 +39,11 @@ const ConfirmRequestModal = (): JSX.Element | null => {
       return (
         <CreateIdentityModal pendingRequest={pendingRequest as PendingRequest<{ host: string }>} />
       );
+
+    case PendingRequestType.CHECK_AVIABLE_IDENTITIES:
+        return (
+          <ConnectHostIdentitiesModal pendingRequest={pendingRequest as PendingRequest<{ host: string }>} />
+        );
     default:
       return (
         <DefaultApprovalModal

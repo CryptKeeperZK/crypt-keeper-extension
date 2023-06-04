@@ -82,6 +82,7 @@ export default class CryptKeeperController extends Handler {
     // Identities
     this.add(RPCAction.GET_COMMITMENTS, this.lockService.ensure, this.zkIdentityService.getIdentityCommitments);
     this.add(RPCAction.GET_IDENTITIES, this.lockService.ensure, this.zkIdentityService.getIdentities);
+    this.add(RPCAction.GET_HOST_IDENTITIES, this.lockService.ensure, this.zkIdentityService.getHostIdentitis);
     this.add(RPCAction.GET_ACTIVE_IDENTITY_DATA, this.lockService.ensure, this.zkIdentityService.getActiveIdentityData);
     this.add(RPCAction.SET_ACTIVE_IDENTITY, this.lockService.ensure, this.zkIdentityService.setActiveIdentity);
     this.add(RPCAction.SET_IDENTITY_NAME, this.lockService.ensure, this.zkIdentityService.setIdentityName);
@@ -240,14 +241,29 @@ export default class CryptKeeperController extends Handler {
       }
 
       if (isApproved || approvalResponse.isApproved) {
-        await this.approvalService.add({host, canSkipApprove: approvalResponse.canSkipApprove});
-        await this.zkIdentityService.setIdentityHost({host});
-        
+        await this.approvalService.add({ host, canSkipApprove: approvalResponse.canSkipApprove });
+        await this.zkIdentityService.setIdentityHost({ host });
+
         // Make sure to close the approval popup
         await this.browserService.closePopup();
 
         // Check Identity
-        await this.requestManager.newRequest(PendingRequestType.CREATE_IDENTITY, { host: host });
+
+        // 1.1 Check available identities
+        const availableIdentities = await this.zkIdentityService.getHostIdentitis({ host });
+
+        // 1.2 If there are aviaable identities
+        if (availableIdentities) {
+          try {
+            await this.requestManager.newRequest(PendingRequestType.CHECK_AVIABLE_IDENTITIES, { host });
+          } catch (error) {
+            // That means the user clicks on the (x) button to close the window.
+            return approvalResponse;
+          }
+        }
+
+        // 1.3 If there are no aviaable identities
+        await this.requestManager.newRequest(PendingRequestType.CREATE_IDENTITY, { host });
       }
 
       return approvalResponse;

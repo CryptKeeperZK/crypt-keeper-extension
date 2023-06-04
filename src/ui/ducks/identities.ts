@@ -12,6 +12,7 @@ import { useAppSelector } from "./hooks";
 
 export interface IdentitiesState {
   identities: IdentityData[];
+  hostIdentities: IdentityData[];
   operations: Operation[];
   requestPending: boolean;
   selected: SelectedIdentity; // This aim to be a short-term solution to the integration with Zkitter
@@ -21,6 +22,7 @@ export interface IdentitiesState {
 
 const initialState: IdentitiesState = {
   identities: [],
+  hostIdentities: [],
   operations: [],
   settings: undefined,
   requestPending: false,
@@ -51,6 +53,10 @@ const identitiesSlice = createSlice({
       state.identities = action.payload;
     },
 
+    setHostIdentities: (state: IdentitiesState, action: PayloadAction<IdentityData[]>) => {
+      state.hostIdentities = action.payload;
+    },
+
     setOperations: (state: IdentitiesState, action: PayloadAction<Operation[]>) => {
       state.operations = action.payload;
     },
@@ -65,7 +71,7 @@ const identitiesSlice = createSlice({
   },
 });
 
-export const { setSelectedCommitment, setIdentities, setIdentityRequestPending, setOperations, setSettings, setIdentityHost } =
+export const { setSelectedCommitment, setIdentities, setHostIdentities, setIdentityRequestPending, setOperations, setSettings, setIdentityHost } =
   identitiesSlice.actions;
 
 export const createIdentityRequest = () => async (): Promise<void> => {
@@ -130,6 +136,15 @@ export const fetchIdentities = (): TypedThunk => async (dispatch) => {
   );
 };
 
+export const fetchHostIdentities = (host: string): TypedThunk => async (dispatch) => {
+  const data = await postMessage<IdentityData[]>({ method: RPCAction.GET_HOST_IDENTITIES, payload: {
+    host
+  } });
+
+  console.log("Data", data)
+  dispatch(setHostIdentities(data));
+};
+
 export const fetchHistory = (): TypedThunk<Promise<void>> => async (dispatch) => {
   const { operations, settings } = await postMessage<{ operations: Operation[]; settings: HistorySettings }>({
     method: RPCAction.LOAD_IDENTITY_HISTORY,
@@ -163,6 +178,8 @@ export const enableHistory =
   };
 
 export const useIdentities = (): IdentityData[] => useAppSelector((state) => state.identities.identities, deepEqual);
+
+export const useHostIdentities = (): IdentityData[] => useAppSelector((state) => state.identities.hostIdentities, deepEqual);
 
 export const useSelectedIdentity = (): IdentityData | undefined =>
   useAppSelector((state) => {

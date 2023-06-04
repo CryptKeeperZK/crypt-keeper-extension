@@ -24,6 +24,7 @@ export interface IdentityItemProps {
   commitment: string;
   metadata: IdentityMetadata;
   selected?: string;
+  isShowSettings: boolean
   onDeleteIdentity: (commitment: string) => Promise<void>;
   onSelectIdentity: (commitment: string) => void;
   onUpdateIdentityName: (commitment: string, name: string) => Promise<void>;
@@ -33,6 +34,7 @@ export const IdentityItem = ({
   commitment,
   selected = "",
   metadata,
+  isShowSettings = true,
   onDeleteIdentity,
   onSelectIdentity,
   onUpdateIdentityName,
@@ -133,15 +135,17 @@ export const IdentityItem = ({
         {metadata.account && <div className="text-xs text-gray-500">Address: {ellipsify(metadata.account)}</div>}
       </div>
 
-      <Menuable
-        className="flex user-menu"
-        items={[
-          { label: "Rename", isDangerItem: false, onClick: handleToggleRenaming },
-          { label: "Delete", isDangerItem: true, onClick: handleDeleteIdentity },
-        ]}
-      >
-        <Icon className="identity-row__menu-icon" fontAwesome="fas fa-ellipsis-h" />
-      </Menuable>
+      {isShowSettings && (
+        <Menuable
+          className="flex user-menu"
+          items={[
+            { label: "Rename", isDangerItem: false, onClick: handleToggleRenaming },
+            { label: "Delete", isDangerItem: true, onClick: handleDeleteIdentity },
+          ]}
+        >
+          <Icon className="identity-row__menu-icon" fontAwesome="fas fa-ellipsis-h" />
+        </Menuable>
+      )}
     </div>
   );
 };

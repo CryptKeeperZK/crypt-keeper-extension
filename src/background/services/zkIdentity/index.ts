@@ -141,6 +141,13 @@ export default class ZkIdentityService implements IBackupable {
       });
   };
 
+  getHostIdentitis = async ({ host }: IdentityHost): Promise<{ commitment: string; metadata: IdentityMetadata }[]> => {
+    const identitis = await this.getIdentities();
+
+    return identitis
+      .filter(identity => identity.metadata.host === host);
+  }
+
   getNumOfIdentites = async (): Promise<number> => {
     const identities = await this.getIdentitiesFromStore();
     return identities.size;
@@ -276,7 +283,7 @@ export default class ZkIdentityService implements IBackupable {
     const config = {
       ...options,
       identityStrategy: strategy,
-      name: options?.name || `Account # ${numOfIdentites}`,
+      name: options?.name || `Account ${numOfIdentites}`,
       messageSignature: strategy === "interrep" ? messageSignature : undefined,
       host
     };
