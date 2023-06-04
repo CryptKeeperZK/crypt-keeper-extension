@@ -1,4 +1,3 @@
-import log from "loglevel";
 import { browser } from "webextension-polyfill-ts";
 
 import { Paths, RPCAction } from "@src/constants";
@@ -15,6 +14,7 @@ import MiscStorageService from "./services/misc";
 import { validateZkInputs } from "./services/validation";
 import WalletService from "./services/wallet";
 import ZkIdentityService from "./services/zkIdentity";
+import InjectorService from "./services/injector";
 
 export default class CryptKeeperController extends Handler {
   private zkIdentityService: ZkIdentityService;
@@ -27,6 +27,8 @@ export default class CryptKeeperController extends Handler {
 
   private lockService: LockerService;
 
+  private injectorService: InjectorService;
+
   private browserService: BrowserUtils;
 
   private historyService: HistoryService;
@@ -37,11 +39,12 @@ export default class CryptKeeperController extends Handler {
 
   constructor() {
     super();
-    this.requestManager = new RequestManager();
+    this.requestManager = RequestManager.getInstance();
     this.zkIdentityService = ZkIdentityService.getInstance();
     this.approvalService = ApprovalService.getInstance();
     this.miscStorageService = MiscStorageService.getInstance();
     this.lockService = LockerService.getInstance();
+    this.injectorService = InjectorService.getInstance();
     this.browserService = BrowserUtils.getInstance();
     this.historyService = HistoryService.getInstance();
     this.walletService = WalletService.getInstance();
@@ -108,166 +111,22 @@ export default class CryptKeeperController extends Handler {
     this.add(RPCAction.SAVE_MNEMONIC, this.lockService.ensure, this.walletService.generateKeyPair);
     this.add(RPCAction.GET_ACCOUNTS, this.lockService.ensure, this.walletService.accounts);
     this.add(RPCAction.SELECT_ACCOUNT, this.lockService.ensure, this.walletService.selectAccount);
-    this.add(RPCAction.GET_SELECTED_ACCOUNT, this.lockService.ensure, this.walletService.getSelectedAccount);
+    this.add(RPCAction.GET_SELECTED_ACCOUNT, this.lockService.ensure, this.walletService.getSelectedAccount);    
 
-    // Protocols
-    this.add(
-      RPCAction.PREPARE_SEMAPHORE_PROOF_REQUEST,
-      this.lockService.ensure,
-      validateZkInputs,
-      async (payload: SemaphoreProofRequest, meta: { origin: string }) => {
-        const { isUnlocked } = await this.lockService.getStatus();
-
-        const semaphorePath = {
-          circuitFilePath: browser.runtime.getURL("js/zkeyFiles/semaphore/semaphore.wasm"),
-          zkeyFilePath: browser.runtime.getURL("js/zkeyFiles/semaphore/semaphore.zkey"),
-          verificationKey: browser.runtime.getURL("js/zkeyFiles/semaphore/semaphore.json"),
-        };
-
-        if (!isUnlocked) {
-          await this.browserService.openPopup();
-          await this.lockService.awaitUnlock();
-        }
-
-        const identity = await this.zkIdentityService.getActiveIdentity();
-        const approved = this.approvalService.isApproved(meta.origin);
-        const permission = this.approvalService.getPermission(meta.origin);
-
-        if (!identity) {
-          throw new Error("active identity not found");
-        }
-
-        if (!approved) {
-          throw new Error(`${meta.origin} is not approved`);
-        }
-
-        try {
-          const request = {
-            ...payload,
-            circuitFilePath: semaphorePath.circuitFilePath,
-            zkeyFilePath: semaphorePath.zkeyFilePath,
-            verificationKey: semaphorePath.verificationKey,
-          };
-
-          if (!permission.canSkipApprove) {
-            await this.requestManager.newRequest(PendingRequestType.SEMAPHORE_PROOF, {
-              ...request,
-              origin: meta.origin,
-            });
-          }
-
-          return { identity: identity.serialize(), payload: request };
-        } finally {
-          await this.browserService.closePopup();
-        }
-      },
-    );
-
+    // Injector 
+    this.add(RPCAction.CONNECT, this.injectorService.connect);
     this.add(
       RPCAction.PREPARE_RLN_PROOF_REQUEST,
       this.lockService.ensure,
       validateZkInputs,
-      async (payload: RLNProofRequest, meta: { origin: string }) => {
-        const identity = await this.zkIdentityService.getActiveIdentity();
-        const approved = this.approvalService.isApproved(meta.origin);
-        const permission = this.approvalService.getPermission(meta.origin);
-
-        const rlnPath = {
-          circuitFilePath: browser.runtime.getURL("js/zkeyFiles//rln/rln.wasm"),
-          zkeyFilePath: browser.runtime.getURL("js/zkeyFiles/rln/rln.zkey"),
-          verificationKey: browser.runtime.getURL("js/zkeyFiles/rln/rln.json"),
-        };
-
-        if (!identity) {
-          throw new Error("active identity not found");
-        }
-        if (!approved) {
-          throw new Error(`${meta.origin} is not approved`);
-        }
-
-        try {
-          const request = {
-            ...payload,
-            circuitFilePath: rlnPath.circuitFilePath,
-            zkeyFilePath: rlnPath.zkeyFilePath,
-            verificationKey: rlnPath.verificationKey,
-          };
-
-          if (!permission.canSkipApprove) {
-            await this.requestManager.newRequest(PendingRequestType.RLN_PROOF, {
-              ...request,
-              origin: meta.origin,
-            });
-          }
-
-          return { identity: identity.serialize(), payload: request };
-        } finally {
-          await this.browserService.closePopup();
-        }
-      },
+      this.injectorService.prepareRLNProofRequest
     );
-
-    // Injecting
-    this.add(RPCAction.TRY_INJECT, async (payload: { origin: string }): Promise<Approvals> => {
-      const { origin: host } = payload;
-      if (!host) {
-        throw new Error("Origin not provided");
-      }
-
-      // Check Locker
-      const { isUnlocked } = await this.lockService.getStatus();
-
-      if (!isUnlocked) {
-        await this.browserService.openPopup();
-        await this.lockService.awaitUnlock();
-      }
-
-      // Check Approval
-      const isApproved = this.approvalService.isApproved(host);
-
-      let approvalResponse: Approvals = {
-        isApproved: false,
-        canSkipApprove: false
-      }
-
-      if (!isApproved) {
-        try {
-          await this.requestManager.newRequest(PendingRequestType.INJECT, { origin: host });
-          const canSkipApproveResponse = await this.approvalService.canSkipApprove(host);
-          approvalResponse = { isApproved: true, canSkipApprove: canSkipApproveResponse }
-        } catch (e) {
-          log.error(e);
-        }
-      }
-
-      if (isApproved || approvalResponse.isApproved) {
-        await this.approvalService.add({ host, canSkipApprove: approvalResponse.canSkipApprove });
-        await this.zkIdentityService.setIdentityHost({ host });
-
-        // Make sure to close the approval popup
-        await this.browserService.closePopup();
-
-        // Check Identity
-
-        // 1.1 Check available identities
-        const availableIdentities = await this.zkIdentityService.getHostIdentitis({ host });
-
-        // 1.2 If there are aviaable identities
-        if (availableIdentities) {
-          try {
-            await this.requestManager.newRequest(PendingRequestType.CHECK_AVIABLE_IDENTITIES, { host });
-          } catch (error) {
-            // That means the user clicks on the (x) button to close the window.
-            return approvalResponse;
-          }
-        }
-
-        // 1.3 If there are no aviaable identities
-        await this.requestManager.newRequest(PendingRequestType.CREATE_IDENTITY, { host });
-      }
-
-      return approvalResponse;
-    });
+    this.add(
+      RPCAction.PREPARE_SEMAPHORE_PROOF_REQUEST,
+      this.lockService.ensure,
+      validateZkInputs,
+      this.injectorService.prepareSemaphoreProofRequest
+    );
 
     // Approvals
     this.add(RPCAction.APPROVE_HOST, this.lockService.ensure, this.approvalService.add);

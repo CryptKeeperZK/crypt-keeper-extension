@@ -7,19 +7,29 @@ import pushMessage from "@src/util/pushMessage";
 import BrowserUtils from "./browserUtils";
 
 export default class RequestManager extends EventEmitter2 {
+  private static INSTANCE: RequestManager;
+
   private browserService: BrowserUtils;
 
   private pendingRequests: PendingRequest[];
 
   private nonce: number;
 
-  constructor() {
+  private constructor() {
     super();
     this.pendingRequests = [];
     this.nonce = 0;
     this.browserService = BrowserUtils.getInstance();
 
     this.browserService.addRemoveWindowListener(this.clearRequests);
+  }
+
+  static getInstance(): RequestManager {
+    if (!RequestManager.INSTANCE) {
+      RequestManager.INSTANCE = new RequestManager();
+    }
+
+    return RequestManager.INSTANCE;
   }
 
   getNonce = (): number => this.nonce;

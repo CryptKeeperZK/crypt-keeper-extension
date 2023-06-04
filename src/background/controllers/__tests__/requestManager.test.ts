@@ -41,7 +41,7 @@ describe("background/controllers/requestManager", () => {
   });
 
   test("should create new request and notify properly", async () => {
-    const requestManager = new RequestManager();
+    const requestManager = RequestManager.getInstance();
     const nonce = requestManager.getNonce();
 
     const requestPromise = requestManager.newRequest(PendingRequestType.APPROVE, { origin: "http://localhost:3000" });
@@ -62,7 +62,7 @@ describe("background/controllers/requestManager", () => {
   });
 
   test("should finalize request and notify properly", async () => {
-    const requestManager = new RequestManager();
+    const requestManager = RequestManager.getInstance();
     const nonce = requestManager.getNonce();
 
     const requestPromise = requestManager.newRequest(PendingRequestType.APPROVE, { origin: "http://localhost:3000" });
@@ -83,7 +83,7 @@ describe("background/controllers/requestManager", () => {
   });
 
   test("should reject request properly", async () => {
-    const requestManager = new RequestManager();
+    const requestManager = RequestManager.getInstance();
     const nonce = requestManager.getNonce();
 
     const requestPromise = requestManager.newRequest(PendingRequestType.APPROVE, { origin: "http://localhost:3000" });
@@ -99,7 +99,7 @@ describe("background/controllers/requestManager", () => {
   });
 
   test("should handle unknown request finalization type properly", async () => {
-    const requestManager = new RequestManager();
+    const requestManager = RequestManager.getInstance();
     const nonce = requestManager.getNonce();
 
     const requestPromise = requestManager.newRequest(PendingRequestType.APPROVE, { origin: "http://localhost:3000" });
@@ -115,7 +115,7 @@ describe("background/controllers/requestManager", () => {
   });
 
   test("should handle reject request finalization type properly if user closes popup", async () => {
-    const requestManager = new RequestManager();
+    const requestManager =RequestManager.getInstance();
 
     const requestPromise = requestManager.newRequest(PendingRequestType.APPROVE, { origin: "http://localhost:3000" });
     await Promise.race([requestPromise, createTimeout()]);
