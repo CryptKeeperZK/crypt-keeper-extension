@@ -25,7 +25,6 @@ function NoActiveIDCommitment() {
 
 function App() {
   const {
-    client,
     isLocked,
     selectedIdentity,
     MerkleProofType,
@@ -35,11 +34,7 @@ function App() {
     genSemaphoreProof,
   } = useCryptKeeper();
 
-  useEffect(() => {
-    connect();
-  }, [connect]);
-
-  if (!client || isLocked) {
+  if (isLocked) {
     return <NotConnected onClick={connect} />;
   }
 

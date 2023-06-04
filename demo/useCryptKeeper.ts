@@ -41,8 +41,6 @@ interface IUseCryptKeeperData {
   genRLNProof: (proofType: MerkleProofType) => void;
 }
 
-const initializeClient = (): Promise<CryptKeeperInjectedProvider | undefined> => window.cryptkeeper?.connect();
-
 export const useCryptKeeper = (): IUseCryptKeeperData => {
   const [client, setClient] = useState<CryptKeeperInjectedProvider>();
   const [isLocked, setIsLocked] = useState(true);
@@ -52,16 +50,36 @@ export const useCryptKeeper = (): IUseCryptKeeperData => {
   });
   const mockIdentityCommitments: string[] = genMockIdentityCommitments();
 
-  const connect = useCallback(async () => {
-    const client = await initializeClient();
+  const initializeCryptKeeper = useCallback(() => {
+    const { cryptkeeper } = window;
 
-    if (client) {
-      setIsLocked(false);
-      setClient(client);
-    } else {
+    if (!cryptkeeper) {
       toast(`CryptKeeper is not installed in the browser`, { type: "error" });
+      return;
     }
-  }, [setIsLocked, setClient]);
+
+    console.log(`cryptkeeper`, cryptkeeper)
+    console.log(`cryptkeeper.connect`, cryptkeeper.connect)
+
+    const client = cryptkeeper;
+
+    setClient(client);
+  }, [setClient]);
+
+  const connect = useCallback(async () => {
+    if (!client) {
+      toast(`CryptKeeper failed to be initialized`, { type: "error" });
+      return;
+    }
+
+    try {
+      await client.connect();
+      //setIsLocked(false);
+    } catch (error) {
+      console.log("Error", error)
+      toast(`CryptKeeper failed to connect`, { type: "error" });
+    }
+  }, [setIsLocked,  setClient]);
 
   const genSemaphoreProof = async (proofType: MerkleProofType = MerkleProofType.STORAGE_ADDRESS) => {
     const externalNullifier = encodeBytes32String("voting-1");
@@ -180,6 +198,10 @@ export const useCryptKeeper = (): IUseCryptKeeperData => {
     });
     setIsLocked(true);
   }, [setSelectedIdentity, setIsLocked]);
+
+  useEffect(() => {
+    initializeCryptKeeper();
+  }, [initializeCryptKeeper, setClient]);
 
   useEffect(() => {
     if (!client) {
