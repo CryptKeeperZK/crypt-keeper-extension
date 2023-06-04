@@ -115,7 +115,7 @@ describe("background/controllers/requestManager", () => {
   });
 
   test("should handle reject request finalization type properly if user closes popup", async () => {
-    const requestManager =RequestManager.getInstance();
+    const requestManager = RequestManager.getInstance();
 
     const requestPromise = requestManager.newRequest(PendingRequestType.APPROVE, { origin: "http://localhost:3000" });
     await Promise.race([requestPromise, createTimeout()]);

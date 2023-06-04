@@ -6,46 +6,45 @@ import { getLinkPreview } from "link-preview-js";
 import { useCallback, useEffect, useState } from "react";
 
 export interface IUseConnectHostIdentitiesModalArgs {
-    pendingRequest: PendingRequest<{ host: string }>;
-  }
-  
-export interface IUseConnectHostIdentitiesModalData {
-    availableHostIdentities: IdentityData[],
-    host?: string,
-    faviconUrl: string,
-    onCreateIdentityRequest: () => void
+  pendingRequest: PendingRequest<{ host: string }>;
 }
 
-export const useConnectHostIdentitiesModal = ({ pendingRequest }: IUseConnectHostIdentitiesModalArgs): IUseConnectHostIdentitiesModalData => {
-    const [faviconUrl, setFaviconUrl] = useState("");
-    const dispatch = useAppDispatch();
-    const availableHostIdentities = useHostIdentities();
+export interface IUseConnectHostIdentitiesModalData {
+  availableHostIdentities: IdentityData[];
+  host?: string;
+  faviconUrl: string;
+  onCreateIdentityRequest: () => void;
+}
+
+export const useConnectHostIdentitiesModal = ({
+  pendingRequest,
+}: IUseConnectHostIdentitiesModalArgs): IUseConnectHostIdentitiesModalData => {
+  const [faviconUrl, setFaviconUrl] = useState("");
+  const dispatch = useAppDispatch();
+  const availableHostIdentities = useHostIdentities();
   const { payload } = pendingRequest;
   const host = payload?.host ?? undefined;
 
-  // Technically both "Create new Identity" and "Connect" are Accept actions. 
+  // Technically both "Create new Identity" and "Connect" are Accept actions.
   // The only rejest action is the user clicks on the (x) button of the window.
-  const onCreateIdentityRequest = useCallback(
-    () => {
-      const req: RequestResolutionAction = {
-        id: pendingRequest?.id,
-        status: RequestResolutionStatus.ACCEPT,
-      };
+  const onCreateIdentityRequest = useCallback(() => {
+    const req: RequestResolutionAction = {
+      id: pendingRequest?.id,
+      status: RequestResolutionStatus.ACCEPT,
+    };
 
-      dispatch(finalizeRequest(req));
-    },
-    [pendingRequest?.id, dispatch],
-  );
+    dispatch(finalizeRequest(req));
+  }, [pendingRequest?.id, dispatch]);
 
   useEffect(() => {
     if (!host) {
-        return;
+      return;
     }
 
     getLinkPreview(host).then((data) => {
-        const [favicon] = data.favicons;
-        setFaviconUrl(favicon);
-      });
+      const [favicon] = data.favicons;
+      setFaviconUrl(favicon);
+    });
 
     dispatch(fetchHostIdentities(host));
   }, [dispatch]);
@@ -54,6 +53,6 @@ export const useConnectHostIdentitiesModal = ({ pendingRequest }: IUseConnectHos
     availableHostIdentities,
     host,
     faviconUrl,
-    onCreateIdentityRequest
+    onCreateIdentityRequest,
   };
 };

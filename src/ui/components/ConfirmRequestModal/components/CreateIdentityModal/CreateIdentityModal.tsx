@@ -19,9 +19,7 @@ export interface CreateIdentityModalProps {
   pendingRequest?: PendingRequest<{ host: string }>;
 }
 
-const CreateIdentityModal = ({
-  pendingRequest
-}: CreateIdentityModalProps): JSX.Element => {
+const CreateIdentityModal = ({ pendingRequest }: CreateIdentityModalProps): JSX.Element => {
   const features = getEnabledFeatures();
   const {
     isLoading,
@@ -35,7 +33,7 @@ const CreateIdentityModal = ({
     onConnectWallet,
     onCreateWithCryptkeeper,
     onCreateWithEthWallet,
-  } = useCreateIdentity({pendingRequest});
+  } = useCreateIdentity({ pendingRequest });
 
   const ethWalletTitle = isWalletConnected ? "Metamask" : "Connect to Metamask";
 
@@ -99,12 +97,10 @@ const CreateIdentityModal = ({
                 </>
               )}
             </>
+          ) : host ? (
+            <Typography>Create your Semaphore identity for `{host}` host</Typography>
           ) : (
-            host ? (
-              <Typography>Create your Semaphore identity for `{host}` host</Typography>
-            ) : (
-              <Typography>Create your Semaphore identity.</Typography>
-            )
+            <Typography>Create your Semaphore identity.</Typography>
           )}
         </FullModalContent>
 

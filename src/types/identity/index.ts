@@ -61,5 +61,5 @@ export type StrategiesMap = {
 };
 
 export interface IdentityHost {
-  host: string | undefined 
+  host: string | undefined;
 }

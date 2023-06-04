@@ -16,7 +16,7 @@ export enum PendingRequestType {
   APPROVE,
   INJECT,
   CHECK_AVIABLE_IDENTITIES,
-  CREATE_IDENTITY
+  CREATE_IDENTITY,
 }
 
 export interface PendingRequest<P = unknown> {

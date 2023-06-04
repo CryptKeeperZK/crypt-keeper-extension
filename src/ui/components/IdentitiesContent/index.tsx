@@ -7,48 +7,48 @@ import { useCallback } from "react";
 import { useAppDispatch } from "@src/ui/ducks/hooks";
 
 export interface IdentityListProps {
-    identities: IdentityData[];
-    isShowSettings: boolean;
+  identities: IdentityData[];
+  isShowSettings: boolean;
 }
 
 export const IdentitiesContent = ({ identities, isShowSettings }: IdentityListProps): JSX.Element => {
-    const selected = useSelectedIdentity();
-    const dispatch = useAppDispatch();
+  const selected = useSelectedIdentity();
+  const dispatch = useAppDispatch();
 
-    const onSelectIdentity = useCallback(
-        (identityCommitment: string) => {
-          dispatch(setActiveIdentity(identityCommitment));
-        },
-        [dispatch],
-      );
-    
-      const onUpdateIdentityName = useCallback(
-        async (identityCommitment: string, name: string) => {
-          await dispatch(setIdentityName(identityCommitment, name));
-        },
-        [dispatch],
-      );
-    
-      const onDeleteIdentity = useCallback(
-        async (identityCommitment: string) => {
-          await dispatch(deleteIdentity(identityCommitment));
-        },
-        [dispatch],
-      );
+  const onSelectIdentity = useCallback(
+    (identityCommitment: string) => {
+      dispatch(setActiveIdentity(identityCommitment));
+    },
+    [dispatch],
+  );
+
+  const onUpdateIdentityName = useCallback(
+    async (identityCommitment: string, name: string) => {
+      await dispatch(setIdentityName(identityCommitment, name));
+    },
+    [dispatch],
+  );
+
+  const onDeleteIdentity = useCallback(
+    async (identityCommitment: string) => {
+      await dispatch(deleteIdentity(identityCommitment));
+    },
+    [dispatch],
+  );
   return (
     <div className="identities-content">
-        {identities.map(({ commitment, metadata }) => (
-          <IdentityItem
-            isShowSettings={isShowSettings}
-            key={commitment}
-            commitment={commitment}
-            metadata={metadata}
-            selected={selected?.commitment}
-            onDeleteIdentity={onDeleteIdentity}
-            onSelectIdentity={onSelectIdentity}
-            onUpdateIdentityName={onUpdateIdentityName}
-          />
-        ))}
-      </div>
+      {identities.map(({ commitment, metadata }) => (
+        <IdentityItem
+          isShowSettings={isShowSettings}
+          key={commitment}
+          commitment={commitment}
+          metadata={metadata}
+          selected={selected?.commitment}
+          onDeleteIdentity={onDeleteIdentity}
+          onSelectIdentity={onSelectIdentity}
+          onUpdateIdentityName={onUpdateIdentityName}
+        />
+      ))}
+    </div>
   );
 };

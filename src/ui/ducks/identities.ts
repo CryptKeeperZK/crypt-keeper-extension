@@ -3,7 +3,14 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import deepEqual from "fast-deep-equal";
 
 import { RPCAction } from "@src/constants";
-import { HistorySettings, ICreateIdentityUiArgs, IdentityData, IdentityHost, Operation, SelectedIdentity } from "@src/types";
+import {
+  HistorySettings,
+  ICreateIdentityUiArgs,
+  IdentityData,
+  IdentityHost,
+  Operation,
+  SelectedIdentity,
+} from "@src/types";
 import postMessage from "@src/util/postMessage";
 
 import type { TypedThunk } from "@src/ui/store/configureAppStore";
@@ -29,9 +36,9 @@ const initialState: IdentitiesState = {
   selected: {
     commitment: "",
     web2Provider: "",
-    host: ""
+    host: "",
   },
-  host: ""
+  host: "",
 };
 
 const identitiesSlice = createSlice({
@@ -71,8 +78,15 @@ const identitiesSlice = createSlice({
   },
 });
 
-export const { setSelectedCommitment, setIdentities, setHostIdentities, setIdentityRequestPending, setOperations, setSettings, setIdentityHost } =
-  identitiesSlice.actions;
+export const {
+  setSelectedCommitment,
+  setIdentities,
+  setHostIdentities,
+  setIdentityRequestPending,
+  setOperations,
+  setSettings,
+  setIdentityHost,
+} = identitiesSlice.actions;
 
 export const createIdentityRequest = () => async (): Promise<void> => {
   await postMessage({ method: RPCAction.CREATE_IDENTITY_REQ });
@@ -88,7 +102,7 @@ export const createIdentity =
         walletType,
         messageSignature,
         options,
-        host
+        host,
       },
     });
 
@@ -136,14 +150,19 @@ export const fetchIdentities = (): TypedThunk => async (dispatch) => {
   );
 };
 
-export const fetchHostIdentities = (host: string): TypedThunk => async (dispatch) => {
-  const data = await postMessage<IdentityData[]>({ method: RPCAction.GET_HOST_IDENTITIES, payload: {
-    host
-  } });
+export const fetchHostIdentities =
+  (host: string): TypedThunk =>
+  async (dispatch) => {
+    const data = await postMessage<IdentityData[]>({
+      method: RPCAction.GET_HOST_IDENTITIES,
+      payload: {
+        host,
+      },
+    });
 
-  console.log("Data", data)
-  dispatch(setHostIdentities(data));
-};
+    console.log("Data", data);
+    dispatch(setHostIdentities(data));
+  };
 
 export const fetchHistory = (): TypedThunk<Promise<void>> => async (dispatch) => {
   const { operations, settings } = await postMessage<{ operations: Operation[]; settings: HistorySettings }>({
@@ -179,7 +198,8 @@ export const enableHistory =
 
 export const useIdentities = (): IdentityData[] => useAppSelector((state) => state.identities.identities, deepEqual);
 
-export const useHostIdentities = (): IdentityData[] => useAppSelector((state) => state.identities.hostIdentities, deepEqual);
+export const useHostIdentities = (): IdentityData[] =>
+  useAppSelector((state) => state.identities.hostIdentities, deepEqual);
 
 export const useSelectedIdentity = (): IdentityData | undefined =>
   useAppSelector((state) => {

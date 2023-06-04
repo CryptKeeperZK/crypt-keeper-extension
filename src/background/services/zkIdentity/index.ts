@@ -113,8 +113,8 @@ export default class ZkIdentityService implements IBackupable {
       features.INTERREP_IDENTITY
         ? iterableIdentities
         : [...iterableIdentities].filter(
-          ([, identity]) => ZkIdentitySemaphore.genFromSerialized(identity).metadata.identityStrategy !== "interrep",
-        ),
+            ([, identity]) => ZkIdentitySemaphore.genFromSerialized(identity).metadata.identityStrategy !== "interrep",
+          ),
     );
   };
 
@@ -144,9 +144,8 @@ export default class ZkIdentityService implements IBackupable {
   getHostIdentitis = async ({ host }: IdentityHost): Promise<{ commitment: string; metadata: IdentityMetadata }[]> => {
     const identitis = await this.getIdentities();
 
-    return identitis
-      .filter(identity => identity.metadata.host === host);
-  }
+    return identitis.filter((identity) => identity.metadata.host === host);
+  };
 
   getNumOfIdentites = async (): Promise<number> => {
     const identities = await this.getIdentitiesFromStore();
@@ -257,11 +256,9 @@ export default class ZkIdentityService implements IBackupable {
 
   setIdentityHost = async ({ host }: IdentityHost): Promise<void> => {
     if (host) {
-      await pushMessage(
-        setIdentityHost(host),
-      )
+      await pushMessage(setIdentityHost(host));
     }
-  }
+  };
 
   createIdentityRequest = async (): Promise<void> => {
     await this.browserController.openPopup({ params: { redirect: Paths.CREATE_IDENTITY } });
@@ -272,7 +269,7 @@ export default class ZkIdentityService implements IBackupable {
     walletType,
     messageSignature,
     options,
-    host
+    host,
   }: NewIdentityRequest): Promise<string | undefined> => {
     if (walletType === EWallet.ETH_WALLET && !messageSignature) {
       throw new Error("No signature provided");
@@ -285,7 +282,7 @@ export default class ZkIdentityService implements IBackupable {
       identityStrategy: strategy,
       name: options?.name || `Account ${numOfIdentites}`,
       messageSignature: strategy === "interrep" ? messageSignature : undefined,
-      host
+      host,
     };
 
     if (walletType === EWallet.CRYPT_KEEPER_WALLET && strategy === "interrep") {

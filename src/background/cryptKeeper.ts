@@ -111,21 +111,21 @@ export default class CryptKeeperController extends Handler {
     this.add(RPCAction.SAVE_MNEMONIC, this.lockService.ensure, this.walletService.generateKeyPair);
     this.add(RPCAction.GET_ACCOUNTS, this.lockService.ensure, this.walletService.accounts);
     this.add(RPCAction.SELECT_ACCOUNT, this.lockService.ensure, this.walletService.selectAccount);
-    this.add(RPCAction.GET_SELECTED_ACCOUNT, this.lockService.ensure, this.walletService.getSelectedAccount);    
+    this.add(RPCAction.GET_SELECTED_ACCOUNT, this.lockService.ensure, this.walletService.getSelectedAccount);
 
-    // Injector 
+    // Injector
     this.add(RPCAction.CONNECT, this.injectorService.connect);
     this.add(
       RPCAction.PREPARE_RLN_PROOF_REQUEST,
       this.lockService.ensure,
       validateZkInputs,
-      this.injectorService.prepareRLNProofRequest
+      this.injectorService.prepareRLNProofRequest,
     );
     this.add(
       RPCAction.PREPARE_SEMAPHORE_PROOF_REQUEST,
       this.lockService.ensure,
       validateZkInputs,
-      this.injectorService.prepareSemaphoreProofRequest
+      this.injectorService.prepareSemaphoreProofRequest,
     );
 
     // Approvals

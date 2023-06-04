@@ -24,7 +24,7 @@ export interface IdentityItemProps {
   commitment: string;
   metadata: IdentityMetadata;
   selected?: string;
-  isShowSettings: boolean
+  isShowSettings: boolean;
   onDeleteIdentity: (commitment: string) => Promise<void>;
   onSelectIdentity: (commitment: string) => void;
   onUpdateIdentityName: (commitment: string, name: string) => Promise<void>;
@@ -113,9 +113,7 @@ export const IdentityItem = ({
             {`${metadata.name}`}
 
             {metadata.host && (
-              <span className="text-xs py-1 px-2 ml-2 rounded-full bg-gray-500 text-gray-800">
-                {metadata.host}
-              </span>
+              <span className="text-xs py-1 px-2 ml-2 rounded-full bg-gray-500 text-gray-800">{metadata.host}</span>
             )}
 
             {canShowIdentityType && (

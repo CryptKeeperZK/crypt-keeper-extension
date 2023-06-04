@@ -13,21 +13,17 @@ export interface ConnectionApprovalModalProps {
   pendingRequest: PendingRequest<{ host: string }>;
 }
 
-export const ConnectHostIdentitiesModal = ({
-  pendingRequest,
-}: ConnectionApprovalModalProps): JSX.Element => {
-  const { availableHostIdentities, host, faviconUrl, onCreateIdentityRequest } = useConnectHostIdentitiesModal({pendingRequest});
+export const ConnectHostIdentitiesModal = ({ pendingRequest }: ConnectionApprovalModalProps): JSX.Element => {
+  const { availableHostIdentities, host, faviconUrl, onCreateIdentityRequest } = useConnectHostIdentitiesModal({
+    pendingRequest,
+  });
 
   return (
     <FullModal className="confirm-modal" data-testid="approval-modal" onClose={() => console.log("hi")}>
-      {host && (
-        <FullModalHeader>
-        Connect to `{host}`
-      </FullModalHeader>
-      )}
+      {host && <FullModalHeader>Connect to `{host}`</FullModalHeader>}
 
       <FullModalContent className="flex flex-col items-center">
-      <div className="w-16 h-16 rounded-full my-6 border border-gray-800 p-2 flex-shrink-0">
+        <div className="w-16 h-16 rounded-full my-6 border border-gray-800 p-2 flex-shrink-0">
           <div
             className="w-16 h-16"
             style={{
@@ -42,7 +38,8 @@ export const ConnectHostIdentitiesModal = ({
         <div className="text-lg font-semibold mb-2 text-center">{`${host} would like to connect to your identity`}</div>
 
         <div className="text-sm text-gray-500 text-center">
-          This site is already attached to {availableHostIdentities.length} identities. Please choose one to connect with, or choose to create a new identity.
+          This site is already attached to {availableHostIdentities.length} identities. Please choose one to connect
+          with, or choose to create a new identity.
         </div>
         <IdentitiesContent identities={availableHostIdentities} isShowSettings={false} />
       </FullModalContent>

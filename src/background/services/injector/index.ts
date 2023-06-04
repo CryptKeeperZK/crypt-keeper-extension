@@ -9,178 +9,178 @@ import { browser } from "webextension-polyfill-ts";
 
 // @src InjectorService is a service for helping the injectedScript provider
 export default class InjectorService {
-    private static INSTANCE: InjectorService;
+  private static INSTANCE: InjectorService;
 
-    private requestManager: RequestManager;
+  private requestManager: RequestManager;
 
-    private lockerService: LockerService;
+  private lockerService: LockerService;
 
-    private zkIdentityService: ZkIdentityService;
+  private zkIdentityService: ZkIdentityService;
 
-    private approvalService: ApprovalService;
+  private approvalService: ApprovalService;
 
-    private browserService: BrowserUtils;
+  private browserService: BrowserUtils;
 
-    private constructor() {
-        this.requestManager = RequestManager.getInstance();
-        this.lockerService = LockerService.getInstance();
-        this.zkIdentityService = ZkIdentityService.getInstance();
-        this.approvalService = ApprovalService.getInstance();
-        this.browserService = BrowserUtils.getInstance();
+  private constructor() {
+    this.requestManager = RequestManager.getInstance();
+    this.lockerService = LockerService.getInstance();
+    this.zkIdentityService = ZkIdentityService.getInstance();
+    this.approvalService = ApprovalService.getInstance();
+    this.browserService = BrowserUtils.getInstance();
+  }
+
+  static getInstance(): InjectorService {
+    if (!InjectorService.INSTANCE) {
+      InjectorService.INSTANCE = new InjectorService();
     }
 
-    static getInstance(): InjectorService {
-        if (!InjectorService.INSTANCE) {
-            InjectorService.INSTANCE = new InjectorService();
-        }
+    return InjectorService.INSTANCE;
+  }
 
-        return InjectorService.INSTANCE;
+  connect = async (payload: { origin: string }): Promise<Approvals> => {
+    const { origin: host } = payload;
+    if (!host) {
+      throw new Error("Origin not provided");
     }
 
-    connect = async (payload: { origin: string }): Promise<Approvals> => {
-        const { origin: host } = payload;
-        if (!host) {
-            throw new Error("Origin not provided");
-        }
+    // Check Locker
+    const { isUnlocked } = await this.lockerService.getStatus();
 
-        // Check Locker
-        const { isUnlocked } = await this.lockerService.getStatus();
-
-        if (!isUnlocked) {
-            await this.browserService.openPopup();
-            await this.lockerService.awaitUnlock();
-        }
-
-        // Check Approval
-        const isApproved = this.approvalService.isApproved(host);
-
-        let approvalResponse: Approvals = {
-            isApproved: false,
-            canSkipApprove: false
-        }
-
-        if (!isApproved) {
-            try {
-                await this.requestManager.newRequest(PendingRequestType.INJECT, { origin: host });
-                const canSkipApproveResponse = await this.approvalService.canSkipApprove(host);
-                approvalResponse = { isApproved: true, canSkipApprove: canSkipApproveResponse }
-            } catch (e) {
-                log.error(e);
-            }
-        }
-
-        if (isApproved || approvalResponse.isApproved) {
-            await this.approvalService.add({ host, canSkipApprove: approvalResponse.canSkipApprove });
-            await this.zkIdentityService.setIdentityHost({ host });
-
-            // Make sure to close the approval popup
-            await this.browserService.closePopup();
-
-            // Check Identity
-
-            // 1.1 Check available identities
-            const availableIdentities = await this.zkIdentityService.getHostIdentitis({ host });
-
-            // 1.2 If there are aviaable identities
-            if (availableIdentities) {
-                try {
-                    await this.requestManager.newRequest(PendingRequestType.CHECK_AVIABLE_IDENTITIES, { host });
-                } catch (error) {
-                    // That means the user clicks on the (x) button to close the window.
-                    return approvalResponse;
-                }
-            }
-
-            // 1.3 If there are no aviaable identities
-            await this.requestManager.newRequest(PendingRequestType.CREATE_IDENTITY, { host });
-        }
-
-        return approvalResponse;
+    if (!isUnlocked) {
+      await this.browserService.openPopup();
+      await this.lockerService.awaitUnlock();
     }
 
-    prepareSemaphoreProofRequest = async (payload: SemaphoreProofRequest, meta: { origin: string }) => {
-        const { isUnlocked } = await this.lockerService.getStatus();
+    // Check Approval
+    const isApproved = this.approvalService.isApproved(host);
 
-        const semaphorePath = {
-            circuitFilePath: browser.runtime.getURL("js/zkeyFiles/semaphore/semaphore.wasm"),
-            zkeyFilePath: browser.runtime.getURL("js/zkeyFiles/semaphore/semaphore.zkey"),
-            verificationKey: browser.runtime.getURL("js/zkeyFiles/semaphore/semaphore.json"),
-        };
+    let approvalResponse: Approvals = {
+      isApproved: false,
+      canSkipApprove: false,
+    };
 
-        if (!isUnlocked) {
-            await this.browserService.openPopup();
-            await this.lockerService.awaitUnlock();
-        }
+    if (!isApproved) {
+      try {
+        await this.requestManager.newRequest(PendingRequestType.INJECT, { origin: host });
+        const canSkipApproveResponse = await this.approvalService.canSkipApprove(host);
+        approvalResponse = { isApproved: true, canSkipApprove: canSkipApproveResponse };
+      } catch (e) {
+        log.error(e);
+      }
+    }
 
-        const identity = await this.zkIdentityService.getActiveIdentity();
-        const approved = this.approvalService.isApproved(meta.origin);
-        const permission = this.approvalService.getPermission(meta.origin);
+    if (isApproved || approvalResponse.isApproved) {
+      await this.approvalService.add({ host, canSkipApprove: approvalResponse.canSkipApprove });
+      await this.zkIdentityService.setIdentityHost({ host });
 
-        if (!identity) {
-            throw new Error("active identity not found");
-        }
+      // Make sure to close the approval popup
+      await this.browserService.closePopup();
 
-        if (!approved) {
-            throw new Error(`${meta.origin} is not approved`);
-        }
+      // Check Identity
 
+      // 1.1 Check available identities
+      const availableIdentities = await this.zkIdentityService.getHostIdentitis({ host });
+
+      // 1.2 If there are aviaable identities
+      if (availableIdentities) {
         try {
-            const request = {
-                ...payload,
-                circuitFilePath: semaphorePath.circuitFilePath,
-                zkeyFilePath: semaphorePath.zkeyFilePath,
-                verificationKey: semaphorePath.verificationKey,
-            };
-
-            if (!permission.canSkipApprove) {
-                await this.requestManager.newRequest(PendingRequestType.SEMAPHORE_PROOF, {
-                    ...request,
-                    origin: meta.origin,
-                });
-            }
-
-            return { identity: identity.serialize(), payload: request };
-        } finally {
-            await this.browserService.closePopup();
+          await this.requestManager.newRequest(PendingRequestType.CHECK_AVIABLE_IDENTITIES, { host });
+        } catch (error) {
+          // That means the user clicks on the (x) button to close the window.
+          return approvalResponse;
         }
+      }
+
+      // 1.3 If there are no aviaable identities
+      await this.requestManager.newRequest(PendingRequestType.CREATE_IDENTITY, { host });
     }
 
-    prepareRLNProofRequest = async (payload: RLNProofRequest, meta: { origin: string }) => {
-        const identity = await this.zkIdentityService.getActiveIdentity();
-        const approved = this.approvalService.isApproved(meta.origin);
-        const permission = this.approvalService.getPermission(meta.origin);
+    return approvalResponse;
+  };
 
-        const rlnPath = {
-            circuitFilePath: browser.runtime.getURL("js/zkeyFiles//rln/rln.wasm"),
-            zkeyFilePath: browser.runtime.getURL("js/zkeyFiles/rln/rln.zkey"),
-            verificationKey: browser.runtime.getURL("js/zkeyFiles/rln/rln.json"),
-        };
+  prepareSemaphoreProofRequest = async (payload: SemaphoreProofRequest, meta: { origin: string }) => {
+    const { isUnlocked } = await this.lockerService.getStatus();
 
-        if (!identity) {
-            throw new Error("active identity not found");
-        }
-        if (!approved) {
-            throw new Error(`${meta.origin} is not approved`);
-        }
+    const semaphorePath = {
+      circuitFilePath: browser.runtime.getURL("js/zkeyFiles/semaphore/semaphore.wasm"),
+      zkeyFilePath: browser.runtime.getURL("js/zkeyFiles/semaphore/semaphore.zkey"),
+      verificationKey: browser.runtime.getURL("js/zkeyFiles/semaphore/semaphore.json"),
+    };
 
-        try {
-            const request = {
-                ...payload,
-                circuitFilePath: rlnPath.circuitFilePath,
-                zkeyFilePath: rlnPath.zkeyFilePath,
-                verificationKey: rlnPath.verificationKey,
-            };
-
-            if (!permission.canSkipApprove) {
-                await this.requestManager.newRequest(PendingRequestType.RLN_PROOF, {
-                    ...request,
-                    origin: meta.origin,
-                });
-            }
-
-            return { identity: identity.serialize(), payload: request };
-        } finally {
-            await this.browserService.closePopup();
-        }
+    if (!isUnlocked) {
+      await this.browserService.openPopup();
+      await this.lockerService.awaitUnlock();
     }
+
+    const identity = await this.zkIdentityService.getActiveIdentity();
+    const approved = this.approvalService.isApproved(meta.origin);
+    const permission = this.approvalService.getPermission(meta.origin);
+
+    if (!identity) {
+      throw new Error("active identity not found");
+    }
+
+    if (!approved) {
+      throw new Error(`${meta.origin} is not approved`);
+    }
+
+    try {
+      const request = {
+        ...payload,
+        circuitFilePath: semaphorePath.circuitFilePath,
+        zkeyFilePath: semaphorePath.zkeyFilePath,
+        verificationKey: semaphorePath.verificationKey,
+      };
+
+      if (!permission.canSkipApprove) {
+        await this.requestManager.newRequest(PendingRequestType.SEMAPHORE_PROOF, {
+          ...request,
+          origin: meta.origin,
+        });
+      }
+
+      return { identity: identity.serialize(), payload: request };
+    } finally {
+      await this.browserService.closePopup();
+    }
+  };
+
+  prepareRLNProofRequest = async (payload: RLNProofRequest, meta: { origin: string }) => {
+    const identity = await this.zkIdentityService.getActiveIdentity();
+    const approved = this.approvalService.isApproved(meta.origin);
+    const permission = this.approvalService.getPermission(meta.origin);
+
+    const rlnPath = {
+      circuitFilePath: browser.runtime.getURL("js/zkeyFiles//rln/rln.wasm"),
+      zkeyFilePath: browser.runtime.getURL("js/zkeyFiles/rln/rln.zkey"),
+      verificationKey: browser.runtime.getURL("js/zkeyFiles/rln/rln.json"),
+    };
+
+    if (!identity) {
+      throw new Error("active identity not found");
+    }
+    if (!approved) {
+      throw new Error(`${meta.origin} is not approved`);
+    }
+
+    try {
+      const request = {
+        ...payload,
+        circuitFilePath: rlnPath.circuitFilePath,
+        zkeyFilePath: rlnPath.zkeyFilePath,
+        verificationKey: rlnPath.verificationKey,
+      };
+
+      if (!permission.canSkipApprove) {
+        await this.requestManager.newRequest(PendingRequestType.RLN_PROOF, {
+          ...request,
+          origin: meta.origin,
+        });
+      }
+
+      return { identity: identity.serialize(), payload: request };
+    } finally {
+      await this.browserService.closePopup();
+    }
+  };
 }

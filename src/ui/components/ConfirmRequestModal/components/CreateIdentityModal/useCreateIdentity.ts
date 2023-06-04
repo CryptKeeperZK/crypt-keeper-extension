@@ -88,11 +88,11 @@ export const useCreateIdentity = ({ pendingRequest }: IUseConnectionIdentityModa
         const options =
           identityStrategyType.value !== "random"
             ? {
-              nonce,
-              web2Provider: web2Provider.value as IdentityWeb2Provider,
-              account: account as string,
-              message,
-            }
+                nonce,
+                web2Provider: web2Provider.value as IdentityWeb2Provider,
+                account: account as string,
+                message,
+              }
             : { message, account: account as string };
 
         const messageSignature =
@@ -106,7 +106,7 @@ export const useCreateIdentity = ({ pendingRequest }: IUseConnectionIdentityModa
             messageSignature,
             options,
             walletType,
-            host
+            host,
           }),
         );
         navigate(Paths.HOME);

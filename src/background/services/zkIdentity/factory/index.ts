@@ -34,6 +34,6 @@ function createRandomIdentity(config: ICreateIdentityArgs): ZkIdentitySemaphore 
     account,
     name,
     identityStrategy,
-    host
+    host,
   });
 }
