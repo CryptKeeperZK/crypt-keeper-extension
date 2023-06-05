@@ -11,11 +11,12 @@ import { getEnabledFeatures } from "@src/config/features";
 
 import { IdentityItem, IdentityItemProps } from "../../IdentitiesContent/Item";
 
-describe("ui/pages/Home/components/IdentityList/Item", () => {
+describe("ui/pages/Home/components/HomeIdentityList/Item", () => {
   const defaultProps: IdentityItemProps = {
     commitment: "1",
     selected: "0",
     isShowSettings: true,
+    isDisableCheckClick: false,
     metadata: {
       account: ZERO_ADDRESS,
       name: "Account #0",

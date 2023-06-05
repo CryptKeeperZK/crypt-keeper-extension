@@ -6,6 +6,7 @@ import "./icon.scss";
 
 export interface IconProps {
   url?: string;
+  title?: string;
   fontAwesome?: string;
   className?: string;
   size?: number;
@@ -17,6 +18,7 @@ const IconUI = (
   {
     url = "",
     size = 0.75,
+    title = "",
     className = "",
     disabled = false,
     fontAwesome = "",
@@ -41,7 +43,7 @@ const IconUI = (
     }}
     onClick={onClick}
   >
-    {fontAwesome && <i title="Connect" className={`fas ${fontAwesome}`} />}
+    {fontAwesome && <i title={title} className={`fas ${fontAwesome}`} />}
   </Box>
 );
 

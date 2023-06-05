@@ -50,8 +50,8 @@ export const ConnectHostIdentitiesModal = ({ pendingRequest, accept, reject }: C
         </div>
 
         <ConnectTabList>
-          <IdentitiesContent identities={hostIdentities} host={host} isShowSettings={false} accept={accept} />
-          <IdentitiesContent identities={randomIdentities} host={host} isShowSettings={false} accept={accept} />
+          <IdentitiesContent identities={hostIdentities} host={host} isShowSettings={false} isDisableCheckClick={false} accept={accept} />
+          <IdentitiesContent identities={randomIdentities} host={host} isShowSettings={false} isDisableCheckClick={false} accept={accept} />
         </ConnectTabList>
       </FullModalContent>
 

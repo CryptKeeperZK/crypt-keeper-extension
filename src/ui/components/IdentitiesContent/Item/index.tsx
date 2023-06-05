@@ -26,6 +26,7 @@ export interface IdentityItemProps {
   metadata: IdentityMetadata;
   selected?: string;
   isShowSettings: boolean;
+  isDisableCheckClick: boolean;
   onDeleteIdentity: (commitment: string) => Promise<void>;
   onSelectIdentity: (commitment: string) => void;
   onConenctIdentity: (commitment: string, host: string) => void;
@@ -38,6 +39,7 @@ export const IdentityItem = ({
   selected = "",
   metadata,
   isShowSettings = true,
+  isDisableCheckClick = true,
   onDeleteIdentity,
   onSelectIdentity,
   onConenctIdentity,
@@ -88,23 +90,25 @@ export const IdentityItem = ({
 
   return (
     <div key={commitment} className="p-4 identity-row">
-      {/* <Icon
-        className={classNames("identity-row__select-icon", {
-          "identity-row__select-icon--selected": selected === commitment,
-        })}
-        data-testid={`identity-select-${commitment}`}
-        fontAwesome="fas fa-check"
-        onClick={handleSelectIdentity}
-      /> */}
-
-      <Icon
-        className={classNames("identity-row__select-icon", {
-          "identity-row__select-icon--selected": selected === commitment,
-        })}
-        data-testid={`identity-connect-${commitment}`}
-        fontAwesome="fas fa-check"
-        onClick={handleConnectIdentity}
-      />
+      {isDisableCheckClick ? (
+        <Icon
+          disabled={isDisableCheckClick}
+          className={classNames("identity-row__select-icon")}
+          data-testid={`identity-select-${commitment}`}
+          fontAwesome="fas fa-check"
+          onClick={handleSelectIdentity}
+        />
+      ) : (
+        <Icon
+          title="Connec"
+          className={classNames("identity-row__select-icon", {
+            "identity-row__select-icon--selected": selected === commitment,
+          })}
+          data-testid={`identity-connect-${commitment}`}
+          fontAwesome="fas fa-check"
+          onClick={handleConnectIdentity}
+        />
+      )}
 
       <div className="flex flex-col flex-grow">
         {isRenaming ? (

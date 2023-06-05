@@ -2,7 +2,7 @@ import classNames from "classnames";
 
 import { Header } from "@src/ui/components/Header";
 import { ActivityList } from "@src/ui/components/ActivityList";
-import { IdentityList } from "@src/ui/components/IdentityList";
+import { HomeIdentityList } from "@src/ui/components/HomeIdentityList";
 import { Info } from "@src/ui/components/Info";
 import { HomeTabList } from "@src/ui/components/HomeTabList";
 
@@ -20,7 +20,7 @@ const Home = (): JSX.Element => {
         <Info refreshConnectionStatus={refreshConnectionStatus} />
 
         <HomeTabList>
-          <IdentityList identities={identities} />
+          <HomeIdentityList identities={identities} />
           <ActivityList />
         </HomeTabList>
       </div>

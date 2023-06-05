@@ -17,7 +17,7 @@ import {
   useSelectedIdentity,
 } from "@src/ui/ducks/identities";
 
-import { IdentityList } from "..";
+import { HomeIdentityList } from "..";
 
 jest.mock("@src/ui/ducks/hooks", (): unknown => ({
   useAppDispatch: jest.fn(),
@@ -32,7 +32,7 @@ jest.mock("@src/ui/ducks/identities", (): unknown => ({
   createIdentityRequest: jest.fn(),
 }));
 
-describe("ui/pages/Home/components/IdentityList", () => {
+describe("ui/pages/Home/components/HomeIdentityList", () => {
   const mockDispatch = jest.fn(() => Promise.resolve());
 
   const defaultIdentities: IdentityData[] = [
@@ -72,7 +72,7 @@ describe("ui/pages/Home/components/IdentityList", () => {
   });
 
   test("should render properly", async () => {
-    render(<IdentityList identities={defaultIdentities} />);
+    render(<HomeIdentityList identities={defaultIdentities} />);
 
     const identityName1 = await screen.findByText(defaultIdentities[0].metadata.name);
     const identityName2 = await screen.findByText(defaultIdentities[1].metadata.name);
@@ -82,7 +82,7 @@ describe("ui/pages/Home/components/IdentityList", () => {
   });
 
   test("should select identity properly", async () => {
-    render(<IdentityList identities={defaultIdentities} />);
+    render(<HomeIdentityList identities={defaultIdentities} />);
 
     const selectIcon = await screen.findByTestId(`identity-select-${defaultIdentities[1].commitment}`);
     act(() => selectIcon.click());
@@ -93,7 +93,7 @@ describe("ui/pages/Home/components/IdentityList", () => {
   });
 
   test("should rename identity properly", async () => {
-    render(<IdentityList identities={defaultIdentities} />);
+    render(<HomeIdentityList identities={defaultIdentities} />);
 
     const [menuIcon] = await screen.findAllByTestId("menu");
     act(() => menuIcon.click());
@@ -113,7 +113,7 @@ describe("ui/pages/Home/components/IdentityList", () => {
   });
 
   test("should accept to delete identity properly", async () => {
-    render(<IdentityList identities={defaultIdentities} />);
+    render(<HomeIdentityList identities={defaultIdentities} />);
 
     const [menuIcon] = await screen.findAllByTestId("menu");
     act(() => menuIcon.click());
@@ -135,7 +135,7 @@ describe("ui/pages/Home/components/IdentityList", () => {
   });
 
   test("should reject to delete identity properly", async () => {
-    render(<IdentityList identities={defaultIdentities} />);
+    render(<HomeIdentityList identities={defaultIdentities} />);
 
     const [menuIcon] = await screen.findAllByTestId("menu");
     act(() => menuIcon.click());
@@ -156,7 +156,7 @@ describe("ui/pages/Home/components/IdentityList", () => {
   });
 
   test("should open create identity modal properly", async () => {
-    render(<IdentityList identities={defaultIdentities} />);
+    render(<HomeIdentityList identities={defaultIdentities} />);
 
     const createIdentityButton = await screen.findByTestId("create-new-identity");
     await act(async () => Promise.resolve(createIdentityButton.click()));

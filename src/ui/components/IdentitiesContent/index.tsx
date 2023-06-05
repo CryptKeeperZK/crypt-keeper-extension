@@ -11,10 +11,11 @@ export interface IdentityListProps {
   identities: IdentityData[];
   host?: string;
   isShowSettings: boolean;
+  isDisableCheckClick: boolean;
   accept?: (data?: unknown) => void;
 }
 
-export const IdentitiesContent = ({ identities, host, isShowSettings, accept }: IdentityListProps): JSX.Element => {
+export const IdentitiesContent = ({ identities, host, isShowSettings, isDisableCheckClick, accept }: IdentityListProps): JSX.Element => {
   const selected = useSelectedIdentity();
   const dispatch = useAppDispatch();
 
@@ -55,6 +56,7 @@ export const IdentitiesContent = ({ identities, host, isShowSettings, accept }: 
       {identities.map(({ commitment, metadata }) => (
         <IdentityItem
           isShowSettings={isShowSettings}
+          isDisableCheckClick={isDisableCheckClick}
           key={commitment}
           host={host}
           commitment={commitment}

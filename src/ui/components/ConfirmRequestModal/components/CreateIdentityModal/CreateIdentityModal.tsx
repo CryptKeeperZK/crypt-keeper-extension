@@ -125,10 +125,10 @@ const CreateIdentityModal = ({ pendingRequest, accept, reject }: CreateIdentityM
               <div className="text-lg font-semibold mb-2 text-center">Create your Semaphore identity for `{host}` host</div>
 
               <div className="text-sm text-gray-500 text-center">
-                You have already {randomIdentities.length} random identities. Please choose one to connect
-                with, or choose to create a new identity.
+              {randomIdentities.length === 0 ? `You don't have any aviable identities created!. Please click on Sign to create a new one.`: `You have already ${randomIdentities.length} random identities. Please choose one to connect
+                with, or choose to create a new identity.`}
               </div>
-              <IdentitiesContent identities={randomIdentities} isShowSettings={false} />
+              <IdentitiesContent identities={randomIdentities} host={host} isShowSettings={false} isDisableCheckClick={false} accept={accept} />
             </div>
           ) : (
             <Typography>Create your Semaphore random identity.</Typography>

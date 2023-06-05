@@ -13,14 +13,14 @@ import {
 
 import type { IdentityData } from "@src/types";
 
-import "./identityListStyles.scss";
+import "./homeIdentityListStyles.scss";
 import { IdentitiesContent } from "../IdentitiesContent";
 
 export interface IdentityListProps {
   identities: IdentityData[];
 }
 
-export const IdentityList = ({ identities }: IdentityListProps): JSX.Element => {
+export const HomeIdentityList = ({ identities }: IdentityListProps): JSX.Element => {
   const dispatch = useAppDispatch();
 
   const onCreateIdentityRequest = useCallback(() => {
@@ -29,7 +29,7 @@ export const IdentityList = ({ identities }: IdentityListProps): JSX.Element => 
 
   return (
     <>
-      <IdentitiesContent identities={identities} isShowSettings={true} />
+      <IdentitiesContent identities={identities} isShowSettings={true} isDisableCheckClick={true} />
 
       <div className="flex flex-row items-center p-4">
         <button
