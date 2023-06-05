@@ -43,8 +43,13 @@ describe("ui/ducks/identities", () => {
   const defaultIdentities: IdentitiesState["identities"] = [
     {
       commitment: "1",
-      metadata: { account: ZERO_ADDRESS, name: "Account #1", identityStrategy: "interrep", web2Provider: "twitter",         groups: []
-    },
+      metadata: {
+        account: ZERO_ADDRESS,
+        name: "Account #1",
+        identityStrategy: "interrep",
+        web2Provider: "twitter",
+        groups: [],
+      },
     },
   ];
 

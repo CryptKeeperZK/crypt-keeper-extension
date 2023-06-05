@@ -58,7 +58,7 @@ export const IdentityItem = ({
 
   const handleConnectIdentity = useCallback(() => {
     if (!host) {
-      throw new Error("Please set host in order to continue this action.")
+      throw new Error("Please set host in order to continue this action.");
     }
     onConenctIdentity(commitment, host);
   }, [commitment, onSelectIdentity]);

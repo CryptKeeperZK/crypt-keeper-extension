@@ -41,7 +41,7 @@ describe("ui/pages/Home/components/ActivityList/useActivityList", () => {
           name: "Account #1",
           identityStrategy: "interrep",
           web2Provider: "twitter",
-          groups: []
+          groups: [],
         },
       },
       createdAt: new Date().toISOString(),
@@ -55,7 +55,7 @@ describe("ui/pages/Home/components/ActivityList/useActivityList", () => {
           account: ZERO_ADDRESS,
           name: "Account #2",
           identityStrategy: "random",
-          groups: []
+          groups: [],
         },
       },
       createdAt: new Date().toISOString(),

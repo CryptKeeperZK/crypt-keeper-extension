@@ -43,7 +43,7 @@ describe("ui/pages/Home/components/HomeIdentityList", () => {
         name: "Account #0",
         identityStrategy: "interrep",
         web2Provider: "twitter",
-        groups: []
+        groups: [],
       },
     },
     {
@@ -52,7 +52,7 @@ describe("ui/pages/Home/components/HomeIdentityList", () => {
         account: ZERO_ADDRESS,
         name: "Account #1",
         identityStrategy: "random",
-        groups: []
+        groups: [],
       },
     },
   ];

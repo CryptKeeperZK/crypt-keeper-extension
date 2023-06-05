@@ -1,4 +1,10 @@
-import { Approvals, ConnectedIdentityData, PendingRequestType, RLNProofRequest, SemaphoreProofRequest } from "@src/types";
+import {
+  Approvals,
+  ConnectedIdentityData,
+  PendingRequestType,
+  RLNProofRequest,
+  SemaphoreProofRequest,
+} from "@src/types";
 import log from "loglevel";
 import LockerService from "../lock";
 import BrowserUtils from "@src/background/controllers/browserUtils";
@@ -37,7 +43,7 @@ export default class InjectorService {
     return InjectorService.INSTANCE;
   }
 
-  // TODO: This function is complicated and needs to be simplified in smaller private functions, that will be done in another PR. 
+  // TODO: This function is complicated and needs to be simplified in smaller private functions, that will be done in another PR.
   connect = async (payload: { origin: string }): Promise<ConnectedIdentityData> => {
     const { origin: host } = payload;
     if (!host) {
@@ -66,7 +72,7 @@ export default class InjectorService {
         const canSkipApproveResponse = this.approvalService.canSkipApprove(host);
         approvalResponse = { isApproved: true, canSkipApprove: canSkipApproveResponse };
       } catch (e) {
-        throw new Error("User rejected to connect!")
+        throw new Error("User rejected to connect!");
       }
     }
 

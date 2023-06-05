@@ -53,7 +53,7 @@ describe("ui/pages/Home/useHome", () => {
         name: "Account #1",
         identityStrategy: "interrep",
         web2Provider: "twitter",
-        groups: []
+        groups: [],
       },
     },
     {
@@ -62,7 +62,7 @@ describe("ui/pages/Home/useHome", () => {
         account: defaultWalletHookData.address as string,
         name: "Account #2",
         identityStrategy: "random",
-        groups: []
+        groups: [],
       },
     },
   ];

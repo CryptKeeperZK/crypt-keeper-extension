@@ -11,8 +11,7 @@ const mockDefaultOperations: Operation[] = [
     type: OperationType.CREATE_IDENTITY,
     identity: {
       commitment: "1234",
-      metadata: { identityStrategy: "random", account: ZERO_ADDRESS, name: "Account #1",         groups: []
-    },
+      metadata: { identityStrategy: "random", account: ZERO_ADDRESS, name: "Account #1", groups: [] },
     },
     createdAt: new Date().toISOString(),
   },
@@ -21,8 +20,7 @@ const mockDefaultOperations: Operation[] = [
     type: OperationType.CREATE_IDENTITY,
     identity: {
       commitment: "1234",
-      metadata: { identityStrategy: "interrep", account: ZERO_ADDRESS, name: "Account #2",         groups: []
-    },
+      metadata: { identityStrategy: "interrep", account: ZERO_ADDRESS, name: "Account #2", groups: [] },
     },
     createdAt: new Date().toISOString(),
   },
@@ -31,8 +29,7 @@ const mockDefaultOperations: Operation[] = [
     type: OperationType.DELETE_IDENTITY,
     identity: {
       commitment: "1234",
-      metadata: { identityStrategy: "interrep", account: ZERO_ADDRESS, name: "Account #3",         groups: []
-    },
+      metadata: { identityStrategy: "interrep", account: ZERO_ADDRESS, name: "Account #3", groups: [] },
     },
     createdAt: new Date().toISOString(),
   },

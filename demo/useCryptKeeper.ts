@@ -46,7 +46,7 @@ export const useCryptKeeper = (): IUseCryptKeeperData => {
   const [connectedIdentity, setConnectedIdentity] = useState<ConnectedIdentityData>({
     identityCommitment: "",
     host: "",
-    groups: []
+    groups: [],
   });
   const mockIdentityCommitments: string[] = genMockIdentityCommitments();
 
@@ -58,8 +58,8 @@ export const useCryptKeeper = (): IUseCryptKeeperData => {
       return;
     }
 
-    console.log(`cryptkeeper`, cryptkeeper)
-    console.log(`cryptkeeper.connect`, cryptkeeper.connect)
+    console.log(`cryptkeeper`, cryptkeeper);
+    console.log(`cryptkeeper.connect`, cryptkeeper.connect);
 
     const client = cryptkeeper;
 
@@ -75,7 +75,7 @@ export const useCryptKeeper = (): IUseCryptKeeperData => {
     try {
       const connectedIdentityData = await client.connect();
       toast(`CryptKeeper: Identity connected successfully!`, { type: "success" });
-      setConnectedIdentity(connectedIdentityData)
+      setConnectedIdentity(connectedIdentityData);
       setIsLocked(false);
     } catch (error) {
       toast(`${error}`, { type: "error" });
@@ -198,7 +198,7 @@ export const useCryptKeeper = (): IUseCryptKeeperData => {
     setConnectedIdentity({
       identityCommitment: "",
       host: "",
-      groups: []
+      groups: [],
     });
     setIsLocked(true);
   }, [setConnectedIdentity, setIsLocked]);

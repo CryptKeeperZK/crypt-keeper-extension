@@ -23,7 +23,7 @@ function createInterrepIdentity(config: ICreateIdentityArgs): ZkIdentitySemaphor
     name,
     identityStrategy,
     web2Provider,
-    groups
+    groups,
   });
 }
 
@@ -36,6 +36,6 @@ function createRandomIdentity(config: ICreateIdentityArgs): ZkIdentitySemaphore 
     name,
     identityStrategy,
     host,
-    groups
+    groups,
   });
 }

@@ -114,17 +114,17 @@ export const createIdentityRequest = () => async (): Promise<void> => {
 
 export const createIdentity =
   ({ walletType, strategy, messageSignature, options, host }: ICreateIdentityUiArgs) =>
-    async (): Promise<string | undefined> =>
-      postMessage({
-        method: RPCAction.CREATE_IDENTITY,
-        payload: {
-          strategy,
-          walletType,
-          messageSignature,
-          options,
-          host,
-        },
-      });
+  async (): Promise<string | undefined> =>
+    postMessage({
+      method: RPCAction.CREATE_IDENTITY,
+      payload: {
+        strategy,
+        walletType,
+        messageSignature,
+        options,
+        host,
+      },
+    });
 
 export const setActiveIdentity = (identityCommitment: string) => async (): Promise<boolean> =>
   postMessage({
@@ -139,7 +139,7 @@ export const setConnectedIdentity = (identityCommitment: string, host: string) =
     method: RPCAction.SET_CONNECTED_IDENTITY,
     payload: {
       identityCommitment,
-      host
+      host,
     },
   });
 
@@ -170,11 +170,11 @@ export const fetchIdentities = (): TypedThunk => async (dispatch) => {
   dispatch(setIdentities(data));
 
   // TODO `RPCAction.GET_ACTIVE_IDENTITY_DATA` will be deprecated and moved to connected identity depending on the host opened.
-  //      After the user connected to an app (host), the connected identity will be marked automatically. 
+  //      After the user connected to an app (host), the connected identity will be marked automatically.
   //      And when the user open the extension to another pagw (window) (host):
-  //       - if this host is connected, the connected identity will be selected. 
+  //       - if this host is connected, the connected identity will be selected.
   //       - if not connected, no identity will be selected for this host, until the user make a connection with this host first.
-  //      This feature would be implemented in another PR depending on the team discussion. 
+  //      This feature would be implemented in another PR depending on the team discussion.
   // const { commitment, web2Provider } = await postMessage<SelectedIdentity>({
   //   method: RPCAction.GET_ACTIVE_IDENTITY_DATA,
   // });
@@ -188,28 +188,25 @@ export const fetchIdentities = (): TypedThunk => async (dispatch) => {
 
 export const fetchHostIdentities =
   (host: string): TypedThunk =>
-    async (dispatch) => {
-      const data = await postMessage<IdentityData[]>({
-        method: RPCAction.GET_HOST_IDENTITIES,
-        payload: {
-          host,
-        },
-      });
+  async (dispatch) => {
+    const data = await postMessage<IdentityData[]>({
+      method: RPCAction.GET_HOST_IDENTITIES,
+      payload: {
+        host,
+      },
+    });
 
-      console.log("Data", data);
-      dispatch(setHostIdentities(data));
-    };
+    console.log("Data", data);
+    dispatch(setHostIdentities(data));
+  };
 
+export const fetchRandomIdentities = (): TypedThunk => async (dispatch) => {
+  const data = await postMessage<IdentityData[]>({
+    method: RPCAction.GET_RANDOM_IDENTITIES,
+  });
 
-export const fetchRandomIdentities =
-  (): TypedThunk =>
-    async (dispatch) => {
-      const data = await postMessage<IdentityData[]>({
-        method: RPCAction.GET_RANDOM_IDENTITIES
-      });
-
-      dispatch(setRandomIdentities(data));
-    };
+  dispatch(setRandomIdentities(data));
+};
 
 export const fetchHistory = (): TypedThunk<Promise<void>> => async (dispatch) => {
   const { operations, settings } = await postMessage<{ operations: Operation[]; settings: HistorySettings }>({
@@ -226,10 +223,10 @@ export const getHistory = (): TypedThunk => async (dispatch) => {
 
 export const deleteHistoryOperation =
   (id: string): TypedThunk<Promise<void>> =>
-    async (dispatch) => {
-      const operations = await postMessage<Operation[]>({ method: RPCAction.DELETE_HISTORY_OPERATION, payload: id });
-      dispatch(setOperations(operations));
-    };
+  async (dispatch) => {
+    const operations = await postMessage<Operation[]>({ method: RPCAction.DELETE_HISTORY_OPERATION, payload: id });
+    dispatch(setOperations(operations));
+  };
 
 export const clearHistory = (): TypedThunk<Promise<void>> => async (dispatch) => {
   await postMessage<Operation[]>({ method: RPCAction.DELETE_ALL_HISTORY_OPERATIONS });
@@ -238,10 +235,10 @@ export const clearHistory = (): TypedThunk<Promise<void>> => async (dispatch) =>
 
 export const enableHistory =
   (isEnabled: boolean): TypedThunk<Promise<void>> =>
-    async (dispatch) => {
-      await postMessage<HistorySettings>({ method: RPCAction.ENABLE_OPERATION_HISTORY, payload: isEnabled });
-      dispatch(setSettings({ isEnabled }));
-    };
+  async (dispatch) => {
+    await postMessage<HistorySettings>({ method: RPCAction.ENABLE_OPERATION_HISTORY, payload: isEnabled });
+    dispatch(setSettings({ isEnabled }));
+  };
 
 export const useIdentities = (): IdentityData[] => useAppSelector((state) => state.identities.identities, deepEqual);
 

@@ -24,14 +24,7 @@ function NoActiveIDCommitment() {
 }
 
 function App() {
-  const {
-    isLocked,
-    connectedIdentity,
-    MerkleProofType,
-    connect,
-    createIdentity,
-    genSemaphoreProof,
-  } = useCryptKeeper();
+  const { isLocked, connectedIdentity, MerkleProofType, connect, createIdentity, genSemaphoreProof } = useCryptKeeper();
 
   if (!connectedIdentity || isLocked) {
     return <NotConnected onClick={connect} />;
@@ -58,7 +51,11 @@ function App() {
       <hr />
       <div>
         <h2>Joined groups for the connected identity:</h2>
-        <p>{connectedIdentity.groups.length === 0 ? "No joined groups for this connected identity!" : connectedIdentity.groups as unknown as string}</p>
+        <p>
+          {connectedIdentity.groups.length === 0
+            ? "No joined groups for this connected identity!"
+            : (connectedIdentity.groups as unknown as string)}
+        </p>
       </div>
 
       <hr />

@@ -21,7 +21,13 @@ import {
   OperationType,
   SelectedIdentity,
 } from "@src/types";
-import { setConnectedCommitment, setConnectedIdentity, setIdentities, setIdentityHost, setSelectedCommitment } from "@src/ui/ducks/identities";
+import {
+  setConnectedCommitment,
+  setConnectedIdentity,
+  setIdentities,
+  setIdentityHost,
+  setSelectedCommitment,
+} from "@src/ui/ducks/identities";
 import { ellipsify } from "@src/util/account";
 import pushMessage from "@src/util/pushMessage";
 
@@ -134,16 +140,16 @@ export default class ZkIdentityService implements IBackupable {
     }
 
     const identityCommitment = bigintToHex(identity.genIdentityCommitment());
-    const host =  identity?.metadata.host;
-    
+    const host = identity?.metadata.host;
+
     if (!host) {
-      throw new Error("This host is not connected to this host")
+      throw new Error("This host is not connected to this host");
     }
 
     return {
       identityCommitment,
       host,
-      groups: []
+      groups: [],
     };
   };
 
@@ -190,7 +196,11 @@ export default class ZkIdentityService implements IBackupable {
       });
   };
 
-  getHostIdentitis = async ({ host }: { host: string}): Promise<{ commitment: string; metadata: IdentityMetadata }[]> => {
+  getHostIdentitis = async ({
+    host,
+  }: {
+    host: string;
+  }): Promise<{ commitment: string; metadata: IdentityMetadata }[]> => {
     const identitis = await this.getIdentities();
 
     return identitis.filter((identity) => identity.metadata.host === host);
@@ -264,7 +274,13 @@ export default class ZkIdentityService implements IBackupable {
     );
   };
 
-  setConnectedIdentity = async ({ identityCommitment, host }: { identityCommitment: string, host: string }): Promise<boolean> => {
+  setConnectedIdentity = async ({
+    identityCommitment,
+    host,
+  }: {
+    identityCommitment: string;
+    host: string;
+  }): Promise<boolean> => {
     const identities = await this.getIdentitiesFromStore();
 
     return this.updateConnectedIdentity({ identities, identityCommitment, host });
@@ -273,7 +289,7 @@ export default class ZkIdentityService implements IBackupable {
   private updateConnectedIdentity = async ({
     identities,
     identityCommitment,
-    host
+    host,
   }: {
     identities: Map<string, string>;
     identityCommitment: string;
@@ -291,7 +307,7 @@ export default class ZkIdentityService implements IBackupable {
 
     // Update connected identity host
     if (!storedIdentityHost) {
-      await this.updateIdentityHost({ identityCommitment, host })
+      await this.updateIdentityHost({ identityCommitment, host });
     }
 
     await this.writeConnectedIdentity(identityCommitment, host);
@@ -299,10 +315,7 @@ export default class ZkIdentityService implements IBackupable {
     return true;
   };
 
-  private updateIdentityHost = async ({
-    identityCommitment,
-    host
-  }: IdentityHost): Promise<boolean> => {
+  private updateIdentityHost = async ({ identityCommitment, host }: IdentityHost): Promise<boolean> => {
     const identities = await this.getIdentitiesFromStore();
     const rawIdentity = identities.get(identityCommitment);
 
@@ -327,7 +340,7 @@ export default class ZkIdentityService implements IBackupable {
         commitment,
         host,
       }),
-    )
+    );
   };
 
   // TODO: this should be more genaric to be updateIdentity()
@@ -405,7 +418,7 @@ export default class ZkIdentityService implements IBackupable {
       name: options?.name || `Account ${numOfIdentites}`,
       messageSignature: strategy === "interrep" ? messageSignature : undefined,
       host,
-      groups: [] // Groups would be empty first because its still a new identity
+      groups: [], // Groups would be empty first because its still a new identity
     };
 
     if (walletType === EWallet.CRYPT_KEEPER_WALLET && strategy === "interrep") {
@@ -418,11 +431,11 @@ export default class ZkIdentityService implements IBackupable {
     const identity = createNewIdentity(strategy, config);
     const status = await this.insertIdentity(identity);
 
-    const identityCommitment = status ? identity.genIdentityCommitment().toString() : undefined
+    const identityCommitment = status ? identity.genIdentityCommitment().toString() : undefined;
 
     // That means this is a creation from a connection request from a `host`
     if (host && identityCommitment) {
-      await this.setConnectedIdentity({identityCommitment, host});
+      await this.setConnectedIdentity({ identityCommitment, host });
       return identityCommitment;
     }
 

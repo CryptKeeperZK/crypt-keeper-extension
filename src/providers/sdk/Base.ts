@@ -170,10 +170,7 @@ export class CryptKeeperInjectedProvider extends EventEmitter {
     });
   }
 
-  async setHostPermissions(
-    host: string,
-    permissions?: HostPermission
-  ): Promise<unknown> {
+  async setHostPermissions(host: string, permissions?: HostPermission): Promise<unknown> {
     return this.post({
       method: RPCAction.SET_HOST_PERMISSIONS,
       payload: {

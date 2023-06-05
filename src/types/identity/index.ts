@@ -30,7 +30,7 @@ export interface IdentityMetadata {
   host?: string;
   web2Provider?: IdentityWeb2Provider;
   groups: GroupData[] | [];
-};
+}
 
 export interface GroupData {
   id: string;
@@ -41,8 +41,8 @@ export interface GroupData {
   contract?: string;
 }
 
-// TODO: now it always returns `identityCommitment` but we should eliminate this, so this feature will be done in another PR 
-//       becuase it needs to build `cryptkeeper.requestIdentityCommitment()` which is out of the scope of this PR. 
+// TODO: now it always returns `identityCommitment` but we should eliminate this, so this feature will be done in another PR
+//       becuase it needs to build `cryptkeeper.requestIdentityCommitment()` which is out of the scope of this PR.
 export interface ConnectedIdentityData {
   identityCommitment: string;
   // nonce: number; // TODO: will be supported in another PR
@@ -77,7 +77,7 @@ export interface ICreateIdentityArgs {
   messageSignature?: string;
   web2Provider?: IdentityWeb2Provider;
   host?: string;
-  groups: GroupData[] | []
+  groups: GroupData[] | [];
 }
 
 export type StrategiesMap = {

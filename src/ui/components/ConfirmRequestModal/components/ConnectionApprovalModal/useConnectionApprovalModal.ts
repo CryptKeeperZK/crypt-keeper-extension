@@ -35,7 +35,7 @@ export const useConnectionApprovalModal = ({
 
   const onAccept = useCallback(() => {
     if (canSkipApprove) {
-      console.log("INside canSkipApprove")
+      console.log("INside canSkipApprove");
       dispatch(setHostPermissions({ host, canSkipApprove }));
     }
     accept();
@@ -47,7 +47,7 @@ export const useConnectionApprovalModal = ({
 
   const onSetApproval = useCallback(
     (event: ChangeEvent<HTMLInputElement>) => {
-      setCanSkipApprove(event.target.checked)
+      setCanSkipApprove(event.target.checked);
     },
     [setCanSkipApprove],
   );

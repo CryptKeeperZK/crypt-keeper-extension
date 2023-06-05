@@ -77,7 +77,7 @@ describe("ui/pages/CreateIdentity/useCreateIdentity", () => {
   });
 
   test("should return initial data", () => {
-    const { result } = renderHook(() => useCreateIdentity({accept: mockAccept, reject: mockReject}));
+    const { result } = renderHook(() => useCreateIdentity({ accept: mockAccept, reject: mockReject }));
 
     expect(result.current.isLoading).toBe(false);
     expect(result.current.isProviderAvailable).toBe(true);
@@ -93,7 +93,7 @@ describe("ui/pages/CreateIdentity/useCreateIdentity", () => {
   });
 
   test("should create identity with eth wallet properly", async () => {
-    const { result } = renderHook(() => useCreateIdentity({accept: mockAccept, reject: mockReject}));
+    const { result } = renderHook(() => useCreateIdentity({ accept: mockAccept, reject: mockReject }));
 
     await act(async () => Promise.resolve(result.current.onCreateWithEthWallet()));
 
@@ -114,7 +114,7 @@ describe("ui/pages/CreateIdentity/useCreateIdentity", () => {
   test("should create identity with eth wallet and disabled interrep identity properly", async () => {
     (getEnabledFeatures as jest.Mock).mockReturnValue({ INTERREP_IDENTITY: false });
 
-    const { result } = renderHook(() => useCreateIdentity({accept: mockAccept, reject: mockReject}));
+    const { result } = renderHook(() => useCreateIdentity({ accept: mockAccept, reject: mockReject }));
 
     await act(async () => Promise.resolve(result.current.onCreateWithEthWallet()));
 
@@ -133,7 +133,7 @@ describe("ui/pages/CreateIdentity/useCreateIdentity", () => {
   });
 
   test("should connect eth wallet properly", async () => {
-    const { result } = renderHook(() => useCreateIdentity({accept: mockAccept, reject: mockReject}));
+    const { result } = renderHook(() => useCreateIdentity({ accept: mockAccept, reject: mockReject }));
 
     await act(async () => Promise.resolve(result.current.onConnectWallet()));
 
@@ -147,7 +147,7 @@ describe("ui/pages/CreateIdentity/useCreateIdentity", () => {
       onConnect: jest.fn(() => Promise.reject()),
     });
 
-    const { result } = renderHook(() => useCreateIdentity({accept: mockAccept, reject: mockReject}));
+    const { result } = renderHook(() => useCreateIdentity({ accept: mockAccept, reject: mockReject }));
 
     await act(async () => Promise.resolve(result.current.onConnectWallet()));
 
@@ -156,7 +156,7 @@ describe("ui/pages/CreateIdentity/useCreateIdentity", () => {
   });
 
   test("should create identity with cryptkeeper properly", async () => {
-    const { result } = renderHook(() => useCreateIdentity({accept: mockAccept, reject: mockReject}));
+    const { result } = renderHook(() => useCreateIdentity({ accept: mockAccept, reject: mockReject }));
 
     await act(async () => Promise.resolve(result.current.onCreateWithCryptkeeper()));
 
@@ -175,7 +175,7 @@ describe("ui/pages/CreateIdentity/useCreateIdentity", () => {
   });
 
   test("should close modal properly", () => {
-    const { result } = renderHook(() => useCreateIdentity({accept: mockAccept, reject: mockReject}));
+    const { result } = renderHook(() => useCreateIdentity({ accept: mockAccept, reject: mockReject }));
 
     act(() => result.current.closeModal());
 
@@ -189,7 +189,7 @@ describe("ui/pages/CreateIdentity/useCreateIdentity", () => {
       throw error;
     });
 
-    const { result } = renderHook(() => useCreateIdentity({accept: mockAccept, reject: mockReject}));
+    const { result } = renderHook(() => useCreateIdentity({ accept: mockAccept, reject: mockReject }));
 
     await act(async () =>
       Promise.resolve(

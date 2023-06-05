@@ -38,7 +38,7 @@ const CreateIdentityModal = ({ pendingRequest, accept, reject }: CreateIdentityM
     randomIdentities,
     isWalletModalOpen,
     closeModal,
-    onAccept, 
+    onAccept,
     onReject,
     onWalletModalShow,
     onConnectWallet,
@@ -122,13 +122,23 @@ const CreateIdentityModal = ({ pendingRequest, accept, reject }: CreateIdentityM
 
               <Typography></Typography>
 
-              <div className="text-lg font-semibold mb-2 text-center">Create your Semaphore identity for `{host}` host</div>
+              <div className="text-lg font-semibold mb-2 text-center">
+                Create your Semaphore identity for `{host}` host
+              </div>
 
               <div className="text-sm text-gray-500 text-center">
-              {randomIdentities.length === 0 ? `You don't have any aviable identities created!. Please click on Sign to create a new one.`: `You have already ${randomIdentities.length} random identities. Please choose one to connect
+                {randomIdentities.length === 0
+                  ? `You don't have any aviable identities created!. Please click on Sign to create a new one.`
+                  : `You have already ${randomIdentities.length} random identities. Please choose one to connect
                 with, or choose to create a new identity.`}
               </div>
-              <IdentitiesContent identities={randomIdentities} host={host} isShowSettings={false} isDisableCheckClick={false} accept={accept} />
+              <IdentitiesContent
+                identities={randomIdentities}
+                host={host}
+                isShowSettings={false}
+                isDisableCheckClick={false}
+                accept={accept}
+              />
             </div>
           ) : (
             <Typography>Create your Semaphore random identity.</Typography>
@@ -137,8 +147,18 @@ const CreateIdentityModal = ({ pendingRequest, accept, reject }: CreateIdentityM
 
         {errors.root && <div className="text-xs text-red-500 text-center pb-1">{errors.root}</div>}
         <FullModalFooter>
-
-          <WalletModal host={host} isOpenModal={isWalletModalOpen} isLoading={isLoading} isWalletConnected={isWalletConnected} isWalletInstalled={isWalletInstalled} onConnectWallet={onConnectWallet} onCreateWithEthWallet={onCreateWithEthWallet} onCreateWithCryptkeeper={onCreateWithCryptkeeper} reject={onWalletModalShow} accept={accept}/>
+          <WalletModal
+            host={host}
+            isOpenModal={isWalletModalOpen}
+            isLoading={isLoading}
+            isWalletConnected={isWalletConnected}
+            isWalletInstalled={isWalletInstalled}
+            onConnectWallet={onConnectWallet}
+            onCreateWithEthWallet={onCreateWithEthWallet}
+            onCreateWithCryptkeeper={onCreateWithCryptkeeper}
+            reject={onWalletModalShow}
+            accept={accept}
+          />
 
           <Button buttonType={ButtonType.SECONDARY} onClick={onReject}>
             Reject

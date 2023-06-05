@@ -1,13 +1,19 @@
 import { IdentityData, PendingRequest, RequestResolutionAction, RequestResolutionStatus } from "@src/types";
 import { useAppDispatch } from "@src/ui/ducks/hooks";
-import { createIdentityRequest, fetchHostIdentities, fetchRandomIdentities, useHostIdentities, useRandomIdentities } from "@src/ui/ducks/identities";
+import {
+  createIdentityRequest,
+  fetchHostIdentities,
+  fetchRandomIdentities,
+  useHostIdentities,
+  useRandomIdentities,
+} from "@src/ui/ducks/identities";
 import { finalizeRequest } from "@src/ui/ducks/requests";
 import { getLinkPreview } from "link-preview-js";
 import { useCallback, useEffect, useState } from "react";
 
 export interface IUseConnectHostIdentitiesModalArgs {
   pendingRequest: PendingRequest<{ host: string }>;
-  reject: () => void
+  reject: () => void;
 }
 
 export interface IUseConnectHostIdentitiesModalData {
@@ -21,7 +27,7 @@ export interface IUseConnectHostIdentitiesModalData {
 
 export const useConnectHostIdentitiesModal = ({
   pendingRequest,
-  reject
+  reject,
 }: IUseConnectHostIdentitiesModalArgs): IUseConnectHostIdentitiesModalData => {
   const [faviconUrl, setFaviconUrl] = useState("");
   const dispatch = useAppDispatch();
@@ -65,6 +71,6 @@ export const useConnectHostIdentitiesModal = ({
     host,
     faviconUrl,
     onCreateIdentityRequest,
-    onReject
+    onReject,
   };
 };

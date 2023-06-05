@@ -4,10 +4,23 @@ import { useNavigate } from "react-router-dom";
 
 import { getEnabledFeatures } from "@src/config/features";
 import { WEB2_PROVIDER_OPTIONS, IDENTITY_TYPES, Paths } from "@src/constants";
-import { EWallet, IdentityData, IdentityStrategy, IdentityWeb2Provider, PendingRequest, SelectOption } from "@src/types";
+import {
+  EWallet,
+  IdentityData,
+  IdentityStrategy,
+  IdentityWeb2Provider,
+  PendingRequest,
+  SelectOption,
+} from "@src/types";
 import { closePopup } from "@src/ui/ducks/app";
 import { useAppDispatch } from "@src/ui/ducks/hooks";
-import { createIdentity, fetchHostIdentities, fetchRandomIdentities, useIdentityHost, useRandomIdentities } from "@src/ui/ducks/identities";
+import {
+  createIdentity,
+  fetchHostIdentities,
+  fetchRandomIdentities,
+  useIdentityHost,
+  useRandomIdentities,
+} from "@src/ui/ducks/identities";
 import { useCryptKeeperWallet, useEthWallet } from "@src/ui/hooks/wallet";
 import { getMessageTemplate, signWithSigner } from "@src/ui/services/identity";
 import { getLinkPreview } from "link-preview-js";
@@ -51,7 +64,11 @@ interface FormFields {
   host?: string;
 }
 
-export const useCreateIdentity = ({ pendingRequest, accept, reject }: IUseConnectionIdentityModalArgs): IUseCreateIdentityData => {
+export const useCreateIdentity = ({
+  pendingRequest,
+  accept,
+  reject,
+}: IUseConnectionIdentityModalArgs): IUseCreateIdentityData => {
   const [faviconUrl, setFaviconUrl] = useState("");
   const [isWalletModalOpen, setWalletModalOpen] = useState(false);
   const randomIdentities = useRandomIdentities();
@@ -110,11 +127,11 @@ export const useCreateIdentity = ({ pendingRequest, accept, reject }: IUseConnec
         const options =
           identityStrategyType.value !== "random"
             ? {
-              nonce,
-              web2Provider: web2Provider.value as IdentityWeb2Provider,
-              account: account as string,
-              message,
-            }
+                nonce,
+                web2Provider: web2Provider.value as IdentityWeb2Provider,
+                account: account as string,
+                message,
+              }
             : { message, account: account as string };
 
         const messageSignature =
@@ -201,7 +218,7 @@ export const useCreateIdentity = ({ pendingRequest, accept, reject }: IUseConnec
     faviconUrl,
     isWalletModalOpen,
     closeModal,
-    onAccept, 
+    onAccept,
     onReject,
     onWalletModalShow,
     register,

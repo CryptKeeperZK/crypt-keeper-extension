@@ -2,7 +2,13 @@ import { IdentityData, RequestResolutionAction, RequestResolutionStatus } from "
 
 import "./identitiesContent.scss";
 import { IdentityItem } from "./Item";
-import { deleteIdentity, setActiveIdentity, setConnectedIdentity, setIdentityName, useSelectedIdentity } from "@src/ui/ducks/identities";
+import {
+  deleteIdentity,
+  setActiveIdentity,
+  setConnectedIdentity,
+  setIdentityName,
+  useSelectedIdentity,
+} from "@src/ui/ducks/identities";
 import { useCallback } from "react";
 import { useAppDispatch } from "@src/ui/ducks/hooks";
 import { finalizeRequest, usePendingRequests } from "@src/ui/ducks/requests";
@@ -15,7 +21,13 @@ export interface IdentityListProps {
   accept?: (data?: unknown) => void;
 }
 
-export const IdentitiesContent = ({ identities, host, isShowSettings, isDisableCheckClick, accept }: IdentityListProps): JSX.Element => {
+export const IdentitiesContent = ({
+  identities,
+  host,
+  isShowSettings,
+  isDisableCheckClick,
+  accept,
+}: IdentityListProps): JSX.Element => {
   const selected = useSelectedIdentity();
   const dispatch = useAppDispatch();
 
@@ -26,14 +38,13 @@ export const IdentitiesContent = ({ identities, host, isShowSettings, isDisableC
     [dispatch],
   );
 
-
   const onConenctIdentity = useCallback(
     async (identityCommitment: string, host: string) => {
-        if (!accept) {
-            throw new Error("Please set accept to be able to continue")
-        }
-        await dispatch(setConnectedIdentity(identityCommitment, host));
-        accept();
+      if (!accept) {
+        throw new Error("Please set accept to be able to continue");
+      }
+      await dispatch(setConnectedIdentity(identityCommitment, host));
+      accept();
     },
     [accept],
   );

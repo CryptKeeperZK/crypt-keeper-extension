@@ -85,7 +85,7 @@ describe("ui/pages/CreateIdentity", () => {
   });
 
   test("should render properly with random", async () => {
-    const { container } = render(<CreateIdentityModal accept={mockAccept} reject={mockReject}/>);
+    const { container } = render(<CreateIdentityModal accept={mockAccept} reject={mockReject} />);
 
     await waitFor(() => container.firstChild !== null);
 

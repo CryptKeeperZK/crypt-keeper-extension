@@ -10,7 +10,7 @@ describe("background/services/zkIdentity/factory", () => {
       account: ZERO_ADDRESS,
       messageSignature: "signature",
       web2Provider: "github",
-      groups: []
+      groups: [],
     });
 
     expect(identity.metadata).toStrictEqual({
@@ -27,7 +27,7 @@ describe("background/services/zkIdentity/factory", () => {
       name: "name",
       account: ZERO_ADDRESS,
       messageSignature: "signature",
-      groups: []
+      groups: [],
     });
 
     expect(identity.metadata).toStrictEqual({

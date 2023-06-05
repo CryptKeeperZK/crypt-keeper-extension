@@ -18,13 +18,26 @@ export interface ConnectionApprovalModalProps {
   reject: () => void;
 }
 
-export const ConnectHostIdentitiesModal = ({ pendingRequest, accept, reject }: ConnectionApprovalModalProps): JSX.Element => {
+export const ConnectHostIdentitiesModal = ({
+  pendingRequest,
+  accept,
+  reject,
+}: ConnectionApprovalModalProps): JSX.Element => {
   const { hostIdentities, randomIdentities, host, faviconUrl, onReject } = useConnectHostIdentitiesModal({
     pendingRequest,
-    reject
+    reject,
   });
 
-  const { isWalletModalOpen, isLoading, isWalletConnected, isWalletInstalled, onConnectWallet, onCreateWithEthWallet, onCreateWithCryptkeeper, onWalletModalShow } = useCreateIdentity({ pendingRequest, accept })
+  const {
+    isWalletModalOpen,
+    isLoading,
+    isWalletConnected,
+    isWalletInstalled,
+    onConnectWallet,
+    onCreateWithEthWallet,
+    onCreateWithCryptkeeper,
+    onWalletModalShow,
+  } = useCreateIdentity({ pendingRequest, accept });
 
   return (
     <FullModal className="confirm-modal" data-testid="approval-modal" onClose={() => console.log("hi")}>
@@ -50,13 +63,35 @@ export const ConnectHostIdentitiesModal = ({ pendingRequest, accept, reject }: C
         </div>
 
         <ConnectTabList>
-          <IdentitiesContent identities={hostIdentities} host={host} isShowSettings={false} isDisableCheckClick={false} accept={accept} />
-          <IdentitiesContent identities={randomIdentities} host={host} isShowSettings={false} isDisableCheckClick={false} accept={accept} />
+          <IdentitiesContent
+            identities={hostIdentities}
+            host={host}
+            isShowSettings={false}
+            isDisableCheckClick={false}
+            accept={accept}
+          />
+          <IdentitiesContent
+            identities={randomIdentities}
+            host={host}
+            isShowSettings={false}
+            isDisableCheckClick={false}
+            accept={accept}
+          />
         </ConnectTabList>
       </FullModalContent>
 
       <FullModalFooter>
-        <WalletModal host={host} isOpenModal={isWalletModalOpen} isLoading={isLoading} isWalletConnected={isWalletConnected} isWalletInstalled={isWalletInstalled} onConnectWallet={onConnectWallet} onCreateWithEthWallet={onCreateWithEthWallet} onCreateWithCryptkeeper={onCreateWithCryptkeeper} reject={onWalletModalShow} />
+        <WalletModal
+          host={host}
+          isOpenModal={isWalletModalOpen}
+          isLoading={isLoading}
+          isWalletConnected={isWalletConnected}
+          isWalletInstalled={isWalletInstalled}
+          onConnectWallet={onConnectWallet}
+          onCreateWithEthWallet={onCreateWithEthWallet}
+          onCreateWithCryptkeeper={onCreateWithCryptkeeper}
+          reject={onWalletModalShow}
+        />
 
         <Button buttonType={ButtonType.SECONDARY} onClick={onReject}>
           Reject

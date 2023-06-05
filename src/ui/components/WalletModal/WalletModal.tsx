@@ -21,9 +21,20 @@ export interface BasicModalProps {
 }
 
 // TODO: replace wallet names with icons
-export const WalletModal = ({ host, isOpenModal, isLoading, isWalletConnected, isWalletInstalled, onConnectWallet, onCreateWithEthWallet, onCreateWithCryptkeeper, reject, accept }: BasicModalProps): JSX.Element => {
+export const WalletModal = ({
+  host,
+  isOpenModal,
+  isLoading,
+  isWalletConnected,
+  isWalletInstalled,
+  onConnectWallet,
+  onCreateWithEthWallet,
+  onCreateWithCryptkeeper,
+  reject,
+  accept,
+}: BasicModalProps): JSX.Element => {
   const ethWalletTitle = isWalletConnected ? "Metamask" : "Connect to Metamask";
-  
+
   const handleCreateWithCryptKeeper = useCallback(async () => {
     await onCreateWithCryptkeeper();
     if (accept) {
@@ -44,11 +55,9 @@ export const WalletModal = ({ host, isOpenModal, isLoading, isWalletConnected, i
         <FullModalContent className="flex flex-col items-center">
           <Box sx={{ p: "1rem", display: "flex", alignItems: "center" }}>
             <Typography sx={{ mr: 1 }}>
-              {host ? 
-                (`Choose wallet to create a new identity for ${host} `)
-              : 
-                (`Choose wallet to create a new random identity`)
-              }
+              {host
+                ? `Choose wallet to create a new identity for ${host} `
+                : `Choose wallet to create a new random identity`}
             </Typography>
 
             <Tooltip
@@ -78,24 +87,24 @@ export const WalletModal = ({ host, isOpenModal, isLoading, isWalletConnected, i
               variant="outlined"
               onClick={handleCreateWithCryptKeeper}
             >
-              Cryptkeeper 
+              Cryptkeeper
             </Button>
           </Box>
         </FullModalContent>
 
         <FullModalFooter>
           <Button
-              disabled={isLoading}
-              name="close"
-              sx={{ textTransform: "none" }}
-              type="submit"
-              variant="contained"
-              onClick={reject}
-            >
-              Close
-            </Button>
-      </FullModalFooter>
+            disabled={isLoading}
+            name="close"
+            sx={{ textTransform: "none" }}
+            type="submit"
+            variant="contained"
+            onClick={reject}
+          >
+            Close
+          </Button>
+        </FullModalFooter>
       </Box>
     </Modal>
-  )
+  );
 };
