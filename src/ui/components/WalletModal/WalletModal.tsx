@@ -1,3 +1,4 @@
+import { BaseSyntheticEvent, MouseEvent as ReactMouseEvent, useCallback } from "react";
 import Box from "@mui/material/Box";
 import Modal from "@mui/material/Modal";
 import { FullModalContent, FullModalFooter, FullModalHeader } from "@src/ui/components/FullModal";
@@ -5,7 +6,6 @@ import { FullModalContent, FullModalFooter, FullModalHeader } from "@src/ui/comp
 import { style } from "./style";
 import { Typography, Tooltip, Button } from "@mui/material";
 import { Icon } from "@src/ui/components/Icon";
-import { BaseSyntheticEvent } from "react";
 
 export interface BasicModalProps {
   host?: string;
@@ -16,13 +16,21 @@ export interface BasicModalProps {
   onConnectWallet: () => Promise<void>;
   onCreateWithEthWallet: (event?: BaseSyntheticEvent) => Promise<void>;
   onCreateWithCryptkeeper: (event?: BaseSyntheticEvent) => Promise<void>;
-  reject: () => void;
+  accept?: () => void;
+  reject: (event: ReactMouseEvent) => void;
 }
 
 // TODO: replace wallet names with icons
-export const WalletModal = ({ host, isOpenModal, isLoading, isWalletConnected, isWalletInstalled, onConnectWallet, onCreateWithEthWallet, onCreateWithCryptkeeper, reject }: BasicModalProps): JSX.Element => {
+export const WalletModal = ({ host, isOpenModal, isLoading, isWalletConnected, isWalletInstalled, onConnectWallet, onCreateWithEthWallet, onCreateWithCryptkeeper, reject, accept }: BasicModalProps): JSX.Element => {
   const ethWalletTitle = isWalletConnected ? "Metamask" : "Connect to Metamask";
   
+  const handleCreateWithCryptKeeper = useCallback(async () => {
+    await onCreateWithCryptkeeper();
+    if (accept) {
+      accept();
+    }
+  }, [accept]);
+
   return (
     <Modal
       aria-describedby="modal-modal-description"
@@ -68,7 +76,7 @@ export const WalletModal = ({ host, isOpenModal, isLoading, isWalletConnected, i
               sx={{ textTransform: "none" }}
               type="submit"
               variant="outlined"
-              onClick={onCreateWithCryptkeeper}
+              onClick={handleCreateWithCryptKeeper}
             >
               Cryptkeeper 
             </Button>

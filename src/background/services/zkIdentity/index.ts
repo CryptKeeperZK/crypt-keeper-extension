@@ -21,7 +21,7 @@ import {
   OperationType,
   SelectedIdentity,
 } from "@src/types";
-import { setConnectedCommitment, setIdentities, setIdentityHost, setSelectedCommitment } from "@src/ui/ducks/identities";
+import { setConnectedCommitment, setConnectedIdentity, setIdentities, setIdentityHost, setSelectedCommitment } from "@src/ui/ducks/identities";
 import { ellipsify } from "@src/util/account";
 import pushMessage from "@src/util/pushMessage";
 
@@ -417,9 +417,18 @@ export default class ZkIdentityService implements IBackupable {
 
     const identity = createNewIdentity(strategy, config);
     const status = await this.insertIdentity(identity);
+
+    const identityCommitment = status ? identity.genIdentityCommitment().toString() : undefined
+
+    // That means this is a creation from a connection request from a `host`
+    if (host && identityCommitment) {
+      await this.setConnectedIdentity({identityCommitment, host});
+      return identityCommitment;
+    }
+
     await this.browserController.closePopup();
 
-    return status ? identity.genIdentityCommitment().toString() : undefined;
+    return identityCommitment;
   };
 
   private insertIdentity = async (newIdentity: ZkIdentitySemaphore): Promise<boolean> => {

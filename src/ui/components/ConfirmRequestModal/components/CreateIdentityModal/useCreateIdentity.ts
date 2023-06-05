@@ -1,4 +1,4 @@
-import { BaseSyntheticEvent, useCallback, useEffect, useState } from "react";
+import { BaseSyntheticEvent, useCallback, useEffect, useState, MouseEvent as ReactMouseEvent } from "react";
 import { Control, useForm, UseFormRegister } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 
@@ -14,6 +14,8 @@ import { getLinkPreview } from "link-preview-js";
 
 export interface IUseConnectionIdentityModalArgs {
   pendingRequest?: PendingRequest<{ host: string }>;
+  accept?: () => void;
+  reject?: () => void;
 }
 
 export interface IUseCreateIdentityData {
@@ -33,7 +35,9 @@ export interface IUseCreateIdentityData {
   randomIdentities: IdentityData[];
   isWalletModalOpen: boolean;
   closeModal: () => void;
-  onWalletModalShow: () => void;
+  onAccept: () => void;
+  onReject: () => void;
+  onWalletModalShow: (event: ReactMouseEvent) => void;
   register: UseFormRegister<FormFields>;
   onConnectWallet: () => Promise<void>;
   onCreateWithEthWallet: (event?: BaseSyntheticEvent) => Promise<void>;
@@ -44,9 +48,10 @@ interface FormFields {
   identityStrategyType: SelectOption;
   web2Provider: SelectOption;
   nonce: number;
+  host?: string;
 }
 
-export const useCreateIdentity = ({ pendingRequest }: IUseConnectionIdentityModalArgs): IUseCreateIdentityData => {
+export const useCreateIdentity = ({ pendingRequest, accept, reject }: IUseConnectionIdentityModalArgs): IUseCreateIdentityData => {
   const [faviconUrl, setFaviconUrl] = useState("");
   const [isWalletModalOpen, setWalletModalOpen] = useState(false);
   const randomIdentities = useRandomIdentities();
@@ -79,12 +84,17 @@ export const useCreateIdentity = ({ pendingRequest }: IUseConnectionIdentityModa
     host = payload?.host ?? undefined;
   }
 
-  const onWalletModalShow = useCallback(() => {
-    setWalletModalOpen((value) => !value);
-  }, [setWalletModalOpen]);
+  const onWalletModalShow = useCallback(
+    (event: ReactMouseEvent) => {
+      event.stopPropagation();
+      setWalletModalOpen((show) => !show);
+    },
+    [setWalletModalOpen],
+  );
 
   const createNewIdentity = useCallback(
     async ({ identityStrategyType, web2Provider, nonce }: FormFields, walletType: EWallet) => {
+      console.log(`host inside`, host);
       try {
         const account =
           walletType === EWallet.ETH_WALLET
@@ -147,6 +157,20 @@ export const useCreateIdentity = ({ pendingRequest }: IUseConnectionIdentityModa
     dispatch(closePopup());
   }, [dispatch]);
 
+  const onAccept = useCallback(() => {
+    if (!accept) {
+      throw new Error("Please set accept fun");
+    }
+    accept();
+  }, [accept]);
+
+  const onReject = useCallback(() => {
+    if (!reject) {
+      throw new Error("Please set accept fun");
+    }
+    reject();
+  }, [reject]);
+
   useEffect(() => {
     if (!host) {
       return;
@@ -177,6 +201,8 @@ export const useCreateIdentity = ({ pendingRequest }: IUseConnectionIdentityModa
     faviconUrl,
     isWalletModalOpen,
     closeModal,
+    onAccept, 
+    onReject,
     onWalletModalShow,
     register,
     onConnectWallet: handleSubmit(onConnectWallet),

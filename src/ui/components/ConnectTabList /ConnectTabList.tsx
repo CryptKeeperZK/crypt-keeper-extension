@@ -4,17 +4,17 @@ import { type ReactNode, type SyntheticEvent, Children, useState, useMemo, useCa
 
 import "./tabListStyles.scss";
 
-export interface TabListProps {
+export interface ConnectTabListProps {
   children: ReactNode;
 }
 
 enum HomeTabs {
-  IDENTITIES = 0,
-  ACTIVITY = 1,
+  CONNECTED = 0,
+  RANDOM = 1,
 }
 
-export const TabList = ({ children }: TabListProps): JSX.Element => {
-  const [selectedTab, setSelectedTab] = useState(HomeTabs.IDENTITIES);
+export const ConnectTabList = ({ children }: ConnectTabListProps): JSX.Element => {
+  const [selectedTab, setSelectedTab] = useState(HomeTabs.CONNECTED);
 
   const selectedContent = useMemo(() => Children.toArray(children)[selectedTab], [children, selectedTab]);
 
@@ -28,9 +28,9 @@ export const TabList = ({ children }: TabListProps): JSX.Element => {
   return (
     <div className="tab__list" data-testid="tab-list">
       <Tabs indicatorColor="primary" textColor="primary" value={selectedTab} variant="fullWidth" onChange={onTabChange}>
-        <Tab data-testid="tab-identities" label="Identities" />
+        <Tab data-testid="tab-identities" label="Connected" />
 
-        <Tab data-testid="tab-activity" label="Activity" />
+        <Tab data-testid="tab-activity" label="Random" />
       </Tabs>
 
       <div className="tab__list__content">{selectedContent}</div>

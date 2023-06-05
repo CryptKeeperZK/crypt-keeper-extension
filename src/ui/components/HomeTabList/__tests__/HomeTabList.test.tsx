@@ -4,10 +4,10 @@
 
 import { act, render, screen } from "@testing-library/react";
 
-import { TabList, TabListProps } from "..";
+import { HomeTabList, HomeTabListProps } from "..";
 
 describe("ui/pages/Home/components/TabList", () => {
-  const defaultProps: TabListProps = {
+  const defaultProps: HomeTabListProps = {
     children: [<div key={0}>Identities content</div>, <div key={1}>Activity content</div>],
   };
 
@@ -16,7 +16,7 @@ describe("ui/pages/Home/components/TabList", () => {
   });
 
   test("should render properly", async () => {
-    render(<TabList {...defaultProps} />);
+    render(<HomeTabList {...defaultProps} />);
 
     const component = await screen.findByTestId("tab-list");
 
@@ -24,7 +24,7 @@ describe("ui/pages/Home/components/TabList", () => {
   });
 
   test("should select tabs properly", async () => {
-    render(<TabList {...defaultProps} />);
+    render(<HomeTabList {...defaultProps} />);
 
     const tabIdentities = await screen.findByTestId("tab-identities");
     act(() => tabIdentities.click());

@@ -43,7 +43,7 @@ export const IdentityList = ({ identities }: IdentityListProps): JSX.Element => 
         >
           <Icon className="mr-2" fontAwesome="fas fa-plus" size={1} />
 
-          <div>Add Identity</div>
+          <div>Add Random Identity</div>
         </button>
       </div>
     </>

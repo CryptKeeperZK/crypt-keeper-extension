@@ -35,10 +35,11 @@ const ConfirmRequestModal = (): JSX.Element | null => {
         />
       );
     case PendingRequestType.CREATE_IDENTITY:
-      return <CreateIdentityModal pendingRequest={pendingRequest as PendingRequest<{ host: string }>} />;
+      return <CreateIdentityModal           reject={reject}           accept={accept}
+      pendingRequest={pendingRequest as PendingRequest<{ host: string }>} />;
 
     case PendingRequestType.CHECK_AVIABLE_IDENTITIES:
-      return <ConnectHostIdentitiesModal accept={accept}
+      return <ConnectHostIdentitiesModal accept={accept} reject={reject}
         pendingRequest={pendingRequest as PendingRequest<{ host: string }>} />;
     default:
       return (

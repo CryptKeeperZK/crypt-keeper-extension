@@ -1,0 +1,11 @@
+@import "@src/util/variables";
+
+.tab__list {
+  height: 100%;
+
+  &__content {
+    background-color: $black;
+    flex: 1;
+    overflow: hidden;
+  }
+}

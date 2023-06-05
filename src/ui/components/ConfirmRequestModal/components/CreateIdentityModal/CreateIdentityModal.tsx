@@ -20,9 +20,11 @@ import { WalletModal } from "@src/ui/components/WalletModal";
 
 export interface CreateIdentityModalProps {
   pendingRequest?: PendingRequest<{ host: string }>;
+  accept?: () => void;
+  reject?: () => void;
 }
 
-const CreateIdentityModal = ({ pendingRequest }: CreateIdentityModalProps): JSX.Element => {
+const CreateIdentityModal = ({ pendingRequest, accept, reject }: CreateIdentityModalProps): JSX.Element => {
   const features = getEnabledFeatures();
   const {
     isLoading,
@@ -36,13 +38,13 @@ const CreateIdentityModal = ({ pendingRequest }: CreateIdentityModalProps): JSX.
     randomIdentities,
     isWalletModalOpen,
     closeModal,
+    onAccept, 
+    onReject,
     onWalletModalShow,
     onConnectWallet,
     onCreateWithCryptkeeper,
     onCreateWithEthWallet,
-  } = useCreateIdentity({ pendingRequest });
-
-  const ethWalletTitle = isWalletConnected ? "Metamask" : "Connect to Metamask";
+  } = useCreateIdentity({ pendingRequest, accept, reject });
 
   return (
     <FullModal data-testid="create-identity-page" onClose={closeModal}>
@@ -136,14 +138,14 @@ const CreateIdentityModal = ({ pendingRequest }: CreateIdentityModalProps): JSX.
         {errors.root && <div className="text-xs text-red-500 text-center pb-1">{errors.root}</div>}
         <FullModalFooter>
 
-          <WalletModal host={host} isOpenModal={isWalletModalOpen} isLoading={isLoading} isWalletConnected={isWalletConnected} isWalletInstalled={isWalletInstalled} onConnectWallet={onConnectWallet} onCreateWithEthWallet={onCreateWithEthWallet} onCreateWithCryptkeeper={onCreateWithCryptkeeper} reject={() => console.log("Help")} />
+          <WalletModal host={host} isOpenModal={isWalletModalOpen} isLoading={isLoading} isWalletConnected={isWalletConnected} isWalletInstalled={isWalletInstalled} onConnectWallet={onConnectWallet} onCreateWithEthWallet={onCreateWithEthWallet} onCreateWithCryptkeeper={onCreateWithCryptkeeper} reject={onWalletModalShow} accept={accept}/>
 
-          <Button buttonType={ButtonType.SECONDARY} onClick={() => console.log("Help")}>
+          <Button buttonType={ButtonType.SECONDARY} onClick={onReject}>
             Reject
           </Button>
 
           <Button className="ml-2" onClick={onWalletModalShow}>
-            Create new identity
+            Sign
           </Button>
         </FullModalFooter>
       </form>

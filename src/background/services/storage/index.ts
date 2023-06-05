@@ -1,6 +1,8 @@
 import log from "loglevel";
 import { browser } from "webextension-polyfill-ts";
 
+// TODO: After storign around 16 Identities we will get this memory error `QUOTA_BYTES_PER_ITEM quota exceeded`
+//       so we will need to request "unlimitedStorage" in the manifest "permissions"
 export default class SimpleStorage {
   private key: string;
 
