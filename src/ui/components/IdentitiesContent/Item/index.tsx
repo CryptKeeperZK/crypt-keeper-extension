@@ -11,6 +11,8 @@ import { Menuable } from "@src/ui/components/Menuable";
 import { ellipsify } from "@src/util/account";
 
 import "./identityListItemStyles.scss";
+import { useAppDispatch } from "@src/ui/ducks/hooks";
+import { setNotReadyToConnect, setSelectedToConnect } from "@src/ui/ducks/identities";
 
 type IconWeb2Providers = Record<IdentityWeb2Provider, [IconPrefix, IconName]>;
 
@@ -29,7 +31,6 @@ export interface IdentityItemProps {
   isDisableCheckClick: boolean;
   onDeleteIdentity: (commitment: string) => Promise<void>;
   onSelectIdentity: (commitment: string) => void;
-  onConenctIdentity: (commitment: string, host: string) => void;
   onUpdateIdentityName: (commitment: string, name: string) => Promise<void>;
 }
 
@@ -42,11 +43,12 @@ export const IdentityItem = ({
   isDisableCheckClick = true,
   onDeleteIdentity,
   onSelectIdentity,
-  onConenctIdentity,
   onUpdateIdentityName,
 }: IdentityItemProps): JSX.Element => {
+  const dispatch = useAppDispatch();
   const [name, setName] = useState(metadata.name);
   const [isRenaming, setIsRenaming] = useState(false);
+  const [select, setSelect] = useState(false);
 
   const handleDeleteIdentity = useCallback(() => {
     onDeleteIdentity(commitment);
@@ -56,12 +58,14 @@ export const IdentityItem = ({
     onSelectIdentity(commitment);
   }, [commitment, onSelectIdentity]);
 
-  const handleConnectIdentity = useCallback(() => {
+  const handleSelectedToConnect = useCallback(async () => {
     if (!host) {
       throw new Error("Please set host in order to continue this action.");
     }
-    onConenctIdentity(commitment, host);
-  }, [commitment, onSelectIdentity]);
+    setSelect(true);
+    await dispatch(setSelectedToConnect({ commitment, host }));
+    await dispatch(setNotReadyToConnect(false));
+  }, [commitment, dispatch, setSelect]);
 
   const handleChangeName = useCallback(
     (event: ChangeEvent<HTMLInputElement>) => {
@@ -89,24 +93,26 @@ export const IdentityItem = ({
   const canShowIdentityType = Boolean(metadata.web2Provider || identityTitle);
 
   return (
-    <div key={commitment} className="p-4 identity-row">
+    <div key={commitment} className={classNames("p-4 identity-row", {
+      "identity-row--selected": select,
+    })}>
       {isDisableCheckClick ? (
         <Icon
-          disabled={isDisableCheckClick}
           className={classNames("identity-row__select-icon")}
           data-testid={`identity-select-${commitment}`}
+          disabled={isDisableCheckClick}
           fontAwesome="fas fa-check"
           onClick={handleSelectIdentity}
         />
       ) : (
         <Icon
-          title="Connec"
           className={classNames("identity-row__select-icon", {
-            "identity-row__select-icon--selected": selected === commitment,
+            "identity-row__select-icon--selected": select,
           })}
           data-testid={`identity-connect-${commitment}`}
           fontAwesome="fas fa-check"
-          onClick={handleConnectIdentity}
+          title="Select to Connect"
+          onClick={handleSelectedToConnect}
         />
       )}
 

@@ -1,11 +1,12 @@
-import { BaseSyntheticEvent, MouseEvent as ReactMouseEvent, useCallback } from "react";
+import { Typography, Tooltip, Button } from "@mui/material";
 import Box from "@mui/material/Box";
 import Modal from "@mui/material/Modal";
+import { BaseSyntheticEvent, MouseEvent as ReactMouseEvent, useCallback } from "react";
+
 import { FullModalContent, FullModalFooter, FullModalHeader } from "@src/ui/components/FullModal";
+import { Icon } from "@src/ui/components/Icon";
 
 import { style } from "./style";
-import { Typography, Tooltip, Button } from "@mui/material";
-import { Icon } from "@src/ui/components/Icon";
 
 export interface BasicModalProps {
   host?: string;
@@ -67,6 +68,7 @@ export const WalletModal = ({
               <Icon fontAwesome="fa-info" />
             </Tooltip>
           </Box>
+
           <Box sx={{ alignItems: "center", display: "flex", justifyContent: "space-between", width: "100%" }}>
             <Button
               disabled={isLoading || !isWalletInstalled}

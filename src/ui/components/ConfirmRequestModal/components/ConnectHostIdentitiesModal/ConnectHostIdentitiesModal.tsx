@@ -1,16 +1,16 @@
 import { PendingRequest } from "@src/types";
 import { ButtonType, Button } from "@src/ui/components/Button";
-import { Checkbox } from "@src/ui/components/Checkbox";
 import { FullModal, FullModalContent, FullModalFooter, FullModalHeader } from "@src/ui/components/FullModal";
 
 import "../../confirmModal.scss";
+import { useCreateIdentity } from "../CreateIdentityModal/useCreateIdentity";
 
 import { useConnectHostIdentitiesModal } from "./useConnectHostIdentitiesModal";
+
 import { IdentitiesContent } from "@src/ui/components/IdentitiesContent";
-import { useEffect } from "react";
 import { ConnectTabList } from "@src/ui/components/ConnectTabList ";
 import { WalletModal } from "@src/ui/components/WalletModal";
-import { useCreateIdentity } from "../CreateIdentityModal/useCreateIdentity";
+import { AddButton } from "@src/ui/components/AddButton";
 
 export interface ConnectionApprovalModalProps {
   pendingRequest: PendingRequest<{ host: string }>;
@@ -23,8 +23,9 @@ export const ConnectHostIdentitiesModal = ({
   accept,
   reject,
 }: ConnectionApprovalModalProps): JSX.Element => {
-  const { hostIdentities, randomIdentities, host, faviconUrl, onReject } = useConnectHostIdentitiesModal({
+  const { hostIdentities, randomIdentities, host, notReadyToConnect, faviconUrl, selectedToConnect, onReject, handleConnectIdentity } = useConnectHostIdentitiesModal({
     pendingRequest,
+    accept,
     reject,
   });
 
@@ -64,41 +65,42 @@ export const ConnectHostIdentitiesModal = ({
 
         <ConnectTabList>
           <IdentitiesContent
+            host={host}
             identities={hostIdentities}
-            host={host}
-            isShowSettings={false}
             isDisableCheckClick={false}
-            accept={accept}
+            isShowSettings={false}
           />
+
           <IdentitiesContent
-            identities={randomIdentities}
             host={host}
-            isShowSettings={false}
+            identities={randomIdentities}
             isDisableCheckClick={false}
-            accept={accept}
+            isShowSettings={false}
           />
         </ConnectTabList>
+
+        <AddButton title="Create a new Identity" action={onWalletModalShow} />
       </FullModalContent>
 
       <FullModalFooter>
         <WalletModal
           host={host}
-          isOpenModal={isWalletModalOpen}
           isLoading={isLoading}
+          isOpenModal={isWalletModalOpen}
           isWalletConnected={isWalletConnected}
           isWalletInstalled={isWalletInstalled}
-          onConnectWallet={onConnectWallet}
-          onCreateWithEthWallet={onCreateWithEthWallet}
-          onCreateWithCryptkeeper={onCreateWithCryptkeeper}
           reject={onWalletModalShow}
+          onConnectWallet={onConnectWallet}
+          onCreateWithCryptkeeper={onCreateWithCryptkeeper}
+          onCreateWithEthWallet={onCreateWithEthWallet}
         />
 
         <Button buttonType={ButtonType.SECONDARY} onClick={onReject}>
           Reject
         </Button>
 
-        <Button className="ml-2" onClick={onWalletModalShow}>
-          Create new identity
+        <Button disabled={notReadyToConnect} className="ml-2" onClick={handleConnectIdentity}>
+          Connect
         </Button>
       </FullModalFooter>
     </FullModal>

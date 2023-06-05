@@ -1,7 +1,5 @@
-import { browser } from "webextension-polyfill-ts";
-
-import { Paths, RPCAction } from "@src/constants";
-import { PendingRequestType, RLNProofRequest, SemaphoreProofRequest, BackupableServices, Approvals } from "@src/types";
+import { RPCAction } from "@src/constants";
+import { BackupableServices } from "@src/types";
 
 import BrowserUtils from "./controllers/browserUtils";
 import Handler from "./controllers/handler";
@@ -9,12 +7,12 @@ import RequestManager from "./controllers/requestManager";
 import ApprovalService from "./services/approval";
 import BackupService from "./services/backup";
 import HistoryService from "./services/history";
+import InjectorService from "./services/injector";
 import LockerService from "./services/lock";
 import MiscStorageService from "./services/misc";
 import { validateZkInputs } from "./services/validation";
 import WalletService from "./services/wallet";
 import ZkIdentityService from "./services/zkIdentity";
-import InjectorService from "./services/injector";
 
 export default class CryptKeeperController extends Handler {
   private zkIdentityService: ZkIdentityService;

@@ -26,7 +26,6 @@ describe("ui/pages/Home/components/HomeIdentityList/Item", () => {
     },
     onDeleteIdentity: jest.fn(),
     onSelectIdentity: jest.fn(),
-    onConenctIdentity: jest.fn(),
     onUpdateIdentityName: jest.fn(),
   };
 

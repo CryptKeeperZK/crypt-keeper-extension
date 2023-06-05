@@ -23,7 +23,6 @@ import {
 } from "@src/types";
 import {
   setConnectedCommitment,
-  setConnectedIdentity,
   setIdentities,
   setIdentityHost,
   setSelectedCommitment,

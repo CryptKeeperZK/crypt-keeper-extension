@@ -1,3 +1,4 @@
+import { getLinkPreview } from "link-preview-js";
 import { BaseSyntheticEvent, useCallback, useEffect, useState, MouseEvent as ReactMouseEvent } from "react";
 import { Control, useForm, UseFormRegister } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
@@ -14,16 +15,9 @@ import {
 } from "@src/types";
 import { closePopup } from "@src/ui/ducks/app";
 import { useAppDispatch } from "@src/ui/ducks/hooks";
-import {
-  createIdentity,
-  fetchHostIdentities,
-  fetchRandomIdentities,
-  useIdentityHost,
-  useRandomIdentities,
-} from "@src/ui/ducks/identities";
+import { createIdentity, fetchRandomIdentities, useRandomIdentities } from "@src/ui/ducks/identities";
 import { useCryptKeeperWallet, useEthWallet } from "@src/ui/hooks/wallet";
 import { getMessageTemplate, signWithSigner } from "@src/ui/services/identity";
-import { getLinkPreview } from "link-preview-js";
 
 export interface IUseConnectionIdentityModalArgs {
   pendingRequest?: PendingRequest<{ host: string }>;

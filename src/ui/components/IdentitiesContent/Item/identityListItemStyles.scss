@@ -10,6 +10,11 @@
     background-color: $gray-950;
   }
 
+  &--selected {
+    color: $primary-green;
+    border-color: $primary-green;
+  }
+
   &__input-field {
     background-color: transparent;
 

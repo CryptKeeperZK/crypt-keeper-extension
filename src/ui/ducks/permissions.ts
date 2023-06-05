@@ -3,12 +3,12 @@ import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 import deepEqual from "fast-deep-equal";
 
 import { RPCAction } from "@src/constants";
+import { HostPermission } from "@src/types";
 import postMessage from "@src/util/postMessage";
 
 import type { TypedThunk } from "../store/configureAppStore";
 
 import { useAppSelector } from "./hooks";
-import { HostPermission } from "@src/types";
 
 export interface PermissionsState {
   noApprovals: Record<string, HostPermissionDucks>;

@@ -1,3 +1,7 @@
+import { browser } from "webextension-polyfill-ts";
+
+import BrowserUtils from "@src/background/controllers/browserUtils";
+import RequestManager from "@src/background/controllers/requestManager";
 import {
   Approvals,
   ConnectedIdentityData,
@@ -5,13 +9,10 @@ import {
   RLNProofRequest,
   SemaphoreProofRequest,
 } from "@src/types";
-import log from "loglevel";
-import LockerService from "../lock";
-import BrowserUtils from "@src/background/controllers/browserUtils";
-import RequestManager from "@src/background/controllers/requestManager";
+
 import ApprovalService from "../approval";
+import LockerService from "../lock";
 import ZkIdentityService from "../zkIdentity";
-import { browser } from "webextension-polyfill-ts";
 
 // @src InjectorService is a service for helping the injectedScript provider
 export default class InjectorService {

@@ -28,9 +28,9 @@ export const ConnectTabList = ({ children }: ConnectTabListProps): JSX.Element =
   return (
     <div className="tab__list" data-testid="tab-list">
       <Tabs indicatorColor="primary" textColor="primary" value={selectedTab} variant="fullWidth" onChange={onTabChange}>
-        <Tab data-testid="tab-identities" label="Connected" />
+        <Tab data-testid="tab-identities" label="Linked" />
 
-        <Tab data-testid="tab-activity" label="Random" />
+        <Tab data-testid="tab-activity" label="Unlinked" />
       </Tabs>
 
       <div className="tab__list__content">{selectedContent}</div>

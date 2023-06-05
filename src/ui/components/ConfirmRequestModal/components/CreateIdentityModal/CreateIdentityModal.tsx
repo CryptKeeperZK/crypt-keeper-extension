@@ -1,21 +1,21 @@
-import Box from "@mui/material/Box";
-import Tooltip from "@mui/material/Tooltip";
 import Typography from "@mui/material/Typography";
 import { Controller } from "react-hook-form";
-import { ButtonType, Button } from "@src/ui/components/Button";
 
 import { getEnabledFeatures } from "@src/config/features";
 import { IDENTITY_TYPES, WEB2_PROVIDER_OPTIONS } from "@src/constants";
+import { PendingRequest } from "@src/types";
+import { ButtonType, Button } from "@src/ui/components/Button";
 import { Dropdown } from "@src/ui/components/Dropdown";
 import { FullModal, FullModalContent, FullModalFooter, FullModalHeader } from "@src/ui/components/FullModal";
-import { Icon } from "@src/ui/components/Icon";
+import { IdentitiesContent } from "@src/ui/components/IdentitiesContent";
 import { Input } from "@src/ui/components/Input";
 
 import "./createIdentityStyles.scss";
+
 import "../../confirmModal.scss";
+
 import { useCreateIdentity } from "./useCreateIdentity";
-import { PendingRequest } from "@src/types";
-import { IdentitiesContent } from "@src/ui/components/IdentitiesContent";
+
 import { WalletModal } from "@src/ui/components/WalletModal";
 
 export interface CreateIdentityModalProps {
@@ -120,7 +120,7 @@ const CreateIdentityModal = ({ pendingRequest, accept, reject }: CreateIdentityM
                 />
               </div>
 
-              <Typography></Typography>
+              <Typography />
 
               <div className="text-lg font-semibold mb-2 text-center">
                 Create your Semaphore identity for `{host}` host
@@ -128,16 +128,16 @@ const CreateIdentityModal = ({ pendingRequest, accept, reject }: CreateIdentityM
 
               <div className="text-sm text-gray-500 text-center">
                 {randomIdentities.length === 0
-                  ? `You don't have any aviable identities created!. Please click on Sign to create a new one.`
+                  ? `You don't have any aviable identities created!. Please click on Create button to create a new one.`
                   : `You have already ${randomIdentities.length} random identities. Please choose one to connect
                 with, or choose to create a new identity.`}
               </div>
+
               <IdentitiesContent
-                identities={randomIdentities}
                 host={host}
-                isShowSettings={false}
+                identities={randomIdentities}
                 isDisableCheckClick={false}
-                accept={accept}
+                isShowSettings={false}
               />
             </div>
           ) : (
@@ -146,18 +146,19 @@ const CreateIdentityModal = ({ pendingRequest, accept, reject }: CreateIdentityM
         </FullModalContent>
 
         {errors.root && <div className="text-xs text-red-500 text-center pb-1">{errors.root}</div>}
+
         <FullModalFooter>
           <WalletModal
+            accept={accept}
             host={host}
-            isOpenModal={isWalletModalOpen}
             isLoading={isLoading}
+            isOpenModal={isWalletModalOpen}
             isWalletConnected={isWalletConnected}
             isWalletInstalled={isWalletInstalled}
-            onConnectWallet={onConnectWallet}
-            onCreateWithEthWallet={onCreateWithEthWallet}
-            onCreateWithCryptkeeper={onCreateWithCryptkeeper}
             reject={onWalletModalShow}
-            accept={accept}
+            onConnectWallet={onConnectWallet}
+            onCreateWithCryptkeeper={onCreateWithCryptkeeper}
+            onCreateWithEthWallet={onCreateWithEthWallet}
           />
 
           <Button buttonType={ButtonType.SECONDARY} onClick={onReject}>
@@ -165,7 +166,7 @@ const CreateIdentityModal = ({ pendingRequest, accept, reject }: CreateIdentityM
           </Button>
 
           <Button className="ml-2" onClick={onWalletModalShow}>
-            Sign
+            Create
           </Button>
         </FullModalFooter>
       </form>

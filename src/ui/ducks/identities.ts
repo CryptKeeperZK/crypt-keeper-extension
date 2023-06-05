@@ -3,14 +3,7 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import deepEqual from "fast-deep-equal";
 
 import { RPCAction } from "@src/constants";
-import {
-  HistorySettings,
-  ICreateIdentityUiArgs,
-  IdentityData,
-  IdentityHost,
-  Operation,
-  SelectedIdentity,
-} from "@src/types";
+import { HistorySettings, ICreateIdentityUiArgs, IdentityData, Operation, SelectedIdentity } from "@src/types";
 import postMessage from "@src/util/postMessage";
 
 import type { TypedThunk } from "@src/ui/store/configureAppStore";
@@ -24,7 +17,9 @@ export interface IdentitiesState {
   operations: Operation[];
   requestPending: boolean;
   selected: SelectedIdentity; // This aim to be a short-term solution to the integration with Zkitter
-  connected: SelectedIdentity; // This aim to be a short-term solution to the integration with Zkitter
+  selectedToConnect: SelectedIdentity;
+  connected: SelectedIdentity;
+  notReadyToConnect: boolean;
   settings?: HistorySettings;
   host?: string;
 }
@@ -41,10 +36,15 @@ const initialState: IdentitiesState = {
     web2Provider: "",
     host: "",
   },
+  selectedToConnect: {
+    commitment: "",
+    host: "",
+  },
   connected: {
     commitment: "",
     host: "",
   },
+  notReadyToConnect: true,
   host: "",
 };
 
@@ -64,6 +64,17 @@ const identitiesSlice = createSlice({
         commitment: action.payload.commitment,
         host: action.payload.host,
       };
+    },
+
+    setSelectedToConnect: (state: IdentitiesState, action: PayloadAction<SelectedIdentity>) => {
+      state.selected = {
+        commitment: action.payload.commitment,
+        host: action.payload.host,
+      };
+    },
+
+    setNotReadyToConnect: (state: IdentitiesState, action: PayloadAction<boolean>) => {
+      state.notReadyToConnect = action.payload;
     },
 
     setIdentityRequestPending: (state: IdentitiesState, action: PayloadAction<boolean>) => {
@@ -99,6 +110,8 @@ const identitiesSlice = createSlice({
 export const {
   setSelectedCommitment,
   setConnectedCommitment,
+  setSelectedToConnect,
+  setNotReadyToConnect,
   setIdentities,
   setHostIdentities,
   setIdentityRequestPending,
@@ -114,17 +127,17 @@ export const createIdentityRequest = () => async (): Promise<void> => {
 
 export const createIdentity =
   ({ walletType, strategy, messageSignature, options, host }: ICreateIdentityUiArgs) =>
-  async (): Promise<string | undefined> =>
-    postMessage({
-      method: RPCAction.CREATE_IDENTITY,
-      payload: {
-        strategy,
-        walletType,
-        messageSignature,
-        options,
-        host,
-      },
-    });
+    async (): Promise<string | undefined> =>
+      postMessage({
+        method: RPCAction.CREATE_IDENTITY,
+        payload: {
+          strategy,
+          walletType,
+          messageSignature,
+          options,
+          host,
+        },
+      });
 
 export const setActiveIdentity = (identityCommitment: string) => async (): Promise<boolean> =>
   postMessage({
@@ -188,17 +201,17 @@ export const fetchIdentities = (): TypedThunk => async (dispatch) => {
 
 export const fetchHostIdentities =
   (host: string): TypedThunk =>
-  async (dispatch) => {
-    const data = await postMessage<IdentityData[]>({
-      method: RPCAction.GET_HOST_IDENTITIES,
-      payload: {
-        host,
-      },
-    });
+    async (dispatch) => {
+      const data = await postMessage<IdentityData[]>({
+        method: RPCAction.GET_HOST_IDENTITIES,
+        payload: {
+          host,
+        },
+      });
 
-    console.log("Data", data);
-    dispatch(setHostIdentities(data));
-  };
+      console.log("Data", data);
+      dispatch(setHostIdentities(data));
+    };
 
 export const fetchRandomIdentities = (): TypedThunk => async (dispatch) => {
   const data = await postMessage<IdentityData[]>({
@@ -223,10 +236,10 @@ export const getHistory = (): TypedThunk => async (dispatch) => {
 
 export const deleteHistoryOperation =
   (id: string): TypedThunk<Promise<void>> =>
-  async (dispatch) => {
-    const operations = await postMessage<Operation[]>({ method: RPCAction.DELETE_HISTORY_OPERATION, payload: id });
-    dispatch(setOperations(operations));
-  };
+    async (dispatch) => {
+      const operations = await postMessage<Operation[]>({ method: RPCAction.DELETE_HISTORY_OPERATION, payload: id });
+      dispatch(setOperations(operations));
+    };
 
 export const clearHistory = (): TypedThunk<Promise<void>> => async (dispatch) => {
   await postMessage<Operation[]>({ method: RPCAction.DELETE_ALL_HISTORY_OPERATIONS });
@@ -235,10 +248,10 @@ export const clearHistory = (): TypedThunk<Promise<void>> => async (dispatch) =>
 
 export const enableHistory =
   (isEnabled: boolean): TypedThunk<Promise<void>> =>
-  async (dispatch) => {
-    await postMessage<HistorySettings>({ method: RPCAction.ENABLE_OPERATION_HISTORY, payload: isEnabled });
-    dispatch(setSettings({ isEnabled }));
-  };
+    async (dispatch) => {
+      await postMessage<HistorySettings>({ method: RPCAction.ENABLE_OPERATION_HISTORY, payload: isEnabled });
+      dispatch(setSettings({ isEnabled }));
+    };
 
 export const useIdentities = (): IdentityData[] => useAppSelector((state) => state.identities.identities, deepEqual);
 
@@ -259,6 +272,10 @@ export const useConnectedIdentity = (): IdentityData | undefined =>
     const { identities, connected } = state.identities;
     return identities.find(({ commitment }) => commitment === connected.commitment);
   }, deepEqual);
+
+export const useSelectedToConnect = (): SelectedIdentity => useAppSelector((state) => state.identities.selectedToConnect, deepEqual);
+
+export const useNotReadyToConnect = (): boolean => useAppSelector((state) => state.identities.notReadyToConnect, deepEqual);
 
 export const useIdentityRequestPending = (): boolean =>
   useAppSelector((state) => state.identities.requestPending, deepEqual);

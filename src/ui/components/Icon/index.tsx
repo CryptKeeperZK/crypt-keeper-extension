@@ -43,7 +43,7 @@ const IconUI = (
     }}
     onClick={onClick}
   >
-    {fontAwesome && <i title={title} className={`fas ${fontAwesome}`} />}
+    {fontAwesome && <i className={`fas ${fontAwesome}`} title={title} />}
   </Box>
 );
 
