@@ -60,7 +60,7 @@ describe("ui/components/ConfirmRequestModal", () => {
   test("should render approval modal properly with inject request type", async () => {
     (useConfirmRequestModal as jest.Mock).mockReturnValue({
       ...defaultHookData,
-      pendingRequests: [{ id: "1", type: PendingRequestType.INJECT }],
+      pendingRequests: [{ id: "1", type: PendingRequestType.APPROVE }],
     });
 
     const { container } = render(

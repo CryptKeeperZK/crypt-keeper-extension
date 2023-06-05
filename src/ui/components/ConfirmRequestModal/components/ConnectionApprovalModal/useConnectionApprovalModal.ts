@@ -26,6 +26,7 @@ export const useConnectionApprovalModal = ({
   reject,
 }: IUseConnectionApprovalModalArgs): IUseConnectionApprovalModalData => {
   const [faviconUrl, setFaviconUrl] = useState("");
+  const [canSkipApprove, setCanSkipApprove] = useState(false);
   const { payload } = pendingRequest;
   const host = payload?.origin ?? "";
 
@@ -33,6 +34,10 @@ export const useConnectionApprovalModal = ({
   const permission = useHostPermission(host);
 
   const onAccept = useCallback(() => {
+    if (canSkipApprove) {
+      console.log("INside canSkipApprove")
+      dispatch(setHostPermissions({ host, canSkipApprove }));
+    }
     accept();
   }, [accept]);
 
@@ -42,9 +47,9 @@ export const useConnectionApprovalModal = ({
 
   const onSetApproval = useCallback(
     (event: ChangeEvent<HTMLInputElement>) => {
-      dispatch(setHostPermissions({ host, noApproval: event.target.checked }));
+      setCanSkipApprove(event.target.checked)
     },
-    [host, dispatch],
+    [setCanSkipApprove],
   );
 
   useEffect(() => {
@@ -62,7 +67,7 @@ export const useConnectionApprovalModal = ({
 
   return {
     host,
-    checked: Boolean(permission?.noApproval),
+    checked: Boolean(permission?.canSkipApprove),
     faviconUrl,
     onAccept,
     onReject,

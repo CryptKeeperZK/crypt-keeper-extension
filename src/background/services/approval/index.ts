@@ -3,12 +3,9 @@ import LockerService from "@src/background/services/lock";
 import SimpleStorage from "@src/background/services/storage";
 
 import type { IBackupable } from "@src/background/services/backup";
+import { HostPermission } from "@src/types";
 
 const APPPROVALS_DB_KEY = "@APPROVED@";
-
-interface HostPermission {
-  canSkipApprove: boolean;
-}
 
 export default class ApprovalService implements IBackupable {
   private static INSTANCE: ApprovalService;
@@ -57,6 +54,7 @@ export default class ApprovalService implements IBackupable {
   });
 
   setPermission = async (host: string, { canSkipApprove }: HostPermission): Promise<HostPermission> => {
+    console.log("Inside set premissions");
     this.allowedHosts.set(host, { canSkipApprove });
     await this.saveApprovals();
 
@@ -64,6 +62,7 @@ export default class ApprovalService implements IBackupable {
   };
 
   add = async ({ host, canSkipApprove }: { host: string; canSkipApprove: boolean }): Promise<void> => {
+    console.log("Inside set premissions 2");
     if (this.allowedHosts.get(host)) {
       return;
     }

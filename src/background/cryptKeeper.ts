@@ -134,7 +134,8 @@ export default class CryptKeeperController extends Handler {
     );
 
     // Approvals
-    this.add(RPCAction.APPROVE_HOST, this.lockService.ensure, this.approvalService.add);
+    // TODO: this approvalApi is now not exposed through RPC calls, but only used in the connection part through the injector service `this.injectorService.connect.connect()
+    // this.add(RPCAction.APPROVE_HOST, this.lockService.ensure, this.approvalService.add);
     this.add(RPCAction.IS_HOST_APPROVED, this.lockService.ensure, this.approvalService.isApproved);
     this.add(RPCAction.REMOVE_HOST, this.lockService.ensure, this.approvalService.remove);
     this.add(RPCAction.GET_HOST_PERMISSIONS, this.lockService.ensure, this.approvalService.getPermission);

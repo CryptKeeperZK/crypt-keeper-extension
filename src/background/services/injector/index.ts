@@ -62,7 +62,7 @@ export default class InjectorService {
 
     if (!isApproved) {
       try {
-        await this.requestManager.newRequest(PendingRequestType.INJECT, { origin: host });
+        await this.requestManager.newRequest(PendingRequestType.APPROVE, { origin: host });
         const canSkipApproveResponse = this.approvalService.canSkipApprove(host);
         approvalResponse = { isApproved: true, canSkipApprove: canSkipApproveResponse };
       } catch (e) {
@@ -74,11 +74,7 @@ export default class InjectorService {
       await this.approvalService.add({ host, canSkipApprove: approvalResponse.canSkipApprove });
       await this.zkIdentityService.setIdentityHost({ host });
 
-      // Make sure to close the approval popup
-      await this.browserService.closePopup();
-
       // Check Identity
-
       // 1.1 Check available identities
       const availableIdentities = await this.zkIdentityService.getHostIdentitis({ host });
 

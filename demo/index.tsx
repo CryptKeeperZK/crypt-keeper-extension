@@ -26,24 +26,52 @@ function NoActiveIDCommitment() {
 function App() {
   const {
     isLocked,
-    selectedIdentity,
+    connectedIdentity,
     MerkleProofType,
     connect,
     createIdentity,
-    getIdentityCommitment,
     genSemaphoreProof,
   } = useCryptKeeper();
 
-  if (isLocked) {
+  if (!connectedIdentity || isLocked) {
     return <NotConnected onClick={connect} />;
   }
 
-  if (!selectedIdentity) {
-    return <NoActiveIDCommitment />;
-  }
+  // if (!connectedIdentity) {
+  //   return <NoActiveIDCommitment />;
+  // }
 
   return (
     <div>
+      <hr />
+      <div>
+        <h2>Identity commitment for the connected identity:</h2>
+        <p>{connectedIdentity.identityCommitment}</p>
+      </div>
+
+      <hr />
+      <div>
+        <h2>Host name for the connected identity:</h2>
+        <p>{connectedIdentity.host}</p>
+      </div>
+
+      <hr />
+      <div>
+        <h2>Joined groups for the connected identity:</h2>
+        <p>{connectedIdentity.groups.length === 0 ? "No joined groups for this connected identity!" : connectedIdentity.groups as unknown as string}</p>
+      </div>
+
+      <hr />
+      <div>
+        <h2>Create a new Identity</h2>
+        <button data-testid="create-new-identity" onClick={createIdentity}>
+          Create
+        </button>{" "}
+        <br />
+        <br />
+      </div>
+
+      <hr />
       <div>
         <h2>Semaphore</h2>
         <button onClick={() => genSemaphoreProof(MerkleProofType.STORAGE_ADDRESS)}>
@@ -68,28 +96,12 @@ function App() {
         </button>
       </div> */}
 
-      <hr />
+      {/* <hr />
       <div>
         <h2>Get Identity Commitment</h2>
         <button onClick={getIdentityCommitment}>Get</button> <br />
         <br />
-      </div>
-
-      <hr />
-      <div>
-        <h2>Create a new Identity</h2>
-        <button data-testid="create-new-identity" onClick={createIdentity}>
-          Create
-        </button>{" "}
-        <br />
-        <br />
-      </div>
-
-      <hr />
-      <div>
-        <h2>Identity commitment for active identity:</h2>
-        <p>{selectedIdentity.commitment}</p>
-      </div>
+      </div> */}
 
       <ToastContainer newestOnTop={true} />
     </div>

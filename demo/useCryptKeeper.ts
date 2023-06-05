@@ -7,7 +7,7 @@ import { encodeBytes32String } from "ethers";
 import { toast } from "react-toastify";
 
 import "react-toastify/dist/ReactToastify.css";
-import { CryptKeeperInjectedProvider, SelectedIdentity } from "./types";
+import { ConnectedIdentityData, CryptKeeperInjectedProvider, SelectedIdentity } from "./types";
 
 const SERVER_URL = "http://localhost:8090";
 
@@ -32,11 +32,10 @@ enum MerkleProofType {
 interface IUseCryptKeeperData {
   client?: CryptKeeperInjectedProvider;
   isLocked: boolean;
-  selectedIdentity: SelectedIdentity;
+  connectedIdentity: ConnectedIdentityData;
   MerkleProofType: typeof MerkleProofType;
   connect: () => void;
   createIdentity: () => unknown;
-  getIdentityCommitment: () => void;
   genSemaphoreProof: (proofType: MerkleProofType) => void;
   genRLNProof: (proofType: MerkleProofType) => void;
 }
@@ -44,9 +43,10 @@ interface IUseCryptKeeperData {
 export const useCryptKeeper = (): IUseCryptKeeperData => {
   const [client, setClient] = useState<CryptKeeperInjectedProvider>();
   const [isLocked, setIsLocked] = useState(true);
-  const [selectedIdentity, setSelectedIdentity] = useState<SelectedIdentity>({
-    commitment: "",
-    web2Provider: "",
+  const [connectedIdentity, setConnectedIdentity] = useState<ConnectedIdentityData>({
+    identityCommitment: "",
+    host: "",
+    groups: []
   });
   const mockIdentityCommitments: string[] = genMockIdentityCommitments();
 
@@ -74,13 +74,13 @@ export const useCryptKeeper = (): IUseCryptKeeperData => {
 
     try {
       const connectedIdentityData = await client.connect();
-      console.log("connectedIdentityData")
-      console.log(connectedIdentityData)
-      //setIsLocked(false);
+      toast(`CryptKeeper: Identity connected successfully!`, { type: "success" });
+      setConnectedIdentity(connectedIdentityData)
+      setIsLocked(false);
     } catch (error) {
-      toast(`CryptKeeper: ${error}`, { type: "error" });
+      toast(`${error}`, { type: "error" });
     }
-  }, [client]);
+  }, [setConnectedIdentity, setIsLocked, client]);
 
   const genSemaphoreProof = async (proofType: MerkleProofType = MerkleProofType.STORAGE_ADDRESS) => {
     const externalNullifier = encodeBytes32String("voting-1");
@@ -88,8 +88,8 @@ export const useCryptKeeper = (): IUseCryptKeeperData => {
 
     let storageAddressOrArtifacts: any = `${merkleStorageAddress}/Semaphore`;
     if (proofType === MerkleProofType.ARTIFACTS) {
-      if (!mockIdentityCommitments.includes(selectedIdentity.commitment)) {
-        mockIdentityCommitments.push(selectedIdentity.commitment);
+      if (!mockIdentityCommitments.includes(connectedIdentity.identityCommitment)) {
+        mockIdentityCommitments.push(connectedIdentity.identityCommitment);
       }
       storageAddressOrArtifacts = {
         leaves: mockIdentityCommitments,
@@ -128,8 +128,8 @@ export const useCryptKeeper = (): IUseCryptKeeperData => {
     let storageAddressOrArtifacts: any = `${merkleStorageAddress}/RLN`;
 
     if (proofType === MerkleProofType.ARTIFACTS) {
-      if (!mockIdentityCommitments.includes(selectedIdentity.commitment)) {
-        mockIdentityCommitments.push(selectedIdentity.commitment);
+      if (!mockIdentityCommitments.includes(connectedIdentity.identityCommitment)) {
+        mockIdentityCommitments.push(connectedIdentity.identityCommitment);
       }
 
       storageAddressOrArtifacts = {
@@ -158,47 +158,50 @@ export const useCryptKeeper = (): IUseCryptKeeperData => {
     }
   };
 
-  const getIdentityCommitment = useCallback(async () => {
-    const payload = await client?.getActiveIdentity();
+  // TODO: `cryptkeeper.requestIdentityCommitment()` outside of the scope of this PR
+  // const getIdentityCommitment = useCallback(async () => {
+  //   const payload = await client?.getActiveIdentity();
 
-    if (!payload) {
-      return;
-    }
+  //   if (!payload) {
+  //     return;
+  //   }
 
-    setSelectedIdentity({
-      commitment: payload.commitment,
-      web2Provider: payload.web2Provider,
-    });
+  //   setConnectedIdentity({
+  //     commitment: payload.commitment,
+  //     web2Provider: payload.web2Provider,
+  //   });
 
-    toast(`Getting Identity Commitment successfully! ${payload.commitment}`, { type: "success" });
-  }, [client, setSelectedIdentity]);
+  //   toast(`Getting Identity Commitment successfully! ${payload.commitment}`, { type: "success" });
+  // }, [client, setConnectedIdentity]);
 
   const createIdentity = useCallback(() => {
     client?.createIdentity();
   }, [client]);
 
-  const onIdentityChanged = useCallback(
-    (payload: unknown) => {
-      const { commitment, web2Provider } = payload as SelectedIdentity;
+  // TODO: `identityChanged` event is outside of the scope of this PR.
+  // const onIdentityChanged = useCallback(
+  //   (payload: unknown) => {
+  //     const { commitment, web2Provider } = payload as SelectedIdentity;
 
-      setSelectedIdentity({ commitment, web2Provider });
-      toast(`Identity has changed! ${commitment}`, { type: "success" });
-    },
-    [setSelectedIdentity],
-  );
+  //     setConnectedIdentity({ commitment, web2Provider });
+  //     toast(`Identity has changed! ${commitment}`, { type: "success" });
+  //   },
+  //   [setConnectedIdentity],
+  // );
 
-  const onLogin = useCallback(() => {
-    setIsLocked(false);
-    getIdentityCommitment();
-  }, [setIsLocked, getIdentityCommitment]);
+  // const onLogin = useCallback(() => {
+  //   setIsLocked(false);
+  //   getIdentityCommitment();
+  // }, [setIsLocked, getIdentityCommitment]);
 
   const onLogout = useCallback(() => {
-    setSelectedIdentity({
-      commitment: "",
-      web2Provider: "",
+    setConnectedIdentity({
+      identityCommitment: "",
+      host: "",
+      groups: []
     });
     setIsLocked(true);
-  }, [setSelectedIdentity, setIsLocked]);
+  }, [setConnectedIdentity, setIsLocked]);
 
   useEffect(() => {
     initializeCryptKeeper();
@@ -209,21 +212,20 @@ export const useCryptKeeper = (): IUseCryptKeeperData => {
       return undefined;
     }
 
-    client?.on("login", onLogin);
-    client?.on("identityChanged", onIdentityChanged);
+    // client?.on("login", onLogin);
+    // client?.on("identityChanged", onIdentityChanged);
     client?.on("logout", onLogout);
 
     return () => client?.cleanListeners();
-  }, [client, onLogout, onIdentityChanged, onLogin]);
+  }, [client, onLogout]);
 
   return {
     client,
     isLocked,
-    selectedIdentity,
+    connectedIdentity,
     MerkleProofType,
     connect,
     createIdentity,
-    getIdentityCommitment,
     genSemaphoreProof,
     genRLNProof,
   };

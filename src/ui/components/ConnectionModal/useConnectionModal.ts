@@ -54,13 +54,13 @@ export const useConnectionModal = ({
 
   const onSetApproval = useCallback(
     (event: ChangeEvent<HTMLInputElement>) => {
-      dispatch(setHostPermissions({ host, noApproval: event.target.checked }));
+      dispatch(setHostPermissions({ host, canSkipApprove: event.target.checked }));
     },
     [host, dispatch],
   );
 
   return {
-    checked: Boolean(permission?.noApproval),
+    checked: Boolean(permission?.canSkipApprove),
     faviconUrl,
     url,
     onRemoveHost,

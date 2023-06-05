@@ -9,6 +9,7 @@ import { RPCAction } from "@src/constants";
 import {
   Approvals,
   ConnectedIdentityData,
+  HostPermission,
   IRlnGenerateArgs,
   ISemaphoreGenerateArgs,
   InjectedMessageData,
@@ -50,7 +51,8 @@ export class CryptKeeperInjectedProvider extends EventEmitter {
       await this.post({ method: RPCAction.CLOSE_POPUP });
       return connectedIdentityData;
     } catch (err) {
-      throw new Error(`Cryptkeeper: ${err}`)
+      await this.post({ method: RPCAction.CLOSE_POPUP });
+      throw `Cryptkeeper ${err}`;
     }
   }
 
@@ -106,11 +108,11 @@ export class CryptKeeperInjectedProvider extends EventEmitter {
     const { data } = event;
 
     if (data && data.target === "injected-injectedscript") {
-      if (data.nonce === "identityChanged") {
-        const [, res] = data.payload;
-        this.emit("identityChanged", res);
-        return;
-      }
+      // if (data.nonce === "identityChanged") {
+      //   const [, res] = data.payload;
+      //   this.emit("identityChanged", res);
+      //   return;
+      // }
 
       if (data.nonce === "logout") {
         const [, res] = data.payload;
@@ -170,15 +172,13 @@ export class CryptKeeperInjectedProvider extends EventEmitter {
 
   async setHostPermissions(
     host: string,
-    permissions?: {
-      noApproval?: boolean;
-    },
+    permissions?: HostPermission
   ): Promise<unknown> {
     return this.post({
       method: RPCAction.SET_HOST_PERMISSIONS,
       payload: {
         host,
-        ...permissions,
+        permissions,
       },
     });
   }

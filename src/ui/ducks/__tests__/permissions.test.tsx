@@ -50,7 +50,7 @@ describe("ui/ducks/permissions", () => {
   test("should set host permission properly", async () => {
     (postMessage as jest.Mock).mockResolvedValue({ ...defaultPermission, noApproval: false });
 
-    await Promise.resolve(store.dispatch(setHostPermissions({ host: defaultHost, noApproval: false })));
+    await Promise.resolve(store.dispatch(setHostPermissions({ host: defaultHost, canSkipApprove: false })));
     const { permissions } = store.getState();
     const { result } = renderHook(() => useHostPermission(defaultHost), {
       wrapper: ({ children }) => <Provider store={store}>{children}</Provider>,

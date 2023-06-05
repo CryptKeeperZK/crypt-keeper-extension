@@ -14,7 +14,6 @@ export enum PendingRequestType {
   SEMAPHORE_PROOF,
   RLN_PROOF,
   APPROVE,
-  INJECT,
   CHECK_AVIABLE_IDENTITIES,
   CREATE_IDENTITY,
 }

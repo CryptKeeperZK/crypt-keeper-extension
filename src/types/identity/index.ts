@@ -46,7 +46,7 @@ export interface GroupData {
 export interface ConnectedIdentityData {
   identityCommitment: string;
   // nonce: number; // TODO: will be supported in another PR
-  host: string;
+  host: string; // TODO: maybe we should rename it to `origin` to be the same with `window.location.origin`
   groups: GroupData[] | [];
 }
 
