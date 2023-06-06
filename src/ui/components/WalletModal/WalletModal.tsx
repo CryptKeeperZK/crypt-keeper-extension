@@ -93,7 +93,7 @@ export const WalletModal = ({
             >
               {isWalletInstalled ? ethWalletTitle : "Install Metamask"}
             </Button>
-            
+
             <Button
               disabled={isLoading}
               name="cryptkeeper"
@@ -102,7 +102,7 @@ export const WalletModal = ({
               variant="outlined"
               onClick={handleCreateWithCryptKeeper}
             >
-              Cryptkeeyer
+              Cryptkeeper
             </Button>
           </Box>
         </FullModalContent>

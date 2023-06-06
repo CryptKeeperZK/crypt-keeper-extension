@@ -69,7 +69,7 @@ export const IdentityItem = ({
     if (handleSelection) {
       handleSelection(commitment);
     }
-    
+
     await dispatch(setSelectedToConnect({ commitment, host }));
     await dispatch(setNotReadyToConnect(false));
   }, [commitment, dispatch, setSelect]);
@@ -108,7 +108,7 @@ export const IdentityItem = ({
           className={classNames("identity-row__select-icon")}
           data-testid={`identity-select-${commitment}`}
           disabled={isDisableCheckClick}
-          fontAwesome="fas fa-skull"
+          fontAwesome="fas fa-check"
           onClick={handleSelectIdentity}
         />
       ) : (
@@ -117,7 +117,7 @@ export const IdentityItem = ({
             "identity-row__select-icon--selected": commitment === identitySelectedFromList,
           })}
           data-testid={`identity-connect-${commitment}`}
-          fontAwesome="fas fa-skull"
+          fontAwesome="fas fa-check"
           title="Select to Connect"
           onClick={handleSelectedToConnect}
         />

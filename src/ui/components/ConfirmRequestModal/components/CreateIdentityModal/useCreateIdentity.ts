@@ -155,7 +155,7 @@ export const useCreateIdentity = ({
         setError("root", { type: "submit", message: (err as Error).message });
       }
     },
-    [ethWallet.address, ethWallet.provider, cryptKeeperWallet.address, dispatch, useEthWallet, useCryptKeeperWallet],
+    [ethWallet.address, ethWallet.provider, cryptKeeperWallet.address, dispatch],
   );
 
   const onCreateIdentityWithEthWallet = useCallback(

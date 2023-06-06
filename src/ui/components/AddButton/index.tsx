@@ -12,7 +12,7 @@ export const AddButton = ({ title, action }: AddButtonProps): JSX.Element => (
         <button
             className={classNames(
                 "flex flex-row items-center justify-center cursor-pointer text-gray-600",
-                "add-button__active",
+                "create-identity-row__active",
             )}
             data-testid="create-new-identity"
             type="button"

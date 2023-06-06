@@ -52,10 +52,10 @@ const CreateIdentityModal = ({ pendingRequest, accept, reject }: CreateIdentityM
 
   return (
     <FullModal data-testid="create-identity-page" onClose={closeModal}>
-      <form className="create-identity-form">
+      <form className="create-identity-form confirm-modal">
         <FullModalHeader onClose={closeModal}>{host ? (`Connect to ${host}`) : ("Create a new Identity")}</FullModalHeader>
 
-        <FullModalContent>
+        <FullModalContent className="flex flex-col items-center">
           {/* DEPRECATED feature for first version */}
           {features.INTERREP_IDENTITY && (
             <>
@@ -116,7 +116,7 @@ const CreateIdentityModal = ({ pendingRequest, accept, reject }: CreateIdentityM
           {/* First Condition: "Add Secret Identity" */}
           {/* This condition when user from the extension clicks on "Add Secret Identity" to just notify the user with the aviable unused identities */}
           {!host && (
-            <div>
+            <>
               <Typography>Create your Semaphore secret identity.</Typography>
               {randomIdentities.length !== 0 && (
                 <div>
@@ -132,14 +132,14 @@ const CreateIdentityModal = ({ pendingRequest, accept, reject }: CreateIdentityM
                   />
                 </div>
               )}
-            </div>
+            </>
           )}
 
 
 
           {/* Second Condition: "cryptkeeper.connect()" */}
           {host && (
-            <div>
+            <>
               <div className="w-16 h-16 rounded-full my-6 border border-gray-800 p-2 flex-shrink-0">
                 <div
                   className="w-16 h-16"
@@ -167,7 +167,7 @@ const CreateIdentityModal = ({ pendingRequest, accept, reject }: CreateIdentityM
 
               {/* This condition when user connects and there are some secrent identities "random" User can choose from or create new a one */}
               {randomIdentities.length !== 0 && (
-                <div>
+                <>
                   <div className="text-sm text-gray-500 text-center">
                     You have already have {randomIdentities.length} random identities.
                     Please choose one to connect with, or choose to Create a new Identity.
@@ -179,11 +179,11 @@ const CreateIdentityModal = ({ pendingRequest, accept, reject }: CreateIdentityM
                     isDisableCheckClick={false}
                     isShowSettings={false}
                   />
-                </div>
+                </>
               )}
 
               <AddButton title="Create a new Identity and Connect" action={onWalletModalShow} />
-            </div>
+            </>
           )}
         </FullModalContent>
 

@@ -60,7 +60,7 @@ function App() {
 
       <hr />
       <div>
-        <h2>Create a new Identity</h2>
+        <h2>Create a new secret Identity</h2>
         <button data-testid="create-new-identity" onClick={createIdentity}>
           Create
         </button>{" "}

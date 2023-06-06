@@ -2,4 +2,9 @@
   display: flex;
   flex-direction: column;
   height: 100%;
+  overflow-y: auto;
+  /* Hide the scrollbar for Chrome, Safari and Opera */
+  &::-webkit-scrollbar {
+    display: none;
+  } 
 }
