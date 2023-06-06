@@ -192,6 +192,7 @@ const CreateIdentityModal = ({ pendingRequest, accept, reject }: CreateIdentityM
         <FullModalFooter>
           {host ? (
             <WalletModal
+              accept={accept}
               host={host}
               isLoading={isLoading}
               isOpenModal={isWalletModalOpen}
@@ -204,7 +205,6 @@ const CreateIdentityModal = ({ pendingRequest, accept, reject }: CreateIdentityM
             />
           ) : (
             <WalletModal
-              accept={accept}
               host={host}
               isLoading={isLoading}
               isOpenModal={isWalletModalOpen}
