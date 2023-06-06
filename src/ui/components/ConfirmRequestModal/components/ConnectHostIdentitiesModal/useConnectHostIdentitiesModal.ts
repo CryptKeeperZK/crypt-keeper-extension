@@ -7,6 +7,7 @@ import {
   fetchHostIdentities,
   fetchRandomIdentities,
   setConnectedIdentity,
+  setSelectedToConnect,
   useHostIdentities,
   useNotReadyToConnect,
   useRandomIdentities,
@@ -40,11 +41,15 @@ export const useConnectHostIdentitiesModal = ({
   reject,
 }: IUseConnectHostIdentitiesModalArgs): IUseConnectHostIdentitiesModalData => {
   const [faviconUrl, setFaviconUrl] = useState("");
+  const [selectedToConnects, setSelectedToConnect ] = useState<SelectedIdentity>({
+    commitment: "",
+    host: ""
+  })
   const dispatch = useAppDispatch();
   const hostIdentities = useHostIdentities();
   const randomIdentities = useRandomIdentities();
-  const selectedToConnect = useSelectedToConnect();
   const notReadyToConnect = useNotReadyToConnect();
+  const selectedToConnect = useSelectedToConnect();
   const { payload } = pendingRequest;
   const host = payload?.host ?? undefined;
 
@@ -71,11 +76,12 @@ export const useConnectHostIdentitiesModal = ({
   );
 
   const handleConnectIdentity = useCallback(async() => {
-    if (!host || selectedToConnect.host !== "") {
-      console.log()
-      throw new Error("Please set host in order to continue this action.");
+    if (selectedToConnect.host && selectedToConnect.host !== "" && selectedToConnect.commitment !== "") {
+      console.log("Commit", selectedToConnect.commitment)
+      console.log("Commit", selectedToConnect.host)
+      await onConenctIdentity(selectedToConnect.commitment, selectedToConnect.host); 
     }
-    await onConenctIdentity(selectedToConnect.commitment, selectedToConnect.host);
+    throw new Error("Please set host in order to continue this action.");
   }, [onConenctIdentity, selectedToConnect, dispatch]);
 
 
@@ -99,7 +105,7 @@ export const useConnectHostIdentitiesModal = ({
 
     dispatch(fetchHostIdentities(host));
     dispatch(fetchRandomIdentities());
-  }, [dispatch, notReadyToConnect]);
+  }, [dispatch, notReadyToConnect, setSelectedToConnect]);
 
   return {
     hostIdentities,

@@ -16,7 +16,7 @@ export interface GroupData {
 export interface ConnectedIdentityData {
   identityCommitment: string;
   host: string;
-  groups: GroupData[] | [];
+  groups: GroupData[];
 }
 
 export interface CryptKeeperInjectedProvider {

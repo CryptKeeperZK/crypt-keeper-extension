@@ -94,7 +94,6 @@ export const ConnectHostIdentitiesModal = ({
           onCreateWithCryptkeeper={onCreateWithCryptkeeper}
           onCreateWithEthWallet={onCreateWithEthWallet}
         />
-
         <Button buttonType={ButtonType.SECONDARY} onClick={onReject}>
           Reject
         </Button>

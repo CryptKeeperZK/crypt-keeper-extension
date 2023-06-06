@@ -67,7 +67,7 @@ const identitiesSlice = createSlice({
     },
 
     setSelectedToConnect: (state: IdentitiesState, action: PayloadAction<SelectedIdentity>) => {
-      state.selected = {
+      state.selectedToConnect = {
         commitment: action.payload.commitment,
         host: action.payload.host,
       };

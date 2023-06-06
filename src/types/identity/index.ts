@@ -29,7 +29,7 @@ export interface IdentityMetadata {
   identityStrategy: IdentityStrategy;
   host?: string;
   web2Provider?: IdentityWeb2Provider;
-  groups: GroupData[] | [];
+  groups: GroupData[];
 }
 
 export interface GroupData {
@@ -47,7 +47,7 @@ export interface ConnectedIdentityData {
   identityCommitment: string;
   // nonce: number; // TODO: will be supported in another PR
   host: string; // TODO: maybe we should rename it to `origin` to be the same with `window.location.origin`
-  groups: GroupData[] | [];
+  groups: GroupData[];
 }
 
 export interface IdentityData {
@@ -77,7 +77,7 @@ export interface ICreateIdentityArgs {
   messageSignature?: string;
   web2Provider?: IdentityWeb2Provider;
   host?: string;
-  groups: GroupData[] | [];
+  groups: GroupData[];
 }
 
 export type StrategiesMap = {
