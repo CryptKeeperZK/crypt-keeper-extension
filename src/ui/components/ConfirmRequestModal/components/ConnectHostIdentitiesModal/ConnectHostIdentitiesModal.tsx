@@ -23,7 +23,7 @@ export const ConnectHostIdentitiesModal = ({
   accept,
   reject,
 }: ConnectionApprovalModalProps): JSX.Element => {
-  const { hostIdentities, randomIdentities, host, notReadyToConnect, faviconUrl, selectedToConnect, onReject, handleConnectIdentity } = useConnectHostIdentitiesModal({
+  const { hostIdentities, randomIdentities, host, notReadyToConnect, faviconUrl, onReject, handleConnectIdentity } = useConnectHostIdentitiesModal({
     pendingRequest,
     accept,
     reject,

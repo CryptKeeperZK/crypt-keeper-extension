@@ -17,6 +17,7 @@ import "../../confirmModal.scss";
 import { useCreateIdentity } from "./useCreateIdentity";
 
 import { WalletModal } from "@src/ui/components/WalletModal";
+import { AddButton } from "@src/ui/components/AddButton";
 
 export interface CreateIdentityModalProps {
   pendingRequest?: PendingRequest<{ host: string }>;
@@ -35,10 +36,11 @@ const CreateIdentityModal = ({ pendingRequest, accept, reject }: CreateIdentityM
     control,
     host,
     faviconUrl,
+    notReadyToConnect,
     randomIdentities,
     isWalletModalOpen,
+    handleConnectIdentity,
     closeModal,
-    onAccept,
     onReject,
     onWalletModalShow,
     onConnectWallet,
@@ -49,10 +51,11 @@ const CreateIdentityModal = ({ pendingRequest, accept, reject }: CreateIdentityM
   return (
     <FullModal data-testid="create-identity-page" onClose={closeModal}>
       <form className="create-identity-form">
-        <FullModalHeader onClose={closeModal}>Create a new Identity</FullModalHeader>
+        <FullModalHeader onClose={closeModal}>{host ? (`Connect to ${host}`) : ("Create a new Identity")}</FullModalHeader>
 
         <FullModalContent>
-          {features.INTERREP_IDENTITY ? (
+          {/* DEPRECATED feature for first version */}
+          {features.INTERREP_IDENTITY && (
             <>
               <Controller
                 control={control}
@@ -106,7 +109,34 @@ const CreateIdentityModal = ({ pendingRequest, accept, reject }: CreateIdentityM
                 </>
               )}
             </>
-          ) : host ? (
+          )}
+
+          {/* First Condition: "Add Secret Identity" */}
+          {/* This condition when user from the extension clicks on "Add Secret Identity" to just notify the user with the aviable unused identities */}
+          {!host && (
+            <div>
+              <Typography>Create your Semaphore secret identity.</Typography>
+              {randomIdentities.length !== 0 && (
+                <div>
+                  <div className="text-sm text-gray-500 text-center">
+                    You have already created {randomIdentities.length} secret identity/ies.
+                    If Are you sure you want to create a new identity please click on create.
+                  </div>
+                  <IdentitiesContent
+                    host={host}
+                    identities={randomIdentities}
+                    isDisableCheckClick={true}
+                    isShowSettings={false}
+                  />
+                </div>
+              )}
+            </div>
+          )}
+
+
+
+          {/* Second Condition: "cryptkeeper.connect()" */}
+          {host && (
             <div>
               <div className="w-16 h-16 rounded-full my-6 border border-gray-800 p-2 flex-shrink-0">
                 <div
@@ -123,54 +153,84 @@ const CreateIdentityModal = ({ pendingRequest, accept, reject }: CreateIdentityM
               <Typography />
 
               <div className="text-lg font-semibold mb-2 text-center">
-                Create your Semaphore identity for `{host}` host
+                Create your Semaphore secret identity for `{host}` host
               </div>
 
-              <div className="text-sm text-gray-500 text-center">
-                {randomIdentities.length === 0
-                  ? `You don't have any aviable identities created!. Please click on Create button to create a new one.`
-                  : `You have already ${randomIdentities.length} random identities. Please choose one to connect
-                with, or choose to create a new identity.`}
-              </div>
+              {randomIdentities.length === 0 && (
+                <div className="text-sm text-gray-500 text-center">
+                  You don't have any aviable identities created!.
+                  Please click on Create button to Create a new Identity.
+                </div>
+              )}
 
-              <IdentitiesContent
-                host={host}
-                identities={randomIdentities}
-                isDisableCheckClick={false}
-                isShowSettings={false}
-              />
+              {/* This condition when user connects and there are some secrent identities "random" User can choose from or create new a one */}
+              {randomIdentities.length !== 0 && (
+                <div>
+                  <div className="text-sm text-gray-500 text-center">
+                    You have already have {randomIdentities.length} random identities.
+                    Please choose one to connect with, or choose to Create a new Identity.
+                  </div>
+
+                  <IdentitiesContent
+                    host={host}
+                    identities={randomIdentities}
+                    isDisableCheckClick={false}
+                    isShowSettings={false}
+                  />
+                </div>
+              )}
+
+              <AddButton title="Create a new Identity" action={onWalletModalShow} />
             </div>
-          ) : (
-            <Typography>Create your Semaphore random identity.</Typography>
           )}
         </FullModalContent>
 
         {errors.root && <div className="text-xs text-red-500 text-center pb-1">{errors.root}</div>}
 
         <FullModalFooter>
-          <WalletModal
-            accept={accept}
-            host={host}
-            isLoading={isLoading}
-            isOpenModal={isWalletModalOpen}
-            isWalletConnected={isWalletConnected}
-            isWalletInstalled={isWalletInstalled}
-            reject={onWalletModalShow}
-            onConnectWallet={onConnectWallet}
-            onCreateWithCryptkeeper={onCreateWithCryptkeeper}
-            onCreateWithEthWallet={onCreateWithEthWallet}
-          />
+          {host ? (
+            <WalletModal
+              host={host}
+              isLoading={isLoading}
+              isOpenModal={isWalletModalOpen}
+              isWalletConnected={isWalletConnected}
+              isWalletInstalled={isWalletInstalled}
+              reject={onWalletModalShow}
+              onConnectWallet={onConnectWallet}
+              onCreateWithCryptkeeper={onCreateWithCryptkeeper}
+              onCreateWithEthWallet={onCreateWithEthWallet}
+            />
+          ) : (
+            <WalletModal
+              accept={accept}
+              host={host}
+              isLoading={isLoading}
+              isOpenModal={isWalletModalOpen}
+              isWalletConnected={isWalletConnected}
+              isWalletInstalled={isWalletInstalled}
+              reject={onWalletModalShow}
+              onConnectWallet={onConnectWallet}
+              onCreateWithCryptkeeper={onCreateWithCryptkeeper}
+              onCreateWithEthWallet={onCreateWithEthWallet}
+            />
+          )}
 
           <Button buttonType={ButtonType.SECONDARY} onClick={onReject}>
             Reject
           </Button>
 
-          <Button className="ml-2" onClick={onWalletModalShow}>
-            Create
-          </Button>
+          {host ? (
+            <Button disabled={notReadyToConnect} className="ml-2" onClick={handleConnectIdentity}>
+              Connect
+            </Button>
+          ) : (
+            <Button className="ml-2" onClick={onWalletModalShow}>
+              Create
+            </Button>
+          )}
         </FullModalFooter>
       </form>
-    </FullModal>
+    </FullModal >
   );
 };
 

@@ -12,10 +12,11 @@ import {
   IdentityWeb2Provider,
   PendingRequest,
   SelectOption,
+  SelectedIdentity,
 } from "@src/types";
 import { closePopup } from "@src/ui/ducks/app";
 import { useAppDispatch } from "@src/ui/ducks/hooks";
-import { createIdentity, fetchRandomIdentities, useRandomIdentities } from "@src/ui/ducks/identities";
+import { createIdentity, fetchRandomIdentities, setConnectedIdentity, useNotReadyToConnect, useRandomIdentities, useSelectedToConnect } from "@src/ui/ducks/identities";
 import { useCryptKeeperWallet, useEthWallet } from "@src/ui/hooks/wallet";
 import { getMessageTemplate, signWithSigner } from "@src/ui/services/identity";
 
@@ -39,8 +40,11 @@ export interface IUseCreateIdentityData {
   control: Control<FormFields, unknown>;
   host?: string;
   faviconUrl: string;
+  notReadyToConnect: boolean;
   randomIdentities: IdentityData[];
   isWalletModalOpen: boolean;
+  selectedToConnect: SelectedIdentity;
+  handleConnectIdentity: () => void;
   closeModal: () => void;
   onAccept: () => void;
   onReject: () => void;
@@ -66,6 +70,8 @@ export const useCreateIdentity = ({
   const [faviconUrl, setFaviconUrl] = useState("");
   const [isWalletModalOpen, setWalletModalOpen] = useState(false);
   const randomIdentities = useRandomIdentities();
+  const notReadyToConnect = useNotReadyToConnect();
+  const selectedToConnect = useSelectedToConnect();
   const features = getEnabledFeatures();
   const {
     formState: { isSubmitting, isLoading, errors },
@@ -121,11 +127,11 @@ export const useCreateIdentity = ({
         const options =
           identityStrategyType.value !== "random"
             ? {
-                nonce,
-                web2Provider: web2Provider.value as IdentityWeb2Provider,
-                account: account as string,
-                message,
-              }
+              nonce,
+              web2Provider: web2Provider.value as IdentityWeb2Provider,
+              account: account as string,
+              message,
+            }
             : { message, account: account as string };
 
         const messageSignature =
@@ -168,6 +174,25 @@ export const useCreateIdentity = ({
     dispatch(closePopup());
   }, [dispatch]);
 
+
+  const onConenctIdentity = useCallback(
+    async (identityCommitment: string, host: string) => {
+      if (!accept) {
+        throw new Error("Please set accept to be able to continue");
+      }
+      await dispatch(setConnectedIdentity(identityCommitment, host));
+      accept();
+    },
+    [accept, dispatch],
+  );
+
+  const handleConnectIdentity = useCallback(async () => {
+    if (selectedToConnect.host && selectedToConnect.host !== "" && selectedToConnect.commitment !== "") {
+      await onConenctIdentity(selectedToConnect.commitment, selectedToConnect.host);
+    }
+    throw new Error("Please set host in order to continue this action.");
+  }, [onConenctIdentity, selectedToConnect, dispatch]);
+
   const onAccept = useCallback(() => {
     if (!accept) {
       throw new Error("Please set accept fun");
@@ -176,13 +201,18 @@ export const useCreateIdentity = ({
   }, [accept]);
 
   const onReject = useCallback(() => {
-    if (!reject) {
-      throw new Error("Please set accept fun");
+    // When user creates a new identity in the connection process with a host
+    if (reject) {
+      reject();
     }
-    reject();
-  }, [reject]);
+
+    // When user clicks on "Add Secret Identity"
+    closeModal();
+  }, [reject, closeModal]);
 
   useEffect(() => {
+    dispatch(fetchRandomIdentities());
+
     if (!host) {
       return;
     }
@@ -191,9 +221,7 @@ export const useCreateIdentity = ({
       const [favicon] = data.favicons;
       setFaviconUrl(favicon);
     });
-
-    dispatch(fetchRandomIdentities());
-  }, [dispatch]);
+  }, [dispatch, notReadyToConnect]);
 
   return {
     isLoading: ethWallet.isActivating || cryptKeeperWallet.isActivating || isLoading || isSubmitting,
@@ -210,7 +238,10 @@ export const useCreateIdentity = ({
     host,
     randomIdentities,
     faviconUrl,
+    notReadyToConnect,
     isWalletModalOpen,
+    selectedToConnect,
+    handleConnectIdentity,
     closeModal,
     onAccept,
     onReject,

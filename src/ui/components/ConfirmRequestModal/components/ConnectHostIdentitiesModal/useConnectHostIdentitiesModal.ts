@@ -77,8 +77,6 @@ export const useConnectHostIdentitiesModal = ({
 
   const handleConnectIdentity = useCallback(async() => {
     if (selectedToConnect.host && selectedToConnect.host !== "" && selectedToConnect.commitment !== "") {
-      console.log("Commit", selectedToConnect.commitment)
-      console.log("Commit", selectedToConnect.host)
       await onConenctIdentity(selectedToConnect.commitment, selectedToConnect.host); 
     }
     throw new Error("Please set host in order to continue this action.");

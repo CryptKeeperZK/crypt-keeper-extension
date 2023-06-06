@@ -101,7 +101,7 @@ export const IdentityItem = ({
           className={classNames("identity-row__select-icon")}
           data-testid={`identity-select-${commitment}`}
           disabled={isDisableCheckClick}
-          fontAwesome="fas fa-check"
+          fontAwesome="fas fa-skull"
           onClick={handleSelectIdentity}
         />
       ) : (
@@ -110,7 +110,7 @@ export const IdentityItem = ({
             "identity-row__select-icon--selected": select,
           })}
           data-testid={`identity-connect-${commitment}`}
-          fontAwesome="fas fa-check"
+          fontAwesome="fas fa-skull"
           title="Select to Connect"
           onClick={handleSelectedToConnect}
         />

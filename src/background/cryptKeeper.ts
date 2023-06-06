@@ -158,7 +158,7 @@ export default class CryptKeeperController extends Handler {
     );
 
     // Browser
-    this.add(RPCAction.CLOSE_POPUP, async () => this.browserService.closePopup());
+    this.add(RPCAction.CLOSE_POPUP, this.browserService.closePopup);
 
     return this;
   };
