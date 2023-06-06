@@ -182,7 +182,7 @@ const CreateIdentityModal = ({ pendingRequest, accept, reject }: CreateIdentityM
                 </div>
               )}
 
-              <AddButton title="Create a new Identity" action={onWalletModalShow} />
+              <AddButton title="Create a new Identity and Connect" action={onWalletModalShow} />
             </div>
           )}
         </FullModalContent>

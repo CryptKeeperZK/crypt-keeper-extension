@@ -1,5 +1,5 @@
 import { getLinkPreview } from "link-preview-js";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState, MouseEvent as ReactMouseEvent } from "react";
 
 import { IdentityData, PendingRequest, RequestResolutionAction, RequestResolutionStatus, SelectedIdentity } from "@src/types";
 import { useAppDispatch } from "@src/ui/ducks/hooks";
@@ -17,6 +17,7 @@ import { finalizeRequest } from "@src/ui/ducks/requests";
 
 export interface IUseConnectHostIdentitiesModalArgs {
   pendingRequest: PendingRequest<{ host: string }>;
+  onWalletModalShow: (event: ReactMouseEvent) => void;
   accept: (data?: unknown) => void;
   reject: () => void;
 }
@@ -41,10 +42,6 @@ export const useConnectHostIdentitiesModal = ({
   reject,
 }: IUseConnectHostIdentitiesModalArgs): IUseConnectHostIdentitiesModalData => {
   const [faviconUrl, setFaviconUrl] = useState("");
-  const [selectedToConnects, setSelectedToConnect ] = useState<SelectedIdentity>({
-    commitment: "",
-    host: ""
-  })
   const dispatch = useAppDispatch();
   const hostIdentities = useHostIdentities();
   const randomIdentities = useRandomIdentities();
@@ -82,7 +79,6 @@ export const useConnectHostIdentitiesModal = ({
     throw new Error("Please set host in order to continue this action.");
   }, [onConenctIdentity, selectedToConnect, dispatch]);
 
-
   const onAccept = useCallback(() => {
     accept();
   }, [accept]);
@@ -103,7 +99,7 @@ export const useConnectHostIdentitiesModal = ({
 
     dispatch(fetchHostIdentities(host));
     dispatch(fetchRandomIdentities());
-  }, [dispatch, notReadyToConnect, setSelectedToConnect]);
+  }, [dispatch, notReadyToConnect]);
 
   return {
     hostIdentities,

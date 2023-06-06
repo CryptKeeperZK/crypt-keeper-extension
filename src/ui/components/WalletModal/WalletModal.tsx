@@ -7,6 +7,8 @@ import { FullModalContent, FullModalFooter, FullModalHeader } from "@src/ui/comp
 import { Icon } from "@src/ui/components/Icon";
 
 import { style } from "./style";
+import { setConnectedIdentity, useSelectedToConnect } from "@src/ui/ducks/identities";
+import { useAppDispatch } from "@src/ui/ducks/hooks";
 
 export interface BasicModalProps {
   host?: string;
@@ -34,20 +36,27 @@ export const WalletModal = ({
   reject,
   accept,
 }: BasicModalProps): JSX.Element => {
+  const dispatch = useAppDispatch();
+  const selectedToConnect = useSelectedToConnect();
+
   const ethWalletTitle = isWalletConnected ? "Metamask" : "Connect to Metamask";
+
+  const handleConnection = useCallback(async () => {
+    if (accept) {
+      //await dispatch(setConnectedIdentity(selectedToConnect.commitment, selectedToConnect.host));
+      accept();
+    }
+    return;
+  }, [accept]);
 
   const handleCreateWithEthWallet = useCallback(async () => {
     await onCreateWithEthWallet();
-    if (accept) {
-      accept();
-    }
+    await handleConnection();
   }, [accept, onConnectWallet]);
 
   const handleCreateWithCryptKeeper = useCallback(async () => {
     await onCreateWithCryptkeeper();
-    if (accept) {
-      accept();
-    }
+    await handleConnection();
   }, [accept]);
 
   return (
