@@ -11,7 +11,7 @@ import {
   useSelectedIdentity,
 } from "@src/ui/ducks/identities";
 
-import { useCallback } from "react";
+import { useCallback, useState } from "react";
 
 import { useAppDispatch } from "@src/ui/ducks/hooks";
 
@@ -28,6 +28,8 @@ export const IdentitiesContent = ({
   isShowSettings,
   isDisableCheckClick,
 }: IdentityListProps): JSX.Element => {
+  const [identitySelectedFromList, setIdentitySelectedFromList] = useState<string>("0"); // For UI bug: fixing the multiple selections
+
   const selected = useSelectedIdentity();
   const dispatch = useAppDispatch();
 
@@ -51,6 +53,11 @@ export const IdentitiesContent = ({
     },
     [dispatch],
   );
+
+  const handleSelection = useCallback((commitment: string) => {
+    setIdentitySelectedFromList(commitment)
+  }, [setIdentitySelectedFromList]);
+
   return (
     <div className="identities-content">
       {identities.map(({ commitment, metadata }) => (
@@ -62,6 +69,8 @@ export const IdentitiesContent = ({
           isShowSettings={isShowSettings}
           metadata={metadata}
           selected={selected?.commitment}
+          identitySelectedFromList={identitySelectedFromList}
+          handleSelection={handleSelection}
           onDeleteIdentity={onDeleteIdentity}
           onSelectIdentity={onSelectIdentity}
           onUpdateIdentityName={onUpdateIdentityName}

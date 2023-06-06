@@ -27,6 +27,8 @@ export interface IdentityItemProps {
   host?: string;
   metadata: IdentityMetadata;
   selected?: string;
+  identitySelectedFromList?: string;
+  handleSelection?: (commitment: string) => void;
   isShowSettings: boolean;
   isDisableCheckClick: boolean;
   onDeleteIdentity: (commitment: string) => Promise<void>;
@@ -38,6 +40,8 @@ export const IdentityItem = ({
   commitment,
   host,
   selected = "",
+  identitySelectedFromList = "",
+  handleSelection,
   metadata,
   isShowSettings = true,
   isDisableCheckClick = true,
@@ -62,7 +66,10 @@ export const IdentityItem = ({
     if (!host) {
       throw new Error("Please set host in order to continue this action.");
     }
-    setSelect(true);
+    if (handleSelection) {
+      handleSelection(commitment);
+    }
+    
     await dispatch(setSelectedToConnect({ commitment, host }));
     await dispatch(setNotReadyToConnect(false));
   }, [commitment, dispatch, setSelect]);
@@ -107,7 +114,7 @@ export const IdentityItem = ({
       ) : (
         <Icon
           className={classNames("identity-row__select-icon", {
-            "identity-row__select-icon--selected": select,
+            "identity-row__select-icon--selected": commitment === identitySelectedFromList,
           })}
           data-testid={`identity-connect-${commitment}`}
           fontAwesome="fas fa-skull"

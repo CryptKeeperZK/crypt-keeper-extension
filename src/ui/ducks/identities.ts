@@ -125,42 +125,42 @@ export const createIdentityRequest = () => async (): Promise<void> => {
   await postMessage({ method: RPCAction.CREATE_IDENTITY_REQ });
 };
 
-export const createIdentity =
-  ({ walletType, strategy, messageSignature, options, host }: ICreateIdentityUiArgs) =>
-    async (): Promise<string | undefined> => {
-      const commitment = await postMessage<string | undefined>({
-        method: RPCAction.CREATE_IDENTITY,
-        payload: {
-          strategy,
-          walletType,
-          messageSignature,
-          options,
-          host,
-        },
-      });
-      // A special case, when user connects and then choose to "+ Create a new identity and Connect" button.
-      // This will automatically select this to be the connected one directly and then finish the connection. 
-      if (commitment) {
-        setSelectedToConnect({
-          commitment,
-          host
-        });
-      }
-      return commitment;
-    }
-
 // export const createIdentity =
 //   ({ walletType, strategy, messageSignature, options, host }: ICreateIdentityUiArgs) =>
-//     async (): Promise<string | undefined> => postMessage<string | undefined>({
-//       method: RPCAction.CREATE_IDENTITY,
-//       payload: {
-//         strategy,
-//         walletType,
-//         messageSignature,
-//         options,
-//         host,
-//       },
-//     })
+//     async (): Promise<string | undefined> => {
+//       const commitment = await postMessage<string | undefined>({
+//         method: RPCAction.CREATE_IDENTITY,
+//         payload: {
+//           strategy,
+//           walletType,
+//           messageSignature,
+//           options,
+//           host,
+//         },
+//       });
+//       // A special case, when user connects and then choose to "+ Create a new identity and Connect" button.
+//       // This will automatically select this to be the connected one directly and then finish the connection. 
+//       if (commitment) {
+//         setSelectedToConnect({
+//           commitment,
+//           host
+//         });
+//       }
+//       return commitment;
+//     }
+
+export const createIdentity =
+  ({ walletType, strategy, messageSignature, options, host }: ICreateIdentityUiArgs) =>
+    async (): Promise<string | undefined> => postMessage<string | undefined>({
+      method: RPCAction.CREATE_IDENTITY,
+      payload: {
+        strategy,
+        walletType,
+        messageSignature,
+        options,
+        host,
+      },
+    })
 
 export const setActiveIdentity = (identityCommitment: string) => async (): Promise<boolean> =>
   postMessage({
