@@ -25,6 +25,8 @@ export interface CreateIdentityModalProps {
   reject?: () => void;
 }
 
+// TODO: This `CreateIdentityModal` component gets complex now.
+//       Its better to be seperated to two smaller seperate modals "ConnectNewIdentityModal" and "CreateNewIdentityModal"
 const CreateIdentityModal = ({ pendingRequest, accept, reject }: CreateIdentityModalProps): JSX.Element => {
   const features = getEnabledFeatures();
   const {

@@ -62,6 +62,8 @@ interface FormFields {
   host?: string;
 }
 
+// TODO: This hook is used for both "CreateIdentityModal" as a local hook.
+//       And also for supporting "Wallet" functions as a non-local hook, that should be generalized and seperated
 export const useCreateIdentity = ({
   pendingRequest,
   accept,
@@ -153,7 +155,7 @@ export const useCreateIdentity = ({
         setError("root", { type: "submit", message: (err as Error).message });
       }
     },
-    [ethWallet.address, ethWallet.provider, cryptKeeperWallet.address, dispatch],
+    [ethWallet.address, ethWallet.provider, cryptKeeperWallet.address, dispatch, useEthWallet, useCryptKeeperWallet],
   );
 
   const onCreateIdentityWithEthWallet = useCallback(

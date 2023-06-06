@@ -36,6 +36,13 @@ export const WalletModal = ({
 }: BasicModalProps): JSX.Element => {
   const ethWalletTitle = isWalletConnected ? "Metamask" : "Connect to Metamask";
 
+  const handleCreateWithEthWallet = useCallback(async () => {
+    await onCreateWithEthWallet();
+    if (accept) {
+      accept();
+    }
+  }, [accept, onConnectWallet]);
+
   const handleCreateWithCryptKeeper = useCallback(async () => {
     await onCreateWithCryptkeeper();
     if (accept) {
@@ -51,7 +58,7 @@ export const WalletModal = ({
       open={isOpenModal}
     >
       <Box sx={style}>
-        <FullModalHeader>Supported Wallets</FullModalHeader>
+        <FullModalHeader>Sign your identity</FullModalHeader>
 
         <FullModalContent className="flex flex-col items-center">
           <Box sx={{ p: "1rem", display: "flex", alignItems: "center" }}>
@@ -76,7 +83,7 @@ export const WalletModal = ({
               sx={{ textTransform: "none" }}
               type="submit"
               variant="outlined"
-              onClick={isWalletConnected ? onCreateWithEthWallet : onConnectWallet}
+              onClick={isWalletConnected ? handleCreateWithEthWallet : onConnectWallet}
             >
               {isWalletInstalled ? ethWalletTitle : "Install Metamask"}
             </Button>
