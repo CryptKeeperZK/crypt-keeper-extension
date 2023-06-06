@@ -179,10 +179,10 @@ const CreateIdentityModal = ({ pendingRequest, accept, reject }: CreateIdentityM
                     isDisableCheckClick={false}
                     isShowSettings={false}
                   />
+
+                  <AddButton title="Create a new Identity and Connect" action={onWalletModalShow} />
                 </>
               )}
-
-              <AddButton title="Create a new Identity and Connect" action={onWalletModalShow} />
             </>
           )}
         </FullModalContent>
@@ -221,7 +221,7 @@ const CreateIdentityModal = ({ pendingRequest, accept, reject }: CreateIdentityM
             Reject
           </Button>
 
-          {host ? (
+          {(host && randomIdentities.length !== 0)  ? (
             <Button disabled={notReadyToConnect} className="ml-2" onClick={handleConnectIdentity}>
               Connect
             </Button>

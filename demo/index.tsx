@@ -42,13 +42,11 @@ function App() {
         <p>{connectedIdentity.identityCommitment}</p>
       </div>
 
-      <hr />
       <div>
         <h2>Host name for the connected identity:</h2>
         <p>{connectedIdentity.host}</p>
       </div>
 
-      <hr />
       <div>
         <h2>Joined groups for the connected identity:</h2>
         <p>
