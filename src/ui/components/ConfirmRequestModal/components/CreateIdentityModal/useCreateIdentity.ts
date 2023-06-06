@@ -16,7 +16,14 @@ import {
 } from "@src/types";
 import { closePopup } from "@src/ui/ducks/app";
 import { useAppDispatch } from "@src/ui/ducks/hooks";
-import { createIdentity, fetchRandomIdentities, setConnectedIdentity, useNotReadyToConnect, useRandomIdentities, useSelectedToConnect } from "@src/ui/ducks/identities";
+import {
+  createIdentity,
+  fetchRandomIdentities,
+  setConnectedIdentity,
+  useNotReadyToConnect,
+  useRandomIdentities,
+  useSelectedToConnect,
+} from "@src/ui/ducks/identities";
 import { useCryptKeeperWallet, useEthWallet } from "@src/ui/hooks/wallet";
 import { getMessageTemplate, signWithSigner } from "@src/ui/services/identity";
 
@@ -48,7 +55,7 @@ export interface IUseCreateIdentityData {
   closeModal: () => void;
   onAccept: () => void;
   onReject: () => void;
-  onWalletModalShow: (event: ReactMouseEvent) => void;
+  onWalletModalShow: () => void;
   register: UseFormRegister<FormFields>;
   onConnectWallet: () => Promise<void>;
   onCreateWithEthWallet: (event?: BaseSyntheticEvent) => Promise<void>;
@@ -103,13 +110,9 @@ export const useCreateIdentity = ({
     host = payload?.host ?? undefined;
   }
 
-  const onWalletModalShow = useCallback(
-    (event: ReactMouseEvent) => {
-      event.stopPropagation();
-      setWalletModalOpen((show) => !show);
-    },
-    [setWalletModalOpen],
-  );
+  const onWalletModalShow = useCallback(() => {
+    setWalletModalOpen((show) => !show);
+  }, [setWalletModalOpen]);
 
   const createNewIdentity = useCallback(
     async ({ identityStrategyType, web2Provider, nonce }: FormFields, walletType: EWallet) => {
@@ -129,11 +132,11 @@ export const useCreateIdentity = ({
         const options =
           identityStrategyType.value !== "random"
             ? {
-              nonce,
-              web2Provider: web2Provider.value as IdentityWeb2Provider,
-              account: account as string,
-              message,
-            }
+                nonce,
+                web2Provider: web2Provider.value as IdentityWeb2Provider,
+                account: account as string,
+                message,
+              }
             : { message, account: account as string };
 
         const messageSignature =
@@ -175,7 +178,6 @@ export const useCreateIdentity = ({
   const closeModal = useCallback(() => {
     dispatch(closePopup());
   }, [dispatch]);
-
 
   const onConenctIdentity = useCallback(
     async (identityCommitment: string, host: string) => {

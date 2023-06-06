@@ -8,6 +8,7 @@ import { ConnectTabList, ConnectTabListProps } from "..";
 
 describe("ui/pages/Home/components/ConnectTabList", () => {
   const defaultProps: ConnectTabListProps = {
+    isShowTabs: true,
     children: [<div key={0}>Identities content</div>, <div key={1}>Activity content</div>],
   };
 
@@ -16,7 +17,7 @@ describe("ui/pages/Home/components/ConnectTabList", () => {
   });
 
   test("should render properly", async () => {
-    render(<ConnectTabList {...defaultProps} />);
+    render(<ConnectTabList {...defaultProps} isShowTabs={false} />);
 
     const component = await screen.findByTestId("tab-list");
 

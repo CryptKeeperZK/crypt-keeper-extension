@@ -21,7 +21,7 @@ export interface BasicModalProps {
   onCreateWithEthWallet: (event?: BaseSyntheticEvent) => Promise<void>;
   onCreateWithCryptkeeper: (event?: BaseSyntheticEvent) => Promise<void>;
   accept?: () => void;
-  reject: (event: ReactMouseEvent) => void;
+  reject: () => void;
 }
 
 // TODO: replace wallet names with icons
@@ -64,7 +64,7 @@ export const WalletModal = ({
       open={isOpenModal}
     >
       <Box sx={style}>
-        <FullModalHeader>Sign your identity</FullModalHeader>
+        <FullModalHeader onClose={reject}>Sign your identity</FullModalHeader>
 
         <FullModalContent className="flex flex-col items-center">
           <Box sx={{ p: "1rem", display: "flex", alignItems: "center" }}>
@@ -106,19 +106,6 @@ export const WalletModal = ({
             </Button>
           </Box>
         </FullModalContent>
-
-        <FullModalFooter>
-          <Button
-            disabled={isLoading}
-            name="close"
-            sx={{ textTransform: "none" }}
-            type="submit"
-            variant="contained"
-            onClick={reject}
-          >
-            Close
-          </Button>
-        </FullModalFooter>
       </Box>
     </Modal>
   );

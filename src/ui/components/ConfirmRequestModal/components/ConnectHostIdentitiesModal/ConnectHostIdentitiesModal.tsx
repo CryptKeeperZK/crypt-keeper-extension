@@ -22,7 +22,7 @@ export const ConnectHostIdentitiesModal = ({
   pendingRequest,
   accept,
   reject,
-}: ConnectionApprovalModalProps): JSX.Element => {  
+}: ConnectionApprovalModalProps): JSX.Element => {
   const {
     isWalletModalOpen,
     isLoading,
@@ -34,12 +34,13 @@ export const ConnectHostIdentitiesModal = ({
     onWalletModalShow,
   } = useCreateIdentity({ pendingRequest, accept });
 
-  const { hostIdentities, randomIdentities, host, notReadyToConnect, faviconUrl, onReject, handleConnectIdentity } = useConnectHostIdentitiesModal({
-    pendingRequest,
-    onWalletModalShow,
-    accept,
-    reject,
-  });
+  const { hostIdentities, randomIdentities, host, notReadyToConnect, faviconUrl, onReject, handleConnectIdentity } =
+    useConnectHostIdentitiesModal({
+      pendingRequest,
+      onWalletModalShow,
+      accept,
+      reject,
+    });
 
   return (
     <FullModal className="confirm-modal" data-testid="approval-modal" onClose={() => console.log("hi")}>
@@ -64,7 +65,7 @@ export const ConnectHostIdentitiesModal = ({
           Please choose one to connect with, or choose to create a new identity.
         </div>
 
-        <ConnectTabList>
+        <ConnectTabList isShowTabs={hostIdentities.length > 0 && randomIdentities.length > 0}>
           <IdentitiesContent
             host={host}
             identities={hostIdentities}
