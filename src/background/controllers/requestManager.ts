@@ -6,20 +6,32 @@ import pushMessage from "@src/util/pushMessage";
 
 import BrowserUtils from "./browserUtils";
 
-export default class RequestManager extends EventEmitter2 {
+export default class RequestManager {
+  private static INSTANCE: RequestManager;
+
+  private eventEmitter: EventEmitter2;
+
   private browserService: BrowserUtils;
 
   private pendingRequests: PendingRequest[];
 
   private nonce: number;
 
-  constructor() {
-    super();
+  private constructor() {
+    this.eventEmitter = new EventEmitter2();
     this.pendingRequests = [];
     this.nonce = 0;
     this.browserService = BrowserUtils.getInstance();
 
     this.browserService.addRemoveWindowListener(this.clearRequests);
+  }
+
+  static getInstance(): RequestManager {
+    if (!RequestManager.INSTANCE) {
+      RequestManager.INSTANCE = new RequestManager();
+    }
+
+    return RequestManager.INSTANCE;
   }
 
   getNonce = (): number => this.nonce;
@@ -40,7 +52,7 @@ export default class RequestManager extends EventEmitter2 {
 
       this.browserService.addRemoveWindowListener(onPopupClose);
 
-      this.once(`${id}:finalized`, (action: RequestResolutionAction) => {
+      this.eventEmitter.once(`${id}:finalized`, (action: RequestResolutionAction) => {
         this.browserService.removeRemoveWindowListener(onPopupClose);
         switch (action.status) {
           case RequestResolutionStatus.ACCEPT:
@@ -61,7 +73,7 @@ export default class RequestManager extends EventEmitter2 {
 
     // TODO add some mutex lock just in case something strange occurs
     this.pendingRequests = this.pendingRequests.filter((pendingRequest) => pendingRequest.id !== id);
-    this.emit(`${id}:finalized`, action);
+    this.eventEmitter.emit(`${id}:finalized`, action);
     await pushMessage(setPendingRequests(this.pendingRequests));
 
     return true;

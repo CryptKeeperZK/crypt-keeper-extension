@@ -39,7 +39,7 @@ describe("ui/components/ConfirmRequestModal/components/ConnectionApprovalModal/u
     reject: jest.fn(),
   };
 
-  const defaultPermission = { noApproval: true };
+  const defaultPermission = { canSkipApprove: true };
 
   const waitForData = async (current: IUseConnectionApprovalModalData) => {
     await waitFor(() => current.checked === true);
@@ -95,7 +95,7 @@ describe("ui/components/ConfirmRequestModal/components/ConnectionApprovalModal/u
   });
 
   test("should set approval properly", async () => {
-    (mockDispatch as jest.Mock).mockResolvedValue({ ...defaultPermission, noApproval: false });
+    (mockDispatch as jest.Mock).mockResolvedValue({ ...defaultPermission, canSkipApprove: false });
     const { result } = renderHook(() => useConnectionApprovalModal(defaultArgs));
     await waitForData(result.current);
 
@@ -105,6 +105,9 @@ describe("ui/components/ConfirmRequestModal/components/ConnectionApprovalModal/u
     expect(fetchHostPermissions).toBeCalledTimes(1);
     expect(fetchHostPermissions).toBeCalledWith(defaultArgs.pendingRequest.payload?.origin);
     expect(setHostPermissions).toBeCalledTimes(1);
-    expect(setHostPermissions).toBeCalledWith({ host: defaultArgs.pendingRequest.payload?.origin, noApproval: false });
+    expect(setHostPermissions).toBeCalledWith({
+      host: defaultArgs.pendingRequest.payload?.origin,
+      canSkipApprove: false,
+    });
   });
 });

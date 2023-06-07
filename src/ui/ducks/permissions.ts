@@ -10,16 +10,16 @@ import type { TypedThunk } from "../store/configureAppStore";
 import { useAppSelector } from "./hooks";
 
 export interface PermissionsState {
-  noApprovals: Record<string, HostPermission>;
+  canSkipApprovals: Record<string, HostPermission>;
 }
 
 export interface HostPermission {
-  noApproval: boolean;
+  canSkipApprove: boolean;
   host: string;
 }
 
 const initialState: PermissionsState = {
-  noApprovals: {},
+  canSkipApprovals: {},
 };
 
 const permissionsSlice = createSlice({
@@ -27,11 +27,11 @@ const permissionsSlice = createSlice({
   initialState,
   reducers: {
     setPermission: (state: PermissionsState, action: PayloadAction<HostPermission>) => {
-      state.noApprovals[action.payload.host] = action.payload;
+      state.canSkipApprovals[action.payload.host] = action.payload;
     },
 
     removeHostPermission: (state: PermissionsState, action: PayloadAction<string>) => {
-      delete state.noApprovals[action.payload];
+      delete state.canSkipApprovals[action.payload];
     },
   },
 });
@@ -41,22 +41,22 @@ const { setPermission, removeHostPermission } = permissionsSlice.actions;
 export const fetchHostPermissions =
   (host: string): TypedThunk<Promise<void>> =>
   async (dispatch) => {
-    const res = await postMessage<{ noApproval: boolean }>({
+    const res = await postMessage<{ canSkipApprove: boolean }>({
       method: RPCAction.GET_HOST_PERMISSIONS,
       payload: host,
     });
 
-    dispatch(setPermission({ host, noApproval: res.noApproval }));
+    dispatch(setPermission({ host, canSkipApprove: res.canSkipApprove }));
   };
 
 export const setHostPermissions =
   (permission: HostPermission): TypedThunk<Promise<void>> =>
   async (dispatch) => {
-    await postMessage<{ noApproval: boolean }>({
+    await postMessage<{ canSkipApprove: boolean }>({
       method: RPCAction.SET_HOST_PERMISSIONS,
       payload: {
         host: permission.host,
-        noApproval: permission.noApproval,
+        canSkipApprove: permission.canSkipApprove,
       },
     });
 
@@ -85,6 +85,6 @@ export const checkHostApproval =
     });
 
 export const useHostPermission = (host: string): HostPermission | undefined =>
-  useAppSelector((state) => state.permissions.noApprovals[host], deepEqual);
+  useAppSelector((state) => state.permissions.canSkipApprovals[host], deepEqual);
 
 export default permissionsSlice.reducer;

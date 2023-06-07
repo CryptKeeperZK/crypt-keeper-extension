@@ -3,7 +3,7 @@ import SimpleStorage from "@src/background/services/storage";
 import ApprovalService from "..";
 
 const mockDefaultHosts = ["https://localhost:3000"];
-const mockSerializedApprovals = JSON.stringify([[mockDefaultHosts[0], { noApproval: true }]]);
+const mockSerializedApprovals = JSON.stringify([[mockDefaultHosts[0], { canSkipApprove: true }]]);
 const mockAuthenticityCheckData = {
   isNewOnboarding: false,
 };
@@ -101,20 +101,20 @@ describe("background/services/approval", () => {
       await approvalService.unlock();
       const result = approvalService.getPermission(mockDefaultHosts[0]);
 
-      expect(result).toStrictEqual({ noApproval: true });
+      expect(result).toStrictEqual({ host: mockDefaultHosts[0], canSkipApprove: true });
     });
 
     test("should get permissions for unknown host", () => {
       const result = approvalService.getPermission("unknown");
 
-      expect(result).toStrictEqual({ noApproval: false });
+      expect(result).toStrictEqual({ host: "unknown", canSkipApprove: false });
     });
 
     test("should set permission", async () => {
-      const result = await approvalService.setPermission(mockDefaultHosts[0], { noApproval: true });
+      const result = await approvalService.setPermission({ host: mockDefaultHosts[0], canSkipApprove: true });
       const canSkipApprove = approvalService.canSkipApprove(mockDefaultHosts[0]);
 
-      expect(result).toStrictEqual({ noApproval: true });
+      expect(result).toStrictEqual({ host: mockDefaultHosts[0], canSkipApprove: true });
       expect(canSkipApprove).toBe(true);
 
       (SimpleStorage as jest.Mock).mock.instances.forEach((instance: MockStorage) => {
@@ -124,9 +124,9 @@ describe("background/services/approval", () => {
     });
 
     test("should set permission for unknown host", async () => {
-      const result = await approvalService.setPermission("unknown", { noApproval: false });
+      const result = await approvalService.setPermission({ host: "unknown", canSkipApprove: false });
 
-      expect(result).toStrictEqual({ noApproval: false });
+      expect(result).toStrictEqual({ host: "unknown", canSkipApprove: false });
 
       (SimpleStorage as jest.Mock).mock.instances.forEach((instance: MockStorage) => {
         expect(instance.set).toBeCalledTimes(1);
@@ -136,7 +136,7 @@ describe("background/services/approval", () => {
 
   describe("approvals", () => {
     test("should add new approval properly", async () => {
-      await approvalService.add({ host: mockDefaultHosts[0], noApproval: true });
+      await approvalService.add({ host: mockDefaultHosts[0], canSkipApprove: true });
       const hosts = approvalService.getAllowedHosts();
 
       expect(hosts).toStrictEqual(mockDefaultHosts);
@@ -149,7 +149,7 @@ describe("background/services/approval", () => {
 
     test("should not approve duplicated host after unlock", async () => {
       await approvalService.unlock();
-      await approvalService.add({ host: mockDefaultHosts[0], noApproval: true });
+      await approvalService.add({ host: mockDefaultHosts[0], canSkipApprove: true });
       const hosts = approvalService.getAllowedHosts();
 
       expect(hosts).toStrictEqual(mockDefaultHosts);

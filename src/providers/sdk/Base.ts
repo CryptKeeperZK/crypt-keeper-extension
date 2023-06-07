@@ -17,6 +17,7 @@ import {
   SelectedIdentity,
   SemaphoreProof,
 } from "@src/types";
+import { HostPermission } from "@src/ui/ducks/permissions";
 
 const promises: {
   [k: string]: {
@@ -25,6 +26,7 @@ const promises: {
   };
 } = {};
 
+// TODO: get rid of inheritance
 export class CryptKeeperInjectedProvider extends EventEmitter {
   readonly isCryptKeeper = true;
 
@@ -60,7 +62,7 @@ export class CryptKeeperInjectedProvider extends EventEmitter {
 
   private async tryInject(host: string): Promise<Approvals> {
     return this.post({
-      method: RPCAction.TRY_INJECT,
+      method: RPCAction.CONNECT,
       payload: { origin: host },
     }) as Promise<Approvals>;
   }
@@ -92,10 +94,10 @@ export class CryptKeeperInjectedProvider extends EventEmitter {
     });
   }
 
-  private async addHost(host: string, noApproval: boolean): Promise<unknown> {
+  private async addHost(host: string, canSkipApprove: boolean): Promise<unknown> {
     return this.post({
       method: RPCAction.APPROVE_HOST,
-      payload: { host, noApproval },
+      payload: { host, canSkipApprove },
     });
   }
 
@@ -172,12 +174,7 @@ export class CryptKeeperInjectedProvider extends EventEmitter {
     });
   }
 
-  async setHostPermissions(
-    host: string,
-    permissions?: {
-      noApproval?: boolean;
-    },
-  ): Promise<unknown> {
+  async setHostPermissions(host: string, permissions?: HostPermission): Promise<unknown> {
     return this.post({
       method: RPCAction.SET_HOST_PERMISSIONS,
       payload: {

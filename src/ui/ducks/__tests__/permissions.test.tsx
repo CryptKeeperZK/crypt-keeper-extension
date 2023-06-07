@@ -22,7 +22,7 @@ jest.unmock("@src/ui/ducks/hooks");
 describe("ui/ducks/permissions", () => {
   const defaultHost = "http://localhost:3000";
   const defaultPermission = {
-    noApproval: true,
+    canSkipApprove: true,
   };
 
   afterEach(() => {
@@ -38,7 +38,7 @@ describe("ui/ducks/permissions", () => {
       wrapper: ({ children }) => <Provider store={store}>{children}</Provider>,
     });
 
-    expect(permissions.noApprovals).toStrictEqual({ [defaultHost]: { host: defaultHost, ...defaultPermission } });
+    expect(permissions.canSkipApprovals).toStrictEqual({ [defaultHost]: { host: defaultHost, ...defaultPermission } });
     expect(result.current).toStrictEqual({ host: defaultHost, ...defaultPermission });
     expect(postMessage).toBeCalledTimes(1);
     expect(postMessage).toBeCalledWith({
@@ -48,22 +48,22 @@ describe("ui/ducks/permissions", () => {
   });
 
   test("should set host permission properly", async () => {
-    (postMessage as jest.Mock).mockResolvedValue({ ...defaultPermission, noApproval: false });
+    (postMessage as jest.Mock).mockResolvedValue({ ...defaultPermission, canSkipApprove: false });
 
-    await Promise.resolve(store.dispatch(setHostPermissions({ host: defaultHost, noApproval: false })));
+    await Promise.resolve(store.dispatch(setHostPermissions({ host: defaultHost, canSkipApprove: false })));
     const { permissions } = store.getState();
     const { result } = renderHook(() => useHostPermission(defaultHost), {
       wrapper: ({ children }) => <Provider store={store}>{children}</Provider>,
     });
 
-    expect(permissions.noApprovals).toStrictEqual({ [defaultHost]: { host: defaultHost, noApproval: false } });
-    expect(result.current).toStrictEqual({ host: defaultHost, noApproval: false });
+    expect(permissions.canSkipApprovals).toStrictEqual({ [defaultHost]: { host: defaultHost, canSkipApprove: false } });
+    expect(result.current).toStrictEqual({ host: defaultHost, canSkipApprove: false });
     expect(postMessage).toBeCalledTimes(1);
     expect(postMessage).toBeCalledWith({
       method: RPCAction.SET_HOST_PERMISSIONS,
       payload: {
         host: defaultHost,
-        noApproval: false,
+        canSkipApprove: false,
       },
     });
   });
@@ -75,7 +75,7 @@ describe("ui/ducks/permissions", () => {
       wrapper: ({ children }) => <Provider store={store}>{children}</Provider>,
     });
 
-    expect(permissions.noApprovals).toStrictEqual({});
+    expect(permissions.canSkipApprovals).toStrictEqual({});
     expect(result.current).toBeUndefined();
     expect(postMessage).toBeCalledTimes(1);
     expect(postMessage).toBeCalledWith({
