@@ -12,6 +12,8 @@ describe("background/zkIdentity/protocols/ZkIdentitySemaphore", () => {
     name: "Identity #1",
     identityStrategy: "interrep",
     web2Provider: "twitter",
+    groups: [],
+    host: "http://localhost:3000",
   };
 
   test("should decorate identity properly", () => {

@@ -94,6 +94,7 @@ export const useCreateIdentity = (): IUseCreateIdentityData => {
             messageSignature,
             options,
             walletType,
+            groups: [],
           }),
         );
         navigate(Paths.HOME);

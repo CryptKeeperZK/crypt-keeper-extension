@@ -255,6 +255,8 @@ export default class ZkIdentityService implements IBackupable {
     strategy,
     walletType,
     messageSignature,
+    groups,
+    host,
     options,
   }: NewIdentityRequest): Promise<string | undefined> => {
     if (walletType === EWallet.ETH_WALLET && !messageSignature) {
@@ -265,6 +267,8 @@ export default class ZkIdentityService implements IBackupable {
 
     const config = {
       ...options,
+      groups,
+      host,
       identityStrategy: strategy,
       name: options?.name || `Account # ${numOfIdentites}`,
       messageSignature: strategy === "interrep" ? messageSignature : undefined,

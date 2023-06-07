@@ -14,7 +14,7 @@ export function createNewIdentity(strategy: keyof StrategiesMap, config: ICreate
 }
 
 function createInterrepIdentity(config: ICreateIdentityArgs): ZkIdentitySemaphore {
-  const { identityStrategy, web2Provider, name, messageSignature, account } = config;
+  const { identityStrategy, web2Provider, name, messageSignature, account, groups, host } = config;
 
   const identity = new Identity(messageSignature);
 
@@ -23,16 +23,20 @@ function createInterrepIdentity(config: ICreateIdentityArgs): ZkIdentitySemaphor
     name,
     identityStrategy,
     web2Provider,
+    groups,
+    host,
   });
 }
 
 function createRandomIdentity(config: ICreateIdentityArgs): ZkIdentitySemaphore {
-  const { identityStrategy, name, account } = config;
+  const { identityStrategy, name, account, groups, host } = config;
   const identity = new Identity();
 
   return new ZkIdentitySemaphore(identity, {
     account,
     name,
     identityStrategy,
+    groups,
+    host,
   });
 }

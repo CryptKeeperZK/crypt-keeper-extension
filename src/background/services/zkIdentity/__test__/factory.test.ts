@@ -1,37 +1,38 @@
+import omit from "lodash/omit";
+
 import { ZERO_ADDRESS } from "@src/config/const";
 
 import { createNewIdentity } from "../factory";
 
 describe("background/services/zkIdentity/factory", () => {
   test("should return new interrep identity ", () => {
-    const identity = createNewIdentity("interrep", {
-      identityStrategy: "interrep",
+    const defaultArgs = {
+      identityStrategy: "interrep" as const,
       name: "name",
       account: ZERO_ADDRESS,
       messageSignature: "signature",
-      web2Provider: "github",
-    });
+      web2Provider: "github" as const,
+      groups: [],
+      host: "http://localhost:3000",
+    };
 
-    expect(identity.metadata).toStrictEqual({
-      account: ZERO_ADDRESS,
-      identityStrategy: "interrep",
-      name: "name",
-      web2Provider: "github",
-    });
+    const identity = createNewIdentity("interrep", defaultArgs);
+
+    expect(identity.metadata).toStrictEqual(omit(defaultArgs, ["messageSignature"]));
   });
 
   test("should return new random identity ", () => {
-    const identity = createNewIdentity("random", {
-      identityStrategy: "random",
+    const defaultArgs = {
+      identityStrategy: "random" as const,
       name: "name",
       account: ZERO_ADDRESS,
       messageSignature: "signature",
-    });
+      groups: [],
+      host: "http://localhost:3000",
+    };
 
-    expect(identity.metadata).toStrictEqual({
-      account: ZERO_ADDRESS,
-      identityStrategy: "random",
-      name: "name",
-    });
+    const identity = createNewIdentity("random", defaultArgs);
+
+    expect(identity.metadata).toStrictEqual(omit(defaultArgs, ["messageSignature"]));
   });
 });

@@ -99,6 +99,7 @@ describe("ui/pages/CreateIdentity/useCreateIdentity", () => {
     expect(mockDispatch).toBeCalledTimes(1);
     expect(createIdentity).toBeCalledTimes(1);
     expect(createIdentity).toBeCalledWith({
+      groups: [],
       messageSignature: mockSignedMessage,
       options: { account: ZERO_ADDRESS, message: mockMessage, nonce: 0, web2Provider: "twitter" },
       strategy: "interrep",
@@ -120,6 +121,7 @@ describe("ui/pages/CreateIdentity/useCreateIdentity", () => {
     expect(mockDispatch).toBeCalledTimes(1);
     expect(createIdentity).toBeCalledTimes(1);
     expect(createIdentity).toBeCalledWith({
+      groups: [],
       messageSignature: mockSignedMessage,
       options: { account: ZERO_ADDRESS, message: mockMessage },
       strategy: "random",
@@ -162,6 +164,7 @@ describe("ui/pages/CreateIdentity/useCreateIdentity", () => {
     expect(mockDispatch).toBeCalledTimes(1);
     expect(createIdentity).toBeCalledTimes(1);
     expect(createIdentity).toBeCalledWith({
+      groups: [],
       messageSignature: undefined,
       options: { account: defaultWalletHookData.address, message: mockMessage, nonce: 0, web2Provider: "twitter" },
       strategy: "interrep",

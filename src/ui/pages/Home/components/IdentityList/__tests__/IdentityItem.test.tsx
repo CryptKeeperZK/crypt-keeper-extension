@@ -20,6 +20,8 @@ describe("ui/pages/Home/components/IdentityList/Item", () => {
       name: "Account #0",
       identityStrategy: "interrep",
       web2Provider: "twitter",
+      groups: [],
+      host: "http://localhost:3000",
     },
     onDeleteIdentity: jest.fn(),
     onSelectIdentity: jest.fn(),

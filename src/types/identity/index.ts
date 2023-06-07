@@ -14,6 +14,8 @@ export type NewIdentityRequest = {
   strategy: IdentityStrategy;
   options: CreateIdentityOptions;
   walletType: EWallet;
+  groups: GroupData[];
+  host?: string;
   messageSignature?: string;
 };
 
@@ -22,12 +24,23 @@ export enum EWallet {
   CRYPT_KEEPER_WALLET,
 }
 
-export type IdentityMetadata = {
+export interface IdentityMetadata {
   account: string;
   name: string;
   identityStrategy: IdentityStrategy;
+  groups: GroupData[];
   web2Provider?: IdentityWeb2Provider;
-};
+  host?: string;
+}
+
+export interface GroupData {
+  id: string;
+  name: string;
+  favicon?: string;
+  description?: string;
+  api?: string;
+  contract?: string;
+}
 
 export interface IdentityData {
   commitment: string;
@@ -39,17 +52,19 @@ export type IdentityName = {
   name: string;
 };
 
-export type SerializedIdentity = {
+export interface SerializedIdentity {
   metadata: IdentityMetadata;
   secret: string;
-};
+}
 
 export interface ICreateIdentityArgs {
   identityStrategy: IdentityStrategy;
   name: string;
   account: string;
+  groups: GroupData[];
   messageSignature?: string;
   web2Provider?: IdentityWeb2Provider;
+  host?: string;
 }
 
 export type StrategiesMap = {

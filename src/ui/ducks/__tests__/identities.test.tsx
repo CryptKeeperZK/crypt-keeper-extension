@@ -43,7 +43,14 @@ describe("ui/ducks/identities", () => {
   const defaultIdentities: IdentitiesState["identities"] = [
     {
       commitment: "1",
-      metadata: { account: ZERO_ADDRESS, name: "Account #1", identityStrategy: "interrep", web2Provider: "twitter" },
+      metadata: {
+        account: ZERO_ADDRESS,
+        name: "Account #1",
+        identityStrategy: "interrep",
+        web2Provider: "twitter",
+        groups: [],
+        host: "http://localhost:3000",
+      },
     },
   ];
 
@@ -189,6 +196,8 @@ describe("ui/ducks/identities", () => {
           walletType: EWallet.ETH_WALLET,
           strategy: "interrep",
           messageSignature: "signature",
+          groups: [],
+          host: "http://localhost:3000",
           options: { message: "message", account: ZERO_ADDRESS },
         }),
       ),
