@@ -42,3 +42,30 @@ Proof generation is enabled in two ways:
 4. `METAMASK_EXTENSION_ID` can be found in log output for `npm run e2e`. For different environments `METAMASK_EXTENSION_ID` is also different so we need to specify it explicitly.
 5. Run `npm run build:e2e` to build the extension
 6. Run `npm run e2e` to run playwright e2e tests
+
+# Screenshots
+
+## Locker screen
+<p align='center'>
+    <img src='./src/static/screenshots/1.png' alt='screenshot' />
+</p>
+
+## Identity list screeen
+<p align='center'>
+    <img src='./src/static/screenshots/2.png' alt='screenshot' />
+</p>
+
+## Connect Screen
+<p align='center'>
+    <img src='./src/static/screenshots/3.png' alt='screenshot' />
+</p>
+
+## Sign screen
+<p align='center'>
+    <img src='./src/static/screenshots/4.png' alt='screenshot' />
+</p>
+
+## Proof generation screen
+<p align='center'>
+    <img src='./src/static/screenshots/5.png' alt='screenshot' />
+</p>
