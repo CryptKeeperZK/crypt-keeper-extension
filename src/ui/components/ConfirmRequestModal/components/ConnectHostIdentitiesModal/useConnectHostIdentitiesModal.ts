@@ -1,7 +1,13 @@
 import { getLinkPreview } from "link-preview-js";
 import { useCallback, useEffect, useState, MouseEvent as ReactMouseEvent } from "react";
 
-import { IdentityData, PendingRequest, RequestResolutionAction, RequestResolutionStatus, SelectedIdentity } from "@src/types";
+import {
+  IdentityData,
+  PendingRequest,
+  RequestResolutionAction,
+  RequestResolutionStatus,
+  SelectedIdentity,
+} from "@src/types";
 import { useAppDispatch } from "@src/ui/ducks/hooks";
 import {
   fetchHostIdentities,
@@ -72,11 +78,11 @@ export const useConnectHostIdentitiesModal = ({
     [accept, dispatch],
   );
 
-  const handleConnectIdentity = useCallback(async() => {
+  const handleConnectIdentity = useCallback(async () => {
     if (selectedToConnect.host && selectedToConnect.host !== "" && selectedToConnect.commitment !== "") {
-      await onConenctIdentity(selectedToConnect.commitment, selectedToConnect.host); 
+      await onConenctIdentity(selectedToConnect.commitment, selectedToConnect.host);
     }
-    throw new Error("Please set host in order to continue this action.");
+    return;
   }, [onConenctIdentity, selectedToConnect, dispatch]);
 
   const onAccept = useCallback(() => {

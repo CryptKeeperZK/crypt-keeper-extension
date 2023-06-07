@@ -56,9 +56,12 @@ export const IdentitiesContent = ({
     [dispatch],
   );
 
-  const handleSelection = useCallback((commitment: string) => {
-    setIdentitySelectedFromList(commitment)
-  }, [setIdentitySelectedFromList]);
+  const handleSelection = useCallback(
+    (commitment: string) => {
+      setIdentitySelectedFromList(commitment);
+    },
+    [setIdentitySelectedFromList],
+  );
 
   return (
     <div className="identities-content">

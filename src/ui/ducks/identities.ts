@@ -3,7 +3,14 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import deepEqual from "fast-deep-equal";
 
 import { RPCAction } from "@src/constants";
-import { ConnectedIdentityData, HistorySettings, ICreateIdentityUiArgs, IdentityData, Operation, SelectedIdentity } from "@src/types";
+import {
+  ConnectedIdentityData,
+  HistorySettings,
+  ICreateIdentityUiArgs,
+  IdentityData,
+  Operation,
+  SelectedIdentity,
+} from "@src/types";
 import postMessage from "@src/util/postMessage";
 
 import type { TypedThunk } from "@src/ui/store/configureAppStore";
@@ -139,7 +146,7 @@ export const createIdentityRequest = () => async (): Promise<void> => {
 //         },
 //       });
 //       // A special case, when user connects and then choose to "+ Create a new identity and Connect" button.
-//       // This will automatically select this to be the connected one directly and then finish the connection. 
+//       // This will automatically select this to be the connected one directly and then finish the connection.
 //       if (commitment) {
 //         setSelectedToConnect({
 //           commitment,
@@ -151,7 +158,8 @@ export const createIdentityRequest = () => async (): Promise<void> => {
 
 export const createIdentity =
   ({ walletType, strategy, messageSignature, options, host }: ICreateIdentityUiArgs) =>
-    async (): Promise<string | undefined> => postMessage<string | undefined>({
+  async (): Promise<string | undefined> =>
+    postMessage<string | undefined>({
       method: RPCAction.CREATE_IDENTITY,
       payload: {
         strategy,
@@ -160,7 +168,7 @@ export const createIdentity =
         options,
         host,
       },
-    })
+    });
 
 export const setActiveIdentity = (identityCommitment: string) => async (): Promise<boolean> =>
   postMessage({
@@ -234,17 +242,16 @@ export const fetchIdentities = (): TypedThunk => async (dispatch) => {
 
 export const fetchHostIdentities =
   (host: string): TypedThunk =>
-    async (dispatch) => {
-      const data = await postMessage<IdentityData[]>({
-        method: RPCAction.GET_HOST_IDENTITIES,
-        payload: {
-          host,
-        },
-      });
+  async (dispatch) => {
+    const data = await postMessage<IdentityData[]>({
+      method: RPCAction.GET_HOST_IDENTITIES,
+      payload: {
+        host,
+      },
+    });
 
-      console.log("Data", data);
-      dispatch(setHostIdentities(data));
-    };
+    dispatch(setHostIdentities(data));
+  };
 
 export const fetchRandomIdentities = (): TypedThunk => async (dispatch) => {
   const data = await postMessage<IdentityData[]>({
@@ -269,10 +276,10 @@ export const getHistory = (): TypedThunk => async (dispatch) => {
 
 export const deleteHistoryOperation =
   (id: string): TypedThunk<Promise<void>> =>
-    async (dispatch) => {
-      const operations = await postMessage<Operation[]>({ method: RPCAction.DELETE_HISTORY_OPERATION, payload: id });
-      dispatch(setOperations(operations));
-    };
+  async (dispatch) => {
+    const operations = await postMessage<Operation[]>({ method: RPCAction.DELETE_HISTORY_OPERATION, payload: id });
+    dispatch(setOperations(operations));
+  };
 
 export const clearHistory = (): TypedThunk<Promise<void>> => async (dispatch) => {
   await postMessage<Operation[]>({ method: RPCAction.DELETE_ALL_HISTORY_OPERATIONS });
@@ -281,10 +288,10 @@ export const clearHistory = (): TypedThunk<Promise<void>> => async (dispatch) =>
 
 export const enableHistory =
   (isEnabled: boolean): TypedThunk<Promise<void>> =>
-    async (dispatch) => {
-      await postMessage<HistorySettings>({ method: RPCAction.ENABLE_OPERATION_HISTORY, payload: isEnabled });
-      dispatch(setSettings({ isEnabled }));
-    };
+  async (dispatch) => {
+    await postMessage<HistorySettings>({ method: RPCAction.ENABLE_OPERATION_HISTORY, payload: isEnabled });
+    dispatch(setSettings({ isEnabled }));
+  };
 
 export const useIdentities = (): IdentityData[] => useAppSelector((state) => state.identities.identities, deepEqual);
 
@@ -306,9 +313,11 @@ export const useConnectedIdentity = (): IdentityData | undefined =>
     return identities.find(({ commitment }) => commitment === connected.commitment);
   }, deepEqual);
 
-export const useSelectedToConnect = (): SelectedIdentity => useAppSelector((state) => state.identities.selectedToConnect, deepEqual);
+export const useSelectedToConnect = (): SelectedIdentity =>
+  useAppSelector((state) => state.identities.selectedToConnect, deepEqual);
 
-export const useNotReadyToConnect = (): boolean => useAppSelector((state) => state.identities.notReadyToConnect, deepEqual);
+export const useNotReadyToConnect = (): boolean =>
+  useAppSelector((state) => state.identities.notReadyToConnect, deepEqual);
 
 export const useIdentityRequestPending = (): boolean =>
   useAppSelector((state) => state.identities.requestPending, deepEqual);

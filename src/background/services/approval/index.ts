@@ -54,7 +54,6 @@ export default class ApprovalService implements IBackupable {
   });
 
   setPermission = async (host: string, { canSkipApprove }: HostPermission): Promise<HostPermission> => {
-    console.log("Inside set premissions");
     this.allowedHosts.set(host, { canSkipApprove });
     await this.saveApprovals();
 
@@ -62,7 +61,6 @@ export default class ApprovalService implements IBackupable {
   };
 
   add = async ({ host, canSkipApprove }: { host: string; canSkipApprove: boolean }): Promise<void> => {
-    console.log("Inside set premissions 2");
     if (this.allowedHosts.get(host)) {
       return;
     }

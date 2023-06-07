@@ -111,26 +111,19 @@ export const IdentityItem = ({
       return false;
     }
 
-    console.log("tabUrl.origin: ", tabUrl.origin)
-
     return dispatch(checkHostApproval(tabUrl.origin));
   }, [dispatch]);
 
-  const onRefreshConnectionStatus = useCallback(
-    async () => {
-      console.log(1)
-      refreshConnectionStatus()
-        .then((isHostApproved: boolean) => {
-          console.log("isHostApproved", isHostApproved);
-          console.log("connectedCommitment", connectedCommitment);
-          if (isHostApproved && connectedCommitment && connectedCommitment.commitment === commitment) {
-            console.log(2)
-            setIsConnected(true);
-          }
-          return;
-        })
-        .catch(() => setIsConnected(false))
-    }, [refreshConnectionStatus, setIsConnected, connectedCommitment, useConnectedIdentity, isConnected]);
+  const onRefreshConnectionStatus = useCallback(async () => {
+    refreshConnectionStatus()
+      .then((isHostApproved: boolean) => {
+        if (isHostApproved && connectedCommitment && connectedCommitment.commitment === commitment) {
+          setIsConnected(true);
+        }
+        return;
+      })
+      .catch(() => setIsConnected(false));
+  }, [refreshConnectionStatus, setIsConnected, connectedCommitment, useConnectedIdentity, isConnected]);
 
   useEffect(() => {
     // Check the connected identity.
@@ -140,9 +133,12 @@ export const IdentityItem = ({
   }, [onRefreshConnectionStatus, useConnectedIdentity]);
 
   return (
-    <div key={commitment} className={classNames("p-4 identity-row", {
-      "identity-row--selected": select,
-    })}>
+    <div
+      key={commitment}
+      className={classNames("p-4 identity-row", {
+        "identity-row--selected": select,
+      })}
+    >
       {isDisableCheckClick ? (
         <Icon
           className={classNames("identity-row__select-icon", {

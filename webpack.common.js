@@ -42,7 +42,7 @@ module.exports = {
       patterns: [
         { from: path.resolve(__dirname, "./src/static/icons"), to: path.resolve(__dirname, "./dist/[name][ext]") },
         {
-          from: path.resolve(__dirname, `./src/manifest.${TARGET}.json`),
+          from: path.resolve(__dirname, `./manifest.${TARGET}.json`),
           to: path.resolve(__dirname, "./dist/manifest.json"),
         },
         { from: path.resolve(__dirname, "./zkeyFiles"), to: path.resolve(__dirname, "./dist/js/zkeyFiles") },

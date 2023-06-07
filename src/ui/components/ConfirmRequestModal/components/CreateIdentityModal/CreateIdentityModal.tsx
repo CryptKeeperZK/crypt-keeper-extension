@@ -53,7 +53,7 @@ const CreateIdentityModal = ({ pendingRequest, accept, reject }: CreateIdentityM
   return (
     <FullModal data-testid="create-identity-page" onClose={closeModal}>
       <form className="create-identity-form confirm-modal">
-        <FullModalHeader onClose={closeModal}>{host ? (`Connect to ${host}`) : ("Create a new Identity")}</FullModalHeader>
+        <FullModalHeader onClose={closeModal}>{host ? `Connect to ${host}` : "Create a new Identity"}</FullModalHeader>
 
         <FullModalContent className="flex flex-col items-center">
           {/* DEPRECATED feature for first version */}
@@ -121,8 +121,8 @@ const CreateIdentityModal = ({ pendingRequest, accept, reject }: CreateIdentityM
               {randomIdentities.length !== 0 && (
                 <div>
                   <div className="text-sm text-gray-500 text-center">
-                    You have already created {randomIdentities.length} secret identity/ies.
-                    If Are you sure you want to create a new identity please click on create.
+                    You have already created {randomIdentities.length} secret identity/ies. If Are you sure you want to
+                    create a new identity please click on create.
                   </div>
                   <IdentitiesContent
                     host={host}
@@ -134,8 +134,6 @@ const CreateIdentityModal = ({ pendingRequest, accept, reject }: CreateIdentityM
               )}
             </>
           )}
-
-
 
           {/* Second Condition: "cryptkeeper.connect()" */}
           {host && (
@@ -160,8 +158,8 @@ const CreateIdentityModal = ({ pendingRequest, accept, reject }: CreateIdentityM
 
               {randomIdentities.length === 0 && (
                 <div className="text-sm text-gray-500 text-center">
-                  You don't have any aviable identities created!.
-                  Please click on Create button to Create a new Identity.
+                  You don't have any aviable identities created!. Please click on Create button to Create a new
+                  Identity.
                 </div>
               )}
 
@@ -169,8 +167,8 @@ const CreateIdentityModal = ({ pendingRequest, accept, reject }: CreateIdentityM
               {randomIdentities.length !== 0 && (
                 <>
                   <div className="text-sm text-gray-500 text-center">
-                    You have already have {randomIdentities.length} random identities.
-                    Please choose one to connect with, or choose to Create a new Identity.
+                    You have already have {randomIdentities.length} random identities. Please choose one to connect
+                    with, or choose to Create a new Identity.
                   </div>
 
                   <IdentitiesContent
@@ -221,7 +219,7 @@ const CreateIdentityModal = ({ pendingRequest, accept, reject }: CreateIdentityM
             Reject
           </Button>
 
-          {(host && randomIdentities.length !== 0)  ? (
+          {host && randomIdentities.length !== 0 ? (
             <Button disabled={notReadyToConnect} className="ml-2" onClick={handleConnectIdentity}>
               Connect
             </Button>
@@ -232,7 +230,7 @@ const CreateIdentityModal = ({ pendingRequest, accept, reject }: CreateIdentityM
           )}
         </FullModalFooter>
       </form>
-    </FullModal >
+    </FullModal>
   );
 };
 

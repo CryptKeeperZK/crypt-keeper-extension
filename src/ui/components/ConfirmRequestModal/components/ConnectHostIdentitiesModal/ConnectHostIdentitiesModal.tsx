@@ -43,7 +43,7 @@ export const ConnectHostIdentitiesModal = ({
     });
 
   return (
-    <FullModal className="confirm-modal" data-testid="approval-modal" onClose={() => console.log("hi")}>
+    <FullModal className="confirm-modal" data-testid="approval-modal" onClose={onReject}>
       {host && <FullModalHeader>Connect to `{host}`</FullModalHeader>}
 
       <FullModalContent className="flex flex-col items-center">

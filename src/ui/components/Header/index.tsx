@@ -24,7 +24,7 @@ export const Header = (): JSX.Element => {
       <Icon data-testid="logo" size={3} url={logoSvg} onClick={onGoToHome} />
 
       <div className="flex-grow flex flex-row items-center justify-end header__content">
-       {ethWallet.isActive && ( <div className="text-sm rounded-full header__network-type">Connected to Metamask</div>)}
+        {ethWallet.isActive && <div className="text-sm rounded-full header__network-type">Connected to Metamask</div>}
 
         <div className="header__account-icon">
           <AccountMenu cryptKeeperWallet={cryptKeeperWallet} ethWallet={ethWallet} />

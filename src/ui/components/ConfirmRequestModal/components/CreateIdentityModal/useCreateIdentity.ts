@@ -116,7 +116,6 @@ export const useCreateIdentity = ({
 
   const createNewIdentity = useCallback(
     async ({ identityStrategyType, web2Provider, nonce }: FormFields, walletType: EWallet) => {
-      console.log(`host inside`, host);
       try {
         const account =
           walletType === EWallet.ETH_WALLET
