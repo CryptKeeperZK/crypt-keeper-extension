@@ -32,6 +32,7 @@ enum MerkleProofType {
 interface IUseCryptKeeperData {
   client?: CryptKeeperInjectedProvider;
   isLocked: boolean;
+  proof: unknown;
   connectedIdentity: ConnectedIdentityData;
   MerkleProofType: typeof MerkleProofType;
   connect: () => void;
@@ -43,6 +44,7 @@ interface IUseCryptKeeperData {
 export const useCryptKeeper = (): IUseCryptKeeperData => {
   const [client, setClient] = useState<CryptKeeperInjectedProvider>();
   const [isLocked, setIsLocked] = useState(true);
+  const [proof, setProof] = useState<unknown>();
   const [connectedIdentity, setConnectedIdentity] = useState<ConnectedIdentityData>({
     identityCommitment: "",
     host: "",
@@ -110,6 +112,7 @@ export const useCryptKeeper = (): IUseCryptKeeperData => {
       const proof = await client?.semaphoreProof(externalNullifier, signal, storageAddressOrArtifacts);
 
       console.log("Semaphore proof generated successfully!", proof);
+      setProof(proof);
       toast("Semaphore proof generated successfully!", { type: "success" });
     } catch (e) {
       toast("Error while generating Semaphore proof!", { type: "error" });
@@ -217,11 +220,12 @@ export const useCryptKeeper = (): IUseCryptKeeperData => {
     client?.on("logout", onLogout);
 
     return () => client?.cleanListeners();
-  }, [client, onLogout]);
+  }, [client, onLogout, setProof]);
 
   return {
     client,
     isLocked,
+    proof,
     connectedIdentity,
     MerkleProofType,
     connect,

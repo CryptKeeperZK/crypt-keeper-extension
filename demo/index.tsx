@@ -24,7 +24,7 @@ function NoActiveIDCommitment() {
 }
 
 function App() {
-  const { isLocked, connectedIdentity, MerkleProofType, connect, createIdentity, genSemaphoreProof } = useCryptKeeper();
+  const { isLocked, proof, connectedIdentity, MerkleProofType, connect, createIdentity, genSemaphoreProof } = useCryptKeeper();
 
   if (!connectedIdentity || isLocked) {
     return <NotConnected onClick={connect} />;
@@ -77,6 +77,10 @@ function App() {
         <button onClick={() => genSemaphoreProof(MerkleProofType.ARTIFACTS)}>
           Generate proof from Merkle proof artifacts
         </button>
+
+        <hr />
+        <h2>Semaphore Proof output: </h2>
+        <div><pre>{ JSON.stringify(proof, null, 2) }</pre></div>
       </div>
       <hr />
       {/* <div>
