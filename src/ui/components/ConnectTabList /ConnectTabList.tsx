@@ -28,15 +28,19 @@ export const ConnectTabList = ({ isShowTabs, children }: ConnectTabListProps): J
 
   return (
     <div className="tab__list" data-testid="tab-list">
-      <Tabs indicatorColor="primary" textColor="primary" value={selectedTab} variant="fullWidth" onChange={onTabChange}>
-        {isShowTabs && (
-          <>
-            <Tab data-testid="tab-identities" label="Linked" />
+      {isShowTabs && (
+        <Tabs
+          indicatorColor="primary"
+          textColor="primary"
+          value={selectedTab}
+          variant="fullWidth"
+          onChange={onTabChange}
+        >
+          <Tab data-testid="tab-identities" label="Linked" />
 
-            <Tab data-testid="tab-activity" label="Unlinked" />
-          </>
-        )}
-      </Tabs>
+          <Tab data-testid="tab-activity" label="Unlinked" />
+        </Tabs>
+      )}
 
       <div className="tab__list__content">{selectedContent}</div>
     </div>
