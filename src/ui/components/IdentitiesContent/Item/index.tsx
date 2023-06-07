@@ -1,7 +1,7 @@
 import { IconName, IconPrefix } from "@fortawesome/fontawesome-common-types";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import classNames from "classnames";
-import { ChangeEvent, FormEvent, MouseEvent as ReactMouseEvent, useCallback, useState } from "react";
+import { ChangeEvent, FormEvent, MouseEvent as ReactMouseEvent, useCallback, useEffect, useState } from "react";
 
 import { getEnabledFeatures } from "@src/config/features";
 import { IdentityMetadata, IdentityWeb2Provider } from "@src/types";
@@ -12,7 +12,9 @@ import { ellipsify } from "@src/util/account";
 
 import "./identityListItemStyles.scss";
 import { useAppDispatch } from "@src/ui/ducks/hooks";
-import { setNotReadyToConnect, setSelectedToConnect } from "@src/ui/ducks/identities";
+import { setNotReadyToConnect, setSelectedToConnect, useConnectedIdentity } from "@src/ui/ducks/identities";
+import { checkHostApproval } from "@src/ui/ducks/permissions";
+import { getLastActiveTabUrl } from "@src/util/browser";
 
 type IconWeb2Providers = Record<IdentityWeb2Provider, [IconPrefix, IconName]>;
 
@@ -53,6 +55,8 @@ export const IdentityItem = ({
   const [name, setName] = useState(metadata.name);
   const [isRenaming, setIsRenaming] = useState(false);
   const [select, setSelect] = useState(false);
+  const [isConnected, setIsConnected] = useState(false);
+  const connectedCommitment = useConnectedIdentity();
 
   const handleDeleteIdentity = useCallback(() => {
     onDeleteIdentity(commitment);
@@ -99,13 +103,51 @@ export const IdentityItem = ({
   const identityTitle = features.INTERREP_IDENTITY ? "random" : "";
   const canShowIdentityType = Boolean(metadata.web2Provider || identityTitle);
 
+  // TODO: repeated code in useHome.ts
+  const refreshConnectionStatus = useCallback(async () => {
+    const tabUrl = await getLastActiveTabUrl();
+
+    if (!tabUrl) {
+      return false;
+    }
+
+    console.log("tabUrl.origin: ", tabUrl.origin)
+
+    return dispatch(checkHostApproval(tabUrl.origin));
+  }, [dispatch]);
+
+  const onRefreshConnectionStatus = useCallback(
+    async () => {
+      console.log(1)
+      refreshConnectionStatus()
+        .then((isHostApproved: boolean) => {
+          console.log("isHostApproved", isHostApproved);
+          console.log("connectedCommitment", connectedCommitment);
+          if (isHostApproved && connectedCommitment && connectedCommitment.commitment === commitment) {
+            console.log(2)
+            setIsConnected(true);
+          }
+          return;
+        })
+        .catch(() => setIsConnected(false))
+    }, [refreshConnectionStatus, setIsConnected, connectedCommitment, useConnectedIdentity, isConnected]);
+
+  useEffect(() => {
+    // Check the connected identity.
+    if (isDisableCheckClick) {
+      onRefreshConnectionStatus();
+    }
+  }, [onRefreshConnectionStatus, useConnectedIdentity]);
+
   return (
     <div key={commitment} className={classNames("p-4 identity-row", {
       "identity-row--selected": select,
     })}>
       {isDisableCheckClick ? (
         <Icon
-          className={classNames("identity-row__select-icon")}
+          className={classNames("identity-row__select-icon", {
+            "identity-row__select-icon--selected": isConnected,
+          })}
           data-testid={`identity-select-${commitment}`}
           disabled={isDisableCheckClick}
           fontAwesome="fas fa-check"

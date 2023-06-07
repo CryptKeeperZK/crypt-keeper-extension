@@ -3,7 +3,7 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import deepEqual from "fast-deep-equal";
 
 import { RPCAction } from "@src/constants";
-import { HistorySettings, ICreateIdentityUiArgs, IdentityData, Operation, SelectedIdentity } from "@src/types";
+import { ConnectedIdentityData, HistorySettings, ICreateIdentityUiArgs, IdentityData, Operation, SelectedIdentity } from "@src/types";
 import postMessage from "@src/util/postMessage";
 
 import type { TypedThunk } from "@src/ui/store/configureAppStore";
@@ -60,7 +60,7 @@ const identitiesSlice = createSlice({
     },
 
     setConnectedCommitment: (state: IdentitiesState, action: PayloadAction<SelectedIdentity>) => {
-      state.selected = {
+      state.connected = {
         commitment: action.payload.commitment,
         host: action.payload.host,
       };
@@ -220,6 +220,16 @@ export const fetchIdentities = (): TypedThunk => async (dispatch) => {
   //     web2Provider,
   //   }),
   // );
+
+  const { identityCommitment, host } = await postMessage<ConnectedIdentityData>({
+    method: RPCAction.GET_CONNECTED_IDENTITY_DATA,
+  });
+  dispatch(
+    setConnectedCommitment({
+      commitment: identityCommitment,
+      host,
+    }),
+  );
 };
 
 export const fetchHostIdentities =

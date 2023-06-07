@@ -11,9 +11,11 @@ import {
   useSelectedIdentity,
 } from "@src/ui/ducks/identities";
 
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 import { useAppDispatch } from "@src/ui/ducks/hooks";
+import { checkHostApproval } from "@src/ui/ducks/permissions";
+import { getLastActiveTabUrl } from "@src/util/browser";
 
 export interface IdentityListProps {
   identities: IdentityData[];
