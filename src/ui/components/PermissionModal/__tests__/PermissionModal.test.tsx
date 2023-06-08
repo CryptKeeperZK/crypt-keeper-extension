@@ -6,11 +6,11 @@ import { act, render, screen } from "@testing-library/react";
 
 import { createModalRoot, deleteModalRoot } from "@src/config/mock/modal";
 
-import { ConnectionModal, ConnectionModalProps } from "..";
-import { IUseConnectionModalData, useConnectionModal } from "../useConnectionModal";
+import { PermissionModal, ConnectionModalProps } from "..";
+import { IUsePermissionModalData, usePermissionModal } from "../usePermissionModal";
 
-jest.mock("../useConnectionModal", (): unknown => ({
-  useConnectionModal: jest.fn(),
+jest.mock("../usePermissionModal", (): unknown => ({
+  usePermissionModal: jest.fn(),
 }));
 
 describe("ui/components/ConnectionModal/ConnectionModal", () => {
@@ -19,7 +19,7 @@ describe("ui/components/ConnectionModal/ConnectionModal", () => {
     onClose: jest.fn(),
   };
 
-  const defaultHookData: IUseConnectionModalData = {
+  const defaultHookData: IUsePermissionModalData = {
     url: new URL("http://localhost:3000"),
     checked: false,
     faviconUrl: "http://localhost:3000/favicon.ico",
@@ -28,7 +28,7 @@ describe("ui/components/ConnectionModal/ConnectionModal", () => {
   };
 
   beforeEach(() => {
-    (useConnectionModal as jest.Mock).mockReturnValue(defaultHookData);
+    (usePermissionModal as jest.Mock).mockReturnValue(defaultHookData);
 
     createModalRoot();
   });
@@ -38,7 +38,7 @@ describe("ui/components/ConnectionModal/ConnectionModal", () => {
   });
 
   test("should render properly", async () => {
-    render(<ConnectionModal {...defaultProps} />);
+    render(<PermissionModal {...defaultProps} />);
 
     const modal = await screen.findByTestId("connection-modal");
     const host = await screen.findByText(defaultHookData.url?.host as string);
@@ -48,8 +48,8 @@ describe("ui/components/ConnectionModal/ConnectionModal", () => {
   });
 
   test("should render properly with chrome extension protocol", async () => {
-    (useConnectionModal as jest.Mock).mockReturnValue({ ...defaultHookData, url: new URL("chrome-extension://id") });
-    render(<ConnectionModal {...defaultProps} />);
+    (usePermissionModal as jest.Mock).mockReturnValue({ ...defaultHookData, url: new URL("chrome-extension://id") });
+    render(<PermissionModal {...defaultProps} />);
 
     const modal = await screen.findByTestId("connection-modal");
     const title = await screen.findByText("Chrome Extension Page");
@@ -59,7 +59,7 @@ describe("ui/components/ConnectionModal/ConnectionModal", () => {
   });
 
   test("should remove host properly", async () => {
-    render(<ConnectionModal {...defaultProps} />);
+    render(<PermissionModal {...defaultProps} />);
 
     const button = await screen.findByText("Disconnect");
     act(() => button.click());
@@ -68,7 +68,7 @@ describe("ui/components/ConnectionModal/ConnectionModal", () => {
   });
 
   test("should close modal properly", async () => {
-    render(<ConnectionModal {...defaultProps} />);
+    render(<PermissionModal {...defaultProps} />);
 
     const button = await screen.findByText("Close");
     act(() => button.click());
@@ -77,7 +77,7 @@ describe("ui/components/ConnectionModal/ConnectionModal", () => {
   });
 
   test("should set approval properly", async () => {
-    render(<ConnectionModal {...defaultProps} />);
+    render(<PermissionModal {...defaultProps} />);
 
     const button = await screen.findByLabelText("Allow host to create proof without approvals");
     act(() => button.click());

@@ -23,6 +23,7 @@ const web2ProvidersIcons: IconWeb2Providers = {
 export interface IdentityItemProps {
   commitment: string;
   metadata: IdentityMetadata;
+  isShowMenu: boolean;
   selected?: string;
   onDeleteIdentity: (commitment: string) => Promise<void>;
   onSelectIdentity: (commitment: string) => void;
@@ -31,6 +32,7 @@ export interface IdentityItemProps {
 
 export const IdentityItem = ({
   commitment,
+  isShowMenu,
   selected = "",
   metadata,
   onDeleteIdentity,
@@ -127,15 +129,17 @@ export const IdentityItem = ({
         {metadata.account && <div className="text-xs text-gray-500">Address: {ellipsify(metadata.account)}</div>}
       </div>
 
-      <Menuable
-        className="flex user-menu"
-        items={[
-          { label: "Rename", isDangerItem: false, onClick: handleToggleRenaming },
-          { label: "Delete", isDangerItem: true, onClick: handleDeleteIdentity },
-        ]}
-      >
-        <Icon className="identity-row__menu-icon" fontAwesome="fas fa-ellipsis-h" />
-      </Menuable>
+      {isShowMenu && (
+        <Menuable
+          className="flex user-menu"
+          items={[
+            { label: "Rename", isDangerItem: false, onClick: handleToggleRenaming },
+            { label: "Delete", isDangerItem: true, onClick: handleDeleteIdentity },
+          ]}
+        >
+          <Icon className="identity-row__menu-icon" fontAwesome="fas fa-ellipsis-h" />
+        </Menuable>
+      )}
     </div>
   );
 };

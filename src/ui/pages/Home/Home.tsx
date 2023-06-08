@@ -1,13 +1,14 @@
 import classNames from "classnames";
 
 import { Header } from "@src/ui/components/Header";
+import { IdentityList } from "@src/ui/components/IdentityList";
 
-import { IdentityList, TabList, Info, ActivityList } from "./components";
+import { TabList, Info, ActivityList } from "./components";
 import "./home.scss";
 import { useHome } from "./useHome";
 
 const Home = (): JSX.Element => {
-  const { identities, refreshConnectionStatus } = useHome();
+  const { identities, selectedIdentity, refreshConnectionStatus, onSelectIdentity } = useHome();
 
   return (
     <div className="w-full h-full flex flex-col home" data-testid="home-page">
@@ -17,7 +18,13 @@ const Home = (): JSX.Element => {
         <Info refreshConnectionStatus={refreshConnectionStatus} />
 
         <TabList>
-          <IdentityList identities={identities} />
+          <IdentityList
+            isShowAddNew
+            isShowMenu
+            identities={identities}
+            selectedCommitment={selectedIdentity?.commitment}
+            onSelect={onSelectIdentity}
+          />
 
           <ActivityList />
         </TabList>

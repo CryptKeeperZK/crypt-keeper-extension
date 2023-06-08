@@ -3,13 +3,7 @@ import { useCallback } from "react";
 
 import { Icon } from "@src/ui/components/Icon";
 import { useAppDispatch } from "@src/ui/ducks/hooks";
-import {
-  createIdentityRequest,
-  deleteIdentity,
-  setActiveIdentity,
-  setIdentityName,
-  useSelectedIdentity,
-} from "@src/ui/ducks/identities";
+import { createIdentityRequest, deleteIdentity, setIdentityName } from "@src/ui/ducks/identities";
 
 import type { IdentityData } from "@src/types";
 
@@ -17,19 +11,21 @@ import "./identityListStyles.scss";
 import { IdentityItem } from "./Item";
 
 export interface IdentityListProps {
+  isShowAddNew: boolean;
+  isShowMenu: boolean;
   identities: IdentityData[];
+  selectedCommitment?: string;
+  onSelect: (identityCommitment: string) => void;
 }
 
-export const IdentityList = ({ identities }: IdentityListProps): JSX.Element => {
-  const selected = useSelectedIdentity();
+export const IdentityList = ({
+  isShowAddNew,
+  isShowMenu,
+  identities,
+  selectedCommitment = undefined,
+  onSelect: onSelectIdentity,
+}: IdentityListProps): JSX.Element => {
   const dispatch = useAppDispatch();
-
-  const onSelectIdentity = useCallback(
-    (identityCommitment: string) => {
-      dispatch(setActiveIdentity(identityCommitment));
-    },
-    [dispatch],
-  );
 
   const onUpdateIdentityName = useCallback(
     async (identityCommitment: string, name: string) => {
@@ -56,8 +52,9 @@ export const IdentityList = ({ identities }: IdentityListProps): JSX.Element => 
           <IdentityItem
             key={commitment}
             commitment={commitment}
+            isShowMenu={isShowMenu}
             metadata={metadata}
-            selected={selected?.commitment}
+            selected={selectedCommitment}
             onDeleteIdentity={onDeleteIdentity}
             onSelectIdentity={onSelectIdentity}
             onUpdateIdentityName={onUpdateIdentityName}
@@ -65,21 +62,23 @@ export const IdentityList = ({ identities }: IdentityListProps): JSX.Element => 
         ))}
       </div>
 
-      <div className="flex flex-row items-center p-4">
-        <button
-          className={classNames(
-            "flex flex-row items-center justify-center cursor-pointer text-gray-600",
-            "create-identity-row__active",
-          )}
-          data-testid="create-new-identity"
-          type="button"
-          onClick={onCreateIdentityRequest}
-        >
-          <Icon className="mr-2" fontAwesome="fas fa-plus" size={1} />
+      {isShowAddNew && (
+        <div className="flex flex-row items-center p-4">
+          <button
+            className={classNames(
+              "flex flex-row items-center justify-center cursor-pointer text-gray-600",
+              "create-identity-row__active",
+            )}
+            data-testid="create-new-identity"
+            type="button"
+            onClick={onCreateIdentityRequest}
+          >
+            <Icon className="mr-2" fontAwesome="fas fa-plus" size={1} />
 
-          <div>Add Identity</div>
-        </button>
-      </div>
+            <div>Add Identity</div>
+          </button>
+        </div>
+      )}
     </>
   );
 };

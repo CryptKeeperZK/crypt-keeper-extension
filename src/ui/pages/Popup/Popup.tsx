@@ -2,6 +2,7 @@ import { Navigate, RouteObject, useRoutes } from "react-router-dom";
 
 import { Paths } from "@src/constants";
 import ConfirmRequestModal from "@src/ui/components/ConfirmRequestModal";
+import ConnectIdentity from "@src/ui/pages/ConnectIdentity";
 import CreateIdentity from "@src/ui/pages/CreateIdentity";
 import DownloadBackup from "@src/ui/pages/DownloadBackup";
 import Home from "@src/ui/pages/Home";
@@ -23,6 +24,7 @@ const routeConfig: RouteObject[] = [
   { path: Paths.SETTINGS, element: <Settings /> },
   { path: Paths.DOWNLOAD_BACKUP, element: <DownloadBackup /> },
   { path: Paths.MNEMONIC, element: <Mnemonic /> },
+  { path: Paths.CONNECT_IDENTITY, element: <ConnectIdentity /> },
   {
     path: "*",
     element: <Navigate to={Paths.HOME} />,

@@ -4,6 +4,11 @@
   height: 375px;
   overflow-x: hidden;
   overflow-y: auto;
+  scrollbar-width: none;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
 }
 
 .activity-row {

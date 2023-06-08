@@ -1,7 +1,13 @@
 import { useEffect, useCallback } from "react";
 
 import { useAppDispatch } from "@src/ui/ducks/hooks";
-import { fetchHistory, fetchIdentities, useIdentities } from "@src/ui/ducks/identities";
+import {
+  fetchHistory,
+  fetchIdentities,
+  setActiveIdentity,
+  useIdentities,
+  useSelectedIdentity,
+} from "@src/ui/ducks/identities";
 import { checkHostApproval } from "@src/ui/ducks/permissions";
 import { useEthWallet } from "@src/ui/hooks/wallet";
 import { getLastActiveTabUrl } from "@src/util/browser";
@@ -10,13 +16,16 @@ import type { IdentityData } from "@src/types";
 
 export interface IUseHomeData {
   identities: IdentityData[];
+  selectedIdentity?: IdentityData;
   address?: string;
   refreshConnectionStatus: () => Promise<boolean>;
+  onSelectIdentity: (identityCommitment: string) => void;
 }
 
 export const useHome = (): IUseHomeData => {
   const dispatch = useAppDispatch();
   const identities = useIdentities();
+  const selectedIdentity = useSelectedIdentity();
 
   const { address } = useEthWallet();
 
@@ -30,6 +39,13 @@ export const useHome = (): IUseHomeData => {
     return dispatch(checkHostApproval(tabUrl.origin));
   }, [dispatch]);
 
+  const onSelectIdentity = useCallback(
+    (identityCommitment: string) => {
+      dispatch(setActiveIdentity(identityCommitment));
+    },
+    [dispatch],
+  );
+
   useEffect(() => {
     dispatch(fetchIdentities());
     dispatch(fetchHistory());
@@ -37,7 +53,9 @@ export const useHome = (): IUseHomeData => {
 
   return {
     address,
+    selectedIdentity,
     identities,
     refreshConnectionStatus,
+    onSelectIdentity,
   };
 };

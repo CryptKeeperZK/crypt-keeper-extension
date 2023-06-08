@@ -9,7 +9,7 @@ import { useAppDispatch } from "@src/ui/ducks/hooks";
 import { fetchHostPermissions, removeHost, setHostPermissions, useHostPermission } from "@src/ui/ducks/permissions";
 import { getLastActiveTabUrl } from "@src/util/browser";
 
-import { IUseConnectionModalArgs, IUseConnectionModalData, useConnectionModal } from "../useConnectionModal";
+import { IUseConnectionModalArgs, IUsePermissionModalData, usePermissionModal } from "../usePermissionModal";
 
 jest.mock("@src/ui/ducks/hooks", (): unknown => ({
   useAppDispatch: jest.fn(),
@@ -38,7 +38,7 @@ describe("ui/components/ConnectionModal/useConnectionModal", () => {
 
   const defaultPermission = { canSkipApprove: true };
 
-  const waitForData = async (current: IUseConnectionModalData) => {
+  const waitForData = async (current: IUsePermissionModalData) => {
     await waitFor(() => current.url !== undefined);
     await waitFor(() => current.checked === true);
     await waitFor(() => current.faviconUrl !== "");
@@ -58,7 +58,7 @@ describe("ui/components/ConnectionModal/useConnectionModal", () => {
 
   test("should return empty data", () => {
     (getLastActiveTabUrl as jest.Mock).mockResolvedValue(undefined);
-    const { result } = renderHook(() => useConnectionModal(defaultArgs));
+    const { result } = renderHook(() => usePermissionModal(defaultArgs));
 
     expect(result.current.checked).toBe(true);
     expect(result.current.faviconUrl).toBe("");
@@ -66,7 +66,7 @@ describe("ui/components/ConnectionModal/useConnectionModal", () => {
   });
 
   test("should return initial data", async () => {
-    const { result } = renderHook(() => useConnectionModal(defaultArgs));
+    const { result } = renderHook(() => usePermissionModal(defaultArgs));
     await waitForData(result.current);
 
     expect(result.current.checked).toBe(true);
@@ -75,7 +75,7 @@ describe("ui/components/ConnectionModal/useConnectionModal", () => {
   });
 
   test("should set approval properly", async () => {
-    const { result } = renderHook(() => useConnectionModal(defaultArgs));
+    const { result } = renderHook(() => usePermissionModal(defaultArgs));
     await waitForData(result.current);
 
     await act(async () =>
@@ -92,7 +92,7 @@ describe("ui/components/ConnectionModal/useConnectionModal", () => {
   });
 
   test("should remove host properly", async () => {
-    const { result } = renderHook(() => useConnectionModal(defaultArgs));
+    const { result } = renderHook(() => usePermissionModal(defaultArgs));
     await waitForData(result.current);
 
     await act(async () => Promise.resolve(result.current.onRemoveHost()));
