@@ -1,4 +1,4 @@
-import Box from "@mui/material/Box";
+import Typography from "@mui/material/Typography";
 import classNames from "classnames";
 import { useCallback } from "react";
 
@@ -46,14 +46,6 @@ export const IdentityList = ({
     dispatch(createIdentityRequest());
   }, [dispatch]);
 
-  if (identities.length === 0) {
-    return (
-      <Box className="identities-content" sx={{ textAlign: "center", my: 2 }}>
-        No identities available
-      </Box>
-    );
-  }
-
   return (
     <>
       <div className="identities-content">
@@ -69,6 +61,10 @@ export const IdentityList = ({
             onUpdateIdentityName={onUpdateIdentityName}
           />
         ))}
+
+        {identities.length === 0 && (
+          <Typography sx={{ my: 2, textAlign: "center" }}>No identities available</Typography>
+        )}
       </div>
 
       {isShowAddNew && (
