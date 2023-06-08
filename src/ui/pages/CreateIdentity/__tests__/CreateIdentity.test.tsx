@@ -2,8 +2,6 @@
  * @jest-environment jsdom
  */
 
-import { library } from "@fortawesome/fontawesome-svg-core";
-import { faTwitter, faGithub, faReddit } from "@fortawesome/free-brands-svg-icons";
 import { act, fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { useNavigate } from "react-router-dom";
 import selectEvent from "react-select-event";
@@ -54,8 +52,6 @@ describe("ui/pages/CreateIdentity", () => {
   const mockNavigate = jest.fn();
 
   beforeEach(() => {
-    library.add(faTwitter, faGithub, faReddit);
-
     (useEthWallet as jest.Mock).mockReturnValue({ ...defaultWalletHookData, isActive: true });
 
     (useCryptKeeperWallet as jest.Mock).mockReturnValue({ ...defaultWalletHookData, isActive: true });

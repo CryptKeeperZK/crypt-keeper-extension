@@ -2,14 +2,17 @@
  * @jest-environment jsdom
  */
 
-import { library } from "@fortawesome/fontawesome-svg-core";
-import { faTwitter } from "@fortawesome/free-brands-svg-icons";
 import { act, render, screen, fireEvent } from "@testing-library/react";
 
 import { ZERO_ADDRESS } from "@src/config/const";
 import { getEnabledFeatures } from "@src/config/features";
+import { redirectToNewTab } from "@src/util/browser";
 
 import { IdentityItem, IdentityItemProps } from "../Item";
+
+jest.mock("@src/util/browser", (): unknown => ({
+  redirectToNewTab: jest.fn(),
+}));
 
 describe("ui/components/IdentityList/Item", () => {
   const defaultProps: IdentityItemProps = {
@@ -38,8 +41,6 @@ describe("ui/components/IdentityList/Item", () => {
   });
 
   test("should render properly", async () => {
-    library.add(faTwitter);
-
     render(<IdentityItem {...defaultProps} isShowMenu={false} />);
 
     const name = await screen.findByText(defaultProps.metadata.name);
@@ -162,5 +163,15 @@ describe("ui/components/IdentityList/Item", () => {
 
     expect(defaultProps.onUpdateIdentityName).toBeCalledTimes(1);
     expect(defaultProps.onUpdateIdentityName).toBeCalledWith(defaultProps.commitment, "Account #1");
+  });
+
+  test("should go to host properly", async () => {
+    render(<IdentityItem {...defaultProps} />);
+
+    const icon = await screen.findByTestId("host-icon");
+    await act(() => Promise.resolve(icon.click()));
+
+    expect(redirectToNewTab).toBeCalledTimes(1);
+    expect(redirectToNewTab).toBeCalledWith(defaultProps.metadata.host);
   });
 });

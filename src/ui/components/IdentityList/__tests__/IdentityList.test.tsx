@@ -2,8 +2,6 @@
  * @jest-environment jsdom
  */
 
-import { library } from "@fortawesome/fontawesome-svg-core";
-import { faTwitter, faGithub, faReddit } from "@fortawesome/free-brands-svg-icons";
 import { act, render, screen, fireEvent } from "@testing-library/react";
 
 import { ZERO_ADDRESS } from "@src/config/const";
@@ -59,8 +57,6 @@ describe("ui/components/IdentityList", () => {
   };
 
   beforeEach(() => {
-    library.add(faTwitter, faGithub, faReddit);
-
     (useAppDispatch as jest.Mock).mockReturnValue(mockDispatch);
 
     (useIdentities as jest.Mock).mockReturnValue(defaultIdentities);
@@ -78,6 +74,14 @@ describe("ui/components/IdentityList", () => {
 
     expect(identityName1).toBeInTheDocument();
     expect(identityName2).toBeInTheDocument();
+  });
+
+  test("should render without identities properly", async () => {
+    render(<IdentityList {...defaultProps} identities={[]} />);
+
+    const empty = await screen.findByText("No identities available");
+
+    expect(empty).toBeInTheDocument();
   });
 
   test("should select identity properly", async () => {

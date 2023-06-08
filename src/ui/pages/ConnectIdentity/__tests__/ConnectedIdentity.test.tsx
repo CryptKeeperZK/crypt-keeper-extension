@@ -21,7 +21,7 @@ describe("ui/pages/ConnectIdentity", () => {
     host: "http://localhost:3000",
     faviconUrl: "",
     selectedTab: EConnectIdentityTabs.LINKED,
-    isShowTabs: true,
+    selectedIdentityCommitment: "1234",
     linkedIdentities: [
       {
         commitment: "1234",

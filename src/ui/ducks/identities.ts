@@ -156,6 +156,12 @@ export const enableHistory =
 
 export const useIdentities = (): IdentityData[] => useAppSelector((state) => state.identities.identities, deepEqual);
 
+export const useLinkedIdentities = (): IdentityData[] =>
+  useAppSelector((state) => state.identities.identities.filter((identity) => identity.metadata.host), deepEqual);
+
+export const useUnlinkedIdentities = (): IdentityData[] =>
+  useAppSelector((state) => state.identities.identities.filter((identity) => !identity.metadata.host), deepEqual);
+
 export const useSelectedIdentity = (): IdentityData | undefined =>
   useAppSelector((state) => {
     const { identities, selected } = state.identities;
