@@ -149,6 +149,7 @@ describe("ui/pages/CreateIdentity", () => {
     expect(mockDispatch).toBeCalledTimes(1);
     expect(createIdentity).toBeCalledTimes(1);
     expect(createIdentity).toBeCalledWith({
+      groups: [],
       messageSignature: undefined,
       options: { message: mockMessage, account: ZERO_ADDRESS },
       strategy: "random",
@@ -170,6 +171,7 @@ describe("ui/pages/CreateIdentity", () => {
     expect(mockDispatch).toBeCalledTimes(1);
     expect(createIdentity).toBeCalledTimes(1);
     expect(createIdentity).toBeCalledWith({
+      groups: [],
       messageSignature: undefined,
       options: { message: mockMessage, account: ZERO_ADDRESS },
       strategy: "random",
@@ -214,6 +216,7 @@ describe("ui/pages/CreateIdentity", () => {
       strategy: "interrep",
       messageSignature: mockSignedMessage,
       walletType: EWallet.ETH_WALLET,
+      groups: [],
       options: {
         account: ZERO_ADDRESS,
         message: mockMessage,

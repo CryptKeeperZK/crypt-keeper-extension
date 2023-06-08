@@ -53,6 +53,8 @@ describe("ui/pages/Home/useHome", () => {
         name: "Account #1",
         identityStrategy: "interrep",
         web2Provider: "twitter",
+        groups: [],
+        host: "http://localhost:3000",
       },
     },
     {
@@ -61,6 +63,8 @@ describe("ui/pages/Home/useHome", () => {
         account: defaultWalletHookData.address as string,
         name: "Account #2",
         identityStrategy: "random",
+        groups: [],
+        host: "http://localhost:3000",
       },
     },
   ];

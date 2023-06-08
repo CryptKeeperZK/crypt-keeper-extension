@@ -377,6 +377,8 @@ describe("background/services/zkIdentity", () => {
         walletType: EWallet.ETH_WALLET,
         messageSignature: identityMessageSignature,
         options: identityOptions,
+        groups: [],
+        host: "http://localhost:3000",
       });
 
       expect(result).toBeDefined();
@@ -395,6 +397,8 @@ describe("background/services/zkIdentity", () => {
         strategy: identityStrategy,
         walletType: EWallet.CRYPT_KEEPER_WALLET,
         options: identityOptions,
+        groups: [],
+        host: "http://localhost:3000",
       });
 
       expect(result).toBeDefined();
@@ -413,6 +417,8 @@ describe("background/services/zkIdentity", () => {
         strategy: identityStrategy,
         walletType: EWallet.ETH_WALLET,
         options: identityOptions,
+        groups: [],
+        host: "http://localhost:3000",
       });
 
       await expect(promise).rejects.toThrowError("No signature provided");
@@ -434,6 +440,8 @@ describe("background/services/zkIdentity", () => {
         walletType: EWallet.ETH_WALLET,
         messageSignature: identityMessageSignature,
         options: identityOptions,
+        groups: [],
+        host: "http://localhost:3000",
       });
 
       expect(successResult).toBeDefined();
@@ -447,6 +455,8 @@ describe("background/services/zkIdentity", () => {
         walletType: EWallet.ETH_WALLET,
         messageSignature: identityMessageSignature,
         options: identityOptions,
+        groups: [],
+        host: "http://localhost:3000",
       });
 
       expect(failedResult).toBeUndefined();
@@ -456,6 +466,8 @@ describe("background/services/zkIdentity", () => {
         walletType: EWallet.ETH_WALLET,
         messageSignature: identityMessageSignature,
         options: { message: "message", account: ZERO_ADDRESS },
+        groups: [],
+        host: "http://localhost:3000",
       });
 
       expect(emptyResult).toBeUndefined();
