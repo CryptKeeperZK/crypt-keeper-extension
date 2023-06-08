@@ -45,6 +45,14 @@ module.exports = {
           from: path.resolve(__dirname, `./manifest.${TARGET}.json`),
           to: path.resolve(__dirname, "./dist/manifest.json"),
         },
+        {
+          from: path.resolve(__dirname, `./privacy_policy.md`),
+          to: path.resolve(__dirname, "./dist/privacy_policy.md"),
+        },
+        {
+          from: path.resolve(__dirname, `./LICENSE`),
+          to: path.resolve(__dirname, "./dist/LICENSE"),
+        },
         { from: path.resolve(__dirname, "./zkeyFiles"), to: path.resolve(__dirname, "./dist/js/zkeyFiles") },
       ],
     }),
