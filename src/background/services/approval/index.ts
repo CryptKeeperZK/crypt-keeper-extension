@@ -7,7 +7,8 @@ import type { IBackupable } from "@src/background/services/backup";
 const APPPROVALS_DB_KEY = "@APPROVED@";
 
 interface HostPermission {
-  noApproval: boolean;
+  host: string;
+  canSkipApprove: boolean;
 }
 
 export default class ApprovalService implements IBackupable {
@@ -38,7 +39,7 @@ export default class ApprovalService implements IBackupable {
 
   isApproved = (host: string): boolean => this.allowedHosts.has(host);
 
-  canSkipApprove = (host: string): boolean => Boolean(this.allowedHosts.get(host)?.noApproval);
+  canSkipApprove = (host: string): boolean => Boolean(this.allowedHosts.get(host)?.canSkipApprove);
 
   unlock = async (): Promise<boolean> => {
     const encryped = await this.approvals.get<string>();
@@ -52,22 +53,23 @@ export default class ApprovalService implements IBackupable {
   };
 
   getPermission = (host: string): HostPermission => ({
-    noApproval: Boolean(this.allowedHosts.get(host)?.noApproval),
+    host,
+    canSkipApprove: Boolean(this.allowedHosts.get(host)?.canSkipApprove),
   });
 
-  setPermission = async (host: string, { noApproval }: HostPermission): Promise<HostPermission> => {
-    this.allowedHosts.set(host, { noApproval });
+  setPermission = async ({ host, canSkipApprove }: HostPermission): Promise<HostPermission> => {
+    this.allowedHosts.set(host, { host, canSkipApprove });
     await this.saveApprovals();
 
-    return { noApproval };
+    return { host, canSkipApprove };
   };
 
-  add = async ({ host, noApproval }: { host: string; noApproval: boolean }): Promise<void> => {
+  add = async ({ host, canSkipApprove }: HostPermission): Promise<void> => {
     if (this.allowedHosts.get(host)) {
       return;
     }
 
-    this.allowedHosts.set(host, { noApproval });
+    this.allowedHosts.set(host, { host, canSkipApprove });
     await this.saveApprovals();
   };
 

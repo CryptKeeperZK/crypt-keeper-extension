@@ -1,8 +1,5 @@
-import log from "loglevel";
-import { browser } from "webextension-polyfill-ts";
-
 import { RPCAction } from "@src/constants";
-import { PendingRequestType, RLNProofRequest, SemaphoreProofRequest, BackupableServices, Approvals } from "@src/types";
+import { BackupableServices, RequestHandler } from "@src/types";
 
 import BrowserUtils from "./controllers/browserUtils";
 import Handler from "./controllers/handler";
@@ -10,13 +7,16 @@ import RequestManager from "./controllers/requestManager";
 import ApprovalService from "./services/approval";
 import BackupService from "./services/backup";
 import HistoryService from "./services/history";
+import InjectorService from "./services/injector";
 import LockerService from "./services/lock";
 import MiscStorageService from "./services/misc";
 import { validateZkInputs } from "./services/validation";
 import WalletService from "./services/wallet";
 import ZkIdentityService from "./services/zkIdentity";
 
-export default class CryptKeeperController extends Handler {
+export default class CryptKeeperController {
+  private handler: Handler;
+
   private zkIdentityService: ZkIdentityService;
 
   private requestManager: RequestManager;
@@ -27,6 +27,8 @@ export default class CryptKeeperController extends Handler {
 
   private lockService: LockerService;
 
+  private injectorService: InjectorService;
+
   private browserService: BrowserUtils;
 
   private historyService: HistoryService;
@@ -36,12 +38,13 @@ export default class CryptKeeperController extends Handler {
   private walletService: WalletService;
 
   constructor() {
-    super();
-    this.requestManager = new RequestManager();
+    this.handler = new Handler();
+    this.requestManager = RequestManager.getInstance();
     this.zkIdentityService = ZkIdentityService.getInstance();
     this.approvalService = ApprovalService.getInstance();
     this.miscStorageService = MiscStorageService.getInstance();
     this.lockService = LockerService.getInstance();
+    this.injectorService = InjectorService.getInstance();
     this.browserService = BrowserUtils.getInstance();
     this.historyService = HistoryService.getInstance();
     this.walletService = WalletService.getInstance();
@@ -52,9 +55,11 @@ export default class CryptKeeperController extends Handler {
       .add(BackupableServices.WALLET, this.walletService);
   }
 
+  handle = (request: RequestHandler): Promise<unknown> => this.handler.handle(request);
+
   initialize = (): CryptKeeperController => {
     // common
-    this.add(
+    this.handler.add(
       RPCAction.UNLOCK,
       this.lockService.unlock,
       this.zkIdentityService.unlock,
@@ -62,7 +67,7 @@ export default class CryptKeeperController extends Handler {
       this.lockService.onUnlocked,
     );
 
-    this.add(RPCAction.LOCK, this.lockService.logout);
+    this.handler.add(RPCAction.LOCK, this.lockService.logout);
 
     /**
      *  Return status of background process
@@ -70,193 +75,94 @@ export default class CryptKeeperController extends Handler {
      *  @returns {boolean} status.isInitialized has background process been initialized
      *  @returns {boolean} status.isUnlocked is background process unlocked
      */
-    this.add(RPCAction.GET_STATUS, this.lockService.getStatus);
+    this.handler.add(RPCAction.GET_STATUS, this.lockService.getStatus);
 
     // requests
-    this.add(RPCAction.GET_PENDING_REQUESTS, this.lockService.ensure, this.requestManager.getRequests);
-    this.add(RPCAction.FINALIZE_REQUEST, this.lockService.ensure, this.requestManager.finalizeRequest);
+    this.handler.add(RPCAction.GET_PENDING_REQUESTS, this.lockService.ensure, this.requestManager.getRequests);
+    this.handler.add(RPCAction.FINALIZE_REQUEST, this.lockService.ensure, this.requestManager.finalizeRequest);
 
     // lock
-    this.add(RPCAction.SETUP_PASSWORD, this.lockService.setupPassword);
+    this.handler.add(RPCAction.SETUP_PASSWORD, this.lockService.setupPassword);
 
     // Identities
-    this.add(RPCAction.GET_COMMITMENTS, this.lockService.ensure, this.zkIdentityService.getIdentityCommitments);
-    this.add(RPCAction.GET_IDENTITIES, this.lockService.ensure, this.zkIdentityService.getIdentities);
-    this.add(RPCAction.GET_ACTIVE_IDENTITY_DATA, this.lockService.ensure, this.zkIdentityService.getActiveIdentityData);
-    this.add(RPCAction.SET_ACTIVE_IDENTITY, this.lockService.ensure, this.zkIdentityService.setActiveIdentity);
-    this.add(RPCAction.SET_IDENTITY_NAME, this.lockService.ensure, this.zkIdentityService.setIdentityName);
-    this.add(RPCAction.CREATE_IDENTITY_REQ, this.lockService.ensure, this.zkIdentityService.createIdentityRequest);
-    this.add(RPCAction.CREATE_IDENTITY, this.lockService.ensure, this.zkIdentityService.createIdentity);
-    this.add(RPCAction.DELETE_IDENTITY, this.lockService.ensure, this.zkIdentityService.deleteIdentity);
-    this.add(RPCAction.DELETE_ALL_IDENTITIES, this.lockService.ensure, this.zkIdentityService.deleteAllIdentities);
-
-    // History
-    this.add(RPCAction.GET_IDENTITY_HISTORY, this.lockService.ensure, this.historyService.getOperations);
-    this.add(RPCAction.LOAD_IDENTITY_HISTORY, this.lockService.ensure, this.historyService.loadOperations);
-    this.add(RPCAction.DELETE_HISTORY_OPERATION, this.lockService.ensure, this.historyService.removeOperation);
-    this.add(RPCAction.DELETE_ALL_HISTORY_OPERATIONS, this.lockService.ensure, this.historyService.clear);
-    this.add(RPCAction.ENABLE_OPERATION_HISTORY, this.lockService.ensure, this.historyService.enableHistory);
-
-    // Backup
-    this.add(RPCAction.DOWNLOAD_BACKUP, this.lockService.ensure, this.backupService.download);
-    this.add(RPCAction.UPLOAD_BACKUP, this.backupService.upload);
-
-    // Wallet
-    this.add(RPCAction.GENERATE_MNEMONIC, this.lockService.ensure, this.walletService.generateMnemonic);
-    this.add(RPCAction.SAVE_MNEMONIC, this.lockService.ensure, this.walletService.generateKeyPair);
-    this.add(RPCAction.GET_ACCOUNTS, this.lockService.ensure, this.walletService.accounts);
-    this.add(RPCAction.SELECT_ACCOUNT, this.lockService.ensure, this.walletService.selectAccount);
-    this.add(RPCAction.GET_SELECTED_ACCOUNT, this.lockService.ensure, this.walletService.getSelectedAccount);
-
-    // Protocols
-    this.add(
-      RPCAction.PREPARE_SEMAPHORE_PROOF_REQUEST,
+    this.handler.add(RPCAction.GET_COMMITMENTS, this.lockService.ensure, this.zkIdentityService.getIdentityCommitments);
+    this.handler.add(RPCAction.GET_IDENTITIES, this.lockService.ensure, this.zkIdentityService.getIdentities);
+    this.handler.add(
+      RPCAction.GET_ACTIVE_IDENTITY_DATA,
       this.lockService.ensure,
-      validateZkInputs,
-      async (payload: SemaphoreProofRequest, meta: { origin: string }) => {
-        const { isUnlocked } = await this.lockService.getStatus();
-
-        const semaphorePath = {
-          circuitFilePath: browser.runtime.getURL("js/zkeyFiles/semaphore/semaphore.wasm"),
-          zkeyFilePath: browser.runtime.getURL("js/zkeyFiles/semaphore/semaphore.zkey"),
-          verificationKey: browser.runtime.getURL("js/zkeyFiles/semaphore/semaphore.json"),
-        };
-
-        if (!isUnlocked) {
-          await this.browserService.openPopup();
-          await this.lockService.awaitUnlock();
-        }
-
-        const identity = await this.zkIdentityService.getActiveIdentity();
-        const approved = this.approvalService.isApproved(meta.origin);
-        const permission = this.approvalService.getPermission(meta.origin);
-
-        if (!identity) {
-          throw new Error("active identity not found");
-        }
-
-        if (!approved) {
-          throw new Error(`${meta.origin} is not approved`);
-        }
-
-        try {
-          const request = {
-            ...payload,
-            circuitFilePath: semaphorePath.circuitFilePath,
-            zkeyFilePath: semaphorePath.zkeyFilePath,
-            verificationKey: semaphorePath.verificationKey,
-          };
-
-          if (!permission.noApproval) {
-            await this.requestManager.newRequest(PendingRequestType.SEMAPHORE_PROOF, {
-              ...request,
-              origin: meta.origin,
-            });
-          }
-
-          return { identity: identity.serialize(), payload: request };
-        } finally {
-          await this.browserService.closePopup();
-        }
-      },
+      this.zkIdentityService.getActiveIdentityData,
+    );
+    this.handler.add(RPCAction.SET_ACTIVE_IDENTITY, this.lockService.ensure, this.zkIdentityService.setActiveIdentity);
+    this.handler.add(RPCAction.SET_IDENTITY_NAME, this.lockService.ensure, this.zkIdentityService.setIdentityName);
+    this.handler.add(
+      RPCAction.CREATE_IDENTITY_REQ,
+      this.lockService.ensure,
+      this.zkIdentityService.createIdentityRequest,
+    );
+    this.handler.add(RPCAction.CREATE_IDENTITY, this.lockService.ensure, this.zkIdentityService.createIdentity);
+    this.handler.add(RPCAction.DELETE_IDENTITY, this.lockService.ensure, this.zkIdentityService.deleteIdentity);
+    this.handler.add(
+      RPCAction.DELETE_ALL_IDENTITIES,
+      this.lockService.ensure,
+      this.zkIdentityService.deleteAllIdentities,
     );
 
-    this.add(
+    // History
+    this.handler.add(RPCAction.GET_IDENTITY_HISTORY, this.lockService.ensure, this.historyService.getOperations);
+    this.handler.add(RPCAction.LOAD_IDENTITY_HISTORY, this.lockService.ensure, this.historyService.loadOperations);
+    this.handler.add(RPCAction.DELETE_HISTORY_OPERATION, this.lockService.ensure, this.historyService.removeOperation);
+    this.handler.add(RPCAction.DELETE_ALL_HISTORY_OPERATIONS, this.lockService.ensure, this.historyService.clear);
+    this.handler.add(RPCAction.ENABLE_OPERATION_HISTORY, this.lockService.ensure, this.historyService.enableHistory);
+
+    // Backup
+    this.handler.add(RPCAction.DOWNLOAD_BACKUP, this.lockService.ensure, this.backupService.download);
+    this.handler.add(RPCAction.UPLOAD_BACKUP, this.backupService.upload);
+
+    // Wallet
+    this.handler.add(RPCAction.GENERATE_MNEMONIC, this.lockService.ensure, this.walletService.generateMnemonic);
+    this.handler.add(RPCAction.SAVE_MNEMONIC, this.lockService.ensure, this.walletService.generateKeyPair);
+    this.handler.add(RPCAction.GET_ACCOUNTS, this.lockService.ensure, this.walletService.accounts);
+    this.handler.add(RPCAction.SELECT_ACCOUNT, this.lockService.ensure, this.walletService.selectAccount);
+    this.handler.add(RPCAction.GET_SELECTED_ACCOUNT, this.lockService.ensure, this.walletService.getSelectedAccount);
+
+    // Injector
+    this.handler.add(RPCAction.CONNECT, this.injectorService.connect);
+    this.handler.add(
       RPCAction.PREPARE_RLN_PROOF_REQUEST,
       this.lockService.ensure,
       validateZkInputs,
-      async (payload: RLNProofRequest, meta: { origin: string }) => {
-        const identity = await this.zkIdentityService.getActiveIdentity();
-        const approved = this.approvalService.isApproved(meta.origin);
-        const permission = this.approvalService.getPermission(meta.origin);
-
-        const rlnPath = {
-          circuitFilePath: browser.runtime.getURL("js/zkeyFiles//rln/rln.wasm"),
-          zkeyFilePath: browser.runtime.getURL("js/zkeyFiles/rln/rln.zkey"),
-          verificationKey: browser.runtime.getURL("js/zkeyFiles/rln/rln.json"),
-        };
-
-        if (!identity) {
-          throw new Error("active identity not found");
-        }
-        if (!approved) {
-          throw new Error(`${meta.origin} is not approved`);
-        }
-
-        try {
-          const request = {
-            ...payload,
-            circuitFilePath: rlnPath.circuitFilePath,
-            zkeyFilePath: rlnPath.zkeyFilePath,
-            verificationKey: rlnPath.verificationKey,
-          };
-
-          if (!permission.noApproval) {
-            await this.requestManager.newRequest(PendingRequestType.RLN_PROOF, {
-              ...request,
-              origin: meta.origin,
-            });
-          }
-
-          return { identity: identity.serialize(), payload: request };
-        } finally {
-          await this.browserService.closePopup();
-        }
-      },
+      this.injectorService.prepareRlnProofRequest,
+    );
+    this.handler.add(
+      RPCAction.PREPARE_SEMAPHORE_PROOF_REQUEST,
+      this.lockService.ensure,
+      validateZkInputs,
+      this.injectorService.prepareSemaphoreProofRequest,
     );
 
-    // Injecting
-    this.add(RPCAction.TRY_INJECT, async (payload: { origin: string }): Promise<Approvals> => {
-      const { origin: host } = payload;
-      if (!host) {
-        throw new Error("Origin not provided");
-      }
-
-      const { isUnlocked } = await this.lockService.getStatus();
-
-      if (!isUnlocked) {
-        await this.browserService.openPopup();
-        await this.lockService.awaitUnlock();
-      }
-
-      const isApproved = this.approvalService.isApproved(host);
-      const canSkipApprove = this.approvalService.canSkipApprove(host);
-
-      if (isApproved) {
-        return { isApproved, canSkipApprove };
-      }
-
-      try {
-        await this.requestManager.newRequest(PendingRequestType.INJECT, { origin: host });
-        return { isApproved: true, canSkipApprove: false };
-      } catch (e) {
-        log.error(e);
-        return { isApproved: false, canSkipApprove: false };
-      }
-    });
-
     // Approvals
-    this.add(RPCAction.APPROVE_HOST, this.lockService.ensure, this.approvalService.add);
-    this.add(RPCAction.IS_HOST_APPROVED, this.lockService.ensure, this.approvalService.isApproved);
-    this.add(RPCAction.REMOVE_HOST, this.lockService.ensure, this.approvalService.remove);
-    this.add(RPCAction.GET_HOST_PERMISSIONS, this.lockService.ensure, this.approvalService.getPermission);
-    this.add(RPCAction.SET_HOST_PERMISSIONS, this.lockService.ensure, this.approvalService.setPermission);
+    this.handler.add(RPCAction.APPROVE_HOST, this.lockService.ensure, this.approvalService.add);
+    this.handler.add(RPCAction.IS_HOST_APPROVED, this.lockService.ensure, this.approvalService.isApproved);
+    this.handler.add(RPCAction.REMOVE_HOST, this.lockService.ensure, this.approvalService.remove);
+    this.handler.add(RPCAction.GET_HOST_PERMISSIONS, this.lockService.ensure, this.approvalService.getPermission);
+    this.handler.add(RPCAction.SET_HOST_PERMISSIONS, this.lockService.ensure, this.approvalService.setPermission);
     // Approvals - DEV ONLY
-    this.add(RPCAction.CLEAR_APPROVED_HOSTS, this.approvalService.clear);
+    this.handler.add(RPCAction.CLEAR_APPROVED_HOSTS, this.approvalService.clear);
 
-    this.add(
+    // Misc
+    this.handler.add(
       RPCAction.SET_CONNECT_WALLET,
       this.lockService.ensure,
       this.miscStorageService.setExternalWalletConnection,
     );
-
-    this.add(
+    this.handler.add(
       RPCAction.GET_CONNECT_WALLET,
       this.lockService.ensure,
       this.miscStorageService.getExternalWalletConnection,
     );
 
-    this.add(RPCAction.CLOSE_POPUP, async () => this.browserService.closePopup());
+    // Browser
+    this.handler.add(RPCAction.CLOSE_POPUP, this.browserService.closePopup);
 
     return this;
   };

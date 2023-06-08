@@ -36,7 +36,7 @@ describe("ui/components/ConnectionModal/useConnectionModal", () => {
 
   const defaultUrl = new URL("http://localhost:3000");
 
-  const defaultPermission = { noApproval: true };
+  const defaultPermission = { canSkipApprove: true };
 
   const waitForData = async (current: IUseConnectionModalData) => {
     await waitFor(() => current.url !== undefined);
@@ -87,7 +87,7 @@ describe("ui/components/ConnectionModal/useConnectionModal", () => {
     expect(setHostPermissions).toBeCalledTimes(1);
     expect(setHostPermissions).toBeCalledWith({
       host: result.current.url?.origin,
-      noApproval: true,
+      canSkipApprove: true,
     });
   });
 
