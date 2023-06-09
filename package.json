@@ -158,7 +158,7 @@
     "react-hook-form": "^7.44.3",
     "react-jazzicon": "^1.0.4",
     "react-redux": "^8.0.7",
-    "react-router-dom": "^6.12.0",
+    "react-router-dom": "^6.12.1",
     "react-select": "^5.7.3",
     "redux-logger": "^3.0.6",
     "redux-thunk": "^2.4.2",
