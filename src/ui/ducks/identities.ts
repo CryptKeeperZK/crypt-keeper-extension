@@ -80,7 +80,7 @@ export const createIdentity =
 
 export const setActiveIdentity = (identityCommitment: string) => async (): Promise<boolean> =>
   postMessage({
-    method: RPCAction.SET_ACTIVE_IDENTITY,
+    method: RPCAction.SET_CONNECTED_IDENTITY,
     payload: {
       identityCommitment,
     },
@@ -111,7 +111,7 @@ export const deleteAllIdentities = () => async (): Promise<boolean> =>
 export const fetchIdentities = (): TypedThunk => async (dispatch) => {
   const data = await postMessage<IdentityData[]>({ method: RPCAction.GET_IDENTITIES });
   const { commitment, web2Provider } = await postMessage<SelectedIdentity>({
-    method: RPCAction.GET_ACTIVE_IDENTITY_DATA,
+    method: RPCAction.GET_CONNECTED_IDENTITY_DATA,
   });
   dispatch(setIdentities(data));
   dispatch(

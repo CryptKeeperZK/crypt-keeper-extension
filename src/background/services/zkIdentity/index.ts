@@ -14,10 +14,11 @@ import { Paths } from "@src/constants";
 import {
   EWallet,
   IdentityMetadata,
-  IdentityName,
+  SetIdentityNameArgs,
   NewIdentityRequest,
   OperationType,
   SelectedIdentity,
+  SetIdentityHostArgs,
 } from "@src/types";
 import { setIdentities, setSelectedCommitment } from "@src/ui/ducks/identities";
 import { ellipsify } from "@src/util/account";
@@ -28,14 +29,14 @@ import type { IBackupable } from "@src/background/services/backup";
 import { createNewIdentity } from "./factory";
 
 const IDENTITY_KEY = "@@ID@@";
-const ACTIVE_IDENTITY_KEY = "@@AID@@";
+const CONNECTED_IDENTITY_KEY = "@@CONNECTED-IDENTITY@@";
 
 export default class ZkIdentityService implements IBackupable {
   private static INSTANCE: ZkIdentityService;
 
   private identitiesStore: SimpleStorage;
 
-  private activeIdentityStore: SimpleStorage;
+  private connectedIdentityStore: SimpleStorage;
 
   private lockService: LockerService;
 
@@ -47,12 +48,12 @@ export default class ZkIdentityService implements IBackupable {
 
   private walletService: WalletService;
 
-  private activeIdentity?: ZkIdentitySemaphore;
+  private connectedIdentity?: ZkIdentitySemaphore;
 
   private constructor() {
-    this.activeIdentity = undefined;
+    this.connectedIdentity = undefined;
     this.identitiesStore = new SimpleStorage(IDENTITY_KEY);
-    this.activeIdentityStore = new SimpleStorage(ACTIVE_IDENTITY_KEY);
+    this.connectedIdentityStore = new SimpleStorage(CONNECTED_IDENTITY_KEY);
     this.lockService = LockerService.getInstance();
     this.notificationService = NotificationService.getInstance();
     this.historyService = HistoryService.getInstance();
@@ -68,8 +69,8 @@ export default class ZkIdentityService implements IBackupable {
     return ZkIdentityService.INSTANCE;
   };
 
-  getActiveIdentityData = async (): Promise<SelectedIdentity> => {
-    const identity = await this.getActiveIdentity();
+  getConnectedIdentityData = async (): Promise<SelectedIdentity> => {
+    const identity = await this.getConnectedIdentity();
 
     return {
       commitment: identity ? bigintToHex(identity.genIdentityCommitment()) : "",
@@ -77,24 +78,24 @@ export default class ZkIdentityService implements IBackupable {
     };
   };
 
-  getActiveIdentity = async (): Promise<ZkIdentitySemaphore | undefined> => {
-    const activeIdentityCommitmentCipher = await this.activeIdentityStore.get<string>();
+  getConnectedIdentity = async (): Promise<ZkIdentitySemaphore | undefined> => {
+    const connectedIdentityCommitmentCipher = await this.connectedIdentityStore.get<string>();
 
-    if (!activeIdentityCommitmentCipher) {
+    if (!connectedIdentityCommitmentCipher) {
       return undefined;
     }
 
-    const activeIdentityCommitment = this.lockService.decrypt(activeIdentityCommitmentCipher);
+    const connectedIdentityCommitment = this.lockService.decrypt(connectedIdentityCommitmentCipher);
     const identities = await this.getIdentitiesFromStore();
-    const identity = identities.get(activeIdentityCommitment);
+    const identity = identities.get(connectedIdentityCommitment);
 
     if (!identity) {
       return undefined;
     }
 
-    this.activeIdentity = ZkIdentitySemaphore.genFromSerialized(identity);
+    this.connectedIdentity = ZkIdentitySemaphore.genFromSerialized(identity);
 
-    return this.activeIdentity;
+    return this.connectedIdentity;
   };
 
   private getIdentitiesFromStore = async (): Promise<Map<string, string>> => {
@@ -145,13 +146,13 @@ export default class ZkIdentityService implements IBackupable {
     return identities.size;
   };
 
-  setActiveIdentity = async ({ identityCommitment }: { identityCommitment: string }): Promise<boolean> => {
+  setConnectedIdentity = async ({ identityCommitment }: { identityCommitment: string }): Promise<boolean> => {
     const identities = await this.getIdentitiesFromStore();
 
-    return this.updateActiveIdentity({ identities, identityCommitment });
+    return this.updateConnectedIdentity({ identities, identityCommitment });
   };
 
-  private updateActiveIdentity = async ({
+  private updateConnectedIdentity = async ({
     identities,
     identityCommitment,
   }: {
@@ -164,18 +165,18 @@ export default class ZkIdentityService implements IBackupable {
       return false;
     }
 
-    this.activeIdentity = ZkIdentitySemaphore.genFromSerialized(identity);
+    this.connectedIdentity = ZkIdentitySemaphore.genFromSerialized(identity);
 
-    const activeIdentityWeb2Provider = this.activeIdentity.metadata.web2Provider;
+    const connectedIdentityWeb2Provider = this.connectedIdentity.metadata.web2Provider;
 
-    await this.writeActiveIdentity(identityCommitment, activeIdentityWeb2Provider);
+    await this.writeConnectedIdentity(identityCommitment, connectedIdentityWeb2Provider);
 
     return true;
   };
 
-  private writeActiveIdentity = async (commitment: string, web2Provider?: string): Promise<void> => {
+  private writeConnectedIdentity = async (commitment: string, web2Provider?: string): Promise<void> => {
     const ciphertext = this.lockService.encrypt(commitment);
-    await this.activeIdentityStore.set(ciphertext);
+    await this.connectedIdentityStore.set(ciphertext);
 
     const [tabs] = await Promise.all([
       browser.tabs.query({ active: true }),
@@ -202,9 +203,8 @@ export default class ZkIdentityService implements IBackupable {
     );
   };
 
-  setIdentityName = async (payload: IdentityName): Promise<boolean> => {
+  setIdentityName = async ({ identityCommitment, name }: SetIdentityNameArgs): Promise<boolean> => {
     const identities = await this.getIdentitiesFromStore();
-    const { identityCommitment, name } = payload;
     const rawIdentity = identities.get(identityCommitment);
 
     if (!rawIdentity) {
@@ -212,7 +212,24 @@ export default class ZkIdentityService implements IBackupable {
     }
 
     const identity = ZkIdentitySemaphore.genFromSerialized(rawIdentity);
-    identity.setIdentityMetadataName(name);
+    identity.updateMetadata({ name });
+    identities.set(identityCommitment, identity.serialize());
+    await this.writeIdentities(identities);
+    await this.refresh();
+
+    return true;
+  };
+
+  setIdentityHost = async ({ identityCommitment, host }: SetIdentityHostArgs): Promise<boolean> => {
+    const identities = await this.getIdentitiesFromStore();
+    const rawIdentity = identities.get(identityCommitment);
+
+    if (!rawIdentity) {
+      return false;
+    }
+
+    const identity = ZkIdentitySemaphore.genFromSerialized(rawIdentity);
+    identity.updateMetadata({ host });
     identities.set(identityCommitment, identity.serialize());
     await this.writeIdentities(identities);
     await this.refresh();
@@ -230,21 +247,21 @@ export default class ZkIdentityService implements IBackupable {
     const identities = await this.getIdentitiesFromStore();
 
     if (!identities.size) {
-      await this.clearActiveIdentity();
+      await this.clearConnectedIdentity();
       return;
     }
 
     const identity = identities.keys().next();
-    await this.updateActiveIdentity({ identities, identityCommitment: identity.value as string });
+    await this.updateConnectedIdentity({ identities, identityCommitment: identity.value as string });
   };
 
-  private clearActiveIdentity = async (): Promise<void> => {
-    if (!this.activeIdentity) {
+  private clearConnectedIdentity = async (): Promise<void> => {
+    if (!this.connectedIdentity) {
       return;
     }
 
-    this.activeIdentity = undefined;
-    await this.writeActiveIdentity("", "");
+    this.connectedIdentity = undefined;
+    await this.writeConnectedIdentity("", "");
   };
 
   createIdentityRequest = async (): Promise<void> => {
@@ -298,7 +315,7 @@ export default class ZkIdentityService implements IBackupable {
 
     identities.set(identityCommitment, newIdentity.serialize());
     await this.writeIdentities(identities);
-    await this.updateActiveIdentity({ identities, identityCommitment });
+    await this.updateConnectedIdentity({ identities, identityCommitment });
     await this.refresh();
     await this.historyService.trackOperation(OperationType.CREATE_IDENTITY, {
       identity: { commitment: identityCommitment, metadata: newIdentity.metadata },
@@ -329,9 +346,11 @@ export default class ZkIdentityService implements IBackupable {
 
   deleteIdentity = async (payload: { identityCommitment: string }): Promise<boolean> => {
     const { identityCommitment } = payload;
-    const activeIdentity = await this.getActiveIdentity();
+    const connectedIdentity = await this.getConnectedIdentity();
     const identities = await this.getIdentitiesFromStore();
-    const activeIdentityCommitment = activeIdentity ? bigintToHex(activeIdentity?.genIdentityCommitment()) : undefined;
+    const connectedIdentityCommitment = connectedIdentity
+      ? bigintToHex(connectedIdentity?.genIdentityCommitment())
+      : undefined;
     const identity = identities.get(identityCommitment);
 
     if (!identity) {
@@ -349,7 +368,7 @@ export default class ZkIdentityService implements IBackupable {
 
     await this.refresh();
 
-    if (activeIdentityCommitment === identityCommitment) {
+    if (connectedIdentityCommitment === identityCommitment) {
       await this.setDefaultIdentity();
     }
 
@@ -363,7 +382,7 @@ export default class ZkIdentityService implements IBackupable {
       return false;
     }
 
-    await Promise.all([this.clearActiveIdentity(), this.identitiesStore.clear(), pushMessage(setIdentities([]))]);
+    await Promise.all([this.clearConnectedIdentity(), this.identitiesStore.clear(), pushMessage(setIdentities([]))]);
     await this.historyService.trackOperation(OperationType.DELETE_ALL_IDENTITIES, {});
 
     await this.notificationService.create({

@@ -14,7 +14,7 @@ import postMessage from "@src/util/postMessage";
 import {
   createIdentityRequest,
   createIdentity,
-  setActiveIdentity,
+  setActiveIdentity as setConnectedIdentity,
   setIdentityName,
   deleteIdentity,
   deleteAllIdentities,
@@ -235,12 +235,12 @@ describe("ui/ducks/identities", () => {
     });
   });
 
-  test("should call set active identity action properly", async () => {
-    await Promise.resolve(store.dispatch(setActiveIdentity("1")));
+  test("should call set connected identity action properly", async () => {
+    await Promise.resolve(store.dispatch(setConnectedIdentity("1")));
 
     expect(postMessage).toBeCalledTimes(1);
     expect(postMessage).toBeCalledWith({
-      method: RPCAction.SET_ACTIVE_IDENTITY,
+      method: RPCAction.SET_CONNECTED_IDENTITY,
       payload: {
         identityCommitment: "1",
       },

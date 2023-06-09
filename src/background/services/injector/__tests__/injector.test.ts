@@ -7,7 +7,7 @@ import { IMeta } from "../types";
 
 const mockDefaultHost = "http://localhost:3000";
 const mockSerializedIdentity = "identity";
-const mockGetActiveIdentity = jest.fn();
+const mockGetConnectedIdentity = jest.fn();
 
 jest.mock("@src/background/controllers/browserUtils", (): unknown => ({
   getInstance: jest.fn(() => ({
@@ -41,13 +41,13 @@ jest.mock("@src/background/services/lock", (): unknown => ({
 
 jest.mock("@src/background/services/zkIdentity", (): unknown => ({
   getInstance: jest.fn(() => ({
-    getActiveIdentity: mockGetActiveIdentity,
+    getConnectedIdentity: mockGetConnectedIdentity,
   })),
 }));
 
 describe("background/services/injector", () => {
   beforeEach(() => {
-    mockGetActiveIdentity.mockResolvedValue({ serialize: () => mockSerializedIdentity });
+    mockGetConnectedIdentity.mockResolvedValue({ serialize: () => mockSerializedIdentity });
   });
 
   afterEach(() => {
@@ -137,13 +137,13 @@ describe("background/services/injector", () => {
       });
     });
 
-    test("should throw error if there is no active identity", async () => {
-      mockGetActiveIdentity.mockResolvedValue(undefined);
+    test("should throw error if there is no connected identity", async () => {
+      mockGetConnectedIdentity.mockResolvedValue(undefined);
 
       const service = InjectorService.getInstance();
 
       await expect(service.prepareSemaphoreProofRequest(defaultProofRequest, { origin: "new-host" })).rejects.toThrow(
-        "active identity not found",
+        "connected identity not found",
       );
     });
 
@@ -199,13 +199,13 @@ describe("background/services/injector", () => {
       });
     });
 
-    test("should throw error if there is no active identity", async () => {
-      mockGetActiveIdentity.mockResolvedValue(undefined);
+    test("should throw error if there is no connected identity", async () => {
+      mockGetConnectedIdentity.mockResolvedValue(undefined);
 
       const service = InjectorService.getInstance();
 
       await expect(service.prepareRlnProofRequest(defaultProofRequest, { origin: "new-host" })).rejects.toThrow(
-        "active identity not found",
+        "connected identity not found",
       );
     });
 

@@ -109,7 +109,7 @@ describe("background/services/zkIdentity", () => {
   });
 
   describe("unlock", () => {
-    test("should unlock properly and set active identity", async () => {
+    test("should unlock properly and set connected identity", async () => {
       const result = await zkIdentityService.unlock();
 
       expect(result).toBe(true);
@@ -143,9 +143,11 @@ describe("background/services/zkIdentity", () => {
     });
   });
 
-  describe("set active identity", () => {
-    test("should set active identity properly", async () => {
-      const result = await zkIdentityService.setActiveIdentity({ identityCommitment: mockDefaultIdentityCommitment });
+  describe("set connected identity", () => {
+    test("should set connected identity properly", async () => {
+      const result = await zkIdentityService.setConnectedIdentity({
+        identityCommitment: mockDefaultIdentityCommitment,
+      });
 
       expect(result).toBe(true);
       expect(pushMessage).toBeCalledTimes(1);
@@ -167,12 +169,14 @@ describe("background/services/zkIdentity", () => {
       }
     });
 
-    test("should not set active identity if there is no any saved identities", async () => {
+    test("should not set connected identity if there is no any saved identities", async () => {
       (SimpleStorage as jest.Mock).mock.instances.forEach((instance: MockStorage) => {
         instance.get.mockReturnValue(undefined);
       });
 
-      const result = await zkIdentityService.setActiveIdentity({ identityCommitment: mockDefaultIdentityCommitment });
+      const result = await zkIdentityService.setConnectedIdentity({
+        identityCommitment: mockDefaultIdentityCommitment,
+      });
 
       expect(result).toBe(false);
       expect(pushMessage).not.toBeCalled();
@@ -200,14 +204,34 @@ describe("background/services/zkIdentity", () => {
     });
   });
 
+  describe("set identity host", () => {
+    test("should set identity host properly", async () => {
+      const result = await zkIdentityService.setIdentityHost({
+        identityCommitment: mockDefaultIdentityCommitment,
+        host: "http://localhost:3000",
+      });
+
+      expect(result).toBe(true);
+    });
+
+    test("should not set identity host if there is no such identity", async () => {
+      const result = await zkIdentityService.setIdentityHost({
+        identityCommitment: "unknown",
+        host: "http://localhost:3000",
+      });
+
+      expect(result).toBe(false);
+    });
+  });
+
   describe("delete identity", () => {
     test("should delete identity properly", async () => {
-      const [identityStorage, activeIdentityStorage] = (SimpleStorage as jest.Mock).mock.instances as [
+      const [identityStorage, connectedIdentityStorage] = (SimpleStorage as jest.Mock).mock.instances as [
         MockStorage,
         MockStorage,
       ];
       identityStorage.get.mockReturnValue(mockSerializedDefaultIdentities);
-      activeIdentityStorage.get.mockReturnValue(mockDefaultIdentityCommitment);
+      connectedIdentityStorage.get.mockReturnValue(mockDefaultIdentityCommitment);
 
       const result = await zkIdentityService.deleteIdentity({
         identityCommitment: mockDefaultIdentityCommitment,
@@ -229,7 +253,7 @@ describe("background/services/zkIdentity", () => {
 
   describe("delete all identities", () => {
     test("should delete all identities properly", async () => {
-      const isIdentitySet = await zkIdentityService.setActiveIdentity({
+      const isIdentitySet = await zkIdentityService.setConnectedIdentity({
         identityCommitment: mockDefaultIdentityCommitment,
       });
       const result = await zkIdentityService.deleteAllIdentities();
@@ -239,11 +263,11 @@ describe("background/services/zkIdentity", () => {
       expect(pushMessage).toBeCalledTimes(3);
     });
 
-    test("should delete all identities properly without active identity", async () => {
-      const activeIdentity = await zkIdentityService.getActiveIdentity();
+    test("should delete all identities properly without connected identity", async () => {
+      const connectedIdentity = await zkIdentityService.getConnectedIdentity();
       const result = await zkIdentityService.deleteAllIdentities();
 
-      expect(activeIdentity).toBeUndefined();
+      expect(connectedIdentity).toBeUndefined();
       expect(result).toBe(true);
       expect(pushMessage).toBeCalledTimes(1);
     });
@@ -259,31 +283,31 @@ describe("background/services/zkIdentity", () => {
     });
   });
 
-  describe("get active identity", () => {
-    test("should get active identity properly", async () => {
-      const [identityStorage, activeIdentityStorage] = (SimpleStorage as jest.Mock).mock.instances as [
+  describe("get connected identity", () => {
+    test("should get connected identity properly", async () => {
+      const [identityStorage, connectedIdentityStorage] = (SimpleStorage as jest.Mock).mock.instances as [
         MockStorage,
         MockStorage,
       ];
 
       identityStorage.get.mockReturnValue(mockSerializedDefaultIdentities);
-      activeIdentityStorage.get.mockReturnValue(mockDefaultIdentityCommitment);
+      connectedIdentityStorage.get.mockReturnValue(mockDefaultIdentityCommitment);
 
-      const activeIdentity = await zkIdentityService.getActiveIdentity();
+      const connectedIdentity = await zkIdentityService.getConnectedIdentity();
 
-      expect(activeIdentity).toBeDefined();
+      expect(connectedIdentity).toBeDefined();
     });
 
-    test("should get active identity data properly", async () => {
-      const [identityStorage, activeIdentityStorage] = (SimpleStorage as jest.Mock).mock.instances as [
+    test("should get connected identity data properly", async () => {
+      const [identityStorage, connectedIdentityStorage] = (SimpleStorage as jest.Mock).mock.instances as [
         MockStorage,
         MockStorage,
       ];
 
       identityStorage.get.mockReturnValue(mockSerializedDefaultIdentities);
-      activeIdentityStorage.get.mockReturnValue(mockDefaultIdentityCommitment);
+      connectedIdentityStorage.get.mockReturnValue(mockDefaultIdentityCommitment);
 
-      const data = await zkIdentityService.getActiveIdentityData();
+      const data = await zkIdentityService.getConnectedIdentityData();
 
       expect(data).toStrictEqual({
         commitment: mockDefaultIdentityCommitment,
@@ -291,9 +315,9 @@ describe("background/services/zkIdentity", () => {
       });
     });
 
-    test("should not get active identity if there is no any active identity", async () => {
-      const identity = await zkIdentityService.getActiveIdentity();
-      const data = await zkIdentityService.getActiveIdentityData();
+    test("should not get connected identity if there is no any connected identity", async () => {
+      const identity = await zkIdentityService.getConnectedIdentity();
+      const data = await zkIdentityService.getConnectedIdentityData();
 
       expect(identity).toBeUndefined();
       expect(data).toStrictEqual({
@@ -302,15 +326,15 @@ describe("background/services/zkIdentity", () => {
       });
     });
 
-    test("should not get active identity if there is no any identity", async () => {
-      const [identityStorage, activeIdentityStorage] = (SimpleStorage as jest.Mock).mock.instances as [
+    test("should not get connected identity if there is no any identity", async () => {
+      const [identityStorage, connectedIdentityStorage] = (SimpleStorage as jest.Mock).mock.instances as [
         MockStorage,
         MockStorage,
       ];
       identityStorage.get.mockReturnValue(undefined);
-      activeIdentityStorage.get.mockReturnValue(mockDefaultIdentityCommitment);
+      connectedIdentityStorage.get.mockReturnValue(mockDefaultIdentityCommitment);
 
-      const result = await zkIdentityService.getActiveIdentity();
+      const result = await zkIdentityService.getConnectedIdentity();
 
       expect(result).toBeUndefined();
     });

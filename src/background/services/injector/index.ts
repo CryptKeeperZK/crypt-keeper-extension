@@ -82,12 +82,12 @@ export default class InjectorService {
       await this.lockerService.awaitUnlock();
     }
 
-    const identity = await this.zkIdentityService.getActiveIdentity();
+    const identity = await this.zkIdentityService.getConnectedIdentity();
     const approved = this.approvalService.isApproved(meta.origin);
     const permission = this.approvalService.getPermission(meta.origin);
 
     if (!identity) {
-      throw new Error("active identity not found");
+      throw new Error("connected identity not found");
     }
 
     if (!approved) {
@@ -129,12 +129,12 @@ export default class InjectorService {
       await this.lockerService.awaitUnlock();
     }
 
-    const identity = await this.zkIdentityService.getActiveIdentity();
+    const identity = await this.zkIdentityService.getConnectedIdentity();
     const approved = this.approvalService.isApproved(meta.origin);
     const permission = this.approvalService.getPermission(meta.origin);
 
     if (!identity) {
-      throw new Error("active identity not found");
+      throw new Error("connected identity not found");
     }
 
     if (!approved) {

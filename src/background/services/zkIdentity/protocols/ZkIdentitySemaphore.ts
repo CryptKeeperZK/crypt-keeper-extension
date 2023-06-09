@@ -14,8 +14,9 @@ export class ZkIdentitySemaphore {
 
   genIdentityCommitment = (): bigint => this.zkIdentity.getCommitment();
 
-  setIdentityMetadataName = (name: string): IdentityMetadata => {
-    this.metadata.name = name;
+  updateMetadata = (metadata: Partial<IdentityMetadata>): IdentityMetadata => {
+    this.metadata = { ...this.metadata, ...metadata };
+
     return this.metadata;
   };
 

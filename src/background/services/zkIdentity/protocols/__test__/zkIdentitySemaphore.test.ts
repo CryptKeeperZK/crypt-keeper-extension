@@ -32,7 +32,7 @@ describe("background/zkIdentity/protocols/ZkIdentitySemaphore", () => {
   test("should set metadata name properly", () => {
     const zkIdentityDecorater = new ZkIdentitySemaphore(defaultIdentity, defaultIdentityMetadata);
 
-    expect(zkIdentityDecorater.setIdentityMetadataName("new name")).toStrictEqual({
+    expect(zkIdentityDecorater.updateMetadata({ name: "new name" })).toStrictEqual({
       ...defaultIdentityMetadata,
       name: "new name",
     });
