@@ -10,7 +10,12 @@ import { useNavigate } from "react-router-dom";
 import { ZERO_ADDRESS } from "@src/config/const";
 import { closePopup } from "@src/ui/ducks/app";
 import { useAppDispatch } from "@src/ui/ducks/hooks";
-import { fetchIdentities, useLinkedIdentities, useUnlinkedIdentities } from "@src/ui/ducks/identities";
+import {
+  fetchIdentities,
+  setConnectedIdentity,
+  useLinkedIdentities,
+  useUnlinkedIdentities,
+} from "@src/ui/ducks/identities";
 
 import { EConnectIdentityTabs, IUseConnectIdentityData, useConnectIdentity } from "../useConnectIdentity";
 
@@ -34,6 +39,7 @@ jest.mock("@src/ui/ducks/app", (): unknown => ({
 
 jest.mock("@src/ui/ducks/identities", (): unknown => ({
   fetchIdentities: jest.fn(),
+  setConnectedIdentity: jest.fn(),
   useLinkedIdentities: jest.fn(),
   useUnlinkedIdentities: jest.fn(),
 }));
@@ -114,6 +120,22 @@ describe("ui/pages/ConnectIdentity/useConnectIdentity", () => {
 
     expect(mockDispatch).toBeCalledTimes(2);
     expect(fetchIdentities).toBeCalledTimes(1);
+    expect(closePopup).toBeCalledTimes(1);
+    expect(mockNavigate).toBeCalledTimes(1);
+    expect(mockNavigate).toBeCalledWith(-1);
+  });
+
+  test("should connect properly", async () => {
+    const { result } = renderHook(() => useConnectIdentity());
+
+    await act(() => Promise.resolve(result.current.onSelectIdentity("1")));
+    await waitFor(() => result.current.selectedIdentityCommitment === "1");
+    await act(() => Promise.resolve(result.current.onConnect()));
+
+    expect(mockDispatch).toBeCalledTimes(3);
+    expect(fetchIdentities).toBeCalledTimes(1);
+    expect(setConnectedIdentity).toBeCalledTimes(1);
+    expect(setConnectedIdentity).toBeCalledWith({ identityCommitment: "1", host: "http://localhost:3000" });
     expect(closePopup).toBeCalledTimes(1);
     expect(mockNavigate).toBeCalledTimes(1);
     expect(mockNavigate).toBeCalledWith(-1);

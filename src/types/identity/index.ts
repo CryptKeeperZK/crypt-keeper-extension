@@ -57,6 +57,11 @@ export interface SetIdentityHostArgs {
   host: string;
 }
 
+export interface SetConnectedIdentityArgs {
+  identityCommitment: string;
+  host: string;
+}
+
 export interface SerializedIdentity {
   metadata: IdentityMetadata;
   secret: string;

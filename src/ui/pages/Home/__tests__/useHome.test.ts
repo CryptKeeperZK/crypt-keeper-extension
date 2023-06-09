@@ -134,6 +134,6 @@ describe("ui/pages/Home/useHome", () => {
     await act(async () => Promise.resolve(result.current.onSelectIdentity("1")));
 
     expect(setConnectedIdentity).toBeCalledTimes(1);
-    expect(setConnectedIdentity).toBeCalledWith("1");
+    expect(setConnectedIdentity).toBeCalledWith({ identityCommitment: "1", host: "" });
   });
 });

@@ -19,6 +19,7 @@ import {
   OperationType,
   SelectedIdentity,
   SetIdentityHostArgs,
+  SetConnectedIdentityArgs,
 } from "@src/types";
 import { setIdentities, setSelectedCommitment } from "@src/ui/ducks/identities";
 import { ellipsify } from "@src/util/account";
@@ -146,18 +147,20 @@ export default class ZkIdentityService implements IBackupable {
     return identities.size;
   };
 
-  setConnectedIdentity = async ({ identityCommitment }: { identityCommitment: string }): Promise<boolean> => {
+  setConnectedIdentity = async ({ host, identityCommitment }: SetConnectedIdentityArgs): Promise<boolean> => {
     const identities = await this.getIdentitiesFromStore();
 
-    return this.updateConnectedIdentity({ identities, identityCommitment });
+    return this.updateConnectedIdentity({ identities, identityCommitment, host });
   };
 
   private updateConnectedIdentity = async ({
     identities,
     identityCommitment,
+    host,
   }: {
     identities: Map<string, string>;
     identityCommitment: string;
+    host?: string;
   }): Promise<boolean> => {
     const identity = identities.get(identityCommitment);
 
@@ -166,15 +169,13 @@ export default class ZkIdentityService implements IBackupable {
     }
 
     this.connectedIdentity = ZkIdentitySemaphore.genFromSerialized(identity);
-
-    const connectedIdentityWeb2Provider = this.connectedIdentity.metadata.web2Provider;
-
-    await this.writeConnectedIdentity(identityCommitment, connectedIdentityWeb2Provider);
+    this.connectedIdentity.updateMetadata({ host });
+    await this.writeConnectedIdentity(identityCommitment, this.connectedIdentity.metadata);
 
     return true;
   };
 
-  private writeConnectedIdentity = async (commitment: string, web2Provider?: string): Promise<void> => {
+  private writeConnectedIdentity = async (commitment: string, metadata?: IdentityMetadata): Promise<void> => {
     const ciphertext = this.lockService.encrypt(commitment);
     await this.connectedIdentityStore.set(ciphertext);
 
@@ -183,7 +184,8 @@ export default class ZkIdentityService implements IBackupable {
       pushMessage(
         setSelectedCommitment({
           commitment,
-          web2Provider,
+          web2Provider: metadata?.web2Provider,
+          host: metadata?.host,
         }),
       ),
     ]);
@@ -195,7 +197,8 @@ export default class ZkIdentityService implements IBackupable {
             tab.id as number,
             setSelectedCommitment({
               commitment,
-              web2Provider,
+              web2Provider: metadata?.web2Provider,
+              host: metadata?.host,
             }),
           )
           .catch(() => undefined),
@@ -252,7 +255,11 @@ export default class ZkIdentityService implements IBackupable {
     }
 
     const identity = identities.keys().next();
-    await this.updateConnectedIdentity({ identities, identityCommitment: identity.value as string });
+
+    await this.updateConnectedIdentity({
+      identities,
+      identityCommitment: identity.value as string,
+    });
   };
 
   private clearConnectedIdentity = async (): Promise<void> => {
@@ -261,7 +268,7 @@ export default class ZkIdentityService implements IBackupable {
     }
 
     this.connectedIdentity = undefined;
-    await this.writeConnectedIdentity("", "");
+    await this.writeConnectedIdentity("");
   };
 
   createIdentityRequest = async (): Promise<void> => {
@@ -315,7 +322,7 @@ export default class ZkIdentityService implements IBackupable {
 
     identities.set(identityCommitment, newIdentity.serialize());
     await this.writeIdentities(identities);
-    await this.updateConnectedIdentity({ identities, identityCommitment });
+    await this.updateConnectedIdentity({ identities, identityCommitment, host: newIdentity.metadata.host });
     await this.refresh();
     await this.historyService.trackOperation(OperationType.CREATE_IDENTITY, {
       identity: { commitment: identityCommitment, metadata: newIdentity.metadata },

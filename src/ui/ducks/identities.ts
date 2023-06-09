@@ -3,7 +3,14 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import deepEqual from "fast-deep-equal";
 
 import { RPCAction } from "@src/constants";
-import { HistorySettings, ICreateIdentityUiArgs, IdentityData, Operation, SelectedIdentity } from "@src/types";
+import {
+  HistorySettings,
+  ICreateIdentityUiArgs,
+  IdentityData,
+  Operation,
+  SelectedIdentity,
+  SetConnectedIdentityArgs,
+} from "@src/types";
 import postMessage from "@src/util/postMessage";
 
 import type { TypedThunk } from "@src/ui/store/configureAppStore";
@@ -78,13 +85,16 @@ export const createIdentity =
       },
     });
 
-export const setConnectedIdentity = (identityCommitment: string) => async (): Promise<boolean> =>
-  postMessage({
-    method: RPCAction.SET_CONNECTED_IDENTITY,
-    payload: {
-      identityCommitment,
-    },
-  });
+export const setConnectedIdentity =
+  ({ identityCommitment, host }: SetConnectedIdentityArgs) =>
+  async (): Promise<boolean> =>
+    postMessage({
+      method: RPCAction.SET_CONNECTED_IDENTITY,
+      payload: {
+        identityCommitment,
+        host,
+      },
+    });
 
 export const setIdentityName = (identityCommitment: string, name: string) => async (): Promise<boolean> =>
   postMessage({
@@ -156,8 +166,11 @@ export const enableHistory =
 
 export const useIdentities = (): IdentityData[] => useAppSelector((state) => state.identities.identities, deepEqual);
 
-export const useLinkedIdentities = (): IdentityData[] =>
-  useAppSelector((state) => state.identities.identities.filter((identity) => identity.metadata.host), deepEqual);
+export const useLinkedIdentities = (host: string): IdentityData[] =>
+  useAppSelector(
+    (state) => state.identities.identities.filter((identity) => identity.metadata.host === host),
+    deepEqual,
+  );
 
 export const useUnlinkedIdentities = (): IdentityData[] =>
   useAppSelector((state) => state.identities.identities.filter((identity) => !identity.metadata.host), deepEqual);

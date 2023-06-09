@@ -94,7 +94,7 @@ describe("ui/ducks/identities", () => {
     const identitiesHookData = renderHook(() => useIdentities(), {
       wrapper: ({ children }) => <Provider store={store}>{children}</Provider>,
     });
-    const linkedIdentitiesHookData = renderHook(() => useLinkedIdentities(), {
+    const linkedIdentitiesHookData = renderHook(() => useLinkedIdentities("http://localhost:3000"), {
       wrapper: ({ children }) => <Provider store={store}>{children}</Provider>,
     });
     const unlinkedIdentitiesHookData = renderHook(() => useUnlinkedIdentities(), {
@@ -236,13 +236,16 @@ describe("ui/ducks/identities", () => {
   });
 
   test("should call set connected identity action properly", async () => {
-    await Promise.resolve(store.dispatch(setConnectedIdentity("1")));
+    await Promise.resolve(
+      store.dispatch(setConnectedIdentity({ identityCommitment: "1", host: "http://localhost:3000" })),
+    );
 
     expect(postMessage).toBeCalledTimes(1);
     expect(postMessage).toBeCalledWith({
       method: RPCAction.SET_CONNECTED_IDENTITY,
       payload: {
         identityCommitment: "1",
+        host: "http://localhost:3000",
       },
     });
   });

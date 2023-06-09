@@ -76,6 +76,7 @@ describe("background/services/zkIdentity", () => {
   const defaultNewIdentity = {
     serialize: () => JSON.stringify({ secret: "1234", metadata: { identityStrategy: "random" } }),
     genIdentityCommitment: () => "commitment",
+    metadata: { host: "http://localhost:3000" },
   };
 
   beforeEach(() => {
@@ -147,6 +148,7 @@ describe("background/services/zkIdentity", () => {
     test("should set connected identity properly", async () => {
       const result = await zkIdentityService.setConnectedIdentity({
         identityCommitment: mockDefaultIdentityCommitment,
+        host: "http://localhost:3000",
       });
 
       expect(result).toBe(true);
@@ -154,6 +156,8 @@ describe("background/services/zkIdentity", () => {
       expect(pushMessage).toBeCalledWith(
         setSelectedCommitment({
           commitment: mockDefaultIdentityCommitment,
+          host: "http://localhost:3000",
+          web2Provider: undefined,
         }),
       );
       expect(browser.tabs.sendMessage).toBeCalledTimes(defaultTabs.length);
@@ -164,6 +168,8 @@ describe("background/services/zkIdentity", () => {
           defaultTabs[index].id,
           setSelectedCommitment({
             commitment: mockDefaultIdentityCommitment,
+            host: "http://localhost:3000",
+            web2Provider: undefined,
           }),
         );
       }
@@ -176,6 +182,7 @@ describe("background/services/zkIdentity", () => {
 
       const result = await zkIdentityService.setConnectedIdentity({
         identityCommitment: mockDefaultIdentityCommitment,
+        host: "http://localhost:3000",
       });
 
       expect(result).toBe(false);
@@ -255,6 +262,7 @@ describe("background/services/zkIdentity", () => {
     test("should delete all identities properly", async () => {
       const isIdentitySet = await zkIdentityService.setConnectedIdentity({
         identityCommitment: mockDefaultIdentityCommitment,
+        host: "http://localhost:3000",
       });
       const result = await zkIdentityService.deleteAllIdentities();
 

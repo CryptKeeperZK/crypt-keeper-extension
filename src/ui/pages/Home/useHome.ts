@@ -41,7 +41,7 @@ export const useHome = (): IUseHomeData => {
 
   const onSelectIdentity = useCallback(
     (identityCommitment: string) => {
-      dispatch(setConnectedIdentity(identityCommitment));
+      dispatch(setConnectedIdentity({ identityCommitment, host: "" }));
     },
     [dispatch],
   );
