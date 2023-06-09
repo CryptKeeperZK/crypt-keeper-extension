@@ -13,7 +13,7 @@ import {
   fetchIdentities,
   fetchHistory,
   useSelectedIdentity,
-  setActiveIdentity,
+  setConnectedIdentity,
 } from "@src/ui/ducks/identities";
 import { checkHostApproval } from "@src/ui/ducks/permissions";
 import { useEthWallet } from "@src/ui/hooks/wallet";
@@ -39,7 +39,7 @@ jest.mock("@src/ui/ducks/identities", (): unknown => ({
   fetchHistory: jest.fn(),
   useIdentities: jest.fn(),
   useSelectedIdentity: jest.fn(),
-  setActiveIdentity: jest.fn(),
+  setConnectedIdentity: jest.fn(),
 }));
 
 jest.mock("@src/ui/ducks/permissions", (): unknown => ({
@@ -133,7 +133,7 @@ describe("ui/pages/Home/useHome", () => {
 
     await act(async () => Promise.resolve(result.current.onSelectIdentity("1")));
 
-    expect(setActiveIdentity).toBeCalledTimes(1);
-    expect(setActiveIdentity).toBeCalledWith("1");
+    expect(setConnectedIdentity).toBeCalledTimes(1);
+    expect(setConnectedIdentity).toBeCalledWith("1");
   });
 });

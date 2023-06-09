@@ -78,7 +78,7 @@ export const createIdentity =
       },
     });
 
-export const setActiveIdentity = (identityCommitment: string) => async (): Promise<boolean> =>
+export const setConnectedIdentity = (identityCommitment: string) => async (): Promise<boolean> =>
   postMessage({
     method: RPCAction.SET_CONNECTED_IDENTITY,
     payload: {

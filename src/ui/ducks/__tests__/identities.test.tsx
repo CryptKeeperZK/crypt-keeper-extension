@@ -14,7 +14,7 @@ import postMessage from "@src/util/postMessage";
 import {
   createIdentityRequest,
   createIdentity,
-  setActiveIdentity as setConnectedIdentity,
+  setConnectedIdentity,
   setIdentityName,
   deleteIdentity,
   deleteAllIdentities,
