@@ -1,7 +1,7 @@
 import classNames from "classnames";
 import { useCallback, useEffect, useState } from "react";
 
-import { ConnectionModal } from "@src/ui/components/ConnectionModal";
+import { PermissionModal } from "@src/ui/components/PermissionModal";
 
 import "./infoStyles.scss";
 
@@ -31,7 +31,7 @@ export const Info = ({ refreshConnectionStatus }: InfoProps): JSX.Element => {
 
   return (
     <>
-      {isModalShow && <ConnectionModal refreshConnectionStatus={onRefreshConnectionStatus} onClose={onShowModal} />}
+      {isModalShow && <PermissionModal refreshConnectionStatus={onRefreshConnectionStatus} onClose={onShowModal} />}
 
       <div className="home__info" data-testid="home-info">
         <button

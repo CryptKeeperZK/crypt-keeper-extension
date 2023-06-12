@@ -10,7 +10,7 @@ export interface IUseConnectionModalArgs {
   onClose: () => void;
 }
 
-export interface IUseConnectionModalData {
+export interface IUsePermissionModalData {
   checked: boolean;
   faviconUrl: string;
   url?: URL;
@@ -18,10 +18,10 @@ export interface IUseConnectionModalData {
   onSetApproval: (event: ChangeEvent<HTMLInputElement>) => void;
 }
 
-export const useConnectionModal = ({
+export const usePermissionModal = ({
   refreshConnectionStatus,
   onClose,
-}: IUseConnectionModalArgs): IUseConnectionModalData => {
+}: IUseConnectionModalArgs): IUsePermissionModalData => {
   const [url, setUrl] = useState<URL>();
   const [faviconUrl, setFaviconUrl] = useState("");
   const host = url?.origin ?? "";

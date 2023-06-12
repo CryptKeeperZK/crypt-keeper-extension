@@ -5,12 +5,12 @@
 import { act, render, screen } from "@testing-library/react";
 
 import { createModalRoot, deleteModalRoot } from "@src/config/mock/modal";
-import { IUseConnectionModalData, useConnectionModal } from "@src/ui/components/ConnectionModal/useConnectionModal";
+import { IUsePermissionModalData, usePermissionModal } from "@src/ui/components/PermissionModal/usePermissionModal";
 
 import { Info, InfoProps } from "..";
 
-jest.mock("@src/ui/components/ConnectionModal/useConnectionModal", (): unknown => ({
-  useConnectionModal: jest.fn(),
+jest.mock("@src/ui/components/PermissionModal/usePermissionModal", (): unknown => ({
+  usePermissionModal: jest.fn(),
 }));
 
 describe("ui/pages/Home/components/Info", () => {
@@ -18,7 +18,7 @@ describe("ui/pages/Home/components/Info", () => {
     refreshConnectionStatus: jest.fn().mockResolvedValue(true),
   };
 
-  const defaultConnectionModalHookData: IUseConnectionModalData = {
+  const defaultConnectionModalHookData: IUsePermissionModalData = {
     url: new URL("http://localhost:3000"),
     checked: false,
     faviconUrl: "http://localhost:3000/favicon.ico",
@@ -27,7 +27,7 @@ describe("ui/pages/Home/components/Info", () => {
   };
 
   beforeEach(() => {
-    (useConnectionModal as jest.Mock).mockReturnValue(defaultConnectionModalHookData);
+    (usePermissionModal as jest.Mock).mockReturnValue(defaultConnectionModalHookData);
 
     createModalRoot();
   });

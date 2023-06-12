@@ -1,9 +1,15 @@
 @import "@src/util/variables";
 
 .identities-content {
-  height: 355px;
   overflow-x: hidden;
   overflow-y: auto;
+  height: 330px;
+  width: 100%;
+  scrollbar-width: none;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
 }
 
 .create-identity-row {

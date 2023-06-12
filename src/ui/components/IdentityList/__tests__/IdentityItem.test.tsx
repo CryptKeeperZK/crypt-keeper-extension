@@ -11,8 +11,9 @@ import { getEnabledFeatures } from "@src/config/features";
 
 import { IdentityItem, IdentityItemProps } from "../Item";
 
-describe("ui/pages/Home/components/IdentityList/Item", () => {
+describe("ui/components/IdentityList/Item", () => {
   const defaultProps: IdentityItemProps = {
+    isShowMenu: true,
     commitment: "1",
     selected: "0",
     metadata: {
@@ -39,7 +40,7 @@ describe("ui/pages/Home/components/IdentityList/Item", () => {
   test("should render properly", async () => {
     library.add(faTwitter);
 
-    render(<IdentityItem {...defaultProps} />);
+    render(<IdentityItem {...defaultProps} isShowMenu={false} />);
 
     const name = await screen.findByText(defaultProps.metadata.name);
     const provider = await screen.findByText(defaultProps.metadata.web2Provider as string);

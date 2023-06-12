@@ -8,4 +8,5 @@ export enum Paths {
   REQUESTS = "/requests",
   SETTINGS = "/settings",
   DOWNLOAD_BACKUP = "/download-backup",
+  CONNECT_IDENTITY = "/connect-identity",
 }

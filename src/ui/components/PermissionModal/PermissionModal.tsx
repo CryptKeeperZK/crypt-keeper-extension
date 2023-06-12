@@ -3,15 +3,15 @@ import { Checkbox } from "@src/ui/components/Checkbox";
 import { FullModal, FullModalContent, FullModalFooter, FullModalHeader } from "@src/ui/components/FullModal";
 import { Icon } from "@src/ui/components/Icon";
 
-import { useConnectionModal } from "./useConnectionModal";
+import { usePermissionModal } from "./usePermissionModal";
 
 export interface ConnectionModalProps {
   refreshConnectionStatus: () => Promise<void>;
   onClose: () => void;
 }
 
-export const ConnectionModal = ({ refreshConnectionStatus, onClose }: ConnectionModalProps): JSX.Element => {
-  const { url, checked, faviconUrl, onRemoveHost, onSetApproval } = useConnectionModal({
+export const PermissionModal = ({ refreshConnectionStatus, onClose }: ConnectionModalProps): JSX.Element => {
+  const { url, checked, faviconUrl, onRemoveHost, onSetApproval } = usePermissionModal({
     refreshConnectionStatus,
     onClose,
   });

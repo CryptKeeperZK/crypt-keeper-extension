@@ -8,7 +8,13 @@ import { useRef } from "react";
 import { defaultWalletHookData } from "@src/config/mock/wallet";
 import { IdentityData } from "@src/types";
 import { useAppDispatch } from "@src/ui/ducks/hooks";
-import { useIdentities, fetchIdentities, fetchHistory } from "@src/ui/ducks/identities";
+import {
+  useIdentities,
+  fetchIdentities,
+  fetchHistory,
+  useSelectedIdentity,
+  setActiveIdentity,
+} from "@src/ui/ducks/identities";
 import { checkHostApproval } from "@src/ui/ducks/permissions";
 import { useEthWallet } from "@src/ui/hooks/wallet";
 import { getLastActiveTabUrl } from "@src/util/browser";
@@ -32,6 +38,8 @@ jest.mock("@src/ui/ducks/identities", (): unknown => ({
   fetchIdentities: jest.fn(),
   fetchHistory: jest.fn(),
   useIdentities: jest.fn(),
+  useSelectedIdentity: jest.fn(),
+  setActiveIdentity: jest.fn(),
 }));
 
 jest.mock("@src/ui/ducks/permissions", (): unknown => ({
@@ -82,6 +90,8 @@ describe("ui/pages/Home/useHome", () => {
 
     (useIdentities as jest.Mock).mockReturnValue(defaultIdentities);
 
+    (useSelectedIdentity as jest.Mock).mockReturnValue(defaultIdentities[0]);
+
     (checkHostApproval as jest.Mock).mockReturnValue(true);
   });
 
@@ -116,5 +126,14 @@ describe("ui/pages/Home/useHome", () => {
     await act(async () => result.current.refreshConnectionStatus());
 
     expect(checkHostApproval).not.toBeCalled();
+  });
+
+  test("should select identity properly", async () => {
+    const { result } = renderHook(() => useHome());
+
+    await act(async () => Promise.resolve(result.current.onSelectIdentity("1")));
+
+    expect(setActiveIdentity).toBeCalledTimes(1);
+    expect(setActiveIdentity).toBeCalledWith("1");
   });
 });
