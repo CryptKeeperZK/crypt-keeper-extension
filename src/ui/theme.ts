@@ -58,9 +58,13 @@ export const theme = createTheme({
 
     MuiButton: {
       styleOverrides: {
-        root: {
+        root: ({ ownerState }) => ({
           textTransform: "none",
-        },
+
+          "&:disabled": {
+            backgroundColor: ownerState.variant === "contained" ? grey[400] : "inherit",
+          },
+        }),
       },
     },
 

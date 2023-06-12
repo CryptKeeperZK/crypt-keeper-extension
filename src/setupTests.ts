@@ -1,5 +1,6 @@
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { faTwitter, faGithub, faReddit } from "@fortawesome/free-brands-svg-icons";
+import { faLink } from "@fortawesome/free-solid-svg-icons";
 import "@testing-library/jest-dom";
 import "isomorphic-fetch";
 
@@ -8,7 +9,7 @@ import type { ReactElement } from "react";
 
 jest.retryTimes(1, { logErrorsBeforeRetry: true });
 
-library.add(faTwitter, faGithub, faReddit);
+library.add(faTwitter, faGithub, faReddit, faLink);
 
 jest.mock("loglevel", () => ({
   info: jest.fn(),

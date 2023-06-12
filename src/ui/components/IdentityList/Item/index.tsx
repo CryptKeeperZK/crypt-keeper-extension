@@ -1,5 +1,6 @@
 import { IconName, IconPrefix } from "@fortawesome/fontawesome-common-types";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import Box from "@mui/material/Box";
 import classNames from "classnames";
 import { ChangeEvent, FormEvent, MouseEvent as ReactMouseEvent, useCallback, useState } from "react";
 
@@ -9,6 +10,7 @@ import { Icon } from "@src/ui/components/Icon";
 import { Input } from "@src/ui/components/Input";
 import { Menuable } from "@src/ui/components/Menuable";
 import { ellipsify } from "@src/util/account";
+import { redirectToNewTab } from "@src/util/browser";
 
 import "./identityListItemStyles.scss";
 
@@ -71,6 +73,10 @@ export const IdentityItem = ({
     [commitment, name, onUpdateIdentityName],
   );
 
+  const handleGoToHost = useCallback(() => {
+    redirectToNewTab(metadata.host as string);
+  }, [metadata.host]);
+
   const features = getEnabledFeatures();
   const identityTitle = features.INTERREP_IDENTITY ? "random" : "";
   const canShowIdentityType = Boolean(metadata.web2Provider || identityTitle);
@@ -120,6 +126,16 @@ export const IdentityItem = ({
                   identityTitle
                 )}
               </span>
+            )}
+
+            {metadata.host && (
+              <Box
+                className="text-xs py-1 px-2 ml-2 rounded-full bg-gray-500 text-gray-800"
+                data-testid="host-icon"
+                onClick={handleGoToHost}
+              >
+                <FontAwesomeIcon icon="link" title={metadata.host} />
+              </Box>
             )}
           </div>
         )}

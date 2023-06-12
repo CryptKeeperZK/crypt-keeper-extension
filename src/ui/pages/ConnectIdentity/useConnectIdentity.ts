@@ -2,9 +2,9 @@ import { getLinkPreview } from "link-preview-js";
 import { type SyntheticEvent, useState, useCallback, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
-import { ZERO_ADDRESS } from "@src/config/const";
 import { closePopup } from "@src/ui/ducks/app";
 import { useAppDispatch } from "@src/ui/ducks/hooks";
+import { fetchIdentities, useLinkedIdentities, useUnlinkedIdentities } from "@src/ui/ducks/identities";
 
 import type { IdentityData } from "@src/types";
 
@@ -14,7 +14,6 @@ export interface IUseConnectIdentityData {
   selectedTab: EConnectIdentityTabs;
   linkedIdentities: IdentityData[];
   unlinkedIdentities: IdentityData[];
-  isShowTabs: boolean;
   selectedIdentityCommitment?: string;
   onTabChange: (event: SyntheticEvent, value: EConnectIdentityTabs) => void;
   onSelectIdentity: (identityCommitment: string) => void;
@@ -30,29 +29,8 @@ export enum EConnectIdentityTabs {
 export const useConnectIdentity = (): IUseConnectIdentityData => {
   // get data
   const host = "http://localhost:3000";
-  const linkedIdentities: IdentityData[] = [
-    {
-      commitment: "1234",
-      metadata: {
-        identityStrategy: "random",
-        account: ZERO_ADDRESS,
-        name: "Account #1",
-        groups: [],
-        host: "http://localhost:3000",
-      },
-    },
-  ];
-  const unlinkedIdentities: IdentityData[] = [
-    {
-      commitment: "4321",
-      metadata: {
-        identityStrategy: "random",
-        account: ZERO_ADDRESS,
-        name: "Account #2",
-        groups: [],
-      },
-    },
-  ];
+  const linkedIdentities = useLinkedIdentities();
+  const unlinkedIdentities = useUnlinkedIdentities();
 
   const [faviconUrl, setFaviconUrl] = useState("");
   const [selectedTab, setSelectedTab] = useState<EConnectIdentityTabs>(EConnectIdentityTabs.LINKED);
@@ -83,6 +61,18 @@ export const useConnectIdentity = (): IUseConnectIdentityData => {
   }, []);
 
   useEffect(() => {
+    dispatch(fetchIdentities());
+  }, [dispatch]);
+
+  useEffect(() => {
+    if (unlinkedIdentities.length === 0) {
+      setSelectedTab(EConnectIdentityTabs.LINKED);
+    } else if (linkedIdentities.length === 0) {
+      setSelectedTab(EConnectIdentityTabs.UNLINKED);
+    }
+  }, [linkedIdentities.length, unlinkedIdentities.length, setSelectedTab]);
+
+  useEffect(() => {
     getLinkPreview(host)
       .then((data) => {
         const [favicon] = data.favicons;
@@ -97,7 +87,6 @@ export const useConnectIdentity = (): IUseConnectIdentityData => {
     selectedTab,
     linkedIdentities,
     unlinkedIdentities,
-    isShowTabs: linkedIdentities.length > 0 && unlinkedIdentities.length > 0,
     selectedIdentityCommitment,
     onTabChange,
     onReject,

@@ -1,3 +1,4 @@
+import Typography from "@mui/material/Typography";
 import classNames from "classnames";
 import { useCallback } from "react";
 
@@ -60,6 +61,10 @@ export const IdentityList = ({
             onUpdateIdentityName={onUpdateIdentityName}
           />
         ))}
+
+        {identities.length === 0 && (
+          <Typography sx={{ my: 2, textAlign: "center" }}>No identities available</Typography>
+        )}
       </div>
 
       {isShowAddNew && (

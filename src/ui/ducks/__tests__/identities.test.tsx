@@ -35,6 +35,8 @@ import {
   useHistorySettings,
   setSettings,
   enableHistory,
+  useLinkedIdentities,
+  useUnlinkedIdentities,
 } from "../identities";
 
 jest.unmock("@src/ui/ducks/hooks");
@@ -50,6 +52,16 @@ describe("ui/ducks/identities", () => {
         web2Provider: "twitter",
         groups: [],
         host: "http://localhost:3000",
+      },
+    },
+    {
+      commitment: "2",
+      metadata: {
+        account: ZERO_ADDRESS,
+        name: "Account #2",
+        identityStrategy: "interrep",
+        web2Provider: "twitter",
+        groups: [],
       },
     },
   ];
@@ -82,12 +94,20 @@ describe("ui/ducks/identities", () => {
     const identitiesHookData = renderHook(() => useIdentities(), {
       wrapper: ({ children }) => <Provider store={store}>{children}</Provider>,
     });
+    const linkedIdentitiesHookData = renderHook(() => useLinkedIdentities(), {
+      wrapper: ({ children }) => <Provider store={store}>{children}</Provider>,
+    });
+    const unlinkedIdentitiesHookData = renderHook(() => useUnlinkedIdentities(), {
+      wrapper: ({ children }) => <Provider store={store}>{children}</Provider>,
+    });
     const selectedIdentityHookData = renderHook(() => useSelectedIdentity(), {
       wrapper: ({ children }) => <Provider store={store}>{children}</Provider>,
     });
 
     expect(identities.identities).toStrictEqual(defaultIdentities);
     expect(identitiesHookData.result.current).toStrictEqual(defaultIdentities);
+    expect(linkedIdentitiesHookData.result.current).toStrictEqual(defaultIdentities.slice(0, 1));
+    expect(unlinkedIdentitiesHookData.result.current).toStrictEqual(defaultIdentities.slice(1));
     expect(selectedIdentityHookData.result.current).toStrictEqual(defaultIdentities[0]);
   });
 

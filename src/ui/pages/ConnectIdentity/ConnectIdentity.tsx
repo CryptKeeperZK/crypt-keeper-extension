@@ -81,7 +81,7 @@ const ConnectIdentity = (): JSX.Element => {
           Reject
         </Button>
 
-        <Button sx={{ ml: 1 }} variant="contained" onClick={onConnect}>
+        <Button disabled={!selectedIdentityCommitment} sx={{ ml: 1 }} variant="contained" onClick={onConnect}>
           Connect
         </Button>
       </FullModalFooter>
