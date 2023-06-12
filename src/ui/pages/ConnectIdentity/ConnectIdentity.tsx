@@ -43,7 +43,7 @@ const ConnectIdentity = (): JSX.Element => {
               Please choose one to connect with or choose to
             </Typography>
 
-            <NavLink to={`${Paths.CREATE_IDENTITY}?back=true`}>create a new identity</NavLink>
+            <NavLink to={`${Paths.CREATE_IDENTITY}?back=true&host=${host}`}>create a new identity</NavLink>
           </Box>
         </Box>
 

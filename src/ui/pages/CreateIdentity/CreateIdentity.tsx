@@ -34,7 +34,7 @@ const CreateIdentity = (): JSX.Element => {
   return (
     <FullModal data-testid="create-identity-page" onClose={closeModal}>
       <form className="create-identity-form">
-        <FullModalHeader onClose={closeModal}>Create Identity</FullModalHeader>
+        <FullModalHeader onClose={closeModal}>Create identity</FullModalHeader>
 
         <FullModalContent>
           {features.INTERREP_IDENTITY ? (

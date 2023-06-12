@@ -52,6 +52,15 @@ describe("ui/pages/CreateIdentity", () => {
   const mockDispatch = jest.fn(() => Promise.resolve());
   const mockNavigate = jest.fn();
 
+  const oldHref = window.location.href;
+
+  Object.defineProperty(window, "location", {
+    value: {
+      href: oldHref,
+    },
+    writable: true,
+  });
+
   beforeEach(() => {
     (useEthWallet as jest.Mock).mockReturnValue({ ...defaultWalletHookData, isActive: true });
 
@@ -74,6 +83,7 @@ describe("ui/pages/CreateIdentity", () => {
 
   afterEach(() => {
     jest.clearAllMocks();
+    window.location.href = oldHref;
 
     deleteModalRoot();
   });

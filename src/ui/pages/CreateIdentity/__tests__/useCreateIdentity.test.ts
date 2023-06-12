@@ -144,7 +144,7 @@ describe("ui/pages/CreateIdentity/useCreateIdentity", () => {
 
   test("should create identity properly and go back", async () => {
     (getEnabledFeatures as jest.Mock).mockReturnValue({ INTERREP_IDENTITY: false });
-    window.location.href = `${oldHref}?back=true`;
+    window.location.href = `${oldHref}?back=true&host=http://localhost:3000`;
 
     const { result } = renderHook(() => useCreateIdentity());
 
@@ -156,6 +156,7 @@ describe("ui/pages/CreateIdentity/useCreateIdentity", () => {
     expect(createIdentity).toBeCalledTimes(1);
     expect(createIdentity).toBeCalledWith({
       groups: [],
+      host: "http://localhost:3000",
       messageSignature: mockSignedMessage,
       options: { account: ZERO_ADDRESS, message: mockMessage },
       strategy: "random",
