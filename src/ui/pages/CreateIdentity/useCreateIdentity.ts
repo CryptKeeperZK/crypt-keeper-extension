@@ -102,13 +102,11 @@ export const useCreateIdentity = (): IUseCreateIdentityData => {
           }),
         );
 
-        await dispatch(closePopup()).then(() => {
-          if (isBackParam) {
-            navigate(-1);
-          } else {
-            navigate(Paths.HOME);
-          }
-        });
+        if (isBackParam) {
+          navigate(-1);
+        } else {
+          dispatch(closePopup()).then(() => navigate(Paths.HOME));
+        }
       } catch (err) {
         setError("root", { type: "submit", message: (err as Error).message });
       }
@@ -131,7 +129,11 @@ export const useCreateIdentity = (): IUseCreateIdentityData => {
   }, [setError, ethWallet.onConnect]);
 
   const closeModal = useCallback(() => {
-    dispatch(closePopup()).then(() => navigate(-1));
+    if (isBackParam) {
+      navigate(-1);
+    } else {
+      dispatch(closePopup());
+    }
   }, [isBackParam, navigate, dispatch]);
 
   return {

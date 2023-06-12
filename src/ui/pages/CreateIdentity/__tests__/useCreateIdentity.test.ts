@@ -152,8 +152,7 @@ describe("ui/pages/CreateIdentity/useCreateIdentity", () => {
 
     expect(result.current.isLoading).toBe(false);
     expect(signWithSigner).toBeCalledTimes(1);
-    expect(mockDispatch).toBeCalledTimes(2);
-    expect(closePopup).toBeCalledTimes(1);
+    expect(mockDispatch).toBeCalledTimes(1);
     expect(createIdentity).toBeCalledTimes(1);
     expect(createIdentity).toBeCalledWith({
       groups: [],
@@ -164,8 +163,6 @@ describe("ui/pages/CreateIdentity/useCreateIdentity", () => {
     });
     expect(mockNavigate).toBeCalledTimes(1);
     expect(mockNavigate).toBeCalledWith(-1);
-
-    window.location.href = oldHref;
   });
 
   test("should connect eth wallet properly", async () => {
@@ -218,6 +215,15 @@ describe("ui/pages/CreateIdentity/useCreateIdentity", () => {
     await act(() => Promise.resolve(result.current.closeModal()));
 
     expect(mockDispatch).toBeCalledTimes(1);
+  });
+
+  test("should go back properly", async () => {
+    window.location.href = `${oldHref}?back=true`;
+
+    const { result } = renderHook(() => useCreateIdentity());
+
+    await act(() => Promise.resolve(result.current.closeModal()));
+
     expect(mockNavigate).toBeCalledTimes(1);
     expect(mockNavigate).toBeCalledWith(-1);
   });
