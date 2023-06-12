@@ -46,6 +46,28 @@ describe("ui/services/identity", () => {
     expect(result).toBe("signed-random");
   });
 
+  test("should throw user rejected error", async () => {
+    const mockSigner = {
+      signMessage: jest.fn().mockRejectedValue({ message: "user rejected signing", code: "ACTION_REJECTED" }),
+    };
+
+    const message = getMessageTemplate({ identityStrategyType: "random", account: ZERO_ADDRESS });
+    await expect(signWithSigner({ message, signer: mockSigner as unknown as JsonRpcSigner })).rejects.toThrowError(
+      "User rejected signing",
+    );
+  });
+
+  test("should throw sign error", async () => {
+    const mockSigner = {
+      signMessage: jest.fn().mockRejectedValue(new Error("error")),
+    };
+
+    const message = getMessageTemplate({ identityStrategyType: "random", account: ZERO_ADDRESS });
+    await expect(signWithSigner({ message, signer: mockSigner as unknown as JsonRpcSigner })).rejects.toThrowError(
+      "error",
+    );
+  });
+
   test("should return undefined if there is no signer", async () => {
     const result = await signWithSigner({
       message: "",
