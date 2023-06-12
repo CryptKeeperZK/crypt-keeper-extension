@@ -1,5 +1,5 @@
 import { getLinkPreview } from "link-preview-js";
-import { type SyntheticEvent, useState, useCallback, useEffect } from "react";
+import { type SyntheticEvent, useState, useCallback, useEffect, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 
 import { closePopup } from "@src/ui/ducks/app";
@@ -32,8 +32,9 @@ export enum EConnectIdentityTabs {
 }
 
 export const useConnectIdentity = (): IUseConnectIdentityData => {
-  // get data
-  const host = "http://localhost:3000";
+  const { searchParams } = new URL(window.location.href.replace("#", ""));
+  const host = useMemo(() => searchParams.get("host") as string, [searchParams.toString()]);
+
   const linkedIdentities = useLinkedIdentities(host);
   const unlinkedIdentities = useUnlinkedIdentities();
 
