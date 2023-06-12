@@ -10,6 +10,7 @@ import { getEnabledFeatures } from "@src/config/features";
 import { defaultWalletHookData } from "@src/config/mock/wallet";
 import { IDENTITY_TYPES, Paths } from "@src/constants";
 import { EWallet } from "@src/types";
+import { closePopup } from "@src/ui/ducks/app";
 import { useAppDispatch } from "@src/ui/ducks/hooks";
 import { createIdentity } from "@src/ui/ducks/identities";
 import { useCryptKeeperWallet, useEthWallet } from "@src/ui/hooks/wallet";
@@ -47,9 +48,16 @@ describe("ui/pages/CreateIdentity/useCreateIdentity", () => {
   const mockSignedMessage = "signed-message";
   const mockMessage = "message";
 
-  const mockDispatch = jest.fn();
-
+  const mockDispatch = jest.fn(() => Promise.resolve());
   const mockNavigate = jest.fn();
+  const oldHref = window.location.href;
+
+  Object.defineProperty(window, "location", {
+    value: {
+      href: oldHref,
+    },
+    writable: true,
+  });
 
   beforeEach(() => {
     (useAppDispatch as jest.Mock).mockReturnValue(mockDispatch);
@@ -71,6 +79,7 @@ describe("ui/pages/CreateIdentity/useCreateIdentity", () => {
 
   afterEach(() => {
     jest.clearAllMocks();
+    window.location.href = oldHref;
   });
 
   test("should return initial data", () => {
@@ -96,7 +105,8 @@ describe("ui/pages/CreateIdentity/useCreateIdentity", () => {
 
     expect(result.current.isLoading).toBe(false);
     expect(signWithSigner).toBeCalledTimes(1);
-    expect(mockDispatch).toBeCalledTimes(1);
+    expect(mockDispatch).toBeCalledTimes(2);
+    expect(closePopup).toBeCalledTimes(1);
     expect(createIdentity).toBeCalledTimes(1);
     expect(createIdentity).toBeCalledWith({
       groups: [],
@@ -118,7 +128,8 @@ describe("ui/pages/CreateIdentity/useCreateIdentity", () => {
 
     expect(result.current.isLoading).toBe(false);
     expect(signWithSigner).toBeCalledTimes(1);
-    expect(mockDispatch).toBeCalledTimes(1);
+    expect(mockDispatch).toBeCalledTimes(2);
+    expect(closePopup).toBeCalledTimes(1);
     expect(createIdentity).toBeCalledTimes(1);
     expect(createIdentity).toBeCalledWith({
       groups: [],
@@ -129,6 +140,32 @@ describe("ui/pages/CreateIdentity/useCreateIdentity", () => {
     });
     expect(mockNavigate).toBeCalledTimes(1);
     expect(mockNavigate).toBeCalledWith(Paths.HOME);
+  });
+
+  test("should create identity properly and go back", async () => {
+    (getEnabledFeatures as jest.Mock).mockReturnValue({ INTERREP_IDENTITY: false });
+    window.location.href = `${oldHref}?back=true`;
+
+    const { result } = renderHook(() => useCreateIdentity());
+
+    await act(async () => Promise.resolve(result.current.onCreateWithEthWallet()));
+
+    expect(result.current.isLoading).toBe(false);
+    expect(signWithSigner).toBeCalledTimes(1);
+    expect(mockDispatch).toBeCalledTimes(2);
+    expect(closePopup).toBeCalledTimes(1);
+    expect(createIdentity).toBeCalledTimes(1);
+    expect(createIdentity).toBeCalledWith({
+      groups: [],
+      messageSignature: mockSignedMessage,
+      options: { account: ZERO_ADDRESS, message: mockMessage },
+      strategy: "random",
+      walletType: EWallet.ETH_WALLET,
+    });
+    expect(mockNavigate).toBeCalledTimes(1);
+    expect(mockNavigate).toBeCalledWith(-1);
+
+    window.location.href = oldHref;
   });
 
   test("should connect eth wallet properly", async () => {
@@ -161,7 +198,8 @@ describe("ui/pages/CreateIdentity/useCreateIdentity", () => {
 
     expect(result.current.isLoading).toBe(false);
     expect(signWithSigner).toBeCalledTimes(0);
-    expect(mockDispatch).toBeCalledTimes(1);
+    expect(mockDispatch).toBeCalledTimes(2);
+    expect(closePopup).toBeCalledTimes(1);
     expect(createIdentity).toBeCalledTimes(1);
     expect(createIdentity).toBeCalledWith({
       groups: [],
@@ -174,12 +212,14 @@ describe("ui/pages/CreateIdentity/useCreateIdentity", () => {
     expect(mockNavigate).toBeCalledWith(Paths.HOME);
   });
 
-  test("should close modal properly", () => {
+  test("should close modal properly", async () => {
     const { result } = renderHook(() => useCreateIdentity());
 
-    act(() => result.current.closeModal());
+    await act(() => Promise.resolve(result.current.closeModal()));
 
     expect(mockDispatch).toBeCalledTimes(1);
+    expect(mockNavigate).toBeCalledTimes(1);
+    expect(mockNavigate).toBeCalledWith(-1);
   });
 
   test("should handle create identity error properly", async () => {

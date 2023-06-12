@@ -1,4 +1,4 @@
-import { BaseSyntheticEvent, useCallback } from "react";
+import { BaseSyntheticEvent, useCallback, useMemo } from "react";
 import { Control, useForm, UseFormRegister } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 
@@ -53,6 +53,10 @@ export const useCreateIdentity = (): IUseCreateIdentityData => {
     },
   });
   const navigate = useNavigate();
+  const isBackParam = useMemo(
+    () => new URL(window.location.href.replace("#", "")).searchParams.get("back") === "true",
+    [window.location.href],
+  );
 
   const ethWallet = useEthWallet();
   const cryptKeeperWallet = useCryptKeeperWallet();
@@ -97,12 +101,19 @@ export const useCreateIdentity = (): IUseCreateIdentityData => {
             groups: [],
           }),
         );
-        navigate(Paths.HOME);
+
+        await dispatch(closePopup()).then(() => {
+          if (isBackParam) {
+            navigate(-1);
+          } else {
+            navigate(Paths.HOME);
+          }
+        });
       } catch (err) {
         setError("root", { type: "submit", message: (err as Error).message });
       }
     },
-    [ethWallet.address, ethWallet.provider, cryptKeeperWallet.address, dispatch],
+    [ethWallet.address, ethWallet.provider, cryptKeeperWallet.address, isBackParam, dispatch, navigate],
   );
 
   const onCreateIdentityWithEthWallet = useCallback(
@@ -120,8 +131,8 @@ export const useCreateIdentity = (): IUseCreateIdentityData => {
   }, [setError, ethWallet.onConnect]);
 
   const closeModal = useCallback(() => {
-    dispatch(closePopup());
-  }, [dispatch]);
+    dispatch(closePopup()).then(() => navigate(-1));
+  }, [isBackParam, navigate, dispatch]);
 
   return {
     isLoading: ethWallet.isActivating || cryptKeeperWallet.isActivating || isLoading || isSubmitting,
