@@ -307,9 +307,14 @@ export default class ZkIdentityService implements IBackupable {
 
     const identity = createNewIdentity(strategy, config);
     const status = await this.insertIdentity(identity);
+
+    if (!status) {
+      throw new Error("Identity is already exist. Try to change nonce or identity data.");
+    }
+
     await this.browserController.closePopup();
 
-    return status ? identity.genIdentityCommitment().toString() : undefined;
+    return identity.genIdentityCommitment().toString();
   };
 
   private insertIdentity = async (newIdentity: ZkIdentitySemaphore): Promise<boolean> => {

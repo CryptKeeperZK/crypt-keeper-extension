@@ -482,27 +482,27 @@ describe("background/services/zkIdentity", () => {
         genIdentityCommitment: () => mockDefaultIdentityCommitment,
       });
 
-      const failedResult = await zkIdentityService.createIdentity({
-        strategy: identityStrategy,
-        walletType: EWallet.ETH_WALLET,
-        messageSignature: identityMessageSignature,
-        options: identityOptions,
-        groups: [],
-        host: "http://localhost:3000",
-      });
+      await expect(
+        zkIdentityService.createIdentity({
+          strategy: identityStrategy,
+          walletType: EWallet.ETH_WALLET,
+          messageSignature: identityMessageSignature,
+          options: identityOptions,
+          groups: [],
+          host: "http://localhost:3000",
+        }),
+      ).rejects.toThrow("Identity is already exist. Try to change nonce or identity data.");
 
-      expect(failedResult).toBeUndefined();
-
-      const emptyResult = await zkIdentityService.createIdentity({
-        strategy: identityStrategy,
-        walletType: EWallet.ETH_WALLET,
-        messageSignature: identityMessageSignature,
-        options: { message: "message", account: ZERO_ADDRESS },
-        groups: [],
-        host: "http://localhost:3000",
-      });
-
-      expect(emptyResult).toBeUndefined();
+      await expect(
+        zkIdentityService.createIdentity({
+          strategy: identityStrategy,
+          walletType: EWallet.ETH_WALLET,
+          messageSignature: identityMessageSignature,
+          options: { message: "message", account: ZERO_ADDRESS },
+          groups: [],
+          host: "http://localhost:3000",
+        }),
+      ).rejects.toThrow("Identity is already exist. Try to change nonce or identity data.");
     });
   });
 
