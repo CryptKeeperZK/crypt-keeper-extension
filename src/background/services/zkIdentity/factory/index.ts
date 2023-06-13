@@ -29,8 +29,9 @@ function createInterrepIdentity(config: ICreateIdentityArgs): ZkIdentitySemaphor
 }
 
 function createRandomIdentity(config: ICreateIdentityArgs): ZkIdentitySemaphore {
-  const { identityStrategy, name, account, groups, host } = config;
-  const identity = new Identity();
+  const { identityStrategy, name, messageSignature, account, groups, host } = config;
+
+  const identity = new Identity(messageSignature);
 
   return new ZkIdentitySemaphore(identity, {
     account,

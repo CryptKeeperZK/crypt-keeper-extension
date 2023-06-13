@@ -312,8 +312,6 @@ export default class ZkIdentityService implements IBackupable {
       throw new Error("Identity is already exist. Try to change nonce or identity data.");
     }
 
-    await this.browserController.closePopup();
-
     return identity.genIdentityCommitment().toString();
   };
 

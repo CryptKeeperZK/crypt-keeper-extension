@@ -1,4 +1,4 @@
-import { BaseSyntheticEvent, useCallback } from "react";
+import { BaseSyntheticEvent, useCallback, useMemo } from "react";
 import { Control, useForm, UseFormRegister } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 
@@ -23,6 +23,7 @@ export interface IUseCreateIdentityData {
     nonce: string;
   }>;
   control: Control<FormFields, unknown>;
+  host?: string;
   closeModal: () => void;
   register: UseFormRegister<FormFields>;
   onConnectWallet: () => Promise<void>;
@@ -53,6 +54,12 @@ export const useCreateIdentity = (): IUseCreateIdentityData => {
     },
   });
   const navigate = useNavigate();
+
+  const { searchParams } = new URL(window.location.href.replace("#", ""));
+  const { isGoBack, host } = useMemo(
+    () => ({ isGoBack: searchParams.get("back") === "true", host: searchParams.get("host") || undefined }),
+    [searchParams.toString()],
+  );
 
   const ethWallet = useEthWallet();
   const cryptKeeperWallet = useCryptKeeperWallet();
@@ -95,14 +102,20 @@ export const useCreateIdentity = (): IUseCreateIdentityData => {
             options,
             walletType,
             groups: [],
+            host,
           }),
         );
-        navigate(Paths.HOME);
+
+        if (isGoBack) {
+          navigate(-1);
+        } else {
+          dispatch(closePopup()).then(() => navigate(Paths.HOME));
+        }
       } catch (err) {
         setError("root", { type: "submit", message: (err as Error).message });
       }
     },
-    [ethWallet.address, ethWallet.provider, cryptKeeperWallet.address, dispatch],
+    [ethWallet.address, ethWallet.provider, cryptKeeperWallet.address, isGoBack, host, dispatch, navigate],
   );
 
   const onCreateIdentityWithEthWallet = useCallback(
@@ -120,8 +133,12 @@ export const useCreateIdentity = (): IUseCreateIdentityData => {
   }, [setError, ethWallet.onConnect]);
 
   const closeModal = useCallback(() => {
-    dispatch(closePopup());
-  }, [dispatch]);
+    if (isGoBack) {
+      navigate(-1);
+    } else {
+      dispatch(closePopup());
+    }
+  }, [isGoBack, navigate, dispatch]);
 
   return {
     isLoading: ethWallet.isActivating || cryptKeeperWallet.isActivating || isLoading || isSubmitting,
@@ -135,6 +152,7 @@ export const useCreateIdentity = (): IUseCreateIdentityData => {
       root: errors.root?.message,
     },
     control,
+    host,
     closeModal,
     register,
     onConnectWallet: handleSubmit(onConnectWallet),

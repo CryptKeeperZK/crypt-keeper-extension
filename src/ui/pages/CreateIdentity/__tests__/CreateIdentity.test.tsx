@@ -10,8 +10,9 @@ import { ZERO_ADDRESS } from "@src/config/const";
 import { getEnabledFeatures } from "@src/config/features";
 import { createModalRoot, deleteModalRoot } from "@src/config/mock/modal";
 import { defaultWalletHookData } from "@src/config/mock/wallet";
-import { IDENTITY_TYPES, WEB2_PROVIDER_OPTIONS } from "@src/constants";
+import { IDENTITY_TYPES, Paths, WEB2_PROVIDER_OPTIONS } from "@src/constants";
 import { EWallet } from "@src/types";
+import { closePopup } from "@src/ui/ducks/app";
 import { useAppDispatch } from "@src/ui/ducks/hooks";
 import { createIdentity } from "@src/ui/ducks/identities";
 import { useCryptKeeperWallet, useEthWallet } from "@src/ui/hooks/wallet";
@@ -51,6 +52,15 @@ describe("ui/pages/CreateIdentity", () => {
   const mockDispatch = jest.fn(() => Promise.resolve());
   const mockNavigate = jest.fn();
 
+  const oldHref = window.location.href;
+
+  Object.defineProperty(window, "location", {
+    value: {
+      href: oldHref,
+    },
+    writable: true,
+  });
+
   beforeEach(() => {
     (useEthWallet as jest.Mock).mockReturnValue({ ...defaultWalletHookData, isActive: true });
 
@@ -73,6 +83,7 @@ describe("ui/pages/CreateIdentity", () => {
 
   afterEach(() => {
     jest.clearAllMocks();
+    window.location.href = oldHref;
 
     deleteModalRoot();
   });
@@ -142,7 +153,10 @@ describe("ui/pages/CreateIdentity", () => {
     await act(async () => Promise.resolve(fireEvent.click(button)));
 
     expect(signWithSigner).toBeCalledTimes(0);
-    expect(mockDispatch).toBeCalledTimes(1);
+    expect(mockDispatch).toBeCalledTimes(2);
+    expect(mockNavigate).toBeCalledTimes(1);
+    expect(mockNavigate).toBeCalledWith(Paths.HOME);
+    expect(closePopup).toBeCalledTimes(1);
     expect(createIdentity).toBeCalledTimes(1);
     expect(createIdentity).toBeCalledWith({
       groups: [],
@@ -164,7 +178,10 @@ describe("ui/pages/CreateIdentity", () => {
     await act(async () => Promise.resolve(fireEvent.click(button)));
 
     expect(signWithSigner).toBeCalledTimes(0);
-    expect(mockDispatch).toBeCalledTimes(1);
+    expect(mockDispatch).toBeCalledTimes(2);
+    expect(mockNavigate).toBeCalledTimes(1);
+    expect(mockNavigate).toBeCalledWith(Paths.HOME);
+    expect(closePopup).toBeCalledTimes(1);
     expect(createIdentity).toBeCalledTimes(1);
     expect(createIdentity).toBeCalledWith({
       groups: [],
@@ -206,7 +223,10 @@ describe("ui/pages/CreateIdentity", () => {
     await act(async () => Promise.resolve(fireEvent.click(button)));
 
     expect(signWithSigner).toBeCalledTimes(1);
-    expect(mockDispatch).toBeCalledTimes(1);
+    expect(mockDispatch).toBeCalledTimes(2);
+    expect(mockNavigate).toBeCalledTimes(1);
+    expect(mockNavigate).toBeCalledWith(Paths.HOME);
+    expect(closePopup).toBeCalledTimes(1);
     expect(createIdentity).toBeCalledTimes(1);
     expect(createIdentity).toBeCalledWith({
       strategy: "interrep",

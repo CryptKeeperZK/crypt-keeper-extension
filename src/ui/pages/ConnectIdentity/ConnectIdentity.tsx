@@ -3,7 +3,9 @@ import Button from "@mui/material/Button";
 import Tab from "@mui/material/Tab";
 import Tabs from "@mui/material/Tabs";
 import Typography from "@mui/material/Typography";
+import { NavLink } from "react-router-dom";
 
+import { Paths } from "@src/constants";
 import { FullModal, FullModalFooter, FullModalHeader } from "@src/ui/components/FullModal";
 import { IdentityList } from "@src/ui/components/IdentityList";
 import { SiteFavicon } from "@src/ui/components/SiteFavicon/SiteFavicon";
@@ -36,10 +38,13 @@ const ConnectIdentity = (): JSX.Element => {
             {`${host} would like to connect to your identity`}
           </Typography>
 
-          <Typography sx={{ color: "text.secondary", mb: 2, textAlign: "center" }}>
-            {/* add identity creation support */}
-            Please choose one to connect with or choose to create a new identity
-          </Typography>
+          <Box sx={{ mb: 2, mx: 2, textAlign: "center" }}>
+            <Typography sx={{ color: "text.secondary", mr: 1, display: "inline" }}>
+              Please choose one to connect with or choose to
+            </Typography>
+
+            <NavLink to={`${Paths.CREATE_IDENTITY}?back=true&host=${host}`}>create a new identity</NavLink>
+          </Box>
         </Box>
 
         <Tabs

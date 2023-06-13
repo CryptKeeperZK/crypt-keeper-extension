@@ -73,6 +73,15 @@ describe("ui/pages/ConnectIdentity/useConnectIdentity", () => {
     },
   ];
 
+  const oldHref = window.location.href;
+
+  Object.defineProperty(window, "location", {
+    value: {
+      href: oldHref,
+    },
+    writable: true,
+  });
+
   beforeEach(() => {
     (useNavigate as jest.Mock).mockReturnValue(mockNavigate);
 
@@ -81,10 +90,14 @@ describe("ui/pages/ConnectIdentity/useConnectIdentity", () => {
     (useLinkedIdentities as jest.Mock).mockReturnValue(defaultLinkedIdentities);
 
     (useUnlinkedIdentities as jest.Mock).mockReturnValue(defaultUnlinkedIdentities);
+
+    window.location.href = `${oldHref}?host=http://localhost:3000`;
   });
 
   afterEach(() => {
     jest.clearAllMocks();
+
+    window.location.href = oldHref;
   });
 
   const waitForData = async (current: IUseConnectIdentityData) => {

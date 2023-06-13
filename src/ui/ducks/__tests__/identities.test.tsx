@@ -230,6 +230,8 @@ describe("ui/ducks/identities", () => {
         strategy: "interrep",
         messageSignature: "signature",
         walletType: EWallet.ETH_WALLET,
+        groups: [],
+        host: "http://localhost:3000",
         options: { message: "message", account: ZERO_ADDRESS },
       },
     });
