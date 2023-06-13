@@ -17,11 +17,12 @@ import {
   SetIdentityNameArgs,
   NewIdentityRequest,
   OperationType,
-  SelectedIdentity,
+  ConnectedIdentity,
   SetIdentityHostArgs,
-  SetConnectedIdentityArgs,
+  ConnectIdentityArgs,
+  ICreateIdentityRequestArgs,
 } from "@src/types";
-import { setIdentities, setSelectedCommitment } from "@src/ui/ducks/identities";
+import { setIdentities, setConnectedIdentity } from "@src/ui/ducks/identities";
 import { ellipsify } from "@src/util/account";
 import pushMessage from "@src/util/pushMessage";
 
@@ -70,12 +71,13 @@ export default class ZkIdentityService implements IBackupable {
     return ZkIdentityService.INSTANCE;
   };
 
-  getConnectedIdentityData = async (): Promise<SelectedIdentity> => {
+  getConnectedIdentityData = async (): Promise<ConnectedIdentity> => {
     const identity = await this.getConnectedIdentity();
 
     return {
       commitment: identity ? bigintToHex(identity.genIdentityCommitment()) : "",
       web2Provider: identity?.metadata.web2Provider || "",
+      host: identity?.metadata.host || "",
     };
   };
 
@@ -147,7 +149,7 @@ export default class ZkIdentityService implements IBackupable {
     return identities.size;
   };
 
-  setConnectedIdentity = async ({ host, identityCommitment }: SetConnectedIdentityArgs): Promise<boolean> => {
+  connectIdentity = async ({ host, identityCommitment }: ConnectIdentityArgs): Promise<boolean> => {
     const identities = await this.getIdentitiesFromStore();
 
     return this.updateConnectedIdentity({ identities, identityCommitment, host });
@@ -182,7 +184,7 @@ export default class ZkIdentityService implements IBackupable {
     const [tabs] = await Promise.all([
       browser.tabs.query({ active: true }),
       pushMessage(
-        setSelectedCommitment({
+        setConnectedIdentity({
           commitment,
           web2Provider: metadata?.web2Provider,
           host: metadata?.host,
@@ -195,7 +197,7 @@ export default class ZkIdentityService implements IBackupable {
         browser.tabs
           .sendMessage(
             tab.id as number,
-            setSelectedCommitment({
+            setConnectedIdentity({
               commitment,
               web2Provider: metadata?.web2Provider,
               host: metadata?.host,
@@ -271,8 +273,8 @@ export default class ZkIdentityService implements IBackupable {
     await this.writeConnectedIdentity("");
   };
 
-  createIdentityRequest = async (): Promise<void> => {
-    await this.browserController.openPopup({ params: { redirect: Paths.CREATE_IDENTITY } });
+  createIdentityRequest = async ({ host }: ICreateIdentityRequestArgs): Promise<void> => {
+    await this.browserController.openPopup({ params: { redirect: Paths.CREATE_IDENTITY, host } });
   };
 
   createIdentity = async ({

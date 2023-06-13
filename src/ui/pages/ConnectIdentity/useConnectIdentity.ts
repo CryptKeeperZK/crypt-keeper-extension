@@ -4,12 +4,7 @@ import { useNavigate } from "react-router-dom";
 
 import { closePopup } from "@src/ui/ducks/app";
 import { useAppDispatch } from "@src/ui/ducks/hooks";
-import {
-  fetchIdentities,
-  setConnectedIdentity,
-  useLinkedIdentities,
-  useUnlinkedIdentities,
-} from "@src/ui/ducks/identities";
+import { connectIdentity, fetchIdentities, useLinkedIdentities, useUnlinkedIdentities } from "@src/ui/ducks/identities";
 
 import type { IdentityData } from "@src/types";
 
@@ -63,7 +58,7 @@ export const useConnectIdentity = (): IUseConnectIdentityData => {
   }, [dispatch, navigate]);
 
   const onConnect = useCallback(async () => {
-    await dispatch(setConnectedIdentity({ identityCommitment: selectedIdentityCommitment as string, host }));
+    await dispatch(connectIdentity({ identityCommitment: selectedIdentityCommitment as string, host }));
     await dispatch(closePopup()).then(() => navigate(-1));
   }, [selectedIdentityCommitment, host, dispatch]);
 

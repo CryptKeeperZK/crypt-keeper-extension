@@ -2,11 +2,11 @@ import { useEffect, useCallback } from "react";
 
 import { useAppDispatch } from "@src/ui/ducks/hooks";
 import {
+  connectIdentity,
   fetchHistory,
   fetchIdentities,
-  setConnectedIdentity,
   useIdentities,
-  useSelectedIdentity,
+  useConnectedIdentity,
 } from "@src/ui/ducks/identities";
 import { checkHostApproval } from "@src/ui/ducks/permissions";
 import { useEthWallet } from "@src/ui/hooks/wallet";
@@ -16,7 +16,7 @@ import type { IdentityData } from "@src/types";
 
 export interface IUseHomeData {
   identities: IdentityData[];
-  selectedIdentity?: IdentityData;
+  connectedIdentity?: IdentityData;
   address?: string;
   refreshConnectionStatus: () => Promise<boolean>;
   onSelectIdentity: (identityCommitment: string) => void;
@@ -25,7 +25,7 @@ export interface IUseHomeData {
 export const useHome = (): IUseHomeData => {
   const dispatch = useAppDispatch();
   const identities = useIdentities();
-  const selectedIdentity = useSelectedIdentity();
+  const connectedIdentity = useConnectedIdentity();
 
   const { address } = useEthWallet();
 
@@ -41,9 +41,16 @@ export const useHome = (): IUseHomeData => {
 
   const onSelectIdentity = useCallback(
     (identityCommitment: string) => {
-      dispatch(setConnectedIdentity({ identityCommitment, host: "" }));
+      const identity = identities.find(({ commitment }) => commitment === identityCommitment);
+
+      dispatch(
+        connectIdentity({
+          identityCommitment,
+          host: identity?.metadata.host as string,
+        }),
+      );
     },
-    [dispatch],
+    [identities, dispatch],
   );
 
   useEffect(() => {
@@ -53,7 +60,7 @@ export const useHome = (): IUseHomeData => {
 
   return {
     address,
-    selectedIdentity,
+    connectedIdentity,
     identities,
     refreshConnectionStatus,
     onSelectIdentity,

@@ -8,8 +8,8 @@ import {
   ICreateIdentityUiArgs,
   IdentityData,
   Operation,
-  SelectedIdentity,
-  SetConnectedIdentityArgs,
+  ConnectedIdentity,
+  ConnectIdentityArgs,
 } from "@src/types";
 import postMessage from "@src/util/postMessage";
 
@@ -21,7 +21,7 @@ export interface IdentitiesState {
   identities: IdentityData[];
   operations: Operation[];
   requestPending: boolean;
-  selected: SelectedIdentity; // This aim to be a short-term solution to the integration with Zkitter
+  connected: ConnectedIdentity; // This aim to be a short-term solution to the integration with Zkitter
   settings?: HistorySettings;
 }
 
@@ -30,9 +30,10 @@ const initialState: IdentitiesState = {
   operations: [],
   settings: undefined,
   requestPending: false,
-  selected: {
+  connected: {
     commitment: "",
     web2Provider: "",
+    host: "",
   },
 };
 
@@ -40,10 +41,11 @@ const identitiesSlice = createSlice({
   name: "identities",
   initialState,
   reducers: {
-    setSelectedCommitment: (state: IdentitiesState, action: PayloadAction<SelectedIdentity>) => {
-      state.selected = {
+    setConnectedIdentity: (state: IdentitiesState, action: PayloadAction<ConnectedIdentity>) => {
+      state.connected = {
         commitment: action.payload.commitment,
         web2Provider: action.payload.web2Provider,
+        host: action.payload.host,
       };
     },
 
@@ -65,7 +67,7 @@ const identitiesSlice = createSlice({
   },
 });
 
-export const { setSelectedCommitment, setIdentities, setIdentityRequestPending, setOperations, setSettings } =
+export const { setConnectedIdentity, setIdentities, setIdentityRequestPending, setOperations, setSettings } =
   identitiesSlice.actions;
 
 export const createIdentityRequest = () => async (): Promise<void> => {
@@ -87,11 +89,11 @@ export const createIdentity =
       },
     });
 
-export const setConnectedIdentity =
-  ({ identityCommitment, host }: SetConnectedIdentityArgs) =>
+export const connectIdentity =
+  ({ identityCommitment, host }: ConnectIdentityArgs) =>
   async (): Promise<boolean> =>
     postMessage({
-      method: RPCAction.SET_CONNECTED_IDENTITY,
+      method: RPCAction.CONNECT_IDENTITY,
       payload: {
         identityCommitment,
         host,
@@ -122,14 +124,15 @@ export const deleteAllIdentities = () => async (): Promise<boolean> =>
 
 export const fetchIdentities = (): TypedThunk => async (dispatch) => {
   const data = await postMessage<IdentityData[]>({ method: RPCAction.GET_IDENTITIES });
-  const { commitment, web2Provider } = await postMessage<SelectedIdentity>({
+  const { commitment, web2Provider, host } = await postMessage<ConnectedIdentity>({
     method: RPCAction.GET_CONNECTED_IDENTITY_DATA,
   });
   dispatch(setIdentities(data));
   dispatch(
-    setSelectedCommitment({
+    setConnectedIdentity({
       commitment,
       web2Provider,
+      host,
     }),
   );
 };
@@ -177,10 +180,10 @@ export const useLinkedIdentities = (host: string): IdentityData[] =>
 export const useUnlinkedIdentities = (): IdentityData[] =>
   useAppSelector((state) => state.identities.identities.filter((identity) => !identity.metadata.host), deepEqual);
 
-export const useSelectedIdentity = (): IdentityData | undefined =>
+export const useConnectedIdentity = (): IdentityData | undefined =>
   useAppSelector((state) => {
-    const { identities, selected } = state.identities;
-    return identities.find(({ commitment }) => commitment === selected.commitment);
+    const { identities, connected } = state.identities;
+    return identities.find(({ commitment }) => commitment === connected.commitment);
   }, deepEqual);
 
 export const useIdentityRequestPending = (): boolean =>

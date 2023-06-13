@@ -81,6 +81,8 @@ describe("ui/pages/Popup/usePopup", () => {
 
   afterEach(() => {
     jest.clearAllMocks();
+
+    window.location.href = oldHref;
   });
 
   test("should return initial data", async () => {
@@ -149,16 +151,14 @@ describe("ui/pages/Popup/usePopup", () => {
   test("should redirect to create identity page", async () => {
     (useAppStatus as jest.Mock).mockReturnValue({ isInitialized: true, isUnlocked: true, isMnemonicGenerated: true });
 
-    const url = `${window.location.href}?redirect=${Paths.CREATE_IDENTITY}`;
+    const url = `${window.location.href}?redirect=${Paths.CREATE_IDENTITY}&host=http://localhost:3000`;
     window.location.href = url;
 
     const { result } = renderHook(() => usePopup());
     await waitForData(result.current);
 
     expect(mockNavigate).toBeCalledTimes(1);
-    expect(mockNavigate).toBeCalledWith(Paths.CREATE_IDENTITY);
-
-    window.location.href = oldHref;
+    expect(mockNavigate).toBeCalledWith(`${Paths.CREATE_IDENTITY}?host=${encodeURIComponent("http://localhost:3000")}`);
   });
 
   test("should redirect to login page", async () => {

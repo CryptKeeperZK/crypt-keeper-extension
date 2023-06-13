@@ -12,8 +12,8 @@ import {
   useIdentities,
   fetchIdentities,
   fetchHistory,
-  useSelectedIdentity,
-  setConnectedIdentity,
+  useConnectedIdentity,
+  connectIdentity,
 } from "@src/ui/ducks/identities";
 import { checkHostApproval } from "@src/ui/ducks/permissions";
 import { useEthWallet } from "@src/ui/hooks/wallet";
@@ -38,8 +38,8 @@ jest.mock("@src/ui/ducks/identities", (): unknown => ({
   fetchIdentities: jest.fn(),
   fetchHistory: jest.fn(),
   useIdentities: jest.fn(),
-  useSelectedIdentity: jest.fn(),
-  setConnectedIdentity: jest.fn(),
+  useConnectedIdentity: jest.fn(),
+  connectIdentity: jest.fn(),
 }));
 
 jest.mock("@src/ui/ducks/permissions", (): unknown => ({
@@ -90,7 +90,7 @@ describe("ui/pages/Home/useHome", () => {
 
     (useIdentities as jest.Mock).mockReturnValue(defaultIdentities);
 
-    (useSelectedIdentity as jest.Mock).mockReturnValue(defaultIdentities[0]);
+    (useConnectedIdentity as jest.Mock).mockReturnValue(defaultIdentities[0]);
 
     (checkHostApproval as jest.Mock).mockReturnValue(true);
   });
@@ -133,7 +133,7 @@ describe("ui/pages/Home/useHome", () => {
 
     await act(async () => Promise.resolve(result.current.onSelectIdentity("1")));
 
-    expect(setConnectedIdentity).toBeCalledTimes(1);
-    expect(setConnectedIdentity).toBeCalledWith({ identityCommitment: "1", host: "" });
+    expect(connectIdentity).toBeCalledTimes(1);
+    expect(connectIdentity).toBeCalledWith({ identityCommitment: "1", host: "http://localhost:3000" });
   });
 });
