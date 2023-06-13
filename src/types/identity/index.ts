@@ -47,10 +47,20 @@ export interface IdentityData {
   metadata: IdentityMetadata;
 }
 
-export type IdentityName = {
+export interface SetIdentityNameArgs {
   identityCommitment: string;
   name: string;
-};
+}
+
+export interface SetIdentityHostArgs {
+  identityCommitment: string;
+  host: string;
+}
+
+export interface SetConnectedIdentityArgs {
+  identityCommitment: string;
+  host: string;
+}
 
 export interface SerializedIdentity {
   metadata: IdentityMetadata;

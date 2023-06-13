@@ -4,7 +4,12 @@ import { useNavigate } from "react-router-dom";
 
 import { closePopup } from "@src/ui/ducks/app";
 import { useAppDispatch } from "@src/ui/ducks/hooks";
-import { fetchIdentities, useLinkedIdentities, useUnlinkedIdentities } from "@src/ui/ducks/identities";
+import {
+  fetchIdentities,
+  setConnectedIdentity,
+  useLinkedIdentities,
+  useUnlinkedIdentities,
+} from "@src/ui/ducks/identities";
 
 import type { IdentityData } from "@src/types";
 
@@ -29,7 +34,7 @@ export enum EConnectIdentityTabs {
 export const useConnectIdentity = (): IUseConnectIdentityData => {
   // get data
   const host = "http://localhost:3000";
-  const linkedIdentities = useLinkedIdentities();
+  const linkedIdentities = useLinkedIdentities(host);
   const unlinkedIdentities = useUnlinkedIdentities();
 
   const [faviconUrl, setFaviconUrl] = useState("");
@@ -56,9 +61,10 @@ export const useConnectIdentity = (): IUseConnectIdentityData => {
     dispatch(closePopup()).then(() => navigate(-1));
   }, [dispatch, navigate]);
 
-  const onConnect = useCallback(() => {
-    // implement
-  }, []);
+  const onConnect = useCallback(async () => {
+    await dispatch(setConnectedIdentity({ identityCommitment: selectedIdentityCommitment as string, host }));
+    await dispatch(closePopup()).then(() => navigate(-1));
+  }, [selectedIdentityCommitment, host, dispatch]);
 
   useEffect(() => {
     dispatch(fetchIdentities());

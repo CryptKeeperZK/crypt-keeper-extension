@@ -19,8 +19,8 @@ function NotConnected({ onClick }: INotConnectedProps) {
   );
 }
 
-function NoActiveIDCommitment() {
-  return <div>Please set an active Identity Commitment in the Crypt-Keeper plugin to continue.</div>;
+function NoConnectedIdentityCommitment() {
+  return <div>Please set a connected identity in the Crypt-Keeper plugin to continue.</div>;
 }
 
 function App() {
@@ -44,7 +44,7 @@ function App() {
   }
 
   if (!selectedIdentity) {
-    return <NoActiveIDCommitment />;
+    return <NoConnectedIdentityCommitment />;
   }
 
   return (
@@ -92,7 +92,7 @@ function App() {
 
       <hr />
       <div>
-        <h2>Identity commitment for active identity:</h2>
+        <h2>Identity commitment for connected identity:</h2>
         <p>{selectedIdentity.commitment}</p>
       </div>
 

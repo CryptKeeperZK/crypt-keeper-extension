@@ -140,7 +140,7 @@ export const useCryptKeeper = (): IUseCryptKeeperData => {
   };
 
   const getIdentityCommitment = useCallback(async () => {
-    const payload = await client?.getActiveIdentity();
+    const payload = await client?.getConnectedIdentity();
 
     if (!payload) {
       return;

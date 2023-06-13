@@ -161,9 +161,9 @@ export class CryptKeeperInjectedProvider extends EventEmitter {
     });
   }
 
-  async getActiveIdentity(): Promise<SelectedIdentity> {
+  async getConnectedIdentity(): Promise<SelectedIdentity> {
     return this.post({
-      method: RPCAction.GET_ACTIVE_IDENTITY_DATA,
+      method: RPCAction.GET_CONNECTED_IDENTITY_DATA,
     }) as Promise<SelectedIdentity>;
   }
 

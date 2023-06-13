@@ -4,7 +4,7 @@ import { useAppDispatch } from "@src/ui/ducks/hooks";
 import {
   fetchHistory,
   fetchIdentities,
-  setActiveIdentity,
+  setConnectedIdentity,
   useIdentities,
   useSelectedIdentity,
 } from "@src/ui/ducks/identities";
@@ -41,7 +41,7 @@ export const useHome = (): IUseHomeData => {
 
   const onSelectIdentity = useCallback(
     (identityCommitment: string) => {
-      dispatch(setActiveIdentity(identityCommitment));
+      dispatch(setConnectedIdentity({ identityCommitment, host: "" }));
     },
     [dispatch],
   );
