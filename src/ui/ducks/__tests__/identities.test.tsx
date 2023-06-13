@@ -205,10 +205,13 @@ describe("ui/ducks/identities", () => {
   });
 
   test("should call create identity request action properly", async () => {
-    await Promise.resolve(store.dispatch(createIdentityRequest()));
+    await Promise.resolve(store.dispatch(createIdentityRequest({ host: "http://localhost:3000" })));
 
     expect(postMessage).toBeCalledTimes(1);
-    expect(postMessage).toBeCalledWith({ method: RPCAction.CREATE_IDENTITY_REQ });
+    expect(postMessage).toBeCalledWith({
+      method: RPCAction.CREATE_IDENTITY_REQ,
+      payload: { host: "http://localhost:3000" },
+    });
   });
 
   test("should call create identity action properly", async () => {

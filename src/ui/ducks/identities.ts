@@ -10,6 +10,7 @@ import {
   Operation,
   ConnectedIdentity,
   ConnectIdentityArgs,
+  ICreateIdentityRequestArgs,
 } from "@src/types";
 import postMessage from "@src/util/postMessage";
 
@@ -70,9 +71,16 @@ const identitiesSlice = createSlice({
 export const { setConnectedIdentity, setIdentities, setIdentityRequestPending, setOperations, setSettings } =
   identitiesSlice.actions;
 
-export const createIdentityRequest = () => async (): Promise<void> => {
-  await postMessage({ method: RPCAction.CREATE_IDENTITY_REQ });
-};
+export const createIdentityRequest =
+  ({ host }: ICreateIdentityRequestArgs) =>
+  async (): Promise<void> => {
+    await postMessage({
+      method: RPCAction.CREATE_IDENTITY_REQ,
+      payload: {
+        host,
+      },
+    });
+  };
 
 export const createIdentity =
   ({ walletType, strategy, messageSignature, groups, host, options }: ICreateIdentityUiArgs) =>

@@ -43,7 +43,7 @@ export const IdentityList = ({
   );
 
   const onCreateIdentityRequest = useCallback(() => {
-    dispatch(createIdentityRequest());
+    dispatch(createIdentityRequest({ host: "" }));
   }, [dispatch]);
 
   return (
