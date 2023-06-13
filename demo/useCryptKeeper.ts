@@ -36,7 +36,7 @@ interface IUseCryptKeeperData {
   proof?: SemaphoreProof | RLNFullProof;
   connect: () => void;
   createIdentity: () => unknown;
-  getIdentityCommitment: () => void;
+  getConnectedIdentity: () => void;
   genSemaphoreProof: (proofType: MerkleProofType) => void;
   genRLNProof: (proofType: MerkleProofType) => void;
 }
@@ -68,12 +68,13 @@ export const useCryptKeeper = (): IUseCryptKeeperData => {
   const genSemaphoreProof = async (proofType: MerkleProofType = MerkleProofType.STORAGE_ADDRESS) => {
     const externalNullifier = encodeBytes32String("voting-1");
     const signal = encodeBytes32String("hello-world");
-
     let storageAddressOrArtifacts: any = `${merkleStorageAddress}/Semaphore`;
+
+    if (!mockIdentityCommitments.includes(connectedIdentity.commitment)) {
+      mockIdentityCommitments.push(connectedIdentity.commitment);
+    }
+
     if (proofType === MerkleProofType.ARTIFACTS) {
-      if (!mockIdentityCommitments.includes(connectedIdentity.commitment)) {
-        mockIdentityCommitments.push(connectedIdentity.commitment);
-      }
       storageAddressOrArtifacts = {
         leaves: mockIdentityCommitments,
         depth: 20,
@@ -81,26 +82,24 @@ export const useCryptKeeper = (): IUseCryptKeeperData => {
       };
     }
 
-    let toastId;
-    try {
-      toastId = toast("Generating semaphore proof...", {
-        type: "info",
-        hideProgressBar: true,
-        closeOnClick: true,
-        pauseOnHover: false,
-      });
+    const toastId = toast("Generating semaphore proof...", {
+      type: "info",
+      hideProgressBar: true,
+      closeOnClick: true,
+      pauseOnHover: false,
+    });
 
-      const proof = await client?.semaphoreProof(externalNullifier, signal, storageAddressOrArtifacts);
-
-      setProof(proof);
-      console.log("Semaphore proof generated successfully!", proof);
-      toast("Semaphore proof generated successfully!", { type: "success" });
-    } catch (e) {
-      toast("Error while generating Semaphore proof!", { type: "error" });
-      console.error(e);
-    }
-
-    toast.dismiss(toastId);
+    await client
+      ?.semaphoreProof(externalNullifier, signal, storageAddressOrArtifacts)
+      .then((proof) => {
+        setProof(proof);
+        toast("Semaphore proof generated successfully!", { type: "success" });
+      })
+      .catch((error) => {
+        toast("Error while generating Semaphore proof!", { type: "error" });
+        console.error(error);
+      })
+      .finally(() => toast.dismiss(toastId));
   };
 
   const genRLNProof = async (proofType: MerkleProofType = MerkleProofType.STORAGE_ADDRESS) => {
@@ -108,14 +107,13 @@ export const useCryptKeeper = (): IUseCryptKeeperData => {
     const signal = encodeBytes32String("hello-world");
     const rlnIdentifier = RLN._genIdentifier();
     const rlnIdentifierHex = bigintToHex(rlnIdentifier);
-
     let storageAddressOrArtifacts: any = `${merkleStorageAddress}/RLN`;
 
-    if (proofType === MerkleProofType.ARTIFACTS) {
-      if (!mockIdentityCommitments.includes(connectedIdentity.commitment)) {
-        mockIdentityCommitments.push(connectedIdentity.commitment);
-      }
+    if (!mockIdentityCommitments.includes(connectedIdentity.commitment)) {
+      mockIdentityCommitments.push(connectedIdentity.commitment);
+    }
 
+    if (proofType === MerkleProofType.ARTIFACTS) {
       storageAddressOrArtifacts = {
         leaves: mockIdentityCommitments,
         depth: 15,
@@ -123,27 +121,27 @@ export const useCryptKeeper = (): IUseCryptKeeperData => {
       };
     }
 
-    try {
-      const toastId = toast("Generating RLN proof...", {
-        type: "info",
-        hideProgressBar: true,
-        closeOnClick: true,
-        pauseOnHover: false,
-      });
+    const toastId = toast("Generating RLN proof...", {
+      type: "info",
+      hideProgressBar: true,
+      closeOnClick: true,
+      pauseOnHover: false,
+    });
 
-      const proof = await client?.rlnProof(externalNullifier, signal, storageAddressOrArtifacts, rlnIdentifierHex);
-
-      setProof(proof);
-      console.log("RLN proof generated successfully!", proof);
-      toast("RLN proof generated successfully!", { type: "success" });
-      toast.dismiss(toastId);
-    } catch (e) {
-      toast("Error while generating RLN proof!", { type: "error" });
-      console.error(e);
-    }
+    await client
+      ?.rlnProof(externalNullifier, signal, storageAddressOrArtifacts, rlnIdentifierHex)
+      .then((proof) => {
+        setProof(proof);
+        toast("RLN proof generated successfully!", { type: "success" });
+      })
+      .catch((error) => {
+        toast("Error while generating RLN proof!", { type: "error" });
+        console.error(error);
+      })
+      .finally(() => toast.dismiss(toastId));
   };
 
-  const getIdentityCommitment = useCallback(async () => {
+  const getConnectedIdentity = useCallback(async () => {
     const payload = await client?.getConnectedIdentity();
 
     if (!payload) {
@@ -175,8 +173,8 @@ export const useCryptKeeper = (): IUseCryptKeeperData => {
 
   const onLogin = useCallback(() => {
     setIsLocked(false);
-    getIdentityCommitment();
-  }, [setIsLocked, getIdentityCommitment]);
+    getConnectedIdentity();
+  }, [setIsLocked, getConnectedIdentity]);
 
   const onLogout = useCallback(() => {
     setConnectedIdentity({
@@ -196,6 +194,8 @@ export const useCryptKeeper = (): IUseCryptKeeperData => {
     client?.on("identityChanged", onIdentityChanged);
     client?.on("logout", onLogout);
 
+    getConnectedIdentity();
+
     return () => client?.cleanListeners();
   }, [client, onLogout, onIdentityChanged, onLogin]);
 
@@ -206,7 +206,7 @@ export const useCryptKeeper = (): IUseCryptKeeperData => {
     proof,
     connect,
     createIdentity,
-    getIdentityCommitment,
+    getConnectedIdentity,
     genSemaphoreProof,
     genRLNProof,
   };
