@@ -114,7 +114,7 @@ describe("ui/components/IdentityList", () => {
   });
 
   test("should accept to delete identity properly", async () => {
-    render(<IdentityList {...defaultProps} />);
+    render(<IdentityList {...defaultProps} selectedCommitment={undefined} />);
 
     const [menuIcon] = await screen.findAllByTestId("menu");
     act(() => menuIcon.click());
@@ -136,7 +136,7 @@ describe("ui/components/IdentityList", () => {
   });
 
   test("should reject to delete identity properly", async () => {
-    render(<IdentityList {...defaultProps} />);
+    render(<IdentityList {...defaultProps} selectedCommitment={undefined} />);
 
     const [menuIcon] = await screen.findAllByTestId("menu");
     act(() => menuIcon.click());

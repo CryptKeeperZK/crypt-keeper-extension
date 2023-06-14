@@ -19,8 +19,20 @@ function NotConnected({ onClick }: INotConnectedProps) {
   );
 }
 
-function NoConnectedIdentityCommitment() {
-  return <div>Please set a connected identity in the Crypt-Keeper plugin to continue.</div>;
+interface NoConnectedIdentityCommitmentProps {
+  onCreateIdentity: () => void;
+}
+
+function NoConnectedIdentityCommitment({ onCreateIdentity }: NoConnectedIdentityCommitmentProps) {
+  return (
+    <div>
+      <p>Please set a connected identity in the Crypt-Keeper plugin to continue.</p>
+
+      <button data-testid="create-new-identity" onClick={onCreateIdentity}>
+        Create identity
+      </button>
+    </div>
+  );
 }
 
 function App() {
@@ -34,8 +46,8 @@ function App() {
     return <NotConnected onClick={connect} />;
   }
 
-  if (!connectedIdentity) {
-    return <NoConnectedIdentityCommitment />;
+  if (!connectedIdentity?.commitment) {
+    return <NoConnectedIdentityCommitment onCreateIdentity={createIdentity} />;
   }
 
   return (

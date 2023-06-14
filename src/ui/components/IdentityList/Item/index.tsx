@@ -81,6 +81,11 @@ export const IdentityItem = ({
   const identityTitle = features.INTERREP_IDENTITY ? "random" : "";
   const canShowIdentityType = Boolean(metadata.web2Provider || identityTitle);
 
+  const menuItems = [
+    { label: "Rename", isDangerItem: false, onClick: handleToggleRenaming },
+    { label: "Delete", isDangerItem: true, onClick: handleDeleteIdentity },
+  ];
+
   return (
     <div key={commitment} className="p-4 identity-row">
       <Icon
@@ -146,13 +151,7 @@ export const IdentityItem = ({
       </div>
 
       {isShowMenu && (
-        <Menuable
-          className="flex user-menu"
-          items={[
-            { label: "Rename", isDangerItem: false, onClick: handleToggleRenaming },
-            { label: "Delete", isDangerItem: true, onClick: handleDeleteIdentity },
-          ]}
-        >
+        <Menuable className="flex user-menu" items={selected !== commitment ? menuItems : [menuItems[0]]}>
           <Icon className="identity-row__menu-icon" fontAwesome="fas fa-ellipsis-h" />
         </Menuable>
       )}
