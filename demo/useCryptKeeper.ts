@@ -173,8 +173,7 @@ export const useCryptKeeper = (): IUseCryptKeeperData => {
 
   const onLogin = useCallback(() => {
     setIsLocked(false);
-    getConnectedIdentity();
-  }, [setIsLocked, getConnectedIdentity]);
+  }, [setIsLocked]);
 
   const onLogout = useCallback(() => {
     setConnectedIdentity({
