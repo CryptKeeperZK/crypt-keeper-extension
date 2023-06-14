@@ -1,4 +1,4 @@
-import { browser } from "webextension-polyfill-ts";
+import browser from "webextension-polyfill";
 
 import HistoryService from "@src/background/services/history";
 import NotificationService from "@src/background/services/notification";

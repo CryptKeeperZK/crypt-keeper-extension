@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/unbound-method */
 import { bigintToHex } from "bigint-conversion";
-import { browser } from "webextension-polyfill-ts";
+import browser from "webextension-polyfill";
 
 import SimpleStorage from "@src/background/services/storage";
 import ZkIdentityService from "@src/background/services/zkIdentity";

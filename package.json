@@ -167,7 +167,7 @@
     "redux-thunk": "^2.4.2",
     "rlnjs": "^2.0.8",
     "subworkers": "^1.0.1",
-    "webextension-polyfill-ts": "^0.26.0",
+    "webextension-polyfill": "^0.10.0",
     "yup": "^1.2.0"
   },
   "config": {

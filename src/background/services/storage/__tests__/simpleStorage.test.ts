@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/unbound-method */
-import { browser } from "webextension-polyfill-ts";
+import browser from "webextension-polyfill";
 
 import SimpleStorage from "..";
 

@@ -1,5 +1,5 @@
 import { bigintToHex } from "bigint-conversion";
-import { browser } from "webextension-polyfill-ts";
+import browser from "webextension-polyfill";
 
 import BrowserUtils from "@src/background/controllers/browserUtils";
 import { cryptoGenerateEncryptedHmac, cryptoGetAuthenticBackupCiphertext } from "@src/background/services/crypto";

@@ -9,7 +9,7 @@ import { Suspense } from "react";
 import ReactDOM from "react-dom/client";
 import { Provider } from "react-redux";
 import { HashRouter } from "react-router-dom";
-import { browser } from "webextension-polyfill-ts";
+import browser from "webextension-polyfill";
 
 import { isDebugMode } from "@src/config/env";
 import { connectors } from "@src/connectors";

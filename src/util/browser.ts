@@ -1,4 +1,4 @@
-import { browser } from "webextension-polyfill-ts";
+import browser from "webextension-polyfill";
 
 export const getLastActiveTabUrl = async (): Promise<URL | undefined> => {
   const [tab] = await browser.tabs.query({ active: true, lastFocusedWindow: true });

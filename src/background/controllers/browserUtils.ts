@@ -1,4 +1,4 @@
-import { browser, Windows } from "webextension-polyfill-ts";
+import browser, { Windows } from "webextension-polyfill";
 
 interface CreateWindowArgs {
   type: "popup";

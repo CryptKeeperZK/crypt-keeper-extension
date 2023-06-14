@@ -136,9 +136,9 @@ dependencies:
   subworkers:
     specifier: ^1.0.1
     version: 1.0.1
-  webextension-polyfill-ts:
-    specifier: ^0.26.0
-    version: 0.26.0
+  webextension-polyfill:
+    specifier: ^0.10.0
+    version: 0.10.0
   yup:
     specifier: ^1.2.0
     version: 1.2.0
