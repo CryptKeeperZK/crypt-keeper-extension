@@ -6,7 +6,7 @@ export enum RPCAction {
   SETUP_PASSWORD = "rpc/lock/setupPassword",
   CREATE_IDENTITY = "rpc/identity/createIdentity",
   CREATE_IDENTITY_REQ = "rpc/identity/createIdentityRequest",
-  SET_CONNECTED_IDENTITY = "rpc/identity/setConnectedIdentity",
+  CONNECT_IDENTITY = "rpc/identity/connectIdentity",
   SET_IDENTITY_NAME = "rpc/identity/setIdentityName",
   SET_IDENTITY_HOST = "rpc/identity/setIdentityHost",
   DELETE_IDENTITY = "rpc/identity/deleteIdentity",

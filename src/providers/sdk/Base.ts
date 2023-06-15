@@ -14,8 +14,9 @@ import {
   InjectedProviderRequest,
   MerkleProofArtifacts,
   RLNFullProof,
-  SelectedIdentity,
+  ConnectedIdentity,
   SemaphoreProof,
+  ICreateIdentityRequestArgs,
 } from "@src/types";
 import { HostPermission } from "@src/ui/ducks/permissions";
 
@@ -161,10 +162,10 @@ export class CryptKeeperInjectedProvider extends EventEmitter {
     });
   }
 
-  async getConnectedIdentity(): Promise<SelectedIdentity> {
+  async getConnectedIdentity(): Promise<ConnectedIdentity> {
     return this.post({
       method: RPCAction.GET_CONNECTED_IDENTITY_DATA,
-    }) as Promise<SelectedIdentity>;
+    }) as Promise<ConnectedIdentity>;
   }
 
   async getHostPermissions(host: string): Promise<unknown> {
@@ -184,9 +185,12 @@ export class CryptKeeperInjectedProvider extends EventEmitter {
     });
   }
 
-  async createIdentity(): Promise<unknown> {
+  async createIdentity({ host }: ICreateIdentityRequestArgs): Promise<unknown> {
     return this.post({
       method: RPCAction.CREATE_IDENTITY_REQ,
+      payload: {
+        host,
+      },
     });
   }
 

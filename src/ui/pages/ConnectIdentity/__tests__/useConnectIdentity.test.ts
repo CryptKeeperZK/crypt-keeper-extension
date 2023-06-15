@@ -10,12 +10,7 @@ import { useNavigate } from "react-router-dom";
 import { ZERO_ADDRESS } from "@src/config/const";
 import { closePopup } from "@src/ui/ducks/app";
 import { useAppDispatch } from "@src/ui/ducks/hooks";
-import {
-  fetchIdentities,
-  setConnectedIdentity,
-  useLinkedIdentities,
-  useUnlinkedIdentities,
-} from "@src/ui/ducks/identities";
+import { connectIdentity, fetchIdentities, useLinkedIdentities, useUnlinkedIdentities } from "@src/ui/ducks/identities";
 
 import { EConnectIdentityTabs, IUseConnectIdentityData, useConnectIdentity } from "../useConnectIdentity";
 
@@ -39,7 +34,7 @@ jest.mock("@src/ui/ducks/app", (): unknown => ({
 
 jest.mock("@src/ui/ducks/identities", (): unknown => ({
   fetchIdentities: jest.fn(),
-  setConnectedIdentity: jest.fn(),
+  connectIdentity: jest.fn(),
   useLinkedIdentities: jest.fn(),
   useUnlinkedIdentities: jest.fn(),
 }));
@@ -147,8 +142,8 @@ describe("ui/pages/ConnectIdentity/useConnectIdentity", () => {
 
     expect(mockDispatch).toBeCalledTimes(3);
     expect(fetchIdentities).toBeCalledTimes(1);
-    expect(setConnectedIdentity).toBeCalledTimes(1);
-    expect(setConnectedIdentity).toBeCalledWith({ identityCommitment: "1", host: "http://localhost:3000" });
+    expect(connectIdentity).toBeCalledTimes(1);
+    expect(connectIdentity).toBeCalledWith({ identityCommitment: "1", host: "http://localhost:3000" });
     expect(closePopup).toBeCalledTimes(1);
     expect(mockNavigate).toBeCalledTimes(1);
     expect(mockNavigate).toBeCalledWith(-1);

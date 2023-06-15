@@ -1,5 +1,5 @@
 import log from "loglevel";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import { Paths } from "@src/constants";
@@ -27,9 +27,9 @@ export const usePopup = (): IUsePopupData => {
   const { isInitialized, isUnlocked, isMnemonicGenerated } = useAppStatus();
   const isShowRequestModal = pendingRequests.length > 0;
 
-  const url = new URL(window.location.href);
+  const url = new URL(window.location.href.replace("#", ""));
   const redirectParam = url.searchParams.get("redirect");
-  const redirect = useMemo(() => redirectParam && REDIRECT_PATHS[redirectParam], [redirectParam, window.location.href]);
+  const redirect = redirectParam && REDIRECT_PATHS[redirectParam];
 
   const fetchData = useCallback(async () => {
     await Promise.all([dispatch(fetchStatus()), dispatch(fetchPendingRequests())]);
@@ -53,9 +53,19 @@ export const usePopup = (): IUsePopupData => {
     } else if (isShowRequestModal) {
       navigate(Paths.REQUESTS);
     } else if (redirect) {
-      navigate(redirect);
+      url.searchParams.delete("redirect");
+      navigate(`${redirect}?${url.searchParams.toString()}`);
     }
-  }, [isLoading, isInitialized, isUnlocked, isShowRequestModal, isMnemonicGenerated, redirect, navigate]);
+  }, [
+    isLoading,
+    isInitialized,
+    isUnlocked,
+    isShowRequestModal,
+    isMnemonicGenerated,
+    redirect,
+    url.searchParams.toString(),
+    navigate,
+  ]);
 
   useEffect(() => {
     setIsLoading(true);

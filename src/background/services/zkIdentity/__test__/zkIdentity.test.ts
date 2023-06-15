@@ -7,7 +7,7 @@ import ZkIdentityService from "@src/background/services/zkIdentity";
 import { ZERO_ADDRESS } from "@src/config/const";
 import { getEnabledFeatures } from "@src/config/features";
 import { CreateIdentityOptions, EWallet, IdentityStrategy } from "@src/types";
-import { setSelectedCommitment } from "@src/ui/ducks/identities";
+import { setConnectedIdentity } from "@src/ui/ducks/identities";
 import pushMessage from "@src/util/pushMessage";
 
 import { createNewIdentity } from "../factory";
@@ -15,7 +15,10 @@ import { createNewIdentity } from "../factory";
 const mockDefaultIdentityCommitment =
   bigintToHex(15206603389158210388485662342360617949291660595274505642693885456541816400294n);
 const mockDefaultIdentities = [
-  [mockDefaultIdentityCommitment, JSON.stringify({ secret: "1234", metadata: { identityStrategy: "interrep" } })],
+  [
+    mockDefaultIdentityCommitment,
+    JSON.stringify({ secret: "1234", metadata: { identityStrategy: "interrep", host: "http://localhost:3000" } }),
+  ],
 ];
 const mockSerializedDefaultIdentities = JSON.stringify(mockDefaultIdentities);
 
@@ -116,7 +119,7 @@ describe("background/services/zkIdentity", () => {
       expect(result).toBe(true);
       expect(pushMessage).toBeCalledTimes(1);
       expect(pushMessage).toBeCalledWith(
-        setSelectedCommitment({
+        setConnectedIdentity({
           commitment: mockDefaultIdentityCommitment,
         }),
       );
@@ -126,7 +129,7 @@ describe("background/services/zkIdentity", () => {
         expect(browser.tabs.sendMessage).toHaveBeenNthCalledWith(
           index + 1,
           defaultTabs[index].id,
-          setSelectedCommitment({
+          setConnectedIdentity({
             commitment: mockDefaultIdentityCommitment,
           }),
         );
@@ -146,7 +149,7 @@ describe("background/services/zkIdentity", () => {
 
   describe("set connected identity", () => {
     test("should set connected identity properly", async () => {
-      const result = await zkIdentityService.setConnectedIdentity({
+      const result = await zkIdentityService.connectIdentity({
         identityCommitment: mockDefaultIdentityCommitment,
         host: "http://localhost:3000",
       });
@@ -154,7 +157,7 @@ describe("background/services/zkIdentity", () => {
       expect(result).toBe(true);
       expect(pushMessage).toBeCalledTimes(1);
       expect(pushMessage).toBeCalledWith(
-        setSelectedCommitment({
+        setConnectedIdentity({
           commitment: mockDefaultIdentityCommitment,
           host: "http://localhost:3000",
           web2Provider: undefined,
@@ -166,7 +169,7 @@ describe("background/services/zkIdentity", () => {
         expect(browser.tabs.sendMessage).toHaveBeenNthCalledWith(
           index + 1,
           defaultTabs[index].id,
-          setSelectedCommitment({
+          setConnectedIdentity({
             commitment: mockDefaultIdentityCommitment,
             host: "http://localhost:3000",
             web2Provider: undefined,
@@ -180,7 +183,7 @@ describe("background/services/zkIdentity", () => {
         instance.get.mockReturnValue(undefined);
       });
 
-      const result = await zkIdentityService.setConnectedIdentity({
+      const result = await zkIdentityService.connectIdentity({
         identityCommitment: mockDefaultIdentityCommitment,
         host: "http://localhost:3000",
       });
@@ -260,7 +263,7 @@ describe("background/services/zkIdentity", () => {
 
   describe("delete all identities", () => {
     test("should delete all identities properly", async () => {
-      const isIdentitySet = await zkIdentityService.setConnectedIdentity({
+      const isIdentitySet = await zkIdentityService.connectIdentity({
         identityCommitment: mockDefaultIdentityCommitment,
         host: "http://localhost:3000",
       });
@@ -320,6 +323,7 @@ describe("background/services/zkIdentity", () => {
       expect(data).toStrictEqual({
         commitment: mockDefaultIdentityCommitment,
         web2Provider: "",
+        host: "http://localhost:3000",
       });
     });
 
@@ -331,6 +335,7 @@ describe("background/services/zkIdentity", () => {
       expect(data).toStrictEqual({
         commitment: "",
         web2Provider: "",
+        host: "",
       });
     });
 
@@ -379,7 +384,7 @@ describe("background/services/zkIdentity", () => {
 
   describe("create", () => {
     test("should be able to request a create identity modal", async () => {
-      await zkIdentityService.createIdentityRequest();
+      await zkIdentityService.createIdentityRequest({ host: "http://localhost:3000" });
 
       expect(browser.tabs.query).toBeCalledWith({ lastFocusedWindow: true });
 

@@ -7,7 +7,7 @@ import { Provider } from "react-redux";
 
 import { ZERO_ADDRESS } from "@src/config/const";
 import { RPCAction } from "@src/constants";
-import { EWallet, HistorySettings, OperationType, SelectedIdentity } from "@src/types";
+import { EWallet, HistorySettings, OperationType, ConnectedIdentity } from "@src/types";
 import { store } from "@src/ui/store/configureAppStore";
 import postMessage from "@src/util/postMessage";
 
@@ -22,10 +22,10 @@ import {
   IdentitiesState,
   setIdentities,
   setIdentityRequestPending,
-  setSelectedCommitment,
+  connectIdentity,
   useIdentities,
   useIdentityRequestPending,
-  useSelectedIdentity,
+  useConnectedIdentity,
   fetchHistory,
   useIdentityOperations,
   getHistory,
@@ -77,9 +77,10 @@ describe("ui/ducks/identities", () => {
 
   const defaultSettings: HistorySettings = { isEnabled: true };
 
-  const defaultSelectedIdentity: SelectedIdentity = {
+  const defaultConnectedIdentity: ConnectedIdentity = {
     commitment: defaultIdentities[0].commitment,
     web2Provider: defaultIdentities[0].metadata.web2Provider,
+    host: defaultIdentities[0].metadata.host,
   };
 
   afterEach(() => {
@@ -87,7 +88,7 @@ describe("ui/ducks/identities", () => {
   });
 
   test("should fetch identities properly", async () => {
-    (postMessage as jest.Mock).mockResolvedValueOnce(defaultIdentities).mockResolvedValueOnce(defaultSelectedIdentity);
+    (postMessage as jest.Mock).mockResolvedValueOnce(defaultIdentities).mockResolvedValueOnce(defaultConnectedIdentity);
 
     await Promise.resolve(store.dispatch(fetchIdentities()));
     const { identities } = store.getState();
@@ -100,7 +101,7 @@ describe("ui/ducks/identities", () => {
     const unlinkedIdentitiesHookData = renderHook(() => useUnlinkedIdentities(), {
       wrapper: ({ children }) => <Provider store={store}>{children}</Provider>,
     });
-    const selectedIdentityHookData = renderHook(() => useSelectedIdentity(), {
+    const connectedIdentityHookData = renderHook(() => useConnectedIdentity(), {
       wrapper: ({ children }) => <Provider store={store}>{children}</Provider>,
     });
 
@@ -108,7 +109,7 @@ describe("ui/ducks/identities", () => {
     expect(identitiesHookData.result.current).toStrictEqual(defaultIdentities);
     expect(linkedIdentitiesHookData.result.current).toStrictEqual(defaultIdentities.slice(0, 1));
     expect(unlinkedIdentitiesHookData.result.current).toStrictEqual(defaultIdentities.slice(1));
-    expect(selectedIdentityHookData.result.current).toStrictEqual(defaultIdentities[0]);
+    expect(connectedIdentityHookData.result.current).toStrictEqual(defaultIdentities[0]);
   });
 
   test("should fetch history properly", async () => {
@@ -176,12 +177,13 @@ describe("ui/ducks/identities", () => {
     expect(identities.operations).toStrictEqual(defaultOperations);
   });
 
-  test("should set selected commitment properly", async () => {
-    await Promise.resolve(store.dispatch(setSelectedCommitment(defaultSelectedIdentity)));
+  test("should set connected identity properly", async () => {
+    await Promise.resolve(store.dispatch(setConnectedIdentity(defaultConnectedIdentity)));
     const { identities } = store.getState();
 
-    expect(identities.selected.commitment).toBe("1");
-    expect(identities.selected.web2Provider).toBe("twitter");
+    expect(identities.connected.commitment).toBe("1");
+    expect(identities.connected.web2Provider).toBe("twitter");
+    expect(identities.connected.host).toBe("http://localhost:3000");
   });
 
   test("should set identities properly", async () => {
@@ -203,10 +205,13 @@ describe("ui/ducks/identities", () => {
   });
 
   test("should call create identity request action properly", async () => {
-    await Promise.resolve(store.dispatch(createIdentityRequest()));
+    await Promise.resolve(store.dispatch(createIdentityRequest({ host: "http://localhost:3000" })));
 
     expect(postMessage).toBeCalledTimes(1);
-    expect(postMessage).toBeCalledWith({ method: RPCAction.CREATE_IDENTITY_REQ });
+    expect(postMessage).toBeCalledWith({
+      method: RPCAction.CREATE_IDENTITY_REQ,
+      payload: { host: "http://localhost:3000" },
+    });
   });
 
   test("should call create identity action properly", async () => {
@@ -238,13 +243,11 @@ describe("ui/ducks/identities", () => {
   });
 
   test("should call set connected identity action properly", async () => {
-    await Promise.resolve(
-      store.dispatch(setConnectedIdentity({ identityCommitment: "1", host: "http://localhost:3000" })),
-    );
+    await Promise.resolve(store.dispatch(connectIdentity({ identityCommitment: "1", host: "http://localhost:3000" })));
 
     expect(postMessage).toBeCalledTimes(1);
     expect(postMessage).toBeCalledWith({
-      method: RPCAction.SET_CONNECTED_IDENTITY,
+      method: RPCAction.CONNECT_IDENTITY,
       payload: {
         identityCommitment: "1",
         host: "http://localhost:3000",

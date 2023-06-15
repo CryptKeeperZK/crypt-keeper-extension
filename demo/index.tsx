@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import { createRoot } from "react-dom/client";
 import { ToastContainer } from "react-toastify";
 
-import { useCryptKeeper } from "./useCryptKeeper";
+import { MerkleProofType, useCryptKeeper } from "./useCryptKeeper";
 
 import "react-toastify/dist/ReactToastify.css";
 
@@ -24,16 +24,7 @@ function NoConnectedIdentityCommitment() {
 }
 
 function App() {
-  const {
-    client,
-    isLocked,
-    selectedIdentity,
-    MerkleProofType,
-    connect,
-    createIdentity,
-    getIdentityCommitment,
-    genSemaphoreProof,
-  } = useCryptKeeper();
+  const { client, isLocked, connectedIdentity, proof, connect, createIdentity, genSemaphoreProof } = useCryptKeeper();
 
   useEffect(() => {
     connect();
@@ -43,24 +34,63 @@ function App() {
     return <NotConnected onClick={connect} />;
   }
 
-  if (!selectedIdentity) {
+  if (!connectedIdentity) {
     return <NoConnectedIdentityCommitment />;
   }
 
   return (
     <div>
+      <hr />
+
+      <div>
+        <h2>Identity commitment for the connected identity:</h2>
+
+        <p>{connectedIdentity.commitment}</p>
+      </div>
+
+      <div>
+        <h2>Host name for the connected identity:</h2>
+
+        <p>{connectedIdentity.host}</p>
+      </div>
+
+      <hr />
+
+      <div>
+        <h2>Create a new secret Identity</h2>
+
+        <button data-testid="create-new-identity" onClick={createIdentity}>
+          Create
+        </button>
+      </div>
+
+      <hr />
+
       <div>
         <h2>Semaphore</h2>
+
         <button onClick={() => genSemaphoreProof(MerkleProofType.STORAGE_ADDRESS)}>
           Generate proof from Merkle proof storage address
-        </button>{" "}
+        </button>
+
         <br />
         <br />
+
         <button onClick={() => genSemaphoreProof(MerkleProofType.ARTIFACTS)}>
           Generate proof from Merkle proof artifacts
         </button>
       </div>
+
       <hr />
+
+      <div>
+        <h2>Semaphore Proof output:</h2>
+
+        <div>
+          <pre>{JSON.stringify(proof, null, 2)}</pre>
+        </div>
+      </div>
+
       {/* <div>
         <h2>RLN</h2>
         <button onClick={() => genRLNProof(MerkleProofType.STORAGE_ADDRESS)}>
@@ -72,29 +102,6 @@ function App() {
           Generate proof from Merkle proof artifacts
         </button>
       </div> */}
-
-      <hr />
-      <div>
-        <h2>Get Identity Commitment</h2>
-        <button onClick={getIdentityCommitment}>Get</button> <br />
-        <br />
-      </div>
-
-      <hr />
-      <div>
-        <h2>Create a new Identity</h2>
-        <button data-testid="create-new-identity" onClick={createIdentity}>
-          Create
-        </button>{" "}
-        <br />
-        <br />
-      </div>
-
-      <hr />
-      <div>
-        <h2>Identity commitment for connected identity:</h2>
-        <p>{selectedIdentity.commitment}</p>
-      </div>
 
       <ToastContainer newestOnTop={true} />
     </div>

@@ -10,6 +10,10 @@ export type CreateIdentityOptions = {
   name?: string;
 };
 
+export interface ICreateIdentityRequestArgs {
+  host: string;
+}
+
 export type NewIdentityRequest = {
   strategy: IdentityStrategy;
   options: CreateIdentityOptions;
@@ -57,7 +61,7 @@ export interface SetIdentityHostArgs {
   host: string;
 }
 
-export interface SetConnectedIdentityArgs {
+export interface ConnectIdentityArgs {
   identityCommitment: string;
   host: string;
 }

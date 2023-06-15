@@ -47,7 +47,7 @@ export default class BrowserUtils {
     const index = tabs.findIndex((tab) => tab.active && tab.highlighted);
     const searchParams = params ? `?${new URLSearchParams(params).toString()}` : "";
     const tab = await this.createTab({
-      url: `popup.html${searchParams}`,
+      url: `popup.html#/${searchParams}`,
       active: index >= 0,
       index: index >= 0 ? index : undefined,
     });
