@@ -9,7 +9,7 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-toastify": "^9.1.3",
-    "rlnjs": "^2.0.8"
+    "rlnjs": "^3.0.0"
   },
   "devDependencies": {
     "@types/react": "^18.2.12",
