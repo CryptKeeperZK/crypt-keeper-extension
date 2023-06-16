@@ -28,8 +28,8 @@ export interface IdentityItemProps {
   isShowMenu: boolean;
   selected?: string;
   onDeleteIdentity: (commitment: string) => Promise<void>;
-  onSelectIdentity: (commitment: string) => void;
   onUpdateIdentityName: (commitment: string, name: string) => Promise<void>;
+  onSelectIdentity?: (commitment: string) => void;
 }
 
 export const IdentityItem = ({
@@ -38,8 +38,8 @@ export const IdentityItem = ({
   selected = "",
   metadata,
   onDeleteIdentity,
-  onSelectIdentity,
   onUpdateIdentityName,
+  onSelectIdentity = undefined,
 }: IdentityItemProps): JSX.Element => {
   const [name, setName] = useState(metadata.name);
   const [isRenaming, setIsRenaming] = useState(false);
@@ -49,7 +49,7 @@ export const IdentityItem = ({
   }, [commitment, onDeleteIdentity]);
 
   const handleSelectIdentity = useCallback(() => {
-    onSelectIdentity(commitment);
+    onSelectIdentity?.(commitment);
   }, [commitment, onSelectIdentity]);
 
   const handleChangeName = useCallback(
@@ -91,6 +91,7 @@ export const IdentityItem = ({
       <Icon
         className={classNames("identity-row__select-icon", {
           "identity-row__select-icon--selected": selected === commitment,
+          "identity-row__select-icon--selectable": Boolean(onSelectIdentity),
         })}
         data-testid={`identity-select-${commitment}`}
         fontAwesome="fas fa-check"

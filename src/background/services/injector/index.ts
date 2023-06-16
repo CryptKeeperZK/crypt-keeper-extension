@@ -58,7 +58,7 @@ export default class InjectorService {
     }
 
     try {
-      await this.requestManager.newRequest(PendingRequestType.INJECT, { origin: host });
+      await this.requestManager.newRequest(PendingRequestType.CONNECT, { origin: host });
       return { isApproved: true, canSkipApprove: false };
     } catch (e) {
       return { isApproved: false, canSkipApprove: false };

@@ -9,6 +9,7 @@ export async function createAccount({ page }: TestExtension): Promise<void> {
 
   await cryptKeeper.createAccount(CRYPT_KEEPER_PASSWORD);
   await cryptKeeper.approve();
+  await cryptKeeper.connectIdentity();
 
   await cryptKeeper.close();
 }

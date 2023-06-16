@@ -36,6 +36,7 @@ interface IUseCryptKeeperData {
   proof?: SemaphoreProof | RLNFullProof;
   connect: () => void;
   createIdentity: () => unknown;
+  connectIdentity: () => Promise<void>;
   getConnectedIdentity: () => void;
   genSemaphoreProof: (proofType: MerkleProofType) => void;
   genRLNProof: (proofType: MerkleProofType) => void;
@@ -158,7 +159,11 @@ export const useCryptKeeper = (): IUseCryptKeeperData => {
   }, [client, setConnectedIdentity]);
 
   const createIdentity = useCallback(() => {
-    client?.createIdentity({ host: window.location.href });
+    client?.createIdentity({ host: window.location.origin });
+  }, [client]);
+
+  const connectIdentity = useCallback(async () => {
+    await client?.connectIdentity({ host: window.location.origin });
   }, [client]);
 
   const onIdentityChanged = useCallback(
@@ -205,6 +210,7 @@ export const useCryptKeeper = (): IUseCryptKeeperData => {
     proof,
     connect,
     createIdentity,
+    connectIdentity,
     getConnectedIdentity,
     genSemaphoreProof,
     genRLNProof,

@@ -93,10 +93,15 @@ export default class CryptKeeperController {
       this.zkIdentityService.getConnectedIdentityData,
     );
     this.handler.add(RPCAction.CONNECT_IDENTITY, this.lockService.ensure, this.zkIdentityService.connectIdentity);
+    this.handler.add(
+      RPCAction.CONNECT_IDENTITY_REQUEST,
+      this.lockService.ensure,
+      this.zkIdentityService.connectIdentityRequest,
+    );
     this.handler.add(RPCAction.SET_IDENTITY_NAME, this.lockService.ensure, this.zkIdentityService.setIdentityName);
     this.handler.add(RPCAction.SET_IDENTITY_HOST, this.lockService.ensure, this.zkIdentityService.setIdentityHost);
     this.handler.add(
-      RPCAction.CREATE_IDENTITY_REQ,
+      RPCAction.CREATE_IDENTITY_REQUEST,
       this.lockService.ensure,
       this.zkIdentityService.createIdentityRequest,
     );

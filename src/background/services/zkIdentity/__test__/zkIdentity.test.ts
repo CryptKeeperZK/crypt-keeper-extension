@@ -7,19 +7,25 @@ import ZkIdentityService from "@src/background/services/zkIdentity";
 import { ZERO_ADDRESS } from "@src/config/const";
 import { getEnabledFeatures } from "@src/config/features";
 import { CreateIdentityOptions, EWallet, IdentityStrategy } from "@src/types";
-import { setConnectedIdentity } from "@src/ui/ducks/identities";
+import { setConnectedIdentity, setIdentities } from "@src/ui/ducks/identities";
 import pushMessage from "@src/util/pushMessage";
 
 import { createNewIdentity } from "../factory";
 
 const mockDefaultIdentityCommitment =
   bigintToHex(15206603389158210388485662342360617949291660595274505642693885456541816400294n);
-const mockDefaultIdentities = [
-  [
-    mockDefaultIdentityCommitment,
-    JSON.stringify({ secret: "1234", metadata: { identityStrategy: "interrep", host: "http://localhost:3000" } }),
-  ],
-];
+const mockDefaultIdentity = {
+  secret: "1234",
+  metadata: {
+    account: ZERO_ADDRESS,
+    groups: [],
+    name: "Account",
+    web2Provider: undefined,
+    identityStrategy: "interrep" as const,
+    host: "http://localhost:3000",
+  },
+};
+const mockDefaultIdentities = [[mockDefaultIdentityCommitment, JSON.stringify(mockDefaultIdentity)]];
 const mockSerializedDefaultIdentities = JSON.stringify(mockDefaultIdentities);
 
 const mockAuthenticityCheckData = {
@@ -114,6 +120,13 @@ describe("background/services/zkIdentity", () => {
 
   describe("unlock", () => {
     test("should unlock properly and set connected identity", async () => {
+      const [identityStorage, connectedIdentityStorage] = (SimpleStorage as jest.Mock).mock.instances as [
+        MockStorage,
+        MockStorage,
+      ];
+      identityStorage.get.mockResolvedValue(mockSerializedDefaultIdentities);
+      connectedIdentityStorage.get.mockResolvedValue(mockDefaultIdentityCommitment);
+
       const result = await zkIdentityService.unlock();
 
       expect(result).toBe(true);
@@ -155,13 +168,18 @@ describe("background/services/zkIdentity", () => {
       });
 
       expect(result).toBe(true);
-      expect(pushMessage).toBeCalledTimes(1);
-      expect(pushMessage).toBeCalledWith(
+      expect(pushMessage).toBeCalledTimes(2);
+      expect(pushMessage).toHaveBeenNthCalledWith(
+        1,
         setConnectedIdentity({
           commitment: mockDefaultIdentityCommitment,
           host: "http://localhost:3000",
           web2Provider: undefined,
         }),
+      );
+      expect(pushMessage).toHaveBeenNthCalledWith(
+        2,
+        setIdentities([{ commitment: mockDefaultIdentityCommitment, metadata: mockDefaultIdentity.metadata }]),
       );
       expect(browser.tabs.sendMessage).toBeCalledTimes(defaultTabs.length);
 
@@ -271,7 +289,7 @@ describe("background/services/zkIdentity", () => {
 
       expect(isIdentitySet).toBe(true);
       expect(result).toBe(true);
-      expect(pushMessage).toBeCalledTimes(3);
+      expect(pushMessage).toBeCalledTimes(4);
     });
 
     test("should delete all identities properly without connected identity", async () => {
@@ -385,6 +403,22 @@ describe("background/services/zkIdentity", () => {
   describe("create", () => {
     test("should be able to request a create identity modal", async () => {
       await zkIdentityService.createIdentityRequest({ host: "http://localhost:3000" });
+
+      expect(browser.tabs.query).toBeCalledWith({ lastFocusedWindow: true });
+
+      const defaultOptions = {
+        tabId: defaultPopupTab.id,
+        type: "popup",
+        focused: true,
+        width: 385,
+        height: 610,
+      };
+
+      expect(browser.windows.create).toBeCalledWith(defaultOptions);
+    });
+
+    test("should be able to request a connect identity modal", async () => {
+      await zkIdentityService.connectIdentityRequest({ host: "http://localhost:3000" });
 
       expect(browser.tabs.query).toBeCalledWith({ lastFocusedWindow: true });
 

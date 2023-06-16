@@ -17,18 +17,18 @@ test.describe("backup", () => {
     const extension = new CryptKeeper(page);
     await extension.focus();
 
-    await extension.identitiesTab.createIdentity({ walletType: "eth" });
+    await extension.identities.createIdentityFromHome({ walletType: "eth" });
     await expect(extension.getByText("Account # 0")).toBeVisible();
 
-    await extension.settingsPage.openPage();
-    await extension.settingsPage.openTab("Advanced");
-    const path = await extension.settingsPage.downloadBackup();
+    await extension.settings.openPage();
+    await extension.settings.openTab("Advanced");
+    const path = await extension.settings.downloadBackup();
 
     expect(path).toBeDefined();
 
     await extension.goHome();
 
-    await extension.activityTab.openTab();
-    await expect(extension.activityTab.getByText("Backup download")).toBeVisible();
+    await extension.activity.openTab();
+    await expect(extension.activity.getByText("Backup download")).toBeVisible();
   });
 });

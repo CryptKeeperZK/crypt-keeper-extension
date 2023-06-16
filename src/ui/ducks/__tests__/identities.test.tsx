@@ -209,7 +209,7 @@ describe("ui/ducks/identities", () => {
 
     expect(postMessage).toBeCalledTimes(1);
     expect(postMessage).toBeCalledWith({
-      method: RPCAction.CREATE_IDENTITY_REQ,
+      method: RPCAction.CREATE_IDENTITY_REQUEST,
       payload: { host: "http://localhost:3000" },
     });
   });

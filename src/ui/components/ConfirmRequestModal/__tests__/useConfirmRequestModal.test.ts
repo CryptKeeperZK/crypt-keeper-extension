@@ -6,12 +6,13 @@ import { act, renderHook, waitFor } from "@testing-library/react";
 
 import { RequestResolutionStatus } from "@src/types";
 import { useAppDispatch } from "@src/ui/ducks/hooks";
-import { finalizeRequest, usePendingRequests } from "@src/ui/ducks/requests";
+import { fetchPendingRequests, finalizeRequest, usePendingRequests } from "@src/ui/ducks/requests";
 
 import { IUseConfirmRequestModalData, useConfirmRequestModal } from "../useConfirmRequestModal";
 
 jest.mock("@src/ui/ducks/requests", (): unknown => ({
   finalizeRequest: jest.fn(),
+  fetchPendingRequests: jest.fn(),
   usePendingRequests: jest.fn(),
 }));
 
@@ -27,6 +28,12 @@ describe("ui/components/ConfirmRequestModal/useConfirmRequestModal", () => {
   };
 
   beforeEach(() => {
+    (finalizeRequest as jest.Mock).mockResolvedValue(true);
+
+    (fetchPendingRequests as jest.Mock).mockResolvedValue([]);
+
+    (mockDispatch as jest.Mock).mockResolvedValue(undefined);
+
     (usePendingRequests as jest.Mock).mockReturnValue([{ id: "1" }]);
 
     (useAppDispatch as jest.Mock).mockReturnValue(mockDispatch);
@@ -50,6 +57,7 @@ describe("ui/components/ConfirmRequestModal/useConfirmRequestModal", () => {
     await waitForData(result.current);
 
     await act(async () => Promise.resolve(result.current.accept()));
+    await waitFor(() => result.current.loading === false);
 
     expect(finalizeRequest).toBeCalledTimes(1);
     expect(finalizeRequest).toBeCalledWith({
@@ -57,6 +65,7 @@ describe("ui/components/ConfirmRequestModal/useConfirmRequestModal", () => {
       status: RequestResolutionStatus.ACCEPT,
       data: undefined,
     });
+    expect(fetchPendingRequests).toBeCalledTimes(1);
   });
 
   test("should handle accept error", async () => {
@@ -66,6 +75,7 @@ describe("ui/components/ConfirmRequestModal/useConfirmRequestModal", () => {
     await waitForData(result.current);
 
     await act(async () => Promise.resolve(result.current.accept()));
+    await waitFor(() => result.current.loading === false);
 
     expect(result.current.error).toBe(error.message);
   });
@@ -75,6 +85,7 @@ describe("ui/components/ConfirmRequestModal/useConfirmRequestModal", () => {
     await waitForData(result.current);
 
     await act(async () => Promise.resolve(result.current.reject()));
+    await waitFor(() => result.current.loading === false);
 
     expect(finalizeRequest).toBeCalledTimes(1);
     expect(finalizeRequest).toBeCalledWith({
@@ -82,6 +93,7 @@ describe("ui/components/ConfirmRequestModal/useConfirmRequestModal", () => {
       status: "reject",
       data: undefined,
     });
+    expect(fetchPendingRequests).toBeCalledTimes(1);
   });
 
   test("should handle reject error", async () => {
@@ -91,6 +103,7 @@ describe("ui/components/ConfirmRequestModal/useConfirmRequestModal", () => {
     await waitForData(result.current);
 
     await act(async () => Promise.resolve(result.current.reject()));
+    await waitFor(() => result.current.loading === false);
 
     expect(result.current.error).toBe(error.message);
   });

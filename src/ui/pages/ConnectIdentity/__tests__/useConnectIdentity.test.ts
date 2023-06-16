@@ -10,7 +10,13 @@ import { useNavigate } from "react-router-dom";
 import { ZERO_ADDRESS } from "@src/config/const";
 import { closePopup } from "@src/ui/ducks/app";
 import { useAppDispatch } from "@src/ui/ducks/hooks";
-import { connectIdentity, fetchIdentities, useLinkedIdentities, useUnlinkedIdentities } from "@src/ui/ducks/identities";
+import {
+  connectIdentity,
+  fetchIdentities,
+  useConnectedIdentity,
+  useLinkedIdentities,
+  useUnlinkedIdentities,
+} from "@src/ui/ducks/identities";
 
 import { EConnectIdentityTabs, IUseConnectIdentityData, useConnectIdentity } from "../useConnectIdentity";
 
@@ -35,6 +41,7 @@ jest.mock("@src/ui/ducks/app", (): unknown => ({
 jest.mock("@src/ui/ducks/identities", (): unknown => ({
   fetchIdentities: jest.fn(),
   connectIdentity: jest.fn(),
+  useConnectedIdentity: jest.fn(),
   useLinkedIdentities: jest.fn(),
   useUnlinkedIdentities: jest.fn(),
 }));
@@ -85,6 +92,8 @@ describe("ui/pages/ConnectIdentity/useConnectIdentity", () => {
     (useLinkedIdentities as jest.Mock).mockReturnValue(defaultLinkedIdentities);
 
     (useUnlinkedIdentities as jest.Mock).mockReturnValue(defaultUnlinkedIdentities);
+
+    (useConnectedIdentity as jest.Mock).mockReturnValue(defaultLinkedIdentities[0]);
 
     window.location.href = `${oldHref}?host=http://localhost:3000`;
   });

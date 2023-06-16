@@ -166,7 +166,7 @@ describe("ui/components/IdentityList/Item", () => {
   });
 
   test("should go to host properly", async () => {
-    render(<IdentityItem {...defaultProps} />);
+    render(<IdentityItem {...defaultProps} onSelectIdentity={undefined} />);
 
     const icon = await screen.findByTestId("host-icon");
     await act(() => Promise.resolve(icon.click()));

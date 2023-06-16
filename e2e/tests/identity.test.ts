@@ -17,29 +17,29 @@ test.describe("identity", () => {
     const extension = new CryptKeeper(page);
     await extension.focus();
 
-    await extension.identitiesTab.createIdentity({ walletType: "eth" });
+    await extension.identities.createIdentityFromHome({ walletType: "eth" });
     await expect(extension.getByText("Account # 0")).toBeVisible();
 
-    await extension.identitiesTab.createIdentity({ provider: "Github", nonce: 0, walletType: "eth" });
+    await extension.identities.createIdentityFromHome({ provider: "Github", nonce: 0, walletType: "eth" });
     await expect(extension.getByText("Account # 1")).toBeVisible();
 
-    await extension.identitiesTab.createIdentity({ provider: "Reddit", nonce: 0, walletType: "ck" });
+    await extension.identities.createIdentityFromHome({ provider: "Reddit", nonce: 0, walletType: "ck" });
     await expect(extension.getByText("Account # 2")).toBeVisible();
 
-    await extension.identitiesTab.createIdentity({ identityType: "Random", nonce: 0, walletType: "eth" });
+    await extension.identities.createIdentityFromHome({ identityType: "Random", nonce: 0, walletType: "eth" });
     await expect(extension.getByText("Account # 3")).toBeVisible();
 
-    await extension.identitiesTab.createIdentity({ identityType: "Random", nonce: 0, walletType: "ck" });
+    await extension.identities.createIdentityFromHome({ identityType: "Random", nonce: 0, walletType: "ck" });
     await expect(extension.getByText("Account # 4")).toBeVisible();
 
+    await expect(extension.getByText(/Account/)).toHaveCount(6);
+
+    await extension.identities.deleteIdentity(1);
     await expect(extension.getByText(/Account/)).toHaveCount(5);
 
-    await extension.identitiesTab.deleteIdentity(0);
-    await expect(extension.getByText(/Account/)).toHaveCount(4);
-
-    await extension.settingsPage.openPage();
-    await extension.settingsPage.openTab("Advanced");
-    await extension.settingsPage.deleteAllIdentities();
+    await extension.settings.openPage();
+    await extension.settings.openTab("Advanced");
+    await extension.settings.deleteAllIdentities();
 
     await extension.goHome();
 
@@ -50,10 +50,10 @@ test.describe("identity", () => {
     const extension = new CryptKeeper(page);
     await extension.focus();
 
-    await extension.identitiesTab.createIdentity({ walletType: "eth" });
+    await extension.identities.createIdentityFromHome({ walletType: "eth" });
     await expect(extension.getByText("Account # 0")).toBeVisible();
 
-    await extension.identitiesTab.renameIdentity(0, "My twitter identity");
+    await extension.identities.renameIdentity(1, "My twitter identity");
 
     await expect(extension.getByText("My twitter identity")).toBeVisible();
   });
@@ -62,91 +62,90 @@ test.describe("identity", () => {
     const extension = new CryptKeeper(page);
     await extension.focus();
 
-    await extension.identitiesTab.createIdentity({ walletType: "eth" });
-    await expect(extension.getByText(/Account/)).toHaveCount(1);
-
-    await extension.activityTab.openTab();
-    await expect(extension.activityTab.getByText("Identity created")).toBeVisible();
-
-    await extension.identitiesTab.openTab();
-    await extension.identitiesTab.createIdentity({ walletType: "ck" });
+    await extension.identities.createIdentityFromHome({ walletType: "eth" });
     await expect(extension.getByText(/Account/)).toHaveCount(2);
 
-    await extension.identitiesTab.deleteIdentity(0);
-    await expect(extension.getByText(/Account/)).toHaveCount(1);
+    await extension.activity.openTab();
+    await expect(extension.activity.getByText("Identity created")).toHaveCount(2);
 
-    await extension.activityTab.openTab();
-    await expect(extension.activityTab.getByText("Identity removed")).toBeVisible();
+    await extension.identities.openTab();
+    await extension.identities.createIdentityFromHome({ walletType: "ck" });
+    await expect(extension.getByText(/Account/)).toHaveCount(3);
 
-    await extension.identitiesTab.openTab();
-    await extension.identitiesTab.createIdentity({ walletType: "ck", identityType: "Random" });
+    await extension.identities.deleteIdentity(1);
     await expect(extension.getByText(/Account/)).toHaveCount(2);
 
-    await extension.settingsPage.openPage();
-    await extension.settingsPage.openTab("Advanced");
-    await extension.settingsPage.deleteAllIdentities();
+    await extension.activity.openTab();
+    await expect(extension.activity.getByText("Identity removed")).toBeVisible();
+
+    await extension.identities.openTab();
+    await extension.identities.createIdentityFromHome({ walletType: "ck", identityType: "Random" });
+    await expect(extension.getByText(/Account/)).toHaveCount(3);
+
+    await extension.settings.openPage();
+    await extension.settings.openTab("Advanced");
+    await extension.settings.deleteAllIdentities();
 
     await extension.goHome();
 
-    await extension.activityTab.openTab();
-    await expect(extension.activityTab.getByText("All identities removed")).toBeVisible();
+    await extension.activity.openTab();
+    await expect(extension.activity.getByText("All identities removed")).toBeVisible();
   });
 
   test("should track activity clear operations properly", async ({ page }) => {
     const extension = new CryptKeeper(page);
     await extension.focus();
 
-    await extension.identitiesTab.createIdentity({ walletType: "eth" });
     await expect(extension.getByText(/Account/)).toHaveCount(1);
 
-    await extension.activityTab.openTab();
-    await expect(extension.activityTab.getByText("Identity created")).toBeVisible();
+    await extension.activity.openTab();
+    await expect(extension.activity.getByText("Identity created")).toHaveCount(1);
 
-    await extension.settingsPage.openPage();
-    await extension.settingsPage.openTab("Advanced");
-    await extension.settingsPage.deleteAllIdentities();
+    await extension.settings.openPage();
+    await extension.settings.openTab("Advanced");
+    await extension.settings.deleteAllIdentities();
 
     await extension.goHome();
 
-    await extension.activityTab.openTab();
-    await expect(extension.activityTab.getByText("All identities removed")).toBeVisible();
+    await extension.activity.openTab();
+    await expect(extension.activity.getByText("All identities removed")).toBeVisible();
 
-    await extension.activityTab.deleteOperation();
-    await extension.activityTab.deleteOperation();
+    await extension.activity.deleteOperation();
+    await extension.activity.deleteOperation();
 
-    await expect(extension.activityTab.getByText("No records found")).toBeVisible();
+    await expect(extension.activity.getByText("No records found")).toBeVisible();
   });
 
   test("should setup settings for tracking operations", async ({ page }) => {
     const extension = new CryptKeeper(page);
     await extension.focus();
 
-    await extension.settingsPage.openPage();
-    await extension.settingsPage.toggleHistoryTracking();
+    await extension.settings.openPage();
+    await extension.settings.toggleHistoryTracking();
 
     await extension.goHome();
-    await extension.identitiesTab.createIdentity({ walletType: "ck" });
     await expect(extension.getByText(/Account/)).toHaveCount(1);
 
-    await extension.activityTab.openTab();
-    await expect(extension.activityTab.getByText("No records found")).toBeVisible();
+    await extension.activity.openTab();
+    await extension.activity.deleteOperation();
+    await expect(extension.activity.getByText("No records found")).toBeVisible();
 
-    await extension.settingsPage.openPage();
-    await extension.settingsPage.toggleHistoryTracking();
+    await extension.settings.openPage();
+    await extension.settings.toggleHistoryTracking();
 
     await extension.goHome();
-    await extension.identitiesTab.createIdentity({ walletType: "eth" });
+    await extension.identities.createIdentityFromHome({ walletType: "eth" });
     await expect(extension.getByText(/Account/)).toHaveCount(2);
 
-    await extension.activityTab.openTab();
-    await expect(extension.activityTab.getByText("Identity created")).toBeVisible();
+    await extension.activity.openTab();
+    await expect(extension.activity.getByText("Identity created")).toBeVisible();
 
-    await extension.settingsPage.openPage();
-    await extension.settingsPage.clearHistory();
+    await extension.settings.openPage();
+    await extension.settings.clearHistory();
 
     await extension.goHome();
-    await extension.activityTab.openTab();
-    await expect(extension.activityTab.getByText("No records found")).toBeVisible();
+    await extension.activity.openTab();
+    await expect(extension.activity.getByText("No records found")).toBeVisible();
   });
 
   test("should create identity from demo", async ({ page, cryptKeeperExtensionId }) => {
@@ -154,10 +153,29 @@ test.describe("identity", () => {
     const extension = new CryptKeeper(page);
     await extension.focus();
 
-    await extension.identitiesTab.createIdentity({ walletType: "eth" });
-    await extension.identitiesTab.createIdentity({ walletType: "ck" });
+    await extension.identities.createIdentityFromHome({ walletType: "eth", identityType: "Random" });
+    await extension.identities.createIdentityFromHome({ walletType: "ck", identityType: "Random" });
 
     await page.goto(`chrome-extension://${cryptKeeperExtensionId}/popup.html`);
+    await expect(extension.getByText(/Account/)).toHaveCount(3);
+  });
+
+  test("should connect identity from demo", async ({ page, cryptKeeperExtensionId }) => {
+    await page.goto("/");
+    const extension = new CryptKeeper(page);
+    await extension.focus();
+
+    await extension.identities.createIdentityFromHome({ walletType: "eth", identityType: "Random" });
+    await extension.identities.createIdentityFromHome({ walletType: "ck", identityType: "Random" });
+
+    await page.getByTestId("connect-identity").click({ delay: 1_000 });
+    await extension.selectIdentity(1);
+
+    await page.goto(`chrome-extension://${cryptKeeperExtensionId}/popup.html`);
+    await expect(extension.getByText(/Account/)).toHaveCount(3);
+
+    await extension.identities.deleteIdentity(0);
+
     await expect(extension.getByText(/Account/)).toHaveCount(2);
   });
 });

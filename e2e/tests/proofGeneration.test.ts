@@ -1,6 +1,5 @@
 import { expect, test } from "../fixtures";
 import { connectWallet, createAccount } from "../helpers/account";
-import { CryptKeeper } from "../pages";
 
 test.describe("proof generation", () => {
   test.beforeEach(async ({ page, cryptKeeperExtensionId, context }) => {
@@ -11,11 +10,6 @@ test.describe("proof generation", () => {
 
     await connectWallet({ page, cryptKeeperExtensionId, context });
     await expect(page.getByText("Ethereum mainnet")).toBeVisible();
-
-    const extension = new CryptKeeper(page);
-
-    await extension.identitiesTab.createIdentity({ walletType: "eth" });
-    await expect(extension.getByText("Account # 0")).toBeVisible();
 
     await page.goto("/");
   });

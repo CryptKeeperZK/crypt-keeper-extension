@@ -4,7 +4,13 @@ import { useNavigate } from "react-router-dom";
 
 import { closePopup } from "@src/ui/ducks/app";
 import { useAppDispatch } from "@src/ui/ducks/hooks";
-import { connectIdentity, fetchIdentities, useLinkedIdentities, useUnlinkedIdentities } from "@src/ui/ducks/identities";
+import {
+  connectIdentity,
+  fetchIdentities,
+  useConnectedIdentity,
+  useLinkedIdentities,
+  useUnlinkedIdentities,
+} from "@src/ui/ducks/identities";
 
 import type { IdentityData } from "@src/types";
 
@@ -30,6 +36,7 @@ export const useConnectIdentity = (): IUseConnectIdentityData => {
   const { searchParams } = new URL(window.location.href.replace("#", ""));
   const host = useMemo(() => searchParams.get("host") as string, [searchParams.toString()]);
 
+  const connectedIdentity = useConnectedIdentity();
   const linkedIdentities = useLinkedIdentities(host);
   const unlinkedIdentities = useUnlinkedIdentities();
 
@@ -65,6 +72,12 @@ export const useConnectIdentity = (): IUseConnectIdentityData => {
   useEffect(() => {
     dispatch(fetchIdentities());
   }, [dispatch]);
+
+  useEffect(() => {
+    if (connectedIdentity?.commitment) {
+      setSelectedIdentityCommitment(connectedIdentity?.commitment);
+    }
+  }, [connectedIdentity?.commitment]);
 
   useEffect(() => {
     if (unlinkedIdentities.length === 0) {

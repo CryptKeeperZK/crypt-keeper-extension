@@ -41,14 +41,16 @@
     margin-right: 1rem;
     padding: 0.25rem;
 
-    &:hover {
+    &--selected {
       color: $primary-green;
       border-color: $primary-green;
     }
 
-    &--selected {
-      color: $primary-green;
-      border-color: $primary-green;
+    &--selectable {
+      &:hover {
+        color: $primary-green;
+        border-color: $primary-green;
+      }
     }
   }
 
