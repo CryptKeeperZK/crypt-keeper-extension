@@ -69,15 +69,18 @@ test.describe("identity", () => {
     await expect(extension.activityTab.getByText("Identity created")).toBeVisible();
 
     await extension.identitiesTab.openTab();
+    await extension.identitiesTab.createIdentity({ walletType: "ck" });
+    await expect(extension.getByText(/Account/)).toHaveCount(2);
+
     await extension.identitiesTab.deleteIdentity(0);
-    await expect(extension.getByText(/Account/)).toHaveCount(0);
+    await expect(extension.getByText(/Account/)).toHaveCount(1);
 
     await extension.activityTab.openTab();
     await expect(extension.activityTab.getByText("Identity removed")).toBeVisible();
 
     await extension.identitiesTab.openTab();
-    await extension.identitiesTab.createIdentity({ walletType: "ck" });
-    await expect(extension.getByText(/Account/)).toHaveCount(1);
+    await extension.identitiesTab.createIdentity({ walletType: "ck", identityType: "Random" });
+    await expect(extension.getByText(/Account/)).toHaveCount(2);
 
     await extension.settingsPage.openPage();
     await extension.settingsPage.openTab("Advanced");
@@ -99,12 +102,14 @@ test.describe("identity", () => {
     await extension.activityTab.openTab();
     await expect(extension.activityTab.getByText("Identity created")).toBeVisible();
 
-    await extension.identitiesTab.openTab();
-    await extension.identitiesTab.deleteIdentity(0);
-    await expect(extension.getByText(/Account/)).toHaveCount(0);
+    await extension.settingsPage.openPage();
+    await extension.settingsPage.openTab("Advanced");
+    await extension.settingsPage.deleteAllIdentities();
+
+    await extension.goHome();
 
     await extension.activityTab.openTab();
-    await expect(extension.activityTab.getByText("Identity removed")).toBeVisible();
+    await expect(extension.activityTab.getByText("All identities removed")).toBeVisible();
 
     await extension.activityTab.deleteOperation();
     await extension.activityTab.deleteOperation();
@@ -130,11 +135,11 @@ test.describe("identity", () => {
     await extension.settingsPage.toggleHistoryTracking();
 
     await extension.goHome();
-    await extension.identitiesTab.deleteIdentity();
-    await expect(extension.getByText(/Account/)).toHaveCount(0);
+    await extension.identitiesTab.createIdentity({ walletType: "eth" });
+    await expect(extension.getByText(/Account/)).toHaveCount(2);
 
     await extension.activityTab.openTab();
-    await expect(extension.activityTab.getByText("Identity removed")).toBeVisible();
+    await expect(extension.activityTab.getByText("Identity created")).toBeVisible();
 
     await extension.settingsPage.openPage();
     await extension.settingsPage.clearHistory();
