@@ -9,7 +9,7 @@ test.describe("proof generation", () => {
     await expect(page.getByTestId("home-page")).toBeVisible();
 
     await connectWallet({ page, cryptKeeperExtensionId, context });
-    await expect(page.getByText("Ethereum mainnet")).toBeVisible();
+    await expect(page.getByText("Connected to Metamask")).toBeVisible();
 
     await page.goto("/");
   });

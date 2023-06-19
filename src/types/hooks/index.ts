@@ -4,8 +4,8 @@ import type BigNumber from "bignumber.js";
 import type { BrowserProvider } from "ethers";
 
 export enum ConnectorNames {
-  METAMASK = "MetaMask",
-  CRYPT_KEEPER = "CryptKeeper",
+  METAMASK = "Metamask",
+  CRYPT_KEEPER = "Cryptkeeper",
   MOCK = "Mock",
   UNKNOWN = "Unknown",
 }

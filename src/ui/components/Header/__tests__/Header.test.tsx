@@ -51,9 +51,9 @@ describe("ui/components/Header", () => {
 
     const { findByText } = render(<Header />);
 
-    const chain = await findByText(defaultWalletHookData.chain?.name as string);
+    const connected = await findByText("Connected to Mock");
 
-    expect(chain).toBeInTheDocument();
+    expect(connected).toBeInTheDocument();
   });
 
   test("should render properly without connected wallet", async () => {

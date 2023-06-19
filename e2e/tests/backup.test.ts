@@ -10,7 +10,7 @@ test.describe("backup", () => {
     await expect(page.getByTestId("home-page")).toBeVisible();
 
     await connectWallet({ page, cryptKeeperExtensionId, context });
-    await expect(page.getByText("Ethereum mainnet")).toBeVisible();
+    await expect(page.getByText("Connected to Metamask")).toBeVisible();
   });
 
   test("should download backup properly", async ({ page }) => {

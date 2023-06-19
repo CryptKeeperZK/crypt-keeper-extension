@@ -10,7 +10,7 @@ test.describe("identity", () => {
     await expect(page.getByTestId("home-page")).toBeVisible();
 
     await connectWallet({ page, cryptKeeperExtensionId, context });
-    await expect(page.getByText("Ethereum mainnet")).toBeVisible();
+    await expect(page.getByText("Connected to Metamask")).toBeVisible();
   });
 
   test("should create and delete different types of identities properly", async ({ page }) => {
