@@ -75,7 +75,7 @@ export const createIdentityRequest =
   ({ host }: ICreateIdentityRequestArgs) =>
   async (): Promise<void> => {
     await postMessage({
-      method: RPCAction.CREATE_IDENTITY_REQ,
+      method: RPCAction.CREATE_IDENTITY_REQUEST,
       payload: {
         host,
       },

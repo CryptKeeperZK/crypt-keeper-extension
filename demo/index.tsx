@@ -20,23 +20,23 @@ function NotConnected({ onClick }: INotConnectedProps) {
 }
 
 interface NoConnectedIdentityCommitmentProps {
-  onCreateIdentity: () => void;
+  onConnectIdentity: () => void;
 }
 
-function NoConnectedIdentityCommitment({ onCreateIdentity }: NoConnectedIdentityCommitmentProps) {
+function NoConnectedIdentityCommitment({ onConnectIdentity }: NoConnectedIdentityCommitmentProps) {
   return (
     <div>
-      <p>Please set a connected identity in the Crypt-Keeper plugin to continue.</p>
-
-      <button data-testid="create-new-identity" onClick={onCreateIdentity}>
-        Create identity
+      Please set a connected identity in the Crypt-Keeper plugin to continue.{" "}
+      <button data-testid="connect-identity" onClick={onConnectIdentity}>
+        Connect identity
       </button>
     </div>
   );
 }
 
 function App() {
-  const { client, isLocked, connectedIdentity, proof, connect, createIdentity, genSemaphoreProof } = useCryptKeeper();
+  const { client, isLocked, connectedIdentity, proof, connect, createIdentity, connectIdentity, genSemaphoreProof } =
+    useCryptKeeper();
 
   useEffect(() => {
     connect();
@@ -47,7 +47,7 @@ function App() {
   }
 
   if (!connectedIdentity?.commitment) {
-    return <NoConnectedIdentityCommitment onCreateIdentity={createIdentity} />;
+    return <NoConnectedIdentityCommitment onConnectIdentity={connectIdentity} />;
   }
 
   return (
@@ -57,22 +57,30 @@ function App() {
       <div>
         <h2>Identity commitment for the connected identity:</h2>
 
-        <p>{connectedIdentity.commitment}</p>
+        <p data-testid="connected-commitment">{connectedIdentity.commitment}</p>
       </div>
 
       <div>
         <h2>Host name for the connected identity:</h2>
 
-        <p>{connectedIdentity.host}</p>
+        <p data-testid="connected-host">{connectedIdentity.host}</p>
       </div>
 
       <hr />
 
       <div>
-        <h2>Create a new secret Identity</h2>
+        <h2>Create a new secret identity</h2>
 
         <button data-testid="create-new-identity" onClick={createIdentity}>
           Create
+        </button>
+      </div>
+
+      <div>
+        <h2>Connect your identity</h2>
+
+        <button data-testid="connect-identity" onClick={connectIdentity}>
+          Connect identity
         </button>
       </div>
 
@@ -82,21 +90,21 @@ function App() {
         <h2>Semaphore</h2>
 
         <button onClick={() => genSemaphoreProof(MerkleProofType.STORAGE_ADDRESS)}>
-          Generate proof from Merkle proof storage address
+          Generate proof from merkle proof storage address
         </button>
 
         <br />
         <br />
 
         <button onClick={() => genSemaphoreProof(MerkleProofType.ARTIFACTS)}>
-          Generate proof from Merkle proof artifacts
+          Generate proof from merkle proof artifacts
         </button>
       </div>
 
       <hr />
 
       <div>
-        <h2>Semaphore Proof output:</h2>
+        <h2>Semaphore proof output:</h2>
 
         <div>
           <pre>{JSON.stringify(proof, null, 2)}</pre>

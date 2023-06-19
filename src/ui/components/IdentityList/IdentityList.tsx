@@ -16,7 +16,7 @@ export interface IdentityListProps {
   isShowMenu: boolean;
   identities: IdentityData[];
   selectedCommitment?: string;
-  onSelect: (identityCommitment: string) => void;
+  onSelect?: (identityCommitment: string) => void;
 }
 
 export const IdentityList = ({
@@ -24,7 +24,7 @@ export const IdentityList = ({
   isShowMenu,
   identities,
   selectedCommitment = undefined,
-  onSelect: onSelectIdentity,
+  onSelect = undefined,
 }: IdentityListProps): JSX.Element => {
   const dispatch = useAppDispatch();
 
@@ -57,7 +57,7 @@ export const IdentityList = ({
             metadata={metadata}
             selected={selectedCommitment}
             onDeleteIdentity={onDeleteIdentity}
-            onSelectIdentity={onSelectIdentity}
+            onSelectIdentity={onSelect}
             onUpdateIdentityName={onUpdateIdentityName}
           />
         ))}

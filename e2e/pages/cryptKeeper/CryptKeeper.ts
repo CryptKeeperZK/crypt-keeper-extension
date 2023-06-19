@@ -3,15 +3,16 @@ import * as metamaskCommands from "@synthetixio/synpress/commands/metamask";
 import BasePage from "../BasePage";
 
 import Activity from "./Activity";
+import ConnectIdentity from "./ConnectIdentity";
 import Identities from "./Identities";
 import Settings from "./Settings";
 
 export default class CryptKeeper extends BasePage {
-  activityTab = new Activity(this.page);
+  activity = new Activity(this.page);
 
-  identitiesTab = new Identities(this.page);
+  identities = new Identities(this.page);
 
-  settingsPage = new Settings(this.page);
+  settings = new Settings(this.page);
 
   async openPopup(extensionId: string): Promise<void> {
     await this.page.goto(`chrome-extension://${extensionId}/popup.html`);
@@ -27,12 +28,12 @@ export default class CryptKeeper extends BasePage {
   }
 
   async lock(): Promise<void> {
-    await this.page.getByTestId("menu").click();
+    await this.page.getByTestId("menu").first().click();
     await this.page.getByText("Lock", { exact: true }).click();
   }
 
   async connectWallet(): Promise<void> {
-    await this.page.getByTestId("menu").click();
+    await this.page.getByTestId("menu").first().click();
     await this.page.getByText("Connect Metamask", { exact: true }).click();
 
     await metamaskCommands.acceptAccess();
@@ -47,5 +48,19 @@ export default class CryptKeeper extends BasePage {
 
   async approve(): Promise<void> {
     await this.page.getByText("Approve").click();
+  }
+
+  async connectIdentity(index = 0): Promise<void> {
+    const cryptKeeper = await this.page.context().waitForEvent("page");
+
+    await new ConnectIdentity(cryptKeeper, this.identities)
+      .createIdentity({ walletType: "ck", identityType: "Random" })
+      .then((page) => page.selectIdentity(index));
+  }
+
+  async selectIdentity(index = 0): Promise<void> {
+    const cryptKeeper = await this.page.context().waitForEvent("page");
+
+    await new ConnectIdentity(cryptKeeper, this.identities).selectIdentity(index);
   }
 }

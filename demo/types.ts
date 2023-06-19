@@ -16,6 +16,7 @@ export interface CryptKeeperInjectedProvider {
   accounts: () => Promise<string[]>;
   connect: () => Promise<CryptKeeperInjectedProvider>;
   createIdentity: (payload: { host: string }) => Promise<void>;
+  connectIdentity: (payload: { host: string }) => Promise<void>;
   getConnectedIdentity: () => Promise<ConnectedIdentity>;
   cleanListeners: () => void;
   semaphoreProof(

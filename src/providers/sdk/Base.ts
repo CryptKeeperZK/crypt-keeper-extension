@@ -1,5 +1,4 @@
 import { MerkleProof } from "@zk-kit/incremental-merkle-tree";
-import log from "loglevel";
 
 import EventEmitter from "@src/background/services/event";
 import { ZkIdentitySemaphore } from "@src/background/services/zkIdentity/protocols/ZkIdentitySemaphore";
@@ -17,6 +16,7 @@ import {
   ConnectedIdentity,
   SemaphoreProof,
   ICreateIdentityRequestArgs,
+  IConnectIdentityRequestArgs,
 } from "@src/types";
 import { HostPermission } from "@src/ui/ducks/permissions";
 
@@ -46,22 +46,24 @@ export class CryptKeeperInjectedProvider extends EventEmitter {
    * @returns injected client
    */
   async connect(): Promise<CryptKeeperInjectedProvider> {
-    try {
-      const { isApproved, canSkipApprove } = await this.tryInject(window.location.origin);
+    const { isApproved, canSkipApprove } = await this.tryConnect(window.location.origin);
 
-      if (isApproved) {
-        await this.addHost(window.location.origin, canSkipApprove);
-      }
-    } catch (err) {
-      log.debug("Err: ", err);
+    if (isApproved) {
+      await this.addHost(window.location.origin, canSkipApprove);
     }
 
     await this.post({ method: RPCAction.CLOSE_POPUP });
 
+    const connectedIdentity = await this.getConnectedIdentity();
+
+    if (!connectedIdentity?.commitment) {
+      await this.connectIdentity({ host: window.location.origin });
+    }
+
     return this;
   }
 
-  private async tryInject(host: string): Promise<Approvals> {
+  private async tryConnect(host: string): Promise<Approvals> {
     return this.post({
       method: RPCAction.CONNECT,
       payload: { origin: host },
@@ -185,9 +187,18 @@ export class CryptKeeperInjectedProvider extends EventEmitter {
     });
   }
 
-  async createIdentity({ host }: ICreateIdentityRequestArgs): Promise<unknown> {
-    return this.post({
-      method: RPCAction.CREATE_IDENTITY_REQ,
+  async createIdentity({ host }: ICreateIdentityRequestArgs): Promise<void> {
+    await this.post({
+      method: RPCAction.CREATE_IDENTITY_REQUEST,
+      payload: {
+        host,
+      },
+    });
+  }
+
+  async connectIdentity({ host }: IConnectIdentityRequestArgs): Promise<void> {
+    await this.post({
+      method: RPCAction.CONNECT_IDENTITY_REQUEST,
       payload: {
         host,
       },

@@ -14,6 +14,7 @@ export interface IUsePopupData {
 
 const REDIRECT_PATHS: Record<string, Paths> = {
   [Paths.CREATE_IDENTITY]: Paths.CREATE_IDENTITY,
+  [Paths.CONNECT_IDENTITY]: Paths.CONNECT_IDENTITY,
 };
 
 export const usePopup = (): IUsePopupData => {

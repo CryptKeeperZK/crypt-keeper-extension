@@ -9,7 +9,7 @@ const ConfirmRequestModal = (): JSX.Element | null => {
   const [pendingRequest] = pendingRequests;
 
   switch (pendingRequest?.type) {
-    case PendingRequestType.INJECT:
+    case PendingRequestType.CONNECT:
     case PendingRequestType.APPROVE:
       return (
         <ConnectionApprovalModal

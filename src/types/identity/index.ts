@@ -14,6 +14,10 @@ export interface ICreateIdentityRequestArgs {
   host: string;
 }
 
+export interface IConnectIdentityRequestArgs {
+  host: string;
+}
+
 export type NewIdentityRequest = {
   strategy: IdentityStrategy;
   options: CreateIdentityOptions;

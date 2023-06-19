@@ -2,7 +2,7 @@ import { useCallback, useState } from "react";
 
 import { PendingRequest, RequestResolutionAction, RequestResolutionStatus } from "@src/types";
 import { useAppDispatch } from "@src/ui/ducks/hooks";
-import { finalizeRequest, usePendingRequests } from "@src/ui/ducks/requests";
+import { fetchPendingRequests, finalizeRequest, usePendingRequests } from "@src/ui/ducks/requests";
 
 export interface IUseConfirmRequestModalData {
   error: string;
@@ -19,36 +19,37 @@ export const useConfirmRequestModal = (): IUseConfirmRequestModalData => {
   const [loading, setLoading] = useState(false);
   const [pendingRequest] = pendingRequests;
 
-  const reject = useCallback(
-    (err?: Error) => {
-      const req: RequestResolutionAction<Error> = {
-        id: pendingRequest?.id,
-        status: RequestResolutionStatus.REJECT,
-        data: err,
-      };
-
+  const finalize = useCallback(
+    (req: RequestResolutionAction) => {
       setLoading(true);
       dispatch(finalizeRequest(req))
+        .then(() => dispatch(fetchPendingRequests()))
         .catch((e: Error) => setError(e.message))
         .finally(() => setLoading(false));
     },
-    [pendingRequest?.id, setLoading, setError, dispatch],
+    [setLoading, setError, dispatch],
+  );
+
+  const reject = useCallback(
+    (err?: Error) => {
+      finalize({
+        id: pendingRequest?.id,
+        status: RequestResolutionStatus.REJECT,
+        data: err,
+      });
+    },
+    [pendingRequest?.id, finalize],
   );
 
   const accept = useCallback(
     (data?: unknown) => {
-      const req: RequestResolutionAction = {
+      finalize({
         id: pendingRequest?.id,
         status: RequestResolutionStatus.ACCEPT,
         data,
-      };
-
-      setLoading(true);
-      dispatch(finalizeRequest(req))
-        .catch((e: Error) => setError(e.message))
-        .finally(() => setLoading(false));
+      });
     },
-    [pendingRequest?.id, setError, setLoading],
+    [pendingRequest?.id, finalize],
   );
 
   return {

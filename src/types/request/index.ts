@@ -14,7 +14,7 @@ export enum PendingRequestType {
   SEMAPHORE_PROOF,
   RLN_PROOF,
   APPROVE,
-  INJECT,
+  CONNECT,
 }
 
 export interface PendingRequest<P = unknown> {

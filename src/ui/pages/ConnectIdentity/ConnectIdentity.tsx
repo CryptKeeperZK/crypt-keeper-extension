@@ -43,7 +43,9 @@ const ConnectIdentity = (): JSX.Element => {
               Please choose one to connect with or choose to
             </Typography>
 
-            <NavLink to={`${Paths.CREATE_IDENTITY}?back=true&host=${host}`}>create a new identity</NavLink>
+            <NavLink data-testid="create-new-identity" to={`${Paths.CREATE_IDENTITY}?back=true&host=${host}`}>
+              create a new identity
+            </NavLink>
           </Box>
         </Box>
 
@@ -86,7 +88,13 @@ const ConnectIdentity = (): JSX.Element => {
           Reject
         </Button>
 
-        <Button disabled={!selectedIdentityCommitment} sx={{ ml: 1 }} variant="contained" onClick={onConnect}>
+        <Button
+          data-testid="connect-identity"
+          disabled={!selectedIdentityCommitment}
+          sx={{ ml: 1 }}
+          variant="contained"
+          onClick={onConnect}
+        >
           Connect
         </Button>
       </FullModalFooter>

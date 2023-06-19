@@ -8,7 +8,7 @@ import "./home.scss";
 import { useHome } from "./useHome";
 
 const Home = (): JSX.Element => {
-  const { identities, connectedIdentity, refreshConnectionStatus, onSelectIdentity } = useHome();
+  const { identities, connectedIdentity, refreshConnectionStatus } = useHome();
 
   return (
     <div className="w-full h-full flex flex-col home" data-testid="home-page">
@@ -23,7 +23,6 @@ const Home = (): JSX.Element => {
             isShowMenu
             identities={identities}
             selectedCommitment={connectedIdentity?.commitment}
-            onSelect={onSelectIdentity}
           />
 
           <ActivityList />

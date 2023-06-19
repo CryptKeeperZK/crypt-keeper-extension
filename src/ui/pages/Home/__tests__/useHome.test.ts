@@ -8,13 +8,7 @@ import { useRef } from "react";
 import { defaultWalletHookData } from "@src/config/mock/wallet";
 import { IdentityData } from "@src/types";
 import { useAppDispatch } from "@src/ui/ducks/hooks";
-import {
-  useIdentities,
-  fetchIdentities,
-  fetchHistory,
-  useConnectedIdentity,
-  connectIdentity,
-} from "@src/ui/ducks/identities";
+import { useIdentities, fetchIdentities, fetchHistory, useConnectedIdentity } from "@src/ui/ducks/identities";
 import { checkHostApproval } from "@src/ui/ducks/permissions";
 import { useEthWallet } from "@src/ui/hooks/wallet";
 import { getLastActiveTabUrl } from "@src/util/browser";
@@ -39,7 +33,6 @@ jest.mock("@src/ui/ducks/identities", (): unknown => ({
   fetchHistory: jest.fn(),
   useIdentities: jest.fn(),
   useConnectedIdentity: jest.fn(),
-  connectIdentity: jest.fn(),
 }));
 
 jest.mock("@src/ui/ducks/permissions", (): unknown => ({
@@ -126,14 +119,5 @@ describe("ui/pages/Home/useHome", () => {
     await act(async () => result.current.refreshConnectionStatus());
 
     expect(checkHostApproval).not.toBeCalled();
-  });
-
-  test("should select identity properly", async () => {
-    const { result } = renderHook(() => useHome());
-
-    await act(async () => Promise.resolve(result.current.onSelectIdentity("1")));
-
-    expect(connectIdentity).toBeCalledTimes(1);
-    expect(connectIdentity).toBeCalledWith({ identityCommitment: "1", host: "http://localhost:3000" });
   });
 });

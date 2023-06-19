@@ -1,3 +1,5 @@
+import { Page } from "@playwright/test";
+
 import BasePage from "../BasePage";
 
 export interface ICreateIdentityArgs {
@@ -29,26 +31,29 @@ export default class Identities extends BasePage {
     await this.page.getByText("Identities", { exact: true }).click();
   }
 
-  async createIdentity({ identityType, provider, nonce, walletType }: ICreateIdentityArgs): Promise<void> {
+  async createIdentityFromHome(params: ICreateIdentityArgs): Promise<void> {
     await this.page.getByTestId("create-new-identity").click({ delay: 1000 });
-
     const cryptKeeper = await this.page.context().waitForEvent("page");
 
+    await this.createIdentity(cryptKeeper, params);
+  }
+
+  async createIdentity(page: Page, { identityType, provider, nonce, walletType }: ICreateIdentityArgs): Promise<void> {
     if (identityType) {
-      await cryptKeeper.locator("#identityStrategyType").click();
-      await cryptKeeper.locator(`[id$="-option-${IDENTITY_OPTIONS[identityType]}"]`).click();
+      await page.locator("#identityStrategyType").click();
+      await page.locator(`[id$="-option-${IDENTITY_OPTIONS[identityType]}"]`).click();
     }
 
     if (provider && identityType !== "Random") {
-      await cryptKeeper.locator("#web2Provider").click();
-      await cryptKeeper.locator(`[id$="-option-${PROVIDER_OPTIONS[provider]}"]`).click();
+      await page.locator("#web2Provider").click();
+      await page.locator(`[id$="-option-${PROVIDER_OPTIONS[provider]}"]`).click();
     }
 
     if (nonce && identityType !== "Random") {
-      await cryptKeeper.getByLabel("Nonce").fill(nonce.toString());
+      await page.getByLabel("Nonce").fill(nonce.toString());
     }
 
-    await cryptKeeper.getByRole("button", { name: walletType === "eth" ? "Metamask" : "Cryptkeeper" }).click();
+    await page.getByRole("button", { name: walletType === "eth" ? "Metamask" : "Cryptkeeper" }).click();
 
     if (walletType === "eth") {
       // TODO: synpress doesn't support new data-testid for metamask
