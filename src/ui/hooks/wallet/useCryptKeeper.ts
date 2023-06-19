@@ -37,7 +37,7 @@ export const useCryptKeeperWallet = (): IUseWalletData => {
     isInjectedWallet: Boolean(window.cryptkeeper),
     address,
     addresses,
-    connectorName: ConnectorNames.CRYPT_KEEPER,
+    connectorName: ConnectorNames.CRYPTKEEPER,
     connector: cryptKeeper,
     balance: undefined,
     chain: undefined,

@@ -163,7 +163,7 @@ describe("ui/pages/CreateIdentity", () => {
       messageSignature: undefined,
       options: { message: mockMessage, account: ZERO_ADDRESS },
       strategy: "random",
-      walletType: EWallet.CRYPT_KEEPER_WALLET,
+      walletType: EWallet.CRYPTKEEPER_WALLET,
     });
   });
 
@@ -188,7 +188,7 @@ describe("ui/pages/CreateIdentity", () => {
       messageSignature: undefined,
       options: { message: mockMessage, account: ZERO_ADDRESS },
       strategy: "random",
-      walletType: EWallet.CRYPT_KEEPER_WALLET,
+      walletType: EWallet.CRYPTKEEPER_WALLET,
     });
   });
 

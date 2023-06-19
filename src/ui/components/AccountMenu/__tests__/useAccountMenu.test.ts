@@ -64,7 +64,7 @@ describe("ui/components/AccountMenu/useAccountMenu", () => {
 
     expect(result.current.accounts).toStrictEqual([
       { type: EWallet.ETH_WALLET, address: defaultWalletHookData.address, active: true },
-      { type: EWallet.CRYPT_KEEPER_WALLET, address: defaultWalletHookData.address, active: true },
+      { type: EWallet.CRYPTKEEPER_WALLET, address: defaultWalletHookData.address, active: true },
     ]);
     expect(result.current.isOpen).toBe(false);
     expect(result.current.anchorEl).toBeUndefined();

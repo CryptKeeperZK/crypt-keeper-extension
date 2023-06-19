@@ -124,7 +124,7 @@ export const useCreateIdentity = (): IUseCreateIdentityData => {
   );
 
   const onCreateIdentityWithCryptkeeper = useCallback(
-    async (data: FormFields) => createNewIdentity(data, EWallet.CRYPT_KEEPER_WALLET),
+    async (data: FormFields) => createNewIdentity(data, EWallet.CRYPTKEEPER_WALLET),
     [setError, createNewIdentity],
   );
 

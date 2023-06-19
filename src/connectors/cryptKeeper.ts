@@ -5,7 +5,7 @@ import { RPCAction } from "@src/constants";
 import { type CryptKeeperInjectedProvider, initializeInjectedProvider } from "@src/providers";
 import postMessage from "@src/util/postMessage";
 
-export class CryptKeeperConnector extends Connector {
+export class CryptkeeperConnector extends Connector {
   private eagerConnection?: Promise<void>;
 
   customProvider?: CryptKeeperInjectedProvider;
@@ -77,6 +77,6 @@ export class CryptKeeperConnector extends Connector {
   }
 }
 
-export const [cryptKeeper, cryptKeeperHooks] = initializeConnector<CryptKeeperConnector>(
-  (actions) => new CryptKeeperConnector(actions),
+export const [cryptKeeper, cryptKeeperHooks] = initializeConnector<CryptkeeperConnector>(
+  (actions) => new CryptkeeperConnector(actions),
 );

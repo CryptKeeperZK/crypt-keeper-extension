@@ -24,7 +24,7 @@ describe("ui/components/Header", () => {
   const defaultHookData: IUseAccountMenuData = {
     isOpen: true,
     accounts: [
-      { type: EWallet.CRYPT_KEEPER_WALLET, address: ZERO_ADDRESS, active: true },
+      { type: EWallet.CRYPTKEEPER_WALLET, address: ZERO_ADDRESS, active: true },
       { type: EWallet.ETH_WALLET, address: ZERO_ADDRESS, active: true },
     ],
     anchorEl: document.body,

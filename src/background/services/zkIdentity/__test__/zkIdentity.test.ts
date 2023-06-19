@@ -466,7 +466,7 @@ describe("background/services/zkIdentity", () => {
 
       const result = await zkIdentityService.createIdentity({
         strategy: identityStrategy,
-        walletType: EWallet.CRYPT_KEEPER_WALLET,
+        walletType: EWallet.CRYPTKEEPER_WALLET,
         options: identityOptions,
         groups: [],
         host: "http://localhost:3000",

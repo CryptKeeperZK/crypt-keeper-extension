@@ -4,7 +4,7 @@ import { ConnectorNames } from "@src/types";
 
 import type { Connector } from "@web3-react/types";
 
-import { CryptKeeperConnector } from "./cryptKeeper";
+import { CryptkeeperConnector } from "./cryptKeeper";
 import { MockConnector } from "./mock";
 
 export function getConnectorName(connector: Connector): ConnectorNames {
@@ -12,8 +12,8 @@ export function getConnectorName(connector: Connector): ConnectorNames {
     return ConnectorNames.METAMASK;
   }
 
-  if (connector instanceof CryptKeeperConnector) {
-    return ConnectorNames.CRYPT_KEEPER;
+  if (connector instanceof CryptkeeperConnector) {
+    return ConnectorNames.CRYPTKEEPER;
   }
 
   if (connector instanceof MockConnector) {

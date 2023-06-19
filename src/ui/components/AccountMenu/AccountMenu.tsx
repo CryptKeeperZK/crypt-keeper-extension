@@ -19,8 +19,8 @@ export interface IAccountMenuProps {
 }
 
 const WALLET_LABEL_BY_TYPE = {
-  [EWallet.ETH_WALLET]: "Metamask",
-  [EWallet.CRYPT_KEEPER_WALLET]: "Cryptkeeper",
+  [EWallet.ETH_WALLET]: "MetaMask",
+  [EWallet.CRYPTKEEPER_WALLET]: "CryptKeeper",
 };
 
 export const AccountMenu = ({ ethWallet, cryptKeeperWallet }: IAccountMenuProps): JSX.Element => {
@@ -57,7 +57,7 @@ export const AccountMenu = ({ ethWallet, cryptKeeperWallet }: IAccountMenuProps)
             key={`${account.type}-${account.address}`}
             data-testid={`${account.type}-${account.address}`}
             sx={{ display: "flex", alignItems: "center", width: 200 }}
-            onClick={account.type === EWallet.CRYPT_KEEPER_WALLET ? () => onSelectAccount(account.address) : undefined}
+            onClick={account.type === EWallet.CRYPTKEEPER_WALLET ? () => onSelectAccount(account.address) : undefined}
           >
             <Jazzicon diameter={16} seed={jsNumberForAddress(account.address)} />
 
