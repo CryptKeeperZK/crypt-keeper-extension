@@ -127,6 +127,7 @@ test.describe("identity", () => {
     await expect(extension.getByText(/Account/)).toHaveCount(1);
 
     await extension.activity.openTab();
+    await expect(extension.activity.getByText(/Identity created/)).toHaveCount(1);
     await extension.activity.deleteOperation();
     await expect(extension.activity.getByText("No records found")).toBeVisible();
 
