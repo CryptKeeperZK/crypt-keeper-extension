@@ -35,13 +35,13 @@ export default defineConfig({
 
   webServer: [
     {
-      command: "npm run merkle",
+      command: "pnpm run merkle",
       url: "http://localhost:8090",
       timeout: 120 * 1000,
       reuseExistingServer: !process.env.CI,
     },
     {
-      command: "npm run start",
+      command: "pnpm run start",
       cwd: path.resolve(__dirname, "./demo"),
       url: "http://localhost:1234",
       timeout: 120 * 1000,

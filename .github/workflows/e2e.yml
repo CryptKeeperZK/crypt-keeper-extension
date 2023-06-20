@@ -39,21 +39,24 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
+      - uses: pnpm/action-setup@v2
+        with:
+          version: latest
 
       - uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node-version }}
-          cache: "npm"
+          cache: "pnpm"
 
       - name: Cache node modules
         uses: actions/cache@v3
         continue-on-error: true
         with:
           path: |
-            ~/.npm
+            ~/.pnpm-store
             node_modules
             /home/runner/.cache/Cypress
-          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          key: ${{ runner.os }}-node-${{ hashFiles('**/pnpm-lock.yaml') }}
           restore-keys: |
             ${{ runner.os }}-node-
 
@@ -72,38 +75,38 @@ jobs:
           key: ${{ runner.os }}-playwright-${{ env.PLAYWRIGHT_VERSION }}
 
       - name: Install dependencies
-        run: npm ci --prefer-offline --no-audit
+        run: pnpm install --frozen-lockfile --prefer-offline
 
       - name: Setup demo
         working-directory: ./demo
-        run: npm ci --prefer-offline --no-audit
+        run: pnpm install --frozen-lockfile --prefer-offline
 
       - name: Build extension (Linux)
         if: runner.os == 'Linux'
-        run: npm run build
+        run: pnpm run build
         env:
-          METAMASK_EXTENSION_ID: "gopbpnbkpnnmomhlhkpljncmmoidkioi"
+          METAMASK_EXTENSION_ID: "dfnhiljlmdmcddpplagcpfmollfdgnba"
 
       - name: Build extension (Windows)
         if: runner.os == 'Windows'
-        run: npm run build
+        run: pnpm run build
         env:
-          METAMASK_EXTENSION_ID: "hbmackiaknfclalpcphhhlakeciobebl"
+          METAMASK_EXTENSION_ID: ""
 
       - name: Build extension (macOS)
         if: runner.os == 'macOS'
-        run: npm run build
+        run: pnpm run build
         env:
-          METAMASK_EXTENSION_ID: "jkmpgeehaghmacekpnefomipbnkkbnlo"
+          METAMASK_EXTENSION_ID: ""
 
       - name: Install Playwright Browsers
         if: steps.playwright-cache.outputs.cache-hit != 'true'
-        run: npx playwright install --with-deps chromium
+        run: pnpx playwright install --with-deps chromium
 
       - name: Run Playwright tests
         uses: coactions/setup-xvfb@v1
         with:
-          run: npm run ${{ matrix.command }}
+          run: pnpm run ${{ matrix.command }}
 
       - uses: actions/upload-artifact@v3
         if: always()

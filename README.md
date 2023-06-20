@@ -24,21 +24,21 @@ Proof generation is enabled in two ways:
 
 # Development
 
-1. `npm install`
-2. `npm run dev`
+1. `pnpm install`
+2. `pnpm run dev`
 3. Load the dist directory as an unpacked extension from your browser.
 
 # Demo
 
-1. `npm run dev` or `npm run build`
-2. `npm run merkle`
-3. `cd demo && npm install && npm run start`
+1. `pnpm run dev` or `pnpm run build`
+2. `pnpm run merkle`
+3. `cd demo && pnpm install && pnpm run start`
 
 # E2E
 
-1. Run `npx playwright install --with-deps chromium` to install playwright dependencies
-2. Run `npm install` for extension and for demo
+1. Run `pnpx playwright install --with-deps chromium` to install playwright dependencies
+2. Run `pnpm install` for extension and for demo
 3. Make sure you have `.env.test` file with `METAMASK_EXTENSION_ID`.
-4. `METAMASK_EXTENSION_ID` can be found in log output for `npm run e2e`. For different environments `METAMASK_EXTENSION_ID` is also different so we need to specify it explicitly.
-5. Run `npm run build:e2e` to build the extension
-6. Run `npm run e2e` to run playwright e2e tests
+4. `METAMASK_EXTENSION_ID` can be found in log output for `pnpm run e2e`. For different environments `METAMASK_EXTENSION_ID` is also different so we need to specify it explicitly.
+5. Run `pnpm run build:e2e` to build the extension
+6. Run `pnpm run e2e` to run playwright e2e tests
