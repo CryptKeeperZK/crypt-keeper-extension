@@ -1,6 +1,6 @@
 export interface Credential {
   context: string[];
-  id: string;
+  id?: string;
   type: string[];
   issuer: string | Issuer;
   issuanceDate: Date;
