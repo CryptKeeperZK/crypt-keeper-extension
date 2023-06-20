@@ -11,13 +11,13 @@ Currently it supports operations for <strong><a href="https://semaphore.appliedz
 <br/>
 
 > YouTube: CryptKeeper Demo
-[![Video](https://img.youtube.com/vi/8nrggpxbJu8/maxresdefault.jpg)](https://youtu.be/8nrggpxbJu8)
+> [![Video](https://img.youtube.com/vi/8nrggpxbJu8/maxresdefault.jpg)](https://youtu.be/8nrggpxbJu8)
 
 # Supported Features
 
-- Semaphore Identity secret and Identity commitment generation. 
-- Connecting with your semaphore identity to a website. 
-- Semaphore ZK-Proof generation. 
+- Semaphore Identity secret and Identity commitment generation.
+- Connecting with your semaphore identity to a website.
+- Semaphore ZK-Proof generation.
 
 ### Proof generation is enabled in two ways:
 
