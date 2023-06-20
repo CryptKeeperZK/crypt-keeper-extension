@@ -1,23 +1,27 @@
-<p align='center'>
-    <img src='./src/static/icons/logo.png' alt='screenshot' />
+<h1 align="center">CryptKeeper</h1>
+
+<p align="center">
+<a rel="noreferrer noopener" href="https://addons.mozilla.org/firefox/addon/cryptkeeper/"><img alt="Firefox Add-ons" src="https://img.shields.io/badge/Firefox-141e24.svg?&style=for-the-badge&logo=firefox-browser"></a>  
 </p>
 
-# CryptKeeper Browser Extension
+<img src="./src/static/icons/logo.png" align="right" alt="CryptKeeper logo">
 
-CryptKeeper is a browser extension which enables Zero knowledge identity management and proof generation.
-Currently it supports operations for Semaphore and RLN gadgets.
+<br/>
+<p align="center">CryptKeeper is an <strong>open-source</strong> MIT-licensed <strong>browser extension</strong> which enables <strong>Zero-Knowledge</strong> identity management and proof generation.
+Currently it supports operations for <strong><a href="https://semaphore.appliedzkp.org/">Semaphore</a></strong> gadgets.</p>
+<br/>
+<br/>
 
-This plugin is still in development phase.
+> YouTube: CryptKeeper Demo
+[![Video](https://img.youtube.com/vi/8nrggpxbJu8/maxresdefault.jpg)](https://youtu.be/8nrggpxbJu8)
 
-The following features are supported currently:
+# Supported Features
 
-- Identity secret and Identity commitment generation
-- Semaphore ZK-Proof generation
-- RLN ZK-Proof generation
+- Semaphore Identity secret and Identity commitment generation. 
+- Connecting with your semaphore identity to a website. 
+- Semaphore ZK-Proof generation. 
 
-The plugin uses the [zk-kit library](https://github.com/appliedzkp/zk-kit).
-
-Proof generation is enabled in two ways:
+## Proof generation is enabled in two ways:
 
 - by providing merkle witness directly
 - by providing a secure service address from which the merkle witness should be obtained
@@ -28,13 +32,13 @@ Proof generation is enabled in two ways:
 2. `pnpm run dev`
 3. Load the dist directory as an unpacked extension from your browser.
 
-# Demo
+## Demo
 
 1. `pnpm run dev` or `pnpm run build`
 2. `pnpm run merkle`
 3. `cd demo && pnpm install && pnpm run start`
 
-# E2E
+## E2E
 
 1. Run `pnpx playwright install --with-deps chromium` to install playwright dependencies
 2. Run `pnpm install` for extension and for demo
