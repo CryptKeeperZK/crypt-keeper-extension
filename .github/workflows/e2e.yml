@@ -85,19 +85,19 @@ jobs:
         if: runner.os == 'Linux'
         run: pnpm run build
         env:
-          METAMASK_EXTENSION_ID: "gopbpnbkpnnmomhlhkpljncmmoidkioi"
+          METAMASK_EXTENSION_ID: "dfnhiljlmdmcddpplagcpfmollfdgnba"
 
       - name: Build extension (Windows)
         if: runner.os == 'Windows'
         run: pnpm run build
         env:
-          METAMASK_EXTENSION_ID: "hbmackiaknfclalpcphhhlakeciobebl"
+          METAMASK_EXTENSION_ID: ""
 
       - name: Build extension (macOS)
         if: runner.os == 'macOS'
         run: pnpm run build
         env:
-          METAMASK_EXTENSION_ID: "jkmpgeehaghmacekpnefomipbnkkbnlo"
+          METAMASK_EXTENSION_ID: ""
 
       - name: Install Playwright Browsers
         if: steps.playwright-cache.outputs.cache-hit != 'true'
