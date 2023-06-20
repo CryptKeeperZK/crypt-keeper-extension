@@ -1,10 +1,8 @@
-<h1 align="center">CryptKeeper</h1>
+<h1 align="center">Crypt-Keeper</h1> <img src="./src/static/icons/logo.png" align="right" alt="CryptKeeper logo">
 
 <p align="center">
 <a rel="noreferrer noopener" href="https://addons.mozilla.org/firefox/addon/cryptkeeper/"><img alt="Firefox Add-ons" src="https://img.shields.io/badge/Firefox-141e24.svg?&style=for-the-badge&logo=firefox-browser"></a>  
 </p>
-
-<img src="./src/static/icons/logo.png" align="right" alt="CryptKeeper logo">
 
 <br/>
 <p align="center">CryptKeeper is an <strong>open-source</strong> MIT-licensed <strong>browser extension</strong> which enables <strong>Zero-Knowledge</strong> identity management and proof generation.
