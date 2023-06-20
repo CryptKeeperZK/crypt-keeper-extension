@@ -33,13 +33,21 @@ Currently it supports operations for <strong><a href="https://semaphore.appliedz
 2. `pnpm run dev`
 3. Load the dist directory as an unpacked extension from your browser.
 
+<<<<<<< HEAD
 ### Demo
+=======
+## Demo
+>>>>>>> 8389fa9 (chore: enhance readme)
 
 1. `pnpm run dev` or `pnpm run build`
 2. `pnpm run merkle`
 3. `cd demo && pnpm install && pnpm run start`
 
+<<<<<<< HEAD
 ### E2E
+=======
+## E2E
+>>>>>>> 8389fa9 (chore: enhance readme)
 
 1. Run `pnpx playwright install --with-deps chromium` to install playwright dependencies
 2. Run `pnpm install` for extension and for demo
