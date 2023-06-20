@@ -76,7 +76,7 @@ describe("ui/hooks/useCryptKeeperWallet", () => {
     expect(result.current.isInjectedWallet).toBe(false);
     expect(result.current.chain).toBeUndefined();
     expect(result.current.address).toBe(defaultWalletHookData.address);
-    expect(result.current.connectorName).toBe(ConnectorNames.CRYPT_KEEPER);
+    expect(result.current.connectorName).toBe(ConnectorNames.CRYPTKEEPER);
     expect(result.current.connector).toBeDefined();
     expect(result.current.provider).toBeUndefined();
   });

@@ -14,7 +14,7 @@ import type { BrowserProvider } from "ethers";
 const hooksByConnectorName = {
   [ConnectorNames.METAMASK]: { connector: metamask, hooks: metamaskHooks },
   [ConnectorNames.MOCK]: undefined,
-  [ConnectorNames.CRYPT_KEEPER]: undefined,
+  [ConnectorNames.CRYPTKEEPER]: undefined,
   [ConnectorNames.UNKNOWN]: undefined,
 };
 

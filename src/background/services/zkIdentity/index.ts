@@ -307,7 +307,7 @@ export default class ZkIdentityService implements IBackupable {
       messageSignature: strategy === "interrep" ? messageSignature : undefined,
     };
 
-    if (walletType === EWallet.CRYPT_KEEPER_WALLET && strategy === "interrep") {
+    if (walletType === EWallet.CRYPTKEEPER_WALLET && strategy === "interrep") {
       config.messageSignature = await this.walletService.signMessage({
         message: options.message,
         address: options.account,

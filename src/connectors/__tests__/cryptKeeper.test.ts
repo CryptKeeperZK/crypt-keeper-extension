@@ -7,7 +7,7 @@ import { ZERO_ADDRESS } from "@src/config/const";
 import { initializeInjectedProvider } from "@src/providers";
 import postMessage from "@src/util/postMessage";
 
-import { cryptKeeper, cryptKeeperHooks, CryptKeeperConnector } from "..";
+import { cryptKeeper, cryptKeeperHooks, CryptkeeperConnector } from "..";
 
 jest.mock("@src/providers", (): unknown => ({
   initializeInjectedProvider: jest.fn(),
@@ -53,7 +53,7 @@ describe("connectors/cryptKeeper", () => {
   test("should activate connector properly", async () => {
     (postMessage as jest.Mock).mockResolvedValue(mockAddresses);
 
-    const connector = new CryptKeeperConnector(mockActions);
+    const connector = new CryptkeeperConnector(mockActions);
 
     await connector.activate();
 
@@ -62,7 +62,7 @@ describe("connectors/cryptKeeper", () => {
   });
 
   test("should activate connector twice properly", async () => {
-    const connector = new CryptKeeperConnector(mockActions);
+    const connector = new CryptkeeperConnector(mockActions);
 
     await connector.activate();
     await connector.activate();
@@ -76,7 +76,7 @@ describe("connectors/cryptKeeper", () => {
     mockProvider.connect = jest.fn(() => Promise.resolve());
     (initializeInjectedProvider as jest.Mock).mockReturnValue(mockProvider);
 
-    const connector = new CryptKeeperConnector(mockActions);
+    const connector = new CryptkeeperConnector(mockActions);
 
     await connector.activate();
 
@@ -86,7 +86,7 @@ describe("connectors/cryptKeeper", () => {
   test("should throw error if there is no provider", async () => {
     (initializeInjectedProvider as jest.Mock).mockReturnValue(undefined);
 
-    const connector = new CryptKeeperConnector(mockActions);
+    const connector = new CryptkeeperConnector(mockActions);
 
     await expect(connector.activate()).rejects.toThrow("No cryptkeeper installed");
     expect(mockActions.startActivation).toBeCalledTimes(1);
@@ -96,7 +96,7 @@ describe("connectors/cryptKeeper", () => {
   test("should handle incomming events properly", async () => {
     (postMessage as jest.Mock).mockResolvedValue(mockAddresses);
 
-    const connector = new CryptKeeperConnector(mockActions);
+    const connector = new CryptkeeperConnector(mockActions);
 
     await connector.activate();
 
@@ -110,7 +110,7 @@ describe("connectors/cryptKeeper", () => {
 
   test("should not connect eagerly if there is no provider", async () => {
     (initializeInjectedProvider as jest.Mock).mockReturnValue(undefined);
-    const connector = new CryptKeeperConnector(mockActions);
+    const connector = new CryptkeeperConnector(mockActions);
 
     await connector.connectEagerly();
 
@@ -122,7 +122,7 @@ describe("connectors/cryptKeeper", () => {
     (initializeInjectedProvider as jest.Mock).mockImplementation(() => {
       throw new Error();
     });
-    const connector = new CryptKeeperConnector(mockActions);
+    const connector = new CryptkeeperConnector(mockActions);
 
     await connector.connectEagerly();
 
@@ -134,7 +134,7 @@ describe("connectors/cryptKeeper", () => {
   test("should connect eagerly and set accounts properly", async () => {
     (postMessage as jest.Mock).mockResolvedValue(mockAddresses);
 
-    const connector = new CryptKeeperConnector(mockActions);
+    const connector = new CryptkeeperConnector(mockActions);
 
     await connector.connectEagerly();
 

@@ -5,7 +5,7 @@ import type { BrowserProvider } from "ethers";
 
 export enum ConnectorNames {
   METAMASK = "MetaMask",
-  CRYPT_KEEPER = "CryptKeeper",
+  CRYPTKEEPER = "CryptKeeper",
   MOCK = "Mock",
   UNKNOWN = "Unknown",
 }

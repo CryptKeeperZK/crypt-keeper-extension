@@ -11,6 +11,6 @@ test.describe("initialization", () => {
 
     await connectWallet({ page, cryptKeeperExtensionId, context });
 
-    await expect(page.getByText("Ethereum mainnet")).toBeVisible();
+    await expect(page.getByText("Connected to Metamask")).toBeVisible();
   });
 });

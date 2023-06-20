@@ -92,7 +92,7 @@ export const useAccountMenu = ({ ethWallet, cryptKeeperWallet }: IUseAccountMenu
   const cryptKeeperAddresses = useMemo(
     () =>
       cryptKeeperWallet.addresses?.map((address) => ({
-        type: EWallet.CRYPT_KEEPER_WALLET,
+        type: EWallet.CRYPTKEEPER_WALLET,
         address: address.toLowerCase(),
         active: cryptKeeperWallet.address === address,
       })) ?? [],

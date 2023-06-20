@@ -204,7 +204,7 @@ describe("ui/pages/CreateIdentity/useCreateIdentity", () => {
       messageSignature: undefined,
       options: { account: defaultWalletHookData.address, message: mockMessage, nonce: 0, web2Provider: "twitter" },
       strategy: "interrep",
-      walletType: EWallet.CRYPT_KEEPER_WALLET,
+      walletType: EWallet.CRYPTKEEPER_WALLET,
     });
     expect(mockNavigate).toBeCalledTimes(1);
     expect(mockNavigate).toBeCalledWith(Paths.HOME);
