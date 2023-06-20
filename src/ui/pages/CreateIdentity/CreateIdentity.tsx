@@ -6,13 +6,18 @@ import { Controller } from "react-hook-form";
 
 import { getEnabledFeatures } from "@src/config/features";
 import { IDENTITY_TYPES, WEB2_PROVIDER_OPTIONS } from "@src/constants";
+import { SelectOption } from "@src/types";
 import { Dropdown } from "@src/ui/components/Dropdown";
 import { FullModal, FullModalContent, FullModalFooter, FullModalHeader } from "@src/ui/components/FullModal";
 import { Icon } from "@src/ui/components/Icon";
 import { Input } from "@src/ui/components/Input";
 
+import type { MultiValue, SingleValue } from "react-select";
+
 import "./createIdentityStyles.scss";
 import { useCreateIdentity } from "./useCreateIdentity";
+
+type DropdownChangeHandler = (arg: SingleValue<SelectOption> | MultiValue<SelectOption>) => void;
 
 const CreateIdentity = (): JSX.Element => {
   const features = getEnabledFeatures();
@@ -52,6 +57,7 @@ const CreateIdentity = (): JSX.Element => {
                     isDisabled={!features.INTERREP_IDENTITY}
                     label="Identity type"
                     options={IDENTITY_TYPES}
+                    onChange={field.onChange as DropdownChangeHandler}
                   />
                 )}
                 rules={{ required: "Identity strategy type is required" }}
@@ -71,6 +77,7 @@ const CreateIdentity = (): JSX.Element => {
                         id="web2Provider"
                         label="Web2 Provider"
                         options={WEB2_PROVIDER_OPTIONS}
+                        onChange={field.onChange as DropdownChangeHandler}
                       />
                     )}
                     rules={{ required: "Provider is required" }}
