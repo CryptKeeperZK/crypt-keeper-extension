@@ -2,7 +2,7 @@ dist/
 node_modules/
 coverage/
 zkeyFiles/
-/test-results/
-/playwright-report/
-/playwright/.cache/
+test-results/
+playwright-report/
+playwright/.cache/
 tmp/
