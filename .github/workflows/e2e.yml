@@ -62,7 +62,7 @@ jobs:
 
       - name: Get installed Playwright version
         id: playwright-version
-        run: echo "PLAYWRIGHT_VERSION=$(node -e "console.log(require('./package-lock.json').dependencies['@playwright/test'].version)")" >> $GITHUB_ENV
+        run: echo "PLAYWRIGHT_VERSION=$(node -e "console.log(require('./package.json').dependencies['@playwright/test'].version)")" >> $GITHUB_ENV
 
       - name: Cache playwright binaries
         uses: actions/cache@v3
@@ -81,7 +81,7 @@ jobs:
         if: runner.os == 'Linux'
         run: pnpm run build
         env:
-          METAMASK_EXTENSION_ID: "dfnhiljlmdmcddpplagcpfmollfdgnba"
+          METAMASK_EXTENSION_ID: "kfclpnhnbcalgnjocffphlobofijdiij"
 
       - name: Build extension (Windows)
         if: runner.os == 'Windows'
