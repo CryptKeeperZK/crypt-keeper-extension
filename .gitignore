@@ -26,6 +26,7 @@ temp
 .sass-cache
 .DS_Store
 app/.DS_Store
+.parcel-cache
 
 storybook-build/
 coverage/
@@ -58,7 +59,7 @@ tsout/
 !.env.example
 .zip
 demo/.parcel-cache
-/test-results/
-/playwright-report/
-/playwright/.cache/
+test-results/
+playwright-report
+playwright/.cache/
 tmp/

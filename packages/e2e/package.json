@@ -1,0 +1,43 @@
+{
+  "name": "@cryptkeeper/e2e",
+  "version": "0.1.0",
+  "description": "E2E tests for CryptKeeper extension",
+  "main": "index.js",
+  "scripts": {
+    "e2e": "playwright test",
+    "e2e:ci": "cross-env CI=true pnpm run e2e",
+    "e2e:debug": "pnpm run e2e -- --debug",
+    "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
+    "lint:fix": "pnpm run lint --fix",
+    "prettier": "prettier -c .",
+    "prettier:fix": "prettier -w .",
+    "types": "tsc -p tsconfig.json --noEmit",
+    "githook:precommit": "lint-staged && pnpm run types"
+  },
+  "author": "Privacy and Scaling explorations team",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/privacy-scaling-explorations/crypt-keeper-extension"
+  },
+  "homepage": "https://github.com/privacy-scaling-explorations/crypt-keeper-extension",
+  "devDependencies": {
+    "@babel/eslint-parser": "^7.22.5",
+    "@playwright/test": "^1.35.1",
+    "@synthetixio/synpress": "^3.7.1",
+    "@typescript-eslint/eslint-plugin": "^5.60.0",
+    "@typescript-eslint/parser": "^5.60.0",
+    "eslint": "^8.43.0",
+    "eslint-config-airbnb": "^19.0.4",
+    "eslint-config-prettier": "^8.8.0",
+    "eslint-import-resolver-typescript": "^3.5.5",
+    "eslint-plugin-import": "^2.27.5",
+    "eslint-plugin-json": "^3.1.0",
+    "eslint-plugin-playwright": "^0.14.3",
+    "eslint-plugin-prettier": "^4.2.1",
+    "eslint-plugin-unused-imports": "^2.0.0",
+    "lint-staged": "^13.2.2",
+    "prettier": "^2.8.8",
+    "pretty-quick": "^3.1.3",
+    "wait-for-expect": "^3.0.2"
+  }
+}

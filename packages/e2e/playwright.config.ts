@@ -9,7 +9,7 @@ dotenv.config({ path: "./.env.test" });
  * See https://playwright.dev/docs/test-configuration.
  */
 export default defineConfig({
-  testDir: "./e2e/tests",
+  testDir: "./tests",
   timeout: process.env.CI ? 120_000 : 60_000,
   expect: {
     timeout: 5_000,
@@ -36,13 +36,14 @@ export default defineConfig({
   webServer: [
     {
       command: "pnpm run merkle",
+      cwd: path.resolve(__dirname, "../app"),
       url: "http://localhost:8090",
       timeout: 120 * 1000,
       reuseExistingServer: !process.env.CI,
     },
     {
       command: "pnpm run start",
-      cwd: path.resolve(__dirname, "./demo"),
+      cwd: path.resolve(__dirname, "../demo"),
       url: "http://localhost:1234",
       timeout: 120 * 1000,
       reuseExistingServer: !process.env.CI,
