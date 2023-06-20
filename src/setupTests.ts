@@ -47,14 +47,15 @@ jest.mock("@src/config/features", (): unknown => ({
 
 type Changes = Record<string, { oldValue: string | null; newValue: string | null }>;
 
-jest.mock("webextension-polyfill-ts", (): unknown => {
+jest.mock("webextension-polyfill", (): unknown => {
   const storageListeners: ((changes: Changes, namespace: string) => void)[] = [];
   const windowRemoveListeners: ((windowId: number) => void)[] = [];
   const namespace = "namespace";
   const defaultChanges = { key: { oldValue: null, newValue: null } };
 
   return {
-    browser: {
+    __esModule: true,
+    default: {
       tabs: {
         query: jest.fn().mockResolvedValue([]),
         sendMessage: jest.fn().mockResolvedValue(true),
@@ -77,6 +78,7 @@ jest.mock("webextension-polyfill-ts", (): unknown => {
 
       runtime: {
         connect: jest.fn(),
+        sendMessage: jest.fn(),
         getURL: jest.fn(),
       },
 

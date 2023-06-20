@@ -16,6 +16,12 @@
       "js": ["js/content.js"],
       "run_at": "document_start",
       "all_frames": true
+    },
+    {
+      "matches": ["file://*/*", "http://*/*", "https://*/*"],
+      "js": ["js/injected.js"],
+      "run_at": "document_start",
+      "all_frames": true
     }
   ],
   "icons": {
@@ -29,6 +35,10 @@
   "permissions": ["scripting", "clipboardWrite", "activeTab", "storage", "notifications", "unlimitedStorage"],
   "host_permissions": ["http://*/", "https://*/"],
   "web_accessible_resources": [
+    {
+      "resources": ["js/content.js"],
+      "matches": ["*://*/*"]
+    },
     {
       "resources": ["js/injected.js"],
       "matches": ["*://*/*"]

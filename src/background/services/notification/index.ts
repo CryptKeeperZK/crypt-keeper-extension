@@ -1,5 +1,5 @@
 import log from "loglevel";
-import { browser } from "webextension-polyfill-ts";
+import browser from "webextension-polyfill";
 
 export interface CreateNotificationArgs {
   id?: string;

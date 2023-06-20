@@ -1,7 +1,7 @@
 import { MetaMaskInpageProvider } from "@metamask/providers";
 import { detect } from "detect-browser";
 import PortStream from "extension-port-stream";
-import { browser } from "webextension-polyfill-ts";
+import browser from "webextension-polyfill";
 
 import type { Duplex } from "stream";
 

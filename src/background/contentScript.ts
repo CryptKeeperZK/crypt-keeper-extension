@@ -1,5 +1,5 @@
 import log from "loglevel";
-import { browser } from "webextension-polyfill-ts";
+import browser from "webextension-polyfill";
 
 import { InjectedMessageData, ReduxAction, ConnectedIdentity } from "@src/types";
 import { setStatus } from "@src/ui/ducks/app";

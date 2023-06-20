@@ -3,7 +3,7 @@
  */
 
 /* eslint-disable @typescript-eslint/unbound-method */
-import { browser } from "webextension-polyfill-ts";
+import browser from "webextension-polyfill";
 
 import { getLastActiveTabUrl, redirectToNewTab, getExtensionUrl, downloadFile, copyToClipboard } from "../browser";
 

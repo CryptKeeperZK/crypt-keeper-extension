@@ -1,5 +1,5 @@
 import { nanoid } from "nanoid";
-import { browser } from "webextension-polyfill-ts";
+import browser from "webextension-polyfill";
 
 import LockerService from "@src/background/services/lock";
 import NotificationService from "@src/background/services/notification";

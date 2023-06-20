@@ -1,6 +1,6 @@
 import log from "loglevel";
 import "subworkers";
-import { browser } from "webextension-polyfill-ts";
+import browser from "webextension-polyfill";
 
 import CryptKeeperController from "@src/background/cryptKeeper";
 import { deferredPromise } from "@src/background/shared/utils";
