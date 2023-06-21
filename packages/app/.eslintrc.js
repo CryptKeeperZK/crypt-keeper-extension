@@ -1,26 +1,13 @@
 const fs = require("fs");
 const path = require("path");
 
-const prettierConfig = fs.readFileSync(path.resolve(".prettierrc"), "utf8");
+const prettierConfig = fs.readFileSync(path.resolve("../../.prettierrc"), "utf8");
 const prettierOptions = JSON.parse(prettierConfig);
 const isProduction = process.env.NODE_ENV === "production";
 
 module.exports = {
-  extends: [
-    "airbnb",
-    "prettier",
-    "plugin:react/recommended",
-    "plugin:import/recommended",
-    "plugin:playwright/playwright-test",
-  ],
-  ignorePatterns: [
-    ".eslintrc.js",
-    "commitlint.config.js",
-    "playwright.config.ts",
-    "webpack.*.js",
-    "demo/*.tsx",
-    "demo/*.ts",
-  ],
+  extends: ["airbnb", "prettier", "plugin:react/recommended", "plugin:import/recommended"],
+  ignorePatterns: [".eslintrc.js", "commitlint.config.js", "webpack.*.js", "demo/*.tsx", "demo/*.ts"],
   root: true,
   env: {
     browser: true,
@@ -104,7 +91,6 @@ module.exports = {
           "**/*.test.ts",
           "**/*.test.tsx",
           "**/setupTests.ts",
-          "playwright.config.ts",
           "webpack.**.js",
           "e2e/**/*.ts",
           "**/server/mockMerkleProof.ts",
@@ -149,24 +135,6 @@ module.exports = {
     curly: ["error", "all"],
   },
   overrides: [
-    {
-      files: ["e2e/**/*.ts", "e2e/**/*.tsx"],
-      rules: {
-        "playwright/prefer-lowercase-title": "error",
-        "playwright/prefer-to-be": "error",
-        "playwright/prefer-to-have-length": "error",
-        "playwright/prefer-strict-equal": "error",
-        "playwright/max-nested-describe": ["error", { max: 1 }],
-        "playwright/no-restricted-matchers": [
-          "error",
-          {
-            toBeFalsy: "Use `toBe(false)` instead.",
-            not: null,
-          },
-        ],
-      },
-    },
-
     {
       files: ["**/*.ts", "**/*.tsx"],
       parser: "@typescript-eslint/parser",

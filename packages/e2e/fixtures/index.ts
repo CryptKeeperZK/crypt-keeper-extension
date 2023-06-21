@@ -17,7 +17,7 @@ export const test = base.extend<TestExtension>({
   context: [
     async ({}, use) => {
       const metamaskPath = await prepareMetamask(process.env.METAMASK_VERSION || "10.28.1");
-      const cryptKeeperPath = path.join(__dirname, "../../dist");
+      const cryptKeeperPath = path.join(__dirname, "../../app/dist");
 
       const context = await chromium.launchPersistentContext("", {
         headless: false,
