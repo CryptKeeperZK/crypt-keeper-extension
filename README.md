@@ -1,5 +1,5 @@
 <p align="center">
-<img width="128" alt="Dark Reader's mascot" src="./src/static/icons/icon-128.png">
+<img width="128" alt="Dark Reader's mascot" src="./packages/app/src/static/icons/icon-128.png">
 </p>
 <p align="center">
 <a rel="noreferrer noopener" href="https://addons.mozilla.org/firefox/addon/cryptkeeper/"><img alt="Firefox Add-ons" src="https://img.shields.io/badge/Firefox-141e24.svg?&style=for-the-badge&logo=firefox-browser"></a>  
