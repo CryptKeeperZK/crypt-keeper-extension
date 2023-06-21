@@ -3,7 +3,8 @@
   "compilerOptions": {
     "baseUrl": ".",
     "rootDir": ".",
-    "typeRoots": ["./node_modules/@types", "./e2e/@types"]
+    "typeRoots": ["./node_modules/@types", "./e2e/@types"],
+    "noEmit": true
   },
   "exclude": ["node_modules"]
 }

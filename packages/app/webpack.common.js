@@ -1,6 +1,7 @@
 const CopyPlugin = require("copy-webpack-plugin");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const webpack = require("webpack");
+
 const path = require("path");
 
 const envPlugin = new webpack.EnvironmentPlugin({
