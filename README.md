@@ -2,7 +2,7 @@
 <img width="128" alt="Dark Reader's mascot" src="./packages/app/src/static/icons/icon-128.png">
 </p>
 <p align="center">
-<a rel="noreferrer noopener" href="https://addons.mozilla.org/firefox/addon/cryptkeeper/"><img alt="Firefox Add-ons" src="https://img.shields.io/badge/Firefox-141e24.svg?&style=for-the-badge&logo=firefox-browser"></a>  
+<a rel="noreferrer noopener" target="_blank" href="https://addons.mozilla.org/firefox/addon/cryptkeeper/"><img alt="Firefox Add-ons" src="https://img.shields.io/badge/Firefox-141e24.svg?&style=for-the-badge&logo=firefox-browser"></a>  
 </p>
 
 <h1 align="center">Crypt-Keeper</h1>
