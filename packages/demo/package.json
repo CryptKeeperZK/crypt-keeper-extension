@@ -1,5 +1,6 @@
 {
   "name": "@cryptkeeper/demo",
+  "private": true,
   "version": "0.1.0",
   "scripts": {
     "start": "parcel serve --no-cache index.html"

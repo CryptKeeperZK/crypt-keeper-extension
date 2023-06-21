@@ -1,0 +1,15 @@
+{
+  "extends": "@cryptkeeper/tsconfig/tsconfig.json",
+  "compilerOptions": {
+    "paths": {
+      "@cryptkeeper/tsconfig": ["./packages/tsconfig"]
+    }
+  },
+  "ts-node": {
+    "compilerOptions": {
+      "noEmit": false
+    },
+    "esm": true,
+    "swc": true
+  },
+}
