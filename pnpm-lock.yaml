@@ -1,5 +1,9 @@
 lockfileVersion: '6.0'
 
+settings:
+  autoInstallPeers: true
+  excludeLinksFromLockfile: false
+
 importers:
 
   .:
@@ -8296,8 +8300,8 @@ packages:
       semver: 6.3.0
     dev: false
 
-  /eslint-plugin-playwright@0.15.1(eslint@8.43.0):
-    resolution: {integrity: sha512-JyzskjLkCZqswRZ+ZZNH+jS8qnI/w0qTHOA2i5IJxXC+MfaKv03YqOFb+aoJukxTpOp0rOnm9FQ/jsF+lj/cBg==}
+  /eslint-plugin-playwright@0.14.3(eslint@8.43.0):
+    resolution: {integrity: sha512-kTuFzoh/8HuSlxZQCnuGcY02ErUI9BPfxLhiNozpJ5ZZXStmEwBaP+GfYSXqSHoN9pvc0ZqPW2sNLGDxQAVr6w==}
     peerDependencies:
       eslint: '>=7'
       eslint-plugin-jest: '>=25'
@@ -16448,7 +16452,3 @@ packages:
       react: 18.2.0
       use-sync-external-store: 1.2.0(react@18.2.0)
     dev: false
-
-settings:
-  autoInstallPeers: true
-  excludeLinksFromLockfile: false
