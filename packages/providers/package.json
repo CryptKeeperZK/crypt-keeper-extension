@@ -12,11 +12,7 @@
     }
   },
   "scripts": {
-    "build:ts": "rm -fr dist && tsc",
-    "test": "jest",
-    "test:coverage": "jest --coverage",
-    "test:watch": "jest --watch",
-    "jest:clearCache": "jest --clearCache"
+    "build:ts": "rm -fr dist && tsc"
   },
   "keywords": [
     "chrome",

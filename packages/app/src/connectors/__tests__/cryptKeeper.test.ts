@@ -10,7 +10,7 @@ import postMessage from "@src/util/postMessage";
 
 import { cryptKeeper, cryptKeeperHooks, CryptkeeperConnector } from "..";
 
-jest.mock("@src/providers", (): unknown => ({
+jest.mock("@cryptkeeper/providers", (): unknown => ({
   initializeInjectedProvider: jest.fn(),
 }));
 

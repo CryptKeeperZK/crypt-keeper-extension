@@ -126,6 +126,6 @@ jest.mock("nanoevents", (): unknown => ({
   })),
 }));
 
-jest.mock("@src/providers", (): unknown => ({
+jest.mock("@cryptkeeper/providers", (): unknown => ({
   initializeInjectedProvider: jest.fn(),
 }));
