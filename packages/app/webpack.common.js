@@ -26,7 +26,7 @@ module.exports = {
     popup: path.resolve(__dirname, "src/ui/popup.tsx"),
   },
   output: {
-    path: path.resolve(__dirname, "dist/js"),
+    path: path.resolve(__dirname, "../../dist/js"),
     filename: "[name].js",
     clean: true,
   },
@@ -40,20 +40,20 @@ module.exports = {
     }),
     new CopyPlugin({
       patterns: [
-        { from: path.resolve(__dirname, "./src/static/icons"), to: path.resolve(__dirname, "./dist/[name][ext]") },
+        { from: path.resolve(__dirname, "./src/static/icons"), to: path.resolve(__dirname, "../../dist/[name][ext]") },
         {
           from: path.resolve(__dirname, `./manifest.${TARGET}.json`),
-          to: path.resolve(__dirname, "./dist/manifest.json"),
+          to: path.resolve(__dirname, "../../dist/manifest.json"),
         },
         {
           from: path.resolve(__dirname, `../../privacy_policy.md`),
-          to: path.resolve(__dirname, "./dist/privacy_policy.md"),
+          to: path.resolve(__dirname, "../../dist/privacy_policy.md"),
         },
         {
           from: path.resolve(__dirname, `../../LICENSE`),
-          to: path.resolve(__dirname, "./dist/LICENSE"),
+          to: path.resolve(__dirname, "../../dist/LICENSE"),
         },
-        { from: path.resolve(__dirname, "../../zkeyFiles"), to: path.resolve(__dirname, "./dist/js/zkeyFiles") },
+        { from: path.resolve(__dirname, "../../zkeyFiles"), to: path.resolve(__dirname, "../../dist/js/zkeyFiles") },
       ],
     }),
     new HtmlWebpackPlugin({

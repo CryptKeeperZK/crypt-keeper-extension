@@ -3,8 +3,16 @@
   "private": true,
   "version": "0.1.0",
   "description": "Crypt-Keeper Extension, zero knowledge identity management and proof generation tool",
-  "main": "index.js",
+  "main": "dist/index.js",
+  "types": "dist/src/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/src/index.d.ts",
+      "default": "./dist/src/index.js"
+    }
+  },
   "scripts": {
+    "build:ts": "rm -fr dist && tsc",
     "build": "env-cmd --silent -f ../../.env cross-env NODE_ENV=production webpack --config webpack.prod.js --mode=production",
     "dev": "env-cmd --silent -f ../../.env cross-env NODE_ENV=development webpack --config webpack.dev.js --mode=development",
     "build:e2e": "env-cmd --silent -f ../../.env.test cross-env NODE_ENV=production webpack --config webpack.prod.js --mode=production",
@@ -111,6 +119,7 @@
     "webpack-merge": "^5.9.0"
   },
   "dependencies": {
+    "@cryptkeeper/providers": "workspace:0.1.0-beta",
     "@emotion/styled": "^11.11.0",
     "@fortawesome/fontawesome-common-types": "^6.4.0",
     "@fortawesome/fontawesome-svg-core": "^6.4.0",

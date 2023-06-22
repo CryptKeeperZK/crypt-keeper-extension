@@ -7,8 +7,7 @@
       "@src/*": ["src/*"]
     },
     "noEmit": true,
-    "jsx": "react-jsx",
-    "lib": ["es2020", "dom", "webworker"]
+    "lib": ["es2020","webworker"]
   },
-  "references": [{ "path": "./tsconfig.json" }, { "path": "../providers" }]
+  "references": [{ "path": "./tsconfig.json" }]
 }

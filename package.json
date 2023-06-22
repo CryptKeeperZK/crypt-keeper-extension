@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "demo:start": "pnpm -r run start",
+    "build:ts": "pnpm -r run build:ts",
     "build": "pnpm -r run build",
     "dev": "pnpm -r run dev",
     "build:e2e": "pnpm -r run build:e2e",

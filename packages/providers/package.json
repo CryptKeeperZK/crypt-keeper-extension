@@ -1,0 +1,37 @@
+{
+  "name": "@cryptkeeper/providers",
+  "version": "0.1.0-beta",
+  "type": "module",
+  "description": "A public CryptKeeper providers package",
+  "main": "dist/src/index.js",
+  "types": "dist/src/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/src/index.d.ts",
+      "default": "./dist/src/index.js"
+    }
+  },
+  "scripts": {
+    "build:ts": "rm -fr dist && tsc",
+    "test": "jest",
+    "test:coverage": "jest --coverage",
+    "test:watch": "jest --watch",
+    "jest:clearCache": "jest --clearCache"
+  },
+  "keywords": [
+    "chrome",
+    "firefox",
+    "extension"
+  ],
+  "author": "Privacy and Scaling explorations team",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/jest": "^29.5.1",
+    "typescript": "^5.0.4"
+  },
+  "dependencies": {
+    "@cryptkeeper/app": "workspace:^",
+    "@zk-kit/incremental-merkle-tree": "^1.1.0",
+    "loglevel": "^1.8.1"
+  }
+}

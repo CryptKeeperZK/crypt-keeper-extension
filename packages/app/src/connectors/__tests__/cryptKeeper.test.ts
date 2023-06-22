@@ -2,9 +2,10 @@
  * @jest-environment jsdom
  */
 
+import { initializeInjectedProvider } from "@cryptkeeper/providers";
+
 import EventEmitter from "@src/background/services/event";
 import { ZERO_ADDRESS } from "@src/config/const";
-import { initializeInjectedProvider } from "@src/providers";
 import postMessage from "@src/util/postMessage";
 
 import { cryptKeeper, cryptKeeperHooks, CryptkeeperConnector } from "..";

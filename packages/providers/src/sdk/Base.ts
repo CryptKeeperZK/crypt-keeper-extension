@@ -1,10 +1,8 @@
-import { MerkleProof } from "@zk-kit/incremental-merkle-tree";
+import { RPCAction } from "@cryptkeeper/app/src/constants";
+import { ZkIdentitySemaphore } from "@cryptkeeper/app/src/background/services/zkIdentity/protocols/ZkIdentitySemaphore";
+import ZkProofService from "@cryptkeeper/app/src/background/services/zkProof";
+import EventEmitter from "@cryptkeeper/app/src/background/services/event";
 
-import EventEmitter from "@src/background/services/event";
-import { ZkIdentitySemaphore } from "@src/background/services/zkIdentity/protocols/ZkIdentitySemaphore";
-import ZkProofService from "@src/background/services/zkProof";
-// TODO: convert to seperate service pacakges @cryptkeeper/services TBD
-import { RPCAction } from "@src/constants";
 import {
   Approvals,
   IRlnGenerateArgs,
@@ -17,8 +15,9 @@ import {
   SemaphoreProof,
   ICreateIdentityRequestArgs,
   IConnectIdentityRequestArgs,
-} from "@src/types";
-import { HostPermission } from "@src/ui/ducks/permissions";
+} from "@cryptkeeper/app/src/types";
+import { HostPermission } from "@cryptkeeper/app/src/ui/ducks/permissions";
+import { MerkleProof } from "@zk-kit/incremental-merkle-tree";
 
 const promises: {
   [k: string]: {
@@ -27,7 +26,6 @@ const promises: {
   };
 } = {};
 
-// TODO: get rid of inheritance
 export class CryptKeeperInjectedProvider extends EventEmitter {
   readonly isCryptKeeper = true;
 
