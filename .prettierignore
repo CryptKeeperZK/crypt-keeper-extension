@@ -6,3 +6,11 @@ playwright-report/
 playwright/.cache/
 tmp/
 pnpm-lock.yaml
+**/dist/
+**/node_modules/
+**/coverage/
+**/test-results/
+**/playwright-report/
+**/playwright/.cache/
+**/tmp/
+**/.parcel-cache/
