@@ -1,9 +1,5 @@
 lockfileVersion: '6.0'
 
-settings:
-  autoInstallPeers: true
-  excludeLinksFromLockfile: false
-
 importers:
 
   .:
@@ -67,7 +63,7 @@ importers:
         version: 5.13.5(@emotion/react@11.11.1)(@emotion/styled@11.11.0)(@types/react@18.2.13)(react-dom@18.2.0)(react@18.2.0)
       '@reduxjs/toolkit':
         specifier: ^1.9.5
-        version: 1.9.5(react-redux@8.1.0)(react@18.2.0)
+        version: 1.9.5(react-redux@8.1.1)(react@18.2.0)
       '@semaphore-protocol/group':
         specifier: ^3.9.0
         version: 3.9.0
@@ -153,8 +149,8 @@ importers:
         specifier: ^1.0.4
         version: 1.0.4(react-dom@18.2.0)(react@18.2.0)
       react-redux:
-        specifier: ^8.1.0
-        version: 8.1.0(@reduxjs/toolkit@1.9.5)(@types/react-dom@18.2.5)(@types/react@18.2.13)(react-dom@18.2.0)(react@18.2.0)(redux@4.2.1)
+        specifier: ^8.1.1
+        version: 8.1.1(@types/react-dom@18.2.5)(@types/react@18.2.13)(react-dom@18.2.0)(react@18.2.0)(redux@4.2.1)
       react-router-dom:
         specifier: ^6.13.0
         version: 6.13.0(react-dom@18.2.0)(react@18.2.0)
@@ -3926,7 +3922,7 @@ packages:
     resolution: {integrity: sha512-P1st0aksCrn9sGZhp8GMYwBnQsbvAWsZAX44oXNNvLHGqAOcoVxmjZiohstwQ7SqKnbR47akdNi+uleWD8+g6A==}
     dev: false
 
-  /@reduxjs/toolkit@1.9.5(react-redux@8.1.0)(react@18.2.0):
+  /@reduxjs/toolkit@1.9.5(react-redux@8.1.1)(react@18.2.0):
     resolution: {integrity: sha512-Rt97jHmfTeaxL4swLRNPD/zV4OxTes4la07Xc4hetpUW/vc75t5m1ANyxG6ymnEQ2FsLQsoMlYB2vV1sO3m8tQ==}
     peerDependencies:
       react: ^16.9.0 || ^17.0.0 || ^18
@@ -3939,7 +3935,7 @@ packages:
     dependencies:
       immer: 9.0.21
       react: 18.2.0
-      react-redux: 8.1.0(@reduxjs/toolkit@1.9.5)(@types/react-dom@18.2.5)(@types/react@18.2.13)(react-dom@18.2.0)(react@18.2.0)(redux@4.2.1)
+      react-redux: 8.1.1(@types/react-dom@18.2.5)(@types/react@18.2.13)(react-dom@18.2.0)(react@18.2.0)(redux@4.2.1)
       redux: 4.2.1
       redux-thunk: 2.4.2(redux@4.2.1)
       reselect: 4.1.8
@@ -13532,10 +13528,9 @@ packages:
       react-dom: 18.2.0(react@18.2.0)
     dev: false
 
-  /react-redux@8.1.0(@reduxjs/toolkit@1.9.5)(@types/react-dom@18.2.5)(@types/react@18.2.13)(react-dom@18.2.0)(react@18.2.0)(redux@4.2.1):
-    resolution: {integrity: sha512-CtHZzAOxi7GQvTph4dVLWwZHAWUjV2kMEQtk50OrN8z3gKxpWg3Tz7JfDw32N3Rpd7fh02z73cF6yZkK467gbQ==}
+  /react-redux@8.1.1(@types/react-dom@18.2.5)(@types/react@18.2.13)(react-dom@18.2.0)(react@18.2.0)(redux@4.2.1):
+    resolution: {integrity: sha512-5W0QaKtEhj+3bC0Nj0NkqkhIv8gLADH/2kYFMTHxCVqQILiWzLv6MaLuV5wJU3BQEdHKzTfcvPN0WMS6SC1oyA==}
     peerDependencies:
-      '@reduxjs/toolkit': ^1 || ^2.0.0-beta.0
       '@types/react': ^16.8 || ^17.0 || ^18.0
       '@types/react-dom': ^16.8 || ^17.0 || ^18.0
       react: ^16.8 || ^17.0 || ^18.0
@@ -13543,8 +13538,6 @@ packages:
       react-native: '>=0.59'
       redux: ^4 || ^5.0.0-beta.0
     peerDependenciesMeta:
-      '@reduxjs/toolkit':
-        optional: true
       '@types/react':
         optional: true
       '@types/react-dom':
@@ -13557,7 +13550,6 @@ packages:
         optional: true
     dependencies:
       '@babel/runtime': 7.22.5
-      '@reduxjs/toolkit': 1.9.5(react-redux@8.1.0)(react@18.2.0)
       '@types/hoist-non-react-statics': 3.3.1
       '@types/react': 18.2.13
       '@types/react-dom': 18.2.5
@@ -16653,3 +16645,7 @@ packages:
       react: 18.2.0
       use-sync-external-store: 1.2.0(react@18.2.0)
     dev: false
+
+settings:
+  autoInstallPeers: true
+  excludeLinksFromLockfile: false
