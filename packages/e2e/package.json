@@ -1,5 +1,6 @@
 {
   "name": "@cryptkeeper/e2e",
+  "private": true,
   "version": "0.1.0",
   "description": "E2E tests for CryptKeeper extension",
   "main": "index.js",

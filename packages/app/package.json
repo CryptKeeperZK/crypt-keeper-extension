@@ -1,5 +1,6 @@
 {
   "name": "@cryptkeeper/app",
+  "private": true,
   "version": "0.1.0",
   "description": "Crypt-Keeper Extension, zero knowledge identity management and proof generation tool",
   "main": "index.js",
