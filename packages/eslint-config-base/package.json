@@ -1,0 +1,26 @@
+{
+  "name": "@cryptkeeper/eslint-config-base",
+  "version": "0.1.0",
+  "description": "ESLint base config for CryptKeeper extension",
+  "private": true,
+  "main": "index.js",
+  "author": "Privacy and Scaling explorations team",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/privacy-scaling-explorations/crypt-keeper-extension"
+  },
+  "homepage": "https://github.com/privacy-scaling-explorations/crypt-keeper-extension",
+  "dependencies": {
+    "@babel/eslint-parser": "^7.22.5",
+    "@typescript-eslint/eslint-plugin": "^5.60.0",
+    "@typescript-eslint/parser": "^5.60.0",
+    "eslint": "^8.43.0",
+    "eslint-config-airbnb": "^19.0.4",
+    "eslint-config-prettier": "^8.8.0",
+    "eslint-import-resolver-typescript": "^3.5.5",
+    "eslint-plugin-import": "^2.27.5",
+    "eslint-plugin-json": "^3.1.0",
+    "eslint-plugin-prettier": "^4.2.1",
+    "eslint-plugin-unused-imports": "^2.0.0"
+  }
+}

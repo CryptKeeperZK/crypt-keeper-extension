@@ -54,6 +54,7 @@ notes.txt
 
 # TypeScript
 tsout/
+tsconfig.tsbuildinfo
 
 .env*
 !.env.example

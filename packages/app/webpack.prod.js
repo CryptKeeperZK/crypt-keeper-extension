@@ -1,5 +1,5 @@
-const { merge } = require("webpack-merge");
 const ImageMinimizerPlugin = require("image-minimizer-webpack-plugin");
+const { merge } = require("webpack-merge");
 
 const common = require("./webpack.common");
 
