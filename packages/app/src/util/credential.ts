@@ -1,5 +1,37 @@
 import { VerifiableCredential, Issuer, CredentialsProof, Subject, Status, ClaimValue } from "@src/types";
 
+/**
+ * Parses a JSON string into a VerifiableCredential object.
+ * @param obj A JSON string representing a VerifiableCredential.
+ * @returns An object representing a VerifiableCredential.
+ */
+export function parseCredentialJson(json: string): VerifiableCredential {
+  const obj = JSON.parse(json) as VerifiableCredential;
+
+  if (
+    obj.issuanceDate &&
+    typeof obj.issuanceDate === "string" &&
+    !Number.isNaN(Date.parse(obj.issuanceDate as string))
+  ) {
+    obj.issuanceDate = new Date(obj.issuanceDate);
+  }
+
+  if (
+    obj.expirationDate &&
+    typeof obj.expirationDate === "string" &&
+    !Number.isNaN(Date.parse(obj.expirationDate as string))
+  ) {
+    obj.expirationDate = new Date(obj.expirationDate);
+  }
+
+  return obj;
+}
+
+/**
+ * Determines if an object is a valid VerifiableCredential.
+ * @param obj An object representing a VerifiableCredential.
+ * @returns A boolean indicating whether or not the object is a valid VerifiableCredential.
+ */
 export function isValidVerifiableCredential(obj: VerifiableCredential): boolean {
   if (!obj.context || !Array.isArray(obj.context)) {
     return false;
