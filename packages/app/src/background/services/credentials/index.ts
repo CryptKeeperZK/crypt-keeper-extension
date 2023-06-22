@@ -6,7 +6,7 @@ import LockerService from "@src/background/services/lock";
 import NotificationService from "@src/background/services/notification";
 import SimpleStorage from "@src/background/services/storage";
 import { OperationType, VerifiableCredential } from "@src/types";
-import { isValidVerifiableCredential } from "@src/util/isValidCredential";
+import { parseCredentialJson, isValidVerifiableCredential } from "@src/util/credential";
 
 import type { IBackupable } from "@src/background/services/backup";
 
@@ -43,7 +43,7 @@ export default class VerifiableCredentialsService implements IBackupable {
       return false;
     }
 
-    const verifiableCredential = JSON.parse(verifiableCredentialJson) as VerifiableCredential;
+    const verifiableCredential = parseCredentialJson(verifiableCredentialJson);
     if (!isValidVerifiableCredential(verifiableCredential)) {
       return false;
     }
