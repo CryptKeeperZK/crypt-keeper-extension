@@ -3,7 +3,8 @@
   "compilerOptions": {
     "rootDir": ".",
     "outDir": "./dist/",
-    "tsBuildInfoFile": "./dist/.tsbuildinfo"
+    "tsBuildInfoFile": "./dist/.tsbuildinfo",
+    "lib": ["es2020", "dom"]
   },
   "include": ["src"],
   "exclude": ["**/src/**/__tests__/**"],
