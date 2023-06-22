@@ -12,5 +12,5 @@
     "lib": ["es2020", "dom", "webworker"]
   },
   "include": ["src"],
-  "exclude": ["node_modules", "coverage", "dist"]
+  "exclude": ["node_modules", "coverage", "dist", "./src/**/*.test.ts", "./src/**/*.test.tsx"]
 }
