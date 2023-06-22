@@ -3,14 +3,14 @@
   "compilerOptions": {
     "baseUrl": ".",
     "rootDir": ".",
+    "outDir": "dist/js",
     "paths": {
       "@src/*": ["src/*"]
     },
     "typeRoots": ["./node_modules/@types", "./src/custom.d.ts"],
-    "outDir": "dist/js",
     "jsx": "react-jsx",
     "lib": ["es2020", "dom", "webworker"]
   },
   "include": ["src"],
-  "exclude": ["node_modules", "coverage", "dist", "./src/**/*.test.ts", "./src/**/*.test.tsx"]
+  "exclude": ["node_modules", "coverage", "dist"]
 }
