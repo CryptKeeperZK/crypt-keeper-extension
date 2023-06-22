@@ -55,4 +55,6 @@ jobs:
 
       - run: pnpm install --frozen-lockfile --prefer-offline
 
+      - run: pnpm run build
+
       - run: pnpm run ${{ matrix.command }}
