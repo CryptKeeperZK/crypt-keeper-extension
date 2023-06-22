@@ -6,7 +6,9 @@
     "paths": {
       "@src/*": ["src/*"]
     },
-    "noEmit": true
+    "noEmit": true,
+    "jsx": "react-jsx",
+    "lib": ["es2020", "dom", "webworker"]
   },
   "references": [{ "path": "./tsconfig.json" }]
 }

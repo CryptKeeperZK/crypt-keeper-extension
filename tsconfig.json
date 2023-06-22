@@ -1,9 +1,26 @@
 {
-  "extends": "@cryptkeeper/tsconfig/tsconfig.json",
   "compilerOptions": {
-    "paths": {
-      "@cryptkeeper/tsconfig": ["./packages/tsconfig"]
-    }
+    "target": "ES2020",
+    "lib": ["es2020"],
+    "experimentalDecorators": true,
+    "strict": true,
+    "noFallthroughCasesInSwitch": true,
+    "noImplicitAny": true,
+    "strictPropertyInitialization": true,
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "isolatedModules": true,
+    "forceConsistentCasingInFileNames": true,
+    "allowSyntheticDefaultImports": true,
+    "composite": true,
+    "incremental": true,
+    "declaration": true,
+    "declarationMap": true,
+    "sourceMap": true,
+    "stripInternal": true
   },
   "ts-node": {
     "compilerOptions": {
