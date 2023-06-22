@@ -42,6 +42,8 @@ export enum RPCAction {
   GET_ACCOUNTS = "rpc/accounts/get",
   SELECT_ACCOUNT = "rpc/accounts/select-account",
   GET_SELECTED_ACCOUNT = "rpc/accounts/get-selected-account",
+  ADD_VERIFIABLE_CREDENTIAL = "rpc/credentials/addVerifiableCredential",
+  GET_ALL_VERIFIABLE_CREDENTIALS = "rpc/credentials/getAllVerifiableCredentials",
   // DEV RPCS
   CLEAR_APPROVED_HOSTS = "rpc/hosts/clear",
 }

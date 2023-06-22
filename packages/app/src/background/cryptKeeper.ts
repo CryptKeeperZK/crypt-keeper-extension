@@ -7,6 +7,7 @@ import Handler from "./controllers/handler";
 import RequestManager from "./controllers/requestManager";
 import ApprovalService from "./services/approval";
 import BackupService from "./services/backup";
+import VerifiableCredentialsService from "./services/credentials";
 import HistoryService from "./services/history";
 import InjectorService from "./services/injector";
 import LockerService from "./services/lock";
@@ -38,6 +39,8 @@ export default class CryptKeeperController {
 
   private walletService: WalletService;
 
+  private verifiableCredentialsService: VerifiableCredentialsService;
+
   constructor() {
     this.handler = new Handler();
     this.requestManager = RequestManager.getInstance();
@@ -54,6 +57,7 @@ export default class CryptKeeperController {
       .add(BackupableServices.IDENTITY, this.zkIdentityService)
       .add(BackupableServices.LOCK, this.lockService)
       .add(BackupableServices.WALLET, this.walletService);
+    this.verifiableCredentialsService = VerifiableCredentialsService.getInstance();
   }
 
   handle = (request: RequestHandler): Promise<unknown> => this.handler.handle(request);
@@ -131,6 +135,18 @@ export default class CryptKeeperController {
     this.handler.add(RPCAction.GET_ACCOUNTS, this.lockService.ensure, this.walletService.accounts);
     this.handler.add(RPCAction.SELECT_ACCOUNT, this.lockService.ensure, this.walletService.selectAccount);
     this.handler.add(RPCAction.GET_SELECTED_ACCOUNT, this.lockService.ensure, this.walletService.getSelectedAccount);
+
+    // Credentials
+    this.handler.add(
+      RPCAction.ADD_VERIFIABLE_CREDENTIAL,
+      this.lockService.ensure,
+      this.verifiableCredentialsService.addVerifiableCredential,
+    );
+    this.handler.add(
+      RPCAction.GET_ALL_VERIFIABLE_CREDENTIALS,
+      this.lockService.ensure,
+      this.verifiableCredentialsService.getAllVerifiableCredentials,
+    );
 
     // Injector
     this.handler.add(RPCAction.CONNECT, this.injectorService.connect);
