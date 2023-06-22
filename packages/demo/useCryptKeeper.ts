@@ -1,13 +1,14 @@
 /* eslint-disable no-console */
-import { useState, useEffect, useCallback } from "react";
-import { RLN, RLNFullProof } from "rlnjs";
-import { bigintToHex } from "bigint-conversion";
+import type { ConnectedIdentity, SemaphoreProof, RLNFullProof } from "@cryptkeeper/types";
 import { Identity } from "@semaphore-protocol/identity";
+import { bigintToHex } from "bigint-conversion";
 import { encodeBytes32String } from "ethers";
+import { useState, useEffect, useCallback } from "react";
 import { toast } from "react-toastify";
+import { RLN } from "rlnjs";
 
 import "react-toastify/dist/ReactToastify.css";
-import type { CryptKeeperInjectedProvider, ConnectedIdentity, SemaphoreProof } from "./types";
+import type { CryptKeeperInjectedProvider } from "./types";
 
 const SERVER_URL = "http://localhost:8090";
 
@@ -42,7 +43,7 @@ interface IUseCryptKeeperData {
   genRLNProof: (proofType: MerkleProofType) => void;
 }
 
-const initializeClient = (): Promise<CryptKeeperInjectedProvider | undefined> => window.cryptkeeper?.connect();
+const initializeClient = (): Promise<CryptKeeperInjectedProvider | undefined> => (window.cryptkeeper as any)?.connect();
 
 export const useCryptKeeper = (): IUseCryptKeeperData => {
   const [client, setClient] = useState<CryptKeeperInjectedProvider>();

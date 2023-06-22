@@ -1,10 +1,10 @@
-import { MerkleProofArtifacts, MerkleProof } from "./Merkle";
+import { MerkleProofArtifacts, MerkleProof } from "./merkle";
 
-export type ZkInputs = {
+export interface ZkInputs {
   merkleStorageAddress?: string;
   merkleProofArtifacts?: MerkleProofArtifacts;
   merkleProof?: MerkleProof;
-};
+}
 
 export interface ZKProofPayload {
   externalNullifier: string;

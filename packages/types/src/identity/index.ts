@@ -2,13 +2,13 @@ export type IdentityStrategy = "interrep" | "random";
 
 export type IdentityWeb2Provider = "twitter" | "github" | "reddit";
 
-export type CreateIdentityOptions = {
+export interface CreateIdentityOptions {
   message: string;
   account: string;
   nonce?: number;
   web2Provider?: IdentityWeb2Provider;
   name?: string;
-};
+}
 
 export interface ICreateIdentityRequestArgs {
   host: string;
@@ -18,14 +18,14 @@ export interface IConnectIdentityRequestArgs {
   host: string;
 }
 
-export type NewIdentityRequest = {
+export interface NewIdentityRequest {
   strategy: IdentityStrategy;
   options: CreateIdentityOptions;
   walletType: EWallet;
   groups: GroupData[];
   host?: string;
   messageSignature?: string;
-};
+}
 
 export enum EWallet {
   ETH_WALLET,
@@ -85,7 +85,7 @@ export interface ICreateIdentityArgs {
   host?: string;
 }
 
-export type StrategiesMap = {
+export interface StrategiesMap {
   random: (config: ICreateIdentityArgs) => void;
   interrep: (config: ICreateIdentityArgs) => void;
-};
+}

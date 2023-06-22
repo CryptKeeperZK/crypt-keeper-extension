@@ -1,16 +1,5 @@
 // TODO: temp until providers package isn't ready
-import type { FullProof } from "@semaphore-protocol/proof";
-import type { RLNFullProof } from "rlnjs";
-
-export interface ConnectedIdentity {
-  commitment: string;
-  web2Provider?: string;
-  host?: string;
-}
-
-export interface SemaphoreProof {
-  fullProof: FullProof;
-}
+import type { RLNFullProof, SemaphoreProof, ConnectedIdentity } from "@cryptkeeper/types";
 
 export interface CryptKeeperInjectedProvider {
   accounts: () => Promise<string[]>;
@@ -32,10 +21,4 @@ export interface CryptKeeperInjectedProvider {
     rlnIdentifier: string,
   ): Promise<RLNFullProof>;
   on: (event: string, handler: (...args: unknown[]) => void) => void;
-}
-
-declare global {
-  interface Window {
-    cryptkeeper: CryptKeeperInjectedProvider;
-  }
 }

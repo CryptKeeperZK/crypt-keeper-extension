@@ -3,12 +3,12 @@ export enum RequestResolutionStatus {
   REJECT = "reject",
 }
 
-export type RequestHandler = {
+export interface RequestHandler<P = unknown, M = unknown> {
   method: string;
-  payload?: unknown;
-  error?: boolean;
-  meta?: unknown;
-};
+  payload?: P;
+  error?: Error;
+  meta?: M;
+}
 
 export enum PendingRequestType {
   SEMAPHORE_PROOF,
