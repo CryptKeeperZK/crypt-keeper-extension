@@ -3,7 +3,9 @@
   "private": true,
   "version": "0.1.0",
   "scripts": {
-    "start": "parcel serve --no-cache index.html"
+    "start": "parcel serve --no-cache index.html",
+    "build": "parcel build index.html",
+    "build:e2e": "pnpm run build"
   },
   "dependencies": {
     "@cryptkeeper/types": "workspace:^",
