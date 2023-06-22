@@ -28,10 +28,6 @@ export default class VerifiableCredentialsService implements IBackupable {
 
   private notificationService: NotificationService;
 
-  private historyService: HistoryService;
-
-  private notificationService: NotificationService;
-
   private constructor() {
     this.verifiableCredentialsStore = new SimpleStorage(VERIFIABLE_CREDENTIALS_KEY);
     this.cryptoService = CryptoService.getInstance();
