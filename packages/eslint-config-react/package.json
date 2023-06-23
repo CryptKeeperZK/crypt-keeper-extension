@@ -11,8 +11,8 @@
   },
   "homepage": "https://github.com/privacy-scaling-explorations/crypt-keeper-extension",
   "scripts": {
-    "prettier": "prettier -c .",
-    "prettier:fix": "prettier -w .",
+    "prettier": "prettier -c . --ignore-path ../../.prettierignore",
+    "prettier:fix": "prettier -w . --ignore-path ../../.prettierignore",
     "githook:precommit": "lint-staged"
   },
   "dependencies": {
