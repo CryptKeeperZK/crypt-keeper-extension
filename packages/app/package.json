@@ -104,7 +104,7 @@
     "@fortawesome/react-fontawesome": "^0.2.0",
     "@interep/identity": "^0.3.0",
     "@metamask/providers": "^11.0.0",
-    "@mui/material": "^5.13.5",
+    "@mui/material": "^5.13.6",
     "@reduxjs/toolkit": "^1.9.5",
     "@semaphore-protocol/group": "^3.10.1",
     "@semaphore-protocol/identity": "^3.10.1",
