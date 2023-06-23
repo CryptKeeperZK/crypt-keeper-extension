@@ -53,6 +53,6 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-node-
 
-      - run: pnpm install --frozen-lockfile --prefer-offline
+      - run: pnpm install --frozen-lockfile --prefer-offline --strict-peer-dependencies
 
       - run: pnpm run ${{ matrix.env }}
