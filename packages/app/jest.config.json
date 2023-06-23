@@ -11,6 +11,7 @@
     "nanoid": "<rootDir>/src/config/mock/nanoidMock.js",
     "@src/(.*)$": "<rootDir>/src/$1"
   },
+  "modulePathIgnorePatterns": ["<rootDir>/dist/"],
   "coveragePathIgnorePatterns": [
     "/node_modules/",
     "/test/",

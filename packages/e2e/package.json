@@ -10,8 +10,8 @@
     "e2e:debug": "pnpm run e2e -- --debug",
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
     "lint:fix": "pnpm run lint --fix",
-    "prettier": "prettier -c .",
-    "prettier:fix": "prettier -w .",
+    "prettier": "prettier -c . --ignore-path ../../.prettierignore",
+    "prettier:fix": "prettier -w . --ignore-path ../../.prettierignore",
     "types": "tsc -p tsconfig.json --noEmit",
     "githook:precommit": "lint-staged && pnpm run types"
   },

@@ -1,4 +1,4 @@
-import { SemaphoreProofRequest } from "./SemaphoreProof";
+import { SemaphoreProofRequest } from "./semaphoreProof";
 
 export type { RLNFullProof, VerificationKey } from "rlnjs";
 
