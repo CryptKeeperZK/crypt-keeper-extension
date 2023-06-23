@@ -1,15 +1,13 @@
 import omit from "lodash/omit";
 
-import { ZERO_ADDRESS } from "@src/config/const";
+import { createNewIdentity } from "..";
 
-import { createNewIdentity } from "../factory";
-
-describe("background/services/zkIdentity/factory", () => {
+describe("identity/factory", () => {
   test("should return new interrep identity ", () => {
     const defaultArgs = {
       identityStrategy: "interrep" as const,
       name: "name",
-      account: ZERO_ADDRESS,
+      account: "account",
       messageSignature: "signature",
       web2Provider: "github" as const,
       groups: [],
@@ -25,7 +23,7 @@ describe("background/services/zkIdentity/factory", () => {
     const defaultArgs = {
       identityStrategy: "random" as const,
       name: "name",
-      account: ZERO_ADDRESS,
+      account: "account",
       messageSignature: "signature",
       groups: [],
       host: "http://localhost:3000",

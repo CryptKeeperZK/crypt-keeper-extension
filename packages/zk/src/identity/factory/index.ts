@@ -1,8 +1,7 @@
+import { ICreateIdentityArgs, StrategiesMap } from "@cryptkeeper/types";
 import { Identity } from "@semaphore-protocol/identity";
 
-import { ICreateIdentityArgs, StrategiesMap } from "@src/types";
-
-import { ZkIdentitySemaphore } from "../protocols/ZkIdentitySemaphore";
+import { ZkIdentitySemaphore } from "../protocols";
 
 const strategies = {
   random: createRandomIdentity,

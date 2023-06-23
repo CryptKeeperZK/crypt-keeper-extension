@@ -1,14 +1,14 @@
 import { Identity } from "@semaphore-protocol/identity";
 
-import { ZkIdentitySemaphore } from "@src/background/services/zkIdentity/protocols/ZkIdentitySemaphore";
-import { ZERO_ADDRESS } from "@src/config/const";
-import { IdentityMetadata } from "@src/types";
+import type { IdentityMetadata } from "@cryptkeeper/types";
 
-describe("background/zkIdentity/protocols/ZkIdentitySemaphore", () => {
+import { ZkIdentitySemaphore } from "..";
+
+describe("protocols/ZkIdentitySemaphore", () => {
   const defaultIdentity = new Identity("1234");
 
   const defaultIdentityMetadata: IdentityMetadata = {
-    account: ZERO_ADDRESS,
+    account: "account",
     name: "Identity #1",
     identityStrategy: "interrep",
     web2Provider: "twitter",

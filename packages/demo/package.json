@@ -5,7 +5,8 @@
   "scripts": {
     "start": "parcel serve --no-cache index.html",
     "build": "parcel build index.html",
-    "build:e2e": "pnpm run build"
+    "build:e2e": "pnpm run build",
+    "dev": "pnpm run build"
   },
   "dependencies": {
     "@cryptkeeper/types": "workspace:^",

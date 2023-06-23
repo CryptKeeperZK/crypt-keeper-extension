@@ -1,3 +1,4 @@
+import { generateMerkleProof } from "@cryptkeeper/zk";
 import { BigNumberish } from "@semaphore-protocol/group";
 import { Identity } from "@semaphore-protocol/identity";
 import { MerkleProof } from "@zk-kit/incremental-merkle-tree";
@@ -5,8 +6,6 @@ import { bigintToHex, hexToBigint } from "bigint-conversion";
 import cors from "cors";
 import express, { Request as ExpressRequest } from "express";
 import log from "loglevel";
-
-import { generateMerkleProof } from "../background/services/zkProof/protocols/utils";
 
 const DEPTH_RLN = 15;
 const DEPTH_SEMAPHORE = 20;

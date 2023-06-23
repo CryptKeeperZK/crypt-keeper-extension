@@ -1,9 +1,10 @@
-import { ZkIdentitySemaphore } from "@src/background/services/zkIdentity/protocols/ZkIdentitySemaphore";
-import { RLNFullProof, RLNProofRequest, SemaphoreProof, SemaphoreProofRequest } from "@src/types";
+import { ZkIdentitySemaphore } from "@src/identity";
+
+import type { RLNFullProof, RLNProofRequest, SemaphoreProof, SemaphoreProofRequest } from "@cryptkeeper/types";
 
 import { SemaphoreProofService, RLNProofService } from "./protocols";
 
-export default class ZkProofService {
+export class ZkProofService {
   private static INSTANCE: ZkProofService;
 
   private semapohreProofService: SemaphoreProofService;

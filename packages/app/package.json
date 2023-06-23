@@ -94,6 +94,7 @@
   },
   "dependencies": {
     "@cryptkeeper/types": "workspace:^",
+    "@cryptkeeper/zk": "workspace:^",
     "@emotion/styled": "^11.11.0",
     "@fortawesome/fontawesome-common-types": "^6.4.0",
     "@fortawesome/fontawesome-svg-core": "^6.4.0",

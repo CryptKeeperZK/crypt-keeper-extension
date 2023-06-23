@@ -1,10 +1,3 @@
-import { MerkleProof } from "@zk-kit/incremental-merkle-tree";
-
-import EventEmitter from "@src/background/services/event";
-import { ZkIdentitySemaphore } from "@src/background/services/zkIdentity/protocols/ZkIdentitySemaphore";
-import ZkProofService from "@src/background/services/zkProof";
-// TODO: convert to seperate service pacakges @cryptkeeper/services TBD
-import { RPCAction } from "@src/constants";
 import {
   Approvals,
   IRlnGenerateArgs,
@@ -17,7 +10,13 @@ import {
   SemaphoreProof,
   ICreateIdentityRequestArgs,
   IConnectIdentityRequestArgs,
-} from "@src/types";
+} from "@cryptkeeper/types";
+import { ZkIdentitySemaphore, ZkProofService } from "@cryptkeeper/zk";
+import { MerkleProof } from "@zk-kit/incremental-merkle-tree";
+
+import EventEmitter from "@src/background/services/event";
+// TODO: convert to seperate service pacakges @cryptkeeper/services TBD
+import { RPCAction } from "@src/constants";
 import { HostPermission } from "@src/ui/ducks/permissions";
 
 const promises: {
