@@ -1,0 +1,22 @@
+{
+  "name": "@cryptkeeper/constants",
+  "version": "0.1.0-beta",
+  "description": "A package for sharing CryptKeeper constants with the providers package",
+  "main": "dist/index.js",
+  "types": "dist/src/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/src/index.d.ts",
+      "default": "./dist/src/index.js"
+    }
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json"
+  },
+  "keywords": [],
+  "author": "Privacy and Scaling explorations team",
+  "license": "MIT",
+  "dependencies": {
+    "@cryptkeeper/types": "workspace:^"
+  }
+}
