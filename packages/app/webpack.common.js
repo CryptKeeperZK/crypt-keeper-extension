@@ -1,20 +1,15 @@
 const CopyPlugin = require("copy-webpack-plugin");
+const Dotenv = require("dotenv-webpack");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const webpack = require("webpack");
 
 const path = require("path");
 
-const envPlugin = new webpack.EnvironmentPlugin({
-  NODE_ENV: process.env.NODE_ENV,
-  TARGET: "chrome",
-  CRYPTKEEPER_DEBUG: false,
-  INTERREP_IDENTITY: false,
-  BACKUP: false,
-  METAMASK_EXTENSION_ID: "",
-  INFURA_API_KEY: "",
-  ALCHEMY_API_KEY: "",
-  FREIGHT_TRUST_NETWORK: "",
-  PULSECHAIN_API_KEY: "",
+const envPlugin = new Dotenv({
+  path: "../../.env",
+  safe: true,
+  allowEmptyValues: true,
+  systemvars: true,
 });
 
 const TARGET = process.env.TARGET || "chrome";

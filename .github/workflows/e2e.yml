@@ -15,11 +15,13 @@ env:
   CRYPTKEEPER_DEBUG: false
   INTERREP_IDENTITY: true
   BACKUP: true
+  METAMASK_EXTENSION_ID: ""
   METAMASK_VERSION: "10.28.1"
   INFURA_API_KEY: ${{ secrets.INFURA_API_KEY }}
   ALCHEMY_API_KEY: ${{ secrets.ALCHEMY_API_KEY }}
   FREIGHT_TRUST_NETWORK: ${{ secrets.FREIGHT_TRUST_NETWORK }}
   PULSECHAIN_API_KEY: ${{ secrets.PULSECHAIN_API_KEY }}
+  TARGET: "chrome"
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
@@ -81,7 +83,7 @@ jobs:
         if: runner.os == 'Linux'
         run: pnpm run build
         env:
-          METAMASK_EXTENSION_ID: "kfclpnhnbcalgnjocffphlobofijdiij"
+          METAMASK_EXTENSION_ID: "bmiamindlpdfbnodjbcfpdfbmiadgnga"
 
       - name: Build extension (Windows)
         if: runner.os == 'Windows'
