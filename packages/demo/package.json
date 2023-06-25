@@ -18,7 +18,7 @@
     "rlnjs": "^2.0.8"
   },
   "devDependencies": {
-    "@types/react": "^18.2.13",
+    "@types/react": "^18.2.14",
     "@types/react-dom": "^18.2.6",
     "assert": "^2.0.0",
     "parcel": "^2.9.2",
