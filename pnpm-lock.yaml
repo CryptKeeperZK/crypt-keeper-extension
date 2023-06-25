@@ -149,8 +149,8 @@ importers:
         specifier: ^5.3.0
         version: 5.3.0
       ethers:
-        specifier: ^6.6.0
-        version: 6.6.0
+        specifier: ^6.6.1
+        version: 6.6.1
       eventemitter2:
         specifier: ^6.4.9
         version: 6.4.9
@@ -390,8 +390,8 @@ importers:
         specifier: ^2.4.1
         version: 2.4.1
       ethers:
-        specifier: ^6.6.0
-        version: 6.6.0
+        specifier: ^6.6.1
+        version: 6.6.1
       react:
         specifier: ^18.2.0
         version: 18.2.0
@@ -4264,7 +4264,7 @@ packages:
       dotenv: 16.3.1
       dotenv-parse-variables: 2.0.0
       download: 8.0.0
-      ethers: 6.6.0
+      ethers: 6.6.1
       etherscan-api: 10.3.0(debug@4.3.4)
       find-config: 1.0.0
       get-port: 6.1.2
@@ -8630,8 +8630,8 @@ packages:
       rlp: 2.2.7
     dev: false
 
-  /ethers@6.6.0:
-    resolution: {integrity: sha512-7D2U+n8eZYmh592VZqap9vBu50jN7YUDHqAmwBYTMntmUKC9RVgcqcFbd+3DTCOQ1jMyK6QHv1usbcfgiGaHOA==}
+  /ethers@6.6.1:
+    resolution: {integrity: sha512-bjNPf/EU4l1jQlAslOmOlyHqjOnM0W7LRPuSf0Kt0tYV4RpUEZsdGWDhvFXfogIhfzXJ/v2tPz4HqXwBt5T8mA==}
     engines: {node: '>=14.0.0'}
     dependencies:
       '@adraffy/ens-normalize': 1.9.2
