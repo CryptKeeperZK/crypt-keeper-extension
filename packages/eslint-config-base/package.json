@@ -1,6 +1,6 @@
 {
   "name": "@cryptkeeper/eslint-config-base",
-  "version": "0.1.0",
+  "version": "0.1.0-beta.0",
   "description": "ESLint base config for CryptKeeper extension",
   "private": true,
   "main": "index.js",
