@@ -1,6 +1,6 @@
 {
   "name": "@cryptkeeper/eslint-config-react",
-  "version": "0.1.0",
+  "version": "0.1.0-beta.0",
   "description": "ESLint react config for CryptKeeper extension",
   "private": true,
   "main": "index.js",
