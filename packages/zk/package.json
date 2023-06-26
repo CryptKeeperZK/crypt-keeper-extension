@@ -44,7 +44,6 @@
     "rlnjs": "^2.0.8"
   },
   "devDependencies": {
-    "@cryptkeeper/eslint-config-base": "workspace:^",
     "@types/jest": "^29.5.2",
     "@types/lodash": "^4.14.195",
     "eslint": "^8.43.0",

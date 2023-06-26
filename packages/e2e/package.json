@@ -23,7 +23,6 @@
   "homepage": "https://github.com/privacy-scaling-explorations/crypt-keeper-extension",
   "devDependencies": {
     "@babel/eslint-parser": "^7.22.5",
-    "@cryptkeeper/eslint-config-base": "workspace:^",
     "@playwright/test": "^1.35.1",
     "@synthetixio/synpress": "^3.7.1",
     "@typescript-eslint/eslint-plugin": "^5.60.0",

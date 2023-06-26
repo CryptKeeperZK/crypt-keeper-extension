@@ -39,7 +39,6 @@
     "rlnjs": "^2.0.8"
   },
   "devDependencies": {
-    "@cryptkeeper/eslint-config-base": "workspace:^",
     "eslint": "^8.43.0",
     "lint-staged": "^13.2.2",
     "prettier": "^2.8.8",
