@@ -1,4 +1,5 @@
-import { RPCAction } from "@src/constants";
+import { RPCAction } from "@cryptkeeper/providers";
+
 import { BackupableServices, RequestHandler } from "@src/types";
 
 import BrowserUtils from "./controllers/browserUtils";

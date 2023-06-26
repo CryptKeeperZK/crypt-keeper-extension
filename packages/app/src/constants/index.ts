@@ -11,5 +11,4 @@ export const IDENTITY_TYPES: readonly SelectOption[] = [
   { value: "random", label: "Random", icon: null },
 ];
 
-export * from "./rpcActions";
 export * from "./paths";

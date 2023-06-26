@@ -2,11 +2,11 @@
  * @jest-environment jsdom
  */
 
+import { RPCAction } from "@cryptkeeper/providers";
 import { renderHook } from "@testing-library/react";
 import { Provider } from "react-redux";
 
 import { ZERO_ADDRESS } from "@src/config/const";
-import { RPCAction } from "@src/constants";
 import { EWallet, HistorySettings, OperationType, ConnectedIdentity } from "@src/types";
 import { store } from "@src/ui/store/configureAppStore";
 import postMessage from "@src/util/postMessage";

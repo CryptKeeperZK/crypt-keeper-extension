@@ -1,21 +1,17 @@
 /* eslint-disable no-param-reassign */
+import { RPCAction } from "@cryptkeeper/providers";
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 import deepEqual from "fast-deep-equal";
 
-import { RPCAction } from "@src/constants";
 import postMessage from "@src/util/postMessage";
 
 import type { TypedThunk } from "../store/configureAppStore";
+import type { HostPermission } from "@cryptkeeper/types";
 
 import { useAppSelector } from "./hooks";
 
 export interface PermissionsState {
   canSkipApprovals: Record<string, HostPermission>;
-}
-
-export interface HostPermission {
-  canSkipApprove: boolean;
-  host: string;
 }
 
 const initialState: PermissionsState = {

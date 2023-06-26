@@ -1,8 +1,8 @@
 /* eslint-disable no-param-reassign */
+import { RPCAction } from "@cryptkeeper/providers";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import deepEqual from "fast-deep-equal";
 
-import { RPCAction } from "@src/constants";
 import postMessage from "@src/util/postMessage";
 
 import type { PendingRequest, RequestResolutionAction } from "@src/types";

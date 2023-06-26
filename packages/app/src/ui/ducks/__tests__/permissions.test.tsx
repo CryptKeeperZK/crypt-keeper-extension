@@ -2,10 +2,10 @@
  * @jest-environment jsdom
  */
 
+import { RPCAction } from "@cryptkeeper/providers";
 import { renderHook } from "@testing-library/react";
 import { Provider } from "react-redux";
 
-import { RPCAction } from "@src/constants";
 import { store } from "@src/ui/store/configureAppStore";
 import postMessage from "@src/util/postMessage";
 

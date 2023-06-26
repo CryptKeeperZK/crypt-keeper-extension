@@ -1,8 +1,7 @@
+import { type CryptKeeperInjectedProvider, initializeInjectedProvider, RPCAction } from "@cryptkeeper/providers";
 import { initializeConnector } from "@web3-react/core";
 import { Connector } from "@web3-react/types";
 
-import { RPCAction } from "@src/constants";
-import { type CryptKeeperInjectedProvider, initializeInjectedProvider } from "@src/providers";
 import postMessage from "@src/util/postMessage";
 
 export class CryptkeeperConnector extends Connector {

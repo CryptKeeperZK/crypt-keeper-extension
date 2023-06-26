@@ -1,5 +1,4 @@
-// TODO: convert to a seperate SDK provider package
-import { CryptKeeperInjectedProvider } from "./sdk/Base";
+import { CryptKeeperInjectedProvider } from "./CryptKeeperInjectedProvider";
 
 declare global {
   interface Window {

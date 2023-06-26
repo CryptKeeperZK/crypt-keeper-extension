@@ -2,16 +2,13 @@
  * @jest-environment jsdom
  */
 
-import EventEmitter from "@src/background/services/event";
+import { initializeInjectedProvider } from "@cryptkeeper/providers";
+import EventEmitter2 from "eventemitter2";
+
 import { ZERO_ADDRESS } from "@src/config/const";
-import { initializeInjectedProvider } from "@src/providers";
 import postMessage from "@src/util/postMessage";
 
 import { cryptKeeper, cryptKeeperHooks, CryptkeeperConnector } from "..";
-
-jest.mock("@src/providers", (): unknown => ({
-  initializeInjectedProvider: jest.fn(),
-}));
 
 describe("connectors/cryptKeeper", () => {
   const cancelActivation = jest.fn();
@@ -30,7 +27,7 @@ describe("connectors/cryptKeeper", () => {
     connect: () => Promise<void>;
   };
 
-  const mockProvider = new EventEmitter() as MockProvider & EventEmitter;
+  const mockProvider = new EventEmitter2() as MockProvider & EventEmitter2;
 
   beforeEach(() => {
     mockProvider.isCryptKeeper = true;
@@ -41,7 +38,7 @@ describe("connectors/cryptKeeper", () => {
   });
 
   afterEach(() => {
-    mockProvider.cleanListeners();
+    mockProvider.removeAllListeners();
     jest.clearAllMocks();
   });
 

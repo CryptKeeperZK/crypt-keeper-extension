@@ -1,9 +1,9 @@
 /* eslint-disable no-param-reassign */
+import { RPCAction } from "@cryptkeeper/providers";
 import { createSlice } from "@reduxjs/toolkit";
 import deepEqual from "fast-deep-equal";
 import omit from "lodash/omit";
 
-import { RPCAction } from "@src/constants";
 import postMessage from "@src/util/postMessage";
 
 import type { PayloadAction } from "@reduxjs/toolkit";
