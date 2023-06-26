@@ -1,4 +1,4 @@
-// TODO: import this constant from `@cryptkeeper/constants` 
+// TODO: import this constant from `@cryptkeeper/constants`
 export enum RPCAction {
   UNLOCK = "rpc/unlock",
   LOCK = "rpc/lock",

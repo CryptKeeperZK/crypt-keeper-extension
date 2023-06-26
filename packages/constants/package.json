@@ -11,7 +11,11 @@
     }
   },
   "scripts": {
-    "build": "tsc -p tsconfig.json"
+    "build": "tsc -p tsconfig.json",
+    "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
+    "lint:fix": "pnpm run lint --fix",
+    "prettier": "prettier -c . --ignore-path ../../.prettierignore",
+    "prettier:fix": "prettier -w . --ignore-path ../../.prettierignore"
   },
   "keywords": [],
   "author": "Privacy and Scaling explorations team",
