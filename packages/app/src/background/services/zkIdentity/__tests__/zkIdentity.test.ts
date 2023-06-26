@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/unbound-method */
+import { createNewIdentity } from "@cryptkeeper/zk";
 import { bigintToHex } from "bigint-conversion";
 import browser from "webextension-polyfill";
 
@@ -9,8 +10,6 @@ import { getEnabledFeatures } from "@src/config/features";
 import { CreateIdentityOptions, EWallet, IdentityStrategy } from "@src/types";
 import { setConnectedIdentity, setIdentities } from "@src/ui/ducks/identities";
 import pushMessage from "@src/util/pushMessage";
-
-import { createNewIdentity } from "../factory";
 
 const mockDefaultIdentityCommitment =
   bigintToHex(15206603389158210388485662342360617949291660595274505642693885456541816400294n);
@@ -71,7 +70,10 @@ jest.mock("@src/background/services/storage");
 
 jest.mock("@src/util/pushMessage");
 
-jest.mock("../factory");
+jest.mock("@cryptkeeper/zk", (): unknown => ({
+  ...jest.requireActual("@cryptkeeper/zk"),
+  createNewIdentity: jest.fn(),
+}));
 
 type MockStorage = { get: jest.Mock; set: jest.Mock; clear: jest.Mock };
 

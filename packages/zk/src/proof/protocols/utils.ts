@@ -2,7 +2,7 @@ import { Group, BigNumberish } from "@semaphore-protocol/group";
 import { MerkleProof } from "@zk-kit/incremental-merkle-tree";
 import { bigintToHex, hexToBigint } from "bigint-conversion";
 
-import { MerkleProofArtifacts, VerificationKey } from "@src/types";
+import type { MerkleProofArtifacts, VerificationKey } from "@cryptkeeper/types";
 
 export function deserializeMerkleProof(merkleProof: MerkleProof): MerkleProof {
   return {

@@ -1,3 +1,4 @@
+import { ZkIdentitySemaphore, createNewIdentity } from "@cryptkeeper/zk";
 import { bigintToHex } from "bigint-conversion";
 import browser from "webextension-polyfill";
 
@@ -8,7 +9,6 @@ import LockerService from "@src/background/services/lock";
 import NotificationService from "@src/background/services/notification";
 import SimpleStorage from "@src/background/services/storage";
 import WalletService from "@src/background/services/wallet";
-import { ZkIdentitySemaphore } from "@src/background/services/zkIdentity/protocols/ZkIdentitySemaphore";
 import { getEnabledFeatures } from "@src/config/features";
 import { Paths } from "@src/constants";
 import {
@@ -28,8 +28,6 @@ import { ellipsify } from "@src/util/account";
 import pushMessage from "@src/util/pushMessage";
 
 import type { IBackupable } from "@src/background/services/backup";
-
-import { createNewIdentity } from "./factory";
 
 const IDENTITY_KEY = "@@ID@@";
 const CONNECTED_IDENTITY_KEY = "@@CONNECTED-IDENTITY@@";

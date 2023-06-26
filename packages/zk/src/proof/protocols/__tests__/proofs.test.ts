@@ -1,11 +1,10 @@
+import { IdentityMetadata, RLNProofRequest } from "@cryptkeeper/types";
 import { Identity } from "@semaphore-protocol/identity";
 import { generateProof } from "@semaphore-protocol/proof";
 import { MerkleProof } from "@zk-kit/incremental-merkle-tree";
 import { RLN } from "rlnjs";
 
-import { ZkIdentitySemaphore } from "@src/background/services/zkIdentity/protocols/ZkIdentitySemaphore";
-import { ZERO_ADDRESS } from "@src/config/const";
-import { IdentityMetadata, RLNProofRequest } from "@src/types";
+import { ZkIdentitySemaphore } from "@src/identity";
 
 import { RLNProofService } from "../RLNProof";
 import { SemaphoreProofService } from "../SemaphoreProof";
@@ -21,7 +20,7 @@ describe("background/services/protocols", () => {
   const defaultIdentity = new Identity("1234");
 
   const defaultIdentityMetadata: IdentityMetadata = {
-    account: ZERO_ADDRESS,
+    account: "account",
     name: "Identity #1",
     identityStrategy: "interrep",
     web2Provider: "twitter",
