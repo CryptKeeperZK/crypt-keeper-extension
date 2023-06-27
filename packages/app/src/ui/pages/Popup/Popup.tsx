@@ -9,6 +9,7 @@ import Home from "@src/ui/pages/Home";
 import Login from "@src/ui/pages/Login";
 import Mnemonic from "@src/ui/pages/Mnemonic";
 import Onboarding from "@src/ui/pages/Onboarding";
+import Recover from "@src/ui/pages/Recover";
 import Settings from "@src/ui/pages/Settings";
 
 import "../../styles.scss";
@@ -25,6 +26,7 @@ const routeConfig: RouteObject[] = [
   { path: Paths.DOWNLOAD_BACKUP, element: <DownloadBackup /> },
   { path: Paths.MNEMONIC, element: <Mnemonic /> },
   { path: Paths.CONNECT_IDENTITY, element: <ConnectIdentity /> },
+  { path: Paths.RECOVER, element: <Recover /> },
   {
     path: "*",
     element: <Navigate to={Paths.HOME} />,

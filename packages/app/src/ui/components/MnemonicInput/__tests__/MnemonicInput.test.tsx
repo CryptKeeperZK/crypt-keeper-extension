@@ -4,15 +4,15 @@
 
 import { act, render } from "@testing-library/react";
 
-import { IRevealMnemonicInputProps, RevealMnemonicInput } from "..";
-import { IUseRevealMnemonicData, useRevealMnemonic } from "../useRevealMnemonic";
+import { IMnemonicInputProps, MnemonicInput } from "..";
+import { IUseMnemonicInputData, useMnemonicInput } from "../useMnemonicInput";
 
-jest.mock("../useRevealMnemonic", (): unknown => ({
-  useRevealMnemonic: jest.fn(),
+jest.mock("../useMnemonicInput", (): unknown => ({
+  useMnemonicInput: jest.fn(),
 }));
 
-describe("ui/components/RevealMnemonicInput", () => {
-  const defaultHookData: IUseRevealMnemonicData = {
+describe("ui/components/MnemonicInput", () => {
+  const defaultHookData: IUseMnemonicInputData = {
     isCopied: false,
     isDownloaded: false,
     isShowMnemonic: false,
@@ -21,12 +21,13 @@ describe("ui/components/RevealMnemonicInput", () => {
     onShowMnemonic: jest.fn(),
   };
 
-  const defaultArgs: IRevealMnemonicInputProps = {
-    mnemonic: "mnemonic",
+  const defaultArgs: IMnemonicInputProps = {
+    hideOptions: false,
+    value: "mnemonic",
   };
 
   beforeEach(() => {
-    (useRevealMnemonic as jest.Mock).mockReturnValue(defaultHookData);
+    (useMnemonicInput as jest.Mock).mockReturnValue(defaultHookData);
   });
 
   afterEach(() => {
@@ -34,7 +35,7 @@ describe("ui/components/RevealMnemonicInput", () => {
   });
 
   test("should render properly", async () => {
-    const { findByText } = render(<RevealMnemonicInput {...defaultArgs} />);
+    const { findByText } = render(<MnemonicInput {...defaultArgs} />);
 
     const copyButton = await findByText("Copy");
     const downloadButton = await findByText("Download");
@@ -46,7 +47,7 @@ describe("ui/components/RevealMnemonicInput", () => {
   });
 
   test("should show mnemonic properly", async () => {
-    const { findByText } = render(<RevealMnemonicInput {...defaultArgs} />);
+    const { findByText } = render(<MnemonicInput {...defaultArgs} />);
 
     const showButton = await findByText("Show");
     await act(() => Promise.resolve(showButton.click()));
@@ -55,9 +56,9 @@ describe("ui/components/RevealMnemonicInput", () => {
   });
 
   test("should hide mnemonic properly", async () => {
-    (useRevealMnemonic as jest.Mock).mockReturnValue({ ...defaultHookData, isShowMnemonic: true });
+    (useMnemonicInput as jest.Mock).mockReturnValue({ ...defaultHookData, isShowMnemonic: true });
 
-    const { findByText } = render(<RevealMnemonicInput {...defaultArgs} />);
+    const { findByText } = render(<MnemonicInput {...defaultArgs} />);
 
     const hideButton = await findByText("Hide");
     await act(() => Promise.resolve(hideButton.click()));
@@ -66,9 +67,9 @@ describe("ui/components/RevealMnemonicInput", () => {
   });
 
   test("should render operation pending labels", async () => {
-    (useRevealMnemonic as jest.Mock).mockReturnValue({ ...defaultHookData, isCopied: true, isDownloaded: true });
+    (useMnemonicInput as jest.Mock).mockReturnValue({ ...defaultHookData, isCopied: true, isDownloaded: true });
 
-    const { findByText } = render(<RevealMnemonicInput {...defaultArgs} />);
+    const { findByText } = render(<MnemonicInput {...defaultArgs} />);
 
     const copyButton = await findByText("Copied!");
     const downloadButton = await findByText("Downloaded!");
@@ -78,7 +79,7 @@ describe("ui/components/RevealMnemonicInput", () => {
   });
 
   test("should call copy and download properly", async () => {
-    const { findByText } = render(<RevealMnemonicInput {...defaultArgs} />);
+    const { findByText } = render(<MnemonicInput {...defaultArgs} />);
 
     const copyButton = await findByText("Copy");
     const downloadButton = await findByText("Download");

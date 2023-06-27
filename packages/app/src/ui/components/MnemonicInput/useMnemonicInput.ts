@@ -3,11 +3,11 @@ import { useCallback, useState } from "react";
 import { useTimeout } from "@src/ui/hooks/timeout";
 import { copyToClipboard, downloadFile } from "@src/util/browser";
 
-export interface IUseRevealMnemonicArgs {
+export interface IUseMnemonicInputArgs {
   mnemonic: string;
 }
 
-export interface IUseRevealMnemonicData {
+export interface IUseMnemonicInputData {
   isShowMnemonic: boolean;
   isCopied: boolean;
   isDownloaded: boolean;
@@ -18,7 +18,7 @@ export interface IUseRevealMnemonicData {
 
 const OPERATION_TIMEOUT_MS = 1_000;
 
-export const useRevealMnemonic = ({ mnemonic }: IUseRevealMnemonicArgs): IUseRevealMnemonicData => {
+export const useMnemonicInput = ({ mnemonic }: IUseMnemonicInputArgs): IUseMnemonicInputData => {
   const [isShowMnemonic, setShowMnemonic] = useState(false);
 
   const { isActive: isCopied, setActive: setCopied } = useTimeout(OPERATION_TIMEOUT_MS);

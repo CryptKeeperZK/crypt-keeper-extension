@@ -3,14 +3,16 @@
  */
 
 import { render, screen, fireEvent, act, waitFor } from "@testing-library/react";
-import { useNavigate } from "react-router-dom";
+import { Suspense } from "react";
+import { MemoryRouter, useNavigate } from "react-router-dom";
 
 import { unlock } from "@src/ui/ducks/app";
 import { useAppDispatch } from "@src/ui/ducks/hooks";
 
 import Login from "..";
 
-jest.mock("react-router-dom", () => ({
+jest.mock("react-router-dom", (): unknown => ({
+  ...jest.requireActual("react-router-dom"),
   useNavigate: jest.fn(),
 }));
 
@@ -39,7 +41,13 @@ describe("ui/pages/Login", () => {
   });
 
   test("should render properly", async () => {
-    const { container } = render(<Login />);
+    const { container } = render(
+      <Suspense>
+        <MemoryRouter>
+          <Login />
+        </MemoryRouter>
+      </Suspense>,
+    );
 
     await waitFor(() => container.firstChild !== null);
 
@@ -51,7 +59,13 @@ describe("ui/pages/Login", () => {
   test("should handle error properly", async () => {
     const err = new Error("Error");
     (mockDispatch as jest.Mock).mockRejectedValue(err);
-    const { container } = render(<Login />);
+    const { container } = render(
+      <Suspense>
+        <MemoryRouter>
+          <Login />
+        </MemoryRouter>
+      </Suspense>,
+    );
 
     await waitFor(() => container.firstChild !== null);
 
@@ -66,7 +80,13 @@ describe("ui/pages/Login", () => {
   });
 
   test("should be able to show/hide password", async () => {
-    const { container } = render(<Login />);
+    const { container } = render(
+      <Suspense>
+        <MemoryRouter>
+          <Login />
+        </MemoryRouter>
+      </Suspense>,
+    );
 
     await waitFor(() => container.firstChild !== null);
 
@@ -89,7 +109,13 @@ describe("ui/pages/Login", () => {
   });
 
   test("should submit form properly", async () => {
-    const { container } = render(<Login />);
+    const { container } = render(
+      <Suspense>
+        <MemoryRouter>
+          <Login />
+        </MemoryRouter>
+      </Suspense>,
+    );
 
     await waitFor(() => container.firstChild !== null);
 

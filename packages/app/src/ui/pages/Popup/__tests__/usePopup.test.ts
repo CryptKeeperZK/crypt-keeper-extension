@@ -4,7 +4,7 @@
 
 import { renderHook, waitFor } from "@testing-library/react";
 import log from "loglevel";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 import { defaultWalletHookData } from "@src/config/mock/wallet";
 import { Paths } from "@src/constants";
@@ -16,6 +16,7 @@ import { useCryptKeeperWallet, useEthWallet } from "@src/ui/hooks/wallet";
 import { IUsePopupData, usePopup } from "../usePopup";
 
 jest.mock("react-router-dom", (): unknown => ({
+  useLocation: jest.fn(),
   useNavigate: jest.fn(),
 }));
 
@@ -67,6 +68,8 @@ describe("ui/pages/Popup/usePopup", () => {
 
   beforeEach(() => {
     (useNavigate as jest.Mock).mockReturnValue(mockNavigate);
+
+    (useLocation as jest.Mock).mockReturnValue({ pathname: "/" });
 
     (usePendingRequests as jest.Mock).mockReturnValue([]);
 
@@ -169,6 +172,16 @@ describe("ui/pages/Popup/usePopup", () => {
 
     expect(mockNavigate).toBeCalledTimes(1);
     expect(mockNavigate).toBeCalledWith(Paths.LOGIN);
+  });
+
+  test("should bypass redirection if location is referenced to common path", async () => {
+    (useLocation as jest.Mock).mockReturnValue({ pathname: Paths.RECOVER });
+    (useAppStatus as jest.Mock).mockReturnValue({ isInitialized: true, isMnemonicGenerated: true, isUnlocked: false });
+
+    const { result } = renderHook(() => usePopup());
+    await waitForData(result.current);
+
+    expect(mockNavigate).toBeCalledTimes(0);
   });
 
   test("should redirect to onboarding page", async () => {

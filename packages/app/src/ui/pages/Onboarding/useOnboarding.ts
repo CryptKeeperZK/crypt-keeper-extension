@@ -11,10 +11,10 @@ import { useValidationResolver } from "@src/ui/hooks/validation";
 
 export interface IUseOnboardingData {
   isLoading: boolean;
+  isShowPassword: boolean;
   errors: Partial<PasswordFormFields & { root: string }>;
   register: UseFormRegister<PasswordFormFields>;
   onSubmit: (event?: BaseSyntheticEvent) => Promise<void>;
-  isShowPassword: boolean;
   onShowPassword: () => void;
 }
 
@@ -66,6 +66,7 @@ export const useOnboarding = (): IUseOnboardingData => {
 
   return {
     isLoading: isLoading || isSubmitting,
+    isShowPassword,
     errors: {
       password: errors.password?.message,
       confirmPassword: errors.confirmPassword?.message,
@@ -73,7 +74,6 @@ export const useOnboarding = (): IUseOnboardingData => {
     },
     register,
     onSubmit: handleSubmit(onSubmit),
-    isShowPassword,
     onShowPassword,
   };
 };

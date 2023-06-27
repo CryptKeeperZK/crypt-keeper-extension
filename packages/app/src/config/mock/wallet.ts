@@ -8,6 +8,8 @@ import type { BrowserProvider } from "ethers";
 import { ZERO_ADDRESS } from "../const";
 import { getChains } from "../rpc";
 
+export const defaultMnemonic = "test test test test test test test test test test test junk";
+
 export const defaultWalletHookData: IUseWalletData = {
   isActive: false,
   isActivating: false,

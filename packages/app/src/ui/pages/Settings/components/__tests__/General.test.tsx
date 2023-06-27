@@ -5,7 +5,7 @@
 import { act, render, waitFor } from "@testing-library/react";
 import { Suspense } from "react";
 
-import { General, IGeneralProps } from "..";
+import General, { IGeneralProps } from "../General";
 
 describe("ui/pages/Settings/components/General", () => {
   const defaultProps: IGeneralProps = {
