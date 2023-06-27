@@ -1,40 +1,41 @@
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 import { createRoot } from "react-dom/client";
 import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 import { MerkleProofType, useCryptKeeper } from "./useCryptKeeper";
-
-import "react-toastify/dist/ReactToastify.css";
 
 interface INotConnectedProps {
   onClick: () => void;
 }
 
-function NotConnected({ onClick }: INotConnectedProps) {
-  return (
-    <div>
-      Please connect to Crypt-Keeper to continue. <button onClick={onClick}>Connect</button>
-      <ToastContainer newestOnTop={true} />
-    </div>
-  );
-}
+const NotConnected = ({ onClick }: INotConnectedProps) => (
+  <div>
+    <p style={{ marginRight: 8 }}>Please connect to Crypt-Keeper to continue.</p>
+
+    <button type="button" onClick={onClick}>
+      Connect
+    </button>
+
+    <ToastContainer newestOnTop />
+  </div>
+);
 
 interface NoConnectedIdentityCommitmentProps {
   onConnectIdentity: () => void;
 }
 
-function NoConnectedIdentityCommitment({ onConnectIdentity }: NoConnectedIdentityCommitmentProps) {
-  return (
-    <div>
-      Please set a connected identity in the Crypt-Keeper plugin to continue.{" "}
-      <button data-testid="connect-identity" onClick={onConnectIdentity}>
-        Connect identity
-      </button>
-    </div>
-  );
-}
+const NoConnectedIdentityCommitment = ({ onConnectIdentity }: NoConnectedIdentityCommitmentProps) => (
+  <div>
+    <p style={{ marginRight: 8 }}>Please set a connected identity in the Crypt-Keeper plugin to continue.</p>
 
-function App() {
+    <button data-testid="connect-identity" type="button" onClick={onConnectIdentity}>
+      Connect identity
+    </button>
+  </div>
+);
+
+const App = () => {
   const { client, isLocked, connectedIdentity, proof, connect, createIdentity, connectIdentity, genSemaphoreProof } =
     useCryptKeeper();
 
@@ -71,7 +72,7 @@ function App() {
       <div>
         <h2>Create a new secret identity</h2>
 
-        <button data-testid="create-new-identity" onClick={createIdentity}>
+        <button data-testid="create-new-identity" type="button" onClick={createIdentity}>
           Create
         </button>
       </div>
@@ -79,7 +80,7 @@ function App() {
       <div>
         <h2>Connect your identity</h2>
 
-        <button data-testid="connect-identity" onClick={connectIdentity}>
+        <button data-testid="connect-identity" type="button" onClick={connectIdentity}>
           Connect identity
         </button>
       </div>
@@ -89,14 +90,15 @@ function App() {
       <div>
         <h2>Semaphore</h2>
 
-        <button onClick={() => genSemaphoreProof(MerkleProofType.STORAGE_ADDRESS)}>
+        <button type="button" onClick={() => genSemaphoreProof(MerkleProofType.STORAGE_ADDRESS)}>
           Generate proof from merkle proof storage address
         </button>
 
         <br />
+
         <br />
 
-        <button onClick={() => genSemaphoreProof(MerkleProofType.ARTIFACTS)}>
+        <button type="button" onClick={() => genSemaphoreProof(MerkleProofType.ARTIFACTS)}>
           Generate proof from merkle proof artifacts
         </button>
       </div>
@@ -123,10 +125,10 @@ function App() {
         </button>
       </div> */}
 
-      <ToastContainer newestOnTop={true} />
+      <ToastContainer newestOnTop />
     </div>
   );
-}
+};
 
 const container = document.getElementById("root");
 const root = createRoot(container as HTMLElement);

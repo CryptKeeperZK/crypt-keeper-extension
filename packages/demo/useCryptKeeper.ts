@@ -1,5 +1,4 @@
 /* eslint-disable no-console */
-import type { ConnectedIdentity, SemaphoreProof, RLNFullProof } from "@cryptkeeperzk/types";
 import { Identity } from "@semaphore-protocol/identity";
 import { bigintToHex } from "bigint-conversion";
 import { encodeBytes32String } from "ethers";
@@ -7,8 +6,8 @@ import { useState, useEffect, useCallback } from "react";
 import { toast } from "react-toastify";
 import { RLN } from "rlnjs";
 
-import "react-toastify/dist/ReactToastify.css";
-import type { CryptKeeperInjectedProvider } from "./types";
+import type { CryptKeeperInjectedProvider } from "@cryptkeeperzk/providers";
+import type { ConnectedIdentity, SemaphoreProof, RLNFullProof, MerkleProofArtifacts } from "@cryptkeeperzk/types";
 
 const SERVER_URL = "http://localhost:8090";
 
@@ -16,7 +15,7 @@ const merkleStorageAddress = `${SERVER_URL}/merkleProof`;
 
 const genMockIdentityCommitments = (): string[] => {
   const identityCommitments: string[] = [];
-  for (let i = 0; i < 10; i++) {
+  for (let i = 0; i < 10; i += 1) {
     const mockIdentity = new Identity();
     const idCommitment = bigintToHex(mockIdentity.getCommitment());
 
@@ -43,7 +42,7 @@ interface IUseCryptKeeperData {
   genRLNProof: (proofType: MerkleProofType) => void;
 }
 
-const initializeClient = (): Promise<CryptKeeperInjectedProvider | undefined> => (window.cryptkeeper as any)?.connect();
+const initializeClient = (): Promise<CryptKeeperInjectedProvider | undefined> => window.cryptkeeper?.connect();
 
 export const useCryptKeeper = (): IUseCryptKeeperData => {
   const [client, setClient] = useState<CryptKeeperInjectedProvider>();
@@ -57,11 +56,11 @@ export const useCryptKeeper = (): IUseCryptKeeperData => {
   const mockIdentityCommitments: string[] = genMockIdentityCommitments();
 
   const connect = useCallback(async () => {
-    const client = await initializeClient();
+    const injectedClient = await initializeClient();
 
-    if (client) {
+    if (injectedClient) {
       setIsLocked(false);
-      setClient(client);
+      setClient(injectedClient);
     } else {
       toast(`CryptKeeper is not installed in the browser`, { type: "error" });
     }
@@ -70,7 +69,7 @@ export const useCryptKeeper = (): IUseCryptKeeperData => {
   const genSemaphoreProof = async (proofType: MerkleProofType = MerkleProofType.STORAGE_ADDRESS) => {
     const externalNullifier = encodeBytes32String("voting-1");
     const signal = encodeBytes32String("hello-world");
-    let storageAddressOrArtifacts: any = `${merkleStorageAddress}/Semaphore`;
+    let storageAddressOrArtifacts: string | MerkleProofArtifacts = `${merkleStorageAddress}/Semaphore`;
 
     if (!mockIdentityCommitments.includes(connectedIdentity.commitment)) {
       mockIdentityCommitments.push(connectedIdentity.commitment);
@@ -93,8 +92,8 @@ export const useCryptKeeper = (): IUseCryptKeeperData => {
 
     await client
       ?.semaphoreProof(externalNullifier, signal, storageAddressOrArtifacts)
-      .then((proof) => {
-        setProof(proof);
+      .then((generatedProof) => {
+        setProof(generatedProof);
         toast("Semaphore proof generated successfully!", { type: "success" });
       })
       .catch((error) => {
@@ -107,9 +106,10 @@ export const useCryptKeeper = (): IUseCryptKeeperData => {
   const genRLNProof = async (proofType: MerkleProofType = MerkleProofType.STORAGE_ADDRESS) => {
     const externalNullifier = encodeBytes32String("voting-1");
     const signal = encodeBytes32String("hello-world");
+    // eslint-disable-next-line no-underscore-dangle
     const rlnIdentifier = RLN._genIdentifier();
     const rlnIdentifierHex = bigintToHex(rlnIdentifier);
-    let storageAddressOrArtifacts: any = `${merkleStorageAddress}/RLN`;
+    let storageAddressOrArtifacts: string | MerkleProofArtifacts = `${merkleStorageAddress}/RLN`;
 
     if (!mockIdentityCommitments.includes(connectedIdentity.commitment)) {
       mockIdentityCommitments.push(connectedIdentity.commitment);
@@ -132,8 +132,8 @@ export const useCryptKeeper = (): IUseCryptKeeperData => {
 
     await client
       ?.rlnProof(externalNullifier, signal, storageAddressOrArtifacts, rlnIdentifierHex)
-      .then((proof) => {
-        setProof(proof);
+      .then((generatedProof) => {
+        setProof(generatedProof);
         toast("RLN proof generated successfully!", { type: "success" });
       })
       .catch((error) => {

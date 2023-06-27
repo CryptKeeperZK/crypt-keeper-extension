@@ -1,9 +1,10 @@
 import log from "loglevel";
 import browser from "webextension-polyfill";
 
-import { InjectedMessageData, ReduxAction, ConnectedIdentity } from "@src/types";
 import { setStatus } from "@src/ui/ducks/app";
 import { setConnectedIdentity } from "@src/ui/ducks/identities";
+
+import type { InjectedMessageData, ReduxAction, ConnectedIdentity } from "@cryptkeeper/types";
 
 function injectScript() {
   const url = browser.runtime.getURL("js/injected.js");

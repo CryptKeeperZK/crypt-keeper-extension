@@ -1,2 +1,2 @@
-export { CryptKeeperInjectedProvider, initializeInjectedProvider, setGlobalInjectedPrivider } from "./sdk";
+export { CryptKeeperInjectedProvider, initializeInjectedProvider } from "./sdk";
 export * from "./constants";
