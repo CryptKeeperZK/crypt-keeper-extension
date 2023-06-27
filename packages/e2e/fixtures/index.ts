@@ -32,6 +32,7 @@ export const test = base.extend<TestExtension>({
         ].filter(Boolean),
       });
 
+      // eslint-disable-next-line playwright/valid-expect
       await waitForExpect(() => {
         test.expect(context.backgroundPages()).toHaveLength(1);
         test.expect(context.serviceWorkers()).toHaveLength(1);
