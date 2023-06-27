@@ -4,6 +4,7 @@ module.exports = {
   setupFilesAfterEnv: ["<rootDir>/src/setupTests.ts"],
   moduleNameMapper: {
     "^.+\\.(css|scss|svg|png)$": "<rootDir>/src/config/mock/resourceMock.js",
+    nanoevents: "<rootDir>/src/config/mock/nanoeventsMock.js",
     nanoid: "<rootDir>/src/config/mock/nanoidMock.js",
     "@src/(.*)$": "<rootDir>/src/$1",
   },

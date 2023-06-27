@@ -21,3 +21,5 @@ export default class EventEmitter {
     this.emitter.events = {};
   }
 }
+
+export * from "./types";

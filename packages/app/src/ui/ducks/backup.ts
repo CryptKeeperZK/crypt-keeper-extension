@@ -1,4 +1,5 @@
-import { RPCAction } from "@src/constants";
+import { RPCAction } from "@cryptkeeper/providers";
+
 import postMessage from "@src/util/postMessage";
 
 import type { TypedThunk } from "@src/ui/store/configureAppStore";

@@ -10,14 +10,13 @@ import {
   SemaphoreProof,
   ICreateIdentityRequestArgs,
   IConnectIdentityRequestArgs,
+  HostPermission,
 } from "@cryptkeeper/types";
 import { ZkIdentitySemaphore, ZkProofService } from "@cryptkeeper/zk";
 import { MerkleProof } from "@zk-kit/incremental-merkle-tree";
 
-import EventEmitter from "@src/background/services/event";
-// TODO: convert to seperate service pacakges @cryptkeeper/services TBD
-import { RPCAction } from "@src/constants";
-import { HostPermission } from "@src/ui/ducks/permissions";
+import { RPCAction } from "../constants";
+import EventEmitter, { EventHandler, EventName } from "../event";
 
 const promises: {
   [k: string]: {
@@ -26,18 +25,31 @@ const promises: {
   };
 } = {};
 
-// TODO: get rid of inheritance
-export class CryptKeeperInjectedProvider extends EventEmitter {
+export class CryptKeeperInjectedProvider {
   readonly isCryptKeeper = true;
 
   private nonce: number;
 
   private zkProofService: ZkProofService;
 
+  private emitter: EventEmitter;
+
   constructor() {
-    super();
     this.nonce = 0;
     this.zkProofService = ZkProofService.getInstance();
+    this.emitter = new EventEmitter();
+  }
+
+  on(eventName: EventName, cb: EventHandler): void {
+    this.emitter.on(eventName, cb);
+  }
+
+  emit(eventName: EventName, payload?: unknown): void {
+    this.emitter.emit(eventName, payload);
+  }
+
+  cleanListeners(): void {
+    this.emitter.cleanListeners();
   }
 
   /**

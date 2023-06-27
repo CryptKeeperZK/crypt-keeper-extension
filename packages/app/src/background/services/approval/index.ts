@@ -2,14 +2,10 @@ import { cryptoGenerateEncryptedHmac, cryptoGetAuthenticBackupCiphertext } from 
 import LockerService from "@src/background/services/lock";
 import SimpleStorage from "@src/background/services/storage";
 
+import type { HostPermission } from "@cryptkeeper/types";
 import type { IBackupable } from "@src/background/services/backup";
 
 const APPPROVALS_DB_KEY = "@APPROVED@";
-
-interface HostPermission {
-  host: string;
-  canSkipApprove: boolean;
-}
 
 export default class ApprovalService implements IBackupable {
   private static INSTANCE: ApprovalService;

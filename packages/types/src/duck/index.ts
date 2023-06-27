@@ -21,3 +21,4 @@ export interface ReduxAction<P = unknown, M = unknown> {
 }
 
 export type * from "./identities";
+export type * from "./permissions";

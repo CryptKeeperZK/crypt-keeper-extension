@@ -1,6 +1,5 @@
+import { RPCAction } from "@cryptkeeper/providers";
 import browser from "webextension-polyfill";
-
-import { RPCAction } from "@src/constants";
 
 import pushMessage from "../pushMessage";
 

@@ -5,7 +5,6 @@ import "@testing-library/jest-dom";
 import "@testing-library/jest-dom/extend-expect";
 import "isomorphic-fetch";
 
-import type { Events, EventHandler, EventName } from "@src/background/services/event/types";
 import type { ReactElement } from "react";
 
 jest.retryTimes(1, { logErrorsBeforeRetry: true });
@@ -107,25 +106,8 @@ jest.mock("webextension-polyfill", (): unknown => {
   };
 });
 
-export const events: Events = {
-  identityChanged: () => false,
-  login: () => false,
-  logout: () => false,
-};
-
-jest.mock("nanoevents", (): unknown => ({
-  createNanoEvents: jest.fn(() => ({
-    on: jest.fn().mockImplementation((eventName: EventName, cb: EventHandler) => {
-      events[eventName] = cb;
-    }),
-
-    emit: jest.fn().mockImplementation((eventName: EventName, payload: number) => {
-      const cb = events[eventName];
-      cb(payload);
-    }),
-  })),
-}));
-
-jest.mock("@src/providers", (): unknown => ({
+jest.mock("@cryptkeeper/providers", (): unknown => ({
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+  RPCAction: jest.requireActual("@cryptkeeper/providers/dist/src/constants/rpcAction"),
   initializeInjectedProvider: jest.fn(),
 }));

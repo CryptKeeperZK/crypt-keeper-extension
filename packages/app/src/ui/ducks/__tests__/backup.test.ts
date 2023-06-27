@@ -2,7 +2,8 @@
  * @jest-environment jsdom
  */
 
-import { RPCAction } from "@src/constants";
+import { RPCAction } from "@cryptkeeper/providers";
+
 import { store } from "@src/ui/store/configureAppStore";
 import postMessage from "@src/util/postMessage";
 
