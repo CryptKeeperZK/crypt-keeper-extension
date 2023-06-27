@@ -32,7 +32,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com"
+    "url": "https://github.com/CryptKeeperZK/crypt-keeper-extension"
   },
   "keywords": [
     "react",
@@ -44,9 +44,9 @@
   "author": "Privacy and Scaling explorations team",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/privacy-scaling-explorations/crypt-keeper-extension"
+    "url": "https://github.com/CryptKeeperZK/crypt-keeper-extension/issues/new/choose"
   },
-  "homepage": "https://github.com/privacy-scaling-explorations/crypt-keeper-extension",
+  "homepage": "https://github.com/CryptKeeperZK/crypt-keeper-extension",
   "devDependencies": {
     "@commitlint/cli": "^17.6.6",
     "@commitlint/config-conventional": "^17.6.6",
