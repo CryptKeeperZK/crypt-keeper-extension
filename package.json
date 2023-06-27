@@ -5,15 +5,16 @@
   "description": "Crypt-Keeper Extension, zero knowledge identity management and proof generation tool",
   "main": "index.js",
   "scripts": {
-    "demo:start": "pnpm -r run start",
-    "merkle:start": "pnpm -r run merkle",
-    "build": "pnpm -r run build",
+    "demo:start": "pnpm exec nx run-many --target=start",
+    "merkle:start": "pnpm exec nx run-many --target=merkle",
+    "build": "pnpm exec nx run-many --target=build",
     "dev": "pnpm -r run dev",
     "build:e2e": "pnpm -r run build:e2e",
     "build:chrome": "cross-env TARGET=chrome pnpm -r run build",
     "dev:chrome": "cross-env TARGET=chrome pnpm -r run dev",
     "build:firefox": "cross-env TARGET=firefox pnpm -r run build",
     "dev:firefox": "cross-env TARGET=firefox pnpm -r run dev",
+    "publish": "pnpm exec nx run-many --target=publish",
     "merkle": "pnpm -r run merkle",
     "test": "pnpm -r run test",
     "test:coverage": "pnpm -r run test:coverage",
@@ -69,7 +70,9 @@
     "string_decoder": "^1.3.0",
     "ts-jest": "^29.1.0",
     "ts-node": "^10.9.1",
-    "typescript": "^5.1.3"
+    "typescript": "^5.1.3",
+    "nx": "16.4.0",
+    "nx-cloud": "latest"
   },
   "config": {
     "commitizen": {

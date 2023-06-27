@@ -1,7 +1,10 @@
 {
   "name": "@cryptkeeper/providers",
-  "version": "0.1.0",
+  "version": "0.1.0-beta",
   "description": "CryptKeeper providers",
+  "publishConfig": {
+    "access": "public"
+  },
   "main": "./dist/src/index.js",
   "types": "./dist/src/index.d.ts",
   "repository": {
@@ -24,6 +27,7 @@
     "build": "tsc -p tsconfig.build.json",
     "build:e2e": "pnpm run build",
     "dev": "pnpm run build",
+    "publish": "pnpm publish",
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
     "lint:fix": "pnpm run lint --fix",
     "prettier": "prettier -c . --ignore-path ../../.prettierignore",
