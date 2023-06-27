@@ -36,7 +36,7 @@ export default defineConfig({
   webServer: [
     {
       command: "pnpm run merkle",
-      cwd: path.resolve(__dirname, "../app"),
+      cwd: path.resolve(__dirname, "../merkle-mock-server"),
       url: "http://localhost:8090",
       timeout: 120 * 1000,
       reuseExistingServer: !process.env.CI,

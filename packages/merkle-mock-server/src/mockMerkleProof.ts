@@ -66,4 +66,4 @@ app.post(
 );
 
 // eslint-disable-next-line no-console
-app.listen(8090, () => console.log("Merkle service is listening"));
+app.listen(8090, () => console.log("Merkle service is listening localhost:8090"));
