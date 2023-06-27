@@ -42,6 +42,11 @@ interface IUseCryptKeeperData {
   genRLNProof: (proofType: MerkleProofType) => void;
 }
 
+<<<<<<< HEAD
+=======
+const initializeClient = (): Promise<CryptKeeperInjectedProvider | undefined> => window.cryptkeeper?.connect();
+
+>>>>>>> eea3a80 (feat: use `@cryptkeeper/provider` for demo)
 export const useCryptKeeper = (): IUseCryptKeeperData => {
   const [client, setClient] = useState<CryptKeeperInjectedProvider>();
   const [isLocked, setIsLocked] = useState(true);
@@ -54,7 +59,11 @@ export const useCryptKeeper = (): IUseCryptKeeperData => {
   const mockIdentityCommitments: string[] = genMockIdentityCommitments();
 
   const connect = useCallback(async () => {
+<<<<<<< HEAD
     const injectedClient = await initializeInjectedProvider()?.connect();
+=======
+    const injectedClient = await initializeClient();
+>>>>>>> eea3a80 (feat: use `@cryptkeeper/provider` for demo)
 
     if (injectedClient) {
       setIsLocked(false);
