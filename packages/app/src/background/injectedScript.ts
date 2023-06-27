@@ -1,4 +1,4 @@
-import { initializeInjectedProvider } from "@cryptkeeper/providers";
+import { initializeInjectedProvider } from "@cryptkeeperzk/providers";
 import log from "loglevel";
 
 import { isDebugMode } from "@src/config/env";

@@ -1,4 +1,4 @@
-import type { IdentityData } from "@cryptkeeper/types";
+import type { IdentityData } from "@cryptkeeperzk/types";
 
 export enum OperationType {
   CREATE_IDENTITY = "CREATE_IDENTITY",

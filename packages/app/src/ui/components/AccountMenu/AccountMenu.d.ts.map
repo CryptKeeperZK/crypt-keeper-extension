@@ -1,0 +1,1 @@
+{"version":3,"file":"AccountMenu.d.ts","sourceRoot":"","sources":["AccountMenu.tsx"],"names":[],"mappings":";;AAUA,OAAO,EAAW,cAAc,EAAE,MAAM,YAAY,CAAC;AAKrD,MAAM,WAAW,iBAAiB;IAChC,SAAS,EAAE,cAAc,CAAC;IAC1B,iBAAiB,EAAE,cAAc,CAAC;CACnC;AAOD,eAAO,MAAM,WAAW,qCAAsC,iBAAiB,KAAG,WA+EjF,CAAC"}

@@ -1,5 +1,5 @@
 {
-  "name": "@cryptkeeper/types",
+  "name": "@cryptkeeperzk/types",
   "version": "0.1.0",
   "description": "CryptKeeper Extension types",
   "main": "./dist/src/index.js",
@@ -39,7 +39,7 @@
     "rlnjs": "^2.0.8"
   },
   "devDependencies": {
-    "@cryptkeeper/eslint-config-base": "workspace:^",
+    "@cryptkeeperzk/eslint-config-base": "workspace:^",
     "eslint": "^8.43.0",
     "lint-staged": "^13.2.2",
     "prettier": "^2.8.8",

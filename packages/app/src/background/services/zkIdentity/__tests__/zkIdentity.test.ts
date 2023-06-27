@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/unbound-method */
-import { createNewIdentity } from "@cryptkeeper/zk";
+import { createNewIdentity } from "@cryptkeeperzk/zk";
 import { bigintToHex } from "bigint-conversion";
 import browser from "webextension-polyfill";
 
@@ -70,8 +70,8 @@ jest.mock("@src/background/services/storage");
 
 jest.mock("@src/util/pushMessage");
 
-jest.mock("@cryptkeeper/zk", (): unknown => ({
-  ...jest.requireActual("@cryptkeeper/zk"),
+jest.mock("@cryptkeeperzk/zk", (): unknown => ({
+  ...jest.requireActual("@cryptkeeperzk/zk"),
   createNewIdentity: jest.fn(),
 }));
 

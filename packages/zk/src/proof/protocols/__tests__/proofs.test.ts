@@ -1,4 +1,4 @@
-import { IdentityMetadata, RLNProofRequest } from "@cryptkeeper/types";
+import { IdentityMetadata, RLNProofRequest } from "@cryptkeeperzk/types";
 import { Identity } from "@semaphore-protocol/identity";
 import { generateProof } from "@semaphore-protocol/proof";
 import { MerkleProof } from "@zk-kit/incremental-merkle-tree";

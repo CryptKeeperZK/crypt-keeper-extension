@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 
-import { initializeInjectedProvider } from "@cryptkeeper/providers";
+import { initializeInjectedProvider } from "@cryptkeeperzk/providers";
 import EventEmitter2 from "eventemitter2";
 
 import { ZERO_ADDRESS } from "@src/config/const";

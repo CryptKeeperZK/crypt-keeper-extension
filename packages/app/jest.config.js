@@ -1,6 +1,6 @@
 module.exports = {
   preset: "../../jest-preset.js",
-  displayName: "@cryptkeeper/app",
+  displayName: "@cryptkeeperzk/app",
   setupFilesAfterEnv: ["<rootDir>/src/setupTests.ts"],
   moduleNameMapper: {
     "^.+\\.(css|scss|svg|png)$": "<rootDir>/src/config/mock/resourceMock.js",

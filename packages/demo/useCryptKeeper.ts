@@ -1,5 +1,5 @@
 /* eslint-disable no-console */
-import type { ConnectedIdentity, SemaphoreProof, RLNFullProof } from "@cryptkeeper/types";
+import type { ConnectedIdentity, SemaphoreProof, RLNFullProof } from "@cryptkeeperzk/types";
 import { Identity } from "@semaphore-protocol/identity";
 import { bigintToHex } from "bigint-conversion";
 import { encodeBytes32String } from "ethers";

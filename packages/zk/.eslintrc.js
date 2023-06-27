@@ -1,7 +1,7 @@
 const path = require("path");
 
 module.exports = {
-  extends: ["@cryptkeeper/eslint-config-base"],
+  extends: ["@cryptkeeperzk/eslint-config-base"],
   ignorePatterns: [".eslintrc.js"],
   settings: {
     react: {

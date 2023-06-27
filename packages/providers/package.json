@@ -1,6 +1,6 @@
 {
-  "name": "@cryptkeeper/providers",
-  "version": "0.1.0-beta",
+  "name": "@cryptkeeperzk/providers",
+  "version": "0.1.0-beta.1",
   "description": "CryptKeeper providers",
   "publishConfig": {
     "access": "public"
@@ -36,8 +36,8 @@
     "githook:precommit": "lint-staged && pnpm run types"
   },
   "dependencies": {
-    "@cryptkeeper/types": "workspace:^",
-    "@cryptkeeper/zk": "workspace:^",
+    "@cryptkeeperzk/types": "workspace:^",
+    "@cryptkeeperzk/zk": "workspace:^",
     "@semaphore-protocol/group": "^3.10.1",
     "@semaphore-protocol/identity": "^3.10.1",
     "@semaphore-protocol/proof": "^3.10.1",
@@ -48,7 +48,7 @@
     "rlnjs": "^2.0.8"
   },
   "devDependencies": {
-    "@cryptkeeper/eslint-config-base": "workspace:^",
+    "@cryptkeeperzk/eslint-config-base": "workspace:^",
     "@types/jest": "^29.5.2",
     "@types/lodash": "^4.14.195",
     "eslint": "^8.43.0",

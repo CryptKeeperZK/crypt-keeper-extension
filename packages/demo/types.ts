@@ -1,5 +1,5 @@
 // TODO: temp until providers package isn't ready
-import type { RLNFullProof, SemaphoreProof, ConnectedIdentity } from "@cryptkeeper/types";
+import type { RLNFullProof, SemaphoreProof, ConnectedIdentity } from "@cryptkeeperzk/types";
 
 export interface CryptKeeperInjectedProvider {
   accounts: () => Promise<string[]>;

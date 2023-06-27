@@ -2,7 +2,7 @@ import { generateProof } from "@semaphore-protocol/proof";
 
 import { ZkIdentitySemaphore } from "@src/identity";
 
-import type { SemaphoreProof, SemaphoreProofRequest } from "@cryptkeeper/types";
+import type { SemaphoreProof, SemaphoreProofRequest } from "@cryptkeeperzk/types";
 
 import { IZkProof } from "./types";
 import { getMerkleProof } from "./utils";

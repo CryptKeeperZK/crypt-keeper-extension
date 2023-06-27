@@ -1,7 +1,7 @@
 {
-  "name": "@cryptkeeper/app",
+  "name": "@cryptkeeperzk/app",
   "private": true,
-  "version": "0.1.0-beta.0",
+  "version": "0.1.0-beta.1",
   "description": "Crypt-Keeper Extension, zero knowledge identity management and proof generation tool",
   "main": "index.js",
   "scripts": {
@@ -38,7 +38,7 @@
   },
   "homepage": "https://github.com/privacy-scaling-explorations/crypt-keeper-extension",
   "devDependencies": {
-    "@cryptkeeper/eslint-config-react": "workspace:^",
+    "@cryptkeeperzk/eslint-config-react": "workspace:^",
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^14.0.0",
     "@types/chrome": "^0.0.238",
@@ -87,9 +87,9 @@
     "webpack-merge": "^5.9.0"
   },
   "dependencies": {
-    "@cryptkeeper/providers": "workspace:^",
-    "@cryptkeeper/types": "workspace:^",
-    "@cryptkeeper/zk": "workspace:^",
+    "@cryptkeeperzk/providers": "workspace:^",
+    "@cryptkeeperzk/types": "workspace:^",
+    "@cryptkeeperzk/zk": "workspace:^",
     "@emotion/styled": "^11.11.0",
     "@fortawesome/fontawesome-common-types": "^6.4.0",
     "@fortawesome/fontawesome-svg-core": "^6.4.0",

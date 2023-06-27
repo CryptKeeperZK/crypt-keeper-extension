@@ -11,8 +11,8 @@ import {
   ICreateIdentityRequestArgs,
   IConnectIdentityRequestArgs,
   HostPermission,
-} from "@cryptkeeper/types";
-import { ZkIdentitySemaphore, ZkProofService } from "@cryptkeeper/zk";
+} from "@cryptkeeperzk/types";
+import { ZkIdentitySemaphore, ZkProofService } from "@cryptkeeperzk/zk";
 import { MerkleProof } from "@zk-kit/incremental-merkle-tree";
 
 import { RPCAction } from "../constants";

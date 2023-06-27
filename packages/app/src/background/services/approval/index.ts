@@ -2,7 +2,7 @@ import { cryptoGenerateEncryptedHmac, cryptoGetAuthenticBackupCiphertext } from 
 import LockerService from "@src/background/services/lock";
 import SimpleStorage from "@src/background/services/storage";
 
-import type { HostPermission } from "@cryptkeeper/types";
+import type { HostPermission } from "@cryptkeeperzk/types";
 import type { IBackupable } from "@src/background/services/backup";
 
 const APPPROVALS_DB_KEY = "@APPROVED@";

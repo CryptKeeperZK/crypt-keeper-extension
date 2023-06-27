@@ -1,7 +1,7 @@
 {
-  "name": "@cryptkeeper/e2e",
+  "name": "@cryptkeeperzk/e2e",
   "private": true,
-  "version": "0.1.0-beta.0",
+  "version": "0.1.0-beta.1",
   "description": "E2E tests for CryptKeeper extension",
   "main": "index.js",
   "scripts": {
@@ -23,7 +23,7 @@
   "homepage": "https://github.com/privacy-scaling-explorations/crypt-keeper-extension",
   "devDependencies": {
     "@babel/eslint-parser": "^7.22.5",
-    "@cryptkeeper/eslint-config-base": "workspace:^",
+    "@cryptkeeperzk/eslint-config-base": "workspace:^",
     "@playwright/test": "^1.35.1",
     "@synthetixio/synpress": "^3.7.1",
     "eslint": "^8.43.0",

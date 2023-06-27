@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 
-import { RPCAction } from "@cryptkeeper/providers";
+import { RPCAction } from "@cryptkeeperzk/providers";
 import { renderHook } from "@testing-library/react";
 import { Provider } from "react-redux";
 

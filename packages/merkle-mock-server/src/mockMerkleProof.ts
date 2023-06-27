@@ -1,4 +1,4 @@
-import { generateMerkleProof } from "@cryptkeeper/zk";
+import { generateMerkleProof } from "@cryptkeeperzk/zk";
 import { BigNumberish } from "@semaphore-protocol/group";
 import { Identity } from "@semaphore-protocol/identity";
 import { MerkleProof } from "@zk-kit/incremental-merkle-tree";
