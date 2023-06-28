@@ -2,8 +2,6 @@
   "name": "@cryptkeeperzk/merkle-mock-server",
   "version": "0.1.0-beta.1",
   "description": "CryptKeeper Extension merkle tree mock server",
-  "main": "./dist/src/index.js",
-  "types": "./dist/src/index.d.ts",
   "private": true,
   "repository": {
     "type": "git",
