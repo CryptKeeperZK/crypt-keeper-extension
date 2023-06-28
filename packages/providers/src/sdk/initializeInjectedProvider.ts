@@ -3,6 +3,7 @@ import { CryptKeeperInjectedProvider } from "./CryptKeeperInjectedProvider";
 declare global {
   interface Window {
     cryptkeeper: CryptKeeperInjectedProvider;
+    isCryptkeeperInjected?: boolean;
   }
 }
 

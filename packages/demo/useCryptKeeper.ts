@@ -1,4 +1,5 @@
 /* eslint-disable no-console */
+import { initializeInjectedProvider, type CryptKeeperInjectedProvider } from "@cryptkeeperzk/providers";
 import { Identity } from "@semaphore-protocol/identity";
 import { bigintToHex } from "bigint-conversion";
 import { encodeBytes32String } from "ethers";
@@ -6,7 +7,6 @@ import { useState, useEffect, useCallback } from "react";
 import { toast } from "react-toastify";
 import { RLN } from "rlnjs";
 
-import type { CryptKeeperInjectedProvider } from "@cryptkeeperzk/providers";
 import type { ConnectedIdentity, SemaphoreProof, RLNFullProof, MerkleProofArtifacts } from "@cryptkeeperzk/types";
 
 const SERVER_URL = "http://localhost:8090";
@@ -42,8 +42,6 @@ interface IUseCryptKeeperData {
   genRLNProof: (proofType: MerkleProofType) => void;
 }
 
-const initializeClient = (): Promise<CryptKeeperInjectedProvider | undefined> => window.cryptkeeper?.connect();
-
 export const useCryptKeeper = (): IUseCryptKeeperData => {
   const [client, setClient] = useState<CryptKeeperInjectedProvider>();
   const [isLocked, setIsLocked] = useState(true);
@@ -56,7 +54,7 @@ export const useCryptKeeper = (): IUseCryptKeeperData => {
   const mockIdentityCommitments: string[] = genMockIdentityCommitments();
 
   const connect = useCallback(async () => {
-    const injectedClient = await initializeClient();
+    const injectedClient = await initializeInjectedProvider()?.connect();
 
     if (injectedClient) {
       setIsLocked(false);

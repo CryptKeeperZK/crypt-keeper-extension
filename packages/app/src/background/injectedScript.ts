@@ -1,12 +1,3 @@
-import { initializeInjectedProvider } from "@cryptkeeperzk/providers";
-import log from "loglevel";
+window.isCryptkeeperInjected = true;
 
-import { isDebugMode } from "@src/config/env";
-
-log.setDefaultLevel(isDebugMode() ? "debug" : "info");
-
-try {
-  initializeInjectedProvider();
-} catch (error) {
-  log.error(`Error in injecting CryptKeeper Injected Provider`);
-}
+export {};
