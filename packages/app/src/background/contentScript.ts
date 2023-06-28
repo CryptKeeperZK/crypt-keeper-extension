@@ -4,7 +4,7 @@ import browser from "webextension-polyfill";
 import { setStatus } from "@src/ui/ducks/app";
 import { setConnectedIdentity } from "@src/ui/ducks/identities";
 
-import type { InjectedMessageData, ReduxAction, ConnectedIdentity } from "@cryptkeeper/types";
+import type { InjectedMessageData, ReduxAction, ConnectedIdentity } from "@cryptkeeperzk/types";
 
 function injectScript() {
   const url = browser.runtime.getURL("js/injected.js");
