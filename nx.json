@@ -12,10 +12,10 @@
     "defaultBase": "master"
   },
   "targetDefaults": {
-    "build": {
+    "publish": {
       "dependsOn": ["^build"]
     },
-    "publish": {
+    "dev": {
       "dependsOn": ["^build"]
     }
   }
