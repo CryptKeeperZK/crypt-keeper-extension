@@ -1,13 +1,13 @@
 {
   "name": "@cryptkeeperzk/merkle-mock-server",
-  "version": "0.1.0",
-  "description": "CryptKeeper Extension types",
+  "version": "0.1.0-beta.1",
+  "description": "CryptKeeper Extension merkle tree mock server",
   "main": "./dist/src/index.js",
   "types": "./dist/src/index.d.ts",
   "private": true,
   "repository": {
     "type": "git",
-    "url": "git+https://github.com"
+    "url": "https://github.com/CryptKeeperZK/crypt-keeper-extension"
   },
   "keywords": [
     "react",
@@ -20,9 +20,9 @@
   "author": "Privacy and Scaling explorations team",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/privacy-scaling-explorations/crypt-keeper-extension"
+    "url": "https://github.com/CryptKeeperZK/crypt-keeper-extension/issues/new/choose"
   },
-  "homepage": "https://github.com/privacy-scaling-explorations/crypt-keeper-extension",
+  "homepage": "https://github.com/CryptKeeperZK/crypt-keeper-extension",
   "scripts": {
     "merkle": "ts-node src/index.ts",
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
