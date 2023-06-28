@@ -6,7 +6,6 @@ import logoSVG from "@src/static/icons/logo.svg";
 import { Icon } from "@src/ui/components/Icon";
 import { MnemonicInput } from "@src/ui/components/MnemonicInput";
 
-import "./recover.scss";
 import { useRecover } from "./useRecover";
 
 const Recover = (): JSX.Element => {
@@ -14,7 +13,6 @@ const Recover = (): JSX.Element => {
 
   return (
     <Box
-      className="recover"
       component="form"
       data-testid="recover-page"
       sx={{ display: "flex", flexDirection: "column", alignItems: "center", flexGrow: 1, position: "relative", p: 3 }}
@@ -44,7 +42,7 @@ const Recover = (): JSX.Element => {
           autoFocus
           hideOptions
           data-testid="mnemonic-input"
-          errorMessage={errors.mnemonic || errors.root}
+          errorMessage={errors.mnemonic}
           id="mnemonic"
           placeholder="Enter mnemonic"
           rows={3}

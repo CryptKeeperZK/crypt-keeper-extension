@@ -4,11 +4,12 @@ import { useNavigate } from "react-router-dom";
 import { object, string } from "yup";
 
 import { validateMnemonic } from "@src/background/services/mnemonic";
+import { Paths } from "@src/constants";
 import { useValidationResolver } from "@src/ui/hooks/validation";
 
 export interface IUseRecoverData {
   isLoading: boolean;
-  errors: Partial<RestoreFormFields & { root: string }>;
+  errors: Partial<RestoreFormFields>;
   register: UseFormRegister<RestoreFormFields>;
   onSubmit: () => Promise<void>;
   onClose: () => void;
@@ -31,7 +32,6 @@ export const useRecover = (): IUseRecoverData => {
   const resolver = useValidationResolver(validationSchema);
   const {
     formState: { isLoading, isSubmitting, errors },
-    setError,
     register,
     handleSubmit,
   } = useForm<RestoreFormFields>({
@@ -41,9 +41,13 @@ export const useRecover = (): IUseRecoverData => {
     },
   });
 
-  const onRecover = useCallback(() => {
-    setError("root", { message: "implement" });
-  }, [setError]);
+  const onRecover = useCallback(
+    (data: RestoreFormFields) => {
+      // TODO: add mnemonic phrase check
+      navigate(`${Paths.RESET_PASSWORD}?mnemonic=${data.mnemonic}`);
+    },
+    [navigate],
+  );
 
   const onClose = useCallback(() => {
     navigate(-1);
@@ -53,7 +57,6 @@ export const useRecover = (): IUseRecoverData => {
     isLoading: isLoading || isSubmitting,
     errors: {
       mnemonic: errors.mnemonic?.message,
-      root: errors.root?.message,
     },
     register,
     onSubmit: handleSubmit(onRecover),

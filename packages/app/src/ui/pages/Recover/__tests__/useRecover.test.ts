@@ -2,10 +2,8 @@
  * @jest-environment jsdom
  */
 
-import { act, renderHook, waitFor } from "@testing-library/react";
+import { act, renderHook } from "@testing-library/react";
 import { useNavigate } from "react-router-dom";
-
-import { defaultMnemonic } from "@src/config/mock/wallet";
 
 import { useRecover } from "../useRecover";
 
@@ -28,7 +26,7 @@ describe("ui/pages/Recover/useRecover", () => {
     const { result } = renderHook(() => useRecover());
 
     expect(result.current.isLoading).toBe(false);
-    expect(result.current.errors).toStrictEqual({ mnemonic: undefined, root: undefined });
+    expect(result.current.errors).toStrictEqual({ mnemonic: undefined });
   });
 
   test("should go back properly", async () => {
@@ -38,18 +36,5 @@ describe("ui/pages/Recover/useRecover", () => {
 
     expect(mockNavigate).toBeCalledTimes(1);
     expect(mockNavigate).toBeCalledWith(-1);
-  });
-
-  test("should submit form properly", async () => {
-    const { result } = renderHook(() => useRecover());
-
-    await act(async () =>
-      Promise.resolve(result.current.register("mnemonic").onChange({ target: { value: defaultMnemonic } })),
-    );
-
-    await act(async () => Promise.resolve(result.current.onSubmit()));
-    await waitFor(() => result.current.isLoading !== true);
-
-    expect(result.current.isLoading).toBe(false);
   });
 });

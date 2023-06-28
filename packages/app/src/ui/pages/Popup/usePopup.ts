@@ -17,6 +17,8 @@ const REDIRECT_PATHS: Record<string, Paths> = {
   [Paths.CONNECT_IDENTITY]: Paths.CONNECT_IDENTITY,
 };
 
+const COMMON_PATHS = [Paths.RECOVER, Paths.RESET_PASSWORD];
+
 export const usePopup = (): IUsePopupData => {
   const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
@@ -32,7 +34,7 @@ export const usePopup = (): IUsePopupData => {
   const url = new URL(window.location.href.replace("#", ""));
   const redirectParam = url.searchParams.get("redirect");
   const redirect = redirectParam && REDIRECT_PATHS[redirectParam];
-  const isCommonPath = useMemo(() => [Paths.RECOVER].includes(location.pathname as Paths), [location.pathname]);
+  const isCommonPath = useMemo(() => COMMON_PATHS.includes(location.pathname as Paths), [location.pathname]);
 
   const fetchData = useCallback(async () => {
     await Promise.all([dispatch(fetchStatus()), dispatch(fetchPendingRequests())]);
