@@ -21,5 +21,5 @@ window.cryptkeeper = injectedClient;
 ```ts
 import type { CryptKeeperInjectedProvider } from "@cryptkeeperzk/providers";
 
-console.log(window.cryptkeeper)
+console.log(window.cryptkeeper);
 ```
