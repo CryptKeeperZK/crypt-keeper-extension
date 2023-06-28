@@ -16,17 +16,8 @@
     "githook:precommit": "lint-staged"
   },
   "dependencies": {
-    "@babel/eslint-parser": "^7.22.5",
-    "@cryptkeeper/eslint-config-base": "workspace:^",
-    "@typescript-eslint/eslint-plugin": "^5.60.1",
-    "@typescript-eslint/parser": "^5.60.1",
-    "eslint": "^8.43.0",
     "eslint-plugin-jsx-a11y": "^6.7.1",
     "eslint-plugin-react": "^7.32.2",
     "eslint-plugin-react-hooks": "^4.6.0"
-  },
-  "devDependencies": {
-    "lint-staged": "^13.2.2",
-    "pretty-quick": "^3.1.3"
   }
 }
