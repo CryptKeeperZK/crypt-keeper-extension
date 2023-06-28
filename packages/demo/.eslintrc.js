@@ -1,7 +1,7 @@
 const path = require("path");
 
 module.exports = {
-  extends: ["@cryptkeeper/eslint-config-react"],
+  extends: ["@cryptkeeperzk/eslint-config-react"],
   parserOptions: {
     project: path.resolve("tsconfig.json"),
     sourceType: "module",
