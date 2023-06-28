@@ -310,8 +310,8 @@ importers:
         specifier: ^29.5.0
         version: 29.5.0
       lint-staged:
-        specifier: ^13.2.2
-        version: 13.2.2
+        specifier: ^13.2.3
+        version: 13.2.3
       prettier:
         specifier: ^2.8.8
         version: 2.8.8
@@ -422,8 +422,8 @@ importers:
         specifier: ^0.15.2
         version: 0.15.2(eslint@8.43.0)
       lint-staged:
-        specifier: ^13.2.2
-        version: 13.2.2
+        specifier: ^13.2.3
+        version: 13.2.3
       prettier:
         specifier: ^2.8.8
         version: 2.8.8
@@ -474,8 +474,8 @@ importers:
         version: 2.0.0(@typescript-eslint/eslint-plugin@5.60.1)(eslint@8.43.0)
     devDependencies:
       lint-staged:
-        specifier: ^13.2.2
-        version: 13.2.2
+        specifier: ^13.2.3
+        version: 13.2.3
       pretty-quick:
         specifier: ^3.1.3
         version: 3.1.3(prettier@2.8.8)
@@ -508,8 +508,8 @@ importers:
         version: 4.6.0(eslint@8.43.0)
     devDependencies:
       lint-staged:
-        specifier: ^13.2.2
-        version: 13.2.2
+        specifier: ^13.2.3
+        version: 13.2.3
       pretty-quick:
         specifier: ^3.1.3
         version: 3.1.3(prettier@2.8.8)
@@ -554,8 +554,8 @@ importers:
         specifier: ^8.43.0
         version: 8.43.0
       lint-staged:
-        specifier: ^13.2.2
-        version: 13.2.2
+        specifier: ^13.2.3
+        version: 13.2.3
       prettier:
         specifier: ^2.8.8
         version: 2.8.8
@@ -621,8 +621,8 @@ importers:
         specifier: ^29.5.0
         version: 29.5.0(@types/node@20.3.1)(ts-node@10.9.1)
       lint-staged:
-        specifier: ^13.2.2
-        version: 13.2.2
+        specifier: ^13.2.3
+        version: 13.2.3
       prettier:
         specifier: ^2.8.8
         version: 2.8.8
@@ -655,8 +655,8 @@ importers:
         specifier: ^8.43.0
         version: 8.43.0
       lint-staged:
-        specifier: ^13.2.2
-        version: 13.2.2
+        specifier: ^13.2.3
+        version: 13.2.3
       prettier:
         specifier: ^2.8.8
         version: 2.8.8
@@ -713,8 +713,8 @@ importers:
         specifier: ^29.5.0
         version: 29.5.0(@types/node@20.3.1)(ts-node@10.9.1)
       lint-staged:
-        specifier: ^13.2.2
-        version: 13.2.2
+        specifier: ^13.2.3
+        version: 13.2.3
       prettier:
         specifier: ^2.8.8
         version: 2.8.8
@@ -5100,6 +5100,7 @@ packages:
     dependencies:
       '@typescript-eslint/types': 5.60.1
       '@typescript-eslint/visitor-keys': 5.60.1
+    dev: false
 
   /@typescript-eslint/type-utils@5.60.1(eslint@8.43.0)(typescript@5.1.3):
     resolution: {integrity: sha512-vN6UztYqIu05nu7JqwQGzQKUJctzs3/Hg7E2Yx8rz9J+4LgtIDFWjjl1gm3pycH0P3mHAcEUBd23LVgfrsTR8A==}
@@ -11689,8 +11690,8 @@ packages:
       - encoding
     dev: false
 
-  /lint-staged@13.2.2:
-    resolution: {integrity: sha512-71gSwXKy649VrSU09s10uAT0rWCcY3aewhMaHyl2N84oBk4Xs9HgxvUp3AYu+bNsK4NrOYYxvSgg7FyGJ+jGcA==}
+  /lint-staged@13.2.3:
+    resolution: {integrity: sha512-zVVEXLuQIhr1Y7R7YAWx4TZLdvuzk7DnmrsTNL0fax6Z3jrpFcas+vKbzxhhvp6TA55m1SQuWkpzI1qbfDZbAg==}
     engines: {node: ^14.13.1 || >=16.0.0}
     hasBin: true
     dependencies:
