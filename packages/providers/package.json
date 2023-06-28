@@ -1,12 +1,15 @@
 {
-  "name": "@cryptkeeper/providers",
-  "version": "0.1.0",
+  "name": "@cryptkeeperzk/providers",
+  "version": "0.1.0-beta.1",
   "description": "CryptKeeper providers",
+  "publishConfig": {
+    "access": "public"
+  },
   "main": "./dist/src/index.js",
   "types": "./dist/src/index.d.ts",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com"
+    "url": "https://github.com/CryptKeeperZK/crypt-keeper-extension"
   },
   "keywords": [
     "cryptkeeper",
@@ -17,13 +20,14 @@
   "author": "Privacy and Scaling explorations team",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/privacy-scaling-explorations/crypt-keeper-extension"
+    "url": "https://github.com/CryptKeeperZK/crypt-keeper-extension/issues/new/choose"
   },
-  "homepage": "https://github.com/privacy-scaling-explorations/crypt-keeper-extension",
+  "homepage": "https://github.com/CryptKeeperZK/crypt-keeper-extension",
   "scripts": {
     "build": "tsc -p tsconfig.build.json",
     "build:e2e": "pnpm run build",
     "dev": "pnpm run build",
+    "publish": "pnpm publish",
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
     "lint:fix": "pnpm run lint --fix",
     "prettier": "prettier -c . --ignore-path ../../.prettierignore",
@@ -32,8 +36,8 @@
     "githook:precommit": "lint-staged && pnpm run types"
   },
   "dependencies": {
-    "@cryptkeeper/types": "workspace:^",
-    "@cryptkeeper/zk": "workspace:^",
+    "@cryptkeeperzk/types": "workspace:^",
+    "@cryptkeeperzk/zk": "workspace:^",
     "@semaphore-protocol/group": "^3.10.1",
     "@semaphore-protocol/identity": "^3.10.1",
     "@semaphore-protocol/proof": "^3.10.1",
@@ -44,7 +48,7 @@
     "rlnjs": "^2.0.8"
   },
   "devDependencies": {
-    "@cryptkeeper/eslint-config-base": "workspace:^",
+    "@cryptkeeperzk/eslint-config-base": "workspace:^",
     "@types/jest": "^29.5.2",
     "@types/lodash": "^4.14.195",
     "eslint": "^8.43.0",

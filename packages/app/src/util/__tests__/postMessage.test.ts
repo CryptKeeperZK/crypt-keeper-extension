@@ -1,4 +1,4 @@
-import { RPCAction } from "@cryptkeeper/providers";
+import { RPCAction } from "@cryptkeeperzk/providers";
 import browser from "webextension-polyfill";
 
 import postMessage from "../postMessage";

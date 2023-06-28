@@ -1,37 +1,41 @@
 {
   "name": "crypt-keeper-extension",
   "private": true,
-  "version": "0.1.0-beta.0",
+  "version": "0.1.0-beta.1",
   "description": "Crypt-Keeper Extension, zero knowledge identity management and proof generation tool",
   "main": "index.js",
+  "pnpm": {
+    "packageManager": "pnpm"
+  },
   "scripts": {
-    "demo:start": "pnpm -r run start",
-    "merkle:start": "pnpm -r run merkle",
-    "build": "pnpm -r run build",
-    "dev": "pnpm -r run dev",
-    "build:e2e": "pnpm -r run build:e2e",
-    "build:chrome": "cross-env TARGET=chrome pnpm -r run build",
-    "dev:chrome": "cross-env TARGET=chrome pnpm -r run dev",
-    "build:firefox": "cross-env TARGET=firefox pnpm -r run build",
-    "dev:firefox": "cross-env TARGET=firefox pnpm -r run dev",
-    "merkle": "pnpm -r run merkle",
-    "test": "pnpm -r run test",
-    "test:coverage": "pnpm -r run test:coverage",
-    "e2e": "pnpm -r run e2e",
-    "e2e:ci": "pnpm -r run e2e:ci",
-    "lint": "pnpm -r run lint",
-    "lint:fix": "pnpm -r run lint:fix",
-    "prettier": "pnpm -r run prettier",
-    "prettier:fix": "pnpm -r run prettier:fix",
-    "types": "pnpm -r run types",
+    "demo:start": "pnpm exec nx run-many --target=start --output-style=stream",
+    "merkle:start": "nx run-many --target=merkle --output-style=stream",
+    "build": "pnpm exec nx run-many --target=build --output-style=stream",
+    "dev": "pnpm exec nx run-many --target=dev --output-style=stream",
+    "build:e2e": "pnpm exec nx run-many --target=build:e2e --output-style=stream",
+    "build:chrome": "cross-env TARGET=chrome pnpm run build --output-style=stream",
+    "dev:chrome": "cross-env TARGET=chrome pnpm run dev --output-style=stream",
+    "build:firefox": "cross-env TARGET=firefox pnpm run build --output-style=stream",
+    "dev:firefox": "cross-env TARGET=firefox pnpm run dev --output-style=stream",
+    "publish": "pnpm exec nx run-many --target=publish --output-style=stream",
+    "merkle": "pnpm exec nx run-many --target=merkle --output-style=stream",
+    "test": "pnpm exec nx run-many --target=test --output-style=stream",
+    "test:coverage": "pnpm exec nx run-many --target=test:coverage --output-style=stream",
+    "e2e": "pnpm exec nx run-many --target=e2e --output-style=stream",
+    "e2e:ci": "pnpm exec nx run-many --target=e2e:ci --output-style=stream",
+    "lint": "pnpm exec nx run-many --target=lint --output-style=stream",
+    "lint:fix": "pnpm exec nx run-many --target=lint:fix --output-style=stream",
+    "prettier": "pnpm exec nx run-many --target=prettier --output-style=stream",
+    "prettier:fix": "pnpm exec nx run-many --target=prettier:fix --output-style=stream",
+    "types": "pnpm exec nx run-many --target=types --output-style=stream",
     "commit": "cz",
-    "githook:precommit": "pnpm -r run githook:precommit",
-    "githook:prepush": "pnpm -r run githook:prepush",
+    "githook:precommit": "pnpm exec nx run-many --target=githook:precommit --output-style=stream",
+    "githook:prepush": "pnpm exec nx run-many --target=githook:prepush --output-style=stream",
     "prepare": "is-ci || husky install"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com"
+    "url": "https://github.com/CryptKeeperZK/crypt-keeper-extension"
   },
   "keywords": [
     "react",
@@ -43,9 +47,9 @@
   "author": "Privacy and Scaling explorations team",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/privacy-scaling-explorations/crypt-keeper-extension"
+    "url": "https://github.com/CryptKeeperZK/crypt-keeper-extension/issues/new/choose"
   },
-  "homepage": "https://github.com/privacy-scaling-explorations/crypt-keeper-extension",
+  "homepage": "https://github.com/CryptKeeperZK/crypt-keeper-extension",
   "devDependencies": {
     "@commitlint/cli": "^17.6.6",
     "@commitlint/config-conventional": "^17.6.6",
@@ -69,11 +73,17 @@
     "string_decoder": "^1.3.0",
     "ts-jest": "^29.1.0",
     "ts-node": "^10.9.1",
-    "typescript": "^5.1.3"
+    "typescript": "^5.1.3",
+    "nx": "16.4.0",
+    "nx-cloud": "latest"
   },
   "config": {
     "commitizen": {
       "path": "./node_modules/cz-conventional-changelog"
     }
-  }
+  },
+  "engines": {
+    "node": "18",
+    "pnpm": "8"
+  }  
 }

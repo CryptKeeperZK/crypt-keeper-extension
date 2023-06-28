@@ -1,5 +1,5 @@
 module.exports = {
-  extends: ["@cryptkeeper/eslint-config-base", "plugin:react/recommended"],
+  extends: ["@cryptkeeperzk/eslint-config-base", "plugin:react/recommended"],
   plugins: ["react-hooks"],
   settings: {
     react: {

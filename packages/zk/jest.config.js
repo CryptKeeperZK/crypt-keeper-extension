@@ -1,6 +1,6 @@
 module.exports = {
   preset: "../../jest-preset.js",
-  displayName: "@cryptkeeper/zk",
+  displayName: "@cryptkeeperzk/zk",
   setupFilesAfterEnv: ["<rootDir>/src/setupTests.ts"],
   moduleNameMapper: {
     nanoid: "<rootDir>/src/config/mock/nanoidMock.js",

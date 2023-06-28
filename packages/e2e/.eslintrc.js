@@ -1,5 +1,5 @@
 module.exports = {
-  extends: ["@cryptkeeper/eslint-config-base", "plugin:playwright/playwright-test"],
+  extends: ["@cryptkeeperzk/eslint-config-base", "plugin:playwright/playwright-test"],
   ignorePatterns: [".eslintrc.js", "playwright.config.ts"],
   settings: {
     react: {

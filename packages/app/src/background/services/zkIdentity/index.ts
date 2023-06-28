@@ -1,4 +1,4 @@
-import { ZkIdentitySemaphore, createNewIdentity } from "@cryptkeeper/zk";
+import { ZkIdentitySemaphore, createNewIdentity } from "@cryptkeeperzk/zk";
 import { bigintToHex } from "bigint-conversion";
 import browser from "webextension-polyfill";
 

@@ -3,7 +3,7 @@
   "compilerOptions": {
     "baseUrl": ".",
     "rootDir": ".",
-    "outDir": "dist/js",
+    "outDir": "dist",
     "paths": {
       "@src/*": ["src/*"]
     },

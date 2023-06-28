@@ -1,15 +1,15 @@
 {
-  "name": "@cryptkeeper/eslint-config-react",
-  "version": "0.1.0-beta.0",
+  "name": "@cryptkeeperzk/eslint-config-react",
+  "version": "0.1.0-beta.1",
   "description": "ESLint react config for CryptKeeper extension",
   "private": true,
   "main": "index.js",
   "author": "Privacy and Scaling explorations team",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/privacy-scaling-explorations/crypt-keeper-extension"
+    "url": "https://github.com/CryptKeeperZK/crypt-keeper-extension/issues/new/choose"
   },
-  "homepage": "https://github.com/privacy-scaling-explorations/crypt-keeper-extension",
+  "homepage": "https://github.com/CryptKeeperZK/crypt-keeper-extension",
   "scripts": {
     "prettier": "prettier -c . --ignore-path ../../.prettierignore",
     "prettier:fix": "prettier -w . --ignore-path ../../.prettierignore",
@@ -17,7 +17,7 @@
   },
   "dependencies": {
     "@babel/eslint-parser": "^7.22.5",
-    "@cryptkeeper/eslint-config-base": "workspace:^",
+    "@cryptkeeperzk/eslint-config-base": "workspace:^",
     "@typescript-eslint/eslint-plugin": "^5.60.1",
     "@typescript-eslint/parser": "^5.60.1",
     "eslint": "^8.43.0",

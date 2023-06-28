@@ -1,6 +1,6 @@
 import { Identity } from "@semaphore-protocol/identity";
 
-import type { SerializedIdentity, IdentityMetadata } from "@cryptkeeper/types";
+import type { SerializedIdentity, IdentityMetadata } from "@cryptkeeperzk/types";
 
 export class ZkIdentitySemaphore {
   zkIdentity: Identity;

@@ -2,7 +2,7 @@ import { RLN, RLNFullProof } from "rlnjs";
 
 import { ZkIdentitySemaphore } from "@src/identity";
 
-import type { RLNProofRequest } from "@cryptkeeper/types";
+import type { RLNProofRequest } from "@cryptkeeperzk/types";
 
 import { IZkProof } from "./types";
 import { getMerkleProof, getRlnVerficationKeyJson } from "./utils";

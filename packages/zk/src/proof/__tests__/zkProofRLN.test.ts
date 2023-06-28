@@ -1,6 +1,6 @@
 import { ZkIdentitySemaphore } from "@src/identity";
 
-import type { IRlnGenerateArgs } from "@cryptkeeper/types";
+import type { IRlnGenerateArgs } from "@cryptkeeperzk/types";
 
 import { ZkProofService } from "..";
 import { RLNProofService } from "../protocols";

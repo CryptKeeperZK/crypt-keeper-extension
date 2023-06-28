@@ -1,4 +1,4 @@
-export * from "@cryptkeeper/types";
+export * from "@cryptkeeperzk/types";
 export * from "./history";
 export * from "./forms";
 export * from "./utility";

@@ -1,13 +1,11 @@
 {
-  "name": "@cryptkeeper/merkle-mock-server",
-  "version": "0.1.0",
-  "description": "CryptKeeper Extension types",
-  "main": "./dist/src/index.js",
-  "types": "./dist/src/index.d.ts",
+  "name": "@cryptkeeperzk/merkle-mock-server",
+  "version": "0.1.0-beta.1",
+  "description": "CryptKeeper Extension merkle tree mock server",
   "private": true,
   "repository": {
     "type": "git",
-    "url": "git+https://github.com"
+    "url": "https://github.com/CryptKeeperZK/crypt-keeper-extension"
   },
   "keywords": [
     "react",
@@ -20,9 +18,9 @@
   "author": "Privacy and Scaling explorations team",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/privacy-scaling-explorations/crypt-keeper-extension"
+    "url": "https://github.com/CryptKeeperZK/crypt-keeper-extension/issues/new/choose"
   },
-  "homepage": "https://github.com/privacy-scaling-explorations/crypt-keeper-extension",
+  "homepage": "https://github.com/CryptKeeperZK/crypt-keeper-extension",
   "scripts": {
     "merkle": "ts-node src/index.ts",
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
@@ -33,7 +31,7 @@
     "githook:precommit": "lint-staged && pnpm run types"
   },
   "dependencies": {
-    "@cryptkeeper/zk": "workspace:^",
+    "@cryptkeeperzk/zk": "workspace:^",
     "@semaphore-protocol/group": "^3.10.1",
     "@semaphore-protocol/identity": "^3.10.1",
     "@zk-kit/incremental-merkle-tree": "^1.1.0",
@@ -43,7 +41,7 @@
     "loglevel": "^1.8.1"
   },
   "devDependencies": {
-    "@cryptkeeper/eslint-config-base": "workspace:^",
+    "@cryptkeeperzk/eslint-config-base": "workspace:^",
     "@types/cors": "^2.8.13",
     "@types/express": "^4.17.17",
     "eslint": "^8.43.0",

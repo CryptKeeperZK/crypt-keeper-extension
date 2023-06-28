@@ -1,5 +1,5 @@
 /* eslint-disable no-param-reassign */
-import { RPCAction } from "@cryptkeeper/providers";
+import { RPCAction } from "@cryptkeeperzk/providers";
 import { createSlice } from "@reduxjs/toolkit";
 import deepEqual from "fast-deep-equal";
 import omit from "lodash/omit";

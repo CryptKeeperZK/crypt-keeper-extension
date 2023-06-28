@@ -1,4 +1,4 @@
-import { type CryptKeeperInjectedProvider, initializeInjectedProvider, RPCAction } from "@cryptkeeper/providers";
+import { type CryptKeeperInjectedProvider, initializeInjectedProvider, RPCAction } from "@cryptkeeperzk/providers";
 import { initializeConnector } from "@web3-react/core";
 import { Connector } from "@web3-react/types";
 

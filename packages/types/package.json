@@ -1,12 +1,12 @@
 {
-  "name": "@cryptkeeper/types",
+  "name": "@cryptkeeperzk/types",
   "version": "0.1.0",
   "description": "CryptKeeper Extension types",
   "main": "./dist/src/index.js",
   "types": "./dist/src/index.d.ts",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com"
+    "url": "https://github.com/CryptKeeperZK/crypt-keeper-extension"
   },
   "keywords": [
     "react",
@@ -19,9 +19,9 @@
   "author": "Privacy and Scaling explorations team",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/privacy-scaling-explorations/crypt-keeper-extension"
+    "url": "https://github.com/CryptKeeperZK/crypt-keeper-extension/issues/new/choose"
   },
-  "homepage": "https://github.com/privacy-scaling-explorations/crypt-keeper-extension",
+  "homepage": "https://github.com/CryptKeeperZK/crypt-keeper-extension",
   "scripts": {
     "build": "tsc -p tsconfig.json",
     "build:e2e": "pnpm run build",
@@ -39,7 +39,7 @@
     "rlnjs": "^2.0.8"
   },
   "devDependencies": {
-    "@cryptkeeper/eslint-config-base": "workspace:^",
+    "@cryptkeeperzk/eslint-config-base": "workspace:^",
     "eslint": "^8.43.0",
     "lint-staged": "^13.2.2",
     "prettier": "^2.8.8",

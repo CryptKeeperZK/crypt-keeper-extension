@@ -1,12 +1,12 @@
 /* eslint-disable no-param-reassign */
-import { RPCAction } from "@cryptkeeper/providers";
+import { RPCAction } from "@cryptkeeperzk/providers";
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 import deepEqual from "fast-deep-equal";
 
 import postMessage from "@src/util/postMessage";
 
 import type { TypedThunk } from "../store/configureAppStore";
-import type { HostPermission } from "@cryptkeeper/types";
+import type { HostPermission } from "@cryptkeeperzk/types";
 
 import { useAppSelector } from "./hooks";
 

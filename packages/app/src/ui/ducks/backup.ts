@@ -1,4 +1,4 @@
-import { RPCAction } from "@cryptkeeper/providers";
+import { RPCAction } from "@cryptkeeperzk/providers";
 
 import postMessage from "@src/util/postMessage";
 
