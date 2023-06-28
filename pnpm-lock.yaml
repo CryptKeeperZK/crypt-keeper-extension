@@ -518,7 +518,7 @@ importers:
 
   packages/merkle-mock-server:
     dependencies:
-      '@cryptkeeper/zk':
+      '@cryptkeeperzk/zk':
         specifier: workspace:^
         version: link:../zk
       '@semaphore-protocol/group':
@@ -543,7 +543,7 @@ importers:
         specifier: ^1.8.1
         version: 1.8.1
     devDependencies:
-      '@cryptkeeper/eslint-config-base':
+      '@cryptkeeperzk/eslint-config-base':
         specifier: workspace:^
         version: link:../eslint-config-base
       '@types/cors':

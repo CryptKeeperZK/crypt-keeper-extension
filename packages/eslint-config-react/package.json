@@ -17,7 +17,7 @@
   },
   "dependencies": {
     "@babel/eslint-parser": "^7.22.5",
-    "@cryptkeeper/eslint-config-base": "workspace:^",
+    "@cryptkeeperzk/eslint-config-base": "workspace:^",
     "@typescript-eslint/eslint-plugin": "^5.60.1",
     "@typescript-eslint/parser": "^5.60.1",
     "eslint": "^8.43.0",
