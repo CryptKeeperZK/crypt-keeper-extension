@@ -12,6 +12,10 @@
     "defaultBase": "master"
   },
   "targetDefaults": {
+    "build": {
+      "dependsOn": ["^build"],
+      "outputs": ["{projectRoot}/dist"]
+    },
     "publish": {
       "dependsOn": ["^build"]
     },
