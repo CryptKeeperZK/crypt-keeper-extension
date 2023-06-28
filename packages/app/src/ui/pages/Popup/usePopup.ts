@@ -1,6 +1,6 @@
 import log from "loglevel";
-import { useCallback, useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 
 import { Paths } from "@src/constants";
 import { fetchStatus, getSelectedAccount, useAppStatus } from "@src/ui/ducks/app";
@@ -20,6 +20,7 @@ const REDIRECT_PATHS: Record<string, Paths> = {
 export const usePopup = (): IUsePopupData => {
   const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
+  const location = useLocation();
 
   const dispatch = useAppDispatch();
   const ethWallet = useEthWallet();
@@ -31,6 +32,7 @@ export const usePopup = (): IUsePopupData => {
   const url = new URL(window.location.href.replace("#", ""));
   const redirectParam = url.searchParams.get("redirect");
   const redirect = redirectParam && REDIRECT_PATHS[redirectParam];
+  const isCommonPath = useMemo(() => [Paths.RECOVER].includes(location.pathname as Paths), [location.pathname]);
 
   const fetchData = useCallback(async () => {
     await Promise.all([dispatch(fetchStatus()), dispatch(fetchPendingRequests())]);
@@ -41,7 +43,7 @@ export const usePopup = (): IUsePopupData => {
   }, [isUnlocked, isMnemonicGenerated, dispatch]);
 
   useEffect(() => {
-    if (isLoading) {
+    if (isLoading || isCommonPath) {
       return;
     }
 
@@ -65,6 +67,7 @@ export const usePopup = (): IUsePopupData => {
     isMnemonicGenerated,
     redirect,
     url.searchParams.toString(),
+    isCommonPath,
     navigate,
   ]);
 

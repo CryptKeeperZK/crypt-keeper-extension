@@ -1,5 +1,8 @@
+import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
+import Typography from "@mui/material/Typography";
+
 import logoSVG from "@src/static/icons/logo.svg";
-import { ButtonType, Button } from "@src/ui/components/Button";
 import { Icon } from "@src/ui/components/Icon";
 import { PasswordInput } from "@src/ui/components/PasswordInput";
 
@@ -10,17 +13,23 @@ const Login = (): JSX.Element => {
   const { isLoading, errors, register, onSubmit, isShowPassword, onShowPassword } = useLogin();
 
   return (
-    <form className="flex flex-col flex-nowrap h-full login" data-testid="login-form" onSubmit={onSubmit}>
-      <div className="flex flex-col items-center flex-grow p-8 login__content">
+    <Box
+      className="login"
+      component="form"
+      data-testid="login-form"
+      sx={{ display: "flex", flexDirection: "column", flexWrap: "nowrap", height: "100%" }}
+      onSubmit={onSubmit}
+    >
+      <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center", p: 3, flexGrow: 1 }}>
         <Icon className="login-icon" url={logoSVG} />
 
-        <div className="text-lg pt-8">
-          <b>Welcome Back!</b>
-        </div>
+        <Typography sx={{ pt: 3, fontWeight: "bold" }} variant="h4">
+          Welcome Back!
+        </Typography>
 
-        <div className="text-base">To continue, please unlock your wallet</div>
+        <Typography variant="body1">To continue, please unlock your wallet</Typography>
 
-        <div className="py-4 w-full password-input">
+        <Box sx={{ width: "100%", py: 2 }}>
           <PasswordInput
             autoFocus
             isShowEye
@@ -31,15 +40,23 @@ const Login = (): JSX.Element => {
             onShowPassword={onShowPassword}
             {...register("password")}
           />
-        </div>
-      </div>
+        </Box>
+      </Box>
 
-      <div className="flex flex-row items-center justify-center flex-shrink p-8 login__footer">
-        <Button buttonType={ButtonType.PRIMARY} data-testid="unlock-button" loading={isLoading} type="submit">
+      <Box sx={{ p: 3, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}>
+        <Button
+          data-testid="unlock-button"
+          disabled={isLoading}
+          sx={{ textTransform: "none", mb: 1 }}
+          type="submit"
+          variant="contained"
+        >
           Unlock
         </Button>
-      </div>
-    </form>
+
+        {/* <NavLink to={Paths.RECOVER}>Forgot password?</NavLink> */}
+      </Box>
+    </Box>
   );
 };
 

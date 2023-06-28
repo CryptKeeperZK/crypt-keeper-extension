@@ -7,7 +7,7 @@ import { act, renderHook } from "@testing-library/react";
 import { IUseTimeoutData, useTimeout } from "@src/ui/hooks/timeout";
 import { copyToClipboard, downloadFile } from "@src/util/browser";
 
-import { IUseRevealMnemonicArgs, useRevealMnemonic } from "../useRevealMnemonic";
+import { IUseMnemonicInputArgs, useMnemonicInput } from "../useMnemonicInput";
 
 jest.mock("@src/ui/hooks/timeout", (): unknown => ({
   useTimeout: jest.fn(),
@@ -18,13 +18,13 @@ jest.mock("@src/util/browser", (): unknown => ({
   downloadFile: jest.fn(),
 }));
 
-describe("ui/components/RevealMnemonicInput/useRevealMnemonic", () => {
+describe("ui/components/MnemonicInput/useMnemonicInput", () => {
   const defaultTimeoutHookData: IUseTimeoutData = {
     isActive: false,
     setActive: jest.fn(),
   };
 
-  const defaultHookArgs: IUseRevealMnemonicArgs = {
+  const defaultHookArgs: IUseMnemonicInputArgs = {
     mnemonic: "mnemonic",
   };
 
@@ -45,7 +45,7 @@ describe("ui/components/RevealMnemonicInput/useRevealMnemonic", () => {
   });
 
   test("should return initial data", () => {
-    const { result } = renderHook(() => useRevealMnemonic(defaultHookArgs));
+    const { result } = renderHook(() => useMnemonicInput(defaultHookArgs));
 
     expect(result.current.isCopied).toBe(false);
     expect(result.current.isDownloaded).toBe(false);
@@ -53,7 +53,7 @@ describe("ui/components/RevealMnemonicInput/useRevealMnemonic", () => {
   });
 
   test("should copy mnemonic properly", async () => {
-    const { result } = renderHook(() => useRevealMnemonic(defaultHookArgs));
+    const { result } = renderHook(() => useMnemonicInput(defaultHookArgs));
 
     await act(() => Promise.resolve(result.current.onCopy()));
 
@@ -62,7 +62,7 @@ describe("ui/components/RevealMnemonicInput/useRevealMnemonic", () => {
   });
 
   test("should download mnemonic properly", async () => {
-    const { result } = renderHook(() => useRevealMnemonic(defaultHookArgs));
+    const { result } = renderHook(() => useMnemonicInput(defaultHookArgs));
 
     await act(() => Promise.resolve(result.current.onDownload()));
 
@@ -71,7 +71,7 @@ describe("ui/components/RevealMnemonicInput/useRevealMnemonic", () => {
   });
 
   test("should toggle mnemonic show properly", async () => {
-    const { result } = renderHook(() => useRevealMnemonic(defaultHookArgs));
+    const { result } = renderHook(() => useMnemonicInput(defaultHookArgs));
 
     await act(() => Promise.resolve(result.current.onShowMnemonic()));
     expect(result.current.isShowMnemonic).toBe(true);

@@ -7,7 +7,7 @@ import { Suspense } from "react";
 
 import { getEnabledFeatures } from "@src/config/features";
 
-import { Advanced, IAdvancedProps } from "..";
+import Advanced, { IAdvancedProps } from "../Advanced";
 
 describe("ui/pages/Settings/components/Advanced", () => {
   const defaultProps: IAdvancedProps = {
