@@ -6,6 +6,7 @@
   "main": "index.js",
   "scripts": {
     "demo:start": "pnpm -r run start",
+    "merkle:start": "pnpm -r run merkle",
     "build": "pnpm -r run build",
     "dev": "pnpm -r run dev",
     "build:e2e": "pnpm -r run build:e2e",

@@ -36,8 +36,8 @@ Currently it supports operations for <strong><a href="https://semaphore.appliedz
 ### Demo
 
 1. `pnpm run dev` or `pnpm run build`
-2. `pnpm run merkle`
-3. `cd demo && pnpm install && pnpm run start`
+2. `pnpm run merkle:start`
+3. `pnpm run demo:start`
 
 ### E2E
 

@@ -13,8 +13,6 @@ module.exports = {
     "/node_modules/",
     "/test/",
     "/__tests__/",
-    "/e2e/",
-    "/src/server/",
     "/src/ui/popup.tsx",
     "/src/ui/theme.ts",
     "/src/background/backgroundPage.ts",
