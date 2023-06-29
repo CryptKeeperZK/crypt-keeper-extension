@@ -1,1 +1,1 @@
-export * from "./rpcAction";
+export { RPCAction } from "./rpcAction";

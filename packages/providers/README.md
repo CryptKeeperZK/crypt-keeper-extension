@@ -21,7 +21,7 @@ With the `@cryptkeeperzk/providers` package, developers can seamlessly integrate
 
 ## Features
 
-- **Simplified integration**: The package offers injected providers that enable applications to establish a connection with the CryptKeeper extension effortlessly.
+- **Simplified integration**: The package offers injected providers which allow applications to establish a connection with the CryptKeeper extension effortlessly.
 
 - **Secure identity management**: CryptKeeper's zero-knowledge proof technology ensures the privacy and security of user identities, enhancing data protection.
 

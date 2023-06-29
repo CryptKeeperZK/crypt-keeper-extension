@@ -16,13 +16,23 @@ import { ZkIdentitySemaphore, ZkProofService } from "@cryptkeeperzk/zk";
 import { MerkleProof } from "@zk-kit/incremental-merkle-tree";
 
 import { RPCAction } from "../constants";
-import EventEmitter, { EventHandler, EventName } from "../event";
+import { EventEmitter, EventHandler, EventName } from "../event";
 
-import { promises } from "./utils";
+/**
+ * Stores promises associated with message nonces.
+ */
+const promises: {
+  [k: string]: {
+    resolve: (res?: unknown) => void;
+    reject: (reason?: unknown) => void;
+  };
+} = {};
 
 /**
  * Represents the CryptKeeper provider that is injected into the application.
  * This class is responsible for handling interactions with the CryptKeeper extension.
+ *
+ * @class
  */
 export class CryptKeeperInjectedProvider {
   /**
@@ -47,6 +57,8 @@ export class CryptKeeperInjectedProvider {
 
   /**
    * Creates an instance of CryptKeeperInjectedProvider.
+   *
+   * @constructor
    */
   constructor() {
     this.nonce = 0;
@@ -56,8 +68,9 @@ export class CryptKeeperInjectedProvider {
 
   /**
    * Registers an event listener for the specified event.
-   * @param eventName - The name of the event to listen for.
-   * @param cb - The callback function to be called when the event is triggered.
+   *
+   * @param {EventName} eventName - The name of the event to listen for.
+   * @param {EventHandler} cb - The callback function to be called when the event is triggered.
    */
   on(eventName: EventName, cb: EventHandler): void {
     this.emitter.on(eventName, cb);
@@ -65,8 +78,9 @@ export class CryptKeeperInjectedProvider {
 
   /**
    * Emits an event with the specified name and optional payload.
-   * @param eventName - The name of the event to emit.
-   * @param payload - The optional payload to include with the event.
+   *
+   * @param {EventName} eventName - The name of the event to emit.
+   * @param {unknown} payload - The optional payload to include with the event.
    */
   emit(eventName: EventName, payload?: unknown): void {
     this.emitter.emit(eventName, payload);
@@ -81,6 +95,7 @@ export class CryptKeeperInjectedProvider {
 
   /**
    * Connects to the CryptKeeper extension.
+   *
    * @returns A Promise that resolves to the connected CryptKeeperInjectedProvider instance, or undefined if the CryptKeeper extension is not installed.
    */
   async connect(): Promise<CryptKeeperInjectedProvider | undefined> {
@@ -107,8 +122,9 @@ export class CryptKeeperInjectedProvider {
 
   /**
    * Attempts to connect to the extension.
-   * @param host - The host origin to connect to.
-   * @returns A Promise that resolves to an object containing approval information.
+   *
+   * @param {string} host - The host origin to connect to.
+   * @returns {Approvals} A Promise that resolves to an object containing approval information.
    */
   private async tryConnect(host: string): Promise<Approvals> {
     return this.post({
@@ -119,8 +135,9 @@ export class CryptKeeperInjectedProvider {
 
   /**
    * Sends a message to the extension.
-   * @param message - The message to send.
-   * @returns A Promise that resolves to the response from the extension.
+   *
+   * @param {InjectedProviderRequest} message - The message to send.
+   * @returns {unknown} A Promise that resolves to the response from the extension.
    */
   private async post(message: InjectedProviderRequest): Promise<unknown> {
     // TODO: (#75) enhance by moving towards long-lived conenctions #75
@@ -150,9 +167,10 @@ export class CryptKeeperInjectedProvider {
 
   /**
    * Adds a host to the approved list.
-   * @param host - The host to add.
-   * @param canSkipApprove - Specifies whether the approval can be skipped.
-   * @returns A Promise that resolves to the result of adding the host.
+   *
+   * @param {string} host - The host to add.
+   * @param {boolean} canSkipApprove - Specifies whether the approval can be skipped.
+   * @returns {unknown} A Promise that resolves to the result of adding the host.
    */
   private async addHost(host: string, canSkipApprove: boolean): Promise<unknown> {
     return this.post({
@@ -163,7 +181,8 @@ export class CryptKeeperInjectedProvider {
 
   /**
    * Retrieves the connected identity.
-   * @returns A Promise that resolves to the connected identity.
+   *
+   * @returns {ConnectedIdentity} A Promise that resolves to the connected identity.
    */
   async getConnectedIdentity(): Promise<ConnectedIdentity> {
     return this.post({
@@ -173,8 +192,9 @@ export class CryptKeeperInjectedProvider {
 
   /**
    * Connects to an existing identity for the specified host.
-   * @param host - The host for which to connect to an identity.
-   * @returns A Promise that resolves when the connection is complete.
+   *
+   * @param {IConnectIdentityRequestArgs} host - The host for which to connect to an identity.
+   * @returns {void} A Promise that resolves when the connection is complete.
    */
   async connectIdentity({ host }: IConnectIdentityRequestArgs): Promise<void> {
     await this.post({
@@ -187,8 +207,9 @@ export class CryptKeeperInjectedProvider {
 
   /**
    * Handles incoming messages from the extension.
-   * @param event - The message event.
-   * @returns The result of handling the event.
+   *
+   * @param {InjectedMessageData} event - The message event.
+   * @returns {unknown} The result of handling the event.
    */
   eventResponser = (event: MessageEvent<InjectedMessageData>): unknown => {
     const { data } = event;
@@ -232,7 +253,8 @@ export class CryptKeeperInjectedProvider {
 
   /**
    * Retrieves the identity commitments.
-   * @returns A Promise that resolves to the identity commitments.
+   *
+   * @returns {unknown} A Promise that resolves to the identity commitments.
    */
   async getIdentityCommitments(): Promise<unknown> {
     return this.post({
@@ -242,8 +264,9 @@ export class CryptKeeperInjectedProvider {
 
   /**
    * Retrieves the host permissions for the specified host.
-   * @param host - The host for which to retrieve the permissions.
-   * @returns A Promise that resolves to the host permissions.
+   *
+   * @param {string} host - The host for which to retrieve the permissions.
+   * @returns {unknown} A Promise that resolves to the host permissions.
    */
   async getHostPermissions(host: string): Promise<unknown> {
     return this.post({
@@ -254,9 +277,10 @@ export class CryptKeeperInjectedProvider {
 
   /**
    * Sets the host permissions for the specified host.
-   * @param host - The host for which to set the permissions.
-   * @param permissions - The host permissions to set.
-   * @returns A Promise that resolves to the result of setting the host permissions.
+   *
+   * @param {striing} host - The host for which to set the permissions.
+   * @param {HostPermission} permissions - The host permissions to set.
+   * @returns {unknown} A Promise that resolves to the result of setting the host permissions.
    */
   async setHostPermissions(host: string, permissions?: HostPermission): Promise<unknown> {
     return this.post({
@@ -270,8 +294,9 @@ export class CryptKeeperInjectedProvider {
 
   /**
    * Creates an identity for the specified host.
-   * @param host - The host for which to create an identity.
-   * @returns A Promise that resolves when the identity creation is complete.
+   *
+   * @param {ICreateIdentityRequestArgs} host - The host for which to create an identity.
+   * @returns {void} A Promise that resolves when the identity creation is complete.
    */
   async createIdentity({ host }: ICreateIdentityRequestArgs): Promise<void> {
     await this.post({
@@ -284,11 +309,12 @@ export class CryptKeeperInjectedProvider {
 
   /**
    * Generates a semaphore proof.
-   * @param externalNullifier - The external nullifier.
-   * @param signal - The signal.
-   * @param merkleProofArtifactsOrStorageAddress - The merkle proof artifacts or storage address.
-   * @param merkleProof - The merkle proof (optional).
-   * @returns A Promise that resolves to the semaphore proof.
+   *
+   * @param {string} externalNullifier - The external nullifier.
+   * @param {string} signal - The signal.
+   * @param {string | MerkleProofArtifacts} merkleProofArtifactsOrStorageAddress - The merkle proof artifacts or storage address.
+   * @param {MerkleProof} merkleProof - The merkle proof (optional).
+   * @returns {SemaphoreProof} A Promise that resolves to the semaphore proof.
    */
   async semaphoreProof(
     externalNullifier: string,
@@ -320,11 +346,12 @@ export class CryptKeeperInjectedProvider {
 
   /**
    * Generates an RLN proof.
-   * @param externalNullifier - The external nullifier.
-   * @param signal - The signal.
-   * @param merkleProofArtifactsOrStorageAddress - The merkle proof artifacts or storage address.
-   * @param rlnIdentifier - The RLN identifier.
-   * @returns A Promise that resolves to the RLN proof.
+   *
+   * @param {string} externalNullifier - The external nullifier.
+   * @param {string} signal - The signal.
+   * @param {string | MerkleProofArtifacts} merkleProofArtifactsOrStorageAddress - The merkle proof artifacts or storage address.
+   * @param {string} rlnIdentifier - The RLN identifier.
+   * @returns {RLNFullProof} A Promise that resolves to the RLN proof.
    */
   async rlnProof(
     externalNullifier: string,
