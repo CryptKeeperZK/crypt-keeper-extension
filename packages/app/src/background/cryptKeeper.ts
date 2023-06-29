@@ -76,12 +76,8 @@ export default class CryptKeeperController {
       .add(BackupableServices.LOCK, this.lockService)
       .add(BackupableServices.WALLET, this.walletService)
       .add(BackupableServices.APPROVAL, this.approvalService)
-<<<<<<< HEAD
       .add(BackupableServices.IDENTITY, this.zkIdentityService)
       .add(BackupableServices.VERIFIABLE_CREDENTIALS, this.verifiableCredentialsService);
-=======
-      .add(BackupableServices.IDENTITY, this.zkIdentityService);
->>>>>>> 6cc5e46 (fix: merge conflicts (#492))
     this.verifiableCredentialsService = VerifiableCredentialsService.getInstance();
   }
 
@@ -183,7 +179,6 @@ export default class CryptKeeperController {
       this.lockService.ensure,
       this.verifiableCredentialsService.getAllVerifiableCredentials,
     );
-<<<<<<< HEAD
     this.handler.add(
       RPCAction.DELETE_VERIFIABLE_CREDENTIAL,
       this.lockService.ensure,
@@ -194,8 +189,6 @@ export default class CryptKeeperController {
       this.lockService.ensure,
       this.verifiableCredentialsService.deleteAllVerifiableCredentials,
     );
-=======
->>>>>>> 6cc5e46 (fix: merge conflicts (#492))
 
     // Injector
     this.handler.add(RPCAction.CONNECT, this.injectorService.connect);
