@@ -14,6 +14,8 @@ log.setDefaultLevel(isDebugMode() ? "debug" : "info");
 declare global {
   // eslint-disable-next-line no-var,vars-on-top
   var isFirstTimeProfileLoaded: boolean | undefined;
+  // eslint-disable-next-line no-var,vars-on-top
+  var isCryptkeeperInjected: boolean | undefined;
 }
 
 // Ref: https://stackoverflow.com/questions/66406672/chrome-extension-mv3-modularize-service-worker-js-file

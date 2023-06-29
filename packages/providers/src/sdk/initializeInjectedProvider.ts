@@ -3,18 +3,15 @@ import { CryptKeeperInjectedProvider } from "./CryptKeeperInjectedProvider";
 declare global {
   interface Window {
     cryptkeeper: CryptKeeperInjectedProvider;
+    isCryptkeeperInjected?: boolean;
   }
 }
 
 export function initializeInjectedProvider(): CryptKeeperInjectedProvider {
   const injectedProvider = new CryptKeeperInjectedProvider();
-  setGlobalInjectedPrivider(injectedProvider);
+  window.cryptkeeper = injectedProvider;
+  window.dispatchEvent(new Event(`cryptkeeper#initialized`));
   window.addEventListener("message", injectedProvider.eventResponser);
 
   return injectedProvider;
-}
-
-export function setGlobalInjectedPrivider(injectedProvider: CryptKeeperInjectedProvider): void {
-  window.cryptkeeper = injectedProvider;
-  window.dispatchEvent(new Event(`cryptkeeper#initialized`));
 }

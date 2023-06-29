@@ -54,9 +54,13 @@ export class CryptKeeperInjectedProvider {
 
   /**
    * Connect to Extension
-   * @returns injected client
+   * @returns injected client or undefined if cryptkeeper is not installed
    */
-  async connect(): Promise<CryptKeeperInjectedProvider> {
+  async connect(): Promise<CryptKeeperInjectedProvider | undefined> {
+    if (!window.isCryptkeeperInjected) {
+      return undefined;
+    }
+
     const { isApproved, canSkipApprove } = await this.tryConnect(window.location.origin);
 
     if (isApproved) {
