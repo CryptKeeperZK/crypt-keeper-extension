@@ -1,5 +1,6 @@
 const ImageMinimizerPlugin = require("image-minimizer-webpack-plugin");
 const { merge } = require("webpack-merge");
+const TerserPlugin = require('terser-webpack-plugin');
 
 const common = require("./webpack.common");
 
@@ -11,7 +12,29 @@ module.exports = merge(common, {
     maxAssetSize: 512000,
   },
   optimization: {
+    splitChunks: {
+      cacheGroups: {
+        popupVendor: {
+          maxSize: 4000000,
+          test: /[\\/]node_modules[\\/]/,
+          name: "popup-vendor",
+          enforce: true,
+          chunks: (chunk) => {
+            return chunk.name === "popup";
+          }
+        }
+      }
+    },
     minimizer: [
+      new TerserPlugin({
+        terserOptions: {
+          compress: {
+            drop_console: true,
+            drop_debugger: true,
+            pure_funcs: ['console.log', 'console.info'],
+          },
+        },
+      }),
       new ImageMinimizerPlugin({
         minimizer: {
           implementation: ImageMinimizerPlugin.svgoMinify,
