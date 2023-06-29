@@ -177,6 +177,16 @@ export default class CryptKeeperController {
       this.lockService.ensure,
       this.verifiableCredentialsService.getAllVerifiableCredentials,
     );
+    this.handler.add(
+      RPCAction.DELETE_VERIFIABLE_CREDENTIAL,
+      this.lockService.ensure,
+      this.verifiableCredentialsService.deleteVerifiableCredential,
+    );
+    this.handler.add(
+      RPCAction.DELETE_ALL_VERIFIABLE_CREDENTIALS,
+      this.lockService.ensure,
+      this.verifiableCredentialsService.deleteAllVerifiableCredentials,
+    );
 
     // Injector
     this.handler.add(RPCAction.CONNECT, this.injectorService.connect);

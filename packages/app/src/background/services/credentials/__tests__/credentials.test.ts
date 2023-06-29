@@ -115,6 +115,53 @@ describe("background/services/credentials", () => {
     });
   });
 
+  describe("delete verifiable credentials", () => {
+    test("should delete a verifiable credential", async () => {
+      const [credentialsStorage] = (SimpleStorage as jest.Mock).mock.instances as [MockStorage];
+      credentialsStorage.get.mockReturnValue(credentialsStorageString);
+      credentialsStorage.set.mockReturnValue(undefined);
+
+      const credentialDeleted = await verifiableCredentialsService.deleteVerifiableCredential("did:example:123");
+
+      expect(credentialDeleted).toBe(true);
+      expect(credentialsStorage.set).toBeCalledTimes(1);
+      expect(credentialsStorage.set).toBeCalledWith(JSON.stringify([[...credentialsMap.entries()][1]]));
+    });
+
+    test("should not delete a verifiable credential if it does not exist", async () => {
+      const [credentialsStorage] = (SimpleStorage as jest.Mock).mock.instances as [MockStorage];
+      credentialsStorage.get.mockReturnValue(credentialsStorageString);
+      credentialsStorage.set.mockReturnValue(undefined);
+
+      const credentialDeleted = await verifiableCredentialsService.deleteVerifiableCredential("did:example:12345");
+
+      expect(credentialDeleted).toBe(false);
+      expect(credentialsStorage.set).toBeCalledTimes(0);
+    });
+
+    test("should delete all verifiable credentials", async () => {
+      const [credentialsStorage] = (SimpleStorage as jest.Mock).mock.instances as [MockStorage];
+      credentialsStorage.get.mockReturnValue(credentialsStorageString);
+      credentialsStorage.set.mockReturnValue(undefined);
+
+      const allCredentialsDeleted = await verifiableCredentialsService.deleteAllVerifiableCredentials();
+
+      expect(allCredentialsDeleted).toBe(true);
+      expect(credentialsStorage.clear).toBeCalledTimes(1);
+    });
+
+    test("should return false when deleting all verifiable credentials from empty storage", async () => {
+      const [credentialsStorage] = (SimpleStorage as jest.Mock).mock.instances as [MockStorage];
+      credentialsStorage.get.mockReturnValue(undefined);
+      credentialsStorage.set.mockReturnValue(undefined);
+
+      const allCredentialsDeleted = await verifiableCredentialsService.deleteAllVerifiableCredentials();
+
+      expect(allCredentialsDeleted).toBe(false);
+      expect(credentialsStorage.clear).toBeCalledTimes(0);
+    });
+  });
+
   describe("backup", () => {
     const exampleEncryptedCredentials = "encrypted credentials";
     const examplePassword = "password";

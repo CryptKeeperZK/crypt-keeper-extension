@@ -57,6 +57,51 @@ export default class VerifiableCredentialsService implements IBackupable {
         credentialsArray.map((credential) => parseVerifiableCredentialFromJson(credential) as VerifiableCredential),
       );
 
+  deleteVerifiableCredential = async (credentialId: string): Promise<boolean> => {
+    if (!credentialId || typeof credentialId !== "string") {
+      return false;
+    }
+
+    const credentials = await this.getVerifiableCredentialsFromStore();
+    if (!credentials.has(credentialId)) {
+      return false;
+    }
+
+    credentials.delete(credentialId);
+    await this.writeVerifiableCredentials(credentials);
+    await this.historyService.trackOperation(OperationType.DELETE_VERIFIABLE_CREDENTIAL, {});
+    await this.notificationService.create({
+      options: {
+        title: "Verifiable Credential deleted.",
+        message: `Credential Id: ${credentialId}`,
+        iconUrl: browser.runtime.getURL("/logo.png"),
+        type: "basic",
+      },
+    });
+
+    return true;
+  };
+
+  deleteAllVerifiableCredentials = async (): Promise<boolean> => {
+    const credentials = await this.getVerifiableCredentialsFromStore();
+    if (credentials.size === 0) {
+      return false;
+    }
+
+    await this.verifiableCredentialsStore.clear();
+    await this.historyService.trackOperation(OperationType.DELETE_ALL_VERIFIABLE_CREDENTIALS, {});
+    await this.notificationService.create({
+      options: {
+        title: "All Verifiable Credentials deleted.",
+        message: `Deleted ${credentials.size} Verifiable Credentials.`,
+        iconUrl: browser.runtime.getURL("/logo.png"),
+        type: "basic",
+      },
+    });
+
+    return true;
+  };
+
   private insertVerifiableCredentialIntoStore = async (
     verifiableCredential: VerifiableCredential,
   ): Promise<boolean> => {
