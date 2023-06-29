@@ -4,6 +4,7 @@ import { Events, EventHandler, EventName } from "./types";
 
 /**
  * Event emitter class that allows subscribing to and emitting events.
+ *
  * @class
  */
 export class EventEmitter {
@@ -14,6 +15,7 @@ export class EventEmitter {
 
   /**
    * Creates an instance of EventEmitter.
+   *
    * @constructor
    */
   constructor() {
