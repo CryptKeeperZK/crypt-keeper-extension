@@ -17,6 +17,7 @@ import { MerkleProof } from "@zk-kit/incremental-merkle-tree";
 
 import { RPCAction } from "../constants";
 import EventEmitter, { EventHandler, EventName } from "../event";
+
 import { promises } from "./utils";
 
 /**
