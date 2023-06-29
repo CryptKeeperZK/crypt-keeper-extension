@@ -6,7 +6,7 @@ import LockerService from "@src/background/services/lock";
 import NotificationService from "@src/background/services/notification";
 import SimpleStorage from "@src/background/services/storage";
 import { OperationType, VerifiableCredential } from "@src/types";
-import { parseCredentialJson, isValidVerifiableCredential } from "@src/util/credential";
+import { parseVerifiableCredentialFromJson } from "@src/util/credential";
 
 import type { IBackupable } from "@src/background/services/backup";
 
@@ -43,15 +43,19 @@ export default class VerifiableCredentialsService implements IBackupable {
       return false;
     }
 
-    const verifiableCredential = parseCredentialJson(verifiableCredentialJson);
-    if (!isValidVerifiableCredential(verifiableCredential)) {
+    const verifiableCredential = parseVerifiableCredentialFromJson(verifiableCredentialJson);
+    if (verifiableCredential === null) {
       return false;
     }
     return this.insertVerifiableCredentialIntoStore(verifiableCredential);
   };
 
   getAllVerifiableCredentials = async (): Promise<VerifiableCredential[]> =>
-    this.getVerifiableCredentialsFromStore().then((credentials) => Array.from(credentials.values()));
+    this.getVerifiableCredentialsFromStore()
+      .then((credentials) => Array.from(credentials.values()))
+      .then((credentialsArray) =>
+        credentialsArray.map((credential) => parseVerifiableCredentialFromJson(credential) as VerifiableCredential),
+      );
 
   private insertVerifiableCredentialIntoStore = async (
     verifiableCredential: VerifiableCredential,
@@ -69,7 +73,7 @@ export default class VerifiableCredentialsService implements IBackupable {
       return false;
     }
 
-    credentials.set(credentialId, verifiableCredential);
+    credentials.set(credentialId, JSON.stringify(verifiableCredential));
     await this.writeVerifiableCredentials(credentials);
 
     await this.historyService.trackOperation(OperationType.ADD_VERIFIABLE_CREDENTIAL, {});
@@ -85,7 +89,7 @@ export default class VerifiableCredentialsService implements IBackupable {
     return true;
   };
 
-  private getVerifiableCredentialsFromStore = async (): Promise<Map<string, VerifiableCredential>> => {
+  private getVerifiableCredentialsFromStore = async (): Promise<Map<string, string>> => {
     const ciphertext = await this.verifiableCredentialsStore.get<string>();
 
     if (!ciphertext) {
@@ -93,13 +97,13 @@ export default class VerifiableCredentialsService implements IBackupable {
     }
 
     const decryptedCredentials = this.lockService.decrypt(ciphertext);
-    const allCredentials = JSON.parse(decryptedCredentials) as Map<string, VerifiableCredential>;
+    const allCredentials = new Map(JSON.parse(decryptedCredentials) as Array<[string, string]>);
 
     return allCredentials;
   };
 
-  private writeVerifiableCredentials = async (credentials: Map<string, VerifiableCredential>): Promise<void> => {
-    const serializedCredentials = JSON.stringify(credentials);
+  private writeVerifiableCredentials = async (credentials: Map<string, string>): Promise<void> => {
+    const serializedCredentials = JSON.stringify(Array.from(credentials));
     const ciphertext = this.lockService.encrypt(serializedCredentials);
 
     await this.verifiableCredentialsStore.set(ciphertext);

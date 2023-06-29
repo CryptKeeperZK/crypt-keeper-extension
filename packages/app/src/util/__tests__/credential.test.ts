@@ -1,4 +1,6 @@
-import { parseCredentialJson, isValidVerifiableCredential } from "../credential";
+import { VerifiableCredential } from "@src/types";
+
+import { parseVerifiableCredentialFromJson, isValidVerifiableCredential } from "../credential";
 
 describe("util/isValidCredential", () => {
   test("should parse a date object correctly inside of a verifiable credential", () => {
@@ -16,9 +18,10 @@ describe("util/isValidCredential", () => {
       },
     };
     const credJson = JSON.stringify(rawCred);
-    const cred = parseCredentialJson(credJson);
+    const cred = parseVerifiableCredentialFromJson(credJson);
 
-    expect(date.getTime()).toBe(cred.issuanceDate.getTime());
+    expect(cred).not.toBeNull();
+    expect(date.getTime()).toBe((cred as VerifiableCredential).issuanceDate.getTime());
   });
 
   test("should return true for a valid verifiable credential", () => {
@@ -35,9 +38,17 @@ describe("util/isValidCredential", () => {
       },
     };
     const credJson = JSON.stringify(rawCred);
-    const cred = parseCredentialJson(credJson);
+    const cred = parseVerifiableCredentialFromJson(credJson);
 
-    expect(isValidVerifiableCredential(cred)).toBe(true);
+    expect(cred).not.toBeNull();
+    expect(isValidVerifiableCredential(cred as VerifiableCredential)).toBe(true);
+  });
+
+  test("should return null if the string is not valid JSON", () => {
+    const rawCred = "asdf";
+    const cred = parseVerifiableCredentialFromJson(rawCred);
+
+    expect(cred).toBeNull();
   });
 
   test("should return false if the context property is not an array", () => {
@@ -54,9 +65,9 @@ describe("util/isValidCredential", () => {
       },
     };
     const credJson = JSON.stringify(rawCred);
-    const cred = parseCredentialJson(credJson);
+    const cred = parseVerifiableCredentialFromJson(credJson);
 
-    expect(isValidVerifiableCredential(cred)).toBe(false);
+    expect(cred).toBeNull();
   });
 
   test("should return false if context entries are not strings", () => {
@@ -73,9 +84,9 @@ describe("util/isValidCredential", () => {
       },
     };
     const credJson = JSON.stringify(rawCred);
-    const cred = parseCredentialJson(credJson);
+    const cred = parseVerifiableCredentialFromJson(credJson);
 
-    expect(isValidVerifiableCredential(cred)).toBe(false);
+    expect(cred).toBeNull();
   });
 
   test("should return false if the id property is not a string", () => {
@@ -93,9 +104,9 @@ describe("util/isValidCredential", () => {
       },
     };
     const credJson = JSON.stringify(rawCred);
-    const cred = parseCredentialJson(credJson);
+    const cred = parseVerifiableCredentialFromJson(credJson);
 
-    expect(isValidVerifiableCredential(cred)).toBe(false);
+    expect(cred).toBeNull();
   });
 
   test("should return false if the type property is not an array", () => {
@@ -112,9 +123,9 @@ describe("util/isValidCredential", () => {
       },
     };
     const credJson = JSON.stringify(rawCred);
-    const cred = parseCredentialJson(credJson);
+    const cred = parseVerifiableCredentialFromJson(credJson);
 
-    expect(isValidVerifiableCredential(cred)).toBe(false);
+    expect(cred).toBeNull();
   });
 
   test("should return false if the type array entries are not strings", () => {
@@ -131,9 +142,9 @@ describe("util/isValidCredential", () => {
       },
     };
     const credJson = JSON.stringify(rawCred);
-    const cred = parseCredentialJson(credJson);
+    const cred = parseVerifiableCredentialFromJson(credJson);
 
-    expect(isValidVerifiableCredential(cred)).toBe(false);
+    expect(cred).toBeNull();
   });
 
   test("should return false if the issuer property does not exist", () => {
@@ -149,9 +160,9 @@ describe("util/isValidCredential", () => {
       },
     };
     const credJson = JSON.stringify(rawCred);
-    const cred = parseCredentialJson(credJson);
+    const cred = parseVerifiableCredentialFromJson(credJson);
 
-    expect(isValidVerifiableCredential(cred)).toBe(false);
+    expect(cred).toBeNull();
   });
 
   test("should return false if the issuer property is not a string", () => {
@@ -168,9 +179,9 @@ describe("util/isValidCredential", () => {
       },
     };
     const credJson = JSON.stringify(rawCred);
-    const cred = parseCredentialJson(credJson);
+    const cred = parseVerifiableCredentialFromJson(credJson);
 
-    expect(isValidVerifiableCredential(cred)).toBe(false);
+    expect(cred).toBeNull();
   });
 
   test("should return false if the issuance date does not exist", () => {
@@ -186,9 +197,9 @@ describe("util/isValidCredential", () => {
       },
     };
     const credJson = JSON.stringify(rawCred);
-    const cred = parseCredentialJson(credJson);
+    const cred = parseVerifiableCredentialFromJson(credJson);
 
-    expect(isValidVerifiableCredential(cred)).toBe(false);
+    expect(cred).toBeNull();
   });
 
   test("should return false if the issuance date is not a date", () => {
@@ -205,9 +216,9 @@ describe("util/isValidCredential", () => {
       },
     };
     const credJson = JSON.stringify(rawCred);
-    const cred = parseCredentialJson(credJson);
+    const cred = parseVerifiableCredentialFromJson(credJson);
 
-    expect(isValidVerifiableCredential(cred)).toBe(false);
+    expect(cred).toBeNull();
   });
 
   test("should return false if the expiration date is not a date", () => {
@@ -225,9 +236,9 @@ describe("util/isValidCredential", () => {
       },
     };
     const credJson = JSON.stringify(rawCred);
-    const cred = parseCredentialJson(credJson);
+    const cred = parseVerifiableCredentialFromJson(credJson);
 
-    expect(isValidVerifiableCredential(cred)).toBe(false);
+    expect(cred).toBeNull();
   });
 
   test("should return false if the subject property does not exist", () => {
@@ -238,9 +249,9 @@ describe("util/isValidCredential", () => {
       issuanceDate: new Date(),
     };
     const credJson = JSON.stringify(rawCred);
-    const cred = parseCredentialJson(credJson);
+    const cred = parseVerifiableCredentialFromJson(credJson);
 
-    expect(isValidVerifiableCredential(cred)).toBe(false);
+    expect(cred).toBeNull();
   });
 
   test("should return false if the subject id is not a string", () => {
@@ -257,9 +268,9 @@ describe("util/isValidCredential", () => {
       },
     };
     const credJson = JSON.stringify(rawCred);
-    const cred = parseCredentialJson(credJson);
+    const cred = parseVerifiableCredentialFromJson(credJson);
 
-    expect(isValidVerifiableCredential(cred)).toBe(false);
+    expect(cred).toBeNull();
   });
 
   test("should return false if the claims are not of valid format", () => {
@@ -278,9 +289,9 @@ describe("util/isValidCredential", () => {
       },
     };
     const credJson = JSON.stringify(rawCred);
-    const cred = parseCredentialJson(credJson);
+    const cred = parseVerifiableCredentialFromJson(credJson);
 
-    expect(isValidVerifiableCredential(cred)).toBe(false);
+    expect(cred).toBeNull();
   });
 
   test("should return false if the status id is not a string", () => {
@@ -301,9 +312,9 @@ describe("util/isValidCredential", () => {
       },
     };
     const credJson = JSON.stringify(rawCred);
-    const cred = parseCredentialJson(credJson);
+    const cred = parseVerifiableCredentialFromJson(credJson);
 
-    expect(isValidVerifiableCredential(cred)).toBe(false);
+    expect(cred).toBeNull();
   });
 
   test("should return false if the status type is not a string", () => {
@@ -324,9 +335,9 @@ describe("util/isValidCredential", () => {
       },
     };
     const credJson = JSON.stringify(rawCred);
-    const cred = parseCredentialJson(credJson);
+    const cred = parseVerifiableCredentialFromJson(credJson);
 
-    expect(isValidVerifiableCredential(cred)).toBe(false);
+    expect(cred).toBeNull();
   });
 
   test("should return false if the proof id is not a string", () => {
@@ -353,9 +364,9 @@ describe("util/isValidCredential", () => {
       ],
     };
     const credJson = JSON.stringify(rawCred);
-    const cred = parseCredentialJson(credJson);
+    const cred = parseVerifiableCredentialFromJson(credJson);
 
-    expect(isValidVerifiableCredential(cred)).toBe(false);
+    expect(cred).toBeNull();
   });
 
   test("should return false if the proof type is not a string", () => {
@@ -382,9 +393,9 @@ describe("util/isValidCredential", () => {
       ],
     };
     const credJson = JSON.stringify(rawCred);
-    const cred = parseCredentialJson(credJson);
+    const cred = parseVerifiableCredentialFromJson(credJson);
 
-    expect(isValidVerifiableCredential(cred)).toBe(false);
+    expect(cred).toBeNull();
   });
 
   test("should return false if the proof purpose is not a string", () => {
@@ -411,9 +422,9 @@ describe("util/isValidCredential", () => {
       ],
     };
     const credJson = JSON.stringify(rawCred);
-    const cred = parseCredentialJson(credJson);
+    const cred = parseVerifiableCredentialFromJson(credJson);
 
-    expect(isValidVerifiableCredential(cred)).toBe(false);
+    expect(cred).toBeNull();
   });
 
   test("should return false if the proof verification method is not a string", () => {
@@ -440,9 +451,9 @@ describe("util/isValidCredential", () => {
       ],
     };
     const credJson = JSON.stringify(rawCred);
-    const cred = parseCredentialJson(credJson);
+    const cred = parseVerifiableCredentialFromJson(credJson);
 
-    expect(isValidVerifiableCredential(cred)).toBe(false);
+    expect(cred).toBeNull();
   });
 
   test("should return false if the proof created time is not a date", () => {
@@ -469,9 +480,9 @@ describe("util/isValidCredential", () => {
       ],
     };
     const credJson = JSON.stringify(rawCred);
-    const cred = parseCredentialJson(credJson);
+    const cred = parseVerifiableCredentialFromJson(credJson);
 
-    expect(isValidVerifiableCredential(cred)).toBe(false);
+    expect(cred).toBeNull();
   });
 
   test("should return false if the proof value is not a string", () => {
@@ -498,8 +509,8 @@ describe("util/isValidCredential", () => {
       ],
     };
     const credJson = JSON.stringify(rawCred);
-    const cred = parseCredentialJson(credJson);
+    const cred = parseVerifiableCredentialFromJson(credJson);
 
-    expect(isValidVerifiableCredential(cred)).toBe(false);
+    expect(cred).toBeNull();
   });
 });
