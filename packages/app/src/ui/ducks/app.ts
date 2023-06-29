@@ -112,6 +112,11 @@ export const selectAccount =
     dispatch(setSelectedAccount(address));
   };
 
+export const checkMnemonic =
+  (mnemonic: string): TypedThunk<Promise<boolean>> =>
+  () =>
+    postMessage({ method: RPCAction.CHECK_MNEMONIC, payload: { mnemonic, strict: true } });
+
 export const useGeneratedMnemonic = (): string | undefined => useAppSelector((state) => state.app.mnemonic, deepEqual);
 
 export const useAppStatus = (): Omit<AppState, "mnemonic"> =>

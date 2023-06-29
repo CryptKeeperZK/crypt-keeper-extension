@@ -8,6 +8,8 @@ import { useNavigate } from "react-router-dom";
 
 import { defaultMnemonic } from "@src/config/mock/wallet";
 import { Paths } from "@src/constants";
+import { checkMnemonic } from "@src/ui/ducks/app";
+import { useAppDispatch } from "@src/ui/ducks/hooks";
 
 import Recover from "..";
 
@@ -15,11 +17,22 @@ jest.mock("react-router-dom", (): unknown => ({
   useNavigate: jest.fn(),
 }));
 
+jest.mock("@src/ui/ducks/hooks", (): unknown => ({
+  useAppDispatch: jest.fn(),
+}));
+
+jest.mock("@src/ui/ducks/app", (): unknown => ({
+  checkMnemonic: jest.fn(),
+}));
+
 describe("ui/pages/Recover", () => {
   const mockNavigate = jest.fn();
+  const mockDispatch = jest.fn(() => Promise.resolve());
 
   beforeEach(() => {
     (useNavigate as jest.Mock).mockReturnValue(mockNavigate);
+
+    (useAppDispatch as jest.Mock).mockReturnValue(mockDispatch);
   });
 
   afterEach(() => {
@@ -72,6 +85,8 @@ describe("ui/pages/Recover", () => {
     const button = await findByTestId("submit-button");
     await act(() => Promise.resolve(button.click()));
 
+    expect(mockDispatch).toBeCalledTimes(1);
+    expect(checkMnemonic).toBeCalledTimes(1);
     expect(mockNavigate).toBeCalledTimes(1);
     expect(mockNavigate).toBeCalledWith(`${Paths.RESET_PASSWORD}?mnemonic=${defaultMnemonic}`);
   });

@@ -9,7 +9,7 @@ import { Paths } from "@src/constants";
 import { setupPassword } from "@src/ui/ducks/app";
 import { useAppDispatch } from "@src/ui/ducks/hooks";
 
-import type { ChangeEvent, FormEvent } from "react";
+import type { ChangeEvent } from "react";
 
 import { useOnboarding } from "../useOnboarding";
 
@@ -94,9 +94,7 @@ describe("ui/pages/Onboarding/useOnboarding", () => {
       ),
     );
 
-    await act(async () =>
-      Promise.resolve(result.current.onSubmit({ preventDefault: jest.fn() } as unknown as FormEvent<HTMLFormElement>)),
-    );
+    await act(async () => Promise.resolve(result.current.onSubmit()));
     await waitFor(() => result.current.errors.root !== "" && result.current.isLoading !== true);
 
     expect(result.current.isLoading).toBe(false);

@@ -5,6 +5,8 @@ import { object, string } from "yup";
 
 import { validateMnemonic } from "@src/background/services/mnemonic";
 import { Paths } from "@src/constants";
+import { checkMnemonic } from "@src/ui/ducks/app";
+import { useAppDispatch } from "@src/ui/ducks/hooks";
 import { useValidationResolver } from "@src/ui/hooks/validation";
 
 export interface IUseRecoverData {
@@ -21,17 +23,18 @@ interface RestoreFormFields {
 
 const validationSchema = object({
   mnemonic: string()
-    .test("mnemonic-validate", "Mnemonic is invalid", (mnemonic?: string) =>
-      mnemonic ? validateMnemonic(mnemonic) : false,
-    )
+    .test("mnemonic", "Mnemonic is invalid", (mnemonic?: string) => (mnemonic ? validateMnemonic(mnemonic) : false))
     .required("Mnemonic is required"),
 });
 
 export const useRecover = (): IUseRecoverData => {
   const navigate = useNavigate();
+  const dispatch = useAppDispatch();
+
   const resolver = useValidationResolver(validationSchema);
   const {
     formState: { isLoading, isSubmitting, errors },
+    setError,
     register,
     handleSubmit,
   } = useForm<RestoreFormFields>({
@@ -43,10 +46,11 @@ export const useRecover = (): IUseRecoverData => {
 
   const onRecover = useCallback(
     (data: RestoreFormFields) => {
-      // TODO: add mnemonic phrase check
-      navigate(`${Paths.RESET_PASSWORD}?mnemonic=${data.mnemonic}`);
+      dispatch(checkMnemonic(data.mnemonic))
+        .then(() => navigate(`${Paths.RESET_PASSWORD}?mnemonic=${data.mnemonic}`))
+        .catch((error: Error) => setError("mnemonic", { message: error.message }));
     },
-    [navigate],
+    [setError, dispatch, navigate],
   );
 
   const onClose = useCallback(() => {
@@ -59,7 +63,7 @@ export const useRecover = (): IUseRecoverData => {
       mnemonic: errors.mnemonic?.message,
     },
     register,
-    onSubmit: handleSubmit(onRecover),
     onClose,
+    onSubmit: handleSubmit(onRecover),
   };
 };
