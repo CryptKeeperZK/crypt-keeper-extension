@@ -1,12 +1,21 @@
 import { VerifiableCredential, Issuer, CredentialsProof, Subject, Status, ClaimValue } from "@src/types";
 
 /**
- * Parses a JSON string into a VerifiableCredential object.
+ * Attempts to parse a JSON string into a VerifiableCredential object.
  * @param obj A JSON string representing a VerifiableCredential.
- * @returns An object representing a VerifiableCredential.
+ * @returns An object representing a VerifiableCredential. Null if the object is not a valid VerifiableCredential.
  */
-export function parseCredentialJson(json: string): VerifiableCredential {
-  const obj = JSON.parse(json) as VerifiableCredential;
+export function parseVerifiableCredentialFromJson(json: string): VerifiableCredential | null {
+  if (!json || typeof json !== "string") {
+    return null;
+  }
+
+  let obj;
+  try {
+    obj = JSON.parse(json) as VerifiableCredential;
+  } catch (e) {
+    return null;
+  }
 
   if (
     obj.issuanceDate &&
@@ -22,6 +31,10 @@ export function parseCredentialJson(json: string): VerifiableCredential {
     !Number.isNaN(Date.parse(obj.expirationDate as string))
   ) {
     obj.expirationDate = new Date(obj.expirationDate);
+  }
+
+  if (!isValidVerifiableCredential(obj)) {
+    return null;
   }
 
   return obj;
