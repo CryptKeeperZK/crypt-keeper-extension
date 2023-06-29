@@ -1,5 +1,5 @@
 /* eslint-disable no-console */
-import { initializeInjectedProvider, type CryptKeeperInjectedProvider } from "@cryptkeeperzk/providers";
+import { cryptkeeperConnect, type CryptKeeperInjectedProvider } from "@cryptkeeperzk/providers";
 import { Identity } from "@semaphore-protocol/identity";
 import { bigintToHex } from "bigint-conversion";
 import { encodeBytes32String } from "ethers";
@@ -54,7 +54,7 @@ export const useCryptKeeper = (): IUseCryptKeeperData => {
   const mockIdentityCommitments: string[] = genMockIdentityCommitments();
 
   const connect = useCallback(async () => {
-    const injectedClient = await initializeInjectedProvider()?.connect();
+    const injectedClient = await cryptkeeperConnect();
 
     if (injectedClient) {
       setIsLocked(false);
