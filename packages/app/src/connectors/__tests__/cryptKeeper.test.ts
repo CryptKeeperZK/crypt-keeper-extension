@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 
-import { initializeInjectedProvider } from "@cryptkeeperzk/providers";
+import { initializeCryptKeeperProvider } from "@cryptkeeperzk/providers";
 import EventEmitter2 from "eventemitter2";
 
 import { ZERO_ADDRESS } from "@src/config/const";
@@ -34,7 +34,7 @@ describe("connectors/cryptKeeper", () => {
     mockProvider.accounts = jest.fn(() => Promise.resolve(mockAddresses));
     mockProvider.connect = jest.fn(() => Promise.resolve());
 
-    (initializeInjectedProvider as jest.Mock).mockReturnValue(mockProvider);
+    (initializeCryptKeeperProvider as jest.Mock).mockReturnValue(mockProvider);
   });
 
   afterEach(() => {
@@ -71,7 +71,7 @@ describe("connectors/cryptKeeper", () => {
     mockProvider.isCryptKeeper = false;
     mockProvider.accounts = jest.fn(() => Promise.resolve(mockAddresses));
     mockProvider.connect = jest.fn(() => Promise.resolve());
-    (initializeInjectedProvider as jest.Mock).mockReturnValue(mockProvider);
+    (initializeCryptKeeperProvider as jest.Mock).mockReturnValue(mockProvider);
 
     const connector = new CryptkeeperConnector(mockActions);
 
@@ -81,7 +81,7 @@ describe("connectors/cryptKeeper", () => {
   });
 
   test("should throw error if there is no provider", async () => {
-    (initializeInjectedProvider as jest.Mock).mockReturnValue(undefined);
+    (initializeCryptKeeperProvider as jest.Mock).mockReturnValue(undefined);
 
     const connector = new CryptkeeperConnector(mockActions);
 
@@ -106,7 +106,7 @@ describe("connectors/cryptKeeper", () => {
   });
 
   test("should not connect eagerly if there is no provider", async () => {
-    (initializeInjectedProvider as jest.Mock).mockReturnValue(undefined);
+    (initializeCryptKeeperProvider as jest.Mock).mockReturnValue(undefined);
     const connector = new CryptkeeperConnector(mockActions);
 
     await connector.connectEagerly();
@@ -116,7 +116,7 @@ describe("connectors/cryptKeeper", () => {
   });
 
   test("should reset state when connecting eagerly throws an error", async () => {
-    (initializeInjectedProvider as jest.Mock).mockImplementation(() => {
+    (initializeCryptKeeperProvider as jest.Mock).mockImplementation(() => {
       throw new Error();
     });
     const connector = new CryptkeeperConnector(mockActions);

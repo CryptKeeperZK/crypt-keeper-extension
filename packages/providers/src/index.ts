@@ -1,2 +1,2 @@
-export { CryptKeeperInjectedProvider, initializeInjectedProvider } from "./sdk";
-export * from "./constants";
+export { CryptKeeperInjectedProvider, initializeCryptKeeperProvider, cryptkeeperConnect } from "./sdk";
+export { RPCAction } from "./constants";

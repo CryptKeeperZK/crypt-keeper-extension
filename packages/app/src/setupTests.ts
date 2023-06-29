@@ -109,5 +109,5 @@ jest.mock("webextension-polyfill", (): unknown => {
 jest.mock("@cryptkeeperzk/providers", (): unknown => ({
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
   RPCAction: jest.requireActual("@cryptkeeperzk/providers/dist/src/constants/rpcAction"),
-  initializeInjectedProvider: jest.fn(),
+  initializeCryptKeeperProvider: jest.fn(),
 }));

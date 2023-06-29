@@ -1,4 +1,4 @@
-import { type CryptKeeperInjectedProvider, initializeInjectedProvider, RPCAction } from "@cryptkeeperzk/providers";
+import { type CryptKeeperInjectedProvider, initializeCryptKeeperProvider, RPCAction } from "@cryptkeeperzk/providers";
 import { initializeConnector } from "@web3-react/core";
 import { Connector } from "@web3-react/types";
 
@@ -55,7 +55,7 @@ export class CryptkeeperConnector extends Connector {
       return undefined;
     }
 
-    this.customProvider = initializeInjectedProvider();
+    this.customProvider = initializeCryptKeeperProvider();
     this.eagerConnection = this.customProvider?.connect().then(() => {
       this.customProvider?.on("login", async () => {
         const accounts = await this.loadAccounts();
