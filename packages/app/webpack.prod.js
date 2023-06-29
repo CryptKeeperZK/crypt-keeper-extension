@@ -1,6 +1,6 @@
 const ImageMinimizerPlugin = require("image-minimizer-webpack-plugin");
+const TerserPlugin = require("terser-webpack-plugin");
 const { merge } = require("webpack-merge");
-const TerserPlugin = require('terser-webpack-plugin');
 
 const common = require("./webpack.common");
 
@@ -19,11 +19,9 @@ module.exports = merge(common, {
           test: /[\\/]node_modules[\\/]/,
           name: "popup-vendor",
           enforce: true,
-          chunks: (chunk) => {
-            return chunk.name === "popup";
-          }
-        }
-      }
+          chunks: (chunk) => chunk.name === "popup",
+        },
+      },
     },
     minimizer: [
       new TerserPlugin({
@@ -31,7 +29,7 @@ module.exports = merge(common, {
           compress: {
             drop_console: true,
             drop_debugger: true,
-            pure_funcs: ['console.log', 'console.info'],
+            pure_funcs: ["console.log", "console.info"],
           },
         },
       }),
