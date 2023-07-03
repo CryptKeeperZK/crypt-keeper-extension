@@ -1,42 +1,89 @@
 import { AES, enc, HmacSHA256, SHA256 } from "crypto-js";
 
+import { validateMnemonic } from "@src/background/services/mnemonic";
+
+interface ICryptoServiceArgs {
+  password?: string;
+  mnemonic?: string;
+}
+
 export default class CryptoService {
-  private secret?: string;
+  private static INSTANCE: CryptoService;
 
-  constructor(secret?: string) {
-    this.secret = secret;
+  private password?: string;
+
+  private mnemonic?: string;
+
+  private constructor({ password, mnemonic }: ICryptoServiceArgs) {
+    this.password = password;
+    this.mnemonic = mnemonic;
   }
 
-  setSecret(secret: string): void {
-    this.secret = secret;
+  static getInstance(args: ICryptoServiceArgs = {}): CryptoService {
+    if (!CryptoService.INSTANCE) {
+      CryptoService.INSTANCE = new CryptoService(args);
+    }
+
+    return CryptoService.INSTANCE;
   }
 
-  encrypt(text: string, secret = this.secret): string {
-    this.checkSecretInitialized(secret);
+  setPassword(password: string): CryptoService {
+    this.password = password;
 
-    return AES.encrypt(text, secret as string).toString();
+    return this;
   }
 
-  decrypt(ciphertext: string, secret = this.secret): string {
-    this.checkSecretInitialized(secret);
+  setMnemonic(mnemonic: string): CryptoService {
+    if (!validateMnemonic(mnemonic)) {
+      throw new Error("Mnemonic is invalid");
+    }
 
-    const bytes = AES.decrypt(ciphertext, secret as string);
+    this.mnemonic = mnemonic;
+
+    return this;
+  }
+
+  clear(): void {
+    this.password = undefined;
+    this.mnemonic = undefined;
+  }
+
+  isAuthenticPassword(password: string): boolean {
+    if (this.password !== password) {
+      throw new Error("Password doesn't match with current");
+    }
+
+    return true;
+  }
+
+  encrypt(text: string, password = this.password): string {
+    this.checkPasswordInitialized(password);
+
+    return AES.encrypt(text, password as string).toString();
+  }
+
+  decrypt(ciphertext: string, password = this.password): string {
+    this.checkPasswordInitialized(password);
+
+    const bytes = AES.decrypt(ciphertext, password as string);
     return bytes.toString(enc.Utf8);
   }
 
-  generateEncryptedHmac(ciphertext: string, secret = this.secret): string {
-    this.checkSecretInitialized(secret);
+  generateEncryptedHmac(ciphertext: string, password: string): string {
+    this.checkPasswordInitialized(password);
+    this.isAuthenticPassword(password);
 
-    const hmac = this.generateHmac(ciphertext, secret as string);
+    const hmac = this.generateHmac(ciphertext, password);
     return `${hmac}${ciphertext}`;
   }
 
-  getAuthenticCiphertext(ciphertext: string, secret = this.secret): string {
-    this.checkSecretInitialized(secret);
+  getAuthenticCiphertext(ciphertext: string, password: string): string {
+    this.checkPasswordInitialized(password);
+    this.isAuthenticPassword(password);
 
     const transitHmac = ciphertext.substring(0, 64);
     const transitCipherContent = ciphertext.substring(64);
-    const decryptedHmac = this.generateHmac(transitCipherContent, secret as string);
+    const decryptedHmac = this.generateHmac(transitCipherContent, password);
     const isAuthentic = transitHmac === decryptedHmac;
 
     if (!isAuthentic) {
@@ -50,9 +97,9 @@ export default class CryptoService {
     return HmacSHA256(ciphertext, SHA256(password)).toString();
   }
 
-  private checkSecretInitialized(secret = this.secret): void {
-    if (!secret) {
-      throw new Error("Secret is not provided");
+  private checkPasswordInitialized(password = this.password): void {
+    if (!password) {
+      throw new Error("Password is not provided");
     }
   }
 }

@@ -66,14 +66,12 @@ jest.mock("@src/background/services/notification", (): unknown => ({
   },
 }));
 
-jest.mock("@src/background/services/lock", (): unknown => ({
-  __esModule: true,
-  default: {
-    getInstance: jest.fn(() => ({
-      encrypt: jest.fn(() => Promise.resolve(mockSerializedDefaultOperations)),
-      decrypt: jest.fn(() => Promise.resolve(mockSerializedDefaultOperations)),
-    })),
-  },
+jest.mock("@src/background/services/crypto", (): unknown => ({
+  ...jest.requireActual("@src/background/services/crypto"),
+  getInstance: jest.fn(() => ({
+    encrypt: jest.fn(() => mockSerializedDefaultOperations),
+    decrypt: jest.fn(() => mockSerializedDefaultOperations),
+  })),
 }));
 
 jest.mock("@src/background/services/storage");

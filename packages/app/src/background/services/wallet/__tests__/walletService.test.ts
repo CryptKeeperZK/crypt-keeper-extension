@@ -1,6 +1,5 @@
 import { HDNodeWallet, Wallet } from "ethers";
 
-import CryptoService from "@src/background/services/crypto";
 import { generateMnemonic } from "@src/background/services/mnemonic";
 import SimpleStorage from "@src/background/services/storage";
 import { ZERO_ADDRESS } from "@src/config/const";
@@ -19,10 +18,6 @@ const mockAccounts = [
 
 const mockSerializedAccounts = JSON.stringify(mockAccounts);
 
-const mockAuthenticityCheckData = {
-  isNewOnboarding: true,
-};
-
 const mockSignedMessage =
   "0x8b7a1e6c0638291c674af226dd97f5354bb3723d611128ad35fda772b9051eab5fec16aacf700ba186590b170a16bfff576078695ac26a3321f9636c6a4a6c051b";
 
@@ -33,14 +28,6 @@ jest.mock("ethers", (): unknown => ({
   })),
 }));
 
-jest.mock("@src/background/services/lock", (): unknown => ({
-  getInstance: jest.fn(() => ({
-    encrypt: jest.fn(() => mockSerializedAccounts),
-    decrypt: jest.fn((arg) => (arg === ZERO_ADDRESS ? ZERO_ADDRESS : mockSerializedAccounts)),
-    isAuthentic: jest.fn(() => mockAuthenticityCheckData),
-  })),
-}));
-
 jest.mock("@src/background/services/misc", (): unknown => ({
   ...jest.requireActual("@src/background/services/misc"),
   getInstance: jest.fn(() => ({
@@ -48,7 +35,15 @@ jest.mock("@src/background/services/misc", (): unknown => ({
   })),
 }));
 
-jest.mock("@src/background/services/crypto");
+jest.mock("@src/background/services/crypto", (): unknown => ({
+  ...jest.requireActual("@src/background/services/crypto"),
+  getInstance: jest.fn(() => ({
+    encrypt: jest.fn(() => mockSerializedAccounts),
+    decrypt: jest.fn((arg) => (arg === ZERO_ADDRESS ? ZERO_ADDRESS : mockSerializedAccounts)),
+    generateEncryptedHmac: jest.fn(() => "encrypted"),
+    getAuthenticCiphertext: jest.fn(() => "encrypted"),
+  })),
+}));
 
 jest.mock("@src/background/services/storage");
 
@@ -70,13 +65,6 @@ describe("background/services/wallet", () => {
       instance.clear.mockReturnValue(undefined);
     });
 
-    (CryptoService as jest.Mock).mock.instances.forEach((instance: CryptoService) => {
-      /* eslint-disable no-param-reassign */
-      instance.generateEncryptedHmac = jest.fn(() => "encrypted");
-      instance.getAuthenticCiphertext = jest.fn(() => "encrypted");
-      /* eslint-enable no-param-reassign */
-    });
-
     Wallet.fromPhrase = jest.fn(() => mockAccounts[0] as unknown as HDNodeWallet);
 
     (generateMnemonic as jest.Mock).mockReturnValue(defaultMnemonic);
@@ -91,11 +79,6 @@ describe("background/services/wallet", () => {
       instance.get.mockClear();
       instance.set.mockClear();
       instance.clear.mockClear();
-    });
-
-    (CryptoService as jest.Mock).mock.instances.forEach((instance: CryptoService) => {
-      (instance.generateEncryptedHmac as jest.Mock).mockClear();
-      (instance.getAuthenticCiphertext as jest.Mock).mockClear();
     });
   });
 

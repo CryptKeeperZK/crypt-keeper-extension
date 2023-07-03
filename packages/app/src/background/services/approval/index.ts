@@ -1,5 +1,4 @@
 import CryptoService from "@src/background/services/crypto";
-import LockerService from "@src/background/services/lock";
 import SimpleStorage from "@src/background/services/storage";
 
 import type { HostPermission } from "@cryptkeeperzk/types";
@@ -14,15 +13,12 @@ export default class ApprovalService implements IBackupable {
 
   private approvals: SimpleStorage;
 
-  private lockService: LockerService;
-
   private cryptoService: CryptoService;
 
   private constructor() {
     this.allowedHosts = new Map();
     this.approvals = new SimpleStorage(APPPROVALS_DB_KEY);
-    this.lockService = LockerService.getInstance();
-    this.cryptoService = new CryptoService();
+    this.cryptoService = CryptoService.getInstance();
   }
 
   static getInstance = (): ApprovalService => {
@@ -44,7 +40,7 @@ export default class ApprovalService implements IBackupable {
     const encryped = await this.approvals.get<string>();
 
     if (encryped) {
-      const decrypted = this.lockService.decrypt(encryped);
+      const decrypted = this.cryptoService.decrypt(encryped);
       this.allowedHosts = new Map(JSON.parse(decrypted) as Iterable<[string, HostPermission]>);
     }
 
@@ -93,7 +89,7 @@ export default class ApprovalService implements IBackupable {
 
   private async saveApprovals(): Promise<void> {
     const serializedApprovals = JSON.stringify(Array.from(this.allowedHosts.entries()));
-    const newApprovals = this.lockService.encrypt(serializedApprovals);
+    const newApprovals = this.cryptoService.encrypt(serializedApprovals);
     await this.approvals.set(newApprovals);
   }
 
@@ -104,7 +100,6 @@ export default class ApprovalService implements IBackupable {
       return null;
     }
 
-    await this.lockService.isAuthentic(backupPassword, true);
     return this.cryptoService.generateEncryptedHmac(backupEncryptedData, backupPassword);
   };
 
@@ -113,7 +108,6 @@ export default class ApprovalService implements IBackupable {
       return;
     }
 
-    await this.lockService.isAuthentic(backupPassword, true);
     await this.approvals.set<string>(this.cryptoService.getAuthenticCiphertext(backupEncryptedData, backupPassword));
   };
 }

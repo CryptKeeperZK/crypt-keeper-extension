@@ -1,23 +1,19 @@
-import CryptoService from "@src/background/services/crypto";
 import SimpleStorage from "@src/background/services/storage";
 
 import ApprovalService from "..";
 
 const mockDefaultHosts = ["https://localhost:3000"];
 const mockSerializedApprovals = JSON.stringify([[mockDefaultHosts[0], { canSkipApprove: true }]]);
-const mockAuthenticityCheckData = {
-  isNewOnboarding: false,
-};
 
-jest.mock("@src/background/services/lock", (): unknown => ({
+jest.mock("@src/background/services/crypto", (): unknown => ({
+  ...jest.requireActual("@src/background/services/crypto"),
   getInstance: jest.fn(() => ({
     encrypt: jest.fn(() => mockSerializedApprovals),
     decrypt: jest.fn(() => mockSerializedApprovals),
-    isAuthentic: jest.fn(() => mockAuthenticityCheckData),
+    generateEncryptedHmac: jest.fn(() => "encrypted"),
+    getAuthenticCiphertext: jest.fn(() => "encrypted"),
   })),
 }));
-
-jest.mock("@src/background/services/crypto");
 
 jest.mock("@src/background/services/storage");
 
@@ -34,13 +30,6 @@ describe("background/services/approval", () => {
       instance.set.mockReturnValue(undefined);
       instance.clear.mockReturnValue(undefined);
     });
-
-    (CryptoService as jest.Mock).mock.instances.forEach((instance: CryptoService) => {
-      /* eslint-disable no-param-reassign */
-      instance.generateEncryptedHmac = jest.fn(() => "encrypted");
-      instance.getAuthenticCiphertext = jest.fn(() => "encrypted");
-      /* eslint-enable no-param-reassign */
-    });
   });
 
   afterEach(async () => {
@@ -51,11 +40,6 @@ describe("background/services/approval", () => {
       instance.get.mockClear();
       instance.set.mockClear();
       instance.clear.mockClear();
-    });
-
-    (CryptoService as jest.Mock).mock.instances.forEach((instance: CryptoService) => {
-      (instance.generateEncryptedHmac as jest.Mock).mockClear();
-      (instance.getAuthenticCiphertext as jest.Mock).mockClear();
     });
   });
 
