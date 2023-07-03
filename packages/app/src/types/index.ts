@@ -7,4 +7,14 @@ export * from "./misc";
 export * from "./wallet";
 export * from "./hooks";
 export * from "./config";
-export * from "./verifiableCredentials";
+export type {
+  Credential,
+  VerifiableCredential,
+  Presentation,
+  VerifiablePresentation,
+  Issuer,
+  Subject,
+  Status,
+  ClaimValue,
+  CredentialsProof,
+} from "./verifiableCredentials";
