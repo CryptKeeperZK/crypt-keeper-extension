@@ -1,31 +1,18 @@
 /* eslint-disable @typescript-eslint/unbound-method */
 import browser from "webextension-polyfill";
 
+import CryptoService from "@src/background/services/crypto";
 import SimpleStorage from "@src/background/services/storage";
 import { InitializationStep } from "@src/types";
 import { setStatus } from "@src/ui/ducks/app";
 import pushMessage from "@src/util/pushMessage";
 
 import LockerService from "..";
-import { cryptoDecrypt } from "../../crypto";
 
 const defaultPassword = "password";
 const passwordChecker = "Password is correct";
 
-jest.mock("crypto-js", (): unknown => ({
-  ...jest.requireActual("crypto-js"),
-  AES: {
-    encrypt: jest.fn(),
-    decrypt: jest.fn(),
-  },
-}));
-
-jest.mock("@src/background/services/crypto", (): unknown => ({
-  cryptoEncrypt: jest.fn(() => defaultPassword),
-  cryptoDecrypt: jest.fn(() => passwordChecker),
-  cryptoGenerateEncryptedHmac: jest.fn(() => "encrypted"),
-  cryptoGetAuthenticBackupCiphertext: jest.fn(() => "encrypted"),
-}));
+jest.mock("@src/background/services/crypto");
 
 jest.mock("@src/background/services/misc", (): unknown => ({
   ...jest.requireActual("@src/background/services/misc"),
@@ -57,6 +44,16 @@ describe("background/services/locker", () => {
     (SimpleStorage as jest.Mock).mock.instances.forEach((instance: MockStorage) => {
       instance.get.mockReturnValue(defaultPassword);
     });
+
+    (CryptoService as jest.Mock).mock.instances.forEach((instance: CryptoService) => {
+      /* eslint-disable no-param-reassign */
+      instance.encrypt = jest.fn(() => defaultPassword);
+      instance.decrypt = jest.fn(() => passwordChecker);
+      instance.generateEncryptedHmac = jest.fn(() => "encrypted");
+      instance.getAuthenticCiphertext = jest.fn(() => "encrypted");
+      instance.setSecret = jest.fn(() => undefined);
+      /* eslint-enable no-param-reassign */
+    });
   });
 
   describe("ensure", () => {
@@ -84,14 +81,6 @@ describe("background/services/locker", () => {
       expect(result).toStrictEqual(defaultPassword);
     });
 
-    test("should not encrypt if there is no password", () => {
-      expect(() => lockService.encrypt(defaultPassword)).toThrowError("Password is not provided");
-    });
-
-    test("should not encrypt if there is no password", () => {
-      expect(() => lockService.decrypt(defaultPassword)).toThrowError("Password is not provided");
-    });
-
     test("should decrypt properly", async () => {
       await lockService.unlock(defaultPassword);
 
@@ -103,6 +92,10 @@ describe("background/services/locker", () => {
 
   describe("unlock", () => {
     test("should setup password and unlock properly", async () => {
+      (SimpleStorage as jest.Mock).mock.instances.forEach((instance: MockStorage) => {
+        instance.get.mockReturnValueOnce(undefined).mockReturnValue(defaultPassword);
+      });
+
       await lockService.setupPassword(defaultPassword);
       const status = await lockService.getStatus();
 
@@ -111,6 +104,10 @@ describe("background/services/locker", () => {
         isMnemonicGenerated: true,
         isUnlocked: true,
       });
+    });
+
+    test("should throw error if password is already setup", async () => {
+      await expect(lockService.setupPassword(defaultPassword)).rejects.toThrow("Password is already initialized");
     });
 
     test("should unlock properly", async () => {
@@ -151,10 +148,6 @@ describe("background/services/locker", () => {
       expect(await lockService.awaitUnlock()).toBeUndefined();
     });
 
-    test("should not unlock if there is no password", async () => {
-      await expect(lockService.unlock("")).rejects.toThrowError("Password is not provided");
-    });
-
     test("should not unlock if there is no cipher text", async () => {
       (SimpleStorage as jest.Mock).mock.instances.forEach((instance: MockStorage) => {
         instance.get.mockReturnValue(undefined);
@@ -166,7 +159,8 @@ describe("background/services/locker", () => {
     });
 
     test("should not unlock if there is wrong password", async () => {
-      (cryptoDecrypt as jest.Mock).mockReturnValue({ toString: () => "" });
+      const [cryptoService] = (CryptoService as jest.Mock).mock.instances as [CryptoService];
+      (cryptoService.decrypt as jest.Mock).mockReturnValue({ toString: () => "" });
 
       await expect(lockService.unlock(defaultPassword)).rejects.toThrowError("Incorrect password");
     });
@@ -176,7 +170,8 @@ describe("background/services/locker", () => {
         instance.get.mockReturnValue(undefined);
       });
 
-      (cryptoDecrypt as jest.Mock).mockReturnValue(passwordChecker);
+      const [cryptoService] = (CryptoService as jest.Mock).mock.instances as [CryptoService];
+      (cryptoService.decrypt as jest.Mock).mockReturnValue(passwordChecker);
 
       const result = await lockService.isAuthentic(defaultPassword, true);
 
@@ -184,21 +179,17 @@ describe("background/services/locker", () => {
     });
 
     test("should check password is correct with filled storage", async () => {
-      (cryptoDecrypt as jest.Mock).mockReturnValue(passwordChecker);
+      const [cryptoService] = (CryptoService as jest.Mock).mock.instances as [CryptoService];
+      (cryptoService.decrypt as jest.Mock).mockReturnValue(passwordChecker);
 
       const result = await lockService.isAuthentic(defaultPassword, true);
 
       expect(result).toStrictEqual({ isNewOnboarding: false });
     });
 
-    test("should throw error if trying to check empty password", async () => {
-      (cryptoDecrypt as jest.Mock).mockReturnValue(passwordChecker);
-
-      await expect(lockService.isAuthentic("", false)).rejects.toThrowError("Password is not provided");
-    });
-
     test("should throw error if password is incorrect", async () => {
-      (cryptoDecrypt as jest.Mock).mockReturnValue("");
+      const [cryptoService] = (CryptoService as jest.Mock).mock.instances as [CryptoService];
+      (cryptoService.decrypt as jest.Mock).mockReturnValue("");
 
       await expect(lockService.isAuthentic(defaultPassword, false)).rejects.toThrowError("Incorrect password");
     });
@@ -208,7 +199,8 @@ describe("background/services/locker", () => {
         instance.get.mockReturnValue(undefined);
       });
 
-      (cryptoDecrypt as jest.Mock).mockReturnValue(passwordChecker);
+      const [cryptoService] = (CryptoService as jest.Mock).mock.instances as [CryptoService];
+      (cryptoService.decrypt as jest.Mock).mockReturnValue(passwordChecker);
 
       await expect(lockService.isAuthentic(defaultPassword, false)).rejects.toThrowError(
         "Something badly gone wrong (reinstallation probably required)",
@@ -220,7 +212,9 @@ describe("background/services/locker", () => {
     test("should download encrypted password storage", async () => {
       const [{ get: mockGet }] = (SimpleStorage as jest.Mock).mock.instances as [MockStorage];
       mockGet.mockClear();
-      (cryptoDecrypt as jest.Mock).mockReturnValue(passwordChecker);
+
+      const [cryptoService] = (CryptoService as jest.Mock).mock.instances as [CryptoService];
+      (cryptoService.decrypt as jest.Mock).mockReturnValue(passwordChecker);
 
       const result = await lockService.downloadEncryptedStorage(defaultPassword);
 
@@ -262,7 +256,8 @@ describe("background/services/locker", () => {
     });
 
     test("should throw error if uploading invalid data", async () => {
-      (cryptoDecrypt as jest.Mock).mockReturnValue({ toString: () => "" });
+      const [cryptoService] = (CryptoService as jest.Mock).mock.instances as [CryptoService];
+      (cryptoService.decrypt as jest.Mock).mockReturnValue({ toString: () => "" });
 
       const [{ set: mockSet }] = (SimpleStorage as jest.Mock).mock.instances as [MockStorage];
       mockSet.mockClear();

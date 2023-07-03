@@ -3,6 +3,7 @@ import { createNewIdentity } from "@cryptkeeperzk/zk";
 import { bigintToHex } from "bigint-conversion";
 import browser from "webextension-polyfill";
 
+import CryptoService from "@src/background/services/crypto";
 import SimpleStorage from "@src/background/services/storage";
 import ZkIdentityService from "@src/background/services/zkIdentity";
 import { ZERO_ADDRESS } from "@src/config/const";
@@ -43,10 +44,7 @@ jest.mock("@src/background/services/lock", (): unknown => ({
   })),
 }));
 
-jest.mock("@src/background/services/crypto", (): unknown => ({
-  cryptoGenerateEncryptedHmac: jest.fn(() => "encrypted"),
-  cryptoGetAuthenticBackupCiphertext: jest.fn(() => "encrypted"),
-}));
+jest.mock("@src/background/services/crypto");
 
 jest.mock("@src/background/services/history", (): unknown => ({
   getInstance: jest.fn(() => ({
@@ -105,6 +103,13 @@ describe("background/services/zkIdentity", () => {
       instance.clear.mockReturnValue(undefined);
     });
 
+    (CryptoService as jest.Mock).mock.instances.forEach((instance: CryptoService) => {
+      /* eslint-disable no-param-reassign */
+      instance.generateEncryptedHmac = jest.fn(() => "encrypted");
+      instance.getAuthenticCiphertext = jest.fn(() => "encrypted");
+      /* eslint-enable no-param-reassign */
+    });
+
     (createNewIdentity as jest.Mock).mockReturnValue(defaultNewIdentity);
   });
 
@@ -113,6 +118,11 @@ describe("background/services/zkIdentity", () => {
       instance.get.mockClear();
       instance.set.mockClear();
       instance.clear.mockClear();
+    });
+
+    (CryptoService as jest.Mock).mock.instances.forEach((instance: CryptoService) => {
+      (instance.generateEncryptedHmac as jest.Mock).mockClear();
+      (instance.getAuthenticCiphertext as jest.Mock).mockClear();
     });
 
     (pushMessage as jest.Mock).mockClear();

@@ -1,7 +1,7 @@
 import { Wallet } from "ethers";
 import uniqBy from "lodash/uniqBy";
 
-import { cryptoGenerateEncryptedHmac, cryptoGetAuthenticBackupCiphertext } from "@src/background/services/crypto";
+import CryptoService from "@src/background/services/crypto";
 import LockerService from "@src/background/services/lock";
 import MiscStorageService from "@src/background/services/misc";
 import { generateMnemonic, validateMnemonic } from "@src/background/services/mnemonic";
@@ -30,12 +30,15 @@ export default class WalletService implements IBackupable {
 
   private miscStorage: MiscStorageService;
 
+  private cryptoService: CryptoService;
+
   private constructor() {
     this.accountStorage = new SimpleStorage(ACCOUNT_STORAGE_DB_KEY);
     this.mnemonicStorage = new SimpleStorage(MNEMONIC_STORAGE_DB_KEY);
     this.selectedAccountStorage = new SimpleStorage(SELECTED_ACCOUNT_STORAGE_DB_KEY);
     this.lockService = LockerService.getInstance();
     this.miscStorage = MiscStorageService.getInstance();
+    this.cryptoService = new CryptoService();
   }
 
   static getInstance = (): WalletService => {
@@ -174,7 +177,7 @@ export default class WalletService implements IBackupable {
     }
 
     await this.lockService.isAuthentic(backupPassword, true);
-    return cryptoGenerateEncryptedHmac(backupEncryptedData, backupPassword);
+    return this.cryptoService.generateEncryptedHmac(backupEncryptedData, backupPassword);
   };
 
   uploadEncryptedStorage = async (backupEncryptedData: string, backupPassword: string): Promise<void> => {
@@ -184,7 +187,7 @@ export default class WalletService implements IBackupable {
       const encrypted = await this.accountStorage.get<string>();
       const accounts = encrypted ? (JSON.parse(this.lockService.decrypt(encrypted)) as IAccount[]) : [];
 
-      const authenticBackupCiphertext = cryptoGetAuthenticBackupCiphertext(backupEncryptedData, backupPassword);
+      const authenticBackupCiphertext = this.cryptoService.getAuthenticCiphertext(backupEncryptedData, backupPassword);
       const newAccounts = JSON.parse(this.lockService.decrypt(authenticBackupCiphertext)) as IAccount[];
       const mergedBackupData = this.lockService.encrypt(
         JSON.stringify(uniqBy([...accounts, ...newAccounts], "privateKey")),

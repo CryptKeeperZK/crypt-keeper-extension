@@ -1,4 +1,4 @@
-import { cryptoGenerateEncryptedHmac, cryptoGetAuthenticBackupCiphertext } from "@src/background/services/crypto";
+import CryptoService from "@src/background/services/crypto";
 import LockerService from "@src/background/services/lock";
 import SimpleStorage from "@src/background/services/storage";
 
@@ -16,10 +16,13 @@ export default class ApprovalService implements IBackupable {
 
   private lockService: LockerService;
 
+  private cryptoService: CryptoService;
+
   private constructor() {
     this.allowedHosts = new Map();
     this.approvals = new SimpleStorage(APPPROVALS_DB_KEY);
     this.lockService = LockerService.getInstance();
+    this.cryptoService = new CryptoService();
   }
 
   static getInstance = (): ApprovalService => {
@@ -102,7 +105,7 @@ export default class ApprovalService implements IBackupable {
     }
 
     await this.lockService.isAuthentic(backupPassword, true);
-    return cryptoGenerateEncryptedHmac(backupEncryptedData, backupPassword);
+    return this.cryptoService.generateEncryptedHmac(backupEncryptedData, backupPassword);
   };
 
   uploadEncryptedStorage = async (backupEncryptedData: string, backupPassword: string): Promise<void> => {
@@ -111,6 +114,6 @@ export default class ApprovalService implements IBackupable {
     }
 
     await this.lockService.isAuthentic(backupPassword, true);
-    await this.approvals.set<string>(cryptoGetAuthenticBackupCiphertext(backupEncryptedData, backupPassword));
+    await this.approvals.set<string>(this.cryptoService.getAuthenticCiphertext(backupEncryptedData, backupPassword));
   };
 }
