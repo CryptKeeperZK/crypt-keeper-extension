@@ -7,6 +7,7 @@ import { Suspense } from "react";
 import { useNavigate } from "react-router-dom";
 
 import { defaultMnemonic } from "@src/config/mock/wallet";
+import { Paths } from "@src/constants";
 
 import Recover from "..";
 
@@ -56,8 +57,8 @@ describe("ui/pages/Recover", () => {
     expect(error).toBeInTheDocument();
   });
 
-  test("should render root error properly", async () => {
-    const { container, findByTestId, findByText, findByPlaceholderText } = render(
+  test("should submit form properly", async () => {
+    const { container, findByTestId, findByPlaceholderText } = render(
       <Suspense>
         <Recover />
       </Suspense>,
@@ -71,8 +72,7 @@ describe("ui/pages/Recover", () => {
     const button = await findByTestId("submit-button");
     await act(() => Promise.resolve(button.click()));
 
-    const error = await findByText("implement");
-
-    expect(error).toBeInTheDocument();
+    expect(mockNavigate).toBeCalledTimes(1);
+    expect(mockNavigate).toBeCalledWith(`${Paths.RESET_PASSWORD}?mnemonic=${defaultMnemonic}`);
   });
 });
