@@ -58,7 +58,11 @@ const Login = (): JSX.Element => {
           Unlock
         </Button>
 
-        {features.RECOVER && <NavLink to={Paths.RECOVER}>Forgot password?</NavLink>}
+        {features.RECOVER && (
+          <Typography component={NavLink} sx={{ color: "primary.main" }} to={Paths.RECOVER}>
+            Forgot password?
+          </Typography>
+        )}
       </Box>
     </Box>
   );
