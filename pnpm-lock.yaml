@@ -434,8 +434,8 @@ importers:
   packages/e2e:
     devDependencies:
       '@babel/eslint-parser':
-        specifier: ^7.22.5
-        version: 7.22.5(@babel/core@7.22.5)(eslint@8.44.0)
+        specifier: ^7.22.6
+        version: 7.22.6(@babel/core@7.22.5)(eslint@8.44.0)
       '@cryptkeeperzk/eslint-config-base':
         specifier: workspace:^
         version: link:../eslint-config-base
@@ -470,8 +470,8 @@ importers:
   packages/eslint-config-base:
     dependencies:
       '@babel/eslint-parser':
-        specifier: ^7.22.5
-        version: 7.22.5(@babel/core@7.22.5)(eslint@8.44.0)
+        specifier: ^7.22.6
+        version: 7.22.6(@babel/core@7.22.5)(eslint@8.44.0)
       '@typescript-eslint/eslint-plugin':
         specifier: ^5.60.1
         version: 5.60.1(@typescript-eslint/parser@5.60.1)(eslint@8.44.0)(typescript@5.1.6)
@@ -513,8 +513,8 @@ importers:
   packages/eslint-config-react:
     dependencies:
       '@babel/eslint-parser':
-        specifier: ^7.22.5
-        version: 7.22.5(@babel/core@7.22.5)(eslint@8.44.0)
+        specifier: ^7.22.6
+        version: 7.22.6(@babel/core@7.22.5)(eslint@8.44.0)
       '@cryptkeeperzk/eslint-config-base':
         specifier: workspace:^
         version: link:../eslint-config-base
@@ -814,8 +814,8 @@ packages:
     transitivePeerDependencies:
       - supports-color
 
-  /@babel/eslint-parser@7.22.5(@babel/core@7.22.5)(eslint@8.44.0):
-    resolution: {integrity: sha512-C69RWYNYtrgIRE5CmTd77ZiLDXqgBipahJc/jHP3sLcAGj6AJzxNIuKNpVnICqbyK7X3pFUfEvL++rvtbQpZkQ==}
+  /@babel/eslint-parser@7.22.6(@babel/core@7.22.5)(eslint@8.44.0):
+    resolution: {integrity: sha512-KAom7E7d6bAh5/PflF3luynWlDLOIqfX+ZJcL0LRs6/6rtXJmJxPiWuIGfxNPtcWdtQ5lSSJbKbQlz/c/R60Ng==}
     engines: {node: ^10.13.0 || ^12.13.0 || >=14.0.0}
     peerDependencies:
       '@babel/core': '>=7.11.0'
@@ -823,9 +823,9 @@ packages:
     dependencies:
       '@babel/core': 7.22.5
       '@nicolo-ribaudo/eslint-scope-5-internals': 5.1.1-v1
+      '@nicolo-ribaudo/semver-v6': 6.3.3
       eslint: 8.44.0
       eslint-visitor-keys: 2.1.0
-      semver: 6.3.0
 
   /@babel/generator@7.22.5:
     resolution: {integrity: sha512-+lcUbnTRhd0jOewtFSedLyiPsD5tswKkbgcezOqqWFUVNEwoUTlpPOBmvhG7OXWLR4jMdv0czPGH5XbflnD1EA==}
@@ -3422,6 +3422,10 @@ packages:
     resolution: {integrity: sha512-54/JRvkLIzzDWshCWfuhadfrfZVPiElY8Fcgmg1HroEly/EDSszzhBAsarCux+D/kOslTRquNzuyGSmUSTTHGg==}
     dependencies:
       eslint-scope: 5.1.1
+
+  /@nicolo-ribaudo/semver-v6@6.3.3:
+    resolution: {integrity: sha512-3Yc1fUTs69MG/uZbJlLSI3JISMn2UV2rg+1D/vROUqZyh3l6iYHCs7GMp+M40ZD7yOdDbYjJcU1oTJhrc+dGKg==}
+    hasBin: true
 
   /@noble/curves@1.0.0:
     resolution: {integrity: sha512-2upgEu0iLiDVDZkNLeFV2+ht0BAVgQnEmCk6JsOch9Rp8xfkMCbvbAZlA2pBHQc73dbl+vFOXfqkf4uemdn0bw==}
