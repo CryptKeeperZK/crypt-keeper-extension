@@ -4,9 +4,9 @@ import uniqBy from "lodash/uniqBy";
 import { cryptoGenerateEncryptedHmac, cryptoGetAuthenticBackupCiphertext } from "@src/background/services/crypto";
 import LockerService from "@src/background/services/lock";
 import MiscStorageService from "@src/background/services/misc";
-import { generateMnemonic } from "@src/background/services/mnemonic";
+import { generateMnemonic, validateMnemonic } from "@src/background/services/mnemonic";
 import SimpleStorage from "@src/background/services/storage";
-import { ISignMessageArgs, InitializationStep } from "@src/types";
+import { ICheckMnemonicArgs, ISignMessageArgs, InitializationStep } from "@src/types";
 import { setSelectedAccount } from "@src/ui/ducks/app";
 import pushMessage from "@src/util/pushMessage";
 
@@ -140,6 +140,26 @@ export default class WalletService implements IBackupable {
     const wallet = new Wallet(account.privateKey);
 
     return wallet.signMessage(message);
+  };
+
+  checkMnemonic = async ({ mnemonic, strict = true }: ICheckMnemonicArgs): Promise<boolean> => {
+    if (!validateMnemonic(mnemonic)) {
+      throw new Error("Mnemonic is invalid");
+    }
+
+    const wallet = Wallet.fromPhrase(mnemonic);
+    const encrypted = await this.accountStorage.get<string>();
+    const accounts = encrypted ? (JSON.parse(this.lockService.decrypt(encrypted)) as IAccount[]) : [];
+
+    const hasDerivedAccounts = accounts.some(
+      (account) => account.privateKey.toLowerCase() === wallet.privateKey.toLowerCase(),
+    );
+
+    if (!hasDerivedAccounts && strict) {
+      throw new Error("Unknown mnemonic");
+    }
+
+    return hasDerivedAccounts;
   };
 
   clear = async (): Promise<void> => {

@@ -7,6 +7,7 @@ import { renderHook } from "@testing-library/react";
 import { Provider } from "react-redux";
 
 import { ZERO_ADDRESS } from "@src/config/const";
+import { defaultMnemonic } from "@src/config/mock/wallet";
 import { store } from "@src/ui/store/configureAppStore";
 import postMessage from "@src/util/postMessage";
 
@@ -23,6 +24,7 @@ import {
   setWalletConnection,
   setupPassword,
   unlock,
+  checkMnemonic,
   useAppStatus,
   useGeneratedMnemonic,
 } from "../app";
@@ -32,6 +34,7 @@ jest.mock("redux-logger", (): unknown => ({
 }));
 
 jest.mock("@src/config/env", (): unknown => ({
+  ...jest.requireActual("@src/config/env"),
   isDebugMode: () => true,
 }));
 
@@ -217,5 +220,15 @@ describe("ui/ducks/app", () => {
 
     expect(app.mnemonic).toStrictEqual(expectedState.mnemonic);
     expect(result.current).toStrictEqual(expectedState.mnemonic);
+  });
+
+  test("should check mnemonic properly", async () => {
+    await Promise.resolve(store.dispatch(checkMnemonic(defaultMnemonic)));
+
+    expect(postMessage).toBeCalledTimes(1);
+    expect(postMessage).toBeCalledWith({
+      method: RPCAction.CHECK_MNEMONIC,
+      payload: { mnemonic: defaultMnemonic, strict: true },
+    });
   });
 });

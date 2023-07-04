@@ -39,6 +39,7 @@ export enum RPCAction {
   UPLOAD_BACKUP = "rpc/backup/upload",
   SAVE_MNEMONIC = "rpc/mnemonic/save",
   GENERATE_MNEMONIC = "rpc/mnemonic/generate",
+  CHECK_MNEMONIC = "rpc/mnemonic/check",
   GET_ACCOUNTS = "rpc/accounts/get",
   SELECT_ACCOUNT = "rpc/accounts/select-account",
   GET_SELECTED_ACCOUNT = "rpc/accounts/get-selected-account",

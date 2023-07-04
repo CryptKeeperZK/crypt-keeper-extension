@@ -55,6 +55,7 @@ jest.mock("@src/background/services/crypto", (): unknown => ({
 jest.mock("@src/background/services/storage");
 
 jest.mock("@src/background/services/mnemonic", (): unknown => ({
+  ...jest.requireActual("@src/background/services/mnemonic"),
   generateMnemonic: jest.fn(),
 }));
 
@@ -168,6 +169,44 @@ describe("background/services/wallet", () => {
       const mnemonic = await walletService.generateMnemonic();
 
       expect(mnemonic).toBeDefined();
+    });
+
+    test("should check mnemonic properly", async () => {
+      const [accountStorage] = (SimpleStorage as jest.Mock).mock.instances as [MockStorage];
+      accountStorage.get.mockReturnValue(mockSerializedAccounts);
+
+      const isValid = await walletService.checkMnemonic({ mnemonic: defaultMnemonic });
+
+      expect(isValid).toBe(true);
+    });
+
+    test("should return false with non-strict mnemonic check", async () => {
+      const [accountStorage] = (SimpleStorage as jest.Mock).mock.instances as [MockStorage];
+      accountStorage.get.mockReturnValue(undefined);
+
+      const isValid = await walletService.checkMnemonic({ mnemonic: defaultMnemonic, strict: false });
+
+      expect(isValid).toBe(false);
+    });
+
+    test("should throw error if mnemonic is invalid", async () => {
+      await expect(walletService.checkMnemonic({ mnemonic: "invalid" })).rejects.toThrow("Mnemonic is invalid");
+    });
+
+    test("should throw error if mnemonic isn't found in storage", async () => {
+      Wallet.fromPhrase = jest.fn(
+        () =>
+          ({
+            publicKey: "0x031bd64c030e0a6233ef38aed1df3922219e547a240c7dc8635749163ec1a0abe7",
+            privateKey: "0x9fa9d5f518423d22cb38d58b659c931a85e93f03d754bcc34f5adf349cb5459c",
+            address: ZERO_ADDRESS,
+          } as unknown as HDNodeWallet),
+      );
+
+      const [accountStorage] = (SimpleStorage as jest.Mock).mock.instances as [MockStorage];
+      accountStorage.get.mockReturnValue(mockSerializedAccounts);
+
+      await expect(walletService.checkMnemonic({ mnemonic: defaultMnemonic })).rejects.toThrow("Unknown mnemonic");
     });
   });
 
