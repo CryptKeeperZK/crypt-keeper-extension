@@ -150,11 +150,7 @@ export default class VerifiableCredentialsService implements IBackupable {
     return true;
   };
 
-<<<<<<< HEAD
   private getCryptkeeperVerifiableCredentialsFromStore = async (): Promise<Map<string, string>> => {
-=======
-  private getVerifiableCredentialsFromStore = async (): Promise<Map<string, string>> => {
->>>>>>> 91e7392 (fix: add tests for credentials service (#491))
     const ciphertext = await this.verifiableCredentialsStore.get<string>();
 
     if (!ciphertext) {
