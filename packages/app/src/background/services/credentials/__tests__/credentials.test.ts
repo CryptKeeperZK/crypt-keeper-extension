@@ -38,7 +38,7 @@ describe("background/services/credentials", () => {
     },
   };
   const exampleCredentialString = JSON.stringify(exampleCredential);
-  const exampleCredential2: VerifiableCredential = {
+  const exampleCredentialTwo: VerifiableCredential = {
     context: ["https://www.w3.org/2018/credentials/v1"],
     id: "did:example:1234",
     type: ["VerifiableCredential", "NameCredential"],
@@ -51,10 +51,10 @@ describe("background/services/credentials", () => {
       },
     },
   };
-  const exampleCredentialString2 = JSON.stringify(exampleCredential2);
+  const exampleCredentialStringTwo = JSON.stringify(exampleCredentialTwo);
   const credentialsMap = new Map<string, string>();
   credentialsMap.set("did:example:123", exampleCredentialString);
-  credentialsMap.set("did:example:1234", exampleCredentialString2);
+  credentialsMap.set("did:example:1234", exampleCredentialStringTwo);
   const credentialsStorageString = JSON.stringify(Array.from(credentialsMap));
 
   const verifiableCredentialsService = VerifiableCredentialsService.getInstance();
@@ -90,12 +90,12 @@ describe("background/services/credentials", () => {
 
     test("should add and retrieve a verifiable credential", async () => {
       await verifiableCredentialsService.addVerifiableCredential(exampleCredentialString);
-      await verifiableCredentialsService.addVerifiableCredential(exampleCredentialString2);
+      await verifiableCredentialsService.addVerifiableCredential(exampleCredentialStringTwo);
       const verifiableCredentials = await verifiableCredentialsService.getAllVerifiableCredentials();
 
       expect(verifiableCredentials.length).toBe(2);
       expect(verifiableCredentials[0]).toEqual(exampleCredential);
-      expect(verifiableCredentials[1]).toEqual(exampleCredential2);
+      expect(verifiableCredentials[1]).toEqual(exampleCredentialTwo);
     });
 
     test("should not add a verifiable credential with an existing id", async () => {
