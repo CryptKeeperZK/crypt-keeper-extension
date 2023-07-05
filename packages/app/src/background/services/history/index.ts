@@ -1,7 +1,7 @@
 import { nanoid } from "nanoid";
 import browser from "webextension-polyfill";
 
-import CryptoService from "@src/background/services/crypto";
+import CryptoService, { ECryptMode } from "@src/background/services/crypto";
 import NotificationService from "@src/background/services/notification";
 import SimpleStorage from "@src/background/services/storage";
 import { getEnabledFeatures } from "@src/config/features";
@@ -64,7 +64,7 @@ export default class HistoryService {
     const features = getEnabledFeatures();
     const serializedOperations = await this.historyStore
       .get<string>()
-      .then((raw) => (raw ? this.cryptoService.decrypt(raw) : JSON.stringify([])))
+      .then((raw) => (raw ? this.cryptoService.decrypt(raw, { mode: ECryptMode.MNEMONIC }) : JSON.stringify([])))
       .then((serialized) => JSON.parse(serialized) as Operation[]);
 
     this.operations = serializedOperations
@@ -105,7 +105,7 @@ export default class HistoryService {
   };
 
   private writeOperations = async (operations: Operation[]) => {
-    const ciphertext = this.cryptoService.encrypt(JSON.stringify(operations));
+    const ciphertext = this.cryptoService.encrypt(JSON.stringify(operations), { mode: ECryptMode.MNEMONIC });
     await this.historyStore.set(ciphertext);
   };
 

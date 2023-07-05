@@ -2,6 +2,7 @@
 import browser from "webextension-polyfill";
 
 import SimpleStorage from "@src/background/services/storage";
+import { defaultMnemonic } from "@src/config/mock/wallet";
 import { InitializationStep } from "@src/types";
 import { setStatus } from "@src/ui/ducks/app";
 import pushMessage from "@src/util/pushMessage";
@@ -17,6 +18,7 @@ jest.mock("@src/background/services/crypto", (): unknown => ({
     encrypt: jest.fn(() => defaultPassword),
     decrypt: jest.fn(() => passwordChecker),
     setPassword: jest.fn(),
+    setMnemonic: jest.fn(),
     clear: jest.fn(),
     generateEncryptedHmac: jest.fn(() => "encrypted"),
     getAuthenticCiphertext: jest.fn(() => "encrypted"),
@@ -28,6 +30,13 @@ jest.mock("@src/background/services/misc", (): unknown => ({
   getInstance: jest.fn(() => ({
     getInitialization: jest.fn(() => InitializationStep.MNEMONIC),
     setInitialization: jest.fn(),
+  })),
+}));
+
+jest.mock("@src/background/services/wallet", (): unknown => ({
+  ...jest.requireActual("@src/background/services/wallet"),
+  getInstance: jest.fn(() => ({
+    getMnemonic: jest.fn(() => Promise.resolve(defaultMnemonic)),
   })),
 }));
 
@@ -51,7 +60,7 @@ describe("background/services/locker", () => {
     (browser.tabs.sendMessage as jest.Mock).mockRejectedValueOnce(false).mockResolvedValue(true);
 
     (SimpleStorage as jest.Mock).mock.instances.forEach((instance: MockStorage) => {
-      instance.get.mockReturnValue(defaultPassword);
+      instance.get.mockResolvedValue(defaultPassword);
     });
   });
 
@@ -74,7 +83,7 @@ describe("background/services/locker", () => {
   describe("unlock", () => {
     test("should setup password and unlock properly", async () => {
       (SimpleStorage as jest.Mock).mock.instances.forEach((instance: MockStorage) => {
-        instance.get.mockReturnValueOnce(undefined).mockReturnValue(defaultPassword);
+        instance.get.mockResolvedValueOnce(undefined).mockResolvedValue(defaultPassword);
       });
 
       await lockService.setupPassword(defaultPassword);
@@ -131,7 +140,7 @@ describe("background/services/locker", () => {
 
     test("should not unlock if there is no cipher text", async () => {
       (SimpleStorage as jest.Mock).mock.instances.forEach((instance: MockStorage) => {
-        instance.get.mockReturnValue(undefined);
+        instance.get.mockResolvedValue(undefined);
       });
 
       await expect(lockService.unlock(defaultPassword)).rejects.toThrowError(
@@ -141,7 +150,10 @@ describe("background/services/locker", () => {
 
     test("should not unlock if there is wrong password", async () => {
       (SimpleStorage as jest.Mock).mock.instances.forEach((instance: MockStorage) => {
-        instance.get.mockReturnValueOnce(undefined).mockReturnValue(defaultPassword);
+        instance.get
+          .mockResolvedValueOnce(undefined)
+          .mockResolvedValueOnce(undefined)
+          .mockResolvedValue(defaultPassword);
       });
 
       await expect(lockService.unlock("wrong")).rejects.toThrowError("Incorrect password");
@@ -162,7 +174,7 @@ describe("background/services/locker", () => {
 
     test("should not download encrypted password storage if storage is empty", async () => {
       (SimpleStorage as jest.Mock).mock.instances.forEach((instance: MockStorage) => {
-        instance.get.mockReturnValue(undefined);
+        instance.get.mockResolvedValue(undefined);
       });
 
       const result = await lockService.downloadEncryptedStorage(defaultPassword);
@@ -184,7 +196,7 @@ describe("background/services/locker", () => {
       mockSet.mockClear();
 
       (SimpleStorage as jest.Mock).mock.instances.forEach((instance: MockStorage) => {
-        instance.get.mockReturnValue(undefined);
+        instance.get.mockResolvedValue(undefined);
       });
 
       await lockService.uploadEncryptedStorage("encrypted", defaultPassword);

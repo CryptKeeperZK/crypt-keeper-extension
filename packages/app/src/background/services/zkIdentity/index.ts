@@ -3,7 +3,7 @@ import { bigintToHex } from "bigint-conversion";
 import browser from "webextension-polyfill";
 
 import BrowserUtils from "@src/background/controllers/browserUtils";
-import CryptoService from "@src/background/services/crypto";
+import CryptoService, { ECryptMode } from "@src/background/services/crypto";
 import HistoryService from "@src/background/services/history";
 import NotificationService from "@src/background/services/notification";
 import SimpleStorage from "@src/background/services/storage";
@@ -92,7 +92,9 @@ export default class ZkIdentityService implements IBackupable {
       return undefined;
     }
 
-    const connectedIdentityCommitment = this.cryptoService.decrypt(connectedIdentityCommitmentCipher);
+    const connectedIdentityCommitment = this.cryptoService.decrypt(connectedIdentityCommitmentCipher, {
+      mode: ECryptMode.MNEMONIC,
+    });
     const identity = identities.get(connectedIdentityCommitment);
 
     if (!identity) {
@@ -112,7 +114,7 @@ export default class ZkIdentityService implements IBackupable {
     }
 
     const features = getEnabledFeatures();
-    const identitesDecrypted = this.cryptoService.decrypt(ciphertext);
+    const identitesDecrypted = this.cryptoService.decrypt(ciphertext, { mode: ECryptMode.MNEMONIC });
     const iterableIdentities = JSON.parse(identitesDecrypted) as Iterable<readonly [string, string]>;
 
     return new Map(
@@ -185,7 +187,7 @@ export default class ZkIdentityService implements IBackupable {
   };
 
   private writeConnectedIdentity = async (commitment: string, metadata?: IdentityMetadata): Promise<void> => {
-    const ciphertext = this.cryptoService.encrypt(commitment);
+    const ciphertext = this.cryptoService.encrypt(commitment, { mode: ECryptMode.MNEMONIC });
     await this.connectedIdentityStore.set(ciphertext);
 
     const [tabs] = await Promise.all([
@@ -350,7 +352,7 @@ export default class ZkIdentityService implements IBackupable {
 
   private writeIdentities = async (identities: Map<string, string>): Promise<void> => {
     const serializedIdentities = JSON.stringify(Array.from(identities.entries()));
-    const ciphertext = this.cryptoService.encrypt(serializedIdentities);
+    const ciphertext = this.cryptoService.encrypt(serializedIdentities, { mode: ECryptMode.MNEMONIC });
     await this.identitiesStore.set(ciphertext);
   };
 

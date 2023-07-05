@@ -3,6 +3,7 @@ import browser from "webextension-polyfill";
 import CryptoService from "@src/background/services/crypto";
 import MiscStorageService from "@src/background/services/misc";
 import SimpleStorage from "@src/background/services/storage";
+import WalletService from "@src/background/services/wallet";
 import { InitializationStep } from "@src/types";
 import { setStatus } from "@src/ui/ducks/app";
 import pushMessage from "@src/util/pushMessage";
@@ -31,6 +32,8 @@ export default class LockerService implements IBackupable {
 
   private cryptoService: CryptoService;
 
+  private walletService: WalletService;
+
   private unlockCB?: () => void;
 
   private constructor() {
@@ -39,6 +42,7 @@ export default class LockerService implements IBackupable {
     this.passwordStorage = new SimpleStorage(PASSWORD_DB_KEY);
     this.miscStorage = MiscStorageService.getInstance();
     this.cryptoService = CryptoService.getInstance();
+    this.walletService = WalletService.getInstance();
   }
 
   static getInstance(): LockerService {
@@ -59,7 +63,7 @@ export default class LockerService implements IBackupable {
       throw new Error("Password is already initialized");
     }
 
-    const ciphertext = this.cryptoService.encrypt(this.passwordChecker, password);
+    const ciphertext = this.cryptoService.encrypt(this.passwordChecker, { secret: password });
     await this.passwordStorage.set(ciphertext);
     await this.unlock(password);
     await this.miscStorage.setInitialization({ initializationStep: InitializationStep.PASSWORD });
@@ -100,13 +104,19 @@ export default class LockerService implements IBackupable {
       return true;
     }
 
+    const status = await this.getStatus();
+
     this.cryptoService.setPassword(password);
     await this.isAuthentic(password, false)
       .then(() => {
+        if (status.isMnemonicGenerated) {
+          this.walletService.getMnemonic().then((mnemonic: string) => this.cryptoService.setMnemonic(mnemonic));
+        }
+
         this.isUnlocked = true;
-        return this.notifyStatusChange();
       })
-      .then(() => this.onUnlocked())
+      .then(() => this.notifyStatusChange())
+      .then(this.onUnlocked)
       .catch((error) => {
         this.cryptoService.clear();
 
@@ -165,7 +175,7 @@ export default class LockerService implements IBackupable {
       return false;
     }
 
-    const decryptedPasswordChecker = this.cryptoService.decrypt(ciphertext, password);
+    const decryptedPasswordChecker = this.cryptoService.decrypt(ciphertext, { secret: password });
     return decryptedPasswordChecker === this.passwordChecker;
   };
 
