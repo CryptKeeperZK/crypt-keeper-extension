@@ -18,10 +18,6 @@ const mockAccounts = [
 
 const mockSerializedAccounts = JSON.stringify(mockAccounts);
 
-const mockAuthenticityCheckData = {
-  isNewOnboarding: true,
-};
-
 const mockSignedMessage =
   "0x8b7a1e6c0638291c674af226dd97f5354bb3723d611128ad35fda772b9051eab5fec16aacf700ba186590b170a16bfff576078695ac26a3321f9636c6a4a6c051b";
 
@@ -29,14 +25,6 @@ jest.mock("ethers", (): unknown => ({
   ...jest.requireActual("ethers"),
   Wallet: jest.fn(() => ({
     signMessage: jest.fn(() => Promise.resolve(mockSignedMessage)),
-  })),
-}));
-
-jest.mock("@src/background/services/lock", (): unknown => ({
-  getInstance: jest.fn(() => ({
-    encrypt: jest.fn(() => mockSerializedAccounts),
-    decrypt: jest.fn((arg) => (arg === ZERO_ADDRESS ? ZERO_ADDRESS : mockSerializedAccounts)),
-    isAuthentic: jest.fn(() => mockAuthenticityCheckData),
   })),
 }));
 
@@ -48,8 +36,13 @@ jest.mock("@src/background/services/misc", (): unknown => ({
 }));
 
 jest.mock("@src/background/services/crypto", (): unknown => ({
-  cryptoGenerateEncryptedHmac: jest.fn(() => "encrypted"),
-  cryptoGetAuthenticBackupCiphertext: jest.fn(() => "encrypted"),
+  ...jest.requireActual("@src/background/services/crypto"),
+  getInstance: jest.fn(() => ({
+    encrypt: jest.fn(() => mockSerializedAccounts),
+    decrypt: jest.fn((arg) => (arg === ZERO_ADDRESS ? ZERO_ADDRESS : mockSerializedAccounts)),
+    generateEncryptedHmac: jest.fn(() => "encrypted"),
+    getAuthenticCiphertext: jest.fn(() => "encrypted"),
+  })),
 }));
 
 jest.mock("@src/background/services/storage");

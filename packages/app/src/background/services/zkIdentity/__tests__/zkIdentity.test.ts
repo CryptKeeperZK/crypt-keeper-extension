@@ -27,11 +27,8 @@ const mockDefaultIdentity = {
 const mockDefaultIdentities = [[mockDefaultIdentityCommitment, JSON.stringify(mockDefaultIdentity)]];
 const mockSerializedDefaultIdentities = JSON.stringify(mockDefaultIdentities);
 
-const mockAuthenticityCheckData = {
-  isNewOnboarding: false,
-};
-
-jest.mock("@src/background/services/lock", (): unknown => ({
+jest.mock("@src/background/services/crypto", (): unknown => ({
+  ...jest.requireActual("@src/background/services/crypto"),
   getInstance: jest.fn(() => ({
     encrypt: jest.fn(() => mockSerializedDefaultIdentities),
     decrypt: jest.fn((value) =>
@@ -39,13 +36,9 @@ jest.mock("@src/background/services/lock", (): unknown => ({
         ? mockDefaultIdentityCommitment.toString()
         : mockSerializedDefaultIdentities,
     ),
-    isAuthentic: jest.fn(() => mockAuthenticityCheckData),
+    generateEncryptedHmac: jest.fn(() => "encrypted"),
+    getAuthenticCiphertext: jest.fn(() => "encrypted"),
   })),
-}));
-
-jest.mock("@src/background/services/crypto", (): unknown => ({
-  cryptoGenerateEncryptedHmac: jest.fn(() => "encrypted"),
-  cryptoGetAuthenticBackupCiphertext: jest.fn(() => "encrypted"),
 }));
 
 jest.mock("@src/background/services/history", (): unknown => ({

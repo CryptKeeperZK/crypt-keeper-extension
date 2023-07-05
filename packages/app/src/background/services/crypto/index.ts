@@ -1,61 +1,105 @@
 import { AES, enc, HmacSHA256, SHA256 } from "crypto-js";
 
-export function cryptoEncrypt(text: string, password: string): string {
-  if (!password) {
-    throw new Error("Password is not provided");
+import { validateMnemonic } from "@src/background/services/mnemonic";
+
+interface ICryptoServiceArgs {
+  password?: string;
+  mnemonic?: string;
+}
+
+export default class CryptoService {
+  private static INSTANCE: CryptoService;
+
+  private password?: string;
+
+  private mnemonic?: string;
+
+  private constructor({ password, mnemonic }: ICryptoServiceArgs) {
+    this.password = password;
+    this.mnemonic = mnemonic;
   }
 
-  return AES.encrypt(text, password).toString();
-}
+  static getInstance(args: ICryptoServiceArgs = {}): CryptoService {
+    if (!CryptoService.INSTANCE) {
+      CryptoService.INSTANCE = new CryptoService(args);
+    }
 
-export function cryptoDecrypt(ciphertext: string, password: string): string {
-  if (!password) {
-    throw new Error("Password is not provided");
+    return CryptoService.INSTANCE;
   }
 
-  const bytes = AES.decrypt(ciphertext, password);
-  return bytes.toString(enc.Utf8);
-}
+  setPassword(password: string): CryptoService {
+    this.password = password;
 
-export function cryptoGenerateEncryptedHmac(ciphertext: string, password: string): string {
-  const hmac = generateHmac(ciphertext, password);
-  return `${hmac}${ciphertext}`;
-}
-
-export function cryptoGetAuthenticBackupCiphertext(backupCiphertext: string, backupPassword: string): string {
-  if (!backupPassword) {
-    throw new Error("Backup password is not provided");
+    return this;
   }
 
-  const isAuthentic = isCryptoHmacAuthentic(backupCiphertext, backupPassword);
+  setMnemonic(mnemonic: string): CryptoService {
+    if (!validateMnemonic(mnemonic)) {
+      throw new Error("Mnemonic is invalid");
+    }
 
-  if (!isAuthentic) {
-    throw new Error("This backup file is not authentic");
+    this.mnemonic = mnemonic;
+
+    return this;
   }
 
-  const { transitCipherContent } = cryptoSubHmacCiphertext(backupCiphertext);
+  clear(): void {
+    this.password = undefined;
+    this.mnemonic = undefined;
+  }
 
-  return transitCipherContent;
-}
+  isAuthenticPassword(password: string): boolean {
+    if (this.password !== password) {
+      throw new Error("Password doesn't match with current");
+    }
 
-function isCryptoHmacAuthentic(ciphertext: string, password: string): boolean {
-  const { transitHmac, transitCipherContent } = cryptoSubHmacCiphertext(ciphertext);
+    return true;
+  }
 
-  const decryptedHmac = generateHmac(transitCipherContent, password);
+  encrypt(text: string, password = this.password): string {
+    this.checkPasswordInitialized(password);
 
-  return transitHmac === decryptedHmac;
-}
+    return AES.encrypt(text, password as string).toString();
+  }
 
-function cryptoSubHmacCiphertext(ciphertext: string): { transitHmac: string; transitCipherContent: string } {
-  const transitHmac = ciphertext.substring(0, 64);
-  const transitCipherContent = ciphertext.substring(64);
+  decrypt(ciphertext: string, password = this.password): string {
+    this.checkPasswordInitialized(password);
 
-  return {
-    transitHmac,
-    transitCipherContent,
-  };
-}
+    const bytes = AES.decrypt(ciphertext, password as string);
+    return bytes.toString(enc.Utf8);
+  }
 
-function generateHmac(ciphertext: string, password: string): string {
-  return HmacSHA256(ciphertext, SHA256(password)).toString();
+  generateEncryptedHmac(ciphertext: string, password: string): string {
+    this.checkPasswordInitialized(password);
+    this.isAuthenticPassword(password);
+
+    const hmac = this.generateHmac(ciphertext, password);
+    return `${hmac}${ciphertext}`;
+  }
+
+  getAuthenticCiphertext(ciphertext: string, password: string): string {
+    this.checkPasswordInitialized(password);
+    this.isAuthenticPassword(password);
+
+    const transitHmac = ciphertext.substring(0, 64);
+    const transitCipherContent = ciphertext.substring(64);
+    const decryptedHmac = this.generateHmac(transitCipherContent, password);
+    const isAuthentic = transitHmac === decryptedHmac;
+
+    if (!isAuthentic) {
+      throw new Error("This ciphertext is not authentic");
+    }
+
+    return transitCipherContent;
+  }
+
+  private generateHmac(ciphertext: string, password: string): string {
+    return HmacSHA256(ciphertext, SHA256(password)).toString();
+  }
+
+  private checkPasswordInitialized(password = this.password): void {
+    if (!password) {
+      throw new Error("Password is not provided");
+    }
+  }
 }

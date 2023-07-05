@@ -1,7 +1,7 @@
 import { nanoid } from "nanoid";
 import browser from "webextension-polyfill";
 
-import LockerService from "@src/background/services/lock";
+import CryptoService from "@src/background/services/crypto";
 import NotificationService from "@src/background/services/notification";
 import SimpleStorage from "@src/background/services/storage";
 import { getEnabledFeatures } from "@src/config/features";
@@ -19,7 +19,7 @@ export default class HistoryService {
 
   private historySettingsStore: SimpleStorage;
 
-  private lockService: LockerService;
+  private cryptoService: CryptoService;
 
   private notificationService: NotificationService;
 
@@ -30,7 +30,7 @@ export default class HistoryService {
   private constructor() {
     this.historyStore = new SimpleStorage(HISTORY_KEY);
     this.historySettingsStore = new SimpleStorage(HISTORY_SETTINGS_KEY);
-    this.lockService = LockerService.getInstance();
+    this.cryptoService = CryptoService.getInstance();
     this.notificationService = NotificationService.getInstance();
     this.operations = [];
     this.settings = undefined;
@@ -64,7 +64,7 @@ export default class HistoryService {
     const features = getEnabledFeatures();
     const serializedOperations = await this.historyStore
       .get<string>()
-      .then((raw) => (raw ? this.lockService.decrypt(raw) : JSON.stringify([])))
+      .then((raw) => (raw ? this.cryptoService.decrypt(raw) : JSON.stringify([])))
       .then((serialized) => JSON.parse(serialized) as Operation[]);
 
     this.operations = serializedOperations
@@ -105,7 +105,7 @@ export default class HistoryService {
   };
 
   private writeOperations = async (operations: Operation[]) => {
-    const ciphertext = this.lockService.encrypt(JSON.stringify(operations));
+    const ciphertext = this.cryptoService.encrypt(JSON.stringify(operations));
     await this.historyStore.set(ciphertext);
   };
 

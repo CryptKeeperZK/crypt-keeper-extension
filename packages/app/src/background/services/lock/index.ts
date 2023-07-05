@@ -1,11 +1,6 @@
 import browser from "webextension-polyfill";
 
-import {
-  cryptoDecrypt,
-  cryptoEncrypt,
-  cryptoGenerateEncryptedHmac,
-  cryptoGetAuthenticBackupCiphertext,
-} from "@src/background/services/crypto";
+import CryptoService from "@src/background/services/crypto";
 import MiscStorageService from "@src/background/services/misc";
 import SimpleStorage from "@src/background/services/storage";
 import { InitializationStep } from "@src/types";
@@ -34,7 +29,7 @@ export default class LockerService implements IBackupable {
 
   private miscStorage: MiscStorageService;
 
-  private password?: string;
+  private cryptoService: CryptoService;
 
   private unlockCB?: () => void;
 
@@ -43,8 +38,7 @@ export default class LockerService implements IBackupable {
     this.passwordChecker = "Password is correct";
     this.passwordStorage = new SimpleStorage(PASSWORD_DB_KEY);
     this.miscStorage = MiscStorageService.getInstance();
-    this.password = undefined;
-    this.unlockCB = undefined;
+    this.cryptoService = CryptoService.getInstance();
   }
 
   static getInstance(): LockerService {
@@ -59,7 +53,13 @@ export default class LockerService implements IBackupable {
    *  This method is called when install event occurs
    */
   setupPassword = async (password: string): Promise<void> => {
-    const ciphertext = cryptoEncrypt(this.passwordChecker, password);
+    const encryptedPassword = await this.passwordStorage.get();
+
+    if (encryptedPassword) {
+      throw new Error("Password is already initialized");
+    }
+
+    const ciphertext = this.cryptoService.encrypt(this.passwordChecker, password);
     await this.passwordStorage.set(ciphertext);
     await this.unlock(password);
     await this.miscStorage.setInitialization({ initializationStep: InitializationStep.PASSWORD });
@@ -100,13 +100,18 @@ export default class LockerService implements IBackupable {
       return true;
     }
 
-    await this.isAuthentic(password, false);
+    this.cryptoService.setPassword(password);
+    await this.isAuthentic(password, false)
+      .then(() => {
+        this.isUnlocked = true;
+        return this.notifyStatusChange();
+      })
+      .then(() => this.onUnlocked())
+      .catch((error) => {
+        this.cryptoService.clear();
 
-    this.password = password;
-    this.isUnlocked = true;
-
-    await this.notifyStatusChange();
-    this.onUnlocked();
+        throw error;
+      });
 
     return true;
   };
@@ -118,24 +123,23 @@ export default class LockerService implements IBackupable {
       return null;
     }
 
-    await this.isAuthentic(backupPassword, true);
-    return cryptoGenerateEncryptedHmac(backupEncryptedData, backupPassword);
+    return this.cryptoService.generateEncryptedHmac(backupEncryptedData, backupPassword);
   };
 
   uploadEncryptedStorage = async (backupEncryptedData: string, backupPassword: string): Promise<void> => {
-    const { isNewOnboarding } = await this.isAuthentic(backupPassword, true);
+    const isNewOnboarding = await this.isNewOnboarding();
 
     if (isNewOnboarding && backupEncryptedData) {
-      const authenticBackupCiphertext = cryptoGetAuthenticBackupCiphertext(backupEncryptedData, backupPassword);
+      const authenticBackupCiphertext = this.cryptoService.getAuthenticCiphertext(backupEncryptedData, backupPassword);
       await this.passwordStorage.set(authenticBackupCiphertext);
     }
   };
 
-  isAuthentic = async (password: string, isBackupAvaiable: boolean): Promise<AuthenticityCheckData> => {
-    const isLockerAuthentic = await this.isLockerPasswordAuthentic(password);
+  private isAuthentic = async (password: string, isBackupAvaiable: boolean): Promise<AuthenticityCheckData> => {
+    const isPasswordAuthentic = await this.isLockerPasswordAuthentic(password);
     const isNewOnboarding = await this.isNewOnboarding();
 
-    if (!isNewOnboarding && !isLockerAuthentic) {
+    if (!isNewOnboarding && !isPasswordAuthentic) {
       throw new Error("Incorrect password");
     }
 
@@ -155,42 +159,22 @@ export default class LockerService implements IBackupable {
   };
 
   private isLockerPasswordAuthentic = async (password: string): Promise<boolean> => {
-    if (!password) {
-      throw new Error("Password is not provided");
-    }
-
     const ciphertext = await this.passwordStorage.get<string>();
 
     if (!ciphertext) {
       return false;
     }
 
-    const decryptedPasswordChecker = cryptoDecrypt(ciphertext, password);
+    const decryptedPasswordChecker = this.cryptoService.decrypt(ciphertext, password);
     return decryptedPasswordChecker === this.passwordChecker;
   };
 
   ensure = (payload: unknown = null): unknown | null | false => {
-    if (!this.isUnlocked || !this.password) {
+    if (!this.isUnlocked) {
       return false;
     }
 
     return payload;
-  };
-
-  encrypt = (payload: string): string => {
-    if (!this.password) {
-      throw new Error("Password is not provided");
-    }
-
-    return cryptoEncrypt(payload, this.password);
-  };
-
-  decrypt = (ciphertext: string): string => {
-    if (!this.password) {
-      throw new Error("Password is not provided");
-    }
-
-    return cryptoDecrypt(ciphertext, this.password);
   };
 
   logout = async (): Promise<boolean> => {
@@ -201,7 +185,7 @@ export default class LockerService implements IBackupable {
 
   private internalLogout = async (): Promise<LockStatus> => {
     this.isUnlocked = false;
-    this.password = undefined;
+    this.cryptoService.clear();
     this.unlockCB = undefined;
 
     return this.notifyStatusChange();

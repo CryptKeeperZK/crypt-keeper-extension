@@ -4,21 +4,15 @@ import ApprovalService from "..";
 
 const mockDefaultHosts = ["https://localhost:3000"];
 const mockSerializedApprovals = JSON.stringify([[mockDefaultHosts[0], { canSkipApprove: true }]]);
-const mockAuthenticityCheckData = {
-  isNewOnboarding: false,
-};
 
-jest.mock("@src/background/services/lock", (): unknown => ({
+jest.mock("@src/background/services/crypto", (): unknown => ({
+  ...jest.requireActual("@src/background/services/crypto"),
   getInstance: jest.fn(() => ({
     encrypt: jest.fn(() => mockSerializedApprovals),
     decrypt: jest.fn(() => mockSerializedApprovals),
-    isAuthentic: jest.fn(() => mockAuthenticityCheckData),
+    generateEncryptedHmac: jest.fn(() => "encrypted"),
+    getAuthenticCiphertext: jest.fn(() => "encrypted"),
   })),
-}));
-
-jest.mock("@src/background/services/crypto", (): unknown => ({
-  cryptoGenerateEncryptedHmac: jest.fn(() => "encrypted"),
-  cryptoGetAuthenticBackupCiphertext: jest.fn(() => "encrypted"),
 }));
 
 jest.mock("@src/background/services/storage");
