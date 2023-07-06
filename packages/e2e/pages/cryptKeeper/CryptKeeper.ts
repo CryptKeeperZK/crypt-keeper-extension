@@ -5,12 +5,15 @@ import BasePage from "../BasePage";
 import Activity from "./Activity";
 import ConnectIdentity from "./ConnectIdentity";
 import Identities from "./Identities";
+import Recover from "./Recover";
 import Settings from "./Settings";
 
 export default class CryptKeeper extends BasePage {
   activity = new Activity(this.page);
 
   identities = new Identities(this.page);
+
+  recover = new Recover(this.page);
 
   settings = new Settings(this.page);
 
@@ -39,10 +42,11 @@ export default class CryptKeeper extends BasePage {
     await metamaskCommands.acceptAccess();
   }
 
-  async createAccount(password: string, confirmPassword?: string): Promise<void> {
+  async createAccount(password: string, confirmPassword = password): Promise<void> {
     await this.page.getByLabel("Password", { exact: true }).type(password);
-    await this.page.getByLabel("Confirm Password", { exact: true }).type(confirmPassword ?? password);
+    await this.page.getByLabel("Confirm Password", { exact: true }).type(confirmPassword);
     await this.page.getByText("Continue", { exact: true }).click();
+    await this.page.getByText("Copy").click();
     await this.page.getByText("Get started!", { exact: true }).click();
   }
 
