@@ -29,13 +29,9 @@ const Recover = (): JSX.Element => {
           Recover access
         </Typography>
 
-        <Typography sx={{ mt: 1, color: "white" }} variant="body2">
+        <Typography sx={{ my: 1, color: "white" }} variant="body2">
           If you are having trouble unlocking your account, you will need to reset your wallet. You can do this by
           providing the Mnemonic Phrase you used when you set up your wallet.
-        </Typography>
-
-        <Typography sx={{ mt: 1, mb: 1, color: "white" }} variant="body2">
-          This action will delete your current wallet and Mnemonic Phrase from this device, along with the data.
         </Typography>
 
         <MnemonicInput

@@ -23,6 +23,7 @@ const OPERATIONS: Record<OperationType, string> = {
   [OperationType.DELETE_ALL_IDENTITIES]: "All identities removed",
   [OperationType.DOWNLOAD_BACKUP]: "Backup download",
   [OperationType.UPLOAD_BACKUP]: "Backup upload",
+  [OperationType.RESET_PASSWORD]: "Password reset",
 };
 
 const web2ProvidersIcons: IconWeb2Providers = {

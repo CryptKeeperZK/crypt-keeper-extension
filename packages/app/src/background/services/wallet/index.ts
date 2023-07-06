@@ -5,7 +5,7 @@ import CryptoService, { ECryptMode } from "@src/background/services/crypto";
 import MiscStorageService from "@src/background/services/misc";
 import { generateMnemonic, validateMnemonic } from "@src/background/services/mnemonic";
 import SimpleStorage from "@src/background/services/storage";
-import { ICheckMnemonicArgs, ISignMessageArgs, InitializationStep } from "@src/types";
+import { IChangeMnemonicPassword, ICheckMnemonicArgs, ISignMessageArgs, InitializationStep } from "@src/types";
 import { setSelectedAccount } from "@src/ui/ducks/app";
 import pushMessage from "@src/util/pushMessage";
 
@@ -171,6 +171,12 @@ export default class WalletService implements IBackupable {
     }
 
     return hasDerivedAccounts;
+  };
+
+  changeMnemonicPassword = async ({ mnemonic, password }: IChangeMnemonicPassword): Promise<void> => {
+    await this.checkMnemonic({ mnemonic, strict: true });
+    const encryptedMnemonic = this.cryptoService.encrypt(mnemonic, { secret: password, mode: ECryptMode.PASSWORD });
+    await this.mnemonicStorage.set(encryptedMnemonic);
   };
 
   clear = async (): Promise<void> => {

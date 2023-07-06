@@ -1,10 +1,12 @@
 import browser from "webextension-polyfill";
 
 import CryptoService from "@src/background/services/crypto";
+import HistoryService from "@src/background/services/history";
 import MiscStorageService from "@src/background/services/misc";
+import NotificationService from "@src/background/services/notification";
 import SimpleStorage from "@src/background/services/storage";
 import WalletService from "@src/background/services/wallet";
-import { InitializationStep } from "@src/types";
+import { IResetPasswordArgs, InitializationStep, OperationType } from "@src/types";
 import { setStatus } from "@src/ui/ducks/app";
 import pushMessage from "@src/util/pushMessage";
 
@@ -34,6 +36,10 @@ export default class LockerService implements IBackupable {
 
   private walletService: WalletService;
 
+  private historyService: HistoryService;
+
+  private notificationService: NotificationService;
+
   private unlockCB?: () => void;
 
   private constructor() {
@@ -43,6 +49,8 @@ export default class LockerService implements IBackupable {
     this.miscStorage = MiscStorageService.getInstance();
     this.cryptoService = CryptoService.getInstance();
     this.walletService = WalletService.getInstance();
+    this.historyService = HistoryService.getInstance();
+    this.notificationService = NotificationService.getInstance();
   }
 
   static getInstance(): LockerService {
@@ -63,10 +71,31 @@ export default class LockerService implements IBackupable {
       throw new Error("Password is already initialized");
     }
 
-    const ciphertext = this.cryptoService.encrypt(this.passwordChecker, { secret: password });
-    await this.passwordStorage.set(ciphertext);
+    await this.writePassword(password);
     await this.unlock(password);
     await this.miscStorage.setInitialization({ initializationStep: InitializationStep.PASSWORD });
+  };
+
+  resetPassword = async ({ mnemonic, password }: IResetPasswordArgs): Promise<void> => {
+    await this.walletService.changeMnemonicPassword({ mnemonic, password });
+    this.cryptoService.setPassword(password);
+    this.writePassword(password);
+    await this.unlock(password);
+
+    await this.historyService.trackOperation(OperationType.RESET_PASSWORD, {});
+    await this.notificationService.create({
+      options: {
+        title: "Password reset",
+        message: "Password has been successfully reset",
+        iconUrl: browser.runtime.getURL("/logo.png"),
+        type: "basic",
+      },
+    });
+  };
+
+  private writePassword = async (password: string): Promise<void> => {
+    const ciphertext = this.cryptoService.encrypt(this.passwordChecker, { secret: password });
+    await this.passwordStorage.set(ciphertext);
   };
 
   getStatus = async (): Promise<LockStatus> => {

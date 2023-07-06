@@ -219,6 +219,18 @@ describe("background/services/wallet", () => {
 
       expect(mnemonic).toBe("");
     });
+
+    test("should change mnemonic password properly", async () => {
+      const [accountStorage, mnemonicStorage] = (SimpleStorage as jest.Mock).mock.instances as [
+        MockStorage,
+        MockStorage,
+      ];
+      accountStorage.get.mockReturnValue(mockSerializedAccounts);
+
+      await walletService.changeMnemonicPassword({ mnemonic: defaultMnemonic, password: "password" });
+
+      expect(mnemonicStorage.set).toBeCalledTimes(1);
+    });
   });
 
   describe("accounts", () => {
