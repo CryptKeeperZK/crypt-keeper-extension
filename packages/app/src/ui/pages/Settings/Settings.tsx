@@ -7,7 +7,7 @@ import { ConfirmDangerModal } from "@src/ui/components/ConfirmDangerModal";
 import { Header } from "@src/ui/components/Header";
 import { Icon } from "@src/ui/components/Icon";
 
-import { General, Advanced } from "./components";
+import { General, Advanced, Security } from "./components";
 import { SettingsTabs, useSettings } from "./useSettings";
 
 const Settings = (): JSX.Element => {
@@ -22,7 +22,9 @@ const Settings = (): JSX.Element => {
     onDeleteAllHistory,
     onGoBack,
     onGoToBackup,
+    onGoToResetPassword,
     onDeleteAllIdentities,
+    onGoRevealMnemonic,
   } = useSettings();
 
   return (
@@ -45,6 +47,8 @@ const Settings = (): JSX.Element => {
           >
             <Tab label={<Typography>General</Typography>} sx={{ alignItems: "flex-start" }} />
 
+            <Tab label={<Typography>Security</Typography>} sx={{ alignItems: "flex-start" }} />
+
             <Tab label={<Typography>Advanced</Typography>} sx={{ alignItems: "flex-start" }} />
           </Tabs>
 
@@ -64,6 +68,14 @@ const Settings = (): JSX.Element => {
                   reject={onConfirmModalShow}
                 />
               </>
+            )}
+
+            {tab === SettingsTabs.SECURITY && (
+              <Security
+                isLoading={isLoading}
+                onGoRevealMnemonic={onGoRevealMnemonic}
+                onGoToResetPassword={onGoToResetPassword}
+              />
             )}
 
             {tab === SettingsTabs.ADVANCED && (

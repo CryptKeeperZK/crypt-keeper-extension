@@ -1,7 +1,7 @@
 import { CRYPT_KEEPER_PASSWORD } from "../../constants";
 import BasePage from "../BasePage";
 
-type SettingTabs = "General" | "Advanced";
+type SettingTabs = "General" | "Security" | "Advanced";
 
 export default class Settings extends BasePage {
   async openPage(): Promise<void> {
@@ -37,5 +37,13 @@ export default class Settings extends BasePage {
     ]);
 
     return download.path();
+  }
+
+  async goToChangePassword(): Promise<void> {
+    await this.page.getByTestId("change-password").click();
+  }
+
+  async goToRevealMnemonic(): Promise<void> {
+    await this.page.getByTestId("reveal-mnemonic").click();
   }
 }

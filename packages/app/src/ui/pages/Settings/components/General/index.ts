@@ -1,5 +1,5 @@
 import { lazy } from "react";
 
-export * from "./General";
+export type { IGeneralProps } from "./General";
 
 export default lazy(() => import("./General"));

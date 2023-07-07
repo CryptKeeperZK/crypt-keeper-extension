@@ -28,6 +28,7 @@ import {
   useAppStatus,
   useGeneratedMnemonic,
   resetPassword,
+  getMnemonic,
 } from "../app";
 
 jest.mock("redux-logger", (): unknown => ({
@@ -240,6 +241,18 @@ describe("ui/ducks/app", () => {
     expect(postMessage).toBeCalledWith({
       method: RPCAction.CHECK_MNEMONIC,
       payload: { mnemonic: defaultMnemonic, strict: true },
+    });
+  });
+
+  test("should get mnemonic properly", async () => {
+    (postMessage as jest.Mock).mockResolvedValue(defaultMnemonic);
+
+    const mnemonic = await Promise.resolve(store.dispatch(getMnemonic()));
+
+    expect(mnemonic).toBe(defaultMnemonic);
+    expect(postMessage).toBeCalledTimes(1);
+    expect(postMessage).toBeCalledWith({
+      method: RPCAction.GET_MNEMONIC,
     });
   });
 });

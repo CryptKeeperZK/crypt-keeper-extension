@@ -54,7 +54,7 @@ export const useOnboarding = (): IUseOnboardingData => {
   const onSubmit = useCallback(
     (data: PasswordFormFields) => {
       dispatch(setupPassword(data.password))
-        .then(() => navigate(Paths.MNEMONIC))
+        .then(() => navigate(Paths.GENERATE_MNEMONIC))
         .catch((err: Error) => setError("root", { type: "submit", message: err.message }));
     },
     [dispatch, navigate, setError],

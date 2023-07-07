@@ -123,6 +123,9 @@ export const checkMnemonic =
   () =>
     postMessage({ method: RPCAction.CHECK_MNEMONIC, payload: { mnemonic, strict: true } });
 
+export const getMnemonic = (): TypedThunk<Promise<string>> => () =>
+  postMessage<string>({ method: RPCAction.GET_MNEMONIC });
+
 export const useGeneratedMnemonic = (): string | undefined => useAppSelector((state) => state.app.mnemonic, deepEqual);
 
 export const useAppStatus = (): Omit<AppState, "mnemonic"> =>

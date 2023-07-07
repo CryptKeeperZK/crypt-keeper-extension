@@ -5,14 +5,14 @@ import { Paths } from "@src/constants";
 import { saveMnemonic, generateMnemonic, useAppStatus, useGeneratedMnemonic } from "@src/ui/ducks/app";
 import { useAppDispatch } from "@src/ui/ducks/hooks";
 
-export interface IUseMnemonicData {
+export interface IUseGenerateMnemonicData {
   isLoading: boolean;
   error: string;
   mnemonic?: string;
   onSaveMnemonic: () => void;
 }
 
-export const useMnemonic = (): IUseMnemonicData => {
+export const useGenerateMnemonic = (): IUseGenerateMnemonicData => {
   const { isMnemonicGenerated } = useAppStatus();
   const mnemonic = useGeneratedMnemonic();
 
@@ -28,7 +28,7 @@ export const useMnemonic = (): IUseMnemonicData => {
       .then(() => navigate(Paths.HOME))
       .catch((err: Error) => setError(err.message))
       .finally(() => setLoading(false));
-  }, [mnemonic, navigate, setLoading]);
+  }, [mnemonic, navigate, dispatch, setLoading, setError]);
 
   useEffect(() => {
     if (isMnemonicGenerated) {

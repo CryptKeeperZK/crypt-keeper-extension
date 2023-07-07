@@ -46,8 +46,8 @@ export const useRecover = (): IUseRecoverData => {
 
   const onRecover = useCallback(
     (data: RestoreFormFields) => {
-      dispatch(checkMnemonic(data.mnemonic))
-        .then(() => navigate(`${Paths.RESET_PASSWORD}?mnemonic=${data.mnemonic}`))
+      dispatch(checkMnemonic(data.mnemonic.trim()))
+        .then(() => navigate(`${Paths.RESET_PASSWORD}?mnemonic=${data.mnemonic.trim()}`))
         .catch((error: Error) => setError("mnemonic", { message: error.message }));
     },
     [setError, dispatch, navigate],

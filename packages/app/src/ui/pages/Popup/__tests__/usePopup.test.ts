@@ -209,7 +209,7 @@ describe("ui/pages/Popup/usePopup", () => {
     await waitForData(result.current);
 
     expect(mockNavigate).toBeCalledTimes(1);
-    expect(mockNavigate).toBeCalledWith(Paths.MNEMONIC);
+    expect(mockNavigate).toBeCalledWith(Paths.GENERATE_MNEMONIC);
   });
 
   test("should redirect to pending requests page", async () => {

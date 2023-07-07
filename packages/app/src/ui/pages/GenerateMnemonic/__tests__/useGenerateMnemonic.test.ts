@@ -8,16 +8,11 @@ import { useNavigate } from "react-router-dom";
 import { Paths } from "@src/constants";
 import { saveMnemonic, generateMnemonic, useAppStatus, useGeneratedMnemonic } from "@src/ui/ducks/app";
 import { useAppDispatch } from "@src/ui/ducks/hooks";
-import { IUseTimeoutData, useTimeout } from "@src/ui/hooks/timeout";
 
-import { useMnemonic } from "../useMnemonic";
+import { useGenerateMnemonic } from "../useGenerateMnemonic";
 
 jest.mock("react-router-dom", () => ({
   useNavigate: jest.fn(),
-}));
-
-jest.mock("@src/ui/hooks/timeout", (): unknown => ({
-  useTimeout: jest.fn(),
 }));
 
 jest.mock("@src/ui/ducks/hooks", (): unknown => ({
@@ -31,22 +26,13 @@ jest.mock("@src/ui/ducks/app", (): unknown => ({
   useGeneratedMnemonic: jest.fn(),
 }));
 
-jest.mock("@src/util/browser", (): unknown => ({
-  copyToClipboard: jest.fn(),
-  downloadFile: jest.fn(),
-}));
-
-describe("ui/pages/Mnemonic/useMnemonic", () => {
+describe("ui/pages/GenerateMnemonic/useGenerateMnemonic", () => {
   const mockNavigate = jest.fn();
   const mockDispatch = jest.fn(() => Promise.resolve());
-  const defaultTimeoutHookData: IUseTimeoutData = {
-    isActive: false,
-    setActive: jest.fn(),
-  };
   const defaultMnemonic = "mnemonic";
 
   beforeAll(() => {
-    jest.useFakeTimers();
+    jest.clearAllMocks();
   });
 
   beforeEach(() => {
@@ -57,8 +43,6 @@ describe("ui/pages/Mnemonic/useMnemonic", () => {
     (useAppStatus as jest.Mock).mockReturnValue({ isMnemonicGenerated: false });
 
     (useGeneratedMnemonic as jest.Mock).mockReturnValue(defaultMnemonic);
-
-    (useTimeout as jest.Mock).mockReturnValue(defaultTimeoutHookData);
   });
 
   afterEach(() => {
@@ -70,18 +54,17 @@ describe("ui/pages/Mnemonic/useMnemonic", () => {
   });
 
   test("should return initial data", () => {
-    const { result } = renderHook(() => useMnemonic());
+    const { result } = renderHook(() => useGenerateMnemonic());
 
     expect(result.current.isLoading).toBe(false);
     expect(result.current.mnemonic).toBe(defaultMnemonic);
     expect(result.current.error).toBe("");
-    expect(result.current.mnemonic).toBeDefined();
   });
 
   test("should redirect to home if mnemonic is generated", async () => {
     (useAppStatus as jest.Mock).mockReturnValue({ isMnemonicGenerated: true });
 
-    renderHook(() => useMnemonic());
+    renderHook(() => useGenerateMnemonic());
 
     await waitFor(() => {
       expect(mockNavigate).toBeCalledTimes(1);
@@ -92,7 +75,7 @@ describe("ui/pages/Mnemonic/useMnemonic", () => {
   test("should generate mnemonic properly", async () => {
     (useGeneratedMnemonic as jest.Mock).mockReturnValue(undefined);
 
-    renderHook(() => useMnemonic());
+    renderHook(() => useGenerateMnemonic());
 
     await waitFor(() => {
       expect(generateMnemonic).toBeCalledTimes(1);
@@ -100,7 +83,7 @@ describe("ui/pages/Mnemonic/useMnemonic", () => {
   });
 
   test("should save mnemonic and go home properly", async () => {
-    const { result } = renderHook(() => useMnemonic());
+    const { result } = renderHook(() => useGenerateMnemonic());
 
     await act(() => Promise.resolve(result.current.onSaveMnemonic()));
 
@@ -114,7 +97,7 @@ describe("ui/pages/Mnemonic/useMnemonic", () => {
     const error = new Error("error");
     (useAppDispatch as jest.Mock).mockReturnValue(jest.fn(() => Promise.reject(error)));
 
-    const { result } = renderHook(() => useMnemonic());
+    const { result } = renderHook(() => useGenerateMnemonic());
 
     await act(() => Promise.resolve(result.current.onSaveMnemonic()));
 

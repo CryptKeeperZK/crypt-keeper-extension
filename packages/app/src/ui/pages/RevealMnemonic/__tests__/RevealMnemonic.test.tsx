@@ -5,22 +5,21 @@
 import { act, render, waitFor } from "@testing-library/react";
 
 import Mnemonic from "..";
-import { IUseMnemonicData, useMnemonic } from "../useMnemonic";
+import { IUseRevealMnemonicData, useRevealMnemonic } from "../useRevealMnemonic";
 
-jest.mock("../useMnemonic", (): unknown => ({
-  useMnemonic: jest.fn(),
+jest.mock("../useRevealMnemonic", (): unknown => ({
+  useRevealMnemonic: jest.fn(),
 }));
 
-describe("ui/pages/Mnemonic", () => {
-  const defaultHookData: IUseMnemonicData = {
-    isLoading: false,
+describe("ui/pages/RevealMnemonic", () => {
+  const defaultHookData: IUseRevealMnemonicData = {
     error: "",
     mnemonic: "mnemonic",
-    onSaveMnemonic: jest.fn(),
+    onGoBack: jest.fn(),
   };
 
   beforeEach(() => {
-    (useMnemonic as jest.Mock).mockReturnValue(defaultHookData);
+    (useRevealMnemonic as jest.Mock).mockReturnValue(defaultHookData);
   });
 
   afterEach(() => {
@@ -31,13 +30,13 @@ describe("ui/pages/Mnemonic", () => {
     const { container, findByTestId } = render(<Mnemonic />);
     await waitFor(() => container.firstChild !== null);
 
-    const page = await findByTestId("mnemonic-page");
+    const page = await findByTestId("reveal-mnemonic-page");
 
     expect(page).toBeInTheDocument();
   });
 
   test("should render error properly", async () => {
-    (useMnemonic as jest.Mock).mockReturnValue({ ...defaultHookData, mnemonic: undefined, error: "error" });
+    (useRevealMnemonic as jest.Mock).mockReturnValue({ ...defaultHookData, mnemonic: undefined, error: "error" });
 
     const { container, findByText } = render(<Mnemonic />);
     await waitFor(() => container.firstChild !== null);
@@ -47,13 +46,13 @@ describe("ui/pages/Mnemonic", () => {
     expect(error).toBeInTheDocument();
   });
 
-  test("should go home properly", async () => {
+  test("should go back properly", async () => {
     const { container, findByTestId } = render(<Mnemonic />);
     await waitFor(() => container.firstChild !== null);
 
-    const button = await findByTestId("submit-button");
-    await act(() => Promise.resolve(button.click()));
+    const icon = await findByTestId("close-icon");
+    await act(() => Promise.resolve(icon.click()));
 
-    expect(defaultHookData.onSaveMnemonic).toBeCalledTimes(1);
+    expect(defaultHookData.onGoBack).toBeCalledTimes(1);
   });
 });

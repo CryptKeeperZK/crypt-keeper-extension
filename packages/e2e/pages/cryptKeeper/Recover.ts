@@ -15,4 +15,9 @@ export default class Recover extends BasePage {
     await this.page.getByLabel("Confirm Password", { exact: true }).type(confirmPassword);
     await this.page.getByText("Reset", { exact: true }).click();
   }
+
+  async getMnemonic(): Promise<string> {
+    await this.page.getByText("Show", { exact: true }).click();
+    return this.page.getByTestId("mnemonic-input").locator("textarea").first().inputValue();
+  }
 }
