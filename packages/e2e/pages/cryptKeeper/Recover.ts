@@ -16,7 +16,10 @@ export default class Recover extends BasePage {
     await this.page.getByText("Reset", { exact: true }).click();
   }
 
-  async getMnemonic(): Promise<string> {
+  async getMnemonic(password: string): Promise<string> {
+    await this.page.getByLabel("Password", { exact: true }).type(password);
+    await this.page.getByTestId("unlock-button").click();
+
     await this.page.getByText("Show", { exact: true }).click();
     return this.page.getByTestId("mnemonic-input").locator("textarea").first().inputValue();
   }

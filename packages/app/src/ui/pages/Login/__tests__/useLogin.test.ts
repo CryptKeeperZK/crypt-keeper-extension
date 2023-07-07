@@ -39,6 +39,7 @@ describe("ui/pages/Login/useLogin", () => {
     const { result } = renderHook(() => useLogin());
 
     expect(result.current.isLoading).toBe(false);
+    expect(result.current.isShowPassword).toStrictEqual(false);
     expect(result.current.errors).toStrictEqual({ password: undefined });
   });
 
@@ -86,17 +87,10 @@ describe("ui/pages/Login/useLogin", () => {
     expect(result.current.isLoading).toBe(false);
   });
 
-  test("should isShowPassword set to false as default", () => {
-    const { result } = renderHook(() => useLogin());
-
-    expect(result.current.isShowPassword).toStrictEqual(false);
-  });
-
-  test("should be able to change isShowPassword", () => {
+  test("should toggle password visibility properly", () => {
     const { result } = renderHook(() => useLogin());
 
     act(() => result.current.onShowPassword());
-
     expect(result.current.isShowPassword).toStrictEqual(true);
 
     act(() => result.current.onShowPassword());

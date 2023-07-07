@@ -19,6 +19,7 @@ jest.mock("@src/background/services/crypto", (): unknown => ({
     decrypt: jest.fn(() => passwordChecker),
     setPassword: jest.fn(),
     setMnemonic: jest.fn(),
+    isAuthenticPassword: jest.fn(() => true),
     clear: jest.fn(),
     generateEncryptedHmac: jest.fn(() => "encrypted"),
     getAuthenticCiphertext: jest.fn(() => "encrypted"),
@@ -126,6 +127,12 @@ describe("background/services/locker", () => {
         isMnemonicGenerated: true,
         isUnlocked: true,
       });
+    });
+
+    test("should check password properly", () => {
+      const result = lockService.checkPassword({ password: defaultPassword });
+
+      expect(result).toBe(true);
     });
 
     test("should unlock properly", async () => {

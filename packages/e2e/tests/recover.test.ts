@@ -65,7 +65,7 @@ test.describe("recover", () => {
     await extension.settings.goToRevealMnemonic();
 
     const mnemonic = await page.evaluate<string>("navigator.clipboard.readText()");
-    const revealedMnemonic = await extension.recover.getMnemonic();
+    const revealedMnemonic = await extension.recover.getMnemonic(CRYPT_KEEPER_PASSWORD);
 
     expect(revealedMnemonic).toBe(mnemonic);
   });

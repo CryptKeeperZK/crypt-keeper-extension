@@ -123,6 +123,11 @@ export const checkMnemonic =
   () =>
     postMessage({ method: RPCAction.CHECK_MNEMONIC, payload: { mnemonic, strict: true } });
 
+export const checkPassword =
+  (password: string): TypedThunk<Promise<boolean>> =>
+  () =>
+    postMessage<boolean>({ method: RPCAction.CHECK_PASSWORD, payload: { password } });
+
 export const getMnemonic = (): TypedThunk<Promise<string>> => () =>
   postMessage<string>({ method: RPCAction.GET_MNEMONIC });
 
