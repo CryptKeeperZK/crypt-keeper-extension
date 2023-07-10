@@ -1,7 +1,7 @@
 import { Wallet } from "ethers";
 import uniqBy from "lodash/uniqBy";
 
-import CryptoService from "@src/background/services/crypto";
+import CryptoService, { ECryptMode } from "@src/background/services/crypto";
 import MiscStorageService from "@src/background/services/misc";
 import { generateMnemonic, validateMnemonic } from "@src/background/services/mnemonic";
 import SimpleStorage from "@src/background/services/storage";
@@ -55,11 +55,12 @@ export default class WalletService implements IBackupable {
     const encryptedMnemonic = await this.mnemonicStorage.get<string>();
 
     if (encryptedMnemonic) {
-      return this.cryptoService.decrypt(encryptedMnemonic);
+      return this.cryptoService.decrypt(encryptedMnemonic, { mode: ECryptMode.PASSWORD });
     }
 
     const mnemonic = generateMnemonic();
-    const encrypted = this.cryptoService.encrypt(mnemonic);
+    this.cryptoService.setMnemonic(mnemonic);
+    const encrypted = this.cryptoService.encrypt(mnemonic, { mode: ECryptMode.PASSWORD });
     await this.mnemonicStorage.set(encrypted);
 
     return mnemonic;
@@ -72,19 +73,24 @@ export default class WalletService implements IBackupable {
       throw new Error("Generate mnemonic first");
     }
 
-    const mnemonic = this.cryptoService.decrypt(encryptedMnemonic);
+    const mnemonic = this.cryptoService.decrypt(encryptedMnemonic, { mode: ECryptMode.PASSWORD });
     const wallet = Wallet.fromPhrase(mnemonic);
     const rawData = await this.accountStorage.get<string>();
+    this.cryptoService.setMnemonic(mnemonic);
 
     const accounts: IAccount[] = rawData ? (JSON.parse(rawData) as IAccount[]) : [];
     accounts.push({ publicKey: wallet.publicKey, privateKey: wallet.privateKey, address: wallet.address });
 
-    const encrypted = this.cryptoService.encrypt(JSON.stringify(accounts));
+    const encrypted = this.cryptoService.encrypt(JSON.stringify(accounts), { mode: ECryptMode.MNEMONIC });
     await this.accountStorage.set(encrypted);
     await this.selectAccount(wallet.address);
     await this.miscStorage.setInitialization({ initializationStep: InitializationStep.MNEMONIC });
-    await this.mnemonicStorage.clear();
   };
+
+  getMnemonic = async (): Promise<string> =>
+    this.mnemonicStorage
+      .get<string>()
+      .then((mnemonic) => (mnemonic ? this.cryptoService.decrypt(mnemonic, { mode: ECryptMode.PASSWORD }) : ""));
 
   selectAccount = async (address: string): Promise<string> => {
     if (!address) {
@@ -92,14 +98,16 @@ export default class WalletService implements IBackupable {
     }
 
     const encryptedAccounts = await this.accountStorage.get<string>();
-    const accounts = encryptedAccounts ? (JSON.parse(this.cryptoService.decrypt(encryptedAccounts)) as IAccount[]) : [];
+    const accounts = encryptedAccounts
+      ? (JSON.parse(this.cryptoService.decrypt(encryptedAccounts, { mode: ECryptMode.MNEMONIC })) as IAccount[])
+      : [];
     const isFound = accounts.some((account) => account.address.toLowerCase() === address.toLowerCase());
 
     if (!isFound) {
       throw new Error(`Account ${address} not found`);
     }
 
-    const encrypted = this.cryptoService.encrypt(address.toLowerCase());
+    const encrypted = this.cryptoService.encrypt(address.toLowerCase(), { mode: ECryptMode.MNEMONIC });
     await this.selectedAccountStorage.set(encrypted);
     await pushMessage(setSelectedAccount(address.toLowerCase()));
 
@@ -108,12 +116,14 @@ export default class WalletService implements IBackupable {
 
   getSelectedAccount = async (): Promise<string | null> => {
     const encryped = await this.selectedAccountStorage.get<string>();
-    return encryped && this.cryptoService.decrypt(encryped);
+    return encryped && this.cryptoService.decrypt(encryped, { mode: ECryptMode.MNEMONIC });
   };
 
   accounts = async (): Promise<string[]> => {
     const encryptedAccounts = await this.accountStorage.get<string>();
-    const accounts = encryptedAccounts ? (JSON.parse(this.cryptoService.decrypt(encryptedAccounts)) as IAccount[]) : [];
+    const accounts = encryptedAccounts
+      ? (JSON.parse(this.cryptoService.decrypt(encryptedAccounts, { mode: ECryptMode.MNEMONIC })) as IAccount[])
+      : [];
     const selectedAddress = await this.getSelectedAccount();
     const addresses = accounts.map(({ address }) => address.toLowerCase());
 
@@ -129,7 +139,7 @@ export default class WalletService implements IBackupable {
       throw new Error("No key pair available");
     }
 
-    const accounts = JSON.parse(this.cryptoService.decrypt(encrypted)) as IAccount[];
+    const accounts = JSON.parse(this.cryptoService.decrypt(encrypted, { mode: ECryptMode.MNEMONIC })) as IAccount[];
     const account = accounts.find((item) => item.address.toLowerCase() === address.toLowerCase());
 
     if (!account) {
@@ -148,7 +158,9 @@ export default class WalletService implements IBackupable {
 
     const wallet = Wallet.fromPhrase(mnemonic);
     const encrypted = await this.accountStorage.get<string>();
-    const accounts = encrypted ? (JSON.parse(this.cryptoService.decrypt(encrypted)) as IAccount[]) : [];
+    const accounts = encrypted
+      ? (JSON.parse(this.cryptoService.decrypt(encrypted, { secret: mnemonic })) as IAccount[])
+      : [];
 
     const hasDerivedAccounts = accounts.some(
       (account) => account.privateKey.toLowerCase() === wallet.privateKey.toLowerCase(),
@@ -166,27 +178,41 @@ export default class WalletService implements IBackupable {
   };
 
   downloadEncryptedStorage = async (backupPassword: string): Promise<string | null> => {
-    const backupEncryptedData = await this.accountStorage.get<string>();
+    const accountsEncryptedData = await this.accountStorage.get<string>();
+    const mnemonicEncryptedData = await this.mnemonicStorage.get<string>();
 
-    if (!backupEncryptedData) {
+    if (!accountsEncryptedData || !mnemonicEncryptedData) {
       return null;
     }
 
-    return this.cryptoService.generateEncryptedHmac(backupEncryptedData, backupPassword);
+    const accounts = this.cryptoService.generateEncryptedHmac(accountsEncryptedData, backupPassword);
+    const mnemonic = this.cryptoService.generateEncryptedHmac(mnemonicEncryptedData, backupPassword);
+
+    return JSON.stringify({ accounts, mnemonic });
   };
 
   uploadEncryptedStorage = async (backupEncryptedData: string, backupPassword: string): Promise<void> => {
-    if (backupEncryptedData) {
-      const encrypted = await this.accountStorage.get<string>();
-      const accounts = encrypted ? (JSON.parse(this.cryptoService.decrypt(encrypted)) as IAccount[]) : [];
-
-      const authenticBackupCiphertext = this.cryptoService.getAuthenticCiphertext(backupEncryptedData, backupPassword);
-      const newAccounts = JSON.parse(this.cryptoService.decrypt(authenticBackupCiphertext)) as IAccount[];
-      const mergedBackupData = this.cryptoService.encrypt(
-        JSON.stringify(uniqBy([...accounts, ...newAccounts], "privateKey")),
-      );
-
-      await this.accountStorage.set(mergedBackupData);
+    if (!backupEncryptedData) {
+      return;
     }
+
+    const rawAuthenticBackup = this.cryptoService.getAuthenticCiphertext(backupEncryptedData, backupPassword);
+    const authenticBackup = JSON.parse(rawAuthenticBackup) as { accounts: string; mnemonic: string };
+    const mnemonic = this.cryptoService.decrypt(authenticBackup.mnemonic);
+    const newAccounts = JSON.parse(
+      this.cryptoService.decrypt(authenticBackup.accounts, { secret: mnemonic }),
+    ) as IAccount[];
+
+    const encrypted = await this.accountStorage.get<string>();
+    const accounts = encrypted
+      ? (JSON.parse(this.cryptoService.decrypt(encrypted, { mode: ECryptMode.MNEMONIC })) as IAccount[])
+      : [];
+
+    const mergedBackupData = this.cryptoService.encrypt(
+      JSON.stringify(uniqBy([...accounts, ...newAccounts], "privateKey")),
+      { mode: ECryptMode.MNEMONIC },
+    );
+
+    await this.accountStorage.set(mergedBackupData);
   };
 }

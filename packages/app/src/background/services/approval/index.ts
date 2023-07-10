@@ -1,4 +1,4 @@
-import CryptoService from "@src/background/services/crypto";
+import CryptoService, { ECryptMode } from "@src/background/services/crypto";
 import SimpleStorage from "@src/background/services/storage";
 
 import type { HostPermission } from "@cryptkeeperzk/types";
@@ -40,7 +40,7 @@ export default class ApprovalService implements IBackupable {
     const encryped = await this.approvals.get<string>();
 
     if (encryped) {
-      const decrypted = this.cryptoService.decrypt(encryped);
+      const decrypted = this.cryptoService.decrypt(encryped, { mode: ECryptMode.MNEMONIC });
       this.allowedHosts = new Map(JSON.parse(decrypted) as Iterable<[string, HostPermission]>);
     }
 
@@ -89,7 +89,7 @@ export default class ApprovalService implements IBackupable {
 
   private async saveApprovals(): Promise<void> {
     const serializedApprovals = JSON.stringify(Array.from(this.allowedHosts.entries()));
-    const newApprovals = this.cryptoService.encrypt(serializedApprovals);
+    const newApprovals = this.cryptoService.encrypt(serializedApprovals, { mode: ECryptMode.MNEMONIC });
     await this.approvals.set(newApprovals);
   }
 

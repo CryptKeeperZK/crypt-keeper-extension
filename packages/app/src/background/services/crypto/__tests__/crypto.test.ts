@@ -2,7 +2,7 @@ import fc from "fast-check";
 
 import { defaultMnemonic } from "@src/config/mock/wallet";
 
-import CryptoService from "..";
+import CryptoService, { ECryptMode } from "..";
 
 describe("background/services/crypto", () => {
   const service = CryptoService.getInstance();
@@ -22,8 +22,10 @@ describe("background/services/crypto", () => {
   test("should encrypt and decrypt data properly", () => {
     expect(() => service.encrypt("text")).toThrow("Password is not provided");
     expect(() => service.decrypt("text")).toThrow("Password is not provided");
-    expect(() => service.encrypt("text", "")).toThrow("Password is not provided");
-    expect(() => service.decrypt("text", "")).toThrow("Password is not provided");
+    expect(() => service.encrypt("text", { secret: "" })).toThrow("Password is not provided");
+    expect(() => service.decrypt("text", { secret: "" })).toThrow("Password is not provided");
+    expect(() => service.encrypt("text", { mode: ECryptMode.MNEMONIC })).toThrow("Password is not provided");
+    expect(() => service.decrypt("text", { mode: ECryptMode.MNEMONIC })).toThrow("Password is not provided");
 
     fc.assert(
       fc.property(fc.string(), fc.string(), (text, password) => {
@@ -33,8 +35,8 @@ describe("background/services/crypto", () => {
 
         const encrypted = service.encrypt(text);
         const decrypted = service.decrypt(encrypted);
-        const encryptedWithPassword = service.encrypt(text, password);
-        const decryptedWithPassword = service.decrypt(encryptedWithPassword, password);
+        const encryptedWithPassword = service.encrypt(text, { secret: password });
+        const decryptedWithPassword = service.decrypt(encryptedWithPassword, { secret: password });
 
         return decrypted === text && decryptedWithPassword === text;
       }),
