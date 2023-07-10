@@ -3,7 +3,6 @@ import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import { NavLink } from "react-router-dom";
 
-import { getEnabledFeatures } from "@src/config/features";
 import { Paths } from "@src/constants";
 import logoSVG from "@src/static/icons/logo.svg";
 import { Icon } from "@src/ui/components/Icon";
@@ -14,7 +13,6 @@ import { useLogin } from "./useLogin";
 
 const Login = (): JSX.Element => {
   const { isLoading, errors, register, onSubmit, isShowPassword, onShowPassword } = useLogin();
-  const features = getEnabledFeatures();
 
   return (
     <Box
@@ -58,11 +56,9 @@ const Login = (): JSX.Element => {
           Unlock
         </Button>
 
-        {features.RECOVER && (
-          <Typography component={NavLink} sx={{ color: "primary.main" }} to={Paths.RECOVER}>
-            Forgot password?
-          </Typography>
-        )}
+        <Typography component={NavLink} sx={{ color: "primary.main" }} to={Paths.RECOVER}>
+          Forgot password?
+        </Typography>
       </Box>
     </Box>
   );
