@@ -37,6 +37,19 @@ jest.mock("@src/background/services/wallet", (): unknown => ({
   ...jest.requireActual("@src/background/services/wallet"),
   getInstance: jest.fn(() => ({
     getMnemonic: jest.fn(() => Promise.resolve(defaultMnemonic)),
+    changeMnemonicPassword: jest.fn(),
+  })),
+}));
+
+jest.mock("@src/background/services/history", (): unknown => ({
+  getInstance: jest.fn(() => ({
+    trackOperation: jest.fn(),
+  })),
+}));
+
+jest.mock("@src/background/services/notification", (): unknown => ({
+  getInstance: jest.fn(() => ({
+    create: jest.fn(),
   })),
 }));
 
@@ -98,6 +111,21 @@ describe("background/services/locker", () => {
 
     test("should throw error if password is already setup", async () => {
       await expect(lockService.setupPassword(defaultPassword)).rejects.toThrow("Password is already initialized");
+    });
+
+    test("should reset password and unlock properly", async () => {
+      const [passwordStorage] = (SimpleStorage as jest.Mock).mock.instances as [MockStorage];
+      passwordStorage.set.mockClear();
+
+      await lockService.resetPassword({ mnemonic: defaultMnemonic, password: defaultPassword });
+      const status = await lockService.getStatus();
+
+      expect(passwordStorage.set).toBeCalledTimes(1);
+      expect(status).toStrictEqual({
+        isInitialized: true,
+        isMnemonicGenerated: true,
+        isUnlocked: true,
+      });
     });
 
     test("should unlock properly", async () => {

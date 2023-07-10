@@ -28,11 +28,14 @@ export async function connectWallet({ page, cryptKeeperExtensionId }: TestExtens
   await cryptKeeper.connectWallet();
 }
 
-export async function unlockAccount({ page, cryptKeeperExtensionId }: TestExtension): Promise<void> {
+export async function unlockAccount(
+  { page, cryptKeeperExtensionId }: TestExtension,
+  password = CRYPT_KEEPER_PASSWORD,
+): Promise<void> {
   const cryptKeeper = new CryptKeeper(page);
   await cryptKeeper.openPopup(cryptKeeperExtensionId);
 
-  await cryptKeeper.unlock(CRYPT_KEEPER_PASSWORD);
+  await cryptKeeper.unlock(password);
 }
 
 const RACE_TIMEOUT_MS = 5_000;

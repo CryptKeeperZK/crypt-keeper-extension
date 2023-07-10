@@ -1,10 +1,12 @@
-import { BaseSyntheticEvent, useCallback, useState } from "react";
+import { BaseSyntheticEvent, useCallback, useEffect, useState } from "react";
 import { useForm, UseFormRegister } from "react-hook-form";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { object, ref, string } from "yup";
 
 import { Paths } from "@src/constants";
 import { PasswordFormFields } from "@src/types";
+import { resetPassword } from "@src/ui/ducks/app";
+import { useAppDispatch } from "@src/ui/ducks/hooks";
 import { useValidationResolver } from "@src/ui/hooks/validation";
 
 export interface IUseResetPasswordData {
@@ -32,11 +34,14 @@ const validationSchema = object({
 
 export const useResetPassword = (): IUseResetPasswordData => {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const dispatch = useAppDispatch();
   const [isShowPassword, setIsShowPassword] = useState(false);
 
   const resolver = useValidationResolver(validationSchema);
   const {
     formState: { isLoading, isSubmitting, errors },
+    setError,
     register,
     handleSubmit,
   } = useForm<PasswordFormFields>({
@@ -47,9 +52,16 @@ export const useResetPassword = (): IUseResetPasswordData => {
     },
   });
 
-  const onSubmit = useCallback(() => {
-    navigate(Paths.HOME);
-  }, [navigate]);
+  const mnemonic = searchParams.get("mnemonic") as string;
+
+  const onSubmit = useCallback(
+    (data: PasswordFormFields) => {
+      dispatch(resetPassword({ password: data.password, mnemonic }))
+        .then(() => navigate(Paths.HOME))
+        .catch((error: Error) => setError("root", { message: error.message }));
+    },
+    [mnemonic, setError, navigate, dispatch],
+  );
 
   const onClose = useCallback(() => {
     navigate(-1);
@@ -58,6 +70,12 @@ export const useResetPassword = (): IUseResetPasswordData => {
   const onShowPassword = useCallback(() => {
     setIsShowPassword((isShow) => !isShow);
   }, [setIsShowPassword]);
+
+  useEffect(() => {
+    if (!mnemonic) {
+      navigate(Paths.HOME);
+    }
+  }, [mnemonic, navigate]);
 
   return {
     isLoading: isLoading || isSubmitting,

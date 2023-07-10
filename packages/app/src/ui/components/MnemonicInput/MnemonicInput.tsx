@@ -51,7 +51,7 @@ const MnemonicInputUI = (
         }}
         inputRef={ref}
         sx={{
-          backgroundColor: "info.main",
+          backgroundColor: "transparent",
           borderColor: "primary.main",
           borderWidth: "2px",
           color: "white",

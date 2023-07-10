@@ -84,6 +84,7 @@ export default class CryptKeeperController {
 
     // lock
     this.handler.add(RPCAction.SETUP_PASSWORD, this.lockService.setupPassword);
+    this.handler.add(RPCAction.RESET_PASSWORD, this.lockService.resetPassword);
 
     // Identities
     this.handler.add(RPCAction.GET_COMMITMENTS, this.lockService.ensure, this.zkIdentityService.getIdentityCommitments);
