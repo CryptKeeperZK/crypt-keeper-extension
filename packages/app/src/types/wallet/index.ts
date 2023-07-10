@@ -7,8 +7,3 @@ export interface ICheckMnemonicArgs {
   mnemonic: string;
   strict?: boolean;
 }
-
-export interface IChangeMnemonicPassword {
-  mnemonic: string;
-  password: string;
-}

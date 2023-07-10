@@ -6,7 +6,7 @@ import MiscStorageService from "@src/background/services/misc";
 import NotificationService from "@src/background/services/notification";
 import SimpleStorage from "@src/background/services/storage";
 import WalletService from "@src/background/services/wallet";
-import { IResetPasswordArgs, InitializationStep, OperationType } from "@src/types";
+import { ISecretArgs, InitializationStep, OperationType } from "@src/types";
 import { setStatus } from "@src/ui/ducks/app";
 import pushMessage from "@src/util/pushMessage";
 
@@ -76,7 +76,7 @@ export default class LockerService implements IBackupable {
     await this.miscStorage.setInitialization({ initializationStep: InitializationStep.PASSWORD });
   };
 
-  resetPassword = async ({ mnemonic, password }: IResetPasswordArgs): Promise<void> => {
+  resetPassword = async ({ mnemonic, password }: ISecretArgs): Promise<void> => {
     await this.walletService.changeMnemonicPassword({ mnemonic, password });
     this.cryptoService.setPassword(password);
     this.writePassword(password);

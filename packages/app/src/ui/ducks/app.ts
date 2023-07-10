@@ -7,7 +7,7 @@ import omit from "lodash/omit";
 import postMessage from "@src/util/postMessage";
 
 import type { PayloadAction } from "@reduxjs/toolkit";
-import type { IResetPasswordArgs } from "@src/types";
+import type { ISecretArgs } from "@src/types";
 import type { TypedThunk } from "@src/ui/store/configureAppStore";
 
 import { useAppSelector } from "./hooks";
@@ -70,7 +70,7 @@ export const setupPassword = (password: string) => async (): Promise<boolean> =>
   postMessage<boolean>({ method: RPCAction.SETUP_PASSWORD, payload: password });
 
 export const resetPassword =
-  ({ mnemonic, password }: IResetPasswordArgs) =>
+  ({ mnemonic, password }: ISecretArgs) =>
   async (): Promise<void> =>
     postMessage({ method: RPCAction.RESET_PASSWORD, payload: { password, mnemonic } });
 

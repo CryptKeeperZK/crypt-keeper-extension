@@ -1,4 +1,4 @@
-export interface IResetPasswordArgs {
+export interface ISecretArgs {
   mnemonic: string;
   password: string;
 }
