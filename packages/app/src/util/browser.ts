@@ -27,3 +27,11 @@ export const downloadFile = (content: string, filename: string): Promise<void> =
 export const copyToClipboard = async (content: string): Promise<void> => {
   await navigator.clipboard.writeText(content);
 };
+
+export const getUrlOrigin = (url?: string): string => {
+  if (!url) {
+    return "";
+  }
+
+  return new URL(url).origin;
+};

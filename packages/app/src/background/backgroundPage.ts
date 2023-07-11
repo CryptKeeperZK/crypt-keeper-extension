@@ -1,6 +1,6 @@
 import log from "loglevel";
 import "subworkers";
-import browser from "webextension-polyfill";
+import browser, { type Runtime } from "webextension-polyfill";
 
 import CryptKeeperController from "@src/background/cryptKeeper";
 import { createChromeOffscreen, deferredPromise, getBrowserPlatform } from "@src/background/shared/utils";
@@ -37,7 +37,7 @@ try {
 
   app.initialize();
 
-  browser.runtime.onMessage.addListener(async (request: RequestHandler) => {
+  browser.runtime.onMessage.addListener(async (request: RequestHandler, sender: Runtime.MessageSender) => {
     log.debug("Background: request: ", request);
 
     if (browserPlatform !== BrowserPlatform.Firefox && request.source === "offscreen") {
@@ -45,7 +45,7 @@ try {
     }
 
     try {
-      const response = await app.handle(request);
+      const response = await app.handle(request, sender);
       log.debug("Background: response: ", response);
       return [null, response];
     } catch (e) {

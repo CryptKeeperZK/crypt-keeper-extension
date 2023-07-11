@@ -5,7 +5,14 @@
 /* eslint-disable @typescript-eslint/unbound-method */
 import browser from "webextension-polyfill";
 
-import { getLastActiveTabUrl, redirectToNewTab, getExtensionUrl, downloadFile, copyToClipboard } from "../browser";
+import {
+  getLastActiveTabUrl,
+  redirectToNewTab,
+  getExtensionUrl,
+  downloadFile,
+  copyToClipboard,
+  getUrlOrigin,
+} from "../browser";
 
 describe("util/browser", () => {
   const defaultTabs = [{ url: "http://localhost:3000" }];
@@ -78,5 +85,10 @@ describe("util/browser", () => {
 
     expect(spyCopy).toBeCalledTimes(1);
     expect(spyCopy).toBeCalledWith("content");
+  });
+
+  test("should get url origin properly", () => {
+    expect(getUrlOrigin()).toBe("");
+    expect(getUrlOrigin("http://localhost:1234/#/page1?search=0")).toBe("http://localhost:1234");
   });
 });

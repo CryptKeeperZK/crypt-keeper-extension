@@ -19,11 +19,11 @@ export const PermissionModal = ({ refreshConnectionStatus, onClose }: Connection
   return (
     <FullModal data-testid="connection-modal" onClose={onClose}>
       <FullModalHeader onClose={onClose}>
-        {url?.protocol === "chrome-extension:" ? "Chrome Extension Page" : url?.host}
+        {url?.protocol.includes("extension:") ? "Chrome Extension Page" : url?.host}
       </FullModalHeader>
 
       <FullModalContent className="flex flex-col items-center">
-        {url?.protocol === "chrome-extension:" ? (
+        {url?.protocol.includes("extension:") ? (
           <div className="w-16 h-16 rounded-full my-6 border border-gray-800 p-2 flex-shrink-0 flex flex-row items-center justify-center">
             <Icon className="text-gray-700" fontAwesome="fas fa-tools" size={1.5} />
           </div>
