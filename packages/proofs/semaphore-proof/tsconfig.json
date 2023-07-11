@@ -4,9 +4,11 @@
         "baseUrl": ".",
         "rootDir": ".",
         "outDir": "./dist",
+        "composite": false,
+        "typeRoots": ["node_modules/@types", "types"]
     },
     "include": [
-        "src"
+        "src",
     ],
     "exclude": [
         "node_modules",
