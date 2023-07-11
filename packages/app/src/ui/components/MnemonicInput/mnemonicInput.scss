@@ -1,3 +1,11 @@
 .mnemonic-input {
   background-color: #262626;
+
+  fieldset {
+    border: none;
+  }
+
+  legend {
+    display: none;
+  }
 }

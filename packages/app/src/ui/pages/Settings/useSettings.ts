@@ -23,12 +23,15 @@ export interface IUseSettingsData {
   onTabChange: (event: SyntheticEvent, value: number) => void;
   onGoBack: () => void;
   onGoToBackup: () => void;
+  onGoToResetPassword: () => void;
+  onGoRevealMnemonic: () => void;
   onDeleteAllIdentities: () => void;
 }
 
 export enum SettingsTabs {
-  GENERAL = 0,
-  ADVANCED = 1,
+  GENERAL,
+  SECURITY,
+  ADVANCED,
 }
 
 export const useSettings = (): IUseSettingsData => {
@@ -66,9 +69,17 @@ export const useSettings = (): IUseSettingsData => {
     navigate(Paths.DOWNLOAD_BACKUP);
   }, [navigate]);
 
+  const onGoToResetPassword = useCallback(() => {
+    navigate(Paths.RECOVER);
+  }, [navigate]);
+
   const onDeleteAllIdentities = useCallback(() => {
     dispatch(deleteAllIdentities()).then(() => onConfirmModalShow());
   }, [dispatch, onConfirmModalShow]);
+
+  const onGoRevealMnemonic = useCallback(() => {
+    navigate(Paths.REVEAL_MNEMONIC);
+  }, [navigate]);
 
   useEffect(() => {
     setIsLoading(true);
@@ -86,6 +97,8 @@ export const useSettings = (): IUseSettingsData => {
     onTabChange,
     onGoBack,
     onGoToBackup,
+    onGoToResetPassword,
+    onGoRevealMnemonic,
     onDeleteAllIdentities,
   };
 };

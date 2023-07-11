@@ -7,14 +7,14 @@ import logoSVG from "@src/static/icons/logo.svg";
 import { Icon } from "@src/ui/components/Icon";
 import { MnemonicInput } from "@src/ui/components/MnemonicInput";
 
-import { useMnemonic } from "./useMnemonic";
+import { useGenerateMnemonic } from "./useGenerateMnemonic";
 
-const Mnemonic = (): JSX.Element => {
-  const { isLoading, error, mnemonic, onSaveMnemonic } = useMnemonic();
+const GenerateMnemonic = (): JSX.Element => {
+  const { isLoading, error, mnemonic, onSaveMnemonic } = useGenerateMnemonic();
 
   return (
     <Box
-      data-testid="mnemonic-page"
+      data-testid="generate-mnemonic-page"
       sx={{ display: "flex", flexDirection: "column", alignItems: "center", flexGrow: 1, p: 3 }}
     >
       <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center", flexGrow: 1 }}>
@@ -51,4 +51,4 @@ const Mnemonic = (): JSX.Element => {
   );
 };
 
-export default Mnemonic;
+export default GenerateMnemonic;

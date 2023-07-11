@@ -6,7 +6,7 @@ import MiscStorageService from "@src/background/services/misc";
 import NotificationService from "@src/background/services/notification";
 import SimpleStorage from "@src/background/services/storage";
 import WalletService from "@src/background/services/wallet";
-import { ISecretArgs, InitializationStep, OperationType } from "@src/types";
+import { ICheckPasswordArgs, ISecretArgs, InitializationStep, OperationType } from "@src/types";
 import { setStatus } from "@src/ui/ducks/app";
 import pushMessage from "@src/util/pushMessage";
 
@@ -92,6 +92,8 @@ export default class LockerService implements IBackupable {
       },
     });
   };
+
+  checkPassword = ({ password }: ICheckPasswordArgs): boolean => this.cryptoService.isAuthenticPassword(password);
 
   private writePassword = async (password: string): Promise<void> => {
     const ciphertext = this.cryptoService.encrypt(this.passwordChecker, { secret: password });

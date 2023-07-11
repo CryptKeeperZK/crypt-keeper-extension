@@ -77,9 +77,9 @@ describe("ui/pages/Popup", () => {
     expect(onboarding).toBeInTheDocument();
   });
 
-  test("should render mnemonic page properly", async () => {
+  test("should render generate mnemonic page properly", async () => {
     const { container, findByTestId } = render(
-      <MemoryRouter initialEntries={[Paths.MNEMONIC]}>
+      <MemoryRouter initialEntries={[Paths.GENERATE_MNEMONIC]}>
         <Suspense>
           <Popup />
         </Suspense>
@@ -88,7 +88,23 @@ describe("ui/pages/Popup", () => {
 
     await waitFor(() => container.firstChild !== null);
 
-    const page = await findByTestId("mnemonic-page");
+    const page = await findByTestId("generate-mnemonic-page");
+
+    expect(page).toBeInTheDocument();
+  });
+
+  test("should render reveal mnemonic page properly", async () => {
+    const { container, findByTestId } = render(
+      <MemoryRouter initialEntries={[Paths.REVEAL_MNEMONIC]}>
+        <Suspense>
+          <Popup />
+        </Suspense>
+      </MemoryRouter>,
+    );
+
+    await waitFor(() => container.firstChild !== null);
+
+    const page = await findByTestId("reveal-mnemonic-page");
 
     expect(page).toBeInTheDocument();
   });
@@ -167,5 +183,20 @@ describe("ui/pages/Popup", () => {
 
     const settings = await findByTestId("settings");
     expect(settings).toBeInTheDocument();
+  });
+
+  test("should render recover page properly", async () => {
+    const { container, findByTestId } = render(
+      <MemoryRouter initialEntries={[Paths.RECOVER]}>
+        <Suspense>
+          <Popup />
+        </Suspense>
+      </MemoryRouter>,
+    );
+
+    await waitFor(() => container.firstChild !== null);
+
+    const page = await findByTestId("recover-page");
+    expect(page).toBeInTheDocument();
   });
 });

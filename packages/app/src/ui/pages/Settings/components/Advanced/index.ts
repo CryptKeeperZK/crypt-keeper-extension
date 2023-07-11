@@ -1,5 +1,5 @@
 import { lazy } from "react";
 
-export * from "./Advanced";
+export type { IAdvancedProps } from "./Advanced";
 
 export default lazy(() => import("./Advanced"));

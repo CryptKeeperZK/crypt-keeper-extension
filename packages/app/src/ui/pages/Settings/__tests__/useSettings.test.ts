@@ -24,6 +24,10 @@ jest.mock("react-router-dom", (): unknown => ({
   useNavigate: jest.fn(),
 }));
 
+jest.mock("@src/ui/ducks/app", (): unknown => ({
+  getMnemonic: jest.fn(),
+}));
+
 jest.mock("@src/ui/ducks/identities", (): unknown => ({
   clearHistory: jest.fn(),
   fetchHistory: jest.fn(),
@@ -141,6 +145,17 @@ describe("ui/pages/Settings/useSettings", () => {
     expect(mockNavigate).toBeCalledWith(Paths.DOWNLOAD_BACKUP);
   });
 
+  test("should go to reset password page properly", async () => {
+    const { result } = renderHook(() => useSettings());
+
+    await waitFor(() => result.current.isLoading === false);
+
+    await act(async () => Promise.resolve(result.current.onGoToResetPassword()));
+
+    expect(mockNavigate).toBeCalledTimes(1);
+    expect(mockNavigate).toBeCalledWith(Paths.RECOVER);
+  });
+
   test("should delete all identities properly", async () => {
     const { result } = renderHook(() => useSettings());
 
@@ -151,5 +166,16 @@ describe("ui/pages/Settings/useSettings", () => {
     expect(mockDispatch).toBeCalledTimes(2);
     expect(fetchHistory).toBeCalledTimes(1);
     expect(deleteAllIdentities).toBeCalledTimes(1);
+  });
+
+  test("should go to reveal mnemonic page properly", async () => {
+    const { result } = renderHook(() => useSettings());
+
+    await waitFor(() => result.current.isLoading === false);
+
+    await act(async () => Promise.resolve(result.current.onGoRevealMnemonic()));
+
+    expect(mockNavigate).toBeCalledTimes(1);
+    expect(mockNavigate).toBeCalledWith(Paths.REVEAL_MNEMONIC);
   });
 });

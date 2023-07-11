@@ -41,6 +41,14 @@ export default class CryptoService {
     return this;
   }
 
+  isAuthenticPassword(password: string): boolean {
+    if (this.secrets[ECryptMode.PASSWORD] !== password) {
+      throw new Error("Password doesn't match with current");
+    }
+
+    return true;
+  }
+
   clear(): void {
     this.secrets = {
       [ECryptMode.PASSWORD]: undefined,
@@ -89,14 +97,6 @@ export default class CryptoService {
 
   private generateHmac(ciphertext: string, password: string): string {
     return HmacSHA256(ciphertext, SHA256(password)).toString();
-  }
-
-  private isAuthenticPassword(password: string): boolean {
-    if (this.secrets[ECryptMode.PASSWORD] !== password) {
-      throw new Error("Password doesn't match with current");
-    }
-
-    return true;
   }
 
   private checkSecretInitialized(secret?: string): void {

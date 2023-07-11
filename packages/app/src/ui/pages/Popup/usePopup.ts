@@ -54,7 +54,7 @@ export const usePopup = (): IUsePopupData => {
     } else if (!isUnlocked) {
       navigate(Paths.LOGIN);
     } else if (!isMnemonicGenerated) {
-      navigate(Paths.MNEMONIC);
+      navigate(Paths.GENERATE_MNEMONIC);
     } else if (isShowRequestModal) {
       navigate(Paths.REQUESTS);
     } else if (redirect) {

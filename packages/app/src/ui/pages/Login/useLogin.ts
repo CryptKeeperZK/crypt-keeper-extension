@@ -9,10 +9,10 @@ import { useAppDispatch } from "@src/ui/ducks/hooks";
 
 export interface IUseLoginData {
   isLoading: boolean;
+  isShowPassword: boolean;
   errors: Partial<LoginFields>;
   register: UseFormRegister<LoginFields>;
   onSubmit: (event?: BaseSyntheticEvent) => Promise<void>;
-  isShowPassword: boolean;
   onShowPassword: () => void;
 }
 
@@ -51,12 +51,12 @@ export const useLogin = (): IUseLoginData => {
 
   return {
     isLoading: isLoading || isSubmitting,
+    isShowPassword,
     errors: {
       password: errors.password?.message,
     },
     register,
     onSubmit: handleSubmit(onSubmit),
-    isShowPassword,
     onShowPassword,
   };
 };

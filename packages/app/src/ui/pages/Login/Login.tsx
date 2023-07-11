@@ -40,7 +40,7 @@ const Login = (): JSX.Element => {
             isShowPassword={isShowPassword}
             label="Password"
             onShowPassword={onShowPassword}
-            {...register("password")}
+            {...register("password", { required: "Password is required" })}
           />
         </Box>
       </Box>

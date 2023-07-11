@@ -26,4 +26,47 @@ test.describe("recover", () => {
     await extension.activity.openTab();
     await expect(extension.activity.getByText("Password reset")).toHaveCount(1);
   });
+
+  test("should change password properly", async ({ page, cryptKeeperExtensionId, context }) => {
+    await createAccount({ page, cryptKeeperExtensionId, context });
+    await page.goto(`chrome-extension://${cryptKeeperExtensionId}/popup.html`);
+
+    const extension = new CryptKeeper(page);
+    await extension.focus();
+
+    await extension.settings.openPage();
+    await extension.settings.openTab("Security");
+    await extension.settings.goToChangePassword();
+
+    const mnemonic = await page.evaluate<string>("navigator.clipboard.readText()");
+    const newPassword = `${CRYPT_KEEPER_PASSWORD}new`;
+
+    await extension.recover.checkMnemonic(mnemonic);
+    await extension.recover.resetPassword(newPassword);
+
+    await lockAccount({ page, cryptKeeperExtensionId, context });
+    await unlockAccount({ page, cryptKeeperExtensionId, context }, newPassword);
+
+    await expect(page.getByTestId("home-page")).toBeVisible();
+
+    await extension.activity.openTab();
+    await expect(extension.activity.getByText("Password reset")).toHaveCount(1);
+  });
+
+  test("should reveal mnemonic phrase properly", async ({ page, cryptKeeperExtensionId, context }) => {
+    await createAccount({ page, cryptKeeperExtensionId, context });
+    await page.goto(`chrome-extension://${cryptKeeperExtensionId}/popup.html`);
+
+    const extension = new CryptKeeper(page);
+    await extension.focus();
+
+    await extension.settings.openPage();
+    await extension.settings.openTab("Security");
+    await extension.settings.goToRevealMnemonic();
+
+    const mnemonic = await page.evaluate<string>("navigator.clipboard.readText()");
+    const revealedMnemonic = await extension.recover.getMnemonic(CRYPT_KEEPER_PASSWORD);
+
+    expect(revealedMnemonic).toBe(mnemonic);
+  });
 });

@@ -41,6 +41,8 @@ describe("ui/pages/Settings", () => {
     onGoBack: jest.fn(),
     onGoToBackup: jest.fn(),
     onDeleteAllIdentities: jest.fn(),
+    onGoToResetPassword: jest.fn(),
+    onGoRevealMnemonic: jest.fn(),
   };
 
   beforeEach(() => {
@@ -83,6 +85,22 @@ describe("ui/pages/Settings", () => {
     await waitFor(() => container.firstChild !== null);
 
     const section = await findByTestId("advanced-settings");
+
+    expect(section).toBeInTheDocument();
+  });
+
+  test("should render security section properly", async () => {
+    (useSettings as jest.Mock).mockReturnValue({ ...defaultHookData, tab: SettingsTabs.SECURITY });
+
+    const { container, findByTestId } = render(
+      <Suspense>
+        <Settings />
+      </Suspense>,
+    );
+
+    await waitFor(() => container.firstChild !== null);
+
+    const section = await findByTestId("security-settings");
 
     expect(section).toBeInTheDocument();
   });

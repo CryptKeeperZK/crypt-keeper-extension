@@ -5,14 +5,14 @@
 import { act, render, waitFor } from "@testing-library/react";
 
 import Mnemonic from "..";
-import { IUseMnemonicData, useMnemonic } from "../useMnemonic";
+import { IUseGenerateMnemonicData, useGenerateMnemonic } from "../useGenerateMnemonic";
 
-jest.mock("../useMnemonic", (): unknown => ({
-  useMnemonic: jest.fn(),
+jest.mock("../useGenerateMnemonic", (): unknown => ({
+  useGenerateMnemonic: jest.fn(),
 }));
 
-describe("ui/pages/Mnemonic", () => {
-  const defaultHookData: IUseMnemonicData = {
+describe("ui/pages/GenerateMnemonic", () => {
+  const defaultHookData: IUseGenerateMnemonicData = {
     isLoading: false,
     error: "",
     mnemonic: "mnemonic",
@@ -20,7 +20,7 @@ describe("ui/pages/Mnemonic", () => {
   };
 
   beforeEach(() => {
-    (useMnemonic as jest.Mock).mockReturnValue(defaultHookData);
+    (useGenerateMnemonic as jest.Mock).mockReturnValue(defaultHookData);
   });
 
   afterEach(() => {
@@ -31,13 +31,13 @@ describe("ui/pages/Mnemonic", () => {
     const { container, findByTestId } = render(<Mnemonic />);
     await waitFor(() => container.firstChild !== null);
 
-    const page = await findByTestId("mnemonic-page");
+    const page = await findByTestId("generate-mnemonic-page");
 
     expect(page).toBeInTheDocument();
   });
 
   test("should render error properly", async () => {
-    (useMnemonic as jest.Mock).mockReturnValue({ ...defaultHookData, mnemonic: undefined, error: "error" });
+    (useGenerateMnemonic as jest.Mock).mockReturnValue({ ...defaultHookData, mnemonic: undefined, error: "error" });
 
     const { container, findByText } = render(<Mnemonic />);
     await waitFor(() => container.firstChild !== null);

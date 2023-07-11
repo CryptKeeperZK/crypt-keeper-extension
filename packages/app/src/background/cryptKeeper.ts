@@ -85,6 +85,7 @@ export default class CryptKeeperController {
     // lock
     this.handler.add(RPCAction.SETUP_PASSWORD, this.lockService.setupPassword);
     this.handler.add(RPCAction.RESET_PASSWORD, this.lockService.resetPassword);
+    this.handler.add(RPCAction.CHECK_PASSWORD, this.lockService.ensure, this.lockService.checkPassword);
 
     // Identities
     this.handler.add(RPCAction.GET_COMMITMENTS, this.lockService.ensure, this.zkIdentityService.getIdentityCommitments);
@@ -133,6 +134,7 @@ export default class CryptKeeperController {
     this.handler.add(RPCAction.SELECT_ACCOUNT, this.lockService.ensure, this.walletService.selectAccount);
     this.handler.add(RPCAction.GET_SELECTED_ACCOUNT, this.lockService.ensure, this.walletService.getSelectedAccount);
     this.handler.add(RPCAction.CHECK_MNEMONIC, this.walletService.checkMnemonic);
+    this.handler.add(RPCAction.GET_MNEMONIC, this.lockService.ensure, this.walletService.getMnemonic);
 
     // Injector
     this.handler.add(RPCAction.CONNECT, this.injectorService.connect);
