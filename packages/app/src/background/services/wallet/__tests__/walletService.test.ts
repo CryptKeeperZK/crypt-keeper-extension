@@ -147,6 +147,16 @@ describe("background/services/wallet", () => {
       expect(mnemonic).toBe(defaultMnemonic);
     });
 
+    test("should generate mnemonic with user option properly", async () => {
+      (SimpleStorage as jest.Mock).mock.instances.forEach((instance: MockStorage) => {
+        instance.get.mockReturnValue(undefined);
+      });
+
+      const mnemonic = await walletService.generateMnemonic(defaultMnemonic);
+
+      expect(mnemonic).toBe(defaultMnemonic);
+    });
+
     test("should throw an error if key pair is already created", async () => {
       await expect(walletService.generateMnemonic()).rejects.toThrowError("Key pair is already generated");
     });

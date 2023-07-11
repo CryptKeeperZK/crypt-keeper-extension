@@ -64,14 +64,11 @@ const MnemonicInputUI = (
         {...rest}
       />
 
-      <Typography sx={{ color: "error.main" }} variant="body2">
-        {errorMessage}
-      </Typography>
-
       {!hideOptions && (
-        <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between", my: 2, width: "100%" }}>
+        <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between", mt: 1, width: "100%" }}>
           <Button
             disabled={isCopied}
+            size="small"
             sx={{ mr: 1, textTransform: "none", width: "100%" }}
             variant="outlined"
             onClick={onCopy}
@@ -81,6 +78,7 @@ const MnemonicInputUI = (
 
           <Button
             disabled={isDownloaded}
+            size="small"
             sx={{ ml: 1, textTransform: "none", width: "100%" }}
             variant="outlined"
             onClick={onDownload}
@@ -89,6 +87,10 @@ const MnemonicInputUI = (
           </Button>
         </Box>
       )}
+
+      <Typography sx={{ color: "error.main", my: 1, height: 20 }} variant="body2">
+        {errorMessage}
+      </Typography>
     </Box>
   );
 };

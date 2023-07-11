@@ -45,7 +45,7 @@ export default class WalletService implements IBackupable {
     return WalletService.INSTANCE;
   };
 
-  generateMnemonic = async (): Promise<string> => {
+  generateMnemonic = async (userMnemonic?: string): Promise<string> => {
     const accounts = await this.accountStorage.get<string>();
 
     if (accounts) {
@@ -54,11 +54,11 @@ export default class WalletService implements IBackupable {
 
     const encryptedMnemonic = await this.mnemonicStorage.get<string>();
 
-    if (encryptedMnemonic) {
+    if (encryptedMnemonic && !userMnemonic) {
       return this.cryptoService.decrypt(encryptedMnemonic, { mode: ECryptMode.PASSWORD });
     }
 
-    const mnemonic = generateMnemonic();
+    const mnemonic = userMnemonic ?? generateMnemonic();
     this.cryptoService.setMnemonic(mnemonic);
     const encrypted = this.cryptoService.encrypt(mnemonic, { mode: ECryptMode.PASSWORD });
     await this.mnemonicStorage.set(encrypted);

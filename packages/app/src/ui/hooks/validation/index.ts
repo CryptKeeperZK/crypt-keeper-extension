@@ -1,9 +1,16 @@
 import { useCallback } from "react";
+import { object, string, type Schema, type ValidationError } from "yup";
 
-import type { Schema, ValidationError } from "yup";
+import { validateMnemonic } from "@src/background/services/mnemonic";
 
 export type ValidationResolver<T> = (data: T) => Promise<{ values: T; errors: Errors }>;
 type Errors = Record<string, { type: string; message: string }>;
+
+export const mnemonicValidationSchema = object({
+  mnemonic: string()
+    .test("mnemonic", "Mnemonic is invalid", (mnemonic?: string) => (mnemonic ? validateMnemonic(mnemonic) : false))
+    .required("Mnemonic is required"),
+});
 
 export const useValidationResolver = <T>(validationSchema: Schema<T>): ValidationResolver<T> =>
   useCallback(

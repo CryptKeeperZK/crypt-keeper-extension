@@ -6,7 +6,7 @@ export default class Recover extends BasePage {
   }
 
   async checkMnemonic(mnemonic: string): Promise<void> {
-    await this.page.getByTestId("mnemonic-input").type(mnemonic);
+    await this.page.getByTestId("mnemonic-input").locator("textarea").first().type(mnemonic);
     await this.page.getByText("Restore", { exact: true }).click();
   }
 

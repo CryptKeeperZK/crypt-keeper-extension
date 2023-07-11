@@ -27,6 +27,7 @@ jest.mock("@src/ui/ducks/app", (): unknown => ({
 }));
 
 jest.mock("@src/ui/hooks/validation", (): unknown => ({
+  ...jest.requireActual("@src/ui/hooks/validation"),
   useValidationResolver: jest.fn(),
 }));
 

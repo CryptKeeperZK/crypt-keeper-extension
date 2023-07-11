@@ -4,10 +4,19 @@ import { CRYPT_KEEPER_PASSWORD } from "../constants";
 import { type TestExtension, expect } from "../fixtures";
 import { CryptKeeper } from "../pages";
 
-export async function createAccount({ page }: TestExtension): Promise<void> {
+interface ICreateAccountArgs extends TestExtension {
+  password?: string;
+  mnemonic?: string;
+}
+
+export async function createAccount({
+  page,
+  password = CRYPT_KEEPER_PASSWORD,
+  mnemonic,
+}: ICreateAccountArgs): Promise<void> {
   const cryptKeeper = await connectCryptKeeper(page);
 
-  await cryptKeeper.createAccount(CRYPT_KEEPER_PASSWORD);
+  await cryptKeeper.createAccount({ password, mnemonic });
   await cryptKeeper.approve();
   await cryptKeeper.connectIdentity();
 
@@ -28,10 +37,15 @@ export async function connectWallet({ page, cryptKeeperExtensionId }: TestExtens
   await cryptKeeper.connectWallet();
 }
 
-export async function unlockAccount(
-  { page, cryptKeeperExtensionId }: TestExtension,
+interface IUnlockAccountArgs extends TestExtension {
+  password?: string;
+}
+
+export async function unlockAccount({
+  page,
+  cryptKeeperExtensionId,
   password = CRYPT_KEEPER_PASSWORD,
-): Promise<void> {
+}: IUnlockAccountArgs): Promise<void> {
   const cryptKeeper = new CryptKeeper(page);
   await cryptKeeper.openPopup(cryptKeeperExtensionId);
 

@@ -8,6 +8,12 @@ import Identities from "./Identities";
 import Recover from "./Recover";
 import Settings from "./Settings";
 
+interface ICreateAccountArgs {
+  password: string;
+  confirmPassword?: string;
+  mnemonic?: string;
+}
+
 export default class CryptKeeper extends BasePage {
   activity = new Activity(this.page);
 
@@ -42,11 +48,20 @@ export default class CryptKeeper extends BasePage {
     await metamaskCommands.acceptAccess();
   }
 
-  async createAccount(password: string, confirmPassword = password): Promise<void> {
+  async createAccount({ password, confirmPassword = password, mnemonic }: ICreateAccountArgs): Promise<void> {
     await this.page.getByLabel("Password", { exact: true }).type(password);
     await this.page.getByLabel("Confirm Password", { exact: true }).type(confirmPassword);
     await this.page.getByText("Continue", { exact: true }).click();
-    await this.page.getByText("Copy").click();
+
+    if (!mnemonic) {
+      await this.page.getByText("Copy").click();
+    }
+
+    if (mnemonic) {
+      await this.page.getByTestId("change-mode-button").click();
+      await this.page.getByTestId("mnemonic-input").locator("textarea").first().type(mnemonic);
+    }
+
     await this.page.getByText("Get started!", { exact: true }).click();
   }
 
