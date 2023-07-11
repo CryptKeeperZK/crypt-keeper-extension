@@ -3,8 +3,9 @@ import "subworkers";
 import browser from "webextension-polyfill";
 
 import CryptKeeperController from "@src/background/cryptKeeper";
-import { deferredPromise } from "@src/background/shared/utils";
+import { createChromeOffscreen, deferredPromise, getBrowserPlatform } from "@src/background/shared/utils";
 import { isDebugMode } from "@src/config/env";
+import { BROWSER_PLATFORM_FIREFOX } from "@src/constants";
 import { RequestHandler } from "@src/types";
 
 import "./appInit";
@@ -31,13 +32,19 @@ browser.runtime.onConnect.addListener(async () => {
 });
 
 try {
+  const browserPlatform = getBrowserPlatform();
   const app = new CryptKeeperController();
 
   app.initialize();
 
   browser.runtime.onMessage.addListener(async (request: RequestHandler) => {
+    log.debug("Background: request: ", request);
+
+    if (browserPlatform !== BROWSER_PLATFORM_FIREFOX && request.isOffscreen) {
+      await createChromeOffscreen();
+    }
+
     try {
-      log.debug("Background: request: ", request);
       const response = await app.handle(request);
       log.debug("Background: response: ", response);
       return [null, response];
