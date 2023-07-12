@@ -21,11 +21,11 @@ describe("connectors/cryptKeeper", () => {
     resetState: jest.fn(),
   };
 
-  type MockProvider = {
+  interface MockProvider {
     isCryptKeeper: boolean;
     accounts: () => Promise<string[]>;
     connect: () => Promise<void>;
-  };
+  }
 
   const mockProvider = new EventEmitter2() as MockProvider & EventEmitter2;
 

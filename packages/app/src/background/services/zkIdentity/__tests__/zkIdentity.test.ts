@@ -68,7 +68,11 @@ jest.mock("@cryptkeeperzk/zk", (): unknown => ({
   createNewIdentity: jest.fn(),
 }));
 
-type MockStorage = { get: jest.Mock; set: jest.Mock; clear: jest.Mock };
+interface MockStorage {
+  get: jest.Mock;
+  set: jest.Mock;
+  clear: jest.Mock;
+}
 
 describe("background/services/zkIdentity", () => {
   const zkIdentityService = ZkIdentityService.getInstance();

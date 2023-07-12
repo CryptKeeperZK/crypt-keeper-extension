@@ -38,11 +38,6 @@ export const test = base.extend<TestExtension>({
         test.expect(context.serviceWorkers()).toHaveLength(1);
       });
 
-      let [background] = context.serviceWorkers();
-      if (!background) {
-        background = await context.waitForEvent("serviceworker");
-      }
-
       const [metamaskBackground] = context.backgroundPages();
       await metamaskBackground.waitForTimeout(2000);
       // eslint-disable-next-line no-console
@@ -63,10 +58,7 @@ export const test = base.extend<TestExtension>({
 
   cryptKeeperExtensionId: [
     async ({ context }, use) => {
-      let [background] = context.serviceWorkers();
-      if (!background) {
-        background = await context.waitForEvent("serviceworker");
-      }
+      const [background] = context.serviceWorkers();
 
       const extensionId = background.url().split("/")[2];
       await use(extensionId);

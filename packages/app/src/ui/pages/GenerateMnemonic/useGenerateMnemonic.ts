@@ -63,7 +63,7 @@ export const useGenerateMnemonic = (): IUseGenerateMnemonicData => {
 
   const onChooseGenerateMode = useCallback(() => {
     setMode(EGenerateMnemonicMode.GENERATE);
-    setValue("mnemonic", generatedMnemonic as string);
+    setValue("mnemonic", generatedMnemonic!);
   }, [generatedMnemonic, setMode, setValue]);
 
   const onChooseInputMode = useCallback(() => {

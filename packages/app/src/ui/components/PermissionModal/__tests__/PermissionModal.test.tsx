@@ -41,7 +41,7 @@ describe("ui/components/ConnectionModal/ConnectionModal", () => {
     render(<PermissionModal {...defaultProps} />);
 
     const modal = await screen.findByTestId("connection-modal");
-    const host = await screen.findByText(defaultHookData.url?.host as string);
+    const host = await screen.findByText(defaultHookData.url!.host);
 
     expect(modal).toBeInTheDocument();
     expect(host).toBeInTheDocument();

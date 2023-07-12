@@ -77,7 +77,7 @@ export const useCreateIdentity = (): IUseCreateIdentityData => {
           web2Provider: web2Provider.value as IdentityWeb2Provider,
           nonce,
           identityStrategyType: identityStrategyType.value as IdentityStrategy,
-          account: account as string,
+          account: account!,
         });
 
         const options =
@@ -85,10 +85,10 @@ export const useCreateIdentity = (): IUseCreateIdentityData => {
             ? {
                 nonce,
                 web2Provider: web2Provider.value as IdentityWeb2Provider,
-                account: account as string,
+                account: account!,
                 message,
               }
-            : { message, account: account as string };
+            : { message, account: account! };
 
         const messageSignature =
           walletType === EWallet.ETH_WALLET

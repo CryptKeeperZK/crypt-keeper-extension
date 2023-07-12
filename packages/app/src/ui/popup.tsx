@@ -39,7 +39,7 @@ browser.runtime.onMessage.addListener((action?: AnyAction) => {
 browser.tabs.query({ active: true, currentWindow: true }).then(() => {
   browser.runtime.connect();
 
-  const root = ReactDOM.createRoot(document.getElementById("popup") as HTMLElement);
+  const root = ReactDOM.createRoot(document.getElementById("popup")!);
 
   library.add(faTwitter, faGithub, faReddit, faLink);
 

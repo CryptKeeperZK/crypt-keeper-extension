@@ -47,7 +47,7 @@ const App = () => {
     return <NotConnected onClick={connect} />;
   }
 
-  if (!connectedIdentity?.commitment) {
+  if (!connectedIdentity.commitment) {
     return <NoConnectedIdentityCommitment onConnectIdentity={connectIdentity} />;
   }
 
@@ -90,7 +90,12 @@ const App = () => {
       <div>
         <h2>Semaphore</h2>
 
-        <button type="button" onClick={() => genSemaphoreProof(MerkleProofType.STORAGE_ADDRESS)}>
+        <button
+          type="button"
+          onClick={() => {
+            genSemaphoreProof(MerkleProofType.STORAGE_ADDRESS);
+          }}
+        >
           Generate proof from merkle proof storage address
         </button>
 
@@ -98,7 +103,12 @@ const App = () => {
 
         <br />
 
-        <button type="button" onClick={() => genSemaphoreProof(MerkleProofType.ARTIFACTS)}>
+        <button
+          type="button"
+          onClick={() => {
+            genSemaphoreProof(MerkleProofType.ARTIFACTS);
+          }}
+        >
           Generate proof from merkle proof artifacts
         </button>
       </div>
@@ -131,6 +141,6 @@ const App = () => {
 };
 
 const container = document.getElementById("root");
-const root = createRoot(container as HTMLElement);
+const root = createRoot(container!);
 
 root.render(<App />);

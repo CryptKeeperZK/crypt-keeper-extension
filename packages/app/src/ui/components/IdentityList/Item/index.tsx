@@ -74,7 +74,7 @@ export const IdentityItem = ({
   );
 
   const handleGoToHost = useCallback(() => {
-    redirectToNewTab(metadata.host as string);
+    redirectToNewTab(metadata.host!);
   }, [metadata.host]);
 
   const features = getEnabledFeatures();

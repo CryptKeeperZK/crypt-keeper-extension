@@ -53,7 +53,7 @@ export async function getMerkleProof({
   return merkleStorageAddress
     ? getRemoteMerkleProof(merkleStorageAddress, bigintToHex(identityCommitment))
     : generateMerkleProof({
-        treeDepth: (merkleProofArtifacts as MerkleProofArtifacts).depth,
+        treeDepth: merkleProofArtifacts!.depth,
         member: identityCommitment,
         members: [identityCommitment],
       });

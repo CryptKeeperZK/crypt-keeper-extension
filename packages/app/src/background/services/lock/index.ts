@@ -111,7 +111,7 @@ export default class LockerService implements IBackupable {
     };
   };
 
-  awaitUnlock = async (): Promise<unknown | undefined> => {
+  awaitUnlock = async (): Promise<void> => {
     if (this.isUnlocked) {
       return undefined;
     }
@@ -210,7 +210,7 @@ export default class LockerService implements IBackupable {
     return decryptedPasswordChecker === this.passwordChecker;
   };
 
-  ensure = (payload: unknown = null): unknown | null | false => {
+  ensure = (payload: unknown = null): unknown => {
     if (!this.isUnlocked) {
       return false;
     }
@@ -238,9 +238,7 @@ export default class LockerService implements IBackupable {
 
     const tabs = await browser.tabs.query({ active: true });
 
-    await Promise.all(
-      tabs.map((tab) => browser.tabs.sendMessage(tab.id as number, setStatus(status)).catch(() => undefined)),
-    );
+    await Promise.all(tabs.map((tab) => browser.tabs.sendMessage(tab.id!, setStatus(status)).catch(() => undefined)));
 
     return status;
   };

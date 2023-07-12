@@ -1,4 +1,3 @@
-/* eslint-disable no-param-reassign */
 import { RPCAction } from "@cryptkeeperzk/providers";
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 import deepEqual from "fast-deep-equal";
@@ -23,10 +22,12 @@ const permissionsSlice = createSlice({
   initialState,
   reducers: {
     setPermission: (state: PermissionsState, action: PayloadAction<HostPermission>) => {
+      // eslint-disable-next-line no-param-reassign
       state.canSkipApprovals[action.payload.host] = action.payload;
     },
 
     removeHostPermission: (state: PermissionsState, action: PayloadAction<string>) => {
+      // eslint-disable-next-line @typescript-eslint/no-dynamic-delete, no-param-reassign
       delete state.canSkipApprovals[action.payload];
     },
   },

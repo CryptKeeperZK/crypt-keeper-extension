@@ -21,12 +21,12 @@ import { EventEmitter, EventHandler, EventName } from "../event";
 /**
  * Stores promises associated with message nonces.
  */
-const promises: {
-  [k: string]: {
-    resolve: (res?: unknown) => void;
-    reject: (reason?: unknown) => void;
-  };
-} = {};
+const promises = new Map<string, Handlers>();
+
+interface Handlers {
+  resolve: (res?: unknown) => void;
+  reject: (reason?: unknown) => void;
+}
 
 /**
  * Represents the CryptKeeper provider that is injected into the application.
@@ -117,7 +117,7 @@ export class CryptKeeperInjectedProvider {
 
     const connectedIdentity = await this.getConnectedIdentity();
 
-    if (!connectedIdentity?.commitment) {
+    if (!connectedIdentity.commitment) {
       await this.connectIdentity({ host: window.location.origin });
     }
 
@@ -165,7 +165,7 @@ export class CryptKeeperInjectedProvider {
         "*",
       );
 
-      promises[messageNonce] = { resolve, reject };
+      promises.set(messageNonce.toString(), { resolve, reject });
     });
   }
 
@@ -218,7 +218,7 @@ export class CryptKeeperInjectedProvider {
   eventResponser = (event: MessageEvent<InjectedMessageData>): unknown => {
     const { data } = event;
 
-    if (data && data.target === "injected-injectedscript") {
+    if (data.target === "injected-injectedscript") {
       if (data.nonce === "identityChanged") {
         const [, res] = data.payload;
         this.emit("identityChanged", res);
@@ -237,12 +237,12 @@ export class CryptKeeperInjectedProvider {
         return;
       }
 
-      if (!promises[data.nonce]) {
+      if (!promises.has(data.nonce.toString())) {
         return;
       }
 
       const [err, res] = data.payload;
-      const { resolve, reject } = promises[data.nonce];
+      const { reject, resolve } = promises.get(data.nonce.toString())!;
 
       if (err) {
         reject(new Error(err));
@@ -251,7 +251,7 @@ export class CryptKeeperInjectedProvider {
 
       resolve(res);
 
-      delete promises[data.nonce];
+      promises.delete(data.nonce.toString());
     }
   };
 

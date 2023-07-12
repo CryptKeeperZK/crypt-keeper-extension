@@ -58,7 +58,10 @@ jest.mock("@src/util/pushMessage");
 
 jest.mock("@src/background/services/storage");
 
-type MockStorage = { get: jest.Mock; set: jest.Mock };
+interface MockStorage {
+  get: jest.Mock;
+  set: jest.Mock;
+}
 
 describe("background/services/locker", () => {
   const lockService = LockerService.getInstance();

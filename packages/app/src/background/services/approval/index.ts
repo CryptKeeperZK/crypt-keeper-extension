@@ -79,7 +79,7 @@ export default class ApprovalService implements IBackupable {
 
   /** dev only */
   clear = async (): Promise<void> => {
-    if (!["development", "test"].includes(process.env.NODE_ENV as string)) {
+    if (!["development", "test"].includes(process.env.NODE_ENV!)) {
       return;
     }
 

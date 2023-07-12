@@ -45,8 +45,8 @@ export const createMockConnectorHooks = ({
   useIsActivating: (): boolean => isActivating,
   useIsActive: (): boolean => isActive,
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore
-  useProvider: (): unknown | undefined => provider,
+  // @ts-expect-error
+  useProvider: (): unknown => provider,
 });
 
 export const [mockConnector] = initializeConnector<MockConnector>((actions) => new MockConnector(actions));

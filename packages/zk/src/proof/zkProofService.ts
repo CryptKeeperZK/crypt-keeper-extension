@@ -5,7 +5,7 @@ import type { RLNFullProof, RLNProofRequest, SemaphoreProof, SemaphoreProofReque
 import { SemaphoreProofService, RLNProofService } from "./protocols";
 
 export class ZkProofService {
-  private static INSTANCE: ZkProofService;
+  private static INSTANCE?: ZkProofService;
 
   private semapohreProofService: SemaphoreProofService;
 

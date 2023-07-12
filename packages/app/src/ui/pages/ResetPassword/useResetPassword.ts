@@ -52,7 +52,7 @@ export const useResetPassword = (): IUseResetPasswordData => {
     },
   });
 
-  const mnemonic = searchParams.get("mnemonic") as string;
+  const mnemonic = searchParams.get("mnemonic")!;
 
   const onSubmit = useCallback(
     (data: PasswordFormFields) => {

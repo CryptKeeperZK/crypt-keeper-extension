@@ -18,6 +18,10 @@ Object.defineProperty(global, "chrome", {
 });
 
 describe("background/shared/utils", () => {
+  afterEach(() => {
+    jest.clearAllMocks();
+  });
+
   test("should create deferred promise and resolve properly", () => {
     const { promise, resolve, reject } = deferredPromise();
 
@@ -86,15 +90,23 @@ describe("background/shared/utils", () => {
     expect(browserPlatform).toBe(BrowserPlatform.Brave);
   });
 
-  test("should be able to create a chrome offscreen", async () => {
+  test("should create a chrome offscreen properly", async () => {
     await createChromeOffscreen();
-    expect(global.chrome.offscreen.hasDocument).toBeCalled();
-    expect(global.chrome.offscreen.hasDocument).toBeCalledTimes(2);
-    expect(global.chrome.offscreen.createDocument).toBeCalledTimes(2);
+
+    expect(global.chrome.offscreen.hasDocument).toBeCalledTimes(1);
+    expect(global.chrome.offscreen.createDocument).toBeCalledTimes(1);
     expect(global.chrome.offscreen.createDocument).toHaveBeenCalledWith({
       url: "offscreen.html",
       reasons: [global.chrome.offscreen.Reason.DOM_SCRAPING],
       justification: "Cryptkeeper Offscrreen for generating ZKP",
     });
+  });
+
+  test("should not create offscreen if there is a document", async () => {
+    (global.chrome.offscreen.hasDocument as jest.Mock).mockReturnValue(true);
+    await createChromeOffscreen();
+
+    expect(global.chrome.offscreen.hasDocument).toBeCalledTimes(1);
+    expect(global.chrome.offscreen.createDocument).toBeCalledTimes(0);
   });
 });

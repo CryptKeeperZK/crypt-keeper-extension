@@ -60,14 +60,14 @@ export default class CryptoService {
     const encryptionKey = secret || this.secrets[mode];
     this.checkSecretInitialized(encryptionKey);
 
-    return AES.encrypt(text, encryptionKey as string).toString();
+    return AES.encrypt(text, encryptionKey!).toString();
   }
 
   decrypt(ciphertext: string, { secret, mode = ECryptMode.PASSWORD }: IDecryptArgs = {}): string {
     const encryptionKey = secret || this.secrets[mode];
     this.checkSecretInitialized(encryptionKey);
 
-    const bytes = AES.decrypt(ciphertext, encryptionKey as string);
+    const bytes = AES.decrypt(ciphertext, encryptionKey!);
     return bytes.toString(enc.Utf8);
   }
 

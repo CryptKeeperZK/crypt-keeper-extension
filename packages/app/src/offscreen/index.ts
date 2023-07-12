@@ -1,3 +1,3 @@
-function isTrueOffscreen() {
+export function isTrueOffscreen(): boolean {
   return true;
 }

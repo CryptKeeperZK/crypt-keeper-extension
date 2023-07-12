@@ -17,7 +17,11 @@ jest.mock("@src/background/services/crypto", (): unknown => ({
 
 jest.mock("@src/background/services/storage");
 
-type MockStorage = { get: jest.Mock; set: jest.Mock; clear: jest.Mock };
+interface MockStorage {
+  get: jest.Mock;
+  set: jest.Mock;
+  clear: jest.Mock;
+}
 
 describe("background/services/approval", () => {
   const approvalService = ApprovalService.getInstance();

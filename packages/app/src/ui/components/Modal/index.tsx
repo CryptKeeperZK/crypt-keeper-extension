@@ -19,11 +19,11 @@ export const Modal = ({ className, onClose, children, ...rest }: ModalProps): JS
 
   return ReactDOM.createPortal(
     <Box {...rest} className="modal__overlay" role="none" onClick={onClose}>
-      <Box className={`modal__wrapper ${className as string}`} role="dialog" onClick={onClick}>
+      <Box className={`modal__wrapper ${className!}`} role="dialog" onClick={onClick}>
         {children}
       </Box>
     </Box>,
-    modalRoot as HTMLDivElement,
+    modalRoot!,
   );
 };
 
