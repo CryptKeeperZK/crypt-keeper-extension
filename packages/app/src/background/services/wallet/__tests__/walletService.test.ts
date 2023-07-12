@@ -193,7 +193,7 @@ describe("background/services/wallet", () => {
             publicKey: "0x031bd64c030e0a6233ef38aed1df3922219e547a240c7dc8635749163ec1a0abe7",
             privateKey: "0x9fa9d5f518423d22cb38d58b659c931a85e93f03d754bcc34f5adf349cb5459c",
             address: ZERO_ADDRESS,
-          } as unknown as HDNodeWallet),
+          }) as unknown as HDNodeWallet,
       );
 
       const [accountStorage] = (SimpleStorage as jest.Mock).mock.instances as [MockStorage];

@@ -6,7 +6,10 @@
   width: 1.25rem;
   border-radius: 0.1875rem;
   cursor: pointer;
-  transition: background-color 200ms ease-in-out, border-color 200ms ease-in-out, color 200ms ease-in-out;
+  transition:
+    background-color 200ms ease-in-out,
+    border-color 200ms ease-in-out,
+    color 200ms ease-in-out;
   opacity: 1;
   border: 2px solid $gray-800;
 

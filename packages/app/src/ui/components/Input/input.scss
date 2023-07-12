@@ -8,7 +8,13 @@
   border: none;
   width: calc(100% - 2rem);
   color: $primary-text;
-  font-family: "Open Sans", -apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif;
+  font-family:
+    "Open Sans",
+    -apple-system,
+    BlinkMacSystemFont,
+    Helvetica,
+    Arial,
+    sans-serif;
 
   &--full-width {
     width: 100%;
