@@ -9,7 +9,7 @@ import { Paths } from "@src/constants";
 import { saveMnemonic, generateMnemonic, useAppStatus, useGeneratedMnemonic } from "@src/ui/ducks/app";
 import { useAppDispatch } from "@src/ui/ducks/hooks";
 
-import { useGenerateMnemonic } from "../useGenerateMnemonic";
+import { EGenerateMnemonicMode, useGenerateMnemonic } from "../useGenerateMnemonic";
 
 jest.mock("react-router-dom", () => ({
   useNavigate: jest.fn(),
@@ -24,6 +24,11 @@ jest.mock("@src/ui/ducks/app", (): unknown => ({
   generateMnemonic: jest.fn(),
   useAppStatus: jest.fn(),
   useGeneratedMnemonic: jest.fn(),
+}));
+
+jest.mock("@src/ui/hooks/validation", (): unknown => ({
+  ...jest.requireActual("@src/ui/hooks/validation"),
+  useValidationResolver: jest.fn(),
 }));
 
 describe("ui/pages/GenerateMnemonic/useGenerateMnemonic", () => {
@@ -57,8 +62,8 @@ describe("ui/pages/GenerateMnemonic/useGenerateMnemonic", () => {
     const { result } = renderHook(() => useGenerateMnemonic());
 
     expect(result.current.isLoading).toBe(false);
-    expect(result.current.mnemonic).toBe(defaultMnemonic);
-    expect(result.current.error).toBe("");
+    expect(result.current.errors).toStrictEqual({ mnemonic: undefined });
+    expect(result.current.mode).toBe(EGenerateMnemonicMode.GENERATE);
   });
 
   test("should redirect to home if mnemonic is generated", async () => {
@@ -93,6 +98,32 @@ describe("ui/pages/GenerateMnemonic/useGenerateMnemonic", () => {
     expect(mockNavigate).toBeCalledWith(Paths.HOME);
   });
 
+  test("should save user mnemonic and go home properly", async () => {
+    const { result } = renderHook(() => useGenerateMnemonic());
+
+    await act(() => Promise.resolve(result.current.onChooseInputMode()));
+    await act(() => Promise.resolve(result.current.onSaveMnemonic()));
+
+    expect(mockDispatch).toBeCalledTimes(2);
+    expect(generateMnemonic).toBeCalledTimes(1);
+    expect(saveMnemonic).toBeCalledTimes(1);
+    expect(mockNavigate).toBeCalledTimes(1);
+    expect(mockNavigate).toBeCalledWith(Paths.HOME);
+  });
+
+  test("should set error if generate mnemonic is not successful", async () => {
+    const error = new Error("error");
+    (useAppDispatch as jest.Mock).mockReturnValue(jest.fn(() => Promise.reject(error)));
+
+    const { result } = renderHook(() => useGenerateMnemonic());
+
+    await act(() => Promise.resolve(result.current.onChooseInputMode()));
+    await act(() => Promise.resolve(result.current.onSaveMnemonic()));
+
+    expect(result.current.errors.mnemonic).toBe(error.message);
+    expect(mockNavigate).toBeCalledTimes(0);
+  });
+
   test("should set error if save mnemonic is not successful", async () => {
     const error = new Error("error");
     (useAppDispatch as jest.Mock).mockReturnValue(jest.fn(() => Promise.reject(error)));
@@ -101,7 +132,17 @@ describe("ui/pages/GenerateMnemonic/useGenerateMnemonic", () => {
 
     await act(() => Promise.resolve(result.current.onSaveMnemonic()));
 
-    expect(result.current.error).toBe(error.message);
+    expect(result.current.errors.mnemonic).toBe(error.message);
     expect(mockNavigate).toBeCalledTimes(0);
+  });
+
+  test("should change modes properly", async () => {
+    const { result } = renderHook(() => useGenerateMnemonic());
+
+    await act(() => Promise.resolve(result.current.onChooseInputMode()));
+    expect(result.current.mode).toBe(EGenerateMnemonicMode.INPUT);
+
+    await act(() => Promise.resolve(result.current.onChooseGenerateMode()));
+    expect(result.current.mode).toBe(EGenerateMnemonicMode.GENERATE);
   });
 });

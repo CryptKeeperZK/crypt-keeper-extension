@@ -9,17 +9,7 @@ module.exports = {
     "@src/(.*)$": "<rootDir>/src/$1",
   },
   modulePathIgnorePatterns: ["<rootDir>/dist/"],
-  coveragePathIgnorePatterns: [
-    "/node_modules/",
-    "/test/",
-    "/__tests__/",
-    "/src/ui/popup.tsx",
-    "/src/ui/theme.ts",
-    "/src/background/backgroundPage.ts",
-    "/src/background/appInit.ts",
-    "/src/background/contentScript.ts",
-    "/src/background/injectedScript.ts",
-  ],
+  coveragePathIgnorePatterns: ["/node_modules/", "/test/", "/__tests__/"],
   collectCoverageFrom: ["src/**/*.{ts,tsx}"],
   coverageThreshold: {
     global: {

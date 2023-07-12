@@ -95,10 +95,12 @@ export const getWalletConnection =
     dispatch(appSlice.actions.setDisconnectedPermanently(Boolean(response?.isDisconnectedPermanently)));
   };
 
-export const generateMnemonic = (): TypedThunk<Promise<void>> => async (dispatch) => {
-  const mnemonic = await postMessage<string>({ method: RPCAction.GENERATE_MNEMONIC });
-  dispatch(appSlice.actions.setMnemonic(mnemonic));
-};
+export const generateMnemonic =
+  (userMnemonic?: string): TypedThunk<Promise<void>> =>
+  async (dispatch) => {
+    const mnemonic = await postMessage<string>({ method: RPCAction.GENERATE_MNEMONIC, payload: userMnemonic });
+    dispatch(appSlice.actions.setMnemonic(mnemonic));
+  };
 
 export const saveMnemonic = (): TypedThunk<Promise<void>> => async (dispatch) => {
   await postMessage({ method: RPCAction.SAVE_MNEMONIC });
