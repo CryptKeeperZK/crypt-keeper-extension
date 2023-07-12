@@ -24,7 +24,7 @@
   "devDependencies": {
     "@babel/eslint-parser": "^7.22.7",
     "@cryptkeeperzk/eslint-config-base": "workspace:^",
-    "@playwright/test": "^1.35.1",
+    "@playwright/test": "^1.36.0",
     "@synthetixio/synpress": "^3.7.1",
     "eslint": "^8.44.0",
     "eslint-plugin-playwright": "^0.15.3",
