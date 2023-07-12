@@ -4,20 +4,13 @@
 import chrome from "jest-chrome";
 
 import {
-  BROWSER_PLATFORM_BRAVE,
-  BROWSER_PLATFORM_CHROME,
-  BROWSER_PLATFORM_EDGE,
-  BROWSER_PLATFORM_FIREFOX,
-  BROWSER_PLATFORM_OPERA,
+  BrowserPlatform
 } from "@src/constants";
 
 import { createChromeOffscreen, deferredPromise, getBrowserPlatform } from "../utils";
 
-Object.assign(global, chrome);
-
-// Mock the chrome module
-jest.mock("jest-chrome", () => ({
-  chrome: {
+Object.defineProperty(global, "chrome", {
+  value: {
     offscreen: {
       hasDocument: jest.fn(),
       createDocument: jest.fn(),
@@ -25,8 +18,8 @@ jest.mock("jest-chrome", () => ({
         DOM_SCRAPING: "DOM_SCRAPING",
       })),
     },
-  },
-}));
+  }
+});
 
 describe("background/shared/utils", () => {
   test("should create deferred promise and resolve properly", () => {
@@ -51,7 +44,7 @@ describe("background/shared/utils", () => {
 
   test("should check the Chrome browser platform", () => {
     const browserPlatform = getBrowserPlatform();
-    expect(browserPlatform).toBe(BROWSER_PLATFORM_CHROME);
+    expect(browserPlatform).toBe(BrowserPlatform.Chrome);
   });
 
   test("should check the Firefox browser platform", () => {
@@ -61,7 +54,7 @@ describe("background/shared/utils", () => {
     });
 
     const browserPlatform = getBrowserPlatform();
-    expect(browserPlatform).toBe(BROWSER_PLATFORM_FIREFOX);
+    expect(browserPlatform).toBe(BrowserPlatform.Firefox);
   });
 
   test("should check the Edge browser platform", () => {
@@ -72,7 +65,7 @@ describe("background/shared/utils", () => {
     });
 
     const browserPlatform = getBrowserPlatform();
-    expect(browserPlatform).toBe(BROWSER_PLATFORM_EDGE);
+    expect(browserPlatform).toBe(BrowserPlatform.Edge);
   });
 
   test("should check the Opera browser platform", () => {
@@ -83,7 +76,7 @@ describe("background/shared/utils", () => {
     });
 
     const browserPlatform = getBrowserPlatform();
-    expect(browserPlatform).toBe(BROWSER_PLATFORM_OPERA);
+    expect(browserPlatform).toBe(BrowserPlatform.Opera);
   });
 
   test("should check the Brave browser platform", () => {
@@ -94,7 +87,7 @@ describe("background/shared/utils", () => {
     Object.defineProperty(window.navigator, "brave", {});
 
     const browserPlatform = getBrowserPlatform();
-    expect(browserPlatform).toBe(BROWSER_PLATFORM_BRAVE);
+    expect(browserPlatform).toBe(BrowserPlatform.Brave);
   });
 
   test("should be able to create a chrome offscreen", async () => {

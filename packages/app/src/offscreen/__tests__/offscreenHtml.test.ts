@@ -7,7 +7,7 @@ import path from "path";
 
 const offscreenHtml = fs.readFileSync(path.resolve(__dirname, "../index.html"), "utf-8");
 
-describe("Offscreen Html", () => {
+describe("offscreen/index.html", () => {
   beforeEach(() => {
     document.documentElement.innerHTML = offscreenHtml.toString();
   });

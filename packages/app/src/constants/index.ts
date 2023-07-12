@@ -11,10 +11,12 @@ export const IDENTITY_TYPES: readonly SelectOption[] = [
   { value: "random", label: "Random", icon: null },
 ];
 
-export const BROWSER_PLATFORM_BRAVE = "Brave";
-export const BROWSER_PLATFORM_CHROME = "Chrome";
-export const BROWSER_PLATFORM_EDGE = "Edge";
-export const BROWSER_PLATFORM_FIREFOX = "Firefox";
-export const BROWSER_PLATFORM_OPERA = "Opera";
+export enum BrowserPlatform {
+  Brave = "Brave",
+  Chrome = "Chrome",
+  Edge = "Edge",
+  Firefox = "Firefox",
+  Opera = "Opera",
+}
 
-export * from "./paths";
+export { Paths } from "./paths";

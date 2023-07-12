@@ -1,10 +1,4 @@
-import {
-  BROWSER_PLATFORM_BRAVE,
-  BROWSER_PLATFORM_CHROME,
-  BROWSER_PLATFORM_EDGE,
-  BROWSER_PLATFORM_FIREFOX,
-  BROWSER_PLATFORM_OPERA,
-} from "@src/constants";
+import { BrowserPlatform } from "@src/constants";
 import { DeferredPromise } from "@src/types";
 
 /**
@@ -43,22 +37,25 @@ export function deferredPromise<T>(): DeferredPromise<T> {
  * @returns {string} the platform ENUM
  */
 export function getBrowserPlatform(): string {
-  const { navigator: browserNavigator } = window;
-  const { userAgent } = navigator;
+  const { userAgent } = window.navigator;
 
   if (userAgent.includes("Firefox")) {
-    return BROWSER_PLATFORM_FIREFOX;
+    return BrowserPlatform.Firefox;
   }
-  if ("brave" in browserNavigator) {
-    return BROWSER_PLATFORM_BRAVE;
+  
+  if ("brave" in window.navigator) {
+    return BrowserPlatform.Brave;
   }
+  
   if (userAgent.includes("Edg/")) {
-    return BROWSER_PLATFORM_EDGE;
+    return BrowserPlatform.Edge;
   }
+  
   if (userAgent.includes("OPR/")) {
-    return BROWSER_PLATFORM_OPERA;
+    return BrowserPlatform.Opera;
   }
-  return BROWSER_PLATFORM_CHROME;
+
+  return BrowserPlatform.Chrome;
 }
 
 /**
@@ -68,9 +65,12 @@ export function getBrowserPlatform(): string {
  * @returns {Promise<void>} A promise that resolves when the offscreen document is created or if it already exists.
  */
 export async function createChromeOffscreen(): Promise<void> {
-  if (await chrome.offscreen.hasDocument()) {
+  const isOffscreenAvaiable = await chrome.offscreen.hasDocument();
+
+  if (isOffscreenAvaiable) {
     return;
   }
+
   await chrome.offscreen.createDocument({
     url: "offscreen.html",
     reasons: [chrome.offscreen.Reason.DOM_SCRAPING],
