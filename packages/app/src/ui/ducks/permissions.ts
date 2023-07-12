@@ -10,11 +10,11 @@ import type { HostPermission } from "@cryptkeeperzk/types";
 import { useAppSelector } from "./hooks";
 
 export interface PermissionsState {
-  canSkipApprovals: Map<string, HostPermission>;
+  canSkipApprovals: Record<string, HostPermission>;
 }
 
 const initialState: PermissionsState = {
-  canSkipApprovals: new Map(),
+  canSkipApprovals: {},
 };
 
 const permissionsSlice = createSlice({
@@ -22,11 +22,13 @@ const permissionsSlice = createSlice({
   initialState,
   reducers: {
     setPermission: (state: PermissionsState, action: PayloadAction<HostPermission>) => {
-      state.canSkipApprovals.set(action.payload.host, action.payload);
+      // eslint-disable-next-line no-param-reassign
+      state.canSkipApprovals[action.payload.host] = action.payload;
     },
 
     removeHostPermission: (state: PermissionsState, action: PayloadAction<string>) => {
-      state.canSkipApprovals.delete(action.payload);
+      // eslint-disable-next-line @typescript-eslint/no-dynamic-delete, no-param-reassign
+      delete state.canSkipApprovals[action.payload];
     },
   },
 });
@@ -80,6 +82,6 @@ export const checkHostApproval =
     });
 
 export const useHostPermission = (host: string): HostPermission | undefined =>
-  useAppSelector((state) => state.permissions.canSkipApprovals.get(host), deepEqual);
+  useAppSelector((state) => state.permissions.canSkipApprovals[host], deepEqual);
 
 export default permissionsSlice.reducer;

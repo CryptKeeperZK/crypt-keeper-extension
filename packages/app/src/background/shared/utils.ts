@@ -36,7 +36,7 @@ export function deferredPromise<T>(): DeferredPromise<T> {
  *
  * @returns {string} the platform ENUM
  */
-export function getBrowserPlatform(): string {
+export function getBrowserPlatform(): BrowserPlatform {
   const { userAgent } = window.navigator;
 
   if (userAgent.includes("Firefox")) {
