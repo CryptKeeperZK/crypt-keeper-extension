@@ -1,11 +1,7 @@
 /**
  * @jest-environment jsdom
  */
-import chrome from "jest-chrome";
-
-import {
-  BrowserPlatform
-} from "@src/constants";
+import { BrowserPlatform } from "@src/constants";
 
 import { createChromeOffscreen, deferredPromise, getBrowserPlatform } from "../utils";
 
@@ -18,7 +14,7 @@ Object.defineProperty(global, "chrome", {
         DOM_SCRAPING: "DOM_SCRAPING",
       })),
     },
-  }
+  },
 });
 
 describe("background/shared/utils", () => {

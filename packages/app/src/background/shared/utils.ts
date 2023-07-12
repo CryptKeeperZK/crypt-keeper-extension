@@ -42,15 +42,15 @@ export function getBrowserPlatform(): string {
   if (userAgent.includes("Firefox")) {
     return BrowserPlatform.Firefox;
   }
-  
+
   if ("brave" in window.navigator) {
     return BrowserPlatform.Brave;
   }
-  
+
   if (userAgent.includes("Edg/")) {
     return BrowserPlatform.Edge;
   }
-  
+
   if (userAgent.includes("OPR/")) {
     return BrowserPlatform.Opera;
   }
