@@ -1,7 +1,13 @@
 @import "@src/util/variables";
 
 body {
-  font-family: "Open Sans", -apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif;
+  font-family:
+    "Open Sans",
+    -apple-system,
+    BlinkMacSystemFont,
+    Helvetica,
+    Arial,
+    sans-serif;
   margin: 0;
   padding: 0;
   background-color: $bg-black;

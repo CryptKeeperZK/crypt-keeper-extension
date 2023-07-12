@@ -69,7 +69,9 @@
   background-color: transparent;
   color: $primary-green;
   border: 2px solid $primary-green;
-  transition: background-color 150ms ease-in-out, color 150ms ease-in-out;
+  transition:
+    background-color 150ms ease-in-out,
+    color 150ms ease-in-out;
 
   &:hover {
     background-color: rgba($primary-green, 0.5);
