@@ -36,7 +36,7 @@ describe("ui/components/ConfirmRequestModal/components/ProofModal", () => {
   };
 
   const defaultHookData: IUseProofModalData = {
-    host: defaultProps.pendingRequest.payload?.origin as string,
+    host: defaultProps.pendingRequest.payload!.origin,
     faviconUrl: "",
     operation: "Generate Semaphore Proof",
     payload: defaultProps.pendingRequest.payload,

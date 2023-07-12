@@ -5,7 +5,7 @@
 import { act, render, screen } from "@testing-library/react";
 
 import { ZERO_ADDRESS } from "@src/config/const";
-import { IdentityData, Operation, OperationType } from "@src/types";
+import { Operation, OperationType } from "@src/types";
 
 import { ActivityItem, IActivityItemProps } from "../Item";
 
@@ -46,9 +46,9 @@ describe("ui/pages/Home/components/ActivityList/Item", () => {
     const operation: Operation = {
       ...defaultProps.operation,
       identity: {
-        ...(defaultProps.operation.identity as IdentityData),
+        ...defaultProps.operation.identity!,
         metadata: {
-          ...(defaultProps.operation.identity as IdentityData).metadata,
+          ...defaultProps.operation.identity!.metadata,
           web2Provider: undefined,
           identityStrategy: "random",
         },

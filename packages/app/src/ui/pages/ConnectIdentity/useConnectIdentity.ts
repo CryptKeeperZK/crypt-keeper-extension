@@ -34,7 +34,7 @@ export enum EConnectIdentityTabs {
 
 export const useConnectIdentity = (): IUseConnectIdentityData => {
   const { searchParams } = new URL(window.location.href.replace("#", ""));
-  const host = useMemo(() => searchParams.get("host") as string, [searchParams.toString()]);
+  const host = useMemo(() => searchParams.get("host")!, [searchParams.toString()]);
 
   const connectedIdentity = useConnectedIdentity();
   const linkedIdentities = useLinkedIdentities(host);
@@ -65,7 +65,7 @@ export const useConnectIdentity = (): IUseConnectIdentityData => {
   }, [dispatch, navigate]);
 
   const onConnect = useCallback(async () => {
-    await dispatch(connectIdentity({ identityCommitment: selectedIdentityCommitment as string, host }));
+    await dispatch(connectIdentity({ identityCommitment: selectedIdentityCommitment!, host }));
     await dispatch(closePopup()).then(() => navigate(-1));
   }, [selectedIdentityCommitment, host, dispatch]);
 

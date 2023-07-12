@@ -139,7 +139,7 @@ export default class ZkIdentityService implements IBackupable {
     return commitments
       .filter((commitment) => identities.has(commitment))
       .map((commitment) => {
-        const serializedIdentity = identities.get(commitment) as string;
+        const serializedIdentity = identities.get(commitment)!;
         const identity = ZkIdentitySemaphore.genFromSerialized(serializedIdentity);
 
         return {
@@ -205,7 +205,7 @@ export default class ZkIdentityService implements IBackupable {
       tabs.map((tab) =>
         browser.tabs
           .sendMessage(
-            tab.id as number,
+            tab.id!,
             setConnectedIdentity({
               commitment,
               web2Provider: metadata?.web2Provider,

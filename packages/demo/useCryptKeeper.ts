@@ -98,7 +98,9 @@ export const useCryptKeeper = (): IUseCryptKeeperData => {
         toast("Error while generating Semaphore proof!", { type: "error" });
         console.error(error);
       })
-      .finally(() => toast.dismiss(toastId));
+      .finally(() => {
+        toast.dismiss(toastId);
+      });
   };
 
   const genRLNProof = async (proofType: MerkleProofType = MerkleProofType.STORAGE_ADDRESS) => {
@@ -138,7 +140,9 @@ export const useCryptKeeper = (): IUseCryptKeeperData => {
         toast("Error while generating RLN proof!", { type: "error" });
         console.error(error);
       })
-      .finally(() => toast.dismiss(toastId));
+      .finally(() => {
+        toast.dismiss(toastId);
+      });
   };
 
   const getConnectedIdentity = useCallback(async () => {
@@ -193,13 +197,15 @@ export const useCryptKeeper = (): IUseCryptKeeperData => {
       return undefined;
     }
 
-    client?.on("login", onLogin);
-    client?.on("identityChanged", onIdentityChanged);
-    client?.on("logout", onLogout);
+    client.on("login", onLogin);
+    client.on("identityChanged", onIdentityChanged);
+    client.on("logout", onLogout);
 
     getConnectedIdentity();
 
-    return () => client?.cleanListeners();
+    return () => {
+      client.cleanListeners();
+    };
   }, [client, onLogout, onIdentityChanged, onLogin]);
 
   return {

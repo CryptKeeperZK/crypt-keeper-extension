@@ -9,14 +9,14 @@ const keys = ["XMLHttpRequest"];
 keys.forEach((key) => {
   if (!Reflect.has(globalThis, key)) {
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
+    // @ts-expect-error
     globalThis[key] = undefined;
   }
 });
 
 if (!Reflect.has(globalThis, "window")) {
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore
+  // @ts-expect-error
   globalThis.window = globalThis;
 }
 

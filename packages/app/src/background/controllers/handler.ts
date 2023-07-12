@@ -2,12 +2,12 @@ import { RequestHandler } from "@src/types";
 
 // TODO: eslint fix any
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-type HandlerType = (payload: any, meta?: any) => Promise<any> | any;
+type HandlerType = (payload: any, meta?: any) => any;
 
-type Chain = {
+interface Chain {
   middlewares: HandlerType[];
   handler: HandlerType;
-};
+}
 
 export default class Handler {
   private handlers: Map<string, Chain>;
@@ -16,7 +16,7 @@ export default class Handler {
     this.handlers = new Map();
   }
 
-  add = (method: string, ...args: Array<HandlerType>): void => {
+  add = (method: string, ...args: HandlerType[]): void => {
     const handler = args[args.length - 1];
     const middlewares = args.slice(0, args.length - 1);
     this.handlers.set(method, { middlewares, handler });

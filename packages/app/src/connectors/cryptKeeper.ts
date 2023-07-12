@@ -37,7 +37,7 @@ export class CryptkeeperConnector extends Connector {
     try {
       await this.initialize();
 
-      if (!this.customProvider || !this.customProvider.isCryptKeeper) {
+      if (!this.customProvider?.isCryptKeeper) {
         cancelActivation();
         return;
       }

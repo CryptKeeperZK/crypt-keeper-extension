@@ -81,7 +81,10 @@ module.exports = {
       extends: [
         "plugin:@typescript-eslint/eslint-recommended",
         "plugin:@typescript-eslint/recommended",
-        "plugin:@typescript-eslint/recommended-requiring-type-checking",
+        "plugin:@typescript-eslint/recommended-type-checked",
+        "plugin:@typescript-eslint/strict",
+        "plugin:@typescript-eslint/stylistic",
+        "plugin:@typescript-eslint/stylistic-type-checked",
         "plugin:import/typescript",
       ],
       plugins: ["@typescript-eslint", "prettier"],
@@ -91,6 +94,8 @@ module.exports = {
       },
       rules: {
         "@typescript-eslint/explicit-member-accessibility": ["error", { accessibility: "no-public" }],
+        "@typescript-eslint/no-non-null-assertion": "off",
+        "@typescript-eslint/prefer-nullish-coalescing": "off",
         "@typescript-eslint/no-floating-promises": "off",
         "@typescript-eslint/no-explicit-any": "error",
         "@typescript-eslint/explicit-module-boundary-types": "error",

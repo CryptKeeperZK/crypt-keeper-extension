@@ -50,7 +50,7 @@ describe("ui/pages/Home/useHome", () => {
     {
       commitment: "1",
       metadata: {
-        account: defaultWalletHookData.address as string,
+        account: defaultWalletHookData.address!,
         name: "Account #1",
         identityStrategy: "interrep",
         web2Provider: "twitter",
@@ -61,7 +61,7 @@ describe("ui/pages/Home/useHome", () => {
     {
       commitment: "2",
       metadata: {
-        account: defaultWalletHookData.address as string,
+        account: defaultWalletHookData.address!,
         name: "Account #2",
         identityStrategy: "random",
         groups: [],

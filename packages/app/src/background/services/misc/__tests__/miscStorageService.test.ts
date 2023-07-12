@@ -5,7 +5,10 @@ import SimpleStorage from "../../storage";
 
 jest.mock("../../storage");
 
-type MockStorage = { get: jest.Mock; set: jest.Mock };
+interface MockStorage {
+  get: jest.Mock;
+  set: jest.Mock;
+}
 
 describe("background/services/wallet", () => {
   const service = MiscStorageService.getInstance();

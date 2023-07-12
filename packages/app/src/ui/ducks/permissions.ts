@@ -1,4 +1,3 @@
-/* eslint-disable no-param-reassign */
 import { RPCAction } from "@cryptkeeperzk/providers";
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 import deepEqual from "fast-deep-equal";
@@ -11,11 +10,11 @@ import type { HostPermission } from "@cryptkeeperzk/types";
 import { useAppSelector } from "./hooks";
 
 export interface PermissionsState {
-  canSkipApprovals: Record<string, HostPermission>;
+  canSkipApprovals: Map<string, HostPermission>;
 }
 
 const initialState: PermissionsState = {
-  canSkipApprovals: {},
+  canSkipApprovals: new Map(),
 };
 
 const permissionsSlice = createSlice({
@@ -23,11 +22,11 @@ const permissionsSlice = createSlice({
   initialState,
   reducers: {
     setPermission: (state: PermissionsState, action: PayloadAction<HostPermission>) => {
-      state.canSkipApprovals[action.payload.host] = action.payload;
+      state.canSkipApprovals.set(action.payload.host, action.payload);
     },
 
     removeHostPermission: (state: PermissionsState, action: PayloadAction<string>) => {
-      delete state.canSkipApprovals[action.payload];
+      state.canSkipApprovals.delete(action.payload);
     },
   },
 });
@@ -81,6 +80,6 @@ export const checkHostApproval =
     });
 
 export const useHostPermission = (host: string): HostPermission | undefined =>
-  useAppSelector((state) => state.permissions.canSkipApprovals[host], deepEqual);
+  useAppSelector((state) => state.permissions.canSkipApprovals.get(host), deepEqual);
 
 export default permissionsSlice.reducer;

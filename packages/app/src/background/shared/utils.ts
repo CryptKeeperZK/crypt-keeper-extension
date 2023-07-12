@@ -23,7 +23,7 @@ export function deferredPromise<T>(): DeferredPromise<T> {
   let resolve: DeferredPromise<T>["resolve"];
   let reject: DeferredPromise<T>["reject"];
 
-  const promise: Promise<T> = new Promise((innerResolve, innerReject) => {
+  const promise = new Promise<T>((innerResolve, innerReject) => {
     resolve = innerResolve;
     reject = innerReject;
   });

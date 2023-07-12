@@ -56,7 +56,10 @@ jest.mock("@src/background/services/mnemonic", (): unknown => ({
   generateMnemonic: jest.fn(),
 }));
 
-type MockStorage = { get: jest.Mock; set: jest.Mock };
+interface MockStorage {
+  get: jest.Mock;
+  set: jest.Mock;
+}
 
 describe("background/services/wallet", () => {
   const walletService = WalletService.getInstance();

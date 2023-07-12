@@ -26,8 +26,8 @@ export const useValidationResolver = <T>(validationSchema: Schema<T>): Validatio
           const errors = error.inner.reduce(
             (allErrors: Errors, currentError: ValidationError) => ({
               ...allErrors,
-              [currentError.path as string]: {
-                type: currentError.type as string,
+              [currentError.path!]: {
+                type: currentError.type!,
                 message: currentError.message,
               },
             }),

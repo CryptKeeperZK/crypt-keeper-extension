@@ -6,5 +6,5 @@ export const createModalRoot = (): void => {
 
 export const deleteModalRoot = (): void => {
   const container = document.getElementById("modal");
-  document.body.removeChild(container as HTMLElement);
+  document.body.removeChild(container!);
 };
