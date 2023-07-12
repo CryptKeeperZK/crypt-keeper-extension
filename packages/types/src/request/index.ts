@@ -8,6 +8,7 @@ export interface RequestHandler<P = unknown, M = unknown> {
   payload?: P;
   error?: Error;
   meta?: M;
+  source?: "offscreen";
 }
 
 export enum PendingRequestType {

@@ -1,0 +1,3 @@
+function isTrueOffscreen() {
+  return true;
+}
