@@ -640,7 +640,7 @@ importers:
         version: 15.0.2(rollup@3.26.2)
       '@types/jest':
         specifier: ^29.5.2
-        version: 29.5.2
+        version: 29.5.3
       ffjavascript:
         specifier: ^0.2.54
         version: 0.2.55
@@ -4916,6 +4916,13 @@ packages:
       '@types/node': 20.3.1
       '@types/responselike': 1.0.0
     dev: false
+
+  /@types/chrome@0.0.114:
+    resolution: {integrity: sha512-i7qRr74IrxHtbnrZSKUuP5Uvd5EOKwlwJq/yp7+yTPihOXnPhNQO4Z5bqb1XTnrjdbUKEJicaVVbhcgtRijmLA==}
+    dependencies:
+      '@types/filesystem': 0.0.32
+      '@types/har-format': 1.2.11
+    dev: true
 
   /@types/chrome@0.0.241:
     resolution: {integrity: sha512-3WxC2D8zhyDnCU1GxyznoyUulLH6ReLWUWQm5LSM7S1rvV9w+k8TUNbWrFavk6zz2E1ws05lNawnSa7rK5kY8Q==}
@@ -13754,6 +13761,13 @@ packages:
       find-up: 4.1.0
     dev: true
 
+  /pkg-dir@5.0.0:
+    resolution: {integrity: sha512-NPE8TDbzl/3YQYY7CSS228s3g2ollTFnc+Qi3tqmqJp9Vg2ovUpixcJEo2HJScN2Ez+kEaal6y70c0ehqJBJeA==}
+    engines: {node: '>=10'}
+    dependencies:
+      find-up: 5.0.0
+    dev: true
+
   /playwright-core@1.36.0:
     resolution: {integrity: sha512-7RTr8P6YJPAqB+8j5ATGHqD6LvLLM39sYVNsslh78g8QeLcBs5750c6+msjrHUwwGt+kEbczBj1XB22WMwn+WA==}
     engines: {node: '>=16'}
@@ -17501,7 +17515,3 @@ packages:
       logplease: 1.2.15
       r1csfile: 0.0.46
     dev: false
-
-settings:
-  autoInstallPeers: true
-  excludeLinksFromLockfile: false
