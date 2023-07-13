@@ -2,6 +2,8 @@ import { RPCAction } from "@cryptkeeperzk/providers";
 
 import { BackupableServices, RequestHandler } from "@src/types";
 
+import type { Runtime } from "webextension-polyfill";
+
 import BrowserUtils from "./controllers/browserUtils";
 import Handler from "./controllers/handler";
 import RequestManager from "./controllers/requestManager";
@@ -14,6 +16,23 @@ import MiscStorageService from "./services/misc";
 import { validateZkInputs } from "./services/validation";
 import WalletService from "./services/wallet";
 import ZkIdentityService from "./services/zkIdentity";
+
+const RPC_METHOD_ACCESS: Record<RPCAction, boolean> = {
+  ...Object.values(RPCAction).reduce((acc, method) => ({ ...acc, [method]: false }), {} as Record<RPCAction, boolean>),
+  [RPCAction.CLOSE_POPUP]: true,
+  [RPCAction.CONNECT]: true,
+  [RPCAction.APPROVE_HOST]: true,
+  [RPCAction.GET_CONNECTED_IDENTITY_DATA]: true,
+  [RPCAction.CONNECT_IDENTITY_REQUEST]: true,
+  [RPCAction.GET_COMMITMENTS]: true,
+  [RPCAction.GET_HOST_PERMISSIONS]: true,
+  [RPCAction.SET_HOST_PERMISSIONS]: true,
+  [RPCAction.CREATE_IDENTITY_REQUEST]: true,
+  [RPCAction.PREPARE_SEMAPHORE_PROOF_REQUEST]: true,
+  [RPCAction.PREPARE_RLN_PROOF_REQUEST]: true,
+};
+
+Object.freeze(RPC_METHOD_ACCESS);
 
 export default class CryptKeeperController {
   private handler: Handler;
@@ -56,7 +75,8 @@ export default class CryptKeeperController {
       .add(BackupableServices.WALLET, this.walletService);
   }
 
-  handle = (request: RequestHandler): Promise<unknown> => this.handler.handle(request);
+  handle = (request: RequestHandler, sender: Runtime.MessageSender): Promise<unknown> =>
+    this.handler.handle(request, { sender, bypass: RPC_METHOD_ACCESS[request.method as RPCAction] });
 
   initialize = (): CryptKeeperController => {
     // common
