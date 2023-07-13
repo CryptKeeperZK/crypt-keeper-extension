@@ -1,14 +1,4 @@
-<<<<<<< HEAD
 import { BrowserPlatform } from "@src/constants";
-=======
-import {
-  BROWSER_PLATFORM_BRAVE,
-  BROWSER_PLATFORM_CHROME,
-  BROWSER_PLATFORM_EDGE,
-  BROWSER_PLATFORM_FIREFOX,
-  BROWSER_PLATFORM_OPERA,
-} from "@src/constants";
->>>>>>> db5a1f8 (feat: supporting offscreen feature for Chrome platform)
 import { DeferredPromise } from "@src/types";
 
 /**

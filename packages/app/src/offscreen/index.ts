@@ -16,10 +16,17 @@ const offscreenMessageListener = async (request: RequestHandler, sender: Runtime
     method,
     payload,
     meta,
-    isOffscreen
+    source
   } = request;
+<<<<<<< HEAD
   
 >>>>>>> 367f6fc (feat: working on offscreen controller)
+=======
+
+  if (source !== "offscreen") {
+    return;
+  }
+>>>>>>> 44e1165 (feat: working on offscreen controller)
 }
 
 browser.runtime.onMessage.addListener(offscreenMessageListener);
