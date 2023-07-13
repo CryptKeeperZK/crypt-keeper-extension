@@ -210,8 +210,8 @@ importers:
         specifier: ^2.4.2
         version: 2.4.2(redux@4.2.1)
       rlnjs:
-        specifier: ^2.0.8
-        version: 2.0.8
+        specifier: ^3.1.5
+        version: 3.1.5
       subworkers:
         specifier: ^1.0.1
         version: 1.0.1
@@ -394,8 +394,8 @@ importers:
         specifier: ^9.1.3
         version: 9.1.3(react-dom@18.2.0)(react@18.2.0)
       rlnjs:
-        specifier: ^2.0.8
-        version: 2.0.8
+        specifier: ^3.1.5
+        version: 3.1.5
     devDependencies:
       '@cryptkeeperzk/eslint-config-react':
         specifier: workspace:^
@@ -629,8 +629,8 @@ importers:
         specifier: ^8.0.0
         version: 8.0.0
       rlnjs:
-        specifier: ^2.0.8
-        version: 2.0.8
+        specifier: ^3.1.5
+        version: 3.1.5
     devDependencies:
       '@cryptkeeperzk/eslint-config-base':
         specifier: workspace:^
@@ -675,8 +675,8 @@ importers:
         specifier: ^1.1.0
         version: 1.1.0
       rlnjs:
-        specifier: ^2.0.8
-        version: 2.0.8
+        specifier: ^3.1.5
+        version: 3.1.5
     devDependencies:
       '@cryptkeeperzk/eslint-config-base':
         specifier: workspace:^
@@ -721,8 +721,8 @@ importers:
         specifier: ^4.17.21
         version: 4.17.21
       rlnjs:
-        specifier: ^2.0.8
-        version: 2.0.8
+        specifier: ^3.1.5
+        version: 3.1.5
     devDependencies:
       '@cryptkeeperzk/eslint-config-base':
         specifier: workspace:^
@@ -6945,11 +6945,11 @@ packages:
       ffjavascript: 0.2.48
     dev: false
 
-  /circom_runtime@0.1.20:
-    resolution: {integrity: sha512-61AnccA8Ozo5apyDf3hR1JMDDNx1DttKll2bdxVpNjUaTiawDuuYE0VNmRvuoKlcy/WAY+HtD3K994WGrOFhJQ==}
+  /circom_runtime@0.1.22:
+    resolution: {integrity: sha512-V/XYZWBhbZY8SotkaGH4FbiDYAZ8a1Md++MBiKPDOuWS/NIJB+Q+XIiTC8zKMgoDaa9cd2OiTvsC9J6te7twNg==}
     hasBin: true
     dependencies:
-      ffjavascript: 0.2.55
+      ffjavascript: 0.2.57
     dev: false
 
   /circomlibjs@0.0.8:
@@ -9353,6 +9353,14 @@ packages:
       big-integer: 1.6.51
       wasmbuilder: 0.0.12
       wasmcurves: 0.1.0
+      web-worker: 1.2.0
+    dev: false
+
+  /ffjavascript@0.2.57:
+    resolution: {integrity: sha512-V+vxZ/zPNcthrWmqfe/1YGgqdkTamJeXiED0tsk7B84g40DKlrTdx47IqZuiygqAVG6zMw4qYuvXftIJWsmfKQ==}
+    dependencies:
+      wasmbuilder: 0.0.16
+      wasmcurves: 0.2.0
       web-worker: 1.2.0
     dev: false
 
@@ -13879,13 +13887,13 @@ packages:
       ffjavascript: 0.2.48
     dev: false
 
-  /r1csfile@0.0.40:
-    resolution: {integrity: sha512-3tKaFLncf42ZTRpPMlgyiFBdk6kir4S4O3X+u4UQjgLYoDPHfizazNbK0Jzj++PVIXVUFAqugSbIo4W3UDuHcQ==}
+  /r1csfile@0.0.45:
+    resolution: {integrity: sha512-YKIp4D441aZ6OoI9y+bfAyb2j4Cl+OFq/iiX6pPWDrL4ZO968h0dq0w07i65edvrTt7/G43mTnl0qEuLXyp/Yw==}
     dependencies:
       '@iden3/bigarray': 0.0.2
       '@iden3/binfileutils': 0.0.11
       fastfile: 0.0.20
-      ffjavascript: 0.2.55
+      ffjavascript: 0.2.57
     dev: false
 
   /randombytes@2.1.0:
@@ -14429,21 +14437,23 @@ packages:
       hash-base: 3.1.0
       inherits: 2.0.4
 
-  /rlnjs@2.0.8:
-    resolution: {integrity: sha512-UbB4wZLryC+w8DM39z0fJrDqkNWB5yG8cUTgQHoMcgfLjVb6yubgmCesFhRn9bcrreSad9+3xe17EUU7vPCG/A==}
+  /rlnjs@3.1.5:
+    resolution: {integrity: sha512-dBsA2EZVqXDOnhtd12FNndD1bAuErbH2MJCQmw3YrJly2Au2c9Lp6GXE/UB71eUgXHLeJAqPxv2EMXix64Ij4A==}
     dependencies:
       '@ethersproject/bytes': 5.7.0
+      '@ethersproject/keccak256': 5.7.0
       '@ethersproject/solidity': 5.7.0
       '@ethersproject/strings': 5.7.0
-      '@semaphore-protocol/identity': 2.6.1
+      '@semaphore-protocol/group': 3.10.1
+      '@semaphore-protocol/identity': 3.10.1
       '@zk-kit/incremental-merkle-tree': 0.4.3
+      base64-js: 1.5.1
+      ethers: 6.6.3
       ffjavascript: 0.2.55
       poseidon-lite: 0.0.2
-      snarkjs: 0.4.27
+      snarkjs: 0.7.0
     transitivePeerDependencies:
       - bufferutil
-      - encoding
-      - supports-color
       - utf-8-validate
     dev: false
 
@@ -14856,20 +14866,20 @@ packages:
       readline: 1.3.0
     dev: false
 
-  /snarkjs@0.4.27:
-    resolution: {integrity: sha512-2CH4JpOIkaoEiPvc/d9eiA7Vs0mC2ZnQAhFIFF+qp8eVxhHpDXFZn50hEZhcb8lypGry8ZiiEQ73a3hOFOUbYQ==}
+  /snarkjs@0.7.0:
+    resolution: {integrity: sha512-Vu5W+0Va6X1xvlCllpZ2r3/S7MafnL6IrAv09lk/F+VNDHuHEHx3xopR9Kr70p2KpbBBJ/HB9VCDZWism8WGlA==}
     hasBin: true
     dependencies:
       '@iden3/binfileutils': 0.0.11
       bfj: 7.0.2
       blake2b-wasm: 2.4.0
-      circom_runtime: 0.1.20
+      circom_runtime: 0.1.22
       ejs: 3.1.9
       fastfile: 0.0.20
-      ffjavascript: 0.2.55
+      ffjavascript: 0.2.59
       js-sha3: 0.8.0
       logplease: 1.2.15
-      r1csfile: 0.0.40
+      r1csfile: 0.0.45
     dev: false
 
   /sockjs@0.3.24:
@@ -16247,6 +16257,12 @@ packages:
     dependencies:
       big-integer: 1.6.51
       blakejs: 1.2.1
+    dev: false
+
+  /wasmcurves@0.2.0:
+    resolution: {integrity: sha512-3e2rbxdujOwaod657gxgmdhZNn+i1qKdHO3Y/bK+8E7bV8ttV/fu5FO4/WLBACF375cK0QDLOP+65Na63qYuWA==}
+    dependencies:
+      wasmbuilder: 0.0.16
     dev: false
 
   /wasmcurves@0.2.1:
