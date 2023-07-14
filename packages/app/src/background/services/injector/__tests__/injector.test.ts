@@ -50,7 +50,7 @@ jest.mock("@src/util/pushMessage");
 
 describe("background/services/injector", () => {
   beforeEach(() => {
-    (pushMessage as jest.Mock).mockReset();
+    (pushMessage as jest.Mock).mockClear();
     mockGetConnectedIdentity.mockResolvedValue({ serialize: () => mockSerializedIdentity });
   });
 

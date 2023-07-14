@@ -44,11 +44,9 @@ export class OffscreenController {
       merkleProofArtifacts,
     });
 
-    const fullProof = await generateProof(identityGenerated.zkIdentity, merkleProof, externalNullifier, signal, {
+    return generateProof(identityGenerated.zkIdentity, merkleProof, externalNullifier, signal, {
       wasmFilePath: circuitFilePath,
       zkeyFilePath,
     });
-
-    return fullProof;
   };
 }

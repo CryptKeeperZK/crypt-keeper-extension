@@ -17,18 +17,13 @@ const offscreenMessageListener = async (request: RequestHandler, sender: Runtime
   try {
     const offscreenController = new OffscreenController();
     offscreenController.initialize();
-
-    const result = await offscreenController.handle(request, sender);
-    return result;
+    return offscreenController.handle(request, sender);
   } catch (e) {
-    throw new Error("Proof gneeration is failed");
+    log.error("CryptKeeper offscreen error!", e);
+    throw new Error("Proof generation is failed");
   } finally {
     browser.runtime.onMessage.removeListener(offscreenMessageListener);
   }
 };
 
-try {
-  browser.runtime.onMessage.addListener(offscreenMessageListener);
-} catch (error) {
-  log.error("CryptKeeper offscreen launching error!");
-}
+browser.runtime.onMessage.addListener(offscreenMessageListener);

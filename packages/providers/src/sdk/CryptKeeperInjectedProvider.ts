@@ -324,13 +324,13 @@ export class CryptKeeperInjectedProvider {
     signal: string,
     merkleProofArtifactsOrStorageAddress: string | MerkleProofArtifacts,
     merkleProof?: MerkleProof,
-  ): Promise<SemaphoreProof | void> {
+  ): Promise<SemaphoreProof> {
     const merkleProofArtifacts =
       typeof merkleProofArtifactsOrStorageAddress === "string" ? undefined : merkleProofArtifactsOrStorageAddress;
     const merkleStorageAddress =
       typeof merkleProofArtifactsOrStorageAddress === "string" ? merkleProofArtifactsOrStorageAddress : undefined;
 
-    return (await this.post({
+    return (this.post({
       method: RPCAction.GENERATE_SEMAPHORE_PROOF,
       payload: {
         externalNullifier,

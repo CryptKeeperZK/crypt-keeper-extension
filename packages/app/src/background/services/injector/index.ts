@@ -73,7 +73,7 @@ export default class InjectorService {
   generateSemaphoreProof = async (
     { merkleStorageAddress, externalNullifier, signal, merkleProofArtifacts, merkleProof }: SemaphoreProofRequest,
     meta: IMeta,
-  ): Promise<SemaphoreProof | undefined> => {
+  ): Promise<SemaphoreProof> => {
     const browserPlatform = getBrowserPlatform();
     const { isUnlocked } = await this.lockerService.getStatus();
 
@@ -122,7 +122,7 @@ export default class InjectorService {
 
     try {
       if (browserPlatform !== BrowserPlatform.Firefox) {
-        return (await pushMessage({
+        const fullProof =  (await pushMessage({
           method: RPCAction.GENERATE_SEMAPHORE_PROOF_OFFSCREEN,
           payload: {
             ...semaphoreRequest,
@@ -130,6 +130,8 @@ export default class InjectorService {
           meta,
           source: "offscreen",
         })) as Promise<SemaphoreProof>;
+
+        return fullProof;
       }
       throw new Error("SemaphoreProofs are not supported with Firefox");
     } catch (e) {
