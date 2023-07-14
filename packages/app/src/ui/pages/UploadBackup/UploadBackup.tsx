@@ -1,25 +1,24 @@
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
-import List from "@mui/material/List";
-import ListItem from "@mui/material/ListItem";
 import Typography from "@mui/material/Typography";
 
 import { Header } from "@src/ui/components/Header";
 import { Icon } from "@src/ui/components/Icon";
 import { PasswordInput } from "@src/ui/components/PasswordInput";
+import { UploadInput } from "@src/ui/components/UploadInput/UploadInput";
 
-import { useDownloadBackup } from "./useDownloadBackup";
+import { useUploadBackup } from "./useUploadBackup";
 
-const DownloadBackup = (): JSX.Element => {
-  const { isShowPassword, isLoading, errors, register, onGoBack, onShowPassword, onSubmit } = useDownloadBackup();
+const UploadBackup = (): JSX.Element => {
+  const { isShowPassword, isLoading, errors, register, onDrop, onGoBack, onShowPassword, onSubmit } = useUploadBackup();
 
   return (
-    <Box data-testid="download-backup-page">
+    <Box data-testid="upload-backup-page">
       <Header />
 
       <Box p={2}>
         <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-          <Typography variant="h4">Download backup</Typography>
+          <Typography variant="h4">Upload backup</Typography>
 
           <Icon data-testid="close-icon" fontAwesome="fas fa-times" size={1.25} onClick={onGoBack} />
         </Box>
@@ -30,21 +29,18 @@ const DownloadBackup = (): JSX.Element => {
           onSubmit={onSubmit}
         >
           <Box>
-            <Typography variant="body1">Backup contains encrypted data:</Typography>
-
-            <List dense>
-              <ListItem>- Your current password and mnemonic</ListItem>
-
-              <ListItem>- Your identities and accounts</ListItem>
-
-              <ListItem>- Your site approvals</ListItem>
-            </List>
-          </Box>
-
-          <Box>
             <Typography fontWeight="bold" sx={{ my: 2 }} variant="body1">
-              To download your backup, please enter your current password
+              To upload your backup, please provide backup file and enter your backup password
             </Typography>
+
+            <UploadInput
+              accept={{ "application/json": [] }}
+              errorMessage={errors.backupFile}
+              isLoading={isLoading}
+              multiple={false}
+              onDrop={onDrop}
+              {...register("backupFile", { required: "Backup file is required" })}
+            />
 
             <PasswordInput
               isShowEye
@@ -56,14 +52,23 @@ const DownloadBackup = (): JSX.Element => {
               {...register("password", { required: "Password is required" })}
             />
 
+            <PasswordInput
+              errorMessage={errors.backupPassword}
+              id="backupPassword"
+              isShowPassword={isShowPassword}
+              label="Backup password"
+              onShowPassword={onShowPassword}
+              {...register("backupPassword", { required: "Backup password is required" })}
+            />
+
             <Button
-              data-testid="download-button"
+              data-testid="upload-button"
               disabled={isLoading}
               sx={{ textTransform: "none", mt: 2, width: "100%" }}
               type="submit"
               variant="contained"
             >
-              Download
+              Upload
             </Button>
           </Box>
         </Box>
@@ -72,4 +77,4 @@ const DownloadBackup = (): JSX.Element => {
   );
 };
 
-export default DownloadBackup;
+export default UploadBackup;

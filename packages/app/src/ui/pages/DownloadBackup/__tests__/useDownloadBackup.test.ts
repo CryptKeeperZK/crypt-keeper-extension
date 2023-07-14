@@ -102,11 +102,10 @@ describe("ui/pages/DownloadBackup/useDownloadBackup", () => {
     expect(result.current.isLoading).toBe(false);
   });
 
-  test("should be able to show password properly", () => {
+  test("should toggle password properly", () => {
     const { result } = renderHook(() => useDownloadBackup());
 
     act(() => result.current.onShowPassword());
-
     expect(result.current.isShowPassword).toStrictEqual(true);
 
     act(() => result.current.onShowPassword());
