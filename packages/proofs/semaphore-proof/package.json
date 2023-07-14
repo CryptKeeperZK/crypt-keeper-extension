@@ -1,14 +1,11 @@
 {
   "name": "@cryptkeeperzk/semaphore-proof",
+  "private": true,
   "version": "0.1.0-beta.1",
   "description": "A forked Semaphore proof library to generate and verify Semaphore proofs.",
   "license": "MIT",
-  "main": "dist/index.node.js",
-  "exports": {
-    "import": "./dist/index.mjs",
-    "require": "./dist/index.node.js"
-  },
-  "types": "dist/types/index.d.ts",
+  "main": "./dist/src/index.js",
+  "types": "./dist/src/index.d.ts",
   "files": [
     "dist/",
     "src/",
@@ -22,11 +19,8 @@
   },
   "scripts": {
     "build:watch": "rollup -c rollup.config.ts -w --configPlugin typescript",
-    "build": "rm -rf dist && tsc -p build.tsconfig.json",
+    "build": "tsc -p tsconfig.build.json",
     "docs": "typedoc src/index.ts --out ../../docs/proof"
-  },
-  "publishConfig": {
-    "access": "public"
   },
   "devDependencies": {
     "@rollup/plugin-commonjs": "^24.1.0",

@@ -4,6 +4,7 @@ import { PendingRequestType, RLNProofRequest, SemaphoreProofRequest } from "@src
 
 import InjectorService from "..";
 import { IMeta } from "../types";
+import pushMessage from "@src/util/pushMessage";
 
 const mockDefaultHost = "http://localhost:3000";
 const mockSerializedIdentity = "identity";
@@ -45,8 +46,11 @@ jest.mock("@src/background/services/zkIdentity", (): unknown => ({
   })),
 }));
 
+jest.mock("@src/util/pushMessage");
+
 describe("background/services/injector", () => {
   beforeEach(() => {
+    (pushMessage as jest.Mock).mockReset();
     mockGetConnectedIdentity.mockResolvedValue({ serialize: () => mockSerializedIdentity });
   });
 
@@ -105,6 +109,7 @@ describe("background/services/injector", () => {
     });
 
     const defaultProofRequest: SemaphoreProofRequest = {
+      identitySerialized: "identitySerialized",
       externalNullifier: "externalNullifier",
       signal: "signal",
       merkleStorageAddress: "merkleStorageAddress",
@@ -154,6 +159,13 @@ describe("background/services/injector", () => {
         "new-host is not approved",
       );
     });
+
+    test("should be able to genearte semaphore proof", async () => {
+      const service = InjectorService.getInstance();
+
+      await service.generateSemaphoreProof(defaultProofRequest, { origin: "new-host" });
+      expect(pushMessage).toBeCalledTimes(1);
+    });
   });
 
   describe("rln", () => {
@@ -166,6 +178,7 @@ describe("background/services/injector", () => {
     });
 
     const defaultProofRequest: RLNProofRequest = {
+      identitySerialized: "identitySerialized",
       rlnIdentifier: "rlnIdentifier",
       externalNullifier: "externalNullifier",
       signal: "signal",

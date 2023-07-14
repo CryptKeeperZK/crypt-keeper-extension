@@ -8,14 +8,15 @@ export interface SemaphoreProof {
 }
 
 export interface SemaphoreProofRequest {
+  identitySerialized: string;
   externalNullifier: string;
   signal: string;
   merkleStorageAddress?: string;
+  merkleProofArtifacts?: MerkleProofArtifacts;
+  merkleProof?: MerkleProof;
   circuitFilePath: string;
   verificationKey: string;
   zkeyFilePath: string;
-  merkleProofArtifacts?: MerkleProofArtifacts;
-  merkleProof?: MerkleProof;
 }
 
 export interface ISemaphoreGenerateArgs {

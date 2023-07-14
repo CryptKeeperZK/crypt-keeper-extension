@@ -165,10 +165,10 @@ export default class CryptKeeperController {
       this.injectorService.prepareRlnProofRequest,
     );
     this.handler.add(
-      RPCAction.PREPARE_SEMAPHORE_PROOF_REQUEST,
+      RPCAction.GENERATE_SEMAPHORE_PROOF,
       this.lockService.ensure,
       validateZkInputs,
-      this.injectorService.prepareSemaphoreProofRequest,
+      this.injectorService.generateSemaphoreProof,
     );
 
     // Approvals

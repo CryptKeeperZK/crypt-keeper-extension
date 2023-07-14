@@ -4,12 +4,9 @@
         "baseUrl": ".",
         "rootDir": ".",
         "outDir": "./dist",
-        "composite": false,
-        "typeRoots": ["node_modules/@types", "types"]
+        "typeRoots": ["node_modules/@types", "src/@types"]
     },
-    "include": [
-        "src",
-    ],
+    "include": ["src", "src/verificationKeys.json"],
     "exclude": [
         "node_modules",
         "dist"
