@@ -23,7 +23,6 @@
   "scripts": {
     "build:watch": "rollup -c rollup.config.ts -w --configPlugin typescript",
     "build": "rm -rf dist && tsc -p build.tsconfig.json",
-    "prepublishOnly": "yarn build",
     "docs": "typedoc src/index.ts --out ../../docs/proof"
   },
   "publishConfig": {
