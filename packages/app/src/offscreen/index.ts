@@ -18,7 +18,7 @@ const offscreenMessageListener = async (request: RequestHandler, sender: Runtime
     const offscreenController = new OffscreenController();
     offscreenController.initialize();
 
-    const result = await offscreenController.handle(request);
+    const result = await offscreenController.handle(request, sender);
     return result;
   } catch (e) {
     throw new Error("Proof gneeration is failed");

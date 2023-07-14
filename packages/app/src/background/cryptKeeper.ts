@@ -28,7 +28,7 @@ const RPC_METHOD_ACCESS: Record<RPCAction, boolean> = {
   [RPCAction.GET_HOST_PERMISSIONS]: true,
   [RPCAction.SET_HOST_PERMISSIONS]: true,
   [RPCAction.CREATE_IDENTITY_REQUEST]: true,
-  [RPCAction.PREPARE_SEMAPHORE_PROOF_REQUEST]: true,
+  [RPCAction.GENERATE_SEMAPHORE_PROOF]: true,
   [RPCAction.PREPARE_RLN_PROOF_REQUEST]: true,
 };
 
