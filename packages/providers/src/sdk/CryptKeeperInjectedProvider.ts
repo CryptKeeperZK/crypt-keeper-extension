@@ -330,7 +330,7 @@ export class CryptKeeperInjectedProvider {
     const merkleStorageAddress =
       typeof merkleProofArtifactsOrStorageAddress === "string" ? merkleProofArtifactsOrStorageAddress : undefined;
 
-    return (this.post({
+    return this.post({
       method: RPCAction.GENERATE_SEMAPHORE_PROOF,
       payload: {
         externalNullifier,
@@ -340,7 +340,7 @@ export class CryptKeeperInjectedProvider {
         merkleProof,
       },
       source: "offscreen",
-    })) as Promise<SemaphoreProof>;
+    }) as Promise<SemaphoreProof>;
   }
 
   /**

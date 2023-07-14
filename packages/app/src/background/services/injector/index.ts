@@ -122,16 +122,14 @@ export default class InjectorService {
 
     try {
       if (browserPlatform !== BrowserPlatform.Firefox) {
-        const fullProof =  (await pushMessage({
+        const fullProof = await pushMessage({
           method: RPCAction.GENERATE_SEMAPHORE_PROOF_OFFSCREEN,
-          payload: {
-            ...semaphoreRequest,
-          },
+          payload: semaphoreRequest,
           meta,
           source: "offscreen",
-        })) as Promise<SemaphoreProof>;
+        });
 
-        return fullProof;
+        return fullProof as SemaphoreProof;
       }
       throw new Error("SemaphoreProofs are not supported with Firefox");
     } catch (e) {
