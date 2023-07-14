@@ -1,10 +1,10 @@
 import browser from "webextension-polyfill";
 
 import { PendingRequestType, RLNProofRequest, SemaphoreProofRequest } from "@src/types";
+import pushMessage from "@src/util/pushMessage";
 
 import InjectorService from "..";
 import { IMeta } from "../types";
-import pushMessage from "@src/util/pushMessage";
 
 const mockDefaultHost = "http://localhost:3000";
 const mockSerializedIdentity = "identity";

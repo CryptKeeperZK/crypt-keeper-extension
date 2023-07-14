@@ -1,3 +1,4 @@
+import { RPCAction } from "@cryptkeeperzk/providers";
 import browser from "webextension-polyfill";
 
 import BrowserUtils from "@src/background/controllers/browserUtils";
@@ -5,13 +6,12 @@ import RequestManager from "@src/background/controllers/requestManager";
 import ApprovalService from "@src/background/services/approval";
 import LockerService from "@src/background/services/lock";
 import ZkIdentityService from "@src/background/services/zkIdentity";
-import { PendingRequestType, RLNProofRequest, RequestHandler, SemaphoreProof, SemaphoreProofRequest } from "@src/types";
-
-import type { IConnectData, IMeta, IProofRequest } from "./types";
-import { RPCAction } from "@cryptkeeperzk/providers";
-import pushMessage from "@src/util/pushMessage";
 import { closeChromeOffscreen, getBrowserPlatform } from "@src/background/shared/utils";
 import { BrowserPlatform } from "@src/constants";
+import { PendingRequestType, RLNProofRequest, SemaphoreProof, SemaphoreProofRequest } from "@src/types";
+import pushMessage from "@src/util/pushMessage";
+
+import type { IConnectData, IMeta, IProofRequest } from "./types";
 
 export default class InjectorService {
   private static INSTANCE: InjectorService;
@@ -70,13 +70,10 @@ export default class InjectorService {
   };
 
   // TODO: writing tests
-  generateSemaphoreProof = async ({
-    merkleStorageAddress,
-    externalNullifier,
-    signal,
-    merkleProofArtifacts,
-    merkleProof,
-  }: SemaphoreProofRequest, meta: IMeta): Promise<SemaphoreProof | undefined> => {
+  generateSemaphoreProof = async (
+    { merkleStorageAddress, externalNullifier, signal, merkleProofArtifacts, merkleProof }: SemaphoreProofRequest,
+    meta: IMeta,
+  ): Promise<SemaphoreProof | undefined> => {
     const browserPlatform = getBrowserPlatform();
     const { isUnlocked } = await this.lockerService.getStatus();
 
@@ -128,12 +125,12 @@ export default class InjectorService {
         return (await pushMessage({
           method: RPCAction.GENERATE_SEMAPHORE_PROOF_OFFSCREEN,
           payload: {
-            ...semaphoreRequest
+            ...semaphoreRequest,
           },
-          meta: meta,
-          source: "offscreen"
+          meta,
+          source: "offscreen",
         })) as Promise<SemaphoreProof>;
-      } 
+      }
       throw new Error("SemaphoreProofs are not supported with Firefox");
     } catch (e) {
       throw new Error("Error in generateSemaphoreProof");
@@ -141,7 +138,7 @@ export default class InjectorService {
       await closeChromeOffscreen();
       await this.browserService.closePopup();
     }
-  }
+  };
 
   prepareSemaphoreProofRequest = async (
     payload: SemaphoreProofRequest,

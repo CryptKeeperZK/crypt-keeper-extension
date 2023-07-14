@@ -91,7 +91,7 @@ export const useCryptKeeper = (): IUseCryptKeeperData => {
     await client
       ?.generateSemaphoreProof(externalNullifier, signal, storageAddressOrArtifacts)
       .then((generatedProof) => {
-        setProof(generatedProof as any);
+        setProof(generatedProof as SemaphoreProof);
         toast("Semaphore proof generated successfully!", { type: "success" });
       })
       .catch((error) => {

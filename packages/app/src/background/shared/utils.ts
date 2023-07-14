@@ -78,7 +78,6 @@ export async function createChromeOffscreen(): Promise<void> {
   });
 }
 
-
 export async function closeChromeOffscreen(): Promise<void> {
-  return await chrome.offscreen.closeDocument();
+  await chrome.offscreen.closeDocument();
 }

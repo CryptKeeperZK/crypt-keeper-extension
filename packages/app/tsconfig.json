@@ -13,5 +13,5 @@
   },
   "include": ["src"],
   "exclude": ["node_modules", "coverage", "dist"],
-  "references": [{ "path": "../proofs/semaphore-proof" }],
+  "references": [{ "path": "../proofs/semaphore-proof" }]
 }

@@ -10,5 +10,5 @@ export interface InjectedProviderRequest<P = unknown, M = unknown> {
   payload?: P;
   error?: boolean;
   meta?: Record<string, M>;
-  source?: "offscreen"
+  source?: "offscreen";
 }

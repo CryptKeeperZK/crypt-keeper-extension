@@ -1,7 +1,6 @@
 import {
   Approvals,
   IRlnGenerateArgs,
-  ISemaphoreGenerateArgs,
   InjectedMessageData,
   InjectedProviderRequest,
   MerkleProofArtifacts,
@@ -340,7 +339,7 @@ export class CryptKeeperInjectedProvider {
         merkleProofArtifacts,
         merkleProof,
       },
-      source: "offscreen"
+      source: "offscreen",
     })) as Promise<SemaphoreProof>;
   }
 
