@@ -47,7 +47,6 @@
     "zero-knowledge-proofs"
   ],
   "scripts": {
-    "prepare": "husky install",
     "build": "tsc -p tsconfig.build.json",
     "test": "jest",
     "test:debug": "jest --silent=false",
