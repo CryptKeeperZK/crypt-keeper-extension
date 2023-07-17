@@ -1,0 +1,12 @@
+{
+  "extends": "./tsconfig.json",
+  "noUnusedLocals": false,
+  "noUnusedParameters": false,
+  "noImplicitAny": false,
+  "noImplicitReturns": false,
+  "noEmitOnError": false,
+  "include": [
+    "tests"
+  ],
+  "exclude": []
+}

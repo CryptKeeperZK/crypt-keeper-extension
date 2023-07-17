@@ -1,0 +1,92 @@
+{
+  "name": "@cryptkeeperzk/rln-proof",
+  "private": true,
+  "version": "0.1.0-beta.1",
+  "description": "A forked RLN proof library to generate and verify RLN proofs.",
+  "license": "MIT",
+  "main": "./dist/src/index.js",
+  "types": "./dist/src/index.d.ts",
+  "files": [
+    "dist/",
+    "src/",
+    "LICENSE",
+    "README.md"
+  ],
+  "browser": {
+    "./dist/index.node.cjs": "./dist/index.mjs"
+  },
+  "directories": {
+    "dist": "./dist",
+    "src": "./src",
+    "test": "./tests"
+  },
+  "repository": "https://github.com/Rate-Limiting-Nullifier/rlnjs",
+  "homepage": "https://github.com/Rate-Limiting-Nullifier/rlnjs",
+  "contributors": [
+    {
+      "name": "AtHeartEngineer"
+    },
+    {
+      "name": "Mai-Hsuan (Kevin) Chia"
+    },
+    {
+      "name": "bdim1"
+    },
+    {
+      "name": "Seohee Park"
+    }
+  ],
+  "keywords": [
+    "rln",
+    "rate-limiting-nullifier",
+    "ethereum",
+    "circom",
+    "zk",
+    "zero-knowledge",
+    "zk-snarks",
+    "zero-knowledge-proofs"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "test": "jest",
+    "test:debug": "jest --silent=false",
+    "test:benchmark": "jest --silent=false ./tests/circuit-wrapper.test.ts",
+    "test:ci": "jest --silent=false --runInBand",
+    "lint": "eslint --ext .ts,.tsx,.js,.jsx src/ -c .eslintrc.js",
+    "lint:fix": "pnpm run lint --fix",
+    "types": "tsc -p tsconfig.json --noEmit",
+    "format": "eslint --ext .ts,.tsx,.js,.jsx src/ -c .eslintrc.js --fix"
+  },
+  "dependencies": {
+    "@ethersproject/bytes": "^5.7.0",
+    "@ethersproject/keccak256": "^5.7.0",
+    "@ethersproject/solidity": "^5.7.0",
+    "@ethersproject/strings": "^5.7.0",
+    "@semaphore-protocol/group": "^3.10.1",
+    "@semaphore-protocol/identity": "^3.10.1",
+    "@zk-kit/incremental-merkle-tree": "^0.4.3",
+    "base64-js": "^1.5.1",
+    "ethers": "^6.4.0",
+    "ffjavascript": "0.2.55",
+    "poseidon-lite": "^0.0.2",
+    "snarkjs": "git+https://github.com/CryptKeeperZK/snarkjs.git"
+  },
+  "devDependencies": {
+    "@ethersproject/bignumber": "^5.7.0",
+    "@types/jest": "^29.2.4",
+    "@typescript-eslint/eslint-plugin": "^5.50.0",
+    "@typescript-eslint/parser": "^5.51.0",
+    "eslint": "^8.33.0",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-config-airbnb-typescript": "^17.0.0",
+    "eslint-import-resolver-typescript": "^3.5.3",
+    "eslint-plugin-import": "^2.27.5",
+    "hardhat": "^2.14.1",
+    "husky": "^8.0.3",
+    "jest": "^29.5.0",
+    "prettier": "^2.8.1",
+    "ts-jest": "^29.0.3",
+    "tslib": "^2.5.0",
+    "typescript": "^4.9.5"
+  }
+}
