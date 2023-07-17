@@ -89,6 +89,9 @@ importers:
       '@cryptkeeperzk/providers':
         specifier: workspace:^
         version: link:../providers
+      '@cryptkeeperzk/semaphore-proof':
+        specifier: workspace:^
+        version: link:../proofs/semaphore-proof
       '@cryptkeeperzk/types':
         specifier: workspace:^
         version: link:../types

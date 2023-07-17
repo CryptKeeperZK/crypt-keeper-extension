@@ -46,6 +46,9 @@ export enum RPCAction {
   GET_ACCOUNTS = "rpc/accounts/get",
   SELECT_ACCOUNT = "rpc/accounts/select-account",
   GET_SELECTED_ACCOUNT = "rpc/accounts/get-selected-account",
+  GENERATE_SEMAPHORE_PROOF = "rpc/proofs/generate-semaphore-proof",
+  GENERATE_SEMAPHORE_PROOF_OFFSCREEN = "rpc/proofs/generate-semaphore-proof-offscreen",
+  SEMAPHORE_PROOF_RESULT = "rpc/proofs/semaphore-proof-result",
   // DEV RPCS
   CLEAR_APPROVED_HOSTS = "rpc/hosts/clear",
 }

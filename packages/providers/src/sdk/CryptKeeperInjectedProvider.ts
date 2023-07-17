@@ -1,7 +1,6 @@
 import {
   Approvals,
   IRlnGenerateArgs,
-  ISemaphoreGenerateArgs,
   InjectedMessageData,
   InjectedProviderRequest,
   MerkleProofArtifacts,
@@ -320,7 +319,7 @@ export class CryptKeeperInjectedProvider {
    * @param {MerkleProof} merkleProof - The merkle proof (optional).
    * @returns {Promise<SemaphoreProof>} A Promise that resolves to the semaphore proof.
    */
-  async semaphoreProof(
+  async generateSemaphoreProof(
     externalNullifier: string,
     signal: string,
     merkleProofArtifactsOrStorageAddress: string | MerkleProofArtifacts,
@@ -331,8 +330,8 @@ export class CryptKeeperInjectedProvider {
     const merkleStorageAddress =
       typeof merkleProofArtifactsOrStorageAddress === "string" ? merkleProofArtifactsOrStorageAddress : undefined;
 
-    const request = (await this.post({
-      method: RPCAction.PREPARE_SEMAPHORE_PROOF_REQUEST,
+    return this.post({
+      method: RPCAction.GENERATE_SEMAPHORE_PROOF,
       payload: {
         externalNullifier,
         signal,
@@ -340,12 +339,8 @@ export class CryptKeeperInjectedProvider {
         merkleProofArtifacts,
         merkleProof,
       },
-    })) as ISemaphoreGenerateArgs;
-
-    return this.zkProofService.generateSemaphoreProof(
-      ZkIdentitySemaphore.genFromSerialized(request.identity),
-      request.payload,
-    );
+      source: "offscreen",
+    }) as Promise<SemaphoreProof>;
   }
 
   /**

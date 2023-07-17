@@ -1,3 +1,4 @@
+import { RPCAction } from "@cryptkeeperzk/providers";
 import browser from "webextension-polyfill";
 
 import BrowserUtils from "@src/background/controllers/browserUtils";
@@ -5,7 +6,10 @@ import RequestManager from "@src/background/controllers/requestManager";
 import ApprovalService from "@src/background/services/approval";
 import LockerService from "@src/background/services/lock";
 import ZkIdentityService from "@src/background/services/zkIdentity";
-import { PendingRequestType, RLNProofRequest, SemaphoreProofRequest } from "@src/types";
+import { closeChromeOffscreen, getBrowserPlatform } from "@src/background/shared/utils";
+import { BrowserPlatform } from "@src/constants";
+import { PendingRequestType, RLNProofRequest, SemaphoreProof, SemaphoreProofRequest } from "@src/types";
+import pushMessage from "@src/util/pushMessage";
 
 import type { IConnectData, IMeta, IProofRequest } from "./types";
 
@@ -62,6 +66,77 @@ export default class InjectorService {
       return { isApproved: true, canSkipApprove: false };
     } catch (e) {
       return { isApproved: false, canSkipApprove: false };
+    }
+  };
+
+  // TODO: writing tests
+  generateSemaphoreProof = async (
+    { merkleStorageAddress, externalNullifier, signal, merkleProofArtifacts, merkleProof }: SemaphoreProofRequest,
+    meta: IMeta,
+  ): Promise<SemaphoreProof> => {
+    const browserPlatform = getBrowserPlatform();
+    const { isUnlocked } = await this.lockerService.getStatus();
+
+    const semaphorePath = {
+      circuitFilePath: browser.runtime.getURL("js/zkeyFiles/semaphore/semaphore.wasm"),
+      zkeyFilePath: browser.runtime.getURL("js/zkeyFiles/semaphore/semaphore.zkey"),
+      verificationKey: browser.runtime.getURL("js/zkeyFiles/semaphore/semaphore.json"),
+    };
+
+    if (!isUnlocked) {
+      await this.browserService.openPopup();
+      await this.lockerService.awaitUnlock();
+    }
+
+    const identity = await this.zkIdentityService.getConnectedIdentity();
+    const approved = this.approvalService.isApproved(meta.origin);
+    const permission = this.approvalService.getPermission(meta.origin);
+    const identitySerialized = identity?.serialize();
+
+    if (!identity || !identitySerialized) {
+      throw new Error("connected identity not found");
+    }
+
+    if (!approved) {
+      throw new Error(`${meta.origin} is not approved`);
+    }
+
+    const semaphoreRequest: SemaphoreProofRequest = {
+      identitySerialized,
+      externalNullifier,
+      signal,
+      merkleStorageAddress,
+      merkleProofArtifacts,
+      merkleProof,
+      circuitFilePath: semaphorePath.circuitFilePath,
+      zkeyFilePath: semaphorePath.zkeyFilePath,
+      verificationKey: semaphorePath.verificationKey,
+    };
+
+    if (!permission.canSkipApprove) {
+      await this.requestManager.newRequest(PendingRequestType.SEMAPHORE_PROOF, {
+        ...semaphoreRequest,
+        origin: meta.origin,
+      });
+    }
+
+    try {
+      if (browserPlatform !== BrowserPlatform.Firefox) {
+        const fullProof = await pushMessage({
+          method: RPCAction.GENERATE_SEMAPHORE_PROOF_OFFSCREEN,
+          payload: semaphoreRequest,
+          meta,
+          source: "offscreen",
+        });
+
+        return fullProof as SemaphoreProof;
+      }
+      throw new Error("SemaphoreProofs are not supported with Firefox");
+    } catch (e) {
+      throw new Error("Error in generateSemaphoreProof");
+    } finally {
+      await closeChromeOffscreen();
+      await this.browserService.closePopup();
     }
   };
 

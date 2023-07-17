@@ -77,3 +77,7 @@ export async function createChromeOffscreen(): Promise<void> {
     justification: "Cryptkeeper Offscrreen for generating ZKP",
   });
 }
+
+export async function closeChromeOffscreen(): Promise<void> {
+  await chrome.offscreen.closeDocument();
+}

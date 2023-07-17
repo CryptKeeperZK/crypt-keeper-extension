@@ -29,6 +29,7 @@ describe("background/services/protocols", () => {
   };
 
   const proofRequest: RLNProofRequest = {
+    identitySerialized: "identitySerialized",
     externalNullifier: "externalNullifier",
     signal: "0x0",
     circuitFilePath: "circuitFilePath",

@@ -1,6 +1,11 @@
+/**
+ * @jest-environment jsdom
+ */
+
 import browser from "webextension-polyfill";
 
 import { PendingRequestType, RLNProofRequest, SemaphoreProofRequest } from "@src/types";
+import pushMessage from "@src/util/pushMessage";
 
 import InjectorService from "..";
 import { IMeta } from "../types";
@@ -8,6 +13,14 @@ import { IMeta } from "../types";
 const mockDefaultHost = "http://localhost:3000";
 const mockSerializedIdentity = "identity";
 const mockGetConnectedIdentity = jest.fn();
+
+Object.defineProperty(global, "chrome", {
+  value: {
+    offscreen: {
+      closeDocument: jest.fn(),
+    },
+  },
+});
 
 jest.mock("@src/background/controllers/browserUtils", (): unknown => ({
   getInstance: jest.fn(() => ({
@@ -45,8 +58,11 @@ jest.mock("@src/background/services/zkIdentity", (): unknown => ({
   })),
 }));
 
+jest.mock("@src/util/pushMessage");
+
 describe("background/services/injector", () => {
   beforeEach(() => {
+    (pushMessage as jest.Mock).mockClear();
     mockGetConnectedIdentity.mockResolvedValue({ serialize: () => mockSerializedIdentity });
   });
 
@@ -105,6 +121,7 @@ describe("background/services/injector", () => {
     });
 
     const defaultProofRequest: SemaphoreProofRequest = {
+      identitySerialized: "identitySerialized",
       externalNullifier: "externalNullifier",
       signal: "signal",
       merkleStorageAddress: "merkleStorageAddress",
@@ -154,6 +171,14 @@ describe("background/services/injector", () => {
         "new-host is not approved",
       );
     });
+
+    test("should be able to genearte semaphore proof", async () => {
+      const service = InjectorService.getInstance();
+
+      await service.connect({ origin: mockDefaultHost });
+      await service.generateSemaphoreProof(defaultProofRequest, { origin: mockDefaultHost });
+      expect(pushMessage).toBeCalledTimes(1);
+    });
   });
 
   describe("rln", () => {
@@ -166,6 +191,7 @@ describe("background/services/injector", () => {
     });
 
     const defaultProofRequest: RLNProofRequest = {
+      identitySerialized: "identitySerialized",
       rlnIdentifier: "rlnIdentifier",
       externalNullifier: "externalNullifier",
       signal: "signal",

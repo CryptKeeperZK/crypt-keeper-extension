@@ -89,6 +89,7 @@
   },
   "dependencies": {
     "@cryptkeeperzk/providers": "workspace:^",
+    "@cryptkeeperzk/semaphore-proof": "workspace:^",
     "@cryptkeeperzk/types": "workspace:^",
     "@cryptkeeperzk/zk": "workspace:^",
     "@emotion/styled": "^11.11.0",
