@@ -540,6 +540,7 @@ export class RLN implements IRLN {
    * Ref: https://github.com/iden3/snarkjs/issues/152#issuecomment-1164821515
    */
   static cleanUp() {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore 
     // TODO: error TS7017: Element implicitly has an 'any' type because type 'typeof globalThis' has no index signature.
     globalThis.curve_bn128.terminate()
