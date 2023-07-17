@@ -13,6 +13,7 @@ import Recover from "@src/ui/pages/Recover";
 import ResetPassword from "@src/ui/pages/ResetPassword";
 import RevealMnemonic from "@src/ui/pages/RevealMnemonic";
 import Settings from "@src/ui/pages/Settings";
+import UploadBackup from "@src/ui/pages/UploadBackup";
 
 import "../../styles.scss";
 
@@ -26,6 +27,7 @@ const routeConfig: RouteObject[] = [
   { path: Paths.REQUESTS, element: <ConfirmRequestModal /> },
   { path: Paths.SETTINGS, element: <Settings /> },
   { path: Paths.DOWNLOAD_BACKUP, element: <DownloadBackup /> },
+  { path: Paths.UPLOAD_BACKUP, element: <UploadBackup /> },
   { path: Paths.GENERATE_MNEMONIC, element: <GenerateMnemonic /> },
   { path: Paths.REVEAL_MNEMONIC, element: <RevealMnemonic /> },
   { path: Paths.CONNECT_IDENTITY, element: <ConnectIdentity /> },

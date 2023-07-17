@@ -76,7 +76,7 @@ describe("ui/pages/DownloadBackup", () => {
     expect(error).toBeInTheDocument();
   });
 
-  test("should be able to show/hide password", async () => {
+  test("should toggle password properly", async () => {
     const { container } = render(<DownloadBackup />);
 
     await waitFor(() => container.firstChild !== null);

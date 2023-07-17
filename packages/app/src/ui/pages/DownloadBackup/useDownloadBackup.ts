@@ -58,12 +58,12 @@ export const useDownloadBackup = (): IUseDownloadBackupData => {
 
   return {
     isLoading: isLoading || isSubmitting,
+    isShowPassword,
     errors: {
       password: errors.password?.message,
     },
     register,
     onSubmit: handleSubmit(onSubmit),
-    isShowPassword,
     onShowPassword,
     onGoBack,
   };

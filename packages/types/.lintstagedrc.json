@@ -1,3 +1,4 @@
 {
-  "**/*.{ts,js,json}": ["pretty-quick --pattern '**/*.*(js|tx|jsx|tsx|json)' --staged", "pnpm run lint:fix"]
+  "*": ["prettier --write"],
+  "**/*.{ts,js,json}": ["eslint --fix"]
 }

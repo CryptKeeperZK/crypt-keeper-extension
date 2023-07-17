@@ -15,8 +15,8 @@
     "githook:precommit": "lint-staged && pnpm run types"
   },
   "dependencies": {
-    "@cryptkeeperzk/types": "workspace:^",
     "@cryptkeeperzk/providers": "workspace:^",
+    "@cryptkeeperzk/types": "workspace:^",
     "@semaphore-protocol/identity": "^3.10.1",
     "bigint-conversion": "^2.4.1",
     "ethers": "^6.6.3",
@@ -34,7 +34,6 @@
     "lint-staged": "^13.2.3",
     "parcel": "^2.9.3",
     "prettier": "^3.0.0",
-    "pretty-quick": "^3.1.3",
     "process": "^0.11.10",
     "typescript": "^5.1.6"
   }

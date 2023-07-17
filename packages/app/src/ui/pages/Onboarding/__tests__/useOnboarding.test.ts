@@ -111,7 +111,6 @@ describe("ui/pages/Onboarding/useOnboarding", () => {
     const { result } = renderHook(() => useOnboarding());
 
     act(() => result.current.onShowPassword());
-
     expect(result.current.isShowPassword).toStrictEqual(true);
 
     act(() => result.current.onShowPassword());
