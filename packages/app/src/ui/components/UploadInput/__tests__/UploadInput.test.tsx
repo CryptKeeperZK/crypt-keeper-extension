@@ -38,7 +38,7 @@ describe("ui/components/UploadInput", () => {
   test("should render properly", async () => {
     const { findByText } = render(<UploadInput {...defaultProps} />);
 
-    const dragText = await findByText("Drop some files here, or click to select files");
+    const dragText = await findByText("Drop some files here, or click to select");
     const fileName = await findByText(/ping.json/);
 
     expect(dragText).toBeInTheDocument();
