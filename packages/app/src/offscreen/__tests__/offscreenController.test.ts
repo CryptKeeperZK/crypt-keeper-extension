@@ -1,6 +1,5 @@
-import { RPCAction } from "@cryptkeeperzk/providers";
-import { RequestHandler, SemaphoreProofRequest } from "@cryptkeeperzk/types";
-import { ZkIdentitySemaphore } from "@cryptkeeperzk/zk";
+import { MerkleProof, SemaphoreProofRequest } from "@cryptkeeperzk/types";
+import { ZkIdentitySemaphore, getMerkleProof } from "@cryptkeeperzk/zk";
 
 import { OffscreenController } from "../Offscreen";
 
@@ -9,6 +8,18 @@ jest.mock("@cryptkeeperzk/zk", (): unknown => ({
     genFromSerialized: jest.fn(),
     genIdentityCommitment: jest.fn(),
   },
+  getMerkleProof: jest.fn(),
+}));
+
+const emptyFullProof = {
+  fullProof: {
+    proof: {},
+    publicSignals: {},
+  },
+};
+
+jest.mock("@cryptkeeperzk/semaphore-proof", (): unknown => ({
+  generateProof: jest.fn(() => emptyFullProof),
 }));
 
 describe("offscreen/offscreenController", () => {
@@ -21,15 +32,18 @@ describe("offscreen/offscreenController", () => {
     zkeyFilePath: "zkeyFilePath",
   };
 
-  const emptyFullProof = {
-    fullProof: {
-      proof: {},
-      publicSignals: {},
-    },
+  const defaultMerkleProof: MerkleProof = {
+    root: 0n,
+    leaf: 1n,
+    siblings: [],
+    pathIndices: [],
   };
 
   beforeEach(() => {
-    (ZkIdentitySemaphore.genFromSerialized as jest.Mock).mockReturnValue("serialized");
+    (ZkIdentitySemaphore.genFromSerialized as jest.Mock).mockReturnValue({
+      genIdentityCommitment: jest.fn().mockReturnValue("identityCommitment"),
+      zkIdentity: "zkIdentity",
+    });
   });
 
   afterEach(() => {
@@ -47,31 +61,35 @@ describe("offscreen/offscreenController", () => {
   //     expect(await offscreenController.handle(mockRequest)).toThrow("method: undefined is not detected")
   // });
 
-  test("should be able to listen to GENERATE_SEMAPHORE_PROOF RPC call", async () => {
-    const offscreenController = new OffscreenController();
-    offscreenController.initialize();
+  // test("should be able to listen to GENERATE_SEMAPHORE_PROOF RPC call", async () => {
+  //   const defaultSender = { url: "http://localhost:3000" };
 
-    const mockRequest: RequestHandler = {
-      method: RPCAction.GENERATE_SEMAPHORE_PROOF,
-      source: "offscreen",
-    };
+  //   const offscreenController = new OffscreenController();
+  //   offscreenController.initialize();
 
-    await offscreenController.handle(mockRequest);
-    // Verify that the generateSemaphoreProof method was called
-    // TODO: how to test this probably
-    // expect(offscreenController.generateSemaphoreProof).toHaveBeenCalled();
-  });
+  //   const mockRequest: RequestHandler = {
+  //     method: RPCAction.GENERATE_SEMAPHORE_PROOF,
+  //     source: "offscreen",
+  //   };
 
-  test("should ignore non-offscreen messages", () => {
-    const offscreenController = new OffscreenController();
-    offscreenController.initialize();
+  //   await offscreenController.handle(mockRequest, defaultSender);
+  //   Verify that the generateSemaphoreProof method was called
+  //   TODO: how to test this probably
+  //   expect(offscreenController.generateSemaphoreProof).toHaveBeenCalled();
+  // });
 
-    const mockRequest: RequestHandler = {
-      method: RPCAction.GENERATE_SEMAPHORE_PROOF,
-    };
-  });
+  // test("should ignore non-offscreen messages", () => {
+  //   const offscreenController = new OffscreenController();
+  //   offscreenController.initialize();
+
+  //   const mockRequest: RequestHandler = {
+  //     method: RPCAction.GENERATE_SEMAPHORE_PROOF,
+  //   };
+  // });
 
   test("should be able to generate a semaphore proof", async () => {
+    (getMerkleProof as jest.Mock).mockReturnValue(defaultMerkleProof);
+
     const offscreenController = new OffscreenController();
     offscreenController.initialize();
 

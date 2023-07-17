@@ -17,6 +17,7 @@ describe("RLN proof", () => {
   const defaultGenerateArgs: IRlnGenerateArgs = {
     identity: "identity",
     payload: {
+      identitySerialized: "identitySerialized",
       externalNullifier: "externalNullifier",
       signal: "0x0",
       circuitFilePath: "circuitFilePath",

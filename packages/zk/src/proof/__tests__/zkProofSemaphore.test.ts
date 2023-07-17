@@ -17,6 +17,7 @@ describe("Semaphore proof", () => {
   const defaultGenerateArgs: ISemaphoreGenerateArgs = {
     identity: "identity",
     payload: {
+      identitySerialized: "identitySerialized",
       externalNullifier: "externalNullifier",
       signal: "0x0",
       circuitFilePath: "circuitFilePath",

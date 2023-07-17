@@ -17,6 +17,7 @@ const offscreenMessageListener = async (request: RequestHandler, sender: Runtime
   try {
     const offscreenController = new OffscreenController();
     offscreenController.initialize();
+    // eslint-disable-next-line consistent-return
     return offscreenController.handle(request, sender);
   } catch (e) {
     log.error("CryptKeeper offscreen error!", e);

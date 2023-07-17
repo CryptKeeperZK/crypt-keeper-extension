@@ -5,8 +5,8 @@ import { ReduxAction, RequestHandler } from "@src/types";
 
 export default async function pushMessage(message: ReduxAction | RequestHandler): Promise<unknown> {
   try {
-    const result = await browser.runtime.sendMessage(message);
-    return result as unknown;
+    const result: unknown = await browser.runtime.sendMessage(message);
+    return result;
   } catch (error) {
     log.warn("Push message error: ", error);
     return undefined;

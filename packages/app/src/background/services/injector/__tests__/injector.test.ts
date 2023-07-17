@@ -1,3 +1,7 @@
+/**
+ * @jest-environment jsdom
+ */
+
 import browser from "webextension-polyfill";
 
 import { PendingRequestType, RLNProofRequest, SemaphoreProofRequest } from "@src/types";
@@ -9,6 +13,14 @@ import { IMeta } from "../types";
 const mockDefaultHost = "http://localhost:3000";
 const mockSerializedIdentity = "identity";
 const mockGetConnectedIdentity = jest.fn();
+
+Object.defineProperty(global, "chrome", {
+  value: {
+    offscreen: {
+      closeDocument: jest.fn(),
+    },
+  },
+});
 
 jest.mock("@src/background/controllers/browserUtils", (): unknown => ({
   getInstance: jest.fn(() => ({
@@ -163,7 +175,8 @@ describe("background/services/injector", () => {
     test("should be able to genearte semaphore proof", async () => {
       const service = InjectorService.getInstance();
 
-      await service.generateSemaphoreProof(defaultProofRequest, { origin: "new-host" });
+      await service.connect({ origin: mockDefaultHost });
+      await service.generateSemaphoreProof(defaultProofRequest, { origin: mockDefaultHost });
       expect(pushMessage).toBeCalledTimes(1);
     });
   });

@@ -2,9 +2,9 @@ import { RPCAction } from "@cryptkeeperzk/providers";
 import { FullProof, generateProof } from "@cryptkeeperzk/semaphore-proof";
 import { RequestHandler, SemaphoreProofRequest } from "@cryptkeeperzk/types";
 import { ZkIdentitySemaphore, getMerkleProof } from "@cryptkeeperzk/zk";
+import { Runtime } from "webextension-polyfill";
 
 import Handler from "@src/background/controllers/handler";
-import { Runtime } from "webextension-polyfill";
 
 const RPC_METHOD_ACCESS: Record<RPCAction, boolean> = {
   ...Object.values(RPCAction).reduce((acc, method) => ({ ...acc, [method]: false }), {} as Record<RPCAction, boolean>),
@@ -32,7 +32,6 @@ export class OffscreenController {
     identitySerialized,
     merkleProofArtifacts,
     signal,
-    verificationKey,
     zkeyFilePath,
   }: SemaphoreProofRequest): Promise<FullProof> => {
     const identityGenerated = ZkIdentitySemaphore.genFromSerialized(identitySerialized);
