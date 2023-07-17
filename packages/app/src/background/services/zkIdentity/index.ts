@@ -407,13 +407,16 @@ export default class ZkIdentityService implements IBackupable {
   };
 
   downloadEncryptedStorage = async (backupPassword: string): Promise<string | null> => {
-    const backupEncryptedData = await this.identitiesStore.get<string>();
+    const data = await this.identitiesStore.get<string>();
 
-    if (!backupEncryptedData) {
+    if (!data) {
       return null;
     }
 
-    return this.cryptoService.generateEncryptedHmac(backupEncryptedData, backupPassword);
+    const backup = this.cryptoService.decrypt(data, { mode: ECryptMode.MNEMONIC });
+    const encryptedBackup = this.cryptoService.encrypt(backup, { secret: backupPassword });
+
+    return this.cryptoService.generateEncryptedHmac(encryptedBackup, backupPassword);
   };
 
   uploadEncryptedStorage = async (backupEncryptedData: string, backupPassword: string): Promise<void> => {
@@ -421,8 +424,13 @@ export default class ZkIdentityService implements IBackupable {
       return;
     }
 
-    await this.identitiesStore.set<string>(
-      this.cryptoService.getAuthenticCiphertext(backupEncryptedData, backupPassword),
-    );
+    const encryptedBackup = this.cryptoService.getAuthenticCiphertext(backupEncryptedData, backupPassword);
+    const backup = this.cryptoService.decrypt(encryptedBackup, { secret: backupPassword });
+
+    const backupIdentities = new Map(JSON.parse(backup) as Iterable<readonly [string, string]>);
+    const identities = await this.getIdentitiesFromStore();
+    const mergedIdentities = new Map([...identities, ...backupIdentities]);
+
+    await this.writeIdentities(mergedIdentities);
   };
 }

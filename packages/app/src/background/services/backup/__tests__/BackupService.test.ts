@@ -12,6 +12,12 @@ jest.mock("@src/background/services/notification", (): unknown => ({
   })),
 }));
 
+jest.mock("@src/background/services/crypto", (): unknown => ({
+  getInstance: jest.fn(() => ({
+    isAuthenticPassword: jest.fn(),
+  })),
+}));
+
 describe("background/services/backup/BackupService", () => {
   const backupService = BackupService.getInstance();
 
@@ -23,6 +29,11 @@ describe("background/services/backup/BackupService", () => {
   const nullBackupable: IBackupable = {
     downloadEncryptedStorage: jest.fn(() => Promise.resolve(null)),
     uploadEncryptedStorage: jest.fn(),
+  };
+
+  const defaultPasswords = {
+    password: "password",
+    backupPassword: "password",
   };
 
   afterEach(() => {
@@ -63,7 +74,7 @@ describe("background/services/backup/BackupService", () => {
     const result = await backupService
       .add("key1", defaultBackupable)
       .add("key2", nullBackupable)
-      .upload({ content: fileContent, password: "password" });
+      .upload({ content: fileContent, ...defaultPasswords });
 
     expect(result).toBe(true);
   });
@@ -78,7 +89,7 @@ describe("background/services/backup/BackupService", () => {
     const result = await backupService
       .add("key1", defaultBackupable)
       .add("key2", nullBackupable)
-      .upload({ content: expectedData, password: "password" });
+      .upload({ content: expectedData, ...defaultPasswords });
 
     expect(backupFileContent).toBe(`data:application/json;charset=utf-8,${encodeURIComponent(expectedData)}`);
     expect(result).toBe(true);
@@ -89,12 +100,14 @@ describe("background/services/backup/BackupService", () => {
     const nullableContent = JSON.stringify({ key1: null, key2: null });
     backupService.add("key1", defaultBackupable).add("key2", nullBackupable);
 
-    await expect(backupService.upload({ content: fileContent, password: "password" })).rejects.toThrowError(
+    await expect(backupService.upload({ content: fileContent, ...defaultPasswords })).rejects.toThrowError(
       "File content is corrupted",
     );
-    await expect(backupService.upload({ content: nullableContent, password: "password" })).rejects.toThrowError(
+
+    await expect(backupService.upload({ content: nullableContent, ...defaultPasswords })).rejects.toThrowError(
       "File doesn't have any data",
     );
-    await expect(backupService.upload({ content: "", password: "password" })).rejects.toThrowError();
+
+    await expect(backupService.upload({ content: "", ...defaultPasswords })).rejects.toThrowError();
   });
 });

@@ -94,13 +94,16 @@ export default class ApprovalService implements IBackupable {
   }
 
   downloadEncryptedStorage = async (backupPassword: string): Promise<string | null> => {
-    const backupEncryptedData = await this.approvals.get<string>();
+    const data = await this.approvals.get<string>();
 
-    if (!backupEncryptedData) {
+    if (!data) {
       return null;
     }
 
-    return this.cryptoService.generateEncryptedHmac(backupEncryptedData, backupPassword);
+    const backup = this.cryptoService.decrypt(data, { mode: ECryptMode.MNEMONIC });
+    const encryptedBackup = this.cryptoService.encrypt(backup, { secret: backupPassword });
+
+    return this.cryptoService.generateEncryptedHmac(encryptedBackup, backupPassword);
   };
 
   uploadEncryptedStorage = async (backupEncryptedData: string, backupPassword: string): Promise<void> => {
@@ -108,6 +111,13 @@ export default class ApprovalService implements IBackupable {
       return;
     }
 
-    await this.approvals.set<string>(this.cryptoService.getAuthenticCiphertext(backupEncryptedData, backupPassword));
+    const encryptedBackup = this.cryptoService.getAuthenticCiphertext(backupEncryptedData, backupPassword);
+    const backup = this.cryptoService.decrypt(encryptedBackup, { secret: backupPassword });
+    await this.unlock();
+
+    const backupAllowedHosts = new Map(JSON.parse(backup) as Iterable<[string, HostPermission]>);
+    this.allowedHosts = new Map([...this.allowedHosts, ...backupAllowedHosts]);
+
+    await this.saveApprovals();
   };
 }

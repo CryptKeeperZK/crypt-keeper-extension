@@ -8,4 +8,5 @@ export enum BackupableServices {
 export interface IUploadArgs {
   content: string;
   password: string;
+  backupPassword: string;
 }
