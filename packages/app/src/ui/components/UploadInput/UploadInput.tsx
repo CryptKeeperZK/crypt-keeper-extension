@@ -31,6 +31,8 @@ export const UploadInput = ({
     onDrop,
   });
 
+  const fileTitle = multiple ? "files" : "file";
+
   return (
     <Box>
       <Box
@@ -51,7 +53,7 @@ export const UploadInput = ({
       >
         <input {...rest} {...getInputProps()} />
 
-        {isDragActive ? <p>Drop the files here...</p> : <p>Drop some files here, or click to select files</p>}
+        {isDragActive ? <p>Drop the {fileTitle} here...</p> : <p>Drop some {fileTitle} here, or click to select</p>}
       </Box>
 
       <Typography color="error" sx={{ mt: 1, mx: 1, fontSize: "0.8125rem" }} variant="body2">

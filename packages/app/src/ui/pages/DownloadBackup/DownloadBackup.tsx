@@ -35,7 +35,7 @@ const DownloadBackup = (): JSX.Element => {
             <List dense>
               <ListItem>- Your current password and mnemonic</ListItem>
 
-              <ListItem>- Your identities and accounts</ListItem>
+              <ListItem>- Your identities and wallet</ListItem>
 
               <ListItem>- Your site approvals</ListItem>
             </List>
