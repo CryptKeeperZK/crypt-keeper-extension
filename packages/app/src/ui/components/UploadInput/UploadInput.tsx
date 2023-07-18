@@ -2,8 +2,8 @@ import Box from "@mui/material/Box";
 import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
 import Typography from "@mui/material/Typography";
+import { forwardRef, Ref, type HTMLAttributes } from "react";
 
-import type { HTMLAttributes } from "react";
 import type { Accept } from "react-dropzone";
 
 import { onDropCallback, useUploadInput } from "./useUploadInput";
@@ -16,14 +16,10 @@ export interface IUploadInputProps extends Omit<HTMLAttributes<HTMLInputElement>
   onDrop: onDropCallback;
 }
 
-export const UploadInput = ({
-  isLoading = false,
-  multiple = true,
-  errorMessage = "",
-  accept,
-  onDrop,
-  ...rest
-}: IUploadInputProps): JSX.Element => {
+export const UploadInputUI = (
+  { isLoading = false, multiple = true, errorMessage = "", accept, onDrop, ...rest }: IUploadInputProps,
+  ref: Ref<HTMLInputElement>,
+): JSX.Element => {
   const { isDragActive, acceptedFiles, getRootProps, getInputProps } = useUploadInput({
     isLoading,
     accept,
@@ -34,7 +30,7 @@ export const UploadInput = ({
   const fileTitle = multiple ? "files" : "file";
 
   return (
-    <Box>
+    <Box sx={{ width: "100%" }}>
       <Box
         {...getRootProps({ className: "dropzone" })}
         sx={{
@@ -49,9 +45,10 @@ export const UploadInput = ({
           borderStyle: "dashed",
           outline: "none",
           cursor: "pointer",
+          width: "100%",
         }}
       >
-        <input {...rest} {...getInputProps()} />
+        <input ref={ref} {...rest} {...getInputProps()} />
 
         {isDragActive ? <p>Drop the {fileTitle} here...</p> : <p>Drop some {fileTitle} here, or click to select</p>}
       </Box>
@@ -68,3 +65,5 @@ export const UploadInput = ({
     </Box>
   );
 };
+
+export const UploadInput = forwardRef<HTMLInputElement, IUploadInputProps>(UploadInputUI);

@@ -2,7 +2,6 @@ import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 
-import { Header } from "@src/ui/components/Header";
 import { Icon } from "@src/ui/components/Icon";
 import { PasswordInput } from "@src/ui/components/PasswordInput";
 import { UploadInput } from "@src/ui/components/UploadInput/UploadInput";
@@ -13,10 +12,8 @@ const UploadBackup = (): JSX.Element => {
   const { isShowPassword, isLoading, errors, register, onDrop, onGoBack, onShowPassword, onSubmit } = useUploadBackup();
 
   return (
-    <Box data-testid="upload-backup-page">
-      <Header />
-
-      <Box p={2}>
+    <Box data-testid="upload-backup-page" sx={{ height: "100%" }}>
+      <Box sx={{ height: "100%", p: 2 }}>
         <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
           <Typography variant="h4">Upload backup</Typography>
 
@@ -25,12 +22,22 @@ const UploadBackup = (): JSX.Element => {
 
         <Box
           component="form"
-          sx={{ mt: 3, height: 430, display: "flex", flexDirection: "column", justifyContent: "space-between" }}
+          sx={{
+            mt: 2,
+            height: "100%",
+            display: "flex",
+            flexDirection: "column",
+            flexWrap: "nowrap",
+          }}
           onSubmit={onSubmit}
         >
-          <Box>
-            <Typography fontWeight="bold" sx={{ my: 2 }} variant="body1">
-              To upload your backup, please provide backup file and enter your backup password
+          <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center", flexGrow: 1, width: "100%" }}>
+            <Typography fontWeight="bold" sx={{ mt: 1 }} variant="body1">
+              To upload your backup, please provide backup file and enter your current and backup password.
+            </Typography>
+
+            <Typography sx={{ my: 1, alignSelf: "flex-start" }} variant="body1">
+              Note: backup will not override your password and mnemonic phrase
             </Typography>
 
             <UploadInput
@@ -42,34 +49,44 @@ const UploadBackup = (): JSX.Element => {
               {...register("backupFile", { required: "Backup file is required" })}
             />
 
-            <PasswordInput
-              isShowEye
-              errorMessage={errors.password}
-              id="password"
-              isShowPassword={isShowPassword}
-              label="Password"
-              onShowPassword={onShowPassword}
-              {...register("password", { required: "Password is required" })}
-            />
+            <Box sx={{ width: "100%" }}>
+              <PasswordInput
+                isShowEye
+                errorMessage={errors.password}
+                id="password"
+                isShowPassword={isShowPassword}
+                label="Password"
+                onShowPassword={onShowPassword}
+                {...register("password", { required: "Password is required" })}
+              />
+            </Box>
 
-            <PasswordInput
-              errorMessage={errors.backupPassword}
-              id="backupPassword"
-              isShowPassword={isShowPassword}
-              label="Backup password"
-              onShowPassword={onShowPassword}
-              {...register("backupPassword", { required: "Backup password is required" })}
-            />
+            <Box sx={{ width: "100%" }}>
+              <PasswordInput
+                errorMessage={errors.backupPassword}
+                id="backupPassword"
+                isShowPassword={isShowPassword}
+                label="Backup password"
+                onShowPassword={onShowPassword}
+                {...register("backupPassword", { required: "Backup password is required" })}
+              />
+            </Box>
+          </Box>
 
+          <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", mb: 8 }}>
             <Button
               data-testid="upload-button"
               disabled={isLoading}
-              sx={{ textTransform: "none", mt: 2, width: "100%" }}
+              sx={{ textTransform: "none", width: "100%" }}
               type="submit"
               variant="contained"
             >
               Upload
             </Button>
+
+            <Typography color="error" sx={{ mt: 1, mx: 1, fontSize: "0.8125rem" }} variant="body2">
+              {errors.root}
+            </Typography>
           </Box>
         </Box>
       </Box>

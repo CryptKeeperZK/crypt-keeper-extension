@@ -207,10 +207,10 @@ export default class WalletService implements IBackupable {
       return;
     }
 
-    const rawAuthenticBackup = this.cryptoService.getAuthenticCiphertext(backupEncryptedData, backupPassword);
-    const authenticBackup = JSON.parse(rawAuthenticBackup) as { accounts: string; mnemonic: string };
+    const authenticBackup = JSON.parse(backupEncryptedData) as { accounts: string; mnemonic: string };
+    const accountsAuthenticBackup = this.cryptoService.getAuthenticCiphertext(authenticBackup.accounts, backupPassword);
     const newAccounts = JSON.parse(
-      this.cryptoService.decrypt(authenticBackup.accounts, { secret: backupPassword }),
+      this.cryptoService.decrypt(accountsAuthenticBackup, { secret: backupPassword }),
     ) as IAccount[];
 
     const encrypted = await this.accountStorage.get<string>();
