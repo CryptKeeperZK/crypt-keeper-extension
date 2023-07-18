@@ -1,0 +1,30 @@
+version: '3.9'
+
+services:
+  demo:
+    image: 490752553772.dkr.ecr.eu-central-1.amazonaws.com/crypt-keeper-extension-demo
+    pull_policy: always
+    container_name: demo
+    ports:
+      - "1234:1234"
+    restart: always
+    expose:
+      - 1234
+    networks:
+      - network-1
+
+  merkle:
+    image: 490752553772.dkr.ecr.eu-central-1.amazonaws.com/crypt-keeper-extension-merkle
+    pull_policy: always
+    container_name: merkle
+    ports:
+      - "8090:8090"
+    expose:
+      - 8090
+    restart: always
+    networks:
+      - network-1
+
+networks:
+  network-1:
+    driver: bridge
