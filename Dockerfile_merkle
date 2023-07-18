@@ -2,7 +2,7 @@ FROM node:18-alpine as builder
 RUN apk add --no-cache git curl
 
 WORKDIR /builder
-COPY ../../ .
+COPY . .
 RUN npm i -g pnpm
 RUN pnpm install
 RUN pnpm run build
@@ -12,10 +12,10 @@ FROM node:18-alpine as runner
 RUN npm i -g pnpm
 
 USER node
-ARG PORT=1234
+ARG PORT=8090
 
 WORKDIR /home/node
 COPY --chown=node:node  --from=builder /builder/ ./
 
 EXPOSE ${PORT}
-CMD ["pnpm", "run", "demo:start"]
+CMD ["pnpm", "run", "merkle:start"]
