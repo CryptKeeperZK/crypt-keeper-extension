@@ -3,8 +3,6 @@ import Button from "@mui/material/Button";
 import FormGroup from "@mui/material/FormGroup";
 import Typography from "@mui/material/Typography";
 
-import { getEnabledFeatures } from "@src/config/features";
-
 export interface IBackupProps {
   isLoading: boolean;
   onDeleteIdentities: () => void;
@@ -13,39 +11,35 @@ export interface IBackupProps {
 }
 
 const Backup = ({ isLoading, onDeleteIdentities, onGoToBackup, onGoToUploadBackup }: IBackupProps): JSX.Element => {
-  const features = getEnabledFeatures();
-
   if (isLoading) {
     return <Box>Loading...</Box>;
   }
 
   return (
     <Box data-testid="backup-settings">
-      {features.BACKUP && (
-        <Box sx={{ mb: 3 }}>
-          <Typography variant="h6">Backup</Typography>
+      <Box sx={{ mb: 3 }}>
+        <Typography variant="h6">Backup</Typography>
 
-          <Typography color="text.secondary" variant="body2">
-            You can backup your storage containing identities, site approvals and password into a JSON file.
-          </Typography>
+        <Typography color="text.secondary" variant="body2">
+          You can backup your storage containing identities, site approvals and password into a JSON file.
+        </Typography>
 
-          <FormGroup sx={{ my: 2 }}>
-            <Button sx={{ textTransform: "none", width: 200 }} variant="contained" onClick={onGoToBackup}>
-              Download backup
-            </Button>
-          </FormGroup>
+        <FormGroup sx={{ my: 2 }}>
+          <Button sx={{ textTransform: "none", width: 200 }} variant="contained" onClick={onGoToBackup}>
+            Download backup
+          </Button>
+        </FormGroup>
 
-          <Typography color="text.secondary" variant="body2">
-            If you have backup file you can upload it and merge with your current extension data.
-          </Typography>
+        <Typography color="text.secondary" variant="body2">
+          If you have backup file you can upload it and merge with your current extension data.
+        </Typography>
 
-          <FormGroup sx={{ mt: 2 }}>
-            <Button sx={{ textTransform: "none", width: 200 }} variant="contained" onClick={onGoToUploadBackup}>
-              Upload backup
-            </Button>
-          </FormGroup>
-        </Box>
-      )}
+        <FormGroup sx={{ mt: 2 }}>
+          <Button sx={{ textTransform: "none", width: 200 }} variant="contained" onClick={onGoToUploadBackup}>
+            Upload backup
+          </Button>
+        </FormGroup>
+      </Box>
 
       <Box sx={{ mb: 3 }}>
         <Typography variant="h6">Clear identities</Typography>
