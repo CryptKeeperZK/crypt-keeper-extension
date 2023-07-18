@@ -24,7 +24,6 @@ const UploadBackup = (): JSX.Element => {
           component="form"
           sx={{
             mt: 2,
-            height: "100%",
             display: "flex",
             flexDirection: "column",
             flexWrap: "nowrap",
@@ -32,7 +31,7 @@ const UploadBackup = (): JSX.Element => {
           onSubmit={onSubmit}
         >
           <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center", flexGrow: 1, width: "100%" }}>
-            <Typography fontWeight="bold" sx={{ mt: 1 }} variant="body1">
+            <Typography fontWeight="bold" variant="body1">
               To upload your backup, please provide backup file and enter your current and backup password.
             </Typography>
 
@@ -73,7 +72,7 @@ const UploadBackup = (): JSX.Element => {
             </Box>
           </Box>
 
-          <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", mb: 8 }}>
+          <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", my: 2 }}>
             <Button
               data-testid="upload-button"
               disabled={isLoading}

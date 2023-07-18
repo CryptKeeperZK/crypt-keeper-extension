@@ -66,8 +66,9 @@ export const useUploadBackup = (): IUseUploadBackupData => {
   const dispatch = useAppDispatch();
 
   const onGoBack = useCallback(() => {
+    dispatch(closePopup());
     navigate(-1);
-  }, [navigate]);
+  }, [dispatch, navigate]);
 
   const onSubmit = useCallback(
     async (data: IUploadBackupFields) => {

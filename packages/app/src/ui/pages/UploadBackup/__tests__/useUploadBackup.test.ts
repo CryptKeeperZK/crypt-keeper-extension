@@ -86,6 +86,8 @@ describe("ui/pages/UploadBackup/useUploadBackup", () => {
 
     act(() => result.current.onGoBack());
 
+    expect(mockDispatch).toBeCalledTimes(1);
+    expect(closePopup).toBeCalledTimes(1);
     expect(mockNavigate).toBeCalledTimes(1);
     expect(mockNavigate).toBeCalledWith(-1);
   });
