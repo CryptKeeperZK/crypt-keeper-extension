@@ -13,6 +13,11 @@ export const downloadBackup =
       payload: password,
     });
 
+export const createUploadBackupRequest = (): TypedThunk<Promise<void>> => async () =>
+  postMessage({
+    method: RPCAction.REQUEST_UPLOAD_BACKUP,
+  });
+
 export const uploadBackup =
   ({ content, password, backupPassword }: IUploadArgs): TypedThunk<Promise<void>> =>
   async () =>

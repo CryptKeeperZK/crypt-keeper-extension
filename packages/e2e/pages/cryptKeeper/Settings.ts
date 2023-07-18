@@ -1,7 +1,7 @@
 import { CRYPT_KEEPER_PASSWORD } from "../../constants";
 import BasePage from "../BasePage";
 
-type SettingTabs = "General" | "Security" | "Advanced";
+type SettingTabs = "General" | "Security" | "Backup";
 
 export default class Settings extends BasePage {
   async openPage(): Promise<void> {
@@ -28,7 +28,7 @@ export default class Settings extends BasePage {
   }
 
   async downloadBackup(): Promise<string | null> {
-    await this.page.getByText("Download backup data", { exact: true }).click();
+    await this.page.getByText("Download backup", { exact: true }).click();
     await this.page.getByLabel("Password", { exact: true }).type(CRYPT_KEEPER_PASSWORD);
 
     const [download] = await Promise.all([

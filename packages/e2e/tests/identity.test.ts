@@ -38,7 +38,7 @@ test.describe("identity", () => {
     await expect(extension.getByText(/Account/)).toHaveCount(5);
 
     await extension.settings.openPage();
-    await extension.settings.openTab("Advanced");
+    await extension.settings.openTab("Backup");
     await extension.settings.deleteAllIdentities();
 
     await extension.goHome();
@@ -83,7 +83,7 @@ test.describe("identity", () => {
     await expect(extension.getByText(/Account/)).toHaveCount(3);
 
     await extension.settings.openPage();
-    await extension.settings.openTab("Advanced");
+    await extension.settings.openTab("Backup");
     await extension.settings.deleteAllIdentities();
 
     await extension.goHome();
@@ -102,7 +102,7 @@ test.describe("identity", () => {
     await expect(extension.activity.getByText("Identity created")).toHaveCount(1);
 
     await extension.settings.openPage();
-    await extension.settings.openTab("Advanced");
+    await extension.settings.openTab("Backup");
     await extension.settings.deleteAllIdentities();
 
     await extension.goHome();

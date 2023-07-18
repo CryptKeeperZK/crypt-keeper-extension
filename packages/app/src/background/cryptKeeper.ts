@@ -145,6 +145,7 @@ export default class CryptKeeperController {
 
     // Backup
     this.handler.add(RPCAction.DOWNLOAD_BACKUP, this.lockService.ensure, this.backupService.download);
+    this.handler.add(RPCAction.REQUEST_UPLOAD_BACKUP, this.backupService.createUploadBackupRequest);
     this.handler.add(RPCAction.UPLOAD_BACKUP, this.backupService.upload);
 
     // Wallet

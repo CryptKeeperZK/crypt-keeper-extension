@@ -21,7 +21,7 @@ test.describe("backup", () => {
     await expect(extension.getByText("Account # 0")).toBeVisible();
 
     await extension.settings.openPage();
-    await extension.settings.openTab("Advanced");
+    await extension.settings.openTab("Backup");
     const path = await extension.settings.downloadBackup();
 
     expect(path).toBeDefined();

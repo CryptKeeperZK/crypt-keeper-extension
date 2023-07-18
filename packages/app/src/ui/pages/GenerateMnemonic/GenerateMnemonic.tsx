@@ -2,6 +2,7 @@ import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 
+import { getEnabledFeatures } from "@src/config/features";
 import logoSVG from "@src/static/icons/logo.svg";
 import { Icon } from "@src/ui/components/Icon";
 import { MnemonicInput } from "@src/ui/components/MnemonicInput";
@@ -9,6 +10,7 @@ import { MnemonicInput } from "@src/ui/components/MnemonicInput";
 import { EGenerateMnemonicMode, useGenerateMnemonic } from "./useGenerateMnemonic";
 
 const GenerateMnemonic = (): JSX.Element => {
+  const features = getEnabledFeatures();
   const { isLoading, errors, mode, mnemonic, register, onChooseGenerateMode, onChooseInputMode, onSaveMnemonic } =
     useGenerateMnemonic();
 
@@ -62,16 +64,18 @@ const GenerateMnemonic = (): JSX.Element => {
           Get started!
         </Button>
 
-        <Button
-          data-testid="change-mode-button"
-          disabled={isLoading}
-          sx={{ textTransform: "none", width: "100%" }}
-          type="button"
-          variant="text"
-          onClick={mode === EGenerateMnemonicMode.INPUT ? onChooseGenerateMode : onChooseInputMode}
-        >
-          {mode === EGenerateMnemonicMode.INPUT ? "Generate mnemonic" : "Use own mnemonic"}
-        </Button>
+        {features.USER_MNEMONIC && (
+          <Button
+            data-testid="change-mode-button"
+            disabled={isLoading}
+            sx={{ textTransform: "none", width: "100%" }}
+            type="button"
+            variant="text"
+            onClick={mode === EGenerateMnemonicMode.INPUT ? onChooseGenerateMode : onChooseInputMode}
+          >
+            {mode === EGenerateMnemonicMode.INPUT ? "Generate mnemonic" : "Use own mnemonic"}
+          </Button>
+        )}
       </Box>
     </Box>
   );

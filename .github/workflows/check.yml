@@ -11,6 +11,7 @@ env:
   CRYPTKEEPER_DEBUG: false
   INTERREP_IDENTITY: false
   BACKUP: false
+  USER_MNEMONIC: false
   METAMASK_EXTENSION_ID: "nkbihfbeogaeaoehlefnkodbefgpgknn"
   METAMASK_VERSION: "10.28.1"
   INFURA_API_KEY: ${{ secrets.INFURA_API_KEY }}

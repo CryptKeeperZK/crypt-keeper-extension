@@ -7,6 +7,7 @@ import { useNavigate } from "react-router-dom";
 
 import { Paths } from "@src/constants";
 import { HistorySettings } from "@src/types";
+import { createUploadBackupRequest } from "@src/ui/ducks/backup";
 import { useAppDispatch } from "@src/ui/ducks/hooks";
 import {
   clearHistory,
@@ -26,6 +27,10 @@ jest.mock("react-router-dom", (): unknown => ({
 
 jest.mock("@src/ui/ducks/app", (): unknown => ({
   getMnemonic: jest.fn(),
+}));
+
+jest.mock("@src/ui/ducks/backup", (): unknown => ({
+  createUploadBackupRequest: jest.fn(),
 }));
 
 jest.mock("@src/ui/ducks/identities", (): unknown => ({
@@ -118,9 +123,9 @@ describe("ui/pages/Settings/useSettings", () => {
 
     await waitFor(() => result.current.isLoading === false);
 
-    await act(async () => Promise.resolve(result.current.onTabChange({} as SyntheticEvent, SettingsTabs.ADVANCED)));
+    await act(async () => Promise.resolve(result.current.onTabChange({} as SyntheticEvent, SettingsTabs.BACKUP)));
 
-    expect(result.current.tab).toBe(SettingsTabs.ADVANCED);
+    expect(result.current.tab).toBe(SettingsTabs.BACKUP);
   });
 
   test("should go back properly", async () => {
@@ -143,6 +148,18 @@ describe("ui/pages/Settings/useSettings", () => {
 
     expect(mockNavigate).toBeCalledTimes(1);
     expect(mockNavigate).toBeCalledWith(Paths.DOWNLOAD_BACKUP);
+  });
+
+  test("should go to upload backup page properly", async () => {
+    const { result } = renderHook(() => useSettings());
+
+    await waitFor(() => result.current.isLoading === false);
+
+    await act(async () => Promise.resolve(result.current.onGoToUploadBackup()));
+
+    expect(mockDispatch).toBeCalledTimes(2);
+    expect(fetchHistory).toBeCalledTimes(1);
+    expect(createUploadBackupRequest).toBeCalledTimes(1);
   });
 
   test("should go to reset password page properly", async () => {

@@ -2,8 +2,9 @@
  * @jest-environment jsdom
  */
 
-import { act, render, waitFor } from "@testing-library/react";
+import { act, fireEvent, render, waitFor } from "@testing-library/react";
 
+import { getEnabledFeatures } from "@src/config/features";
 import { defaultMnemonic } from "@src/config/mock/wallet";
 
 import Mnemonic from "..";
@@ -27,6 +28,8 @@ describe("ui/pages/GenerateMnemonic", () => {
   };
 
   beforeEach(() => {
+    (getEnabledFeatures as jest.Mock).mockReturnValue({ USER_MNEMONIC: true });
+
     (useGenerateMnemonic as jest.Mock).mockReturnValue(defaultHookData);
   });
 
@@ -84,7 +87,7 @@ describe("ui/pages/GenerateMnemonic", () => {
     await waitFor(() => container.firstChild !== null);
 
     const button = await findByTestId("submit-button");
-    await act(() => Promise.resolve(button.click()));
+    await act(() => fireEvent.submit(button));
 
     expect(defaultHookData.onSaveMnemonic).toBeCalledTimes(1);
   });
