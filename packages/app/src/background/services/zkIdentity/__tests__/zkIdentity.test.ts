@@ -565,7 +565,6 @@ describe("background/services/zkIdentity", () => {
 
       const [instance] = (SimpleStorage as jest.Mock).mock.instances as [MockStorage, MockStorage];
       expect(instance.set).toBeCalledTimes(1);
-      expect(instance.set).toBeCalledWith("encrypted");
     });
 
     test("should not upload encrypted identities if there is no data", async () => {

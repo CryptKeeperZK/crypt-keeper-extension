@@ -1,6 +1,6 @@
 import browser from "webextension-polyfill";
 
-import CryptoService from "@src/background/services/crypto";
+import CryptoService, { ECryptMode } from "@src/background/services/crypto";
 import HistoryService from "@src/background/services/history";
 import MiscStorageService from "@src/background/services/misc";
 import NotificationService from "@src/background/services/notification";
@@ -158,13 +158,16 @@ export default class LockerService implements IBackupable {
   };
 
   downloadEncryptedStorage = async (backupPassword: string): Promise<string | null> => {
-    const backupEncryptedData = await this.passwordStorage.get<string>();
+    const data = await this.passwordStorage.get<string>();
 
-    if (!backupEncryptedData) {
+    if (!data) {
       return null;
     }
 
-    return this.cryptoService.generateEncryptedHmac(backupEncryptedData, backupPassword);
+    const backup = this.cryptoService.decrypt(data, { mode: ECryptMode.PASSWORD });
+    const encryptedBackup = this.cryptoService.encrypt(backup, { secret: backupPassword });
+
+    return this.cryptoService.generateEncryptedHmac(encryptedBackup, backupPassword);
   };
 
   uploadEncryptedStorage = async (backupEncryptedData: string, backupPassword: string): Promise<void> => {
@@ -172,7 +175,9 @@ export default class LockerService implements IBackupable {
 
     if (isNewOnboarding && backupEncryptedData) {
       const authenticBackupCiphertext = this.cryptoService.getAuthenticCiphertext(backupEncryptedData, backupPassword);
-      await this.passwordStorage.set(authenticBackupCiphertext);
+      const backup = this.cryptoService.decrypt(authenticBackupCiphertext, { secret: backupPassword });
+      const encrypted = this.cryptoService.encrypt(backup, { mode: ECryptMode.PASSWORD });
+      await this.passwordStorage.set(encrypted);
     }
   };
 

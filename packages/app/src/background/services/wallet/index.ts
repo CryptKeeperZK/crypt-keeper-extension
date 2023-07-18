@@ -191,8 +191,13 @@ export default class WalletService implements IBackupable {
       return null;
     }
 
-    const accounts = this.cryptoService.generateEncryptedHmac(accountsEncryptedData, backupPassword);
-    const mnemonic = this.cryptoService.generateEncryptedHmac(mnemonicEncryptedData, backupPassword);
+    const backupAccounts = this.cryptoService.decrypt(accountsEncryptedData, { mode: ECryptMode.MNEMONIC });
+    const backupMnemonic = this.cryptoService.decrypt(mnemonicEncryptedData, { mode: ECryptMode.PASSWORD });
+    const encryptedBackupAccounts = this.cryptoService.encrypt(backupAccounts, { secret: backupPassword });
+    const encryptedBackupMnemonic = this.cryptoService.encrypt(backupMnemonic, { secret: backupPassword });
+
+    const accounts = this.cryptoService.generateEncryptedHmac(encryptedBackupAccounts, backupPassword);
+    const mnemonic = this.cryptoService.generateEncryptedHmac(encryptedBackupMnemonic, backupPassword);
 
     return JSON.stringify({ accounts, mnemonic });
   };
@@ -204,9 +209,8 @@ export default class WalletService implements IBackupable {
 
     const rawAuthenticBackup = this.cryptoService.getAuthenticCiphertext(backupEncryptedData, backupPassword);
     const authenticBackup = JSON.parse(rawAuthenticBackup) as { accounts: string; mnemonic: string };
-    const mnemonic = this.cryptoService.decrypt(authenticBackup.mnemonic);
     const newAccounts = JSON.parse(
-      this.cryptoService.decrypt(authenticBackup.accounts, { secret: mnemonic }),
+      this.cryptoService.decrypt(authenticBackup.accounts, { secret: backupPassword }),
     ) as IAccount[];
 
     const encrypted = await this.accountStorage.get<string>();

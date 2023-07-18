@@ -1,5 +1,6 @@
 import browser from "webextension-polyfill";
 
+import CryptoService from "@src/background/services/crypto";
 import HistoryService from "@src/background/services/history";
 import NotificationService from "@src/background/services/notification";
 import { OperationType, type IUploadArgs } from "@src/types";
@@ -15,10 +16,13 @@ export default class BackupService {
 
   private notificationService: NotificationService;
 
+  private cryptoService: CryptoService;
+
   private constructor() {
     this.backupables = new Map();
     this.historyService = HistoryService.getInstance();
     this.notificationService = NotificationService.getInstance();
+    this.cryptoService = CryptoService.getInstance();
   }
 
   static getInstance = (): BackupService => {
@@ -30,6 +34,8 @@ export default class BackupService {
   };
 
   download = async (backupPassword: string): Promise<string> => {
+    this.cryptoService.isAuthenticPassword(backupPassword);
+
     const keys = [...this.backupables.keys()];
     const services = [...this.backupables.values()];
 
@@ -49,7 +55,9 @@ export default class BackupService {
     return `data:application/json;charset=utf-8,${encodeURIComponent(JSON.stringify(prepared, null, 4))}`;
   };
 
-  upload = async ({ content, password }: IUploadArgs): Promise<boolean> => {
+  upload = async ({ content, password, backupPassword }: IUploadArgs): Promise<boolean> => {
+    this.cryptoService.isAuthenticPassword(password);
+
     const data = JSON.parse(content) as Record<string, string | null>;
     const entries = Object.entries(data).filter(([key]) => this.backupables.has(key));
     const isEmpty = entries.every(([, value]) => !value);
@@ -63,7 +71,7 @@ export default class BackupService {
     }
 
     await Promise.all(
-      entries.map(([key, value]) => value && this.backupables.get(key)?.uploadEncryptedStorage(value, password)),
+      entries.map(([key, value]) => value && this.backupables.get(key)?.uploadEncryptedStorage(value, backupPassword)),
     );
 
     await this.historyService.trackOperation(OperationType.UPLOAD_BACKUP, {});

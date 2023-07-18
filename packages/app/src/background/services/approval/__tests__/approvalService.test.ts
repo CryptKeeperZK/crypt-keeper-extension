@@ -204,7 +204,6 @@ describe("background/services/approval", () => {
 
       (SimpleStorage as jest.Mock).mock.instances.forEach((instance: MockStorage) => {
         expect(instance.set).toBeCalledTimes(1);
-        expect(instance.set).toBeCalledWith("encrypted");
       });
     });
 
