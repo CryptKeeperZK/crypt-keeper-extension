@@ -57,7 +57,6 @@ tsout/
 tsconfig.tsbuildinfo
 
 .env*
-!.env
 !.env.example
 .zip
 demo/.parcel-cache
