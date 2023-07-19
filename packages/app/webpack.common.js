@@ -52,10 +52,6 @@ module.exports = {
           to: path.resolve(__dirname, "./dist/LICENSE"),
         },
         { from: path.resolve(__dirname, "../../zkeyFiles"), to: path.resolve(__dirname, "./dist/js/zkeyFiles") },
-        {
-          from: path.resolve(__dirname, "./src/background/shared/subworkers.js"),
-          to: path.resolve(__dirname, "./dist/js/subworkers.js"),
-        },
       ],
     }),
     new HtmlWebpackPlugin({
