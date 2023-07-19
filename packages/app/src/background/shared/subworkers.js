@@ -1,4 +1,4 @@
-// 
+//
 // A workaround for resolving `Worker is not defined` error with MV3 on Chromium based platforms.
 (async function () {
   if (global.chrome) {

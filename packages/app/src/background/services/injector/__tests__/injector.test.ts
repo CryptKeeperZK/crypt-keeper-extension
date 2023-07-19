@@ -2,6 +2,14 @@
  * @jest-environment jsdom
  */
 
+Object.defineProperty(global, "chrome", {
+  value: {
+    offscreen: {
+      closeDocument: jest.fn(),
+    },
+  },
+});
+
 import browser from "webextension-polyfill";
 
 import { PendingRequestType, RLNProofRequest, SemaphoreProofRequest } from "@src/types";
@@ -13,14 +21,6 @@ import { IMeta } from "../types";
 const mockDefaultHost = "http://localhost:3000";
 const mockSerializedIdentity = "identity";
 const mockGetConnectedIdentity = jest.fn();
-
-Object.defineProperty(global, "chrome", {
-  value: {
-    offscreen: {
-      closeDocument: jest.fn(),
-    },
-  },
-});
 
 jest.mock("@src/background/controllers/browserUtils", (): unknown => ({
   getInstance: jest.fn(() => ({
