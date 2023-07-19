@@ -21,7 +21,8 @@ const Backup = ({ isLoading, onDeleteIdentities, onGoToBackup, onGoToUploadBacku
         <Typography variant="h6">Backup</Typography>
 
         <Typography color="text.secondary" variant="body2">
-          You can backup your storage containing identities, site approvals and password into a JSON file.
+          You can backup your storage containing identities, site approvals, password and wallet into an encrypted JSON
+          file.
         </Typography>
 
         <FormGroup sx={{ my: 2 }}>
@@ -31,7 +32,7 @@ const Backup = ({ isLoading, onDeleteIdentities, onGoToBackup, onGoToUploadBacku
         </FormGroup>
 
         <Typography color="text.secondary" variant="body2">
-          If you have backup file you can upload it and merge with your current extension data.
+          If you have a backup file you can upload it and merge with your current extension data.
         </Typography>
 
         <FormGroup sx={{ mt: 2 }}>
