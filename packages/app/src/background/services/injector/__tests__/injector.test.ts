@@ -18,9 +18,22 @@ Object.defineProperty(global, "chrome", {
   value: {
     offscreen: {
       closeDocument: jest.fn(),
+      hasDocument: jest.fn(),
+      createDocument: jest.fn(),
+      Reason: jest.fn(() => ({
+        DOM_SCRAPING: "DOM_SCRAPING",
+      })),
     },
   },
 });
+
+jest.mock("@cryptkeeperzk/semaphore-proof", (): unknown => ({
+  generateProof: jest.fn(),
+}));
+
+jest.mock("@cryptkeeperzk/zk", (): unknown => ({
+  getMerkleProof: jest.fn(),
+}));
 
 jest.mock("@src/background/controllers/browserUtils", (): unknown => ({
   getInstance: jest.fn(() => ({
@@ -172,7 +185,7 @@ describe("background/services/injector", () => {
       );
     });
 
-    test("should be able to genearte semaphore proof", async () => {
+    test("should be able to generate semaphore proof", async () => {
       const service = InjectorService.getInstance();
 
       await service.connect({ origin: mockDefaultHost });

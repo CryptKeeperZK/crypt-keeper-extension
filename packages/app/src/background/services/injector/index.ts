@@ -1,5 +1,5 @@
 import { RPCAction } from "@cryptkeeperzk/providers";
-import { FullProof, generateProof } from "@cryptkeeperzk/semaphore-proof";
+import { generateProof } from "@cryptkeeperzk/semaphore-proof";
 import { getMerkleProof } from "@cryptkeeperzk/zk";
 import browser from "webextension-polyfill";
 
@@ -77,7 +77,7 @@ export default class InjectorService {
   generateSemaphoreProof = async (
     { merkleStorageAddress, externalNullifier, signal, merkleProofArtifacts }: SemaphoreProofRequest,
     meta: IMeta,
-  ): Promise<SemaphoreProof | FullProof> => {
+  ): Promise<SemaphoreProof> => {
     const browserPlatform = getBrowserPlatform();
     const { isUnlocked } = await this.lockerService.getStatus();
 
@@ -149,9 +149,9 @@ export default class InjectorService {
         zkeyFilePath: semaphoreRequest.zkeyFilePath,
       });
 
-      return fullProof;
+      return { fullProof };
     } catch (e) {
-      throw new Error("Error in generateSemaphoreProof");
+      throw new Error(`${e as string}`);
     } finally {
       if (browserPlatform !== BrowserPlatform.Firefox) {
         await closeChromeOffscreen();
