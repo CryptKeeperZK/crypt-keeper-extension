@@ -77,7 +77,7 @@ export default class InjectorService {
   generateSemaphoreProof = async (
     { merkleStorageAddress, externalNullifier, signal, merkleProofArtifacts }: SemaphoreProofRequest,
     meta: IMeta,
-  ): Promise<SemaphoreProof> => {
+  ): Promise<SemaphoreProof | FullProof> => {
     const browserPlatform = getBrowserPlatform();
     const { isUnlocked } = await this.lockerService.getStatus();
 
@@ -149,7 +149,11 @@ export default class InjectorService {
         zkeyFilePath: semaphoreRequest.zkeyFilePath,
       });
 
+<<<<<<< HEAD
       return { fullProof };
+=======
+      return fullProof;
+>>>>>>> 7f635c9 (fix: generating SemaphoreProofs in Firefox with MV2)
     } catch (e) {
       throw new Error(`${e as string}`);
     } finally {
