@@ -39,7 +39,10 @@ module.exports = {
       patterns: [
         { from: path.resolve(__dirname, "./src/static/icons"), to: path.resolve(__dirname, "./dist/[name][ext]") },
         {
-          from: path.resolve(__dirname, `./manifest.${TARGET}.json`),
+          from:
+            TARGET === "firefox"
+              ? path.resolve(__dirname, `./src/manifest/v2/manifest.${TARGET}.json`)
+              : path.resolve(__dirname, `./src/manifest/v3/manifest.${TARGET}.json`),
           to: path.resolve(__dirname, "./dist/manifest.json"),
         },
         {
@@ -51,6 +54,10 @@ module.exports = {
           to: path.resolve(__dirname, "./dist/LICENSE"),
         },
         { from: path.resolve(__dirname, "../../zkeyFiles"), to: path.resolve(__dirname, "./dist/js/zkeyFiles") },
+        {
+          from: path.resolve(__dirname, "./src/background/shared/subworkers.js"),
+          to: path.resolve(__dirname, "./dist/js/subworkers.js"),
+        },
       ],
     }),
     new HtmlWebpackPlugin({

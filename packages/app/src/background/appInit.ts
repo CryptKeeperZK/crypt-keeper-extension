@@ -5,9 +5,10 @@
 import log from "loglevel";
 import browser from "webextension-polyfill";
 
+import { importAllScripts } from "@src/background/shared/importScripts";
+import "@src/background/shared/initGlobals";
+import "@src/background/shared/subworkers";
 import { isDebugMode } from "@src/config/env";
-
-import { importAllScripts } from "./shared/importScripts";
 
 log.setDefaultLevel(isDebugMode() ? "debug" : "info");
 
@@ -24,13 +25,6 @@ self.addEventListener("install", () => {
   importAllScripts();
 });
 
-/*
- * @src MetaMask extension workaround
- * A keepalive message listener to prevent Service Worker getting shut down due to inactivity.
- * UI sends the message periodically, in a setInterval.
- * Chrome will revive the service worker if it was shut down, whenever a new message is sent, but only if a listener was defined here.
- *
- */
 browser.runtime.onMessage.addListener(() => {
   importAllScripts();
 });

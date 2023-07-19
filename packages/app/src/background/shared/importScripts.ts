@@ -1,6 +1,4 @@
-// Source: https://github.com/MetaMask/metamask-extension/blob/develop/app/scripts/app-init.js
 // This file is used only for manifest version 3
-
 // Represents if importAllScripts has been run
 let scriptsLoadInitiated = false;
 

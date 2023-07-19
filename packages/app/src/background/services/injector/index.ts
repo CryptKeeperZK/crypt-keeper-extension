@@ -1,4 +1,6 @@
 import { RPCAction } from "@cryptkeeperzk/providers";
+import { FullProof, generateProof } from "@cryptkeeperzk/semaphore-proof";
+import { getMerkleProof } from "@cryptkeeperzk/zk";
 import browser from "webextension-polyfill";
 
 import BrowserUtils from "@src/background/controllers/browserUtils";
@@ -6,7 +8,7 @@ import RequestManager from "@src/background/controllers/requestManager";
 import ApprovalService from "@src/background/services/approval";
 import LockerService from "@src/background/services/lock";
 import ZkIdentityService from "@src/background/services/zkIdentity";
-import { closeChromeOffscreen, getBrowserPlatform } from "@src/background/shared/utils";
+import { closeChromeOffscreen, createChromeOffscreen, getBrowserPlatform } from "@src/background/shared/utils";
 import { BrowserPlatform } from "@src/constants";
 import { PendingRequestType, RLNProofRequest, SemaphoreProof, SemaphoreProofRequest } from "@src/types";
 import pushMessage from "@src/util/pushMessage";
@@ -66,14 +68,16 @@ export default class InjectorService {
       return { isApproved: true, canSkipApprove: false };
     } catch (e) {
       return { isApproved: false, canSkipApprove: false };
+    } finally {
+      await this.browserService.closePopup();
     }
   };
 
   // TODO: writing tests
   generateSemaphoreProof = async (
-    { merkleStorageAddress, externalNullifier, signal, merkleProofArtifacts, merkleProof }: SemaphoreProofRequest,
+    { merkleStorageAddress, externalNullifier, signal, merkleProofArtifacts }: SemaphoreProofRequest,
     meta: IMeta,
-  ): Promise<SemaphoreProof> => {
+  ): Promise<SemaphoreProof | FullProof> => {
     const browserPlatform = getBrowserPlatform();
     const { isUnlocked } = await this.lockerService.getStatus();
 
@@ -107,7 +111,6 @@ export default class InjectorService {
       signal,
       merkleStorageAddress,
       merkleProofArtifacts,
-      merkleProof,
       circuitFilePath: semaphorePath.circuitFilePath,
       zkeyFilePath: semaphorePath.zkeyFilePath,
       verificationKey: semaphorePath.verificationKey,
@@ -118,10 +121,12 @@ export default class InjectorService {
         ...semaphoreRequest,
         origin: meta.origin,
       });
+      await this.browserService.closePopup();
     }
 
     try {
       if (browserPlatform !== BrowserPlatform.Firefox) {
+        await createChromeOffscreen();
         const fullProof = await pushMessage({
           method: RPCAction.GENERATE_SEMAPHORE_PROOF_OFFSCREEN,
           payload: semaphoreRequest,
@@ -131,12 +136,26 @@ export default class InjectorService {
 
         return fullProof as SemaphoreProof;
       }
-      throw new Error("SemaphoreProofs are not supported with Firefox");
+      // TODO: This is a temporary solution ONLY FOR FIREFOX for generating SemaphoreProofs from the background on MV2
+      const identityCommitment = identity.genIdentityCommitment();
+
+      const merkleProof = await getMerkleProof({
+        identityCommitment,
+        merkleProofArtifacts,
+      });
+
+      const fullProof = await generateProof(identity.zkIdentity, merkleProof, externalNullifier, signal, {
+        wasmFilePath: semaphoreRequest.circuitFilePath,
+        zkeyFilePath: semaphoreRequest.zkeyFilePath,
+      });
+
+      return fullProof;
     } catch (e) {
       throw new Error("Error in generateSemaphoreProof");
     } finally {
-      await closeChromeOffscreen();
-      await this.browserService.closePopup();
+      if (browserPlatform !== BrowserPlatform.Firefox) {
+        await closeChromeOffscreen();
+      }
     }
   };
 

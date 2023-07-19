@@ -1,4 +1,3 @@
-import log from "loglevel";
 import browser from "webextension-polyfill";
 
 export interface CreateNotificationArgs {
@@ -14,9 +13,8 @@ export interface CreateNotificationArgs {
 export default class NotificationService {
   private static INSTANCE: NotificationService;
 
-  private constructor() {
-    log.debug("Notification service was initialized");
-  }
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
+  private constructor() {}
 
   static getInstance(): NotificationService {
     if (!NotificationService.INSTANCE) {
