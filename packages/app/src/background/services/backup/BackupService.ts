@@ -1,8 +1,10 @@
 import browser from "webextension-polyfill";
 
+import BrowserUtils from "@src/background/controllers/browserUtils";
 import CryptoService from "@src/background/services/crypto";
 import HistoryService from "@src/background/services/history";
 import NotificationService from "@src/background/services/notification";
+import { Paths } from "@src/constants";
 import { OperationType, type IUploadArgs } from "@src/types";
 
 import { type IBackupable } from "./types";
@@ -18,11 +20,14 @@ export default class BackupService {
 
   private cryptoService: CryptoService;
 
+  private browserController: BrowserUtils;
+
   private constructor() {
     this.backupables = new Map();
     this.historyService = HistoryService.getInstance();
     this.notificationService = NotificationService.getInstance();
     this.cryptoService = CryptoService.getInstance();
+    this.browserController = BrowserUtils.getInstance();
   }
 
   static getInstance = (): BackupService => {
@@ -31,6 +36,10 @@ export default class BackupService {
     }
 
     return BackupService.INSTANCE;
+  };
+
+  createUploadBackupRequest = async (): Promise<void> => {
+    await this.browserController.openPopup({ params: { redirect: Paths.UPLOAD_BACKUP } });
   };
 
   download = async (backupPassword: string): Promise<string> => {

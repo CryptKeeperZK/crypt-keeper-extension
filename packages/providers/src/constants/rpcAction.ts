@@ -38,6 +38,7 @@ export enum RPCAction {
   DELETE_ALL_HISTORY_OPERATIONS = "rpc/identity/deleteHistory",
   ENABLE_OPERATION_HISTORY = "rpc/identity/historyEnable",
   DOWNLOAD_BACKUP = "rpc/backup/download",
+  REQUEST_UPLOAD_BACKUP = "rpc/backup/requestUpload",
   UPLOAD_BACKUP = "rpc/backup/upload",
   SAVE_MNEMONIC = "rpc/mnemonic/save",
   GENERATE_MNEMONIC = "rpc/mnemonic/generate",

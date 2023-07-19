@@ -9,7 +9,7 @@ export interface ISecurityProps {
   onGoRevealMnemonic: () => void;
 }
 
-const Advanced = ({ isLoading, onGoRevealMnemonic, onGoToResetPassword }: ISecurityProps): JSX.Element => {
+const Security = ({ isLoading, onGoRevealMnemonic, onGoToResetPassword }: ISecurityProps): JSX.Element => {
   if (isLoading) {
     return <Box>Loading...</Box>;
   }
@@ -59,4 +59,4 @@ const Advanced = ({ isLoading, onGoRevealMnemonic, onGoToResetPassword }: ISecur
   );
 };
 
-export default Advanced;
+export default Security;

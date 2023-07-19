@@ -18,6 +18,12 @@ jest.mock("@src/background/services/crypto", (): unknown => ({
   })),
 }));
 
+jest.mock("@src/background/controllers/browserUtils", (): unknown => ({
+  getInstance: jest.fn(() => ({
+    openPopup: jest.fn(),
+  })),
+}));
+
 describe("background/services/backup/BackupService", () => {
   const backupService = BackupService.getInstance();
 
@@ -38,6 +44,10 @@ describe("background/services/backup/BackupService", () => {
 
   afterEach(() => {
     backupService.clear();
+  });
+
+  test("should create upload backup request properly", async () => {
+    await expect(backupService.createUploadBackupRequest()).resolves.toBeUndefined();
   });
 
   test("should add backupable services properly", () => {

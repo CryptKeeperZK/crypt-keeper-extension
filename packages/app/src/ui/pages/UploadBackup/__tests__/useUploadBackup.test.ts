@@ -8,6 +8,7 @@ import { useNavigate } from "react-router-dom";
 import { mockJsonFile } from "@src/config/mock/file";
 import { defaultWalletHookData } from "@src/config/mock/wallet";
 import { Paths } from "@src/constants";
+import { closePopup } from "@src/ui/ducks/app";
 import { uploadBackup } from "@src/ui/ducks/backup";
 import { useAppDispatch } from "@src/ui/ducks/hooks";
 import { useCryptKeeperWallet } from "@src/ui/hooks/wallet";
@@ -21,6 +22,10 @@ jest.mock("react-router-dom", (): unknown => ({
 
 jest.mock("@src/ui/hooks/wallet", (): unknown => ({
   useCryptKeeperWallet: jest.fn(),
+}));
+
+jest.mock("@src/ui/ducks/app", (): unknown => ({
+  closePopup: jest.fn(),
 }));
 
 jest.mock("@src/ui/ducks/hooks", (): unknown => ({
@@ -120,9 +125,10 @@ describe("ui/pages/UploadBackup/useUploadBackup", () => {
 
     await act(() => Promise.resolve(result.current.onSubmit()));
 
-    expect(mockDispatch).toBeCalledTimes(1);
+    expect(mockDispatch).toBeCalledTimes(2);
     expect(uploadBackup).toBeCalledTimes(1);
     expect(defaultWalletHookData.onConnect).toBeCalledTimes(1);
+    expect(closePopup).toBeCalledTimes(1);
     expect(mockNavigate).toBeCalledTimes(1);
     expect(mockNavigate).toBeCalledWith(Paths.HOME);
   });

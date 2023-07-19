@@ -7,7 +7,7 @@ import { ConfirmDangerModal } from "@src/ui/components/ConfirmDangerModal";
 import { Header } from "@src/ui/components/Header";
 import { Icon } from "@src/ui/components/Icon";
 
-import { General, Advanced, Security } from "./components";
+import { General, Backup, Security } from "./components";
 import { SettingsTabs, useSettings } from "./useSettings";
 
 const Settings = (): JSX.Element => {
@@ -22,6 +22,7 @@ const Settings = (): JSX.Element => {
     onDeleteAllHistory,
     onGoBack,
     onGoToBackup,
+    onGoToUploadBackup,
     onGoToResetPassword,
     onDeleteAllIdentities,
     onGoRevealMnemonic,
@@ -49,7 +50,7 @@ const Settings = (): JSX.Element => {
 
             <Tab label={<Typography>Security</Typography>} sx={{ alignItems: "flex-start" }} />
 
-            <Tab label={<Typography>Advanced</Typography>} sx={{ alignItems: "flex-start" }} />
+            <Tab label={<Typography>Backup</Typography>} sx={{ alignItems: "flex-start" }} />
           </Tabs>
 
           <Box sx={{ width: "100%", px: 2 }}>
@@ -78,9 +79,14 @@ const Settings = (): JSX.Element => {
               />
             )}
 
-            {tab === SettingsTabs.ADVANCED && (
+            {tab === SettingsTabs.BACKUP && (
               <>
-                <Advanced isLoading={isLoading} onDeleteIdentities={onConfirmModalShow} onGoToBackup={onGoToBackup} />
+                <Backup
+                  isLoading={isLoading}
+                  onDeleteIdentities={onConfirmModalShow}
+                  onGoToBackup={onGoToBackup}
+                  onGoToUploadBackup={onGoToUploadBackup}
+                />
 
                 <ConfirmDangerModal
                   accept={onDeleteAllIdentities}

@@ -4,6 +4,7 @@ import { UseFormRegister, useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 
 import { Paths } from "@src/constants";
+import { closePopup } from "@src/ui/ducks/app";
 import { uploadBackup } from "@src/ui/ducks/backup";
 import { useAppDispatch } from "@src/ui/ducks/hooks";
 import { useCryptKeeperWallet } from "@src/ui/hooks/wallet";
@@ -88,6 +89,7 @@ export const useUploadBackup = (): IUseUploadBackupData => {
 
       dispatch(uploadBackup({ password: data.password, backupPassword: data.backupPassword, content }))
         .then(() => onConnect())
+        .then(() => dispatch(closePopup()))
         .then(() => navigate(Paths.HOME))
         .catch((error: Error) => setError("root", { message: error.message }));
     },

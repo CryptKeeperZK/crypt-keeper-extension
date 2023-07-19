@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 
 import { Paths } from "@src/constants";
 import { HistorySettings } from "@src/types";
+import { createUploadBackupRequest } from "@src/ui/ducks/backup";
 import { useAppDispatch } from "@src/ui/ducks/hooks";
 import {
   clearHistory,
@@ -23,6 +24,7 @@ export interface IUseSettingsData {
   onTabChange: (event: SyntheticEvent, value: number) => void;
   onGoBack: () => void;
   onGoToBackup: () => void;
+  onGoToUploadBackup: () => void;
   onGoToResetPassword: () => void;
   onGoRevealMnemonic: () => void;
   onDeleteAllIdentities: () => void;
@@ -31,7 +33,7 @@ export interface IUseSettingsData {
 export enum SettingsTabs {
   GENERAL,
   SECURITY,
-  ADVANCED,
+  BACKUP,
 }
 
 export const useSettings = (): IUseSettingsData => {
@@ -69,6 +71,10 @@ export const useSettings = (): IUseSettingsData => {
     navigate(Paths.DOWNLOAD_BACKUP);
   }, [navigate]);
 
+  const onGoToUploadBackup = useCallback(() => {
+    dispatch(createUploadBackupRequest());
+  }, [dispatch]);
+
   const onGoToResetPassword = useCallback(() => {
     navigate(Paths.RECOVER);
   }, [navigate]);
@@ -97,6 +103,7 @@ export const useSettings = (): IUseSettingsData => {
     onTabChange,
     onGoBack,
     onGoToBackup,
+    onGoToUploadBackup,
     onGoToResetPassword,
     onGoRevealMnemonic,
     onDeleteAllIdentities,

@@ -7,13 +7,14 @@ import { Suspense } from "react";
 
 import { getEnabledFeatures } from "@src/config/features";
 
-import Advanced, { IAdvancedProps } from "../Advanced";
+import Backup, { IBackupProps } from "../Backup";
 
-describe("ui/pages/Settings/components/Advanced", () => {
-  const defaultProps: IAdvancedProps = {
+describe("ui/pages/Settings/components/Backup", () => {
+  const defaultProps: IBackupProps = {
     isLoading: false,
     onDeleteIdentities: jest.fn(),
     onGoToBackup: jest.fn(),
+    onGoToUploadBackup: jest.fn(),
   };
 
   beforeEach(() => {
@@ -27,7 +28,7 @@ describe("ui/pages/Settings/components/Advanced", () => {
   test("should clear identities properly", async () => {
     const { container, findByText } = render(
       <Suspense>
-        <Advanced {...defaultProps} />
+        <Backup {...defaultProps} />
       </Suspense>,
     );
 
@@ -42,16 +43,31 @@ describe("ui/pages/Settings/components/Advanced", () => {
   test("should download backup data properly", async () => {
     const { container, findByText } = render(
       <Suspense>
-        <Advanced {...defaultProps} />
+        <Backup {...defaultProps} />
       </Suspense>,
     );
 
     await waitFor(() => container.firstChild !== null);
 
-    const button = await findByText("Download backup data");
+    const button = await findByText("Download backup");
     await act(() => Promise.resolve(button.click()));
 
     expect(defaultProps.onGoToBackup).toBeCalledTimes(1);
+  });
+
+  test("should go to upload backup data properly", async () => {
+    const { container, findByText } = render(
+      <Suspense>
+        <Backup {...defaultProps} />
+      </Suspense>,
+    );
+
+    await waitFor(() => container.firstChild !== null);
+
+    const button = await findByText("Upload backup");
+    await act(() => Promise.resolve(button.click()));
+
+    expect(defaultProps.onGoToUploadBackup).toBeCalledTimes(1);
   });
 
   test("should not render backup option if feature is disabled", async () => {
@@ -59,13 +75,13 @@ describe("ui/pages/Settings/components/Advanced", () => {
 
     const { container, queryByText } = render(
       <Suspense>
-        <Advanced {...defaultProps} />
+        <Backup {...defaultProps} />
       </Suspense>,
     );
 
     await waitFor(() => container.firstChild !== null);
 
-    const button = queryByText("Download backup data");
+    const button = queryByText("Download backup");
 
     expect(button).not.toBeInTheDocument();
   });
@@ -73,7 +89,7 @@ describe("ui/pages/Settings/components/Advanced", () => {
   test("should render loading state properly", async () => {
     const { container, findByText } = render(
       <Suspense>
-        <Advanced {...defaultProps} isLoading />
+        <Backup {...defaultProps} isLoading />
       </Suspense>,
     );
 

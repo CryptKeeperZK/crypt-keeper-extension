@@ -15,6 +15,7 @@ export interface IUsePopupData {
 const REDIRECT_PATHS: Record<string, Paths> = {
   [Paths.CREATE_IDENTITY]: Paths.CREATE_IDENTITY,
   [Paths.CONNECT_IDENTITY]: Paths.CONNECT_IDENTITY,
+  [Paths.UPLOAD_BACKUP]: Paths.UPLOAD_BACKUP,
 };
 
 const COMMON_PATHS = [Paths.RECOVER, Paths.RESET_PASSWORD];
