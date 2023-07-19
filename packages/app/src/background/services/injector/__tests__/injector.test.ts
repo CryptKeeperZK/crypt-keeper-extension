@@ -14,7 +14,6 @@ const mockDefaultHost = "http://localhost:3000";
 const mockSerializedIdentity = "identity";
 const mockGetConnectedIdentity = jest.fn();
 
-
 Object.defineProperty(global, "chrome", {
   value: {
     offscreen: {
