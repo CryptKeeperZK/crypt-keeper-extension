@@ -2,6 +2,14 @@
  * @jest-environment jsdom
  */
 
+Object.defineProperty(global, "chrome", {
+  value: {
+    offscreen: {
+      closeDocument: jest.fn(),
+    },
+  },
+});
+
 import browser from "webextension-polyfill";
 
 import { PendingRequestType, RLNProofRequest, SemaphoreProofRequest } from "@src/types";
