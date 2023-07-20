@@ -81,7 +81,6 @@ export default class CryptoService {
 
   getAuthenticCiphertext(ciphertext: string, password: string): string {
     this.checkSecretInitialized(password);
-    this.isAuthenticPassword(password);
 
     const transitHmac = ciphertext.substring(0, 64);
     const transitCipherContent = ciphertext.substring(64);
