@@ -13,6 +13,7 @@ const envPlugin = new Dotenv({
 });
 
 const TARGET = process.env.TARGET || "chrome";
+const MANIFEST_VERSION = process.env.MANIFEST_VERSION || "3";
 
 module.exports = {
   entry: {
@@ -39,7 +40,7 @@ module.exports = {
       patterns: [
         { from: path.resolve(__dirname, "./src/static/icons"), to: path.resolve(__dirname, "./dist/[name][ext]") },
         {
-          from: path.resolve(__dirname, `./manifest.${TARGET}.json`),
+          from: path.resolve(__dirname, `./src/manifest/v${MANIFEST_VERSION}/manifest.${TARGET}.json`),
           to: path.resolve(__dirname, "./dist/manifest.json"),
         },
         {
