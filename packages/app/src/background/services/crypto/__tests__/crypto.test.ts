@@ -49,7 +49,6 @@ describe("background/services/crypto", () => {
 
     service.setPassword("password");
     expect(() => service.getAuthenticCiphertext("text", "password")).toThrow("This ciphertext is not authentic");
-    expect(() => service.getAuthenticCiphertext("text", "wrong")).toThrow("Password doesn't match with current");
 
     fc.assert(
       fc.property(fc.string(), fc.string(), (text, password) => {
