@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
-  "name": "CryptKeeper",
-  "description": "Extension that stores credentials and creates semaphore proofs",
-  "version": "0.0.1",
+  "name": "CryptKeeper - Beta Version",
+  "description": "CryptKeeper extension creates and stores Semaphore identities, and generates Semaphore proofs.",
+  "version": "0.1.0",
   "minimum_chrome_version": "93",
   "action": {
     "default_icon": "logo.png",
