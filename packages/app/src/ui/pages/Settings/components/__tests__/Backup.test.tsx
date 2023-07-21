@@ -5,8 +5,6 @@
 import { act, render, waitFor } from "@testing-library/react";
 import { Suspense } from "react";
 
-import { getEnabledFeatures } from "@src/config/features";
-
 import Backup, { IBackupProps } from "../Backup";
 
 describe("ui/pages/Settings/components/Backup", () => {
@@ -16,10 +14,6 @@ describe("ui/pages/Settings/components/Backup", () => {
     onGoToBackup: jest.fn(),
     onGoToUploadBackup: jest.fn(),
   };
-
-  beforeEach(() => {
-    (getEnabledFeatures as jest.Mock).mockReturnValue({ BACKUP: true });
-  });
 
   afterEach(() => {
     jest.clearAllMocks();
@@ -68,22 +62,6 @@ describe("ui/pages/Settings/components/Backup", () => {
     await act(() => Promise.resolve(button.click()));
 
     expect(defaultProps.onGoToUploadBackup).toBeCalledTimes(1);
-  });
-
-  test("should not render backup option if feature is disabled", async () => {
-    (getEnabledFeatures as jest.Mock).mockReturnValue({ BACKUP: false });
-
-    const { container, queryByText } = render(
-      <Suspense>
-        <Backup {...defaultProps} />
-      </Suspense>,
-    );
-
-    await waitFor(() => container.firstChild !== null);
-
-    const button = queryByText("Download backup");
-
-    expect(button).not.toBeInTheDocument();
   });
 
   test("should render loading state properly", async () => {
