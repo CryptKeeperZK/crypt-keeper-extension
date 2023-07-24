@@ -219,17 +219,23 @@ export default class WalletService implements IBackupable {
     const newAccounts = JSON.parse(
       this.cryptoService.decrypt(backup.accounts, { secret: backupPassword }),
     ) as IAccount[];
+    const newMnemonic = this.cryptoService.decrypt(backup.mnemonic, { secret: backupPassword });
 
-    const encrypted = await this.accountStorage.get<string>();
-    const accounts = encrypted
-      ? (JSON.parse(this.cryptoService.decrypt(encrypted, { mode: ECryptMode.MNEMONIC })) as IAccount[])
+    const mnemonic = await this.getMnemonic();
+    const encryptedAccounts = await this.accountStorage.get<string>();
+    const accounts = encryptedAccounts
+      ? (JSON.parse(this.cryptoService.decrypt(encryptedAccounts, { mode: ECryptMode.MNEMONIC })) as IAccount[])
       : [];
 
     const mergedBackupData = this.cryptoService.encrypt(
       JSON.stringify(uniqBy([...accounts, ...newAccounts], "privateKey")),
       { mode: ECryptMode.MNEMONIC },
     );
-
     await this.accountStorage.set(mergedBackupData);
+
+    if (!mnemonic) {
+      await this.changeMnemonicPassword({ mnemonic: newMnemonic, password: backupPassword });
+      this.cryptoService.setMnemonic(newMnemonic);
+    }
   };
 }

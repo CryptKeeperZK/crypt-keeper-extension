@@ -190,6 +190,7 @@ export default class LockerService implements IBackupable {
     const backup = this.cryptoService.decrypt(authenticBackupCiphertext, { secret: backupPassword });
     const encrypted = this.cryptoService.encrypt(backup, { mode: ECryptMode.PASSWORD });
     await this.passwordStorage.set(encrypted);
+    this.cryptoService.setPassword(backupPassword);
   };
 
   private isAuthentic = async (password: string, isBackupAvaiable: boolean): Promise<AuthenticityCheckData> => {

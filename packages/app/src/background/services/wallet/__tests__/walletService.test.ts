@@ -38,13 +38,20 @@ jest.mock("@src/background/services/misc", (): unknown => ({
   })),
 }));
 
+const mockCryptoResponses: Record<string, string> = {
+  [ZERO_ADDRESS]: ZERO_ADDRESS,
+  [defaultMnemonic]: defaultMnemonic,
+};
+
 jest.mock("@src/background/services/crypto", (): unknown => ({
   ...jest.requireActual("@src/background/services/crypto"),
   getInstance: jest.fn(() => ({
-    encrypt: jest.fn(() => mockSerializedAccounts),
-    decrypt: jest.fn((arg) => (arg === ZERO_ADDRESS ? ZERO_ADDRESS : mockSerializedAccounts)),
+    encrypt: jest.fn((arg: string) => mockCryptoResponses[arg] ?? mockSerializedAccounts),
+    decrypt: jest.fn((arg: string) => mockCryptoResponses[arg] ?? mockSerializedAccounts),
     generateEncryptedHmac: jest.fn(() => mockBackup),
-    getAuthenticCiphertext: jest.fn((encrypted) => (typeof encrypted === "string" ? encrypted : mockBackup)),
+    getAuthenticCiphertext: jest.fn((encrypted: string | Record<string, string>) =>
+      typeof encrypted === "string" ? encrypted : mockBackup,
+    ),
     setMnemonic: jest.fn(),
   })),
 }));
@@ -335,23 +342,33 @@ describe("background/services/wallet", () => {
     });
 
     test("should upload encrypted backup", async () => {
+      const [accountStorage, mnemonicStorage] = (SimpleStorage as jest.Mock).mock.instances as [
+        MockStorage,
+        MockStorage,
+      ];
+      mnemonicStorage.get.mockResolvedValue(defaultMnemonic);
+
       await walletService.uploadEncryptedStorage(mockBackup, "password");
 
-      const [accountStorage] = (SimpleStorage as jest.Mock).mock.instances as [MockStorage];
       expect(accountStorage.set).toBeCalledTimes(1);
       expect(accountStorage.set).toBeCalledWith(mockSerializedAccounts);
+      expect(mnemonicStorage.set).toBeCalledTimes(0);
     });
 
     test("should upload encrypted data with empty storage", async () => {
-      (SimpleStorage as jest.Mock).mock.instances.forEach((instance: MockStorage) => {
-        instance.get.mockReturnValue(undefined);
-      });
+      const [accountStorage, mnemonicStorage] = (SimpleStorage as jest.Mock).mock.instances as [
+        MockStorage,
+        MockStorage,
+      ];
+      accountStorage.get.mockResolvedValueOnce(undefined).mockResolvedValue(mockSerializedAccounts);
+      mnemonicStorage.get.mockResolvedValue(undefined);
 
       await walletService.uploadEncryptedStorage(mockBackup, "password");
 
-      const [accountStorage] = (SimpleStorage as jest.Mock).mock.instances as [MockStorage];
       expect(accountStorage.set).toBeCalledTimes(1);
       expect(accountStorage.set).toBeCalledWith(mockSerializedAccounts);
+      expect(mnemonicStorage.set).toBeCalledTimes(1);
+      expect(mnemonicStorage.set).toBeCalledWith(defaultMnemonic);
     });
 
     test("should not upload encrypted keys if there is no data", async () => {
