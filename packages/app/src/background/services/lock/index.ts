@@ -87,7 +87,7 @@ export default class LockerService implements IBackupable {
       options: {
         title: "Password reset",
         message: "Password has been successfully reset",
-        iconUrl: browser.runtime.getURL("/logo.png"),
+        iconUrl: browser.runtime.getURL("/icons/logo.png"),
         type: "basic",
       },
     });

@@ -125,7 +125,7 @@ export default class HistoryService {
       options: {
         title: "History clear",
         message: "History operations has been cleared",
-        iconUrl: browser.runtime.getURL("/logo.png"),
+        iconUrl: browser.runtime.getURL("/icons/logo.png"),
         type: "basic",
       },
     });
