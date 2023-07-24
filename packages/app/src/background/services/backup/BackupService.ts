@@ -49,7 +49,10 @@ export default class BackupService {
     const services = [...this.backupables.values()];
 
     const data = await Promise.all(services.map((service) => service.downloadEncryptedStorage(backupPassword)));
-    const prepared = data.reduce<Record<string, string | null>>((acc, x, index) => ({ ...acc, [keys[index]]: x }), {});
+    const prepared = data.reduce<Record<string, string | Record<string, string> | null>>(
+      (acc, x, index) => ({ ...acc, [keys[index]]: x }),
+      {},
+    );
 
     await this.historyService.trackOperation(OperationType.DOWNLOAD_BACKUP, {});
     await this.notificationService.create({

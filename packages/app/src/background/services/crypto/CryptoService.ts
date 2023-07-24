@@ -79,9 +79,23 @@ export default class CryptoService {
     return `${hmac}${ciphertext}`;
   }
 
-  getAuthenticCiphertext(ciphertext: string, password: string): string {
+  getAuthenticCiphertext(
+    ciphertext: string | Record<string, string>,
+    password: string,
+  ): string | Record<string, string> {
     this.checkSecretInitialized(password);
 
+    if (typeof ciphertext === "object") {
+      return Object.entries(ciphertext).reduce<Record<string, string>>((acc, [key, value]) => {
+        acc[key] = this.getAuthenticContent(value, password);
+        return acc;
+      }, {});
+    }
+
+    return this.getAuthenticContent(ciphertext, password);
+  }
+
+  private getAuthenticContent(ciphertext: string, password: string): string {
     const transitHmac = ciphertext.substring(0, 64);
     const transitCipherContent = ciphertext.substring(64);
     const decryptedHmac = this.generateHmac(transitCipherContent, password);

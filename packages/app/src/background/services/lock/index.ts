@@ -170,15 +170,26 @@ export default class LockerService implements IBackupable {
     return this.cryptoService.generateEncryptedHmac(encryptedBackup, backupPassword);
   };
 
-  uploadEncryptedStorage = async (backupEncryptedData: string, backupPassword: string): Promise<void> => {
+  uploadEncryptedStorage = async (
+    backupEncryptedData: string | Record<string, string>,
+    backupPassword: string,
+  ): Promise<void> => {
     const isNewOnboarding = await this.isNewOnboarding();
+    const canProcessBackup = isNewOnboarding && backupEncryptedData;
 
-    if (isNewOnboarding && backupEncryptedData) {
-      const authenticBackupCiphertext = this.cryptoService.getAuthenticCiphertext(backupEncryptedData, backupPassword);
-      const backup = this.cryptoService.decrypt(authenticBackupCiphertext, { secret: backupPassword });
-      const encrypted = this.cryptoService.encrypt(backup, { mode: ECryptMode.PASSWORD });
-      await this.passwordStorage.set(encrypted);
+    if (!canProcessBackup) {
+      return;
     }
+
+    const authenticBackupCiphertext = this.cryptoService.getAuthenticCiphertext(backupEncryptedData, backupPassword);
+
+    if (typeof authenticBackupCiphertext !== "string") {
+      throw new Error("Incorrect backup format for password");
+    }
+
+    const backup = this.cryptoService.decrypt(authenticBackupCiphertext, { secret: backupPassword });
+    const encrypted = this.cryptoService.encrypt(backup, { mode: ECryptMode.PASSWORD });
+    await this.passwordStorage.set(encrypted);
   };
 
   private isAuthentic = async (password: string, isBackupAvaiable: boolean): Promise<AuthenticityCheckData> => {

@@ -17,7 +17,6 @@ test.describe("backup", () => {
     const extension = new CryptKeeper(page);
     await extension.focus();
 
-    await extension.identities.createIdentityFromHome({ walletType: "eth" });
     await expect(extension.getByText("Account # 0")).toBeVisible();
 
     await extension.settings.openPage();
@@ -30,5 +29,109 @@ test.describe("backup", () => {
 
     await extension.activity.openTab();
     await expect(extension.activity.getByText("Backup download")).toBeVisible();
+  });
+
+  test("should download and upload backup properly", async ({ page }) => {
+    const extension = new CryptKeeper(page);
+    await extension.focus();
+
+    await extension.identities.createIdentityFromHome({ walletType: "eth" });
+    await expect(extension.getByText(/Account/)).toHaveCount(2);
+
+    await extension.settings.openPage();
+    await extension.settings.openTab("Backup");
+    const backupFilePath = await extension.settings.downloadBackup();
+    expect(backupFilePath).toBeDefined();
+
+    await extension.settings.openTab("Backup");
+    await extension.settings.deleteAllIdentities();
+    await extension.goHome();
+    await expect(extension.getByText(/Account/)).toHaveCount(0);
+
+    await extension.settings.openPage();
+    await extension.settings.openTab("Backup");
+    await extension.settings.uploadBackup({ backupFilePath: backupFilePath! });
+    await extension.goHome();
+    await expect(extension.getByText(/Account/)).toHaveCount(2);
+
+    await extension.activity.openTab();
+    await expect(extension.activity.getByText("Backup upload")).toBeVisible();
+    await expect(extension.activity.getByText("Backup download")).toBeVisible();
+  });
+
+  test("should download and upload empty backup properly", async ({ page }) => {
+    const extension = new CryptKeeper(page);
+    await extension.focus();
+
+    await extension.settings.openPage();
+    await extension.settings.openTab("Backup");
+    await extension.settings.deleteAllIdentities();
+    await extension.goHome();
+    await expect(extension.getByText(/Account/)).toHaveCount(0);
+
+    await extension.settings.openPage();
+    await extension.settings.openTab("Backup");
+    const backupFilePath = await extension.settings.downloadBackup();
+    expect(backupFilePath).toBeDefined();
+
+    await extension.settings.openTab("Backup");
+    await extension.settings.uploadBackup({ backupFilePath: backupFilePath! });
+    await extension.goHome();
+    await expect(extension.getByText(/Account/)).toHaveCount(0);
+
+    await extension.activity.openTab();
+    await expect(extension.activity.getByText("Backup upload")).toBeVisible();
+    await expect(extension.activity.getByText("Backup download")).toBeVisible();
+  });
+
+  test("should download and upload backup with additional data properly", async ({ page }) => {
+    const extension = new CryptKeeper(page);
+    await extension.focus();
+
+    await extension.identities.createIdentityFromHome({ walletType: "eth", identityType: "Random" });
+    await expect(extension.getByText(/Account/)).toHaveCount(2);
+
+    await extension.settings.openPage();
+    await extension.settings.openTab("Backup");
+    const backupFilePath = await extension.settings.downloadBackup();
+    expect(backupFilePath).toBeDefined();
+
+    await extension.goHome();
+
+    await extension.identities.createIdentityFromHome({ walletType: "eth", identityType: "Random" });
+    await expect(extension.getByText(/Account/)).toHaveCount(3);
+
+    await extension.settings.openPage();
+    await extension.settings.openTab("Backup");
+    await extension.settings.uploadBackup({ backupFilePath: backupFilePath! });
+    await extension.goHome();
+    await expect(extension.getByText(/Account/)).toHaveCount(3);
+
+    await extension.activity.openTab();
+    await expect(extension.activity.getByText("Backup upload")).toBeVisible();
+    await expect(extension.activity.getByText("Backup download")).toBeVisible();
+  });
+
+  test("should double upload backup properly without data duplication", async ({ page }) => {
+    const extension = new CryptKeeper(page);
+    await extension.focus();
+
+    await extension.identities.createIdentityFromHome({ walletType: "eth", identityType: "Random" });
+    await extension.identities.createIdentityFromHome({ walletType: "eth", identityType: "Random" });
+    await expect(extension.getByText(/Account/)).toHaveCount(3);
+
+    await extension.settings.openPage();
+    await extension.settings.openTab("Backup");
+    const backupFilePath = await extension.settings.downloadBackup();
+    expect(backupFilePath).toBeDefined();
+
+    await extension.goHome();
+
+    await extension.settings.openPage();
+    await extension.settings.openTab("Backup");
+    await extension.settings.uploadBackup({ backupFilePath: backupFilePath! });
+    await extension.settings.uploadBackup({ backupFilePath: backupFilePath! });
+    await extension.goHome();
+    await expect(extension.getByText(/Account/)).toHaveCount(3);
   });
 });

@@ -49,6 +49,7 @@ describe("background/services/crypto", () => {
 
     service.setPassword("password");
     expect(() => service.getAuthenticCiphertext("text", "password")).toThrow("This ciphertext is not authentic");
+    expect(() => service.isAuthenticPassword("")).toThrow("Password doesn't match with current");
 
     fc.assert(
       fc.property(fc.string(), fc.string(), (text, password) => {
@@ -58,8 +59,9 @@ describe("background/services/crypto", () => {
 
         const encrypted = service.generateEncryptedHmac(text, password);
         const decrypted = service.getAuthenticCiphertext(encrypted, password);
+        const object = service.getAuthenticCiphertext({ key: encrypted }, password) as { key: string };
 
-        return decrypted === text;
+        return decrypted === text && object.key === text;
       }),
     );
   });

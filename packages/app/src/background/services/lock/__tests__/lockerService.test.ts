@@ -22,7 +22,7 @@ jest.mock("@src/background/services/crypto", (): unknown => ({
     isAuthenticPassword: jest.fn(() => true),
     clear: jest.fn(),
     generateEncryptedHmac: jest.fn(() => "encrypted"),
-    getAuthenticCiphertext: jest.fn(() => "encrypted"),
+    getAuthenticCiphertext: jest.fn((encrypted: string | Record<string, string>) => encrypted),
   })),
 }));
 
@@ -240,6 +240,16 @@ describe("background/services/locker", () => {
       await lockService.uploadEncryptedStorage("encrypted", defaultPassword);
 
       expect(mockSet).toBeCalledTimes(1);
+    });
+
+    test("should throw error when trying upload incorrect backup", async () => {
+      (SimpleStorage as jest.Mock).mock.instances.forEach((instance: MockStorage) => {
+        instance.get.mockResolvedValue(undefined);
+      });
+
+      await expect(lockService.uploadEncryptedStorage({}, "password")).rejects.toThrow(
+        "Incorrect backup format for password",
+      );
     });
   });
 });

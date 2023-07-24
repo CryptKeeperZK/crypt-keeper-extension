@@ -11,7 +11,7 @@ jest.mock("@src/background/services/crypto", (): unknown => ({
     encrypt: jest.fn(() => mockSerializedApprovals),
     decrypt: jest.fn(() => mockSerializedApprovals),
     generateEncryptedHmac: jest.fn(() => "encrypted"),
-    getAuthenticCiphertext: jest.fn(() => "encrypted"),
+    getAuthenticCiphertext: jest.fn((encrypted: string | Record<string, string>) => encrypted),
   })),
 }));
 
@@ -213,6 +213,12 @@ describe("background/services/approval", () => {
       (SimpleStorage as jest.Mock).mock.instances.forEach((instance: MockStorage) => {
         expect(instance.set).toBeCalledTimes(0);
       });
+    });
+
+    test("should throw error when trying upload incorrect backup", async () => {
+      await expect(approvalService.uploadEncryptedStorage({}, "password")).rejects.toThrow(
+        "Incorrect backup format for approvals",
+      );
     });
   });
 });

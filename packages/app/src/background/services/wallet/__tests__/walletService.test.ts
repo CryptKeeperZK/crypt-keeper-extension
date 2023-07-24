@@ -19,7 +19,7 @@ const mockAccounts = [
 
 const mockSerializedAccounts = JSON.stringify(mockAccounts);
 
-const mockSerializedBackup = JSON.stringify({ accounts: mockSerializedAccounts, mnemonic: defaultMnemonic });
+const mockBackup = { accounts: mockSerializedAccounts, mnemonic: defaultMnemonic };
 
 const mockSignedMessage =
   "0x8b7a1e6c0638291c674af226dd97f5354bb3723d611128ad35fda772b9051eab5fec16aacf700ba186590b170a16bfff576078695ac26a3321f9636c6a4a6c051b";
@@ -43,8 +43,8 @@ jest.mock("@src/background/services/crypto", (): unknown => ({
   getInstance: jest.fn(() => ({
     encrypt: jest.fn(() => mockSerializedAccounts),
     decrypt: jest.fn((arg) => (arg === ZERO_ADDRESS ? ZERO_ADDRESS : mockSerializedAccounts)),
-    generateEncryptedHmac: jest.fn(() => mockSerializedBackup),
-    getAuthenticCiphertext: jest.fn(() => mockSerializedBackup),
+    generateEncryptedHmac: jest.fn(() => mockBackup),
+    getAuthenticCiphertext: jest.fn((encrypted) => (typeof encrypted === "string" ? encrypted : mockBackup)),
     setMnemonic: jest.fn(),
   })),
 }));
@@ -335,7 +335,7 @@ describe("background/services/wallet", () => {
     });
 
     test("should upload encrypted backup", async () => {
-      await walletService.uploadEncryptedStorage(mockSerializedBackup, "password");
+      await walletService.uploadEncryptedStorage(mockBackup, "password");
 
       const [accountStorage] = (SimpleStorage as jest.Mock).mock.instances as [MockStorage];
       expect(accountStorage.set).toBeCalledTimes(1);
@@ -347,7 +347,7 @@ describe("background/services/wallet", () => {
         instance.get.mockReturnValue(undefined);
       });
 
-      await walletService.uploadEncryptedStorage(mockSerializedBackup, "password");
+      await walletService.uploadEncryptedStorage(mockBackup, "password");
 
       const [accountStorage] = (SimpleStorage as jest.Mock).mock.instances as [MockStorage];
       expect(accountStorage.set).toBeCalledTimes(1);
@@ -360,6 +360,12 @@ describe("background/services/wallet", () => {
       (SimpleStorage as jest.Mock).mock.instances.forEach((instance: MockStorage) => {
         expect(instance.set).toBeCalledTimes(0);
       });
+    });
+
+    test("should throw error when trying upload incorrect backup", async () => {
+      await expect(walletService.uploadEncryptedStorage("backup", "password")).rejects.toThrow(
+        "Incorrect backup format for wallet",
+      );
     });
   });
 });
