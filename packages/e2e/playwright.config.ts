@@ -20,7 +20,7 @@ export default defineConfig({
   workers: 1,
   reporter: [["github"], ["list"], ["html", { open: "never" }]],
   use: {
-    baseURL: "http://localhost:1234",
+    baseURL: process.env.DEMO_URL || "http://localhost:1234",
     trace: "on-first-retry",
     screenshot: "only-on-failure",
     headless: false,
@@ -35,20 +35,22 @@ export default defineConfig({
     },
   ],
 
-  webServer: [
-    {
-      command: "pnpm run merkle",
-      cwd: path.resolve(__dirname, "../merkle-mock-server"),
-      url: "http://localhost:8090",
-      timeout: 120 * 1000,
-      reuseExistingServer: !process.env.CI,
-    },
-    {
-      command: "pnpm run start",
-      cwd: path.resolve(__dirname, "../demo"),
-      url: "http://localhost:1234",
-      timeout: 120 * 1000,
-      reuseExistingServer: !process.env.CI,
-    },
-  ],
+  webServer: !process.env.DEMO_URL
+    ? [
+        {
+          command: "pnpm run merkle",
+          cwd: path.resolve(__dirname, "../merkle-mock-server"),
+          url: "http://localhost:8090",
+          timeout: 120 * 1000,
+          reuseExistingServer: !process.env.CI,
+        },
+        {
+          command: "pnpm run start",
+          cwd: path.resolve(__dirname, "../demo"),
+          url: "http://localhost:1234",
+          timeout: 120 * 1000,
+          reuseExistingServer: !process.env.CI,
+        },
+      ]
+    : [],
 });

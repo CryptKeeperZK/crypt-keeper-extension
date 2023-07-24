@@ -22,7 +22,9 @@ env:
   FREIGHT_TRUST_NETWORK: ${{ secrets.FREIGHT_TRUST_NETWORK }}
   PULSECHAIN_API_KEY: ${{ secrets.PULSECHAIN_API_KEY }}
   TARGET: "chrome"
+  DEMO_URL: ${{ vars.DEMO_URL }}
   PLAYWRIGHT_VERSION: ""
+  
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
