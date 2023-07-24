@@ -10,7 +10,7 @@ import LockerService from "@src/background/services/lock";
 import ZkIdentityService from "@src/background/services/zkIdentity";
 import { closeChromeOffscreen, createChromeOffscreen, getBrowserPlatform } from "@src/background/shared/utils";
 import { BrowserPlatform } from "@src/constants";
-import { PendingRequestType, RLNProofRequest, SemaphoreProof, SemaphoreProofRequest } from "@src/types";
+import { PendingRequestType, SemaphoreProof, SemaphoreProofRequest } from "@src/types";
 import pushMessage from "@src/util/pushMessage";
 
 import type { IConnectData, IMeta, IProofRequest } from "./types";
@@ -209,50 +209,50 @@ export default class InjectorService {
     }
   };
 
-  prepareRlnProofRequest = async (payload: RLNProofRequest, meta: IMeta): Promise<IProofRequest<RLNProofRequest>> => {
-    const { isUnlocked } = await this.lockerService.getStatus();
+  // prepareRlnProofRequest = async (payload: RLNProofRequest, meta: IMeta): Promise<IProofRequest<RLNProofRequest>> => {
+  //   const { isUnlocked } = await this.lockerService.getStatus();
 
-    const rlnPath = {
-      circuitFilePath: browser.runtime.getURL("js/zkeyFiles/rln/rln.wasm"),
-      zkeyFilePath: browser.runtime.getURL("js/zkeyFiles/rln/rln.zkey"),
-      verificationKey: browser.runtime.getURL("js/zkeyFiles/rln/rln.json"),
-    };
+  //   const rlnPath = {
+  //     circuitFilePath: browser.runtime.getURL("js/zkeyFiles/rln/rln.wasm"),
+  //     zkeyFilePath: browser.runtime.getURL("js/zkeyFiles/rln/rln.zkey"),
+  //     verificationKey: browser.runtime.getURL("js/zkeyFiles/rln/rln.json"),
+  //   };
 
-    if (!isUnlocked) {
-      await this.browserService.openPopup();
-      await this.lockerService.awaitUnlock();
-    }
+  //   if (!isUnlocked) {
+  //     await this.browserService.openPopup();
+  //     await this.lockerService.awaitUnlock();
+  //   }
 
-    const identity = await this.zkIdentityService.getConnectedIdentity();
-    const approved = this.approvalService.isApproved(meta.origin);
-    const permission = this.approvalService.getPermission(meta.origin);
+  //   const identity = await this.zkIdentityService.getConnectedIdentity();
+  //   const approved = this.approvalService.isApproved(meta.origin);
+  //   const permission = this.approvalService.getPermission(meta.origin);
 
-    if (!identity) {
-      throw new Error("connected identity not found");
-    }
+  //   if (!identity) {
+  //     throw new Error("connected identity not found");
+  //   }
 
-    if (!approved) {
-      throw new Error(`${meta.origin} is not approved`);
-    }
+  //   if (!approved) {
+  //     throw new Error(`${meta.origin} is not approved`);
+  //   }
 
-    try {
-      const request = {
-        ...payload,
-        circuitFilePath: rlnPath.circuitFilePath,
-        zkeyFilePath: rlnPath.zkeyFilePath,
-        verificationKey: rlnPath.verificationKey,
-      };
+  //   try {
+  //     const request = {
+  //       ...payload,
+  //       circuitFilePath: rlnPath.circuitFilePath,
+  //       zkeyFilePath: rlnPath.zkeyFilePath,
+  //       verificationKey: rlnPath.verificationKey,
+  //     };
 
-      if (!permission.canSkipApprove) {
-        await this.requestManager.newRequest(PendingRequestType.RLN_PROOF, {
-          ...request,
-          origin: meta.origin,
-        });
-      }
+  //     if (!permission.canSkipApprove) {
+  //       await this.requestManager.newRequest(PendingRequestType.RLN_PROOF, {
+  //         ...request,
+  //         origin: meta.origin,
+  //       });
+  //     }
 
-      return { identity: identity.serialize(), payload: request };
-    } finally {
-      await this.browserService.closePopup();
-    }
-  };
+  //     return { identity: identity.serialize(), payload: request };
+  //   } finally {
+  //     await this.browserService.closePopup();
+  //   }
+  // };
 }

@@ -2,6 +2,7 @@ const CopyPlugin = require("copy-webpack-plugin");
 const Dotenv = require("dotenv-webpack");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const webpack = require("webpack");
+const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 
 const path = require("path");
 
@@ -30,6 +31,8 @@ module.exports = {
   },
   plugins: [
     envPlugin,
+    // Uncomment only if you needed to analyze the package size
+    //new BundleAnalyzerPlugin(),
     new webpack.ProvidePlugin({
       Buffer: ["buffer", "Buffer"],
     }),
@@ -38,7 +41,7 @@ module.exports = {
     }),
     new CopyPlugin({
       patterns: [
-        { from: path.resolve(__dirname, "./src/static/icons"), to: path.resolve(__dirname, "./dist/[name][ext]") },
+        { from: path.resolve(__dirname, "./src/static/icons"), to: path.resolve(__dirname, "./dist/static/[name][ext]") },
         {
           from: path.resolve(__dirname, `./src/manifest/v${MANIFEST_VERSION}/manifest.${TARGET}.json`),
           to: path.resolve(__dirname, "./dist/manifest.json"),
@@ -64,7 +67,7 @@ module.exports = {
       checkResource(resource) {
         return /.*\/wordlists\/(?!english).*\.json/.test(resource);
       },
-    }),
+    })
   ],
   module: {
     rules: [
@@ -96,7 +99,7 @@ module.exports = {
       {
         test: /\.(jpe?g|png|gif|svg)$/i,
         type: "asset",
-      },
+      }
     ],
   },
   resolve: {

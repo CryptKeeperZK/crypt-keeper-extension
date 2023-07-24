@@ -1,10 +1,8 @@
 import {
   Approvals,
-  IRlnGenerateArgs,
   InjectedMessageData,
   InjectedProviderRequest,
   MerkleProofArtifacts,
-  RLNFullProof,
   ConnectedIdentity,
   SemaphoreProof,
   ICreateIdentityRequestArgs,
@@ -352,31 +350,31 @@ export class CryptKeeperInjectedProvider {
    * @param {string} rlnIdentifier - The RLN identifier.
    * @returns {Promise<RLNFullProof>} A Promise that resolves to the RLN proof.
    */
-  async rlnProof(
-    externalNullifier: string,
-    signal: string,
-    merkleProofArtifactsOrStorageAddress: string | MerkleProofArtifacts,
-    rlnIdentifier: string,
-  ): Promise<RLNFullProof> {
-    const merkleProofArtifacts =
-      typeof merkleProofArtifactsOrStorageAddress === "string" ? undefined : merkleProofArtifactsOrStorageAddress;
-    const merkleStorageAddress =
-      typeof merkleProofArtifactsOrStorageAddress === "string" ? merkleProofArtifactsOrStorageAddress : undefined;
+  // async rlnProof(
+  //   externalNullifier: string,
+  //   signal: string,
+  //   merkleProofArtifactsOrStorageAddress: string | MerkleProofArtifacts,
+  //   rlnIdentifier: string,
+  // ): Promise<RLNFullProof> {
+  //   const merkleProofArtifacts =
+  //     typeof merkleProofArtifactsOrStorageAddress === "string" ? undefined : merkleProofArtifactsOrStorageAddress;
+  //   const merkleStorageAddress =
+  //     typeof merkleProofArtifactsOrStorageAddress === "string" ? merkleProofArtifactsOrStorageAddress : undefined;
 
-    const request = (await this.post({
-      method: RPCAction.PREPARE_RLN_PROOF_REQUEST,
-      payload: {
-        externalNullifier,
-        signal,
-        merkleStorageAddress,
-        merkleProofArtifacts,
-        rlnIdentifier,
-      },
-    })) as IRlnGenerateArgs;
+  //   const request = (await this.post({
+  //     method: RPCAction.PREPARE_RLN_PROOF_REQUEST,
+  //     payload: {
+  //       externalNullifier,
+  //       signal,
+  //       merkleStorageAddress,
+  //       merkleProofArtifacts,
+  //       rlnIdentifier,
+  //     },
+  //   })) as IRlnGenerateArgs;
 
-    return this.zkProofService.generateRLNProof(
-      ZkIdentitySemaphore.genFromSerialized(request.identity),
-      request.payload,
-    );
-  }
+  //   return this.zkProofService.generateRLNProof(
+  //     ZkIdentitySemaphore.genFromSerialized(request.identity),
+  //     request.payload,
+  //   );
+  // }
 }

@@ -5,7 +5,7 @@ import { bigintToHex } from "bigint-conversion";
 import { encodeBytes32String } from "ethers";
 import { useState, useEffect, useCallback } from "react";
 import { toast } from "react-toastify";
-import { RLN } from "rlnjs";
+//import { RLN } from "rlnjs";
 
 import type { ConnectedIdentity, SemaphoreProof, RLNFullProof, MerkleProofArtifacts } from "@cryptkeeperzk/types";
 
@@ -103,47 +103,48 @@ export const useCryptKeeper = (): IUseCryptKeeperData => {
       });
   };
 
-  const genRLNProof = async (proofType: MerkleProofType = MerkleProofType.STORAGE_ADDRESS) => {
-    const externalNullifier = encodeBytes32String("voting-1");
-    const signal = encodeBytes32String("hello-world");
-    // eslint-disable-next-line no-underscore-dangle
-    const rlnIdentifier = RLN._genIdentifier();
-    const rlnIdentifierHex = bigintToHex(rlnIdentifier);
-    let storageAddressOrArtifacts: string | MerkleProofArtifacts = `${merkleStorageAddress}/RLN`;
+  // TODO: RLN fix
+  // const genRLNProof = async (proofType: MerkleProofType = MerkleProofType.STORAGE_ADDRESS) => {
+  //   const externalNullifier = encodeBytes32String("voting-1");
+  //   const signal = encodeBytes32String("hello-world");
+  //   // eslint-disable-next-line no-underscore-dangle
+  //   const rlnIdentifier = RLN._genIdentifier();
+  //   const rlnIdentifierHex = bigintToHex(rlnIdentifier);
+  //   let storageAddressOrArtifacts: string | MerkleProofArtifacts = `${merkleStorageAddress}/RLN`;
 
-    if (!mockIdentityCommitments.includes(connectedIdentity.commitment)) {
-      mockIdentityCommitments.push(connectedIdentity.commitment);
-    }
+  //   if (!mockIdentityCommitments.includes(connectedIdentity.commitment)) {
+  //     mockIdentityCommitments.push(connectedIdentity.commitment);
+  //   }
 
-    if (proofType === MerkleProofType.ARTIFACTS) {
-      storageAddressOrArtifacts = {
-        leaves: mockIdentityCommitments,
-        depth: 15,
-        leavesPerNode: 2,
-      };
-    }
+  //   if (proofType === MerkleProofType.ARTIFACTS) {
+  //     storageAddressOrArtifacts = {
+  //       leaves: mockIdentityCommitments,
+  //       depth: 15,
+  //       leavesPerNode: 2,
+  //     };
+  //   }
 
-    const toastId = toast("Generating RLN proof...", {
-      type: "info",
-      hideProgressBar: true,
-      closeOnClick: true,
-      pauseOnHover: false,
-    });
+  //   const toastId = toast("Generating RLN proof...", {
+  //     type: "info",
+  //     hideProgressBar: true,
+  //     closeOnClick: true,
+  //     pauseOnHover: false,
+  //   });
 
-    await client
-      ?.rlnProof(externalNullifier, signal, storageAddressOrArtifacts, rlnIdentifierHex)
-      .then((generatedProof) => {
-        setProof(generatedProof);
-        toast("RLN proof generated successfully!", { type: "success" });
-      })
-      .catch((error) => {
-        toast("Error while generating RLN proof!", { type: "error" });
-        console.error(error);
-      })
-      .finally(() => {
-        toast.dismiss(toastId);
-      });
-  };
+  //   await client
+  //     ?.rlnProof(externalNullifier, signal, storageAddressOrArtifacts, rlnIdentifierHex)
+  //     .then((generatedProof) => {
+  //       setProof(generatedProof);
+  //       toast("RLN proof generated successfully!", { type: "success" });
+  //     })
+  //     .catch((error) => {
+  //       toast("Error while generating RLN proof!", { type: "error" });
+  //       console.error(error);
+  //     })
+  //     .finally(() => {
+  //       toast.dismiss(toastId);
+  //     });
+  // };
 
   const getConnectedIdentity = useCallback(async () => {
     const payload = await client?.getConnectedIdentity();

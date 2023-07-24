@@ -1,12 +1,13 @@
-import { SemaphoreProofRequest } from "./semaphoreProof";
+// TODO: RLN fix
+// import { SemaphoreProofRequest } from "./semaphoreProof";
 
-export type { RLNFullProof, VerificationKey } from "rlnjs";
+// export type { RLNFullProof, VerificationKey } from "rlnjs";
 
-export interface RLNProofRequest extends SemaphoreProofRequest {
-  rlnIdentifier: string;
-}
+// export interface RLNProofRequest extends SemaphoreProofRequest {
+//   rlnIdentifier: string;
+// }
 
-export interface IRlnGenerateArgs {
-  identity: string;
-  payload: RLNProofRequest;
-}
+// export interface IRlnGenerateArgs {
+//   identity: string;
+//   payload: RLNProofRequest;
+// }

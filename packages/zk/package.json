@@ -40,8 +40,7 @@
     "@semaphore-protocol/proof": "^3.10.1",
     "@zk-kit/incremental-merkle-tree": "^1.1.0",
     "bigint-conversion": "^2.4.1",
-    "lodash": "^4.17.21",
-    "rlnjs": "^2.0.8"
+    "lodash": "^4.17.21"
   },
   "devDependencies": {
     "@cryptkeeperzk/eslint-config-base": "workspace:^",

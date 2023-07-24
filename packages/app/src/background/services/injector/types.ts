@@ -1,6 +1,6 @@
-import type { RLNProofRequest, SemaphoreProofRequest } from "@src/types";
+import type { SemaphoreProofRequest } from "@src/types";
 
-export interface IProofRequest<P = RLNProofRequest | SemaphoreProofRequest> {
+export interface IProofRequest<P = SemaphoreProofRequest> {
   identity: string;
   payload: P;
 }

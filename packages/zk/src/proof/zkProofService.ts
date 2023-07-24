@@ -1,19 +1,19 @@
 import { ZkIdentitySemaphore } from "@src/identity";
 
-import type { RLNFullProof, RLNProofRequest, SemaphoreProof, SemaphoreProofRequest } from "@cryptkeeperzk/types";
+import type { SemaphoreProof, SemaphoreProofRequest } from "@cryptkeeperzk/types";
 
-import { SemaphoreProofService, RLNProofService } from "./protocols";
+import { SemaphoreProofService } from "./protocols";
 
 export class ZkProofService {
   private static INSTANCE?: ZkProofService;
 
   private semapohreProofService: SemaphoreProofService;
 
-  private rlnProofService: RLNProofService;
+  //private rlnProofService: RLNProofService;
 
   constructor() {
     this.semapohreProofService = new SemaphoreProofService();
-    this.rlnProofService = new RLNProofService();
+    //this.rlnProofService = new RLNProofService();
   }
 
   static getInstance(): ZkProofService {
@@ -28,7 +28,7 @@ export class ZkProofService {
     return this.semapohreProofService.genProof(identity, request);
   }
 
-  generateRLNProof(identity: ZkIdentitySemaphore, request: RLNProofRequest): Promise<RLNFullProof> {
-    return this.rlnProofService.genProof(identity, request);
-  }
+  // generateRLNProof(identity: ZkIdentitySemaphore, request: RLNProofRequest): Promise<RLNFullProof> {
+  //   return this.rlnProofService.genProof(identity, request);
+  // }
 }
