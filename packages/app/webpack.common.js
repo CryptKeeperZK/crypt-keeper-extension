@@ -38,7 +38,7 @@ module.exports = {
     }),
     new CopyPlugin({
       patterns: [
-        { from: path.resolve(__dirname, "./src/static/icons"), to: path.resolve(__dirname, "./dist/[name][ext]") },
+        { from: path.resolve(__dirname, "./src/static"), to: path.resolve(__dirname, "./dist") },
         {
           from: path.resolve(__dirname, `./src/manifest/v${MANIFEST_VERSION}/manifest.${TARGET}.json`),
           to: path.resolve(__dirname, "./dist/manifest.json"),
@@ -49,7 +49,7 @@ module.exports = {
         },
         {
           from: path.resolve(__dirname, `../../LICENSE`),
-          to: path.resolve(__dirname, "./dist/LICENSE"),
+          to: path.resolve(__dirname, "./dist"),
         },
         { from: path.resolve(__dirname, "../../zkeyFiles"), to: path.resolve(__dirname, "./dist/js/zkeyFiles") },
       ],

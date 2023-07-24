@@ -18,12 +18,13 @@ export default defineConfig({
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 1 : 0,
   workers: 1,
-  reporter: [["github"], ["list"], ["html"]],
+  reporter: [["github"], ["list"], ["html", { open: "never" }]],
   use: {
     baseURL: "http://localhost:1234",
     trace: "on-first-retry",
     screenshot: "only-on-failure",
     headless: false,
+    acceptDownloads: true,
     permissions: ["clipboard-read", "clipboard-write"],
   },
 

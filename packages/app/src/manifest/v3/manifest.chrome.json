@@ -5,7 +5,7 @@
   "version": "0.0.1",
   "minimum_chrome_version": "93",
   "action": {
-    "default_icon": "logo.png",
+    "default_icon": "./icons/logo.png",
     "default_popup": "popup.html"
   },
   "background": {
@@ -27,9 +27,9 @@
     }
   ],
   "icons": {
-    "16": "icon-16.png",
-    "48": "icon-48.png",
-    "128": "icon-128.png"
+    "16": "./icons/icon-16.png",
+    "48": "./icons/icon-48.png",
+    "128": "./icons/icon-128.png"
   },
   "content_security_policy": {
     "extension_pages": "script-src 'self' 'wasm-unsafe-eval'; object-src 'self';"
@@ -51,6 +51,10 @@
     },
     {
       "resources": ["js/injected.js"],
+      "matches": ["*://*/*"]
+    },
+    {
+      "resources": ["styles/*"],
       "matches": ["*://*/*"]
     },
     {
