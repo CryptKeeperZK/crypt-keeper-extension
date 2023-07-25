@@ -342,7 +342,7 @@ export default class ZkIdentityService implements IBackupable {
       options: {
         title: "New identity has been created.",
         message: `Identity commitment: ${ellipsify(identityCommitment)}`,
-        iconUrl: browser.runtime.getURL("/logo.png"),
+        iconUrl: browser.runtime.getURL("/icons/logo.png"),
         type: "basic",
       },
     });
@@ -398,7 +398,7 @@ export default class ZkIdentityService implements IBackupable {
       options: {
         title: "Identities removed",
         message: `Identity storage has been cleared`,
-        iconUrl: browser.runtime.getURL("/logo.png"),
+        iconUrl: browser.runtime.getURL("/icons/logo.png"),
         type: "basic",
       },
     });

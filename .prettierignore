@@ -14,3 +14,4 @@ pnpm-lock.yaml
 **/playwright/.cache/
 **/tmp/
 **/.parcel-cache/
+packages/app/src/static/

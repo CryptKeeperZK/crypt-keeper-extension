@@ -56,7 +56,7 @@ export default class BackupService {
       options: {
         title: "Backup download",
         message: "Backup data has been successfully downloaded",
-        iconUrl: browser.runtime.getURL("/logo.png"),
+        iconUrl: browser.runtime.getURL("/icons/logo.png"),
         type: "basic",
       },
     });
@@ -88,7 +88,7 @@ export default class BackupService {
       options: {
         title: "Backup upload",
         message: "Backup data has been successfully uploaded",
-        iconUrl: browser.runtime.getURL("/logo.png"),
+        iconUrl: browser.runtime.getURL("/icons/logo.png"),
         type: "basic",
       },
     });
