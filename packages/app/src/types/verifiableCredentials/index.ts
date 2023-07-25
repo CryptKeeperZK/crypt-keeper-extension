@@ -4,7 +4,7 @@
  */
 
 /**
- * @typedef {object} Credential
+ * @typedef {object} VerifiableCredential
  * @description A credential is a set of one or more claims made by the same entity.
  * Credentials might also include an identifier and metadata to describe properties
  * of the credential, such as the issuer, the expiry date and time, a representative
@@ -12,9 +12,9 @@
  * and so on. The metadata might be signed by the issuer. A verifiable credential is
  * a set of tamper-evident claims and metadata that cryptographically prove who issued it.
  */
-export interface Credential {
+export interface VerifiableCredential {
   /**
-   * @property {URI[]} context - The value of the @context property MUST be an ordered set where the first
+   * @property {string[]} context - The value of the @context property MUST be an ordered set where the first
    * item is a URI with the value https://www.w3.org/2018/credentials/v1.
    */
   context: string[];
@@ -27,16 +27,16 @@ export interface Credential {
   id?: string;
 
   /**
-   * @property {URI[]} type - The value of the type property MUST be, or map to (through interpretation
+   * @property {string[]} type - The value of the type property MUST be, or map to (through interpretation
    * of the @context property), one or more URIs.
    */
   type: string[];
 
   /**
-   * @property {string|Issuer} issuer - The value of the issuer property MUST be either a URI or an object
+   * @property {string|CredentialIssuer} issuer - The value of the issuer property MUST be either a URI or an object
    * containing an id property.
    */
-  issuer: string | Issuer;
+  issuer: string | CredentialIssuer;
 
   /**
    * @property {Date} issuanceDate - A credential MUST have an issuanceDate property. The value of the
@@ -54,45 +54,36 @@ export interface Credential {
   expirationDate?: Date;
 
   /**
-   * @property {Subject} credentialSubject - The value of the credentialSubject property is defined as a set of objects
+   * @property {CredentialSubject} credentialSubject - The value of the credentialSubject property is defined as a set of objects
    * that contain one or more properties that are each related to a subject of the verifiable
    * credential. Each object MAY contain an id.
    */
-  credentialSubject: Subject;
+  credentialSubject: CredentialSubject;
 
   /**
-   * @property {Status} [credentialStatus] - If present, the value of the credentialStatus property MUST include the
+   * @property {CredentialStatus} [credentialStatus] - If present, the value of the credentialStatus property MUST include the
    * following: id property, which MUST be a URI, and type property, which expresses the
    * credential status type.
    */
-  credentialStatus?: Status;
-}
+  credentialStatus?: CredentialStatus;
 
-/**
- * @typedef {object} VerifiableCredential
- * @augments {Credential}
- * @description One or more cryptographic proofs that can be used to detect tampering and
- * verify the authorship of a credential or presentation. The specific method used for an
- * embedded proof MUST be included using the type property.
- */
-export interface VerifiableCredential extends Credential {
   /**
-   * @property {CredentialsProof[]} [proof] - One or more cryptographic proofs that can be used to detect tampering and
+   * @property {CredentialProof[]} [proof] - One or more cryptographic proofs that can be used to detect tampering and
    * verify the authorship of a credential or presentation. The specific method used for an
    * embedded proof MUST be included using the type property.
    */
-  proof?: CredentialsProof[];
+  proof?: CredentialProof[];
 }
 
 /**
- * @typedef {object} Presentation
+ * @typedef {object} VerifiablePresentation
  * @description Presentations MAY be used to combine and present credentials. They can be
  * packaged in such a way that the authorship of the data is verifiable. The data in a
  * presentation is often all about the same subject, but there is no limit to the number
  * of subjects or issuers in the data. The aggregation of information from multiple
  * verifiable credentials is a typical use of verifiable presentations.
  */
-export interface Presentation {
+export interface VerifiablePresentation {
   /**
    * @property {string[]} context - The context of the presentation.
    */
@@ -118,29 +109,22 @@ export interface Presentation {
   verifiableCredential?: VerifiableCredential[];
 
   /**
-   * @property {URI} [holder] - If present, the value of the holder property is expected to be a
+   * @property {string} [holder] - If present, the value of the holder property is expected to be a
    * URI for the entity that is generating the presentation.
    */
   holder?: string;
-}
 
-/**
- * @typedef {object} VerifiablePresentation
- * @augments {Presentation}
- * @description If present, the value of the proof property ensures that the presentation is verifiable.
- */
-export interface VerifiablePresentation extends Presentation {
   /**
-   * @property {CredentialsProof[]} [proof] - The cryptographic proofs for the verifiable presentation.
+   * @property {CredentialProof[]} [proof] - The cryptographic proofs for the verifiable presentation.
    */
-  proof?: CredentialsProof[];
+  proof?: CredentialProof[];
 }
 
 /**
- * @typedef {object} Issuer
+ * @typedef {object} CredentialIssuer
  * @description Represents the issuer of a credential.
  */
-export interface Issuer {
+export interface CredentialIssuer {
   /**
    * @property {string} [id] - The identifier of the issuer.
    */
@@ -148,10 +132,10 @@ export interface Issuer {
 }
 
 /**
- * @typedef {object} Subject
+ * @typedef {object} CredentialSubject
  * @description Represents the subject of a credential.
  */
-export interface Subject {
+export interface CredentialSubject {
   /**
    * @property {string} [id] - The identifier of the subject.
    */
@@ -164,12 +148,12 @@ export interface Subject {
 }
 
 /**
- * @typedef {object} Status
+ * @typedef {object} CredentialStatus
  * @description Represents the status of a credential.
  */
-export interface Status {
+export interface CredentialStatus {
   /**
-   * @property {URI} id - The identifier of the credential status.
+   * @property {string} id - The identifier of the credential status.
    */
   id: string;
 
@@ -190,11 +174,11 @@ export interface Status {
 export type ClaimValue = string | ClaimValue[] | { [key: string]: ClaimValue };
 
 /**
- * @typedef {object} CredentialsProof
+ * @typedef {object} CredentialProof
  * @description A data integrity proof provides information about the proof mechanism,
  * parameters required to verify that proof, and the proof value itself.
  */
-export interface CredentialsProof {
+export interface CredentialProof {
   /**
    * @property {string} [id] - An optional identifier for the proof, which MUST be a URL, such as a
    * UUID as a URN (urn:uuid:6a1676b8-b51f-11ed-937b-d76685a20ff5).
@@ -202,19 +186,19 @@ export interface CredentialsProof {
   id?: string;
 
   /**
-   * @property {URI[]} type - The specific proof type used for the cryptographic proof MUST be
+   * @property {string[]} type - The specific proof type used for the cryptographic proof MUST be
    * specified as a string that maps to a URL.
    */
   type: string[];
 
   /**
-   * @property {URI} proofPurpose - The reason the proof was created MUST be specified as a string that
+   * @property {string} proofPurpose - The reason the proof was created MUST be specified as a string that
    * maps to a URL.
    */
   proofPurpose: string;
 
   /**
-   * @property {URI} verificationMethod - The means and information needed to verify the proof MUST be specified
+   * @property {string} verificationMethod - The means and information needed to verify the proof MUST be specified
    * as a string that maps to a URL.
    */
   verificationMethod: string;
