@@ -106,12 +106,20 @@ export default class ApprovalService implements IBackupable {
     return this.cryptoService.generateEncryptedHmac(encryptedBackup, backupPassword);
   };
 
-  uploadEncryptedStorage = async (backupEncryptedData: string, backupPassword: string): Promise<void> => {
+  uploadEncryptedStorage = async (
+    backupEncryptedData: string | Record<string, string>,
+    backupPassword: string,
+  ): Promise<void> => {
     if (!backupEncryptedData) {
       return;
     }
 
     const encryptedBackup = this.cryptoService.getAuthenticCiphertext(backupEncryptedData, backupPassword);
+
+    if (typeof encryptedBackup !== "string") {
+      throw new Error("Incorrect backup format for approvals");
+    }
+
     const backup = this.cryptoService.decrypt(encryptedBackup, { secret: backupPassword });
     await this.unlock();
 

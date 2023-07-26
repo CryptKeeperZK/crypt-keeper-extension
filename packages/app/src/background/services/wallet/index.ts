@@ -183,7 +183,7 @@ export default class WalletService implements IBackupable {
     await this.accountStorage.clear();
   };
 
-  downloadEncryptedStorage = async (backupPassword: string): Promise<string | null> => {
+  downloadEncryptedStorage = async (backupPassword: string): Promise<Record<string, string> | null> => {
     const accountsEncryptedData = await this.accountStorage.get<string>();
     const mnemonicEncryptedData = await this.mnemonicStorage.get<string>();
 
@@ -199,30 +199,43 @@ export default class WalletService implements IBackupable {
     const accounts = this.cryptoService.generateEncryptedHmac(encryptedBackupAccounts, backupPassword);
     const mnemonic = this.cryptoService.generateEncryptedHmac(encryptedBackupMnemonic, backupPassword);
 
-    return JSON.stringify({ accounts, mnemonic });
+    return { accounts, mnemonic };
   };
 
-  uploadEncryptedStorage = async (backupEncryptedData: string, backupPassword: string): Promise<void> => {
+  uploadEncryptedStorage = async (
+    backupEncryptedData: string | Record<string, string>,
+    backupPassword: string,
+  ): Promise<void> => {
     if (!backupEncryptedData) {
       return;
     }
 
-    const authenticBackup = JSON.parse(backupEncryptedData) as { accounts: string; mnemonic: string };
-    const accountsAuthenticBackup = this.cryptoService.getAuthenticCiphertext(authenticBackup.accounts, backupPassword);
-    const newAccounts = JSON.parse(
-      this.cryptoService.decrypt(accountsAuthenticBackup, { secret: backupPassword }),
-    ) as IAccount[];
+    const backup = this.cryptoService.getAuthenticCiphertext(backupEncryptedData, backupPassword);
 
-    const encrypted = await this.accountStorage.get<string>();
-    const accounts = encrypted
-      ? (JSON.parse(this.cryptoService.decrypt(encrypted, { mode: ECryptMode.MNEMONIC })) as IAccount[])
+    if (typeof backup !== "object") {
+      throw new Error("Incorrect backup format for wallet");
+    }
+
+    const newAccounts = JSON.parse(
+      this.cryptoService.decrypt(backup.accounts, { secret: backupPassword }),
+    ) as IAccount[];
+    const newMnemonic = this.cryptoService.decrypt(backup.mnemonic, { secret: backupPassword });
+
+    const mnemonic = await this.getMnemonic();
+    const encryptedAccounts = await this.accountStorage.get<string>();
+    const accounts = encryptedAccounts
+      ? (JSON.parse(this.cryptoService.decrypt(encryptedAccounts, { mode: ECryptMode.MNEMONIC })) as IAccount[])
       : [];
 
     const mergedBackupData = this.cryptoService.encrypt(
       JSON.stringify(uniqBy([...accounts, ...newAccounts], "privateKey")),
       { mode: ECryptMode.MNEMONIC },
     );
-
     await this.accountStorage.set(mergedBackupData);
+
+    if (!mnemonic) {
+      await this.changeMnemonicPassword({ mnemonic: newMnemonic, password: backupPassword });
+      this.cryptoService.setMnemonic(newMnemonic);
+    }
   };
 }

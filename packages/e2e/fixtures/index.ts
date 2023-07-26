@@ -3,6 +3,7 @@ import { initialSetup } from "@synthetixio/synpress/commands/metamask";
 import { prepareMetamask } from "@synthetixio/synpress/helpers";
 import waitForExpect from "wait-for-expect";
 
+import fs from "fs";
 import path from "path";
 
 import { METAMASK_PASSWORD, METAMASK_SEED_PHRASE, NETWORK } from "../constants";
@@ -18,9 +19,11 @@ export const test = base.extend<TestExtension>({
     async ({}, use) => {
       const metamaskPath = await prepareMetamask(process.env.METAMASK_VERSION || "10.28.1");
       const cryptKeeperPath = path.join(__dirname, "../../app/dist");
+      const downloadsPath = path.join(__dirname, "../playwright-downloads");
 
       const context = await chromium.launchPersistentContext("", {
         headless: false,
+        downloadsPath,
         args: [
           process.env.HEADLESS ? `--headless=new` : "",
           process.env.CI ? "--disable-gpu" : "",
@@ -52,6 +55,7 @@ export const test = base.extend<TestExtension>({
 
       await use(context);
       await context.close();
+      fs.rmSync(downloadsPath, { recursive: true, force: true });
     },
     { scope: "test" },
   ],
