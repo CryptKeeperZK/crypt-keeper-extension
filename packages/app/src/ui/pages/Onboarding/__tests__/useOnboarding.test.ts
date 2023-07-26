@@ -7,6 +7,7 @@ import { useNavigate } from "react-router-dom";
 
 import { Paths } from "@src/constants";
 import { setupPassword } from "@src/ui/ducks/app";
+import { createOnboardingBackupRequest } from "@src/ui/ducks/backup";
 import { useAppDispatch } from "@src/ui/ducks/hooks";
 
 import type { ChangeEvent } from "react";
@@ -19,6 +20,10 @@ jest.mock("react-router-dom", () => ({
 
 jest.mock("@src/ui/ducks/app", (): unknown => ({
   setupPassword: jest.fn(),
+}));
+
+jest.mock("@src/ui/ducks/backup", (): unknown => ({
+  createOnboardingBackupRequest: jest.fn(),
 }));
 
 jest.mock("@src/ui/ducks/hooks", (): unknown => ({
@@ -50,6 +55,7 @@ describe("ui/pages/Onboarding/useOnboarding", () => {
     const { result } = renderHook(() => useOnboarding());
 
     expect(result.current.isLoading).toBe(false);
+    expect(result.current.isShowPassword).toStrictEqual(false);
     expect(result.current.errors).toStrictEqual({ password: undefined, confirmPassword: undefined, root: undefined });
   });
 
@@ -101,13 +107,7 @@ describe("ui/pages/Onboarding/useOnboarding", () => {
     expect(result.current.errors.root).toBe(error.message);
   });
 
-  test("should isShowPassword set to false as default", () => {
-    const { result } = renderHook(() => useOnboarding());
-
-    expect(result.current.isShowPassword).toStrictEqual(false);
-  });
-
-  test("should be able to change isShowPassword", () => {
+  test("should change password visibility properly", () => {
     const { result } = renderHook(() => useOnboarding());
 
     act(() => result.current.onShowPassword());
@@ -115,5 +115,14 @@ describe("ui/pages/Onboarding/useOnboarding", () => {
 
     act(() => result.current.onShowPassword());
     expect(result.current.isShowPassword).toStrictEqual(false);
+  });
+
+  test("should go to onboardin backup page properly", () => {
+    const { result } = renderHook(() => useOnboarding());
+
+    act(() => result.current.onGoToOnboardingBackup());
+
+    expect(mockDispatch).toBeCalledTimes(1);
+    expect(createOnboardingBackupRequest).toBeCalledTimes(1);
   });
 });

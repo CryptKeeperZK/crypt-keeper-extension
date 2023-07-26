@@ -1,5 +1,8 @@
+import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
+import Typography from "@mui/material/Typography";
+
 import logoSVG from "@src/static/icons/logo.svg";
-import { ButtonType, Button } from "@src/ui/components/Button";
 import { Icon } from "@src/ui/components/Icon";
 import { PasswordInput } from "@src/ui/components/PasswordInput";
 
@@ -7,20 +10,27 @@ import "./onboarding.scss";
 import { useOnboarding } from "./useOnboarding";
 
 const Onboarding = (): JSX.Element => {
-  const { errors, isLoading, register, onSubmit, isShowPassword, onShowPassword } = useOnboarding();
+  const { errors, isLoading, register, onSubmit, isShowPassword, onShowPassword, onGoToOnboardingBackup } =
+    useOnboarding();
 
   return (
-    <form className="flex flex-col flex-nowrap h-full onboarding" data-testid="onboarding-form" onSubmit={onSubmit}>
-      <div className="flex flex-col items-center flex-grow p-8 onboarding__content">
+    <Box
+      className="onboarding"
+      component="form"
+      data-testid="onboarding-form"
+      sx={{ display: "flex", flexDirection: "column", flexWrap: "nowrap", height: "100%" }}
+      onSubmit={onSubmit}
+    >
+      <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center", flexGrow: 1, p: 3 }}>
         <Icon size={8} url={logoSVG} />
 
-        <div className="text-lg pt-8">
-          <b>Thanks for using CryptKeeper!</b>
-        </div>
+        <Typography sx={{ pt: 3, fontWeight: "bold" }} variant="h4">
+          Thanks for using CryptKeeper!
+        </Typography>
 
-        <div className="text-base">To continue, please setup a password</div>
+        <Typography>To continue, please setup a password</Typography>
 
-        <div className="py-4 w-full password-input">
+        <Box sx={{ width: "100%", py: 2 }}>
           <PasswordInput
             autoFocus
             isShowEye
@@ -34,24 +44,41 @@ const Onboarding = (): JSX.Element => {
           />
 
           <PasswordInput
-            errorMessage={errors.confirmPassword}
+            errorMessage={errors.confirmPassword || errors.root}
             id="confirmPassword"
             isShowPassword={isShowPassword}
             label="Confirm Password"
             onShowPassword={onShowPassword}
             {...register("confirmPassword")}
           />
-        </div>
-      </div>
+        </Box>
+      </Box>
 
-      {errors.root && <div className="text-red-500 text-sm text-center">{errors.root}</div>}
-
-      <div className="flex flex-row items-center justify-center flex-shrink p-8 onboarding__footer">
-        <Button buttonType={ButtonType.PRIMARY} data-testid="submit-button" loading={isLoading} type="submit">
+      <Box
+        sx={{
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "center",
+          alignItems: "center",
+          flexShrink: 1,
+          p: 3,
+        }}
+      >
+        <Button
+          data-testid="submit-button"
+          disabled={isLoading}
+          sx={{ textTransform: "none", mb: 1 }}
+          type="submit"
+          variant="contained"
+        >
           Continue
         </Button>
-      </div>
-    </form>
+
+        <Button sx={{ color: "primary.main" }} variant="text" onClick={onGoToOnboardingBackup}>
+          Have backup?
+        </Button>
+      </Box>
+    </Box>
   );
 };
 

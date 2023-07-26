@@ -16,9 +16,10 @@ const REDIRECT_PATHS: Record<string, Paths> = {
   [Paths.CREATE_IDENTITY]: Paths.CREATE_IDENTITY,
   [Paths.CONNECT_IDENTITY]: Paths.CONNECT_IDENTITY,
   [Paths.UPLOAD_BACKUP]: Paths.UPLOAD_BACKUP,
+  [Paths.ONBOARDING_BACKUP]: Paths.ONBOARDING_BACKUP,
 };
 
-const COMMON_PATHS = [Paths.RECOVER, Paths.RESET_PASSWORD];
+const COMMON_PATHS = [Paths.RECOVER, Paths.RESET_PASSWORD, Paths.ONBOARDING_BACKUP];
 
 export const usePopup = (): IUsePopupData => {
   const [isLoading, setIsLoading] = useState(true);
@@ -33,9 +34,16 @@ export const usePopup = (): IUsePopupData => {
   const isShowRequestModal = pendingRequests.length > 0;
 
   const url = new URL(window.location.href.replace("#", ""));
+  const pathname = url.pathname.replace("/popup.html", "");
   const redirectParam = url.searchParams.get("redirect");
   const redirect = redirectParam && REDIRECT_PATHS[redirectParam];
-  const isCommonPath = useMemo(() => COMMON_PATHS.includes(location.pathname as Paths), [location.pathname]);
+  const isCommonPath = useMemo(
+    () =>
+      COMMON_PATHS.includes(location.pathname as Paths) ||
+      COMMON_PATHS.includes(redirect as Paths) ||
+      COMMON_PATHS.includes(pathname as Paths),
+    [location.pathname, redirect, pathname],
+  );
 
   const fetchData = useCallback(async () => {
     await Promise.all([dispatch(fetchStatus()), dispatch(fetchPendingRequests())]);
@@ -45,16 +53,21 @@ export const usePopup = (): IUsePopupData => {
     }
   }, [isUnlocked, isMnemonicGenerated, dispatch]);
 
+  // TODO: refactoring for routes
   useEffect(() => {
-    if (isLoading || isCommonPath) {
+    if (isLoading) {
       return;
     }
 
-    if (!isInitialized) {
+    if (isCommonPath && !redirect) {
+      return;
+    }
+
+    if (!isInitialized && !isCommonPath) {
       navigate(Paths.ONBOARDING);
-    } else if (!isUnlocked) {
+    } else if (!isUnlocked && !isCommonPath) {
       navigate(Paths.LOGIN);
-    } else if (!isMnemonicGenerated) {
+    } else if (!isMnemonicGenerated && !isCommonPath) {
       navigate(Paths.GENERATE_MNEMONIC);
     } else if (isShowRequestModal) {
       navigate(Paths.REQUESTS);

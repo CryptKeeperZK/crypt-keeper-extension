@@ -9,6 +9,7 @@ import GenerateMnemonic from "@src/ui/pages/GenerateMnemonic";
 import Home from "@src/ui/pages/Home";
 import Login from "@src/ui/pages/Login";
 import Onboarding from "@src/ui/pages/Onboarding";
+import OnboardingBackup from "@src/ui/pages/OnboardingBackup";
 import Recover from "@src/ui/pages/Recover";
 import ResetPassword from "@src/ui/pages/ResetPassword";
 import RevealMnemonic from "@src/ui/pages/RevealMnemonic";
@@ -24,6 +25,7 @@ const routeConfig: RouteObject[] = [
   { path: Paths.CREATE_IDENTITY, element: <CreateIdentity /> },
   { path: Paths.LOGIN, element: <Login /> },
   { path: Paths.ONBOARDING, element: <Onboarding /> },
+  { path: Paths.ONBOARDING_BACKUP, element: <OnboardingBackup /> },
   { path: Paths.REQUESTS, element: <ConfirmRequestModal /> },
   { path: Paths.SETTINGS, element: <Settings /> },
   { path: Paths.DOWNLOAD_BACKUP, element: <DownloadBackup /> },

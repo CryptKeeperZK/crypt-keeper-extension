@@ -18,6 +18,11 @@ export const createUploadBackupRequest = (): TypedThunk<Promise<void>> => async 
     method: RPCAction.REQUEST_UPLOAD_BACKUP,
   });
 
+export const createOnboardingBackupRequest = (): TypedThunk<Promise<void>> => async () =>
+  postMessage({
+    method: RPCAction.REQUEST_ONBOARDING_BACKUP,
+  });
+
 export const uploadBackup =
   ({ content, password, backupPassword }: IUploadArgs): TypedThunk<Promise<void>> =>
   async () =>

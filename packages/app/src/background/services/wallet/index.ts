@@ -210,7 +210,10 @@ export default class WalletService implements IBackupable {
       return;
     }
 
-    const backup = this.cryptoService.getAuthenticCiphertext(backupEncryptedData, backupPassword);
+    const backup = this.cryptoService.getAuthenticCiphertext(backupEncryptedData, backupPassword) as {
+      accounts: string;
+      mnemonic: string;
+    };
 
     if (typeof backup !== "object") {
       throw new Error("Incorrect backup format for wallet");
@@ -229,13 +232,14 @@ export default class WalletService implements IBackupable {
 
     const mergedBackupData = this.cryptoService.encrypt(
       JSON.stringify(uniqBy([...accounts, ...newAccounts], "privateKey")),
-      { mode: ECryptMode.MNEMONIC },
+      { mode: ECryptMode.MNEMONIC, secret: mnemonic || newMnemonic },
     );
     await this.accountStorage.set(mergedBackupData);
 
     if (!mnemonic) {
       await this.changeMnemonicPassword({ mnemonic: newMnemonic, password: backupPassword });
       this.cryptoService.setMnemonic(newMnemonic);
+      await this.miscStorage.setInitialization({ initializationStep: InitializationStep.MNEMONIC });
     }
   };
 }

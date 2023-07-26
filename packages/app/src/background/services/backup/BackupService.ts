@@ -3,9 +3,10 @@ import browser from "webextension-polyfill";
 import BrowserUtils from "@src/background/controllers/browserUtils";
 import CryptoService from "@src/background/services/crypto";
 import HistoryService from "@src/background/services/history";
+import MiscStorageService from "@src/background/services/misc";
 import NotificationService from "@src/background/services/notification";
 import { Paths } from "@src/constants";
-import { OperationType, type IUploadArgs } from "@src/types";
+import { OperationType, type IUploadArgs, InitializationStep, BackupableServices } from "@src/types";
 
 import { type IBackupable } from "./types";
 
@@ -22,12 +23,15 @@ export default class BackupService {
 
   private browserController: BrowserUtils;
 
+  private miscStorage: MiscStorageService;
+
   private constructor() {
     this.backupables = new Map();
     this.historyService = HistoryService.getInstance();
     this.notificationService = NotificationService.getInstance();
     this.cryptoService = CryptoService.getInstance();
     this.browserController = BrowserUtils.getInstance();
+    this.miscStorage = MiscStorageService.getInstance();
   }
 
   static getInstance = (): BackupService => {
@@ -40,6 +44,10 @@ export default class BackupService {
 
   createUploadBackupRequest = async (): Promise<void> => {
     await this.browserController.openPopup({ params: { redirect: Paths.UPLOAD_BACKUP } });
+  };
+
+  createOnboardingBackupRequest = async (): Promise<void> => {
+    await this.browserController.openPopup({ params: { redirect: Paths.ONBOARDING_BACKUP } });
   };
 
   download = async (backupPassword: string): Promise<string> => {
@@ -68,24 +76,29 @@ export default class BackupService {
   };
 
   upload = async ({ content, password, backupPassword }: IUploadArgs): Promise<boolean> => {
-    this.cryptoService.isAuthenticPassword(password);
+    const initializationStep = await this.miscStorage.getInitialization();
+    const isBackupInstall = initializationStep <= InitializationStep.NEW;
+
+    if (!isBackupInstall) {
+      this.cryptoService.isAuthenticPassword(password);
+    }
 
     const data = JSON.parse(content) as Record<string, string | null>;
     const entries = Object.entries(data).filter(([key]) => this.backupables.has(key));
-    const isEmpty = entries.every(([, value]) => !value);
 
-    if (entries.length === 0) {
+    if (entries.length === 0 || !data.lock || !data.wallet) {
       throw new Error("File content is corrupted");
     }
 
-    if (isEmpty) {
-      throw new Error("File doesn't have any data");
-    }
-
+    await this.backupables.get(BackupableServices.LOCK)?.uploadEncryptedStorage(data.lock, backupPassword);
+    await this.backupables.get(BackupableServices.WALLET)?.uploadEncryptedStorage(data.wallet, backupPassword);
     await Promise.all(
-      entries.map(([key, value]) => value && this.backupables.get(key)?.uploadEncryptedStorage(value, backupPassword)),
+      entries
+        .filter(([key]) => ![BackupableServices.LOCK, BackupableServices.WALLET].includes(key as BackupableServices))
+        .map(([key, value]) => value && this.backupables.get(key)?.uploadEncryptedStorage(value, backupPassword)),
     );
 
+    await this.historyService.loadSettings();
     await this.historyService.trackOperation(OperationType.UPLOAD_BACKUP, {});
     await this.notificationService.create({
       options: {

@@ -234,7 +234,10 @@ describe("background/services/locker", () => {
       mockSet.mockClear();
 
       (SimpleStorage as jest.Mock).mock.instances.forEach((instance: MockStorage) => {
-        instance.get.mockResolvedValue(undefined);
+        instance.get
+          .mockResolvedValueOnce(undefined)
+          .mockResolvedValueOnce(undefined)
+          .mockResolvedValue(defaultPassword);
       });
 
       await lockService.uploadEncryptedStorage("encrypted", defaultPassword);

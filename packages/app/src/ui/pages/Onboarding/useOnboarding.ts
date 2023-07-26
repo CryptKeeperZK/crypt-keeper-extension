@@ -6,6 +6,7 @@ import { object, ref, string } from "yup";
 import { Paths } from "@src/constants";
 import { PasswordFormFields } from "@src/types";
 import { setupPassword } from "@src/ui/ducks/app";
+import { createOnboardingBackupRequest } from "@src/ui/ducks/backup";
 import { useAppDispatch } from "@src/ui/ducks/hooks";
 import { useValidationResolver } from "@src/ui/hooks/validation";
 
@@ -16,6 +17,7 @@ export interface IUseOnboardingData {
   register: UseFormRegister<PasswordFormFields>;
   onSubmit: (event?: BaseSyntheticEvent) => Promise<void>;
   onShowPassword: () => void;
+  onGoToOnboardingBackup: () => void;
 }
 
 const passwordRules = /^(?=.*[0-9])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{8,}$/;
@@ -64,6 +66,10 @@ export const useOnboarding = (): IUseOnboardingData => {
     setIsShowPassword((isShow) => !isShow);
   }, [setIsShowPassword]);
 
+  const onGoToOnboardingBackup = useCallback(() => {
+    dispatch(createOnboardingBackupRequest()).then(() => navigate(Paths.ONBOARDING_BACKUP));
+  }, [dispatch, navigate]);
+
   return {
     isLoading: isLoading || isSubmitting,
     isShowPassword,
@@ -75,5 +81,6 @@ export const useOnboarding = (): IUseOnboardingData => {
     register,
     onSubmit: handleSubmit(onSubmit),
     onShowPassword,
+    onGoToOnboardingBackup,
   };
 };

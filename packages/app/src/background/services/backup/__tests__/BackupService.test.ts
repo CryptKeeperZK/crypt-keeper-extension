@@ -1,7 +1,10 @@
+import { BackupableServices, InitializationStep } from "@src/types";
+
 import BackupService, { type IBackupable } from "..";
 
 jest.mock("@src/background/services/history", (): unknown => ({
   getInstance: jest.fn(() => ({
+    loadSettings: jest.fn(),
     trackOperation: jest.fn(),
   })),
 }));
@@ -21,6 +24,14 @@ jest.mock("@src/background/services/crypto", (): unknown => ({
 jest.mock("@src/background/controllers/browserUtils", (): unknown => ({
   getInstance: jest.fn(() => ({
     openPopup: jest.fn(),
+  })),
+}));
+
+jest.mock("@src/background/services/misc", (): unknown => ({
+  ...jest.requireActual("@src/background/services/misc"),
+  getInstance: jest.fn(() => ({
+    getInitialization: jest.fn(() => InitializationStep.MNEMONIC),
+    setInitialization: jest.fn(),
   })),
 }));
 
@@ -50,55 +61,74 @@ describe("background/services/backup/BackupService", () => {
     await expect(backupService.createUploadBackupRequest()).resolves.toBeUndefined();
   });
 
-  test("should add backupable services properly", () => {
-    const backupables = backupService.add("key1", defaultBackupable).getBackupables();
+  test("should create onboarding backup request properly", async () => {
+    await expect(backupService.createOnboardingBackupRequest()).resolves.toBeUndefined();
+  });
 
-    expect(backupables.size).toBe(1);
-    expect(backupables.get("key1")).toStrictEqual(defaultBackupable);
+  test("should add backupable services properly", () => {
+    const backupables = backupService
+      .add(BackupableServices.LOCK, defaultBackupable)
+      .add(BackupableServices.WALLET, defaultBackupable)
+      .getBackupables();
+
+    expect(backupables.size).toBe(2);
+    expect(backupables.get(BackupableServices.LOCK)).toStrictEqual(defaultBackupable);
+    expect(backupables.get(BackupableServices.WALLET)).toStrictEqual(defaultBackupable);
   });
 
   test("should remove backupable services properly", () => {
-    const backupables = backupService.add("key1", defaultBackupable).remove("key1").getBackupables();
+    const backupables = backupService
+      .add(BackupableServices.LOCK, defaultBackupable)
+      .add(BackupableServices.WALLET, defaultBackupable)
+      .remove(BackupableServices.LOCK)
+      .remove(BackupableServices.WALLET)
+      .getBackupables();
 
     expect(backupables.size).toBe(0);
   });
 
   test("should clear backupable services properly", () => {
-    const backupables = backupService.add("key1", defaultBackupable).clear().getBackupables();
+    const backupables = backupService
+      .add(BackupableServices.LOCK, defaultBackupable)
+      .add(BackupableServices.WALLET, defaultBackupable)
+      .clear()
+      .getBackupables();
 
     expect(backupables.size).toBe(0);
   });
 
   test("should download backup data properly", async () => {
-    const expectedData = JSON.stringify({ key1: "encrypted", key2: null }, null, 4);
+    const expectedData = JSON.stringify({ lock: "encrypted", wallet: "encrypted", approval: null }, null, 4);
     const backupFileContent = await backupService
-      .add("key1", defaultBackupable)
-      .add("key2", nullBackupable)
+      .add(BackupableServices.LOCK, defaultBackupable)
+      .add(BackupableServices.WALLET, defaultBackupable)
+      .add(BackupableServices.APPROVAL, nullBackupable)
       .download("password");
 
     expect(backupFileContent).toBe(`data:application/json;charset=utf-8,${encodeURIComponent(expectedData)}`);
   });
 
   test("should upload backup data properly", async () => {
-    const fileContent = JSON.stringify({ key1: "encrypted", key2: null }, null, 4);
+    const fileContent = JSON.stringify({ lock: "encrypted", wallet: "encrypted", approval: null }, null, 4);
     const result = await backupService
-      .add("key1", defaultBackupable)
-      .add("key2", nullBackupable)
+      .add(BackupableServices.LOCK, defaultBackupable)
+      .add(BackupableServices.WALLET, defaultBackupable)
+      .add(BackupableServices.APPROVAL, nullBackupable)
       .upload({ content: fileContent, ...defaultPasswords });
 
     expect(result).toBe(true);
   });
 
   test("should download and upload the same backup data properly", async () => {
-    const expectedData = JSON.stringify({ key1: "encrypted", key2: null }, null, 4);
+    const expectedData = JSON.stringify({ lock: "encrypted", wallet: "encrypted" }, null, 4);
 
     const backupFileContent = await backupService
-      .add("key1", defaultBackupable)
-      .add("key2", nullBackupable)
+      .add(BackupableServices.LOCK, defaultBackupable)
+      .add(BackupableServices.WALLET, defaultBackupable)
       .download("password");
     const result = await backupService
-      .add("key1", defaultBackupable)
-      .add("key2", nullBackupable)
+      .add(BackupableServices.LOCK, defaultBackupable)
+      .add(BackupableServices.WALLET, defaultBackupable)
       .upload({ content: expectedData, ...defaultPasswords });
 
     expect(backupFileContent).toBe(`data:application/json;charset=utf-8,${encodeURIComponent(expectedData)}`);
@@ -106,18 +136,21 @@ describe("background/services/backup/BackupService", () => {
   });
 
   test("should throw errors when uploading invalid data", async () => {
-    const fileContent = JSON.stringify({ unknown: "encrypted" }, null, 4);
-    const nullableContent = JSON.stringify({ key1: null, key2: null });
-    backupService.add("key1", defaultBackupable).add("key2", nullBackupable);
+    const invalidFileContent = JSON.stringify({ unknown: "encrypted" }, null, 4);
+    const fileContent = JSON.stringify({ lock: "encrypted", wallet: "encrypted", approval: "encrypted" }, null, 4);
 
-    await expect(backupService.upload({ content: fileContent, ...defaultPasswords })).rejects.toThrowError(
+    await expect(backupService.upload({ content: invalidFileContent, ...defaultPasswords })).rejects.toThrowError(
       "File content is corrupted",
     );
 
-    await expect(backupService.upload({ content: nullableContent, ...defaultPasswords })).rejects.toThrowError(
-      "File doesn't have any data",
-    );
+    backupService
+      .add(BackupableServices.LOCK, defaultBackupable)
+      .add(BackupableServices.WALLET, defaultBackupable)
+      .add(BackupableServices.APPROVAL, {
+        downloadEncryptedStorage: jest.fn(),
+        uploadEncryptedStorage: jest.fn(() => Promise.reject(new Error("error"))),
+      });
 
-    await expect(backupService.upload({ content: "", ...defaultPasswords })).rejects.toThrowError();
+    await expect(backupService.upload({ content: fileContent, ...defaultPasswords })).rejects.toThrow("error");
   });
 });

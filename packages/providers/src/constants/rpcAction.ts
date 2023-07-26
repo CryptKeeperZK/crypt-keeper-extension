@@ -39,6 +39,7 @@ export enum RPCAction {
   ENABLE_OPERATION_HISTORY = "rpc/identity/historyEnable",
   DOWNLOAD_BACKUP = "rpc/backup/download",
   REQUEST_UPLOAD_BACKUP = "rpc/backup/requestUpload",
+  REQUEST_ONBOARDING_BACKUP = "rpc/backup/requestOnboarding",
   UPLOAD_BACKUP = "rpc/backup/upload",
   SAVE_MNEMONIC = "rpc/mnemonic/save",
   GENERATE_MNEMONIC = "rpc/mnemonic/generate",

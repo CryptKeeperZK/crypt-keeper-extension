@@ -1,9 +1,6 @@
 import classNames from "classnames";
 import { ButtonHTMLAttributes } from "react";
 
-import loaderSvg from "@src/static/icons/loader.svg";
-import { Icon } from "@src/ui/components/Icon";
-
 import "./button.scss";
 
 export enum ButtonType {
@@ -41,8 +38,6 @@ export const Button = ({
     type="button"
     {...buttonProps}
   >
-    {loading && <Icon className="button__loader" size={2} url={loaderSvg} />}
-
-    {!loading && children}
+    {children}
   </button>
 );
