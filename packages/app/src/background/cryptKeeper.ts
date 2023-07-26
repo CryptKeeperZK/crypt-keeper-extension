@@ -71,11 +71,13 @@ export default class CryptKeeperController {
     this.browserService = BrowserUtils.getInstance();
     this.historyService = HistoryService.getInstance();
     this.walletService = WalletService.getInstance();
+    this.verifiableCredentialsService = VerifiableCredentialsService.getInstance();
     this.backupService = BackupService.getInstance()
       .add(BackupableServices.LOCK, this.lockService)
       .add(BackupableServices.WALLET, this.walletService)
       .add(BackupableServices.APPROVAL, this.approvalService)
-      .add(BackupableServices.IDENTITY, this.zkIdentityService);
+      .add(BackupableServices.IDENTITY, this.zkIdentityService)
+      .add(BackupableServices.VERIFIABLE_CREDENTIALS, this.verifiableCredentialsService);
     this.verifiableCredentialsService = VerifiableCredentialsService.getInstance();
   }
 

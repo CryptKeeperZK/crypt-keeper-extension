@@ -3,6 +3,7 @@ export enum BackupableServices {
   APPROVAL = "approval",
   LOCK = "lock",
   WALLET = "wallet",
+  VERIFIABLE_CREDENTIALS = "verifiable credentials",
 }
 
 export interface IUploadArgs {

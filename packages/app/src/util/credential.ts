@@ -1,4 +1,11 @@
-import { VerifiableCredential, Issuer, CredentialsProof, Subject, Status, ClaimValue } from "@src/types";
+import {
+  VerifiableCredential,
+  CredentialIssuer,
+  CredentialProof,
+  CredentialSubject,
+  CredentialStatus,
+  ClaimValue,
+} from "@src/types";
 
 /**
  * Attempts to parse a JSON string into a VerifiableCredential object.
@@ -108,7 +115,7 @@ export function isValidVerifiableCredential(obj: VerifiableCredential): boolean 
   return true;
 }
 
-export function isValidIssuer(obj: Issuer): boolean {
+export function isValidIssuer(obj: CredentialIssuer): boolean {
   if (obj.id && typeof ["id"] !== "string") {
     return false;
   }
@@ -116,7 +123,7 @@ export function isValidIssuer(obj: Issuer): boolean {
   return true;
 }
 
-export function isValidSubject(obj: Subject): boolean {
+export function isValidSubject(obj: CredentialSubject): boolean {
   if (obj.id && typeof obj.id !== "string") {
     return false;
   }
@@ -158,7 +165,7 @@ export function isValidClaimValue(obj: ClaimValue): boolean {
   return isValidClaims(obj);
 }
 
-export function isValidStatus(obj: Status): boolean {
+export function isValidStatus(obj: CredentialStatus): boolean {
   if (!obj.id || typeof obj.id !== "string") {
     return false;
   }
@@ -170,7 +177,7 @@ export function isValidStatus(obj: Status): boolean {
   return true;
 }
 
-export function isValidCredentialsProof(obj: CredentialsProof): boolean {
+export function isValidCredentialsProof(obj: CredentialProof): boolean {
   if (obj.id && typeof obj.id !== "string") {
     return false;
   }

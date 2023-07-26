@@ -2,26 +2,23 @@ import VerifiableCredentialsService from "@src/background/services/credentials";
 import SimpleStorage from "@src/background/services/storage";
 import { VerifiableCredential } from "@src/types";
 
-const mockAuthenticityCheckData = {
-  isNewOnboarding: false,
-};
-
-jest.mock("@src/background/services/lock", (): unknown => ({
+jest.mock("@src/background/services/crypto", (): unknown => ({
+  ...jest.requireActual("@src/background/services/crypto"),
   getInstance: jest.fn(() => ({
     encrypt: jest.fn((value: string) => value),
     decrypt: jest.fn((value: string) => value),
-    isAuthentic: jest.fn(() => mockAuthenticityCheckData),
+    generateEncryptedHmac: jest.fn((value: string) => value),
+    getAuthenticCiphertext: jest.fn((value: string) => value),
   })),
-}));
-
-jest.mock("@src/background/services/crypto", (): unknown => ({
-  cryptoGenerateEncryptedHmac: jest.fn(() => "encrypted credentials"),
-  cryptoGetAuthenticBackupCiphertext: jest.fn(() => "encrypted credentials"),
 }));
 
 jest.mock("@src/background/services/storage");
 
-type MockStorage = { get: jest.Mock; set: jest.Mock; clear: jest.Mock };
+interface MockStorage {
+  get: jest.Mock;
+  set: jest.Mock;
+  clear: jest.Mock;
+}
 
 describe("background/services/credentials", () => {
   const exampleCredential: VerifiableCredential = {
@@ -163,7 +160,6 @@ describe("background/services/credentials", () => {
   });
 
   describe("backup", () => {
-    const exampleEncryptedCredentials = "encrypted credentials";
     const examplePassword = "password";
 
     test("should download encrypted identities", async () => {
@@ -184,10 +180,10 @@ describe("background/services/credentials", () => {
     test("should upload encrypted identities", async () => {
       const [credentialsStorage] = (SimpleStorage as jest.Mock).mock.instances as [MockStorage];
 
-      await verifiableCredentialsService.uploadEncryptedStorage(exampleEncryptedCredentials, examplePassword);
+      await verifiableCredentialsService.uploadEncryptedStorage(credentialsStorageString, examplePassword);
 
       expect(credentialsStorage.set).toBeCalledTimes(1);
-      expect(credentialsStorage.set).toBeCalledWith(exampleEncryptedCredentials);
+      expect(credentialsStorage.set).toBeCalledWith(credentialsStorageString);
     });
 
     test("should not upload encrypted identities if there is no data", async () => {

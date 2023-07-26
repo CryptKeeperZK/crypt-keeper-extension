@@ -1,8 +1,7 @@
 import browser from "webextension-polyfill";
 
-import { cryptoGenerateEncryptedHmac, cryptoGetAuthenticBackupCiphertext } from "@src/background/services/crypto";
+import CryptoService, { ECryptMode } from "@src/background/services/crypto";
 import HistoryService from "@src/background/services/history";
-import LockerService from "@src/background/services/lock";
 import NotificationService from "@src/background/services/notification";
 import SimpleStorage from "@src/background/services/storage";
 import { OperationType, VerifiableCredential } from "@src/types";
@@ -17,7 +16,7 @@ export default class VerifiableCredentialsService implements IBackupable {
 
   private verifiableCredentialsStore: SimpleStorage;
 
-  private lockService: LockerService;
+  private cryptoService: CryptoService;
 
   private historyService: HistoryService;
 
@@ -25,7 +24,7 @@ export default class VerifiableCredentialsService implements IBackupable {
 
   private constructor() {
     this.verifiableCredentialsStore = new SimpleStorage(VERIFIABLE_CREDENTIALS_KEY);
-    this.lockService = LockerService.getInstance();
+    this.cryptoService = CryptoService.getInstance();
     this.historyService = HistoryService.getInstance();
     this.notificationService = NotificationService.getInstance();
   }
@@ -53,9 +52,7 @@ export default class VerifiableCredentialsService implements IBackupable {
   getAllVerifiableCredentials = async (): Promise<VerifiableCredential[]> =>
     this.getVerifiableCredentialsFromStore()
       .then((credentials) => Array.from(credentials.values()))
-      .then((credentialsArray) =>
-        credentialsArray.map((credential) => parseVerifiableCredentialFromJson(credential) as VerifiableCredential),
-      );
+      .then((credentialsArray) => credentialsArray.map((credential) => parseVerifiableCredentialFromJson(credential)!));
 
   deleteVerifiableCredential = async (credentialId: string): Promise<boolean> => {
     if (!credentialId || typeof credentialId !== "string") {
@@ -141,15 +138,15 @@ export default class VerifiableCredentialsService implements IBackupable {
       return new Map();
     }
 
-    const decryptedCredentials = this.lockService.decrypt(ciphertext);
-    const allCredentials = new Map(JSON.parse(decryptedCredentials) as Array<[string, string]>);
+    const decryptedCredentials = this.cryptoService.decrypt(ciphertext, { mode: ECryptMode.MNEMONIC });
+    const allCredentials = new Map(JSON.parse(decryptedCredentials) as [string, string][]);
 
     return allCredentials;
   };
 
   private writeVerifiableCredentials = async (credentials: Map<string, string>): Promise<void> => {
     const serializedCredentials = JSON.stringify(Array.from(credentials));
-    const ciphertext = this.lockService.encrypt(serializedCredentials);
+    const ciphertext = this.cryptoService.encrypt(serializedCredentials, { mode: ECryptMode.MNEMONIC });
 
     await this.verifiableCredentialsStore.set(ciphertext);
   };
@@ -161,16 +158,32 @@ export default class VerifiableCredentialsService implements IBackupable {
       return null;
     }
 
-    await this.lockService.isAuthentic(backupPassword, true);
-    return cryptoGenerateEncryptedHmac(backupEncryptedData, backupPassword);
+    const backup = this.cryptoService.decrypt(backupEncryptedData, { mode: ECryptMode.MNEMONIC });
+    const encryptedBackup = this.cryptoService.encrypt(backup, { secret: backupPassword });
+
+    return this.cryptoService.generateEncryptedHmac(encryptedBackup, backupPassword);
   };
 
-  uploadEncryptedStorage = async (backupEncryptedData: string, backupPassword: string): Promise<void> => {
+  uploadEncryptedStorage = async (
+    backupEncryptedData: string | Record<string, string>,
+    backupPassword: string,
+  ): Promise<void> => {
     if (!backupEncryptedData) {
       return;
     }
 
-    await this.lockService.isAuthentic(backupPassword, true);
-    await this.verifiableCredentialsStore.set(cryptoGetAuthenticBackupCiphertext(backupEncryptedData, backupPassword));
+    const encryptedBackup = this.cryptoService.getAuthenticCiphertext(backupEncryptedData, backupPassword);
+
+    if (typeof encryptedBackup !== "string") {
+      throw new Error("Incorrect backup format for verifiable credentials");
+    }
+
+    const backup = this.cryptoService.decrypt(encryptedBackup, { secret: backupPassword });
+
+    const backupCredentials = new Map(JSON.parse(backup) as [string, string][]);
+    const credentials = await this.getVerifiableCredentialsFromStore();
+    const mergedCredentials = new Map([...credentials, ...backupCredentials]);
+
+    await this.writeVerifiableCredentials(mergedCredentials);
   };
 }
