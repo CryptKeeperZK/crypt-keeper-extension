@@ -62,6 +62,7 @@ export default class VerifiableCredentialsService implements IBackupable {
     }
   };
 
+<<<<<<< HEAD
   getAllVerifiableCredentials = async (): Promise<CryptkeeperVerifiableCredential[]> => {
     const cryptkeeperVerifiableCredentials = await this.getCryptkeeperVerifiableCredentialsFromStore();
     const cryptkeeperVerifiableCredentialsArray = Array.from(cryptkeeperVerifiableCredentials.values());
@@ -72,6 +73,12 @@ export default class VerifiableCredentialsService implements IBackupable {
       ),
     );
   };
+=======
+  getAllVerifiableCredentials = async (): Promise<VerifiableCredential[]> =>
+    this.getVerifiableCredentialsFromStore()
+      .then((credentials) => Array.from(credentials.values()))
+      .then((credentialsArray) => credentialsArray.map((credential) => parseVerifiableCredentialFromJson(credential)!));
+>>>>>>> e334e46 (fix: merge conflicts (#492))
 
   deleteVerifiableCredential = async (verifiableCredentialHash: string): Promise<boolean> => {
     if (!verifiableCredentialHash) {
@@ -163,10 +170,15 @@ export default class VerifiableCredentialsService implements IBackupable {
     return allCredentials;
   };
 
+<<<<<<< HEAD
   private writeCryptkeeperVerifiableCredentials = async (
     cryptkeeperVerifiableCredentials: Map<string, string>,
   ): Promise<void> => {
     const serializedCredentials = JSON.stringify(Array.from(cryptkeeperVerifiableCredentials));
+=======
+  private writeVerifiableCredentials = async (credentials: Map<string, string>): Promise<void> => {
+    const serializedCredentials = JSON.stringify(Array.from(credentials));
+>>>>>>> e334e46 (fix: merge conflicts (#492))
     const ciphertext = this.cryptoService.encrypt(serializedCredentials, { mode: ECryptMode.MNEMONIC });
 
     await this.verifiableCredentialsStore.set(ciphertext);
@@ -212,9 +224,16 @@ export default class VerifiableCredentialsService implements IBackupable {
     const backup = this.cryptoService.decrypt(encryptedBackup, { secret: backupPassword });
 
     const backupCredentials = new Map(JSON.parse(backup) as [string, string][]);
+<<<<<<< HEAD
     const cryptkeeperVerifiableCredentials = await this.getCryptkeeperVerifiableCredentialsFromStore();
     const mergedCredentials = new Map([...cryptkeeperVerifiableCredentials, ...backupCredentials]);
 
     await this.writeCryptkeeperVerifiableCredentials(mergedCredentials);
+=======
+    const credentials = await this.getVerifiableCredentialsFromStore();
+    const mergedCredentials = new Map([...credentials, ...backupCredentials]);
+
+    await this.writeVerifiableCredentials(mergedCredentials);
+>>>>>>> e334e46 (fix: merge conflicts (#492))
   };
 }
