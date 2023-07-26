@@ -1,6 +1,4 @@
-import { VerifiableCredential } from "@src/types";
-
-import { parseVerifiableCredentialFromJson, isValidVerifiableCredential } from "../credential";
+import { parseVerifiableCredentialFromJson, validateVerifiableCredential } from "../credential";
 
 describe("util/isValidCredential", () => {
   test("should parse a date object correctly inside of a verifiable credential", () => {
@@ -21,7 +19,7 @@ describe("util/isValidCredential", () => {
     const cred = parseVerifiableCredentialFromJson(credJson);
 
     expect(cred).not.toBeNull();
-    expect(date.getTime()).toBe((cred as VerifiableCredential).issuanceDate.getTime());
+    expect(date.getTime()).toBe(cred!.issuanceDate.getTime());
   });
 
   test("should return true for a valid verifiable credential", () => {
@@ -41,7 +39,7 @@ describe("util/isValidCredential", () => {
     const cred = parseVerifiableCredentialFromJson(credJson);
 
     expect(cred).not.toBeNull();
-    expect(isValidVerifiableCredential(cred as VerifiableCredential)).toBe(true);
+    expect(validateVerifiableCredential(cred!)).not.toBeNull();
   });
 
   test("should return null if the string is not valid JSON", () => {
