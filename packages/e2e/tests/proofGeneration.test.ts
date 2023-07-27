@@ -14,7 +14,7 @@ test.describe("proof generation", () => {
     await page.goto("/");
   });
 
-  test("should generate semaphore proof from merkle proof storage address", async ({ page }) => {
+  test("should generate semaphore proof from merkle proof storage address [health-check]", async ({ page }) => {
     await page.getByText("Generate proof from Merkle proof storage address").first().click();
 
     const cryptKeeper = await page.context().waitForEvent("page");
@@ -23,7 +23,7 @@ test.describe("proof generation", () => {
     await expect(page.getByText("Semaphore proof generated successfully!")).toBeVisible();
   });
 
-  test("should generate semaphore proof from merkle proof artifacts", async ({ page }) => {
+  test("should generate semaphore proof from merkle proof artifacts [health-check]", async ({ page }) => {
     await page.getByText("Generate proof from Merkle proof artifacts").first().click();
 
     const cryptKeeper = await page.context().waitForEvent("page");
@@ -32,7 +32,7 @@ test.describe("proof generation", () => {
     await expect(page.getByText("Semaphore proof generated successfully!")).toBeVisible();
   });
 
-  test.skip("should generate rln proof from merkle proof storage address", async ({ page }) => {
+  test.skip("should generate rln proof from merkle proof storage address [health-check]", async ({ page }) => {
     await page.getByText("Generate proof from Merkle proof storage address").nth(1).click();
 
     const cryptKeeper = await page.context().waitForEvent("page");
@@ -41,7 +41,7 @@ test.describe("proof generation", () => {
     await expect(page.getByText("RLN proof generated successfully!")).toBeVisible();
   });
 
-  test.skip("should generate rln proof from merkle proof artifacts", async ({ page }) => {
+  test.skip("should generate rln proof from merkle proof artifacts [health-check]", async ({ page }) => {
     await page.getByText("Generate proof from Merkle proof artifacts").nth(1).click();
 
     const cryptKeeper = await page.context().waitForEvent("page");

@@ -56,11 +56,15 @@ export const test = base.extend<TestExtension>({
       });
 
       await use(context);
-
       await deleteCryptKeeperStorage(context);
-      await context.close();
+
+      if (!fs.existsSync(downloadsPath)) {
+        return;
+      }
 
       fs.rmSync(downloadsPath, { recursive: true, force: true });
+
+      await context.close();
     },
     { scope: "test" },
   ],

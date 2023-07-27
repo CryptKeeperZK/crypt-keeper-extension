@@ -23,6 +23,7 @@
     "test:coverage": "pnpm exec nx run-many --target=test:coverage --output-style=stream",
     "e2e": "pnpm exec nx run-many --target=e2e --output-style=stream",
     "e2e:ci": "pnpm exec nx run-many --target=e2e:ci --output-style=stream",
+    "health-check": "pnpm exec nx run-many --target=health-check --output-style=stream",
     "lint": "pnpm exec nx run-many --target=lint --output-style=stream",
     "lint:fix": "pnpm exec nx run-many --target=lint:fix --output-style=stream",
     "prettier": "pnpm exec nx run-many --target=prettier --output-style=stream",

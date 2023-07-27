@@ -13,7 +13,7 @@ test.describe("identity", () => {
     await expect(page.getByText("Connected to MetaMask")).toBeVisible();
   });
 
-  test("should create and delete different types of identities properly", async ({ page }) => {
+  test("should create and delete different types of identities properly [health-check]", async ({ page }) => {
     const extension = new CryptKeeper(page);
     await extension.focus();
 
@@ -149,7 +149,7 @@ test.describe("identity", () => {
     await expect(extension.activity.getByText("No records found")).toBeVisible();
   });
 
-  test("should create identity from demo", async ({ page, cryptKeeperExtensionId }) => {
+  test("should create identity from demo [health-check]", async ({ page, cryptKeeperExtensionId }) => {
     await page.goto("/");
     const extension = new CryptKeeper(page);
     await extension.focus();
@@ -161,7 +161,7 @@ test.describe("identity", () => {
     await expect(extension.getByText(/Account/)).toHaveCount(3);
   });
 
-  test("should connect identity from demo", async ({ page, cryptKeeperExtensionId }) => {
+  test("should connect identity from demo [health-check]", async ({ page, cryptKeeperExtensionId }) => {
     await page.goto("/");
     const extension = new CryptKeeper(page);
     await extension.focus();
