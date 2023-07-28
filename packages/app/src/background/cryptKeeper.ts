@@ -69,10 +69,10 @@ export default class CryptKeeperController {
     this.historyService = HistoryService.getInstance();
     this.walletService = WalletService.getInstance();
     this.backupService = BackupService.getInstance()
-      .add(BackupableServices.APPROVAL, this.approvalService)
-      .add(BackupableServices.IDENTITY, this.zkIdentityService)
       .add(BackupableServices.LOCK, this.lockService)
-      .add(BackupableServices.WALLET, this.walletService);
+      .add(BackupableServices.WALLET, this.walletService)
+      .add(BackupableServices.APPROVAL, this.approvalService)
+      .add(BackupableServices.IDENTITY, this.zkIdentityService);
   }
 
   handle = (request: RequestHandler, sender: Runtime.MessageSender): Promise<unknown> =>
@@ -145,7 +145,12 @@ export default class CryptKeeperController {
 
     // Backup
     this.handler.add(RPCAction.DOWNLOAD_BACKUP, this.lockService.ensure, this.backupService.download);
-    this.handler.add(RPCAction.REQUEST_UPLOAD_BACKUP, this.backupService.createUploadBackupRequest);
+    this.handler.add(
+      RPCAction.REQUEST_UPLOAD_BACKUP,
+      this.lockService.ensure,
+      this.backupService.createUploadBackupRequest,
+    );
+    this.handler.add(RPCAction.REQUEST_ONBOARDING_BACKUP, this.backupService.createOnboardingBackupRequest);
     this.handler.add(RPCAction.UPLOAD_BACKUP, this.backupService.upload);
 
     // Wallet

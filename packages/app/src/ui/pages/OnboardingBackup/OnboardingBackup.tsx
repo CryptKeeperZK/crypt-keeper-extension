@@ -6,14 +6,15 @@ import { Icon } from "@src/ui/components/Icon";
 import { PasswordInput } from "@src/ui/components/PasswordInput";
 import { UploadInput } from "@src/ui/components/UploadInput/UploadInput";
 
-import { useUploadBackup } from "./useUploadBackup";
+import { useOnboardingBackup } from "./useOnboardingBackup";
 
-const UploadBackup = (): JSX.Element => {
-  const { isShowPassword, isLoading, errors, register, onDrop, onGoBack, onShowPassword, onSubmit } = useUploadBackup();
+const OnboardingBackup = (): JSX.Element => {
+  const { isShowPassword, isLoading, errors, register, onDrop, onGoBack, onShowPassword, onSubmit } =
+    useOnboardingBackup();
 
   return (
     <Box
-      data-testid="upload-backup-page"
+      data-testid="onboarding-backup-page"
       sx={{ display: "flex", flexDirection: "column", flexWrap: "nowrap", height: "100%" }}
     >
       <Box sx={{ display: "flex", flexDirection: "column", p: 2, flexGrow: 1 }}>
@@ -36,11 +37,11 @@ const UploadBackup = (): JSX.Element => {
         >
           <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center", flexGrow: 1, width: "100%" }}>
             <Typography fontWeight="bold" variant="body1">
-              To upload your backup, please provide backup file and enter your current and backup password.
+              To upload your backup, please provide backup file and backup password.
             </Typography>
 
             <Typography sx={{ my: 1, alignSelf: "flex-start" }} variant="body1">
-              Note: backup will not override your password and mnemonic phrase
+              Note: backup will use backup password as your login password and mnemonic phrase from backup file
             </Typography>
 
             <UploadInput
@@ -55,17 +56,6 @@ const UploadBackup = (): JSX.Element => {
             <Box sx={{ width: "100%" }}>
               <PasswordInput
                 isShowEye
-                errorMessage={errors.password}
-                id="password"
-                isShowPassword={isShowPassword}
-                label="Password"
-                onShowPassword={onShowPassword}
-                {...register("password", { required: "Password is required" })}
-              />
-            </Box>
-
-            <Box sx={{ width: "100%" }}>
-              <PasswordInput
                 errorMessage={errors.backupPassword}
                 id="backupPassword"
                 isShowPassword={isShowPassword}
@@ -97,4 +87,4 @@ const UploadBackup = (): JSX.Element => {
   );
 };
 
-export default UploadBackup;
+export default OnboardingBackup;

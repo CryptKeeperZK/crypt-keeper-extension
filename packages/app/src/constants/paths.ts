@@ -4,6 +4,7 @@ export enum Paths {
   CREATE_IDENTITY = "/create-identity",
   LOGIN = "/login",
   ONBOARDING = "/onboarding",
+  ONBOARDING_BACKUP = "/onboarding-backup",
   GENERATE_MNEMONIC = "/generate-mnemonic",
   REVEAL_MNEMONIC = "/reveal-mnemonic",
   REQUESTS = "/requests",

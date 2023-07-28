@@ -76,7 +76,7 @@ export default class HistoryService {
     return { operations: this.operations, settings: this.settings };
   };
 
-  private loadSettings = async (): Promise<HistorySettings> => {
+  loadSettings = async (): Promise<HistorySettings> => {
     this.settings = await this.historySettingsStore
       .get<string>()
       .then((settings) => (settings ? (JSON.parse(settings) as HistorySettings) : undefined));

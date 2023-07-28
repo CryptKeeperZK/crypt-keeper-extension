@@ -23,7 +23,7 @@ const Login = (): JSX.Element => {
       onSubmit={onSubmit}
     >
       <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center", p: 3, flexGrow: 1 }}>
-        <Icon className="login-icon" url={logoSVG} />
+        <Icon size={8} url={logoSVG} />
 
         <Typography sx={{ pt: 3, fontWeight: "bold" }} variant="h4">
           Welcome Back!

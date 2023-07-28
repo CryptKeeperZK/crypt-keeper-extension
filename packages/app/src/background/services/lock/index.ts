@@ -72,8 +72,8 @@ export default class LockerService implements IBackupable {
     }
 
     await this.writePassword(password);
-    await this.unlock(password);
     await this.miscStorage.setInitialization({ initializationStep: InitializationStep.PASSWORD });
+    await this.unlock(password);
   };
 
   resetPassword = async ({ mnemonic, password }: ISecretArgs): Promise<void> => {
@@ -187,10 +187,7 @@ export default class LockerService implements IBackupable {
       throw new Error("Incorrect backup format for password");
     }
 
-    const backup = this.cryptoService.decrypt(authenticBackupCiphertext, { secret: backupPassword });
-    const encrypted = this.cryptoService.encrypt(backup, { mode: ECryptMode.PASSWORD });
-    await this.passwordStorage.set(encrypted);
-    this.cryptoService.setPassword(backupPassword);
+    await this.setupPassword(backupPassword);
   };
 
   private isAuthentic = async (password: string, isBackupAvaiable: boolean): Promise<AuthenticityCheckData> => {
