@@ -1,4 +1,6 @@
-import { getApiKeys, isDebugMode } from "../env";
+import { getApiKeys, isDebugMode, isE2E } from "../env";
+
+jest.unmock("@src/config/env");
 
 describe("config/env", () => {
   beforeAll(() => {
@@ -30,5 +32,9 @@ describe("config/env", () => {
 
   test("should check if debug mode is enabled", () => {
     expect(isDebugMode()).toBe(false);
+  });
+
+  test("should check if debug mode is enabled", () => {
+    expect(isE2E()).toBe(false);
   });
 });

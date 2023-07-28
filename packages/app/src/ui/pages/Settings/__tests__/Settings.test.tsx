@@ -32,10 +32,13 @@ describe("ui/pages/Settings", () => {
   const defaultHookData: IUseSettingsData = {
     isLoading: false,
     isConfirmModalOpen: false,
+    isConfirmStorageDelete: false,
     tab: SettingsTabs.GENERAL,
     settings: { isEnabled: true },
     onConfirmModalShow: jest.fn(),
+    onConfirmStorageDelete: jest.fn(),
     onDeleteAllHistory: jest.fn(),
+    onDeleteStorage: jest.fn(),
     onEnableHistory: jest.fn(),
     onTabChange: jest.fn(),
     onGoBack: jest.fn(),

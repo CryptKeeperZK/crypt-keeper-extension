@@ -15,6 +15,7 @@ export interface IdentityListProps {
   isShowAddNew: boolean;
   isShowMenu: boolean;
   identities: IdentityData[];
+  className?: string;
   selectedCommitment?: string;
   onSelect?: (identityCommitment: string) => void;
 }
@@ -23,6 +24,7 @@ export const IdentityList = ({
   isShowAddNew,
   isShowMenu,
   identities,
+  className = "",
   selectedCommitment = undefined,
   onSelect = undefined,
 }: IdentityListProps): JSX.Element => {
@@ -48,7 +50,7 @@ export const IdentityList = ({
 
   return (
     <>
-      <div className="identities-content">
+      <div className={classNames("identities-content", className)}>
         {identities.map(({ commitment, metadata }) => (
           <IdentityItem
             key={commitment}
@@ -68,7 +70,7 @@ export const IdentityList = ({
       </div>
 
       {isShowAddNew && (
-        <div className="flex flex-row items-center p-4">
+        <div className="flex flex-row items-center p-4 identities-footer">
           <button
             className={classNames(
               "flex flex-row items-center justify-center cursor-pointer text-gray-600",

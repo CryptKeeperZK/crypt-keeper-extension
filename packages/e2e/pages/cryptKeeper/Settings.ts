@@ -39,6 +39,11 @@ export default class Settings extends BasePage {
     await this.page.getByText("Yes").click();
   }
 
+  async deleteStorage(): Promise<void> {
+    await this.page.getByText("Delete storage", { exact: true }).click();
+    await this.page.getByText("Yes").click();
+  }
+
   async downloadBackup({ backupPassword = CRYPT_KEEPER_PASSWORD }: IDownloadBackupArgs = {}): Promise<string | null> {
     await this.page.getByText("Download backup", { exact: true }).click();
     await this.page.getByLabel("Password", { exact: true }).type(backupPassword);

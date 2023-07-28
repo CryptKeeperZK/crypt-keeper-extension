@@ -14,6 +14,11 @@ interface ICreateAccountArgs {
   mnemonic?: string;
 }
 
+interface ICreateAccountFromBackupArgs {
+  password: string;
+  backupFilePath: string;
+}
+
 export default class CryptKeeper extends BasePage {
   activity = new Activity(this.page);
 
@@ -42,9 +47,15 @@ export default class CryptKeeper extends BasePage {
   }
 
   async connectWallet(): Promise<void> {
-    await this.page.getByTestId("menu").first().click();
-    await this.page.getByText("Connect Metamask", { exact: true }).click();
+    await this.page.waitForSelector(`[data-testid="home-info"]`);
+    const isMetamaskConnected = await this.page.getByText("Connected to MetaMask").isVisible();
 
+    if (isMetamaskConnected) {
+      return;
+    }
+
+    await this.page.getByTestId("menu").first().click();
+    await this.page.getByText("Connect MetaMask", { exact: true }).click();
     await metamaskCommands.acceptAccess();
   }
 
@@ -63,6 +74,15 @@ export default class CryptKeeper extends BasePage {
     }
 
     await this.page.getByText("Get started!", { exact: true }).click();
+  }
+
+  async createAccountFromBackup({ password, backupFilePath }: ICreateAccountFromBackupArgs): Promise<void> {
+    await this.page.getByText("Have backup?", { exact: true }).click();
+
+    await this.page.setInputFiles(`input[name="backupFile"]`, backupFilePath);
+    await this.page.getByLabel("Backup password", { exact: true }).type(password);
+
+    await this.page.getByText("Upload", { exact: true }).click();
   }
 
   async approve(): Promise<void> {

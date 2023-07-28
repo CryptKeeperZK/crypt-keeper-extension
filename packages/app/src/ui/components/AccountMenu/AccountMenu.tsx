@@ -88,12 +88,12 @@ export const AccountMenu = ({ ethWallet, cryptKeeperWallet }: IAccountMenuProps)
 
         <Divider sx={{ backgroundColor: "background.paper" }} />
 
-        {ethWallet.isActive && <MenuItem onClick={onDisconnect}>Disconnect Metamask</MenuItem>}
+        {ethWallet.isActive && <MenuItem onClick={onDisconnect}>Disconnect MetaMask</MenuItem>}
 
         {ethWallet.isInjectedWallet ? (
-          !ethWallet.isActive && <MenuItem onClick={onConnect}>Connect Metamask</MenuItem>
+          !ethWallet.isActive && <MenuItem onClick={onConnect}>Connect MetaMask</MenuItem>
         ) : (
-          <MenuItem onClick={onGoToMetamaskPage}>Install Metamask</MenuItem>
+          <MenuItem onClick={onGoToMetamaskPage}>Install MetaMask</MenuItem>
         )}
 
         <MenuItem onClick={onGoToSettings}>Settings</MenuItem>

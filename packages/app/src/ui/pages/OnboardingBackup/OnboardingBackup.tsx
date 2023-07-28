@@ -40,7 +40,7 @@ const OnboardingBackup = (): JSX.Element => {
               To upload your backup, please provide backup file and backup password.
             </Typography>
 
-            <Typography sx={{ my: 1, alignSelf: "flex-start" }} variant="body1">
+            <Typography sx={{ my: 1, alignSelf: "flex-start", color: "warning.main" }} variant="body1">
               Note: backup will use backup password as your login password and mnemonic phrase from backup file
             </Typography>
 

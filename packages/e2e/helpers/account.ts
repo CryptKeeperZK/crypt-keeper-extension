@@ -54,7 +54,7 @@ export async function unlockAccount({
 
 const RACE_TIMEOUT_MS = 5_000;
 
-async function connectCryptKeeper(app: Page): Promise<CryptKeeper> {
+export async function connectCryptKeeper(app: Page): Promise<CryptKeeper> {
   await app.waitForLoadState();
   await expect(app).toHaveTitle(/Crypt-keeper Extension demo/);
   await expect(app.getByText(/Please connect to Crypt-Keeper to continue./)).toBeVisible();

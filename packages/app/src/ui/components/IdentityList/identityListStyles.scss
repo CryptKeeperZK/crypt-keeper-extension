@@ -3,13 +3,22 @@
 .identities-content {
   overflow-x: hidden;
   overflow-y: auto;
-  height: 355px;
+  top: 56px;
+  bottom: 56px;
+  position: absolute;
   width: 100%;
   scrollbar-width: none;
 
   &::-webkit-scrollbar {
     display: none;
   }
+}
+
+.identities-footer {
+  bottom: 0;
+  position: absolute;
+  height: 56px;
+  width: 100%;
 }
 
 .create-identity-row {

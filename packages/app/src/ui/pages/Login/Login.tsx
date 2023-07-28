@@ -8,7 +8,6 @@ import logoSVG from "@src/static/icons/logo.svg";
 import { Icon } from "@src/ui/components/Icon";
 import { PasswordInput } from "@src/ui/components/PasswordInput";
 
-import "./login.scss";
 import { useLogin } from "./useLogin";
 
 const Login = (): JSX.Element => {
@@ -25,7 +24,7 @@ const Login = (): JSX.Element => {
       <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center", p: 3, flexGrow: 1 }}>
         <Icon size={8} url={logoSVG} />
 
-        <Typography sx={{ pt: 3, fontWeight: "bold" }} variant="h4">
+        <Typography sx={{ pt: 3, fontWeight: "bold", color: "primary.main" }} variant="h4">
           Welcome Back!
         </Typography>
 

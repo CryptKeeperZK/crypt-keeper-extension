@@ -3,14 +3,23 @@ import Button from "@mui/material/Button";
 import FormGroup from "@mui/material/FormGroup";
 import Typography from "@mui/material/Typography";
 
+import { isE2E } from "@src/config/env";
+
 export interface IBackupProps {
   isLoading: boolean;
   onDeleteIdentities: () => void;
+  onDeleteStorage: () => void;
   onGoToBackup: () => void;
   onGoToUploadBackup: () => void;
 }
 
-const Backup = ({ isLoading, onDeleteIdentities, onGoToBackup, onGoToUploadBackup }: IBackupProps): JSX.Element => {
+const Backup = ({
+  isLoading,
+  onDeleteIdentities,
+  onGoToBackup,
+  onDeleteStorage,
+  onGoToUploadBackup,
+}: IBackupProps): JSX.Element => {
   if (isLoading) {
     return <Box>Loading...</Box>;
   }
@@ -60,6 +69,27 @@ const Backup = ({ isLoading, onDeleteIdentities, onGoToBackup, onGoToUploadBacku
           </Button>
         </FormGroup>
       </Box>
+
+      {isE2E() && (
+        <Box sx={{ mb: 3 }}>
+          <Typography variant="h6">Delete storage data</Typography>
+
+          <Typography color="text.secondary" variant="body2">
+            This erases the whole storage data. This is not revertable operation.
+          </Typography>
+
+          <FormGroup sx={{ mt: 2 }}>
+            <Button
+              color="error"
+              sx={{ textTransform: "none", width: 200 }}
+              variant="contained"
+              onClick={onDeleteStorage}
+            >
+              Delete storage
+            </Button>
+          </FormGroup>
+        </Box>
+      )}
     </Box>
   );
 };

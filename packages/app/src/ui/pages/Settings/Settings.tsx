@@ -3,28 +3,33 @@ import Tab from "@mui/material/Tab";
 import Tabs from "@mui/material/Tabs";
 import Typography from "@mui/material/Typography";
 
+import { isE2E } from "@src/config/env";
 import { ConfirmDangerModal } from "@src/ui/components/ConfirmDangerModal";
 import { Header } from "@src/ui/components/Header";
 import { Icon } from "@src/ui/components/Icon";
 
 import { General, Backup, Security } from "./components";
+import "./settings.scss";
 import { SettingsTabs, useSettings } from "./useSettings";
 
 const Settings = (): JSX.Element => {
   const {
     isLoading,
     isConfirmModalOpen,
+    isConfirmStorageDelete,
     tab,
     settings,
     onTabChange,
     onEnableHistory,
     onConfirmModalShow,
+    onConfirmStorageDelete,
     onDeleteAllHistory,
     onGoBack,
     onGoToBackup,
     onGoToUploadBackup,
     onGoToResetPassword,
     onDeleteAllIdentities,
+    onDeleteStorage,
     onGoRevealMnemonic,
   } = useSettings();
 
@@ -53,7 +58,7 @@ const Settings = (): JSX.Element => {
             <Tab label={<Typography>Backup</Typography>} sx={{ alignItems: "flex-start" }} />
           </Tabs>
 
-          <Box sx={{ width: "100%", px: 2 }}>
+          <Box className="settings-content" sx={{ width: "100%", px: 2, maxHeight: "30rem", overflow: "auto" }}>
             {tab === SettingsTabs.GENERAL && (
               <>
                 <General
@@ -84,6 +89,7 @@ const Settings = (): JSX.Element => {
                 <Backup
                   isLoading={isLoading}
                   onDeleteIdentities={onConfirmModalShow}
+                  onDeleteStorage={onConfirmStorageDelete}
                   onGoToBackup={onGoToBackup}
                   onGoToUploadBackup={onGoToUploadBackup}
                 />
@@ -93,6 +99,14 @@ const Settings = (): JSX.Element => {
                   isOpenModal={isConfirmModalOpen}
                   reject={onConfirmModalShow}
                 />
+
+                {isE2E() && (
+                  <ConfirmDangerModal
+                    accept={onDeleteStorage}
+                    isOpenModal={isConfirmStorageDelete}
+                    reject={onConfirmStorageDelete}
+                  />
+                )}
               </>
             )}
           </Box>

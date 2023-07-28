@@ -7,6 +7,7 @@ import fs from "fs";
 import path from "path";
 
 import { METAMASK_PASSWORD, METAMASK_SEED_PHRASE, NETWORK } from "../constants";
+import { CryptKeeper } from "../pages";
 
 export interface TestExtension {
   page: Page;
@@ -20,8 +21,9 @@ export const test = base.extend<TestExtension>({
       const metamaskPath = await prepareMetamask(process.env.METAMASK_VERSION || "10.28.1");
       const cryptKeeperPath = path.join(__dirname, "../../app/dist");
       const downloadsPath = path.join(__dirname, "../playwright-downloads");
+      const userPath = path.join(__dirname, "../user-data");
 
-      const context = await chromium.launchPersistentContext("", {
+      const context = await chromium.launchPersistentContext(userPath, {
         headless: false,
         downloadsPath,
         args: [
@@ -54,7 +56,10 @@ export const test = base.extend<TestExtension>({
       });
 
       await use(context);
+
+      await deleteCryptKeeperStorage(context);
       await context.close();
+
       fs.rmSync(downloadsPath, { recursive: true, force: true });
     },
     { scope: "test" },
@@ -81,5 +86,19 @@ export const test = base.extend<TestExtension>({
     { scope: "test" },
   ],
 });
+
+async function deleteCryptKeeperStorage(context: BrowserContext): Promise<void> {
+  const [background] = context.serviceWorkers();
+  const extensionId = background.url().split("/")[2];
+
+  const page = await context.newPage();
+  await page.goto(`chrome-extension://${extensionId}/popup.html`);
+
+  const extension = new CryptKeeper(page);
+  await extension.settings.openPage();
+  await extension.settings.openTab("Backup");
+  await extension.settings.deleteStorage();
+  await extension.close();
+}
 
 export const { expect } = test;

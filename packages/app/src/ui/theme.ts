@@ -39,6 +39,10 @@ const PALETTE = {
     main: lighten("#000", 0.75),
   },
 
+  warning: {
+    main: "#ffcc00",
+  },
+
   success: {
     main: "#2ed272",
   },
