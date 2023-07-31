@@ -1,4 +1,4 @@
-import { parseVerifiableCredentialFromJson, validateVerifiableCredential } from "../credential";
+import { parseSerializedVerifiableCredential, validateVerifiableCredential } from "../utils";
 
 describe("util/isValidCredential", () => {
   test("should parse a date object correctly inside of a verifiable credential", async () => {
@@ -16,10 +16,10 @@ describe("util/isValidCredential", () => {
       },
     };
     const credJson = JSON.stringify(rawCred);
-    const cred = await parseVerifiableCredentialFromJson(credJson);
+    const cred = await parseSerializedVerifiableCredential(credJson);
 
     expect(cred).not.toBeNull();
-    expect(date.getTime()).toBe(cred!.issuanceDate.getTime());
+    expect(date.getTime()).toBe(cred.issuanceDate.getTime());
   });
 
   test("should return true for a valid verifiable credential", async () => {
@@ -36,20 +36,20 @@ describe("util/isValidCredential", () => {
       },
     };
     const credJson = JSON.stringify(rawCred);
-    const cred = await parseVerifiableCredentialFromJson(credJson);
+    const cred = await parseSerializedVerifiableCredential(credJson);
 
     expect(cred).not.toBeNull();
-    expect(validateVerifiableCredential(cred!)).not.toBeNull();
+    expect(validateVerifiableCredential(cred)).not.toBeNull();
   });
 
-  test("should return null if the string is not valid JSON", async () => {
+  test("should return null if the string is not valid JSON", () => {
     const rawCred = "asdf";
-    const cred = await parseVerifiableCredentialFromJson(rawCred);
-
-    expect(cred).toBeNull();
+    expect(async () => {
+      await parseSerializedVerifiableCredential(rawCred);
+    }).rejects.toThrow(`Serialized Verifiable Credential is not valid JSON`);
   });
 
-  test("should return false if the context property is not an array", async () => {
+  test("should return false if the context property is not an array", () => {
     const rawCred = {
       context: "https://www.w3.org/2018/credentials/v1",
       type: ["VerifiableCredential"],
@@ -63,12 +63,12 @@ describe("util/isValidCredential", () => {
       },
     };
     const credJson = JSON.stringify(rawCred);
-    const cred = await parseVerifiableCredentialFromJson(credJson);
-
-    expect(cred).toBeNull();
+    expect(async () => {
+      await parseSerializedVerifiableCredential(credJson);
+    }).rejects.toThrow(`Invalid Verifiable Credential`);
   });
 
-  test("should return false if context entries are not strings", async () => {
+  test("should return false if context entries are not strings", () => {
     const rawCred = {
       context: [3],
       type: ["VerifiableCredential"],
@@ -82,12 +82,12 @@ describe("util/isValidCredential", () => {
       },
     };
     const credJson = JSON.stringify(rawCred);
-    const cred = await parseVerifiableCredentialFromJson(credJson);
-
-    expect(cred).toBeNull();
+    expect(async () => {
+      await parseSerializedVerifiableCredential(credJson);
+    }).rejects.toThrow(`Invalid Verifiable Credential`);
   });
 
-  test("should return false if the id property is not a string", async () => {
+  test("should return false if the id property is not a string", () => {
     const rawCred = {
       context: ["https://www.w3.org/2018/credentials/v1"],
       id: 3,
@@ -102,12 +102,12 @@ describe("util/isValidCredential", () => {
       },
     };
     const credJson = JSON.stringify(rawCred);
-    const cred = await parseVerifiableCredentialFromJson(credJson);
-
-    expect(cred).toBeNull();
+    expect(async () => {
+      await parseSerializedVerifiableCredential(credJson);
+    }).rejects.toThrow(`Invalid Verifiable Credential`);
   });
 
-  test("should return false if the type property is not an array", async () => {
+  test("should return false if the type property is not an array", () => {
     const rawCred = {
       context: ["https://www.w3.org/2018/credentials/v1"],
       type: "VerifiableCredential",
@@ -121,12 +121,12 @@ describe("util/isValidCredential", () => {
       },
     };
     const credJson = JSON.stringify(rawCred);
-    const cred = await parseVerifiableCredentialFromJson(credJson);
-
-    expect(cred).toBeNull();
+    expect(async () => {
+      await parseSerializedVerifiableCredential(credJson);
+    }).rejects.toThrow(`Invalid Verifiable Credential`);
   });
 
-  test("should return false if the type array entries are not strings", async () => {
+  test("should return false if the type array entries are not strings", () => {
     const rawCred = {
       context: ["https://www.w3.org/2018/credentials/v1"],
       type: [3],
@@ -140,12 +140,12 @@ describe("util/isValidCredential", () => {
       },
     };
     const credJson = JSON.stringify(rawCred);
-    const cred = await parseVerifiableCredentialFromJson(credJson);
-
-    expect(cred).toBeNull();
+    expect(async () => {
+      await parseSerializedVerifiableCredential(credJson);
+    }).rejects.toThrow(`Invalid Verifiable Credential`);
   });
 
-  test("should return false if the issuer property does not exist", async () => {
+  test("should return false if the issuer property does not exist", () => {
     const rawCred = {
       context: ["https://www.w3.org/2018/credentials/v1"],
       type: ["VerifiableCredential"],
@@ -158,12 +158,12 @@ describe("util/isValidCredential", () => {
       },
     };
     const credJson = JSON.stringify(rawCred);
-    const cred = await parseVerifiableCredentialFromJson(credJson);
-
-    expect(cred).toBeNull();
+    expect(async () => {
+      await parseSerializedVerifiableCredential(credJson);
+    }).rejects.toThrow(`Invalid Verifiable Credential`);
   });
 
-  test("should return false if the issuer property is not a string", async () => {
+  test("should return false if the issuer property is not a string", () => {
     const rawCred = {
       context: ["https://www.w3.org/2018/credentials/v1"],
       type: ["VerifiableCredential"],
@@ -177,12 +177,12 @@ describe("util/isValidCredential", () => {
       },
     };
     const credJson = JSON.stringify(rawCred);
-    const cred = await parseVerifiableCredentialFromJson(credJson);
-
-    expect(cred).toBeNull();
+    expect(async () => {
+      await parseSerializedVerifiableCredential(credJson);
+    }).rejects.toThrow(`Invalid Verifiable Credential`);
   });
 
-  test("should return false if the issuance date does not exist", async () => {
+  test("should return false if the issuance date does not exist", () => {
     const rawCred = {
       context: ["https://www.w3.org/2018/credentials/v1"],
       type: ["VerifiableCredential"],
@@ -195,12 +195,12 @@ describe("util/isValidCredential", () => {
       },
     };
     const credJson = JSON.stringify(rawCred);
-    const cred = await parseVerifiableCredentialFromJson(credJson);
-
-    expect(cred).toBeNull();
+    expect(async () => {
+      await parseSerializedVerifiableCredential(credJson);
+    }).rejects.toThrow(`Invalid Verifiable Credential`);
   });
 
-  test("should return false if the issuance date is not a date", async () => {
+  test("should return false if the issuance date is not a date", () => {
     const rawCred = {
       context: ["https://www.w3.org/2018/credentials/v1"],
       type: ["VerifiableCredential"],
@@ -214,12 +214,12 @@ describe("util/isValidCredential", () => {
       },
     };
     const credJson = JSON.stringify(rawCred);
-    const cred = await parseVerifiableCredentialFromJson(credJson);
-
-    expect(cred).toBeNull();
+    expect(async () => {
+      await parseSerializedVerifiableCredential(credJson);
+    }).rejects.toThrow(`Invalid Verifiable Credential`);
   });
 
-  test("should return false if the expiration date is not a date", async () => {
+  test("should return false if the expiration date is not a date", () => {
     const rawCred = {
       context: ["https://www.w3.org/2018/credentials/v1"],
       type: ["VerifiableCredential"],
@@ -234,12 +234,12 @@ describe("util/isValidCredential", () => {
       },
     };
     const credJson = JSON.stringify(rawCred);
-    const cred = await parseVerifiableCredentialFromJson(credJson);
-
-    expect(cred).toBeNull();
+    expect(async () => {
+      await parseSerializedVerifiableCredential(credJson);
+    }).rejects.toThrow(`Invalid Verifiable Credential`);
   });
 
-  test("should return false if the subject property does not exist", async () => {
+  test("should return false if the subject property does not exist", () => {
     const rawCred = {
       context: ["https://www.w3.org/2018/credentials/v1"],
       type: ["VerifiableCredential"],
@@ -247,12 +247,12 @@ describe("util/isValidCredential", () => {
       issuanceDate: new Date(),
     };
     const credJson = JSON.stringify(rawCred);
-    const cred = await parseVerifiableCredentialFromJson(credJson);
-
-    expect(cred).toBeNull();
+    expect(async () => {
+      await parseSerializedVerifiableCredential(credJson);
+    }).rejects.toThrow(`Invalid Verifiable Credential`);
   });
 
-  test("should return false if the subject id is not a string", async () => {
+  test("should return false if the subject id is not a string", () => {
     const rawCred = {
       context: ["https://www.w3.org/2018/credentials/v1"],
       type: ["VerifiableCredential"],
@@ -266,12 +266,12 @@ describe("util/isValidCredential", () => {
       },
     };
     const credJson = JSON.stringify(rawCred);
-    const cred = await parseVerifiableCredentialFromJson(credJson);
-
-    expect(cred).toBeNull();
+    expect(async () => {
+      await parseSerializedVerifiableCredential(credJson);
+    }).rejects.toThrow(`Invalid Verifiable Credential`);
   });
 
-  test("should return false if the claims are not of valid format", async () => {
+  test("should return false if the claims are not of valid format", () => {
     const rawCred = {
       context: ["https://www.w3.org/2018/credentials/v1"],
       type: ["VerifiableCredential"],
@@ -287,12 +287,12 @@ describe("util/isValidCredential", () => {
       },
     };
     const credJson = JSON.stringify(rawCred);
-    const cred = await parseVerifiableCredentialFromJson(credJson);
-
-    expect(cred).toBeNull();
+    expect(async () => {
+      await parseSerializedVerifiableCredential(credJson);
+    }).rejects.toThrow(`Invalid Verifiable Credential`);
   });
 
-  test("should return false if the status id is not a string", async () => {
+  test("should return false if the status id is not a string", () => {
     const rawCred = {
       context: ["https://www.w3.org/2018/credentials/v1"],
       type: ["VerifiableCredential"],
@@ -310,12 +310,12 @@ describe("util/isValidCredential", () => {
       },
     };
     const credJson = JSON.stringify(rawCred);
-    const cred = await parseVerifiableCredentialFromJson(credJson);
-
-    expect(cred).toBeNull();
+    expect(async () => {
+      await parseSerializedVerifiableCredential(credJson);
+    }).rejects.toThrow(`Invalid Verifiable Credential`);
   });
 
-  test("should return false if the status type is not a string", async () => {
+  test("should return false if the status type is not a string", () => {
     const rawCred = {
       context: ["https://www.w3.org/2018/credentials/v1"],
       type: ["VerifiableCredential"],
@@ -333,12 +333,12 @@ describe("util/isValidCredential", () => {
       },
     };
     const credJson = JSON.stringify(rawCred);
-    const cred = await parseVerifiableCredentialFromJson(credJson);
-
-    expect(cred).toBeNull();
+    expect(async () => {
+      await parseSerializedVerifiableCredential(credJson);
+    }).rejects.toThrow(`Invalid Verifiable Credential`);
   });
 
-  test("should return false if the proof id is not a string", async () => {
+  test("should return false if the proof id is not a string", () => {
     const rawCred = {
       context: ["https://www.w3.org/2018/credentials/v1"],
       type: ["VerifiableCredential"],
@@ -362,12 +362,12 @@ describe("util/isValidCredential", () => {
       ],
     };
     const credJson = JSON.stringify(rawCred);
-    const cred = await parseVerifiableCredentialFromJson(credJson);
-
-    expect(cred).toBeNull();
+    expect(async () => {
+      await parseSerializedVerifiableCredential(credJson);
+    }).rejects.toThrow(`Invalid Verifiable Credential`);
   });
 
-  test("should return false if the proof type is not a string", async () => {
+  test("should return false if the proof type is not a string", () => {
     const rawCred = {
       context: ["https://www.w3.org/2018/credentials/v1"],
       type: ["VerifiableCredential"],
@@ -391,12 +391,12 @@ describe("util/isValidCredential", () => {
       ],
     };
     const credJson = JSON.stringify(rawCred);
-    const cred = await parseVerifiableCredentialFromJson(credJson);
-
-    expect(cred).toBeNull();
+    expect(async () => {
+      await parseSerializedVerifiableCredential(credJson);
+    }).rejects.toThrow(`Invalid Verifiable Credential`);
   });
 
-  test("should return false if the proof purpose is not a string", async () => {
+  test("should return false if the proof purpose is not a string", () => {
     const rawCred = {
       context: ["https://www.w3.org/2018/credentials/v1"],
       type: ["VerifiableCredential"],
@@ -420,12 +420,12 @@ describe("util/isValidCredential", () => {
       ],
     };
     const credJson = JSON.stringify(rawCred);
-    const cred = await parseVerifiableCredentialFromJson(credJson);
-
-    expect(cred).toBeNull();
+    expect(async () => {
+      await parseSerializedVerifiableCredential(credJson);
+    }).rejects.toThrow(`Invalid Verifiable Credential`);
   });
 
-  test("should return false if the proof verification method is not a string", async () => {
+  test("should return false if the proof verification method is not a string", () => {
     const rawCred = {
       context: ["https://www.w3.org/2018/credentials/v1"],
       type: ["VerifiableCredential"],
@@ -449,12 +449,12 @@ describe("util/isValidCredential", () => {
       ],
     };
     const credJson = JSON.stringify(rawCred);
-    const cred = await parseVerifiableCredentialFromJson(credJson);
-
-    expect(cred).toBeNull();
+    expect(async () => {
+      await parseSerializedVerifiableCredential(credJson);
+    }).rejects.toThrow(`Invalid Verifiable Credential`);
   });
 
-  test("should return false if the proof created time is not a date", async () => {
+  test("should return false if the proof created time is not a date", () => {
     const rawCred = {
       context: ["https://www.w3.org/2018/credentials/v1"],
       type: ["VerifiableCredential"],
@@ -478,12 +478,12 @@ describe("util/isValidCredential", () => {
       ],
     };
     const credJson = JSON.stringify(rawCred);
-    const cred = await parseVerifiableCredentialFromJson(credJson);
-
-    expect(cred).toBeNull();
+    expect(async () => {
+      await parseSerializedVerifiableCredential(credJson);
+    }).rejects.toThrow(`Invalid Verifiable Credential`);
   });
 
-  test("should return false if the proof value is not a string", async () => {
+  test("should return false if the proof value is not a string", () => {
     const rawCred = {
       context: ["https://www.w3.org/2018/credentials/v1"],
       type: ["VerifiableCredential"],
@@ -507,8 +507,8 @@ describe("util/isValidCredential", () => {
       ],
     };
     const credJson = JSON.stringify(rawCred);
-    const cred = await parseVerifiableCredentialFromJson(credJson);
-
-    expect(cred).toBeNull();
+    expect(async () => {
+      await parseSerializedVerifiableCredential(credJson);
+    }).rejects.toThrow(`Invalid Verifiable Credential`);
   });
 });

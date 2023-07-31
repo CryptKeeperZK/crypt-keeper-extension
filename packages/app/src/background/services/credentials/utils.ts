@@ -12,18 +12,23 @@ import {
 /**
  * Attempts to parse a JSON string into a VerifiableCredential object.
  * @param json A JSON string representing a VerifiableCredential.
- * @returns An object representing a VerifiableCredential. Null if the object is not a valid VerifiableCredential.
+ * @returns An object representing a VerifiableCredential. Throws error if the object is not a valid VerifiableCredential.
  */
-export async function parseVerifiableCredentialFromJson(json: string): Promise<VerifiableCredential | null> {
-  if (!json) {
-    return null;
+export async function parseSerializedVerifiableCredential(
+  serializedVerifiableCredential: string,
+): Promise<VerifiableCredential> {
+  if (!serializedVerifiableCredential) {
+    throw new Error("Serialized Verifiable Credential is not provided!");
   }
 
+  let parsedVerifiableCredential;
   try {
-    return await validateVerifiableCredential(JSON.parse(json) as Record<string, unknown>);
-  } catch (e) {
-    return null;
+    parsedVerifiableCredential = JSON.parse(serializedVerifiableCredential) as Record<string, unknown>;
+  } catch (error) {
+    throw new Error(`Serialized Verifiable Credential is not valid JSON: ${(error as Error).message}`);
   }
+
+  return validateVerifiableCredential(parsedVerifiableCredential);
 }
 
 let claimValueSchema: yup.Schema<ClaimValue>;
@@ -130,14 +135,14 @@ const verifiableCredentialSchema: yup.Schema<VerifiableCredential> = yup.object(
 
 /**
  * Determines if an object is a valid VerifiableCredential.
- * @param obj An object representing a VerifiableCredential.
- * @returns A boolean indicating whether or not the object is a valid VerifiableCredential.
+ * @param verifiableCredential An object representing a VerifiableCredential.
+ * @returns The Verifiable Credential if the object is a valid VerifiableCredential, otherwise throws an error.
  */
-export async function validateVerifiableCredential(obj: object): Promise<VerifiableCredential | null> {
+export async function validateVerifiableCredential(verifiableCredential: object): Promise<VerifiableCredential> {
   try {
-    return await verifiableCredentialSchema.validate(obj);
+    return verifiableCredentialSchema.validate(verifiableCredential);
   } catch (error) {
-    return null;
+    throw new Error(`Invalid Verifiable Credential: ${(error as Error).message}`);
   }
 }
 
