@@ -11,6 +11,7 @@ export interface TabListProps {
 enum HomeTabs {
   IDENTITIES = 0,
   ACTIVITY = 1,
+  VERIFIABLE_CREDENTIALS = 2,
 }
 
 export const TabList = ({ children }: TabListProps): JSX.Element => {
@@ -38,6 +39,8 @@ export const TabList = ({ children }: TabListProps): JSX.Element => {
         <Tab data-testid="tab-identities" label="Identities" />
 
         <Tab data-testid="tab-activity" label="Activity" />
+
+        <Tab data-testid="tab-credentials" label="Verifiable Credentials" />
       </Tabs>
 
       {selectedContent}
