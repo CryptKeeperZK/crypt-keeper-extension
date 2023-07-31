@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 
 import { Paths } from "@src/constants";
 import { HistorySettings } from "@src/types";
+import { deleteStorage, lock } from "@src/ui/ducks/app";
 import { createUploadBackupRequest } from "@src/ui/ducks/backup";
 import { useAppDispatch } from "@src/ui/ducks/hooks";
 import {
@@ -16,9 +17,11 @@ import {
 export interface IUseSettingsData {
   isLoading: boolean;
   isConfirmModalOpen: boolean;
+  isConfirmStorageDelete: boolean;
   tab: SettingsTabs;
   settings?: HistorySettings;
   onConfirmModalShow: () => void;
+  onConfirmStorageDelete: () => void;
   onDeleteAllHistory: () => void;
   onEnableHistory: () => void;
   onTabChange: (event: SyntheticEvent, value: number) => void;
@@ -28,6 +31,7 @@ export interface IUseSettingsData {
   onGoToResetPassword: () => void;
   onGoRevealMnemonic: () => void;
   onDeleteAllIdentities: () => void;
+  onDeleteStorage: () => void;
 }
 
 export enum SettingsTabs {
@@ -41,6 +45,7 @@ export const useSettings = (): IUseSettingsData => {
   const navigate = useNavigate();
   const settings = useHistorySettings();
   const [isConfirmModalOpen, setConfirmModalOpen] = useState(false);
+  const [isConfirmStorageDelete, setConfirmStorageDelete] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [tab, setTab] = useState(SettingsTabs.GENERAL);
 
@@ -54,6 +59,10 @@ export const useSettings = (): IUseSettingsData => {
   const onConfirmModalShow = useCallback(() => {
     setConfirmModalOpen((value) => !value);
   }, [setConfirmModalOpen]);
+
+  const onConfirmStorageDelete = useCallback(() => {
+    setConfirmStorageDelete((value) => !value);
+  }, [setConfirmStorageDelete]);
 
   const onEnableHistory = useCallback(() => {
     dispatch(enableHistory(!settings?.isEnabled));
@@ -83,6 +92,12 @@ export const useSettings = (): IUseSettingsData => {
     dispatch(deleteAllIdentities()).then(() => onConfirmModalShow());
   }, [dispatch, onConfirmModalShow]);
 
+  const onDeleteStorage = useCallback(() => {
+    dispatch(deleteStorage())
+      .then(() => onConfirmModalShow())
+      .then(() => dispatch(lock()));
+  }, [dispatch]);
+
   const onGoRevealMnemonic = useCallback(() => {
     navigate(Paths.REVEAL_MNEMONIC);
   }, [navigate]);
@@ -95,9 +110,11 @@ export const useSettings = (): IUseSettingsData => {
   return {
     isLoading,
     isConfirmModalOpen,
+    isConfirmStorageDelete,
     settings,
     tab,
     onConfirmModalShow,
+    onConfirmStorageDelete,
     onDeleteAllHistory,
     onEnableHistory,
     onTabChange,
@@ -107,5 +124,6 @@ export const useSettings = (): IUseSettingsData => {
     onGoToResetPassword,
     onGoRevealMnemonic,
     onDeleteAllIdentities,
+    onDeleteStorage,
   };
 };

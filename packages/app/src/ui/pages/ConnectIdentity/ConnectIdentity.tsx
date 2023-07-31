@@ -10,6 +10,7 @@ import { FullModal, FullModalFooter, FullModalHeader } from "@src/ui/components/
 import { IdentityList } from "@src/ui/components/IdentityList";
 import { SiteFavicon } from "@src/ui/components/SiteFavicon/SiteFavicon";
 
+import "./connectIdentity.scss";
 import { EConnectIdentityTabs, useConnectIdentity } from "./useConnectIdentity";
 
 const ConnectIdentity = (): JSX.Element => {
@@ -49,38 +50,42 @@ const ConnectIdentity = (): JSX.Element => {
           </Box>
         </Box>
 
-        <Tabs
-          indicatorColor="primary"
-          sx={{ width: "100%" }}
-          textColor="primary"
-          value={selectedTab}
-          variant="fullWidth"
-          onChange={onTabChange}
-        >
-          <Tab label="Linked" />
+        <Box sx={{ position: "relative", width: "100%" }}>
+          <Tabs
+            indicatorColor="primary"
+            sx={{ width: "100%" }}
+            textColor="primary"
+            value={selectedTab}
+            variant="fullWidth"
+            onChange={onTabChange}
+          >
+            <Tab label="Linked" />
 
-          <Tab label="Unlinked" />
-        </Tabs>
+            <Tab label="Unlinked" />
+          </Tabs>
 
-        {selectedTab === EConnectIdentityTabs.LINKED && (
-          <IdentityList
-            identities={linkedIdentities}
-            isShowAddNew={false}
-            isShowMenu={false}
-            selectedCommitment={selectedIdentityCommitment}
-            onSelect={onSelectIdentity}
-          />
-        )}
+          {selectedTab === EConnectIdentityTabs.LINKED && (
+            <IdentityList
+              className="connect-identity-list"
+              identities={linkedIdentities}
+              isShowAddNew={false}
+              isShowMenu={false}
+              selectedCommitment={selectedIdentityCommitment}
+              onSelect={onSelectIdentity}
+            />
+          )}
 
-        {selectedTab === EConnectIdentityTabs.UNLINKED && (
-          <IdentityList
-            identities={unlinkedIdentities}
-            isShowAddNew={false}
-            isShowMenu={false}
-            selectedCommitment={selectedIdentityCommitment}
-            onSelect={onSelectIdentity}
-          />
-        )}
+          {selectedTab === EConnectIdentityTabs.UNLINKED && (
+            <IdentityList
+              className="connect-identity-list"
+              identities={unlinkedIdentities}
+              isShowAddNew={false}
+              isShowMenu={false}
+              selectedCommitment={selectedIdentityCommitment}
+              onSelect={onSelectIdentity}
+            />
+          )}
+        </Box>
       </Box>
 
       <FullModalFooter>

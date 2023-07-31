@@ -30,6 +30,7 @@ import {
   resetPassword,
   getMnemonic,
   checkPassword,
+  deleteStorage,
 } from "../app";
 
 jest.mock("redux-logger", (): unknown => ({
@@ -145,6 +146,13 @@ describe("ui/ducks/app", () => {
 
     expect(postMessage).toBeCalledTimes(1);
     expect(postMessage).toBeCalledWith({ method: RPCAction.UNLOCK, payload: "password" });
+  });
+
+  test("should call storage clear action properly", async () => {
+    await Promise.resolve(store.dispatch(deleteStorage()));
+
+    expect(postMessage).toBeCalledTimes(1);
+    expect(postMessage).toBeCalledWith({ method: RPCAction.CLEAR_STORAGE });
   });
 
   test("should call setup password action properly", async () => {

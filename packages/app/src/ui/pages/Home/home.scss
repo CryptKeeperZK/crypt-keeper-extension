@@ -4,6 +4,8 @@
   position: relative;
 
   &__scroller {
+    overflow: hidden;
+
     &::-webkit-scrollbar {
       display: none;
     }

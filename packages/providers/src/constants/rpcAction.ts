@@ -53,4 +53,5 @@ export enum RPCAction {
   SEMAPHORE_PROOF_RESULT = "rpc/proofs/semaphore-proof-result",
   // DEV RPCS
   CLEAR_APPROVED_HOSTS = "rpc/hosts/clear",
+  CLEAR_STORAGE = "rpc/browser/clear",
 }

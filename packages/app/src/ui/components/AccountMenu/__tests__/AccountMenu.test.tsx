@@ -59,7 +59,7 @@ describe("ui/components/Header", () => {
       <AccountMenu {...defaulltProps} ethWallet={{ ...defaulltProps.ethWallet, isActive: false }} />,
     );
 
-    const item = await findByText("Connect Metamask");
+    const item = await findByText("Connect MetaMask");
     await act(async () => Promise.resolve(item.click()));
 
     expect(defaultHookData.onConnect).toBeCalledTimes(1);
@@ -83,7 +83,7 @@ describe("ui/components/Header", () => {
       />,
     );
 
-    const metamaskInstall = await findByText("Install Metamask");
+    const metamaskInstall = await findByText("Install MetaMask");
     await act(async () => Promise.resolve(metamaskInstall.click()));
 
     expect(defaultHookData.onGoToMetamaskPage).toBeCalledTimes(1);
@@ -112,7 +112,7 @@ describe("ui/components/Header", () => {
       <AccountMenu {...defaulltProps} ethWallet={{ ...defaultWalletHookData, isActive: true }} />,
     );
 
-    const disconnect = await findByText("Disconnect Metamask");
+    const disconnect = await findByText("Disconnect MetaMask");
     await act(async () => Promise.resolve(disconnect.click()));
 
     expect(defaultHookData.onDisconnect).toBeCalledTimes(1);

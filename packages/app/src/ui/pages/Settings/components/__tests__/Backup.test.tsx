@@ -13,6 +13,7 @@ describe("ui/pages/Settings/components/Backup", () => {
     onDeleteIdentities: jest.fn(),
     onGoToBackup: jest.fn(),
     onGoToUploadBackup: jest.fn(),
+    onDeleteStorage: jest.fn(),
   };
 
   afterEach(() => {
@@ -32,6 +33,21 @@ describe("ui/pages/Settings/components/Backup", () => {
     await act(() => Promise.resolve(button.click()));
 
     expect(defaultProps.onDeleteIdentities).toBeCalledTimes(1);
+  });
+
+  test("should clear storage properly", async () => {
+    const { container, findByText } = render(
+      <Suspense>
+        <Backup {...defaultProps} />
+      </Suspense>,
+    );
+
+    await waitFor(() => container.firstChild !== null);
+
+    const button = await findByText("Delete storage");
+    await act(() => Promise.resolve(button.click()));
+
+    expect(defaultProps.onDeleteStorage).toBeCalledTimes(1);
   });
 
   test("should download backup data properly", async () => {

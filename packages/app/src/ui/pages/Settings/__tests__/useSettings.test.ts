@@ -7,6 +7,7 @@ import { useNavigate } from "react-router-dom";
 
 import { Paths } from "@src/constants";
 import { HistorySettings } from "@src/types";
+import { deleteStorage, lock } from "@src/ui/ducks/app";
 import { createUploadBackupRequest } from "@src/ui/ducks/backup";
 import { useAppDispatch } from "@src/ui/ducks/hooks";
 import {
@@ -27,6 +28,8 @@ jest.mock("react-router-dom", (): unknown => ({
 
 jest.mock("@src/ui/ducks/app", (): unknown => ({
   getMnemonic: jest.fn(),
+  deleteStorage: jest.fn(),
+  lock: jest.fn(),
 }));
 
 jest.mock("@src/ui/ducks/backup", (): unknown => ({
@@ -91,6 +94,24 @@ describe("ui/pages/Settings/useSettings", () => {
     expect(mockDispatch).toBeCalledTimes(2);
     expect(fetchHistory).toBeCalledTimes(1);
     expect(clearHistory).toBeCalledTimes(1);
+  });
+
+  test("should show confirm storage clear modal", async () => {
+    const { result } = renderHook(() => useSettings());
+
+    await waitFor(() => result.current.isLoading === false);
+
+    await act(async () => Promise.resolve(result.current.onConfirmStorageDelete()));
+    await waitFor(() => result.current.isConfirmStorageDelete === true);
+
+    await act(async () => Promise.resolve(result.current.onDeleteStorage()));
+
+    await waitFor(() => result.current.isConfirmStorageDelete === false);
+
+    expect(mockDispatch).toBeCalledTimes(3);
+    expect(fetchHistory).toBeCalledTimes(1);
+    expect(deleteStorage).toBeCalledTimes(1);
+    expect(lock).toBeCalledTimes(1);
   });
 
   test("should delete all history properly", async () => {

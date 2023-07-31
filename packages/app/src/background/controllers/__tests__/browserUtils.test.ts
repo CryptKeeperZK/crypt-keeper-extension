@@ -55,4 +55,13 @@ describe("background/controllers/browserUtils", () => {
     // eslint-disable-next-line @typescript-eslint/unbound-method
     expect(browser.windows.onRemoved.removeListener).toBeCalledTimes(1);
   });
+
+  test("should clear storage properly", async () => {
+    const browserUtils = BrowserUtils.getInstance();
+
+    await browserUtils.clearStorage();
+
+    // eslint-disable-next-line @typescript-eslint/unbound-method
+    expect(browser.storage.sync.clear).toBeCalledTimes(1);
+  });
 });

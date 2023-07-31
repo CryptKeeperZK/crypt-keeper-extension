@@ -37,6 +37,10 @@ export default class BrowserUtils {
     return BrowserUtils.INSTANCE;
   }
 
+  clearStorage = async (): Promise<void> => {
+    await browser.storage.sync.clear();
+  };
+
   openPopup = async ({ params }: OpenPopupArgs = {}): Promise<Windows.Window> => {
     if (this.cached?.id) {
       await this.focusWindow(this.cached.id);

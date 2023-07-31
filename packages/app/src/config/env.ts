@@ -2,6 +2,10 @@ export function isDebugMode(): boolean {
   return process.env.CRYPTKEEPER_DEBUG === "true";
 }
 
+export function isE2E(): boolean {
+  return process.env.E2E === "true";
+}
+
 export type Providers = "infura" | "alchemy" | "freightTrustNetwork" | "pulseChain";
 
 export function getApiKeys(): Record<Providers, string | undefined> {

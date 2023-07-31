@@ -99,7 +99,7 @@ describe("ui/components/Header", () => {
     const menu = await findByTestId("menu");
     await act(async () => Promise.resolve(menu.click()));
 
-    const metamaskInstall = await findByText("Install Metamask");
+    const metamaskInstall = await findByText("Install MetaMask");
     await act(async () => Promise.resolve(metamaskInstall.click()));
 
     expect(redirectToNewTab).toBeCalledTimes(1);

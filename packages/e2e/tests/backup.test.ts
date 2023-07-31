@@ -11,7 +11,7 @@ test.describe("backup", () => {
     await expect(page.getByTestId("home-page")).toBeVisible();
 
     await connectWallet({ page, cryptKeeperExtensionId, context });
-    await expect(page.getByText("Connected to Metamask")).toBeVisible();
+    await expect(page.getByText("Connected to MetaMask")).toBeVisible();
   });
 
   test("should download backup properly", async ({ page }) => {
@@ -140,12 +140,13 @@ test.describe("backup", () => {
     const extension = new CryptKeeper(page);
     await extension.focus();
 
-    const mnemonic = await page.evaluate<string>("navigator.clipboard.readText()");
-    const newPassword = `${CRYPT_KEEPER_PASSWORD}new`;
-
     await extension.settings.openPage();
     await extension.settings.openTab("Security");
     await extension.settings.goToChangePassword();
+
+    const mnemonic = await page.evaluate<string>("navigator.clipboard.readText()");
+    const newPassword = `${CRYPT_KEEPER_PASSWORD}new`;
+
     await extension.recover.checkMnemonic(mnemonic);
     await extension.recover.resetPassword(newPassword);
 

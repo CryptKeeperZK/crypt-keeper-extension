@@ -115,7 +115,7 @@ describe("ui/pages/CreateIdentity", () => {
     const select = await screen.findByLabelText("Identity type");
     await selectEvent.select(select, IDENTITY_TYPES[1].label);
 
-    const metamaskButton = await screen.findByText("Install Metamask");
+    const metamaskButton = await screen.findByText("Install MetaMask");
     const cryptkeeperButton = await screen.findByText("Cryptkeeper");
     const identityType = await screen.findByText("Random");
 

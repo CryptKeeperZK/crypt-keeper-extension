@@ -44,6 +44,11 @@ jest.mock("@src/config/features", (): unknown => ({
   getEnabledFeatures: jest.fn().mockReturnValue({ INTERREP_IDENTITY: true, USER_MNEMONIC: true }),
 }));
 
+jest.mock("@src/config/env", (): unknown => ({
+  ...jest.requireActual("@src/config/env"),
+  isE2E: jest.fn(() => true),
+}));
+
 type Changes = Record<string, { oldValue: string | null; newValue: string | null }>;
 
 jest.mock("webextension-polyfill", (): unknown => {
@@ -95,6 +100,7 @@ jest.mock("webextension-polyfill", (): unknown => {
           remove: jest.fn().mockImplementation(() => {
             storageListeners.forEach((listener) => listener(defaultChanges, namespace));
           }),
+          clear: jest.fn(),
         },
         onChanged: {
           addListener: (fun: () => void) => {

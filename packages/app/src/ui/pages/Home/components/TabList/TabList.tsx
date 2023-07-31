@@ -27,13 +27,20 @@ export const TabList = ({ children }: TabListProps): JSX.Element => {
 
   return (
     <div className="tab__list" data-testid="tab-list">
-      <Tabs indicatorColor="primary" textColor="primary" value={selectedTab} variant="fullWidth" onChange={onTabChange}>
+      <Tabs
+        className="tab__list__tabs"
+        indicatorColor="primary"
+        textColor="primary"
+        value={selectedTab}
+        variant="fullWidth"
+        onChange={onTabChange}
+      >
         <Tab data-testid="tab-identities" label="Identities" />
 
         <Tab data-testid="tab-activity" label="Activity" />
       </Tabs>
 
-      <div className="tab__list__content">{selectedContent}</div>
+      {selectedContent}
     </div>
   );
 };

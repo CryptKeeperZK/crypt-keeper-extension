@@ -126,7 +126,7 @@ const CreateIdentity = (): JSX.Element => {
               variant="outlined"
               onClick={isWalletConnected ? onCreateWithEthWallet : onConnectWallet}
             >
-              {isWalletInstalled ? ethWalletTitle : "Install Metamask"}
+              {isWalletInstalled ? ethWalletTitle : "Install MetaMask"}
             </Button>
 
             <Button

@@ -24,7 +24,7 @@ const GenerateMnemonic = (): JSX.Element => {
       <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center", flexGrow: 1, width: "100%" }}>
         <Icon size={8} url={logoSVG} />
 
-        <Typography sx={{ mt: 1 }} variant="h4">
+        <Typography sx={{ mt: 1, color: "primary.main" }} variant="h4">
           One step left!
         </Typography>
 

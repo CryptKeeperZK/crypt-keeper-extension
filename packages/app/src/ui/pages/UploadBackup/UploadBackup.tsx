@@ -39,7 +39,7 @@ const UploadBackup = (): JSX.Element => {
               To upload your backup, please provide backup file and enter your current and backup password.
             </Typography>
 
-            <Typography sx={{ my: 1, alignSelf: "flex-start" }} variant="body1">
+            <Typography sx={{ my: 1, alignSelf: "flex-start", color: "warning.main" }} variant="body1">
               Note: backup will not override your password and mnemonic phrase
             </Typography>
 
