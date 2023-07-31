@@ -140,7 +140,7 @@ const verifiableCredentialSchema: yup.Schema<VerifiableCredential> = yup.object(
  */
 export async function validateVerifiableCredential(verifiableCredential: object): Promise<VerifiableCredential> {
   try {
-    return verifiableCredentialSchema.validate(verifiableCredential);
+    return await verifiableCredentialSchema.validate(verifiableCredential);
   } catch (error) {
     throw new Error(`Invalid Verifiable Credential: ${(error as Error).message}`);
   }
