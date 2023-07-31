@@ -383,4 +383,17 @@ export class CryptKeeperInjectedProvider {
       },
     }) as Promise<RLNSNARKProof>;
   }
+
+  /**
+   * Adds a verifiable credential.
+   *
+   * @param {string} verifiableCredentialString - The json string representation of the verifiable credential to add.
+   * @returns {Promise<boolean>} A Promise that resolves to a boolean indicating whether or not the verifiable credential was added.
+   */
+  async addVerifiableCredential(verifiableCredentialString: string): Promise<boolean> {
+    return this.post({
+      method: RPCAction.ADD_VERIFIABLE_CREDENTIAL,
+      payload: verifiableCredentialString,
+    }) as Promise<boolean>;
+  }
 }

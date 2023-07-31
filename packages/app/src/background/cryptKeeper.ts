@@ -31,6 +31,8 @@ const RPC_METHOD_ACCESS: Record<RPCAction, boolean> = {
   [RPCAction.CREATE_IDENTITY_REQUEST]: true,
   [RPCAction.GENERATE_SEMAPHORE_PROOF]: true,
   [RPCAction.GENERATE_RLN_PROOF]: true,
+  [RPCAction.PREPARE_RLN_PROOF_REQUEST]: true,
+  [RPCAction.ADD_VERIFIABLE_CREDENTIAL]: true,
 };
 
 Object.freeze(RPC_METHOD_ACCESS);

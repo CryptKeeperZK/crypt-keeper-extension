@@ -45,7 +45,11 @@ const App = () => {
     createIdentity,
     connectIdentity,
     genSemaphoreProof,
+<<<<<<< HEAD
     genRLNProof,
+=======
+    addVerifiableCredential,
+>>>>>>> 58ae87c (feat: add verifiable credentials sdk and demo functionality (#493))
   } = useCryptKeeper();
 
   useEffect(() => {
@@ -150,6 +154,16 @@ const App = () => {
         <div>
           <pre data-testid="proof-json">{JSON.stringify(proof, null, 2)}</pre>
         </div>
+      </div>
+
+      <hr />
+
+      <div>
+        <h2>Verifiable Credentials</h2>
+
+        <button data-testid="add-verifiable-credential" type="button" onClick={addVerifiableCredential}>
+          Add a Verifiable Credential
+        </button>
       </div>
 
       <ToastContainer newestOnTop />

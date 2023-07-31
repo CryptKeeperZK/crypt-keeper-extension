@@ -7,6 +7,13 @@ import { useState, useEffect, useCallback } from "react";
 import { toast } from "react-toastify";
 
 import type { ConnectedIdentity, SemaphoreFullProof, MerkleProofArtifacts, RLNSNARKProof } from "@cryptkeeperzk/types";
+import type {
+  ConnectedIdentity,
+  SemaphoreProof,
+  RLNFullProof,
+  MerkleProofArtifacts,
+  VerifiableCredential,
+} from "@cryptkeeperzk/types";
 
 const SERVER_URL = "http://localhost:8090";
 
@@ -22,6 +29,23 @@ const genMockIdentityCommitments = (): string[] => {
   }
   return identityCommitments;
 };
+
+const genMockVerifiableCredential = (): VerifiableCredential => ({
+  context: ["https://www.w3.org/2018/credentials/v1"],
+  id: "http://example.edu/credentials/1872",
+  type: ["VerifiableCredential", "UniversityDegreeCredential"],
+  issuer: {
+    id: "did:example:76e12ec712ebc6f1c221ebfeb1f",
+  },
+  issuanceDate: new Date("2010-01-01T19:23:24Z"),
+  credentialSubject: {
+    id: "did:example:ebfeb1f712ebc6f1c276e12ec21",
+    claims: {
+      type: "BachelorDegree",
+      name: "Bachelor of Science and Arts",
+    },
+  },
+});
 
 export enum MerkleProofType {
   STORAGE_ADDRESS,
@@ -39,6 +63,7 @@ interface IUseCryptKeeperData {
   getConnectedIdentity: () => void;
   genSemaphoreProof: (proofType: MerkleProofType) => void;
   genRLNProof: (proofType: MerkleProofType) => void;
+  addVerifiableCredential: () => void;
 }
 
 export const useCryptKeeper = (): IUseCryptKeeperData => {
@@ -144,6 +169,18 @@ export const useCryptKeeper = (): IUseCryptKeeperData => {
       });
   };
 
+  const addVerifiableCredential = useCallback(async () => {
+    const mockVerifiableCredential = genMockVerifiableCredential();
+    const verifiableCredentialJson = JSON.stringify(mockVerifiableCredential);
+
+    const success = await client?.addVerifiableCredential(verifiableCredentialJson);
+    if (success) {
+      toast(`Successfully added verifiable credential!`, { type: "success" });
+    } else {
+      toast(`Failed to add verifiable credential.`, { type: "warning" });
+    }
+  }, [client]);
+
   const getConnectedIdentity = useCallback(async () => {
     const payload = await client?.getConnectedIdentity();
 
@@ -218,5 +255,6 @@ export const useCryptKeeper = (): IUseCryptKeeperData => {
     getConnectedIdentity,
     genSemaphoreProof,
     genRLNProof,
+    addVerifiableCredential,
   };
 };
