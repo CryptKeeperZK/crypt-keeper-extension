@@ -38,28 +38,41 @@ export default class VerifiableCredentialsService implements IBackupable {
   }
 
   addVerifiableCredential = async (verifiableCredentialJson: string): Promise<boolean> => {
-    if (!verifiableCredentialJson || typeof verifiableCredentialJson !== "string") {
+    if (!verifiableCredentialJson) {
       return false;
     }
 
-    const verifiableCredential = parseVerifiableCredentialFromJson(verifiableCredentialJson);
+    const verifiableCredential = await parseVerifiableCredentialFromJson(verifiableCredentialJson);
+
     if (verifiableCredential === null) {
       return false;
     }
+
     return this.insertVerifiableCredentialIntoStore(verifiableCredential);
   };
 
-  getAllVerifiableCredentials = async (): Promise<VerifiableCredential[]> =>
-    this.getVerifiableCredentialsFromStore()
-      .then((credentials) => Array.from(credentials.values()))
-      .then((credentialsArray) => credentialsArray.map((credential) => parseVerifiableCredentialFromJson(credential)!));
+  getAllVerifiableCredentials = async (): Promise<VerifiableCredential[]> => {
+    const credentials = await this.getVerifiableCredentialsFromStore();
+    const credentialsArray = Array.from(credentials.values());
+
+    return Promise.all(
+      credentialsArray.map(async (credential) => {
+        const parsedCredential = await parseVerifiableCredentialFromJson(credential);
+        if (!parsedCredential) {
+          throw new Error("Failed to parse verifiable credential");
+        }
+        return parsedCredential;
+      }),
+    );
+  };
 
   deleteVerifiableCredential = async (credentialId: string): Promise<boolean> => {
-    if (!credentialId || typeof credentialId !== "string") {
+    if (!credentialId) {
       return false;
     }
 
     const credentials = await this.getVerifiableCredentialsFromStore();
+
     if (!credentials.has(credentialId)) {
       return false;
     }
@@ -70,8 +83,8 @@ export default class VerifiableCredentialsService implements IBackupable {
     await this.notificationService.create({
       options: {
         title: "Verifiable Credential deleted.",
-        message: `Credential Id: ${credentialId}`,
-        iconUrl: browser.runtime.getURL("/logo.png"),
+        message: `Deleted 1 Verifiable Credential.`,
+        iconUrl: browser.runtime.getURL("/icons/logo.png"),
         type: "basic",
       },
     });
@@ -81,6 +94,7 @@ export default class VerifiableCredentialsService implements IBackupable {
 
   deleteAllVerifiableCredentials = async (): Promise<boolean> => {
     const credentials = await this.getVerifiableCredentialsFromStore();
+
     if (credentials.size === 0) {
       return false;
     }
@@ -90,8 +104,8 @@ export default class VerifiableCredentialsService implements IBackupable {
     await this.notificationService.create({
       options: {
         title: "All Verifiable Credentials deleted.",
-        message: `Deleted ${credentials.size} Verifiable Credentials.`,
-        iconUrl: browser.runtime.getURL("/logo.png"),
+        message: `Deleted ${credentials.size} Verifiable Credential(s).`,
+        iconUrl: browser.runtime.getURL("/icons/logo.png"),
         type: "basic",
       },
     });
@@ -108,9 +122,11 @@ export default class VerifiableCredentialsService implements IBackupable {
     if (!verifiableCredential.id) {
       return false;
     }
+
     const credentialId = verifiableCredential.id.toString();
 
     const credentials = await this.getVerifiableCredentialsFromStore();
+
     if (credentials.has(credentialId)) {
       return false;
     }
@@ -122,8 +138,8 @@ export default class VerifiableCredentialsService implements IBackupable {
     await this.notificationService.create({
       options: {
         title: "Verifiable Credential added.",
-        message: `Credential Id: ${credentialId}`,
-        iconUrl: browser.runtime.getURL("/logo.png"),
+        message: `Added 1 Verifiable Credential.`,
+        iconUrl: browser.runtime.getURL("/icons/logo.png"),
         type: "basic",
       },
     });
