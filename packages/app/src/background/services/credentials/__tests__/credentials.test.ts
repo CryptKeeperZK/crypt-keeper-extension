@@ -1,6 +1,11 @@
 import VerifiableCredentialsService from "@src/background/services/credentials";
+import {
+  generateInitialMetadataForVerifiableCredential,
+  serializeCryptkeeperVerifiableCredential,
+  serializeVerifiableCredential,
+} from "@src/background/services/credentials/utils";
 import SimpleStorage from "@src/background/services/storage";
-import { VerifiableCredential } from "@src/types";
+import { CryptkeeperVerifiableCredential, VerifiableCredential } from "@src/types";
 
 jest.mock("@src/background/services/crypto", (): unknown => ({
   ...jest.requireActual("@src/background/services/crypto"),
@@ -34,7 +39,15 @@ describe("background/services/credentials", () => {
       },
     },
   };
-  const exampleCredentialString = JSON.stringify(exampleCredential);
+  const exampleCredentialString = serializeVerifiableCredential(exampleCredential);
+  const exampleCredentialMetadata = generateInitialMetadataForVerifiableCredential(exampleCredential);
+  const exampleCredentialHash = exampleCredentialMetadata.hash;
+  const exampleCryptkeeperCredential: CryptkeeperVerifiableCredential = {
+    verifiableCredential: exampleCredential,
+    metadata: exampleCredentialMetadata,
+  };
+  const exampleCryptkeeperCredentialString = serializeCryptkeeperVerifiableCredential(exampleCryptkeeperCredential);
+
   const exampleCredentialTwo: VerifiableCredential = {
     context: ["https://www.w3.org/2018/credentials/v1"],
     id: "did:example:1234",
@@ -48,10 +61,20 @@ describe("background/services/credentials", () => {
       },
     },
   };
-  const exampleCredentialStringTwo = JSON.stringify(exampleCredentialTwo);
+  const exampleCredentialStringTwo = serializeVerifiableCredential(exampleCredentialTwo);
+  const exampleCredentialMetadataTwo = generateInitialMetadataForVerifiableCredential(exampleCredentialTwo);
+  const exampleCredentialHashTwo = exampleCredentialMetadataTwo.hash;
+  const exampleCryptkeeperCredentialTwo: CryptkeeperVerifiableCredential = {
+    verifiableCredential: exampleCredentialTwo,
+    metadata: exampleCredentialMetadataTwo,
+  };
+  const exampleCryptkeeperCredentialStringTwo = serializeCryptkeeperVerifiableCredential(
+    exampleCryptkeeperCredentialTwo,
+  );
+
   const credentialsMap = new Map<string, string>();
-  credentialsMap.set("did:example:123", exampleCredentialString);
-  credentialsMap.set("did:example:1234", exampleCredentialStringTwo);
+  credentialsMap.set(exampleCredentialHash, exampleCryptkeeperCredentialString);
+  credentialsMap.set(exampleCredentialHashTwo, exampleCryptkeeperCredentialStringTwo);
   const credentialsStorageString = JSON.stringify(Array.from(credentialsMap));
 
   const verifiableCredentialsService = VerifiableCredentialsService.getInstance();
@@ -91,8 +114,8 @@ describe("background/services/credentials", () => {
       const verifiableCredentials = await verifiableCredentialsService.getAllVerifiableCredentials();
 
       expect(verifiableCredentials.length).toBe(2);
-      expect(verifiableCredentials[0]).toEqual(exampleCredential);
-      expect(verifiableCredentials[1]).toEqual(exampleCredentialTwo);
+      expect(verifiableCredentials[0].verifiableCredential).toEqual(exampleCredential);
+      expect(verifiableCredentials[1].verifiableCredential).toEqual(exampleCredentialTwo);
     });
 
     test("should not add a verifiable credential with an existing id", async () => {
@@ -118,7 +141,7 @@ describe("background/services/credentials", () => {
       credentialsStorage.get.mockReturnValue(credentialsStorageString);
       credentialsStorage.set.mockReturnValue(undefined);
 
-      const credentialDeleted = await verifiableCredentialsService.deleteVerifiableCredential("did:example:123");
+      const credentialDeleted = await verifiableCredentialsService.deleteVerifiableCredential(exampleCredentialHash);
 
       expect(credentialDeleted).toBe(true);
       expect(credentialsStorage.set).toBeCalledTimes(1);
@@ -130,7 +153,7 @@ describe("background/services/credentials", () => {
       credentialsStorage.get.mockReturnValue(credentialsStorageString);
       credentialsStorage.set.mockReturnValue(undefined);
 
-      const credentialDeleted = await verifiableCredentialsService.deleteVerifiableCredential("did:example:12345");
+      const credentialDeleted = await verifiableCredentialsService.deleteVerifiableCredential("example hash");
 
       expect(credentialDeleted).toBe(false);
       expect(credentialsStorage.set).toBeCalledTimes(0);

@@ -4,11 +4,16 @@ import CryptoService, { ECryptMode } from "@src/background/services/crypto";
 import HistoryService from "@src/background/services/history";
 import NotificationService from "@src/background/services/notification";
 import SimpleStorage from "@src/background/services/storage";
-import { OperationType, VerifiableCredential } from "@src/types";
+import { OperationType, CryptkeeperVerifiableCredential } from "@src/types";
 
 import type { IBackupable } from "@src/background/services/backup";
 
-import { parseSerializedVerifiableCredential } from "./utils";
+import {
+  generateInitialMetadataForVerifiableCredential,
+  serializeCryptkeeperVerifiableCredential,
+  deserializeVerifiableCredential,
+  deserializeCryptkeeperVerifiableCredential,
+} from "./utils";
 
 const VERIFIABLE_CREDENTIALS_KEY = "@@VERIFIABLE-CREDENTIALS@@";
 
@@ -44,37 +49,42 @@ export default class VerifiableCredentialsService implements IBackupable {
     }
 
     try {
-      const verifiableCredential = await parseSerializedVerifiableCredential(serializedVerifiableCredential);
-      return this.insertVerifiableCredentialIntoStore(verifiableCredential);
+      const verifiableCredential = await deserializeVerifiableCredential(serializedVerifiableCredential);
+      const metadata = generateInitialMetadataForVerifiableCredential(verifiableCredential);
+      const cryptkeeperVerifiableCredential: CryptkeeperVerifiableCredential = {
+        verifiableCredential,
+        metadata,
+      };
+      return this.insertCryptkeeperVerifiableCredentialIntoStore(cryptkeeperVerifiableCredential);
     } catch (error) {
       return false;
     }
   };
 
-  getAllVerifiableCredentials = async (): Promise<VerifiableCredential[]> => {
-    const verifiableCredentials = await this.getVerifiableCredentialsFromStore();
-    const verifiableCredentialsArray = Array.from(verifiableCredentials.values());
+  getAllVerifiableCredentials = async (): Promise<CryptkeeperVerifiableCredential[]> => {
+    const cryptkeeperVerifiableCredentials = await this.getCryptkeeperVerifiableCredentialsFromStore();
+    const cryptkeeperVerifiableCredentialsArray = Array.from(cryptkeeperVerifiableCredentials.values());
 
     return Promise.all(
-      verifiableCredentialsArray.map(async (verifiableCredential) =>
-        parseSerializedVerifiableCredential(verifiableCredential),
+      cryptkeeperVerifiableCredentialsArray.map(async (cryptkeeperVerifiableCredential) =>
+        deserializeCryptkeeperVerifiableCredential(cryptkeeperVerifiableCredential),
       ),
     );
   };
 
-  deleteVerifiableCredential = async (verifiableCredentialId: string): Promise<boolean> => {
-    if (!verifiableCredentialId) {
+  deleteVerifiableCredential = async (verifiableCredentialHash: string): Promise<boolean> => {
+    if (!verifiableCredentialHash) {
       return false;
     }
 
-    const verifiableCredentials = await this.getVerifiableCredentialsFromStore();
+    const cryptkeeperVerifiableCredentials = await this.getCryptkeeperVerifiableCredentialsFromStore();
 
-    if (!verifiableCredentials.has(verifiableCredentialId)) {
+    if (!cryptkeeperVerifiableCredentials.has(verifiableCredentialHash)) {
       return false;
     }
 
-    verifiableCredentials.delete(verifiableCredentialId);
-    await this.writeVerifiableCredentials(verifiableCredentials);
+    cryptkeeperVerifiableCredentials.delete(verifiableCredentialHash);
+    await this.writeCryptkeeperVerifiableCredentials(cryptkeeperVerifiableCredentials);
     await this.historyService.trackOperation(OperationType.DELETE_VERIFIABLE_CREDENTIAL, {});
     await this.notificationService.create({
       options: {
@@ -89,9 +99,9 @@ export default class VerifiableCredentialsService implements IBackupable {
   };
 
   deleteAllVerifiableCredentials = async (): Promise<boolean> => {
-    const verifiableCredentials = await this.getVerifiableCredentialsFromStore();
+    const cryptkeeperVerifiableCredentials = await this.getCryptkeeperVerifiableCredentialsFromStore();
 
-    if (verifiableCredentials.size === 0) {
+    if (cryptkeeperVerifiableCredentials.size === 0) {
       return false;
     }
 
@@ -100,7 +110,7 @@ export default class VerifiableCredentialsService implements IBackupable {
     await this.notificationService.create({
       options: {
         title: "All Verifiable Credentials deleted.",
-        message: `Deleted ${verifiableCredentials.size} Verifiable Credential(s).`,
+        message: `Deleted ${cryptkeeperVerifiableCredentials.size} Verifiable Credential(s).`,
         iconUrl: browser.runtime.getURL("/icons/logo.png"),
         type: "basic",
       },
@@ -109,26 +119,22 @@ export default class VerifiableCredentialsService implements IBackupable {
     return true;
   };
 
-  private insertVerifiableCredentialIntoStore = async (
-    verifiableCredential: VerifiableCredential,
+  private insertCryptkeeperVerifiableCredentialIntoStore = async (
+    cryptkeeperVerifiableCredential: CryptkeeperVerifiableCredential,
   ): Promise<boolean> => {
-    /**
-     * We do not accept Verifiable Credentials that do not have a non-empty id.
-     */
-    if (!verifiableCredential.id) {
+    const verifiableCredentialHash = cryptkeeperVerifiableCredential.metadata.hash;
+
+    const cryptkeeperVerifiableCredentials = await this.getCryptkeeperVerifiableCredentialsFromStore();
+
+    if (cryptkeeperVerifiableCredentials.has(verifiableCredentialHash)) {
       return false;
     }
 
-    const verifiableCredentialId = verifiableCredential.id.toString();
-
-    const verifiableCredentials = await this.getVerifiableCredentialsFromStore();
-
-    if (verifiableCredentials.has(verifiableCredentialId)) {
-      return false;
-    }
-
-    verifiableCredentials.set(verifiableCredentialId, JSON.stringify(verifiableCredential));
-    await this.writeVerifiableCredentials(verifiableCredentials);
+    cryptkeeperVerifiableCredentials.set(
+      verifiableCredentialHash,
+      serializeCryptkeeperVerifiableCredential(cryptkeeperVerifiableCredential),
+    );
+    await this.writeCryptkeeperVerifiableCredentials(cryptkeeperVerifiableCredentials);
 
     await this.historyService.trackOperation(OperationType.ADD_VERIFIABLE_CREDENTIAL, {});
     await this.notificationService.create({
@@ -143,7 +149,7 @@ export default class VerifiableCredentialsService implements IBackupable {
     return true;
   };
 
-  private getVerifiableCredentialsFromStore = async (): Promise<Map<string, string>> => {
+  private getCryptkeeperVerifiableCredentialsFromStore = async (): Promise<Map<string, string>> => {
     const ciphertext = await this.verifiableCredentialsStore.get<string>();
 
     if (!ciphertext) {
@@ -156,8 +162,10 @@ export default class VerifiableCredentialsService implements IBackupable {
     return allCredentials;
   };
 
-  private writeVerifiableCredentials = async (verifiableCredentials: Map<string, string>): Promise<void> => {
-    const serializedCredentials = JSON.stringify(Array.from(verifiableCredentials));
+  private writeCryptkeeperVerifiableCredentials = async (
+    cryptkeeperVerifiableCredentials: Map<string, string>,
+  ): Promise<void> => {
+    const serializedCredentials = JSON.stringify(Array.from(cryptkeeperVerifiableCredentials));
     const ciphertext = this.cryptoService.encrypt(serializedCredentials, { mode: ECryptMode.MNEMONIC });
 
     await this.verifiableCredentialsStore.set(ciphertext);
@@ -193,9 +201,9 @@ export default class VerifiableCredentialsService implements IBackupable {
     const backup = this.cryptoService.decrypt(encryptedBackup, { secret: backupPassword });
 
     const backupCredentials = new Map(JSON.parse(backup) as [string, string][]);
-    const verifiableCredentials = await this.getVerifiableCredentialsFromStore();
-    const mergedCredentials = new Map([...verifiableCredentials, ...backupCredentials]);
+    const cryptkeeperVerifiableCredentials = await this.getCryptkeeperVerifiableCredentialsFromStore();
+    const mergedCredentials = new Map([...cryptkeeperVerifiableCredentials, ...backupCredentials]);
 
-    await this.writeVerifiableCredentials(mergedCredentials);
+    await this.writeCryptkeeperVerifiableCredentials(mergedCredentials);
   };
 }

@@ -1,13 +1,22 @@
-import { parseSerializedVerifiableCredential, validateVerifiableCredential } from "../utils";
+import stringify from "json-stable-stringify";
 
-describe("util/isValidCredential", () => {
-  test("should parse a date object correctly inside of a verifiable credential", async () => {
-    const date = new Date();
+import {
+  serializeCryptkeeperVerifiableCredential,
+  deserializeCryptkeeperVerifiableCredential,
+  serializeVerifiableCredential,
+  deserializeVerifiableCredential,
+  validateVerifiableCredential,
+  generateInitialMetadataForVerifiableCredential,
+  hashVerifiableCredential,
+} from "../utils";
+
+describe("util/serializeCryptkeeperVerifiableCredential", () => {
+  test("should serialize and deserialize CryptkeeperVerifiableCredential object correctly", async () => {
     const rawCred = {
       context: ["https://www.w3.org/2018/credentials/v1"],
       type: ["VerifiableCredential"],
       issuer: "did:ethr:0x123",
-      issuanceDate: date,
+      issuanceDate: new Date("2010-01-01T19:23:24Z"),
       credentialSubject: {
         id: "did:ethr:0x123",
         claims: {
@@ -15,19 +24,29 @@ describe("util/isValidCredential", () => {
         },
       },
     };
-    const credJson = JSON.stringify(rawCred);
-    const cred = await parseSerializedVerifiableCredential(credJson);
+    const metadata = generateInitialMetadataForVerifiableCredential(rawCred);
+    const cryptkeeperCred = {
+      verifiableCredential: rawCred,
+      metadata,
+    };
+    const serializedCred = serializeCryptkeeperVerifiableCredential(cryptkeeperCred);
+    const deserializedCred = await deserializeCryptkeeperVerifiableCredential(serializedCred);
 
-    expect(cred).not.toBeNull();
-    expect(date.getTime()).toBe(cred.issuanceDate.getTime());
+    expect(deserializedCred.verifiableCredential).toStrictEqual(rawCred);
+    expect(deserializedCred.metadata).toStrictEqual(metadata);
+    expect(serializeCryptkeeperVerifiableCredential(deserializedCred)).toBe(
+      serializeCryptkeeperVerifiableCredential(cryptkeeperCred),
+    );
   });
+});
 
-  test("should return true for a valid verifiable credential", async () => {
+describe("util/deserializeVerifiableCredential", () => {
+  test("should deserialize a verifiable credential correctly", async () => {
     const rawCred = {
       context: ["https://www.w3.org/2018/credentials/v1"],
       type: ["VerifiableCredential"],
       issuer: "did:ethr:0x123",
-      issuanceDate: new Date(),
+      issuanceDate: new Date("2010-01-01T19:23:24Z"),
       credentialSubject: {
         id: "did:ethr:0x123",
         claims: {
@@ -35,8 +54,30 @@ describe("util/isValidCredential", () => {
         },
       },
     };
-    const credJson = JSON.stringify(rawCred);
-    const cred = await parseSerializedVerifiableCredential(credJson);
+    const credJson = serializeVerifiableCredential(rawCred);
+    const deserializedCred = await deserializeVerifiableCredential(credJson);
+
+    expect(deserializedCred).toStrictEqual(rawCred);
+    expect(serializeVerifiableCredential(deserializedCred)).toBe(credJson);
+  });
+});
+
+describe("util/validateVerifiableCredential", () => {
+  test("should correctly validiate a valid verifiable credential", async () => {
+    const rawCred = {
+      context: ["https://www.w3.org/2018/credentials/v1"],
+      type: ["VerifiableCredential"],
+      issuer: "did:ethr:0x123",
+      issuanceDate: new Date("2010-01-01T19:23:24Z"),
+      credentialSubject: {
+        id: "did:ethr:0x123",
+        claims: {
+          name: "John Doe",
+        },
+      },
+    };
+    const credJson = serializeVerifiableCredential(rawCred);
+    const cred = await deserializeVerifiableCredential(credJson);
 
     expect(cred).not.toBeNull();
     expect(validateVerifiableCredential(cred)).not.toBeNull();
@@ -45,7 +86,7 @@ describe("util/isValidCredential", () => {
   test("should return null if the string is not valid JSON", () => {
     const rawCred = "asdf";
     expect(async () => {
-      await parseSerializedVerifiableCredential(rawCred);
+      await deserializeVerifiableCredential(rawCred);
     }).rejects.toThrow(`Serialized Verifiable Credential is not valid JSON`);
   });
 
@@ -54,7 +95,7 @@ describe("util/isValidCredential", () => {
       context: "https://www.w3.org/2018/credentials/v1",
       type: ["VerifiableCredential"],
       issuer: "did:ethr:0x123",
-      issuanceDate: new Date(),
+      issuanceDate: new Date("2010-01-01T19:23:24Z"),
       credentialSubject: {
         id: "did:ethr:0x123",
         claims: {
@@ -62,9 +103,9 @@ describe("util/isValidCredential", () => {
         },
       },
     };
-    const credJson = JSON.stringify(rawCred);
+    const credJson = stringify(rawCred);
     expect(async () => {
-      await parseSerializedVerifiableCredential(credJson);
+      await deserializeVerifiableCredential(credJson);
     }).rejects.toThrow(`Invalid Verifiable Credential`);
   });
 
@@ -73,7 +114,7 @@ describe("util/isValidCredential", () => {
       context: [3],
       type: ["VerifiableCredential"],
       issuer: "did:ethr:0x123",
-      issuanceDate: new Date(),
+      issuanceDate: new Date("2010-01-01T19:23:24Z"),
       credentialSubject: {
         id: "did:ethr:0x123",
         claims: {
@@ -81,9 +122,9 @@ describe("util/isValidCredential", () => {
         },
       },
     };
-    const credJson = JSON.stringify(rawCred);
+    const credJson = stringify(rawCred);
     expect(async () => {
-      await parseSerializedVerifiableCredential(credJson);
+      await deserializeVerifiableCredential(credJson);
     }).rejects.toThrow(`Invalid Verifiable Credential`);
   });
 
@@ -93,7 +134,7 @@ describe("util/isValidCredential", () => {
       id: 3,
       type: ["VerifiableCredential"],
       issuer: "did:ethr:0x123",
-      issuanceDate: new Date(),
+      issuanceDate: new Date("2010-01-01T19:23:24Z"),
       credentialSubject: {
         id: "did:ethr:0x123",
         claims: {
@@ -101,9 +142,9 @@ describe("util/isValidCredential", () => {
         },
       },
     };
-    const credJson = JSON.stringify(rawCred);
+    const credJson = stringify(rawCred);
     expect(async () => {
-      await parseSerializedVerifiableCredential(credJson);
+      await deserializeVerifiableCredential(credJson);
     }).rejects.toThrow(`Invalid Verifiable Credential`);
   });
 
@@ -112,7 +153,7 @@ describe("util/isValidCredential", () => {
       context: ["https://www.w3.org/2018/credentials/v1"],
       type: "VerifiableCredential",
       issuer: "did:ethr:0x123",
-      issuanceDate: new Date(),
+      issuanceDate: new Date("2010-01-01T19:23:24Z"),
       credentialSubject: {
         id: "did:ethr:0x123",
         claims: {
@@ -120,9 +161,9 @@ describe("util/isValidCredential", () => {
         },
       },
     };
-    const credJson = JSON.stringify(rawCred);
+    const credJson = stringify(rawCred);
     expect(async () => {
-      await parseSerializedVerifiableCredential(credJson);
+      await deserializeVerifiableCredential(credJson);
     }).rejects.toThrow(`Invalid Verifiable Credential`);
   });
 
@@ -131,7 +172,7 @@ describe("util/isValidCredential", () => {
       context: ["https://www.w3.org/2018/credentials/v1"],
       type: [3],
       issuer: "did:ethr:0x123",
-      issuanceDate: new Date(),
+      issuanceDate: new Date("2010-01-01T19:23:24Z"),
       credentialSubject: {
         id: "did:ethr:0x123",
         claims: {
@@ -139,9 +180,9 @@ describe("util/isValidCredential", () => {
         },
       },
     };
-    const credJson = JSON.stringify(rawCred);
+    const credJson = stringify(rawCred);
     expect(async () => {
-      await parseSerializedVerifiableCredential(credJson);
+      await deserializeVerifiableCredential(credJson);
     }).rejects.toThrow(`Invalid Verifiable Credential`);
   });
 
@@ -149,7 +190,7 @@ describe("util/isValidCredential", () => {
     const rawCred = {
       context: ["https://www.w3.org/2018/credentials/v1"],
       type: ["VerifiableCredential"],
-      issuanceDate: new Date(),
+      issuanceDate: new Date("2010-01-01T19:23:24Z"),
       credentialSubject: {
         id: "did:ethr:0x123",
         claims: {
@@ -157,9 +198,9 @@ describe("util/isValidCredential", () => {
         },
       },
     };
-    const credJson = JSON.stringify(rawCred);
+    const credJson = stringify(rawCred);
     expect(async () => {
-      await parseSerializedVerifiableCredential(credJson);
+      await deserializeVerifiableCredential(credJson);
     }).rejects.toThrow(`Invalid Verifiable Credential`);
   });
 
@@ -168,7 +209,7 @@ describe("util/isValidCredential", () => {
       context: ["https://www.w3.org/2018/credentials/v1"],
       type: ["VerifiableCredential"],
       issuer: 3,
-      issuanceDate: new Date(),
+      issuanceDate: new Date("2010-01-01T19:23:24Z"),
       credentialSubject: {
         id: "did:ethr:0x123",
         claims: {
@@ -176,9 +217,9 @@ describe("util/isValidCredential", () => {
         },
       },
     };
-    const credJson = JSON.stringify(rawCred);
+    const credJson = stringify(rawCred);
     expect(async () => {
-      await parseSerializedVerifiableCredential(credJson);
+      await deserializeVerifiableCredential(credJson);
     }).rejects.toThrow(`Invalid Verifiable Credential`);
   });
 
@@ -194,9 +235,9 @@ describe("util/isValidCredential", () => {
         },
       },
     };
-    const credJson = JSON.stringify(rawCred);
+    const credJson = stringify(rawCred);
     expect(async () => {
-      await parseSerializedVerifiableCredential(credJson);
+      await deserializeVerifiableCredential(credJson);
     }).rejects.toThrow(`Invalid Verifiable Credential`);
   });
 
@@ -213,9 +254,9 @@ describe("util/isValidCredential", () => {
         },
       },
     };
-    const credJson = JSON.stringify(rawCred);
+    const credJson = stringify(rawCred);
     expect(async () => {
-      await parseSerializedVerifiableCredential(credJson);
+      await deserializeVerifiableCredential(credJson);
     }).rejects.toThrow(`Invalid Verifiable Credential`);
   });
 
@@ -224,7 +265,7 @@ describe("util/isValidCredential", () => {
       context: ["https://www.w3.org/2018/credentials/v1"],
       type: ["VerifiableCredential"],
       issuer: "did:ethr:0x123",
-      issuanceDate: new Date(),
+      issuanceDate: new Date("2010-01-01T19:23:24Z"),
       expirationDate: "asd",
       credentialSubject: {
         id: "did:ethr:0x123",
@@ -233,9 +274,9 @@ describe("util/isValidCredential", () => {
         },
       },
     };
-    const credJson = JSON.stringify(rawCred);
+    const credJson = stringify(rawCred);
     expect(async () => {
-      await parseSerializedVerifiableCredential(credJson);
+      await deserializeVerifiableCredential(credJson);
     }).rejects.toThrow(`Invalid Verifiable Credential`);
   });
 
@@ -244,11 +285,11 @@ describe("util/isValidCredential", () => {
       context: ["https://www.w3.org/2018/credentials/v1"],
       type: ["VerifiableCredential"],
       issuer: "did:ethr:0x123",
-      issuanceDate: new Date(),
+      issuanceDate: new Date("2010-01-01T19:23:24Z"),
     };
-    const credJson = JSON.stringify(rawCred);
+    const credJson = stringify(rawCred);
     expect(async () => {
-      await parseSerializedVerifiableCredential(credJson);
+      await deserializeVerifiableCredential(credJson);
     }).rejects.toThrow(`Invalid Verifiable Credential`);
   });
 
@@ -257,7 +298,7 @@ describe("util/isValidCredential", () => {
       context: ["https://www.w3.org/2018/credentials/v1"],
       type: ["VerifiableCredential"],
       issuer: "did:ethr:0x123",
-      issuanceDate: new Date(),
+      issuanceDate: new Date("2010-01-01T19:23:24Z"),
       credentialSubject: {
         id: 3,
         claims: {
@@ -265,9 +306,9 @@ describe("util/isValidCredential", () => {
         },
       },
     };
-    const credJson = JSON.stringify(rawCred);
+    const credJson = stringify(rawCred);
     expect(async () => {
-      await parseSerializedVerifiableCredential(credJson);
+      await deserializeVerifiableCredential(credJson);
     }).rejects.toThrow(`Invalid Verifiable Credential`);
   });
 
@@ -276,7 +317,7 @@ describe("util/isValidCredential", () => {
       context: ["https://www.w3.org/2018/credentials/v1"],
       type: ["VerifiableCredential"],
       issuer: "did:ethr:0x123",
-      issuanceDate: new Date(),
+      issuanceDate: new Date("2010-01-01T19:23:24Z"),
       credentialSubject: {
         id: "did:ethr:0x123",
         claims: {
@@ -286,9 +327,9 @@ describe("util/isValidCredential", () => {
         },
       },
     };
-    const credJson = JSON.stringify(rawCred);
+    const credJson = stringify(rawCred);
     expect(async () => {
-      await parseSerializedVerifiableCredential(credJson);
+      await deserializeVerifiableCredential(credJson);
     }).rejects.toThrow(`Invalid Verifiable Credential`);
   });
 
@@ -297,7 +338,7 @@ describe("util/isValidCredential", () => {
       context: ["https://www.w3.org/2018/credentials/v1"],
       type: ["VerifiableCredential"],
       issuer: "did:ethr:0x123",
-      issuanceDate: new Date(),
+      issuanceDate: new Date("2010-01-01T19:23:24Z"),
       credentialSubject: {
         id: "did:ethr:0x123",
         claims: {
@@ -309,9 +350,9 @@ describe("util/isValidCredential", () => {
         type: "some type",
       },
     };
-    const credJson = JSON.stringify(rawCred);
+    const credJson = stringify(rawCred);
     expect(async () => {
-      await parseSerializedVerifiableCredential(credJson);
+      await deserializeVerifiableCredential(credJson);
     }).rejects.toThrow(`Invalid Verifiable Credential`);
   });
 
@@ -320,7 +361,7 @@ describe("util/isValidCredential", () => {
       context: ["https://www.w3.org/2018/credentials/v1"],
       type: ["VerifiableCredential"],
       issuer: "did:ethr:0x123",
-      issuanceDate: new Date(),
+      issuanceDate: new Date("2010-01-01T19:23:24Z"),
       credentialSubject: {
         id: "did:ethr:0x123",
         claims: {
@@ -332,9 +373,9 @@ describe("util/isValidCredential", () => {
         type: 3,
       },
     };
-    const credJson = JSON.stringify(rawCred);
+    const credJson = stringify(rawCred);
     expect(async () => {
-      await parseSerializedVerifiableCredential(credJson);
+      await deserializeVerifiableCredential(credJson);
     }).rejects.toThrow(`Invalid Verifiable Credential`);
   });
 
@@ -343,7 +384,7 @@ describe("util/isValidCredential", () => {
       context: ["https://www.w3.org/2018/credentials/v1"],
       type: ["VerifiableCredential"],
       issuer: "did:ethr:0x123",
-      issuanceDate: new Date(),
+      issuanceDate: new Date("2010-01-01T19:23:24Z"),
       credentialSubject: {
         id: "did:ethr:0x123",
         claims: {
@@ -356,14 +397,14 @@ describe("util/isValidCredential", () => {
           type: "some type",
           proofPurpose: "some proof purpose",
           verificationMethod: "some verification method",
-          created: new Date(),
+          created: new Date("2010-01-01T19:23:24Z"),
           proofValue: "some proof value",
         },
       ],
     };
-    const credJson = JSON.stringify(rawCred);
+    const credJson = stringify(rawCred);
     expect(async () => {
-      await parseSerializedVerifiableCredential(credJson);
+      await deserializeVerifiableCredential(credJson);
     }).rejects.toThrow(`Invalid Verifiable Credential`);
   });
 
@@ -372,7 +413,7 @@ describe("util/isValidCredential", () => {
       context: ["https://www.w3.org/2018/credentials/v1"],
       type: ["VerifiableCredential"],
       issuer: "did:ethr:0x123",
-      issuanceDate: new Date(),
+      issuanceDate: new Date("2010-01-01T19:23:24Z"),
       credentialSubject: {
         id: "did:ethr:0x123",
         claims: {
@@ -385,14 +426,14 @@ describe("util/isValidCredential", () => {
           type: null,
           proofPurpose: "some proof purpose",
           verificationMethod: "some verification method",
-          created: new Date(),
+          created: new Date("2010-01-01T19:23:24Z"),
           proofValue: "some proof value",
         },
       ],
     };
-    const credJson = JSON.stringify(rawCred);
+    const credJson = stringify(rawCred);
     expect(async () => {
-      await parseSerializedVerifiableCredential(credJson);
+      await deserializeVerifiableCredential(credJson);
     }).rejects.toThrow(`Invalid Verifiable Credential`);
   });
 
@@ -401,7 +442,7 @@ describe("util/isValidCredential", () => {
       context: ["https://www.w3.org/2018/credentials/v1"],
       type: ["VerifiableCredential"],
       issuer: "did:ethr:0x123",
-      issuanceDate: new Date(),
+      issuanceDate: new Date("2010-01-01T19:23:24Z"),
       credentialSubject: {
         id: "did:ethr:0x123",
         claims: {
@@ -414,14 +455,14 @@ describe("util/isValidCredential", () => {
           type: "some type",
           proofPurpose: false,
           verificationMethod: "some verification method",
-          created: new Date(),
+          created: new Date("2010-01-01T19:23:24Z"),
           proofValue: "some proof value",
         },
       ],
     };
-    const credJson = JSON.stringify(rawCred);
+    const credJson = stringify(rawCred);
     expect(async () => {
-      await parseSerializedVerifiableCredential(credJson);
+      await deserializeVerifiableCredential(credJson);
     }).rejects.toThrow(`Invalid Verifiable Credential`);
   });
 
@@ -430,7 +471,7 @@ describe("util/isValidCredential", () => {
       context: ["https://www.w3.org/2018/credentials/v1"],
       type: ["VerifiableCredential"],
       issuer: "did:ethr:0x123",
-      issuanceDate: new Date(),
+      issuanceDate: new Date("2010-01-01T19:23:24Z"),
       credentialSubject: {
         id: "did:ethr:0x123",
         claims: {
@@ -443,14 +484,14 @@ describe("util/isValidCredential", () => {
           type: "some type",
           proofPurpose: "some proof purpose",
           verificationMethod: {},
-          created: new Date(),
+          created: new Date("2010-01-01T19:23:24Z"),
           proofValue: "some proof value",
         },
       ],
     };
-    const credJson = JSON.stringify(rawCred);
+    const credJson = stringify(rawCred);
     expect(async () => {
-      await parseSerializedVerifiableCredential(credJson);
+      await deserializeVerifiableCredential(credJson);
     }).rejects.toThrow(`Invalid Verifiable Credential`);
   });
 
@@ -459,7 +500,7 @@ describe("util/isValidCredential", () => {
       context: ["https://www.w3.org/2018/credentials/v1"],
       type: ["VerifiableCredential"],
       issuer: "did:ethr:0x123",
-      issuanceDate: new Date(),
+      issuanceDate: new Date("2010-01-01T19:23:24Z"),
       credentialSubject: {
         id: "did:ethr:0x123",
         claims: {
@@ -477,9 +518,9 @@ describe("util/isValidCredential", () => {
         },
       ],
     };
-    const credJson = JSON.stringify(rawCred);
+    const credJson = stringify(rawCred);
     expect(async () => {
-      await parseSerializedVerifiableCredential(credJson);
+      await deserializeVerifiableCredential(credJson);
     }).rejects.toThrow(`Invalid Verifiable Credential`);
   });
 
@@ -488,7 +529,7 @@ describe("util/isValidCredential", () => {
       context: ["https://www.w3.org/2018/credentials/v1"],
       type: ["VerifiableCredential"],
       issuer: "did:ethr:0x123",
-      issuanceDate: new Date(),
+      issuanceDate: new Date("2010-01-01T19:23:24Z"),
       credentialSubject: {
         id: "did:ethr:0x123",
         claims: {
@@ -501,14 +542,88 @@ describe("util/isValidCredential", () => {
           type: "some type",
           proofPurpose: "some proof purpose",
           verificationMethod: "some verification method",
-          created: new Date(),
+          created: new Date("2010-01-01T19:23:24Z"),
           proofValue: 1234,
         },
       ],
     };
-    const credJson = JSON.stringify(rawCred);
+    const credJson = stringify(rawCred);
     expect(async () => {
-      await parseSerializedVerifiableCredential(credJson);
+      await deserializeVerifiableCredential(credJson);
     }).rejects.toThrow(`Invalid Verifiable Credential`);
+  });
+});
+
+describe("util/hashVerifiableCredential", () => {
+  it("should produce deterministic hashes", () => {
+    const credOne = {
+      context: ["https://www.w3.org/2018/credentials/v1"],
+      type: ["VerifiableCredential"],
+      issuer: "did:ethr:0x123",
+      issuanceDate: new Date("2010-01-01T19:23:24Z"),
+      credentialSubject: {
+        id: "did:ethr:0x123",
+        claims: {
+          name: "John Doe",
+        },
+      },
+    };
+    const credTwo = {
+      context: ["https://www.w3.org/2018/credentials/v1"],
+      type: ["VerifiableCredential"],
+      issuer: "did:ethr:0x123",
+      issuanceDate: new Date("2010-01-01T19:23:24Z"),
+      credentialSubject: {
+        id: "did:ethr:0x123",
+        claims: {
+          name: "John Doe",
+        },
+      },
+    };
+
+    expect(hashVerifiableCredential(credOne)).toBe(hashVerifiableCredential(credTwo));
+  });
+
+  it("should produce the same hash after serialization/deserialization", async () => {
+    const cred = {
+      context: ["https://www.w3.org/2018/credentials/v1"],
+      type: ["VerifiableCredential"],
+      issuer: "did:ethr:0x123",
+      issuanceDate: new Date("2010-01-01T19:23:24Z"),
+      credentialSubject: {
+        id: "did:ethr:0x123",
+        claims: {
+          name: "John Doe",
+        },
+      },
+    };
+    const credJson = serializeVerifiableCredential(cred);
+    const deserializedCred = await deserializeVerifiableCredential(credJson);
+
+    expect(hashVerifiableCredential(cred)).toBe(hashVerifiableCredential(deserializedCred));
+  });
+});
+
+describe("util/generateInitialMetadataForVerifiableCredential", () => {
+  it("should generate the correct metadata for a verifiable credential", () => {
+    const rawCred = {
+      context: ["https://www.w3.org/2018/credentials/v1"],
+      type: ["VerifiableCredential"],
+      issuer: "did:ethr:0x123",
+      issuanceDate: new Date("2010-01-01T19:23:24Z"),
+      credentialSubject: {
+        id: "did:ethr:0x123",
+        claims: {
+          name: "John Doe",
+        },
+      },
+    };
+    const metadata = generateInitialMetadataForVerifiableCredential(rawCred);
+    const expectedMetadata = {
+      name: "Verifiable Credential",
+      hash: hashVerifiableCredential(rawCred),
+    };
+
+    expect(metadata).toStrictEqual(expectedMetadata);
   });
 });
