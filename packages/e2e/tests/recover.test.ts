@@ -4,7 +4,7 @@ import { createAccount, lockAccount, unlockAccount } from "../helpers/account";
 import { CryptKeeper } from "../pages";
 
 test.describe("recover", () => {
-  test("should recover access properly", async ({ page, cryptKeeperExtensionId, context }) => {
+  test("should recover access properly [health-check]", async ({ page, cryptKeeperExtensionId, context }) => {
     await createAccount({ page, cryptKeeperExtensionId, context });
     await lockAccount({ page, cryptKeeperExtensionId, context });
 
@@ -61,7 +61,7 @@ test.describe("recover", () => {
     expect(revealedMnemonic).toBe(METAMASK_SEED_PHRASE);
   });
 
-  test("should change password properly", async ({ page, cryptKeeperExtensionId, context }) => {
+  test("should change password properly [health-check]", async ({ page, cryptKeeperExtensionId, context }) => {
     await createAccount({ page, cryptKeeperExtensionId, context });
     await page.goto(`chrome-extension://${cryptKeeperExtensionId}/popup.html`);
 
@@ -87,7 +87,7 @@ test.describe("recover", () => {
     await expect(extension.activity.getByText("Password reset")).toHaveCount(1);
   });
 
-  test("should reveal mnemonic phrase properly", async ({ page, cryptKeeperExtensionId, context }) => {
+  test("should reveal mnemonic phrase properly [health-check]", async ({ page, cryptKeeperExtensionId, context }) => {
     await createAccount({ page, cryptKeeperExtensionId, context });
     await page.goto(`chrome-extension://${cryptKeeperExtensionId}/popup.html`);
 

@@ -1,7 +1,10 @@
 name: Deploy
 on:
-  #push:
-  #  branches: [ main ]
+  push:
+    branches: [main]
+    paths:
+      - "packages/demo/**"
+
   workflow_dispatch:
     inputs:
       build:
@@ -19,7 +22,8 @@ concurrency:
 
 jobs:  
   deploy:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
+
     env:
       DATA: ${{ github.event.inputs.build || 'enable' }}
     permissions:

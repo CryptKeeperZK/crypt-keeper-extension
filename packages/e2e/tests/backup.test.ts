@@ -32,7 +32,7 @@ test.describe("backup", () => {
     await expect(extension.activity.getByText("Backup download")).toBeVisible();
   });
 
-  test("should download and upload backup properly", async ({ page }) => {
+  test("should download and upload backup properly [health-check]", async ({ page }) => {
     const extension = new CryptKeeper(page);
     await extension.focus();
 

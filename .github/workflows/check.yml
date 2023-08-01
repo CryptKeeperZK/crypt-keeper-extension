@@ -32,9 +32,8 @@ jobs:
       matrix:
         node-version: [18]
         command: ["prettier", "lint", "types", "test:coverage"]
-        os: [ubuntu-22.04, windows-2022, macos-12]
 
-    runs-on: ${{ matrix.os }}
+    runs-on: ubuntu-22.04
 
     steps:
       - uses: actions/checkout@v3
