@@ -1,3 +1,5 @@
+import path from "path";
+
 import { CRYPT_KEEPER_PASSWORD } from "../constants";
 import { expect, test } from "../fixtures";
 import { connectWallet, createAccount } from "../helpers/account";
@@ -22,9 +24,9 @@ test.describe("backup", () => {
 
     await extension.settings.openPage();
     await extension.settings.openTab("Backup");
-    const path = await extension.settings.downloadBackup();
+    const backupFilePath = await extension.settings.downloadBackup();
 
-    expect(path).toBeDefined();
+    expect(backupFilePath).toBeDefined();
 
     await extension.goHome();
 
@@ -237,5 +239,24 @@ test.describe("backup", () => {
     await expect(extension.getByText(/Account/)).toHaveCount(1);
     await expect(extension.getByText("My twitter identity")).toBeVisible();
     await expect(extension.getByText("My github identity")).toBeVisible();
+  });
+
+  test("should restore data if backup file is invalid", async ({ page }) => {
+    const extension = new CryptKeeper(page);
+    await extension.focus();
+
+    await expect(extension.getByText(/Account/)).toHaveCount(1);
+
+    await extension.settings.openPage();
+    await extension.settings.openTab("Backup");
+    await extension.settings.uploadBackup({
+      backupFilePath: path.resolve(__dirname, "../backups/1_invalid_backup.json"),
+    });
+
+    await extension.goHome();
+    await extension.lock();
+    await extension.unlock(CRYPT_KEEPER_PASSWORD);
+
+    await expect(extension.getByText(/Account/)).toHaveCount(1);
   });
 });

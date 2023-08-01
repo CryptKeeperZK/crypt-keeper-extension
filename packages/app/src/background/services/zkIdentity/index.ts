@@ -26,7 +26,7 @@ import { setIdentities, setConnectedIdentity } from "@src/ui/ducks/identities";
 import { ellipsify } from "@src/util/account";
 import pushMessage from "@src/util/pushMessage";
 
-import type { IBackupable } from "@src/background/services/backup";
+import type { BackupData, IBackupable } from "@src/background/services/backup";
 
 const IDENTITY_KEY = "@@ID@@";
 const CONNECTED_IDENTITY_KEY = "@@CONNECTED-IDENTITY@@";
@@ -406,6 +406,16 @@ export default class ZkIdentityService implements IBackupable {
     return true;
   };
 
+  downloadStorage = (): Promise<string | null> => this.identitiesStore.get<string>();
+
+  restoreStorage = async (data: BackupData | null): Promise<void> => {
+    if (data && typeof data !== "string") {
+      throw new Error("Incorrect restore format for identities");
+    }
+
+    await this.identitiesStore.set(data);
+  };
+
   downloadEncryptedStorage = async (backupPassword: string): Promise<string | null> => {
     const data = await this.identitiesStore.get<string>();
 
@@ -419,10 +429,7 @@ export default class ZkIdentityService implements IBackupable {
     return this.cryptoService.generateEncryptedHmac(encryptedBackup, backupPassword);
   };
 
-  uploadEncryptedStorage = async (
-    backupEncryptedData: string | Record<string, string>,
-    backupPassword: string,
-  ): Promise<void> => {
+  uploadEncryptedStorage = async (backupEncryptedData: BackupData, backupPassword: string): Promise<void> => {
     if (!backupEncryptedData) {
       return;
     }

@@ -28,7 +28,6 @@ import {
   useConnectedIdentity,
   fetchHistory,
   useIdentityOperations,
-  getHistory,
   setOperations,
   deleteHistoryOperation,
   clearHistory,
@@ -128,19 +127,6 @@ describe("ui/ducks/identities", () => {
     expect(identities.settings).toStrictEqual(defaultSettings);
     expect(operationsHookData.result.current).toStrictEqual(defaultOperations);
     expect(settingsHookData.result.current).toStrictEqual(defaultSettings);
-  });
-
-  test("should get history properly", async () => {
-    (postMessage as jest.Mock).mockResolvedValue(defaultOperations);
-
-    await Promise.resolve(store.dispatch(getHistory()));
-    const { identities } = store.getState();
-    const operationsHookData = renderHook(() => useIdentityOperations(), {
-      wrapper: ({ children }) => <Provider store={store}>{children}</Provider>,
-    });
-
-    expect(identities.operations).toStrictEqual(defaultOperations);
-    expect(operationsHookData.result.current).toStrictEqual(defaultOperations);
   });
 
   test("should delete history operation properly", async () => {

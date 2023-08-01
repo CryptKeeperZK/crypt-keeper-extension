@@ -8,7 +8,7 @@ import NotificationService from "@src/background/services/notification";
 import { Paths } from "@src/constants";
 import { OperationType, type IUploadArgs, InitializationStep, BackupableServices } from "@src/types";
 
-import { type IBackupable } from "./types";
+import { BackupData, type IBackupable } from "./types";
 
 export default class BackupService {
   private static INSTANCE: BackupService;
@@ -57,7 +57,7 @@ export default class BackupService {
     const services = [...this.backupables.values()];
 
     const data = await Promise.all(services.map((service) => service.downloadEncryptedStorage(backupPassword)));
-    const prepared = data.reduce<Record<string, string | Record<string, string> | null>>(
+    const prepared = data.reduce<Record<string, BackupData | null>>(
       (acc, x, index) => ({ ...acc, [keys[index]]: x }),
       {},
     );
@@ -90,13 +90,28 @@ export default class BackupService {
       throw new Error("File content is corrupted");
     }
 
-    await this.backupables.get(BackupableServices.LOCK)?.uploadEncryptedStorage(data.lock, backupPassword);
-    await this.backupables.get(BackupableServices.WALLET)?.uploadEncryptedStorage(data.wallet, backupPassword);
-    await Promise.all(
-      entries
-        .filter(([key]) => ![BackupableServices.LOCK, BackupableServices.WALLET].includes(key as BackupableServices))
-        .map(([key, value]) => value && this.backupables.get(key)?.uploadEncryptedStorage(value, backupPassword)),
-    );
+    const restoreData = await this.saveRestoreData();
+
+    try {
+      await this.backupables.get(BackupableServices.LOCK)?.uploadEncryptedStorage(data.lock, backupPassword);
+      await this.backupables.get(BackupableServices.WALLET)?.uploadEncryptedStorage(data.wallet, backupPassword);
+
+      await Promise.all(
+        entries
+          .filter(([key]) => ![BackupableServices.LOCK, BackupableServices.WALLET].includes(key as BackupableServices))
+          .map(([key, value]) => value && this.backupables.get(key)?.uploadEncryptedStorage(value, backupPassword)),
+      );
+
+      await this.miscStorage.setInitialization({ initializationStep: InitializationStep.MNEMONIC });
+    } catch (error) {
+      await this.rollback(restoreData);
+
+      if (isBackupInstall) {
+        await this.miscStorage.setInitialization({ initializationStep: InitializationStep.NEW });
+      }
+
+      throw error;
+    }
 
     await this.historyService.loadSettings();
     await this.historyService.trackOperation(OperationType.UPLOAD_BACKUP, {});
@@ -110,6 +125,22 @@ export default class BackupService {
     });
 
     return true;
+  };
+
+  private saveRestoreData = async (): Promise<Record<BackupableServices, BackupData | null>> => {
+    const keys = [...this.backupables.keys()];
+    const backupArray = await Promise.all(keys.map((key) => this.backupables.get(key)?.downloadStorage()));
+
+    return keys.reduce(
+      (acc, key, index) => ({ ...acc, [key as BackupableServices]: backupArray[index] }),
+      {} as Record<BackupableServices, BackupData | null>,
+    );
+  };
+
+  private rollback = async (restoreData: Record<BackupableServices, BackupData | null>): Promise<void> => {
+    await Promise.all(
+      Object.entries(restoreData).map(([key, value]) => this.backupables.get(key)?.restoreStorage(value)),
+    );
   };
 
   getBackupables = (): Map<string, IBackupable> => this.backupables;

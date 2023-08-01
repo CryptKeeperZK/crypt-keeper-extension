@@ -579,5 +579,26 @@ describe("background/services/zkIdentity", () => {
         "Incorrect backup format for identities",
       );
     });
+
+    test("should download storage properly", async () => {
+      const [storage] = (SimpleStorage as jest.Mock).mock.instances as [MockStorage];
+
+      await zkIdentityService.downloadStorage();
+
+      expect(storage.get).toBeCalledTimes(1);
+    });
+
+    test("should restore storage properly", async () => {
+      const [storage] = (SimpleStorage as jest.Mock).mock.instances as [MockStorage];
+
+      await zkIdentityService.restoreStorage("storage");
+
+      expect(storage.set).toBeCalledTimes(1);
+      expect(storage.set).toBeCalledWith("storage");
+    });
+
+    test("should throw error when trying to restore incorrect data", async () => {
+      await expect(zkIdentityService.restoreStorage({})).rejects.toThrow("Incorrect restore format for identities");
+    });
   });
 });

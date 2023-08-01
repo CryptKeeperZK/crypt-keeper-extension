@@ -76,11 +76,13 @@ export default class CryptKeeper extends BasePage {
     await this.page.getByText("Get started!", { exact: true }).click();
   }
 
-  async createAccountFromBackup({ password, backupFilePath }: ICreateAccountFromBackupArgs): Promise<void> {
+  async openBackupOnboarding(): Promise<void> {
     await this.page.getByText("Have backup?", { exact: true }).click();
+  }
 
+  async createAccountFromBackup({ password, backupFilePath }: ICreateAccountFromBackupArgs): Promise<void> {
     await this.page.setInputFiles(`input[name="backupFile"]`, backupFilePath);
-    await this.page.getByLabel("Backup password", { exact: true }).type(password);
+    await this.page.getByLabel("Backup password", { exact: true }).fill(password);
 
     await this.page.getByText("Upload", { exact: true }).click();
   }

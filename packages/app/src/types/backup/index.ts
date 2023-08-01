@@ -1,8 +1,8 @@
 export enum BackupableServices {
-  IDENTITY = "identity",
-  APPROVAL = "approval",
   LOCK = "lock",
   WALLET = "wallet",
+  APPROVAL = "approval",
+  IDENTITY = "identity",
   VERIFIABLE_CREDENTIALS = "verifiable credentials",
 }
 
