@@ -680,3 +680,77 @@ describe("util/generateInitialMetadataForVerifiableCredential", () => {
     expect(metadata).toStrictEqual(expectedMetadata);
   });
 });
+
+describe("util/hashVerifiableCredential", () => {
+  it("should produce deterministic hashes", () => {
+    const credOne = {
+      context: ["https://www.w3.org/2018/credentials/v1"],
+      type: ["VerifiableCredential"],
+      issuer: "did:ethr:0x123",
+      issuanceDate: new Date("2010-01-01T19:23:24Z"),
+      credentialSubject: {
+        id: "did:ethr:0x123",
+        claims: {
+          name: "John Doe",
+        },
+      },
+    };
+    const credTwo = {
+      context: ["https://www.w3.org/2018/credentials/v1"],
+      type: ["VerifiableCredential"],
+      issuer: "did:ethr:0x123",
+      issuanceDate: new Date("2010-01-01T19:23:24Z"),
+      credentialSubject: {
+        id: "did:ethr:0x123",
+        claims: {
+          name: "John Doe",
+        },
+      },
+    };
+
+    expect(hashVerifiableCredential(credOne)).toBe(hashVerifiableCredential(credTwo));
+  });
+
+  it("should produce the same hash after serialization/deserialization", async () => {
+    const cred = {
+      context: ["https://www.w3.org/2018/credentials/v1"],
+      type: ["VerifiableCredential"],
+      issuer: "did:ethr:0x123",
+      issuanceDate: new Date("2010-01-01T19:23:24Z"),
+      credentialSubject: {
+        id: "did:ethr:0x123",
+        claims: {
+          name: "John Doe",
+        },
+      },
+    };
+    const credJson = serializeVerifiableCredential(cred);
+    const deserializedCred = await deserializeVerifiableCredential(credJson);
+
+    expect(hashVerifiableCredential(cred)).toBe(hashVerifiableCredential(deserializedCred));
+  });
+});
+
+describe("util/generateInitialMetadataForVerifiableCredential", () => {
+  it("should generate the correct metadata for a verifiable credential", () => {
+    const rawCred = {
+      context: ["https://www.w3.org/2018/credentials/v1"],
+      type: ["VerifiableCredential"],
+      issuer: "did:ethr:0x123",
+      issuanceDate: new Date("2010-01-01T19:23:24Z"),
+      credentialSubject: {
+        id: "did:ethr:0x123",
+        claims: {
+          name: "John Doe",
+        },
+      },
+    };
+    const metadata = generateInitialMetadataForVerifiableCredential(rawCred);
+    const expectedMetadata = {
+      name: "Verifiable Credential",
+      hash: hashVerifiableCredential(rawCred),
+    };
+
+    expect(metadata).toStrictEqual(expectedMetadata);
+  });
+});
