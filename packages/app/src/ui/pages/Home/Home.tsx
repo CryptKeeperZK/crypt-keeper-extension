@@ -6,9 +6,10 @@ import { IdentityList } from "@src/ui/components/IdentityList";
 import { TabList, Info, ActivityList } from "./components";
 import "./home.scss";
 import { useHome } from "./useHome";
+import { VerifiableCredentialsList } from "@src/ui/components/VerifiableCredentialList";
 
 const Home = (): JSX.Element => {
-  const { identities, connectedIdentity, refreshConnectionStatus } = useHome();
+  const { identities, connectedIdentity, refreshConnectionStatus, verifiableCredentials } = useHome();
 
   return (
     <div className="w-full h-full flex flex-col home" data-testid="home-page">
@@ -26,6 +27,8 @@ const Home = (): JSX.Element => {
           />
 
           <ActivityList />
+
+          <VerifiableCredentialsList verifiableCredentials={verifiableCredentials} />
         </TabList>
       </div>
     </div>

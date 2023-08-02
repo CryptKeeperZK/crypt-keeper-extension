@@ -7,13 +7,13 @@ import { checkHostApproval } from "@src/ui/ducks/permissions";
 import { useEthWallet } from "@src/ui/hooks/wallet";
 import { getLastActiveTabUrl } from "@src/util/browser";
 
-import type { IdentityData, VerifiableCredential } from "@src/types";
+import type { FlattenedCryptkeeperVerifiableCredential, IdentityData, VerifiableCredential } from "@src/types";
 
 export interface IUseHomeData {
   identities: IdentityData[];
   connectedIdentity?: IdentityData;
   address?: string;
-  verifiableCredentials: VerifiableCredential[];
+  verifiableCredentials: FlattenedCryptkeeperVerifiableCredential[];
   refreshConnectionStatus: () => Promise<boolean>;
 }
 
