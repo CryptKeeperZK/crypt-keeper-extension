@@ -1,4 +1,5 @@
 import stringify from "json-stable-stringify";
+import * as yup from "yup";
 
 import {
   serializeCryptkeeperVerifiableCredential,
@@ -87,7 +88,7 @@ describe("util/validateVerifiableCredential", () => {
     const rawCred = "asdf";
     expect(async () => {
       await deserializeVerifiableCredential(rawCred);
-    }).rejects.toThrow(`Serialized Verifiable Credential is not valid JSON`);
+    }).rejects.toThrow(SyntaxError);
   });
 
   test("should return false if the context property is not an array", () => {
@@ -106,7 +107,7 @@ describe("util/validateVerifiableCredential", () => {
     const credJson = stringify(rawCred);
     expect(async () => {
       await deserializeVerifiableCredential(credJson);
-    }).rejects.toThrow(`Invalid Verifiable Credential`);
+    }).rejects.toThrow(yup.ValidationError);
   });
 
   test("should return false if context entries are not strings", () => {
@@ -125,7 +126,7 @@ describe("util/validateVerifiableCredential", () => {
     const credJson = stringify(rawCred);
     expect(async () => {
       await deserializeVerifiableCredential(credJson);
-    }).rejects.toThrow(`Invalid Verifiable Credential`);
+    }).rejects.toThrow(yup.ValidationError);
   });
 
   test("should return false if the id property is not a string", () => {
@@ -145,7 +146,7 @@ describe("util/validateVerifiableCredential", () => {
     const credJson = stringify(rawCred);
     expect(async () => {
       await deserializeVerifiableCredential(credJson);
-    }).rejects.toThrow(`Invalid Verifiable Credential`);
+    }).rejects.toThrow(yup.ValidationError);
   });
 
   test("should return false if the type property is not an array", () => {
@@ -164,7 +165,7 @@ describe("util/validateVerifiableCredential", () => {
     const credJson = stringify(rawCred);
     expect(async () => {
       await deserializeVerifiableCredential(credJson);
-    }).rejects.toThrow(`Invalid Verifiable Credential`);
+    }).rejects.toThrow(yup.ValidationError);
   });
 
   test("should return false if the type array entries are not strings", () => {
@@ -183,7 +184,7 @@ describe("util/validateVerifiableCredential", () => {
     const credJson = stringify(rawCred);
     expect(async () => {
       await deserializeVerifiableCredential(credJson);
-    }).rejects.toThrow(`Invalid Verifiable Credential`);
+    }).rejects.toThrow(yup.ValidationError);
   });
 
   test("should return false if the issuer property does not exist", () => {
@@ -201,7 +202,7 @@ describe("util/validateVerifiableCredential", () => {
     const credJson = stringify(rawCred);
     expect(async () => {
       await deserializeVerifiableCredential(credJson);
-    }).rejects.toThrow(`Invalid Verifiable Credential`);
+    }).rejects.toThrow(yup.ValidationError);
   });
 
   test("should return false if the issuer property is not a string", () => {
@@ -220,7 +221,7 @@ describe("util/validateVerifiableCredential", () => {
     const credJson = stringify(rawCred);
     expect(async () => {
       await deserializeVerifiableCredential(credJson);
-    }).rejects.toThrow(`Invalid Verifiable Credential`);
+    }).rejects.toThrow(yup.ValidationError);
   });
 
   test("should return false if the issuance date does not exist", () => {
@@ -238,7 +239,7 @@ describe("util/validateVerifiableCredential", () => {
     const credJson = stringify(rawCred);
     expect(async () => {
       await deserializeVerifiableCredential(credJson);
-    }).rejects.toThrow(`Invalid Verifiable Credential`);
+    }).rejects.toThrow(yup.ValidationError);
   });
 
   test("should return false if the issuance date is not a date", () => {
@@ -257,7 +258,7 @@ describe("util/validateVerifiableCredential", () => {
     const credJson = stringify(rawCred);
     expect(async () => {
       await deserializeVerifiableCredential(credJson);
-    }).rejects.toThrow(`Invalid Verifiable Credential`);
+    }).rejects.toThrow(yup.ValidationError);
   });
 
   test("should return false if the expiration date is not a date", () => {
@@ -277,7 +278,7 @@ describe("util/validateVerifiableCredential", () => {
     const credJson = stringify(rawCred);
     expect(async () => {
       await deserializeVerifiableCredential(credJson);
-    }).rejects.toThrow(`Invalid Verifiable Credential`);
+    }).rejects.toThrow(yup.ValidationError);
   });
 
   test("should return false if the subject property does not exist", () => {
@@ -290,7 +291,7 @@ describe("util/validateVerifiableCredential", () => {
     const credJson = stringify(rawCred);
     expect(async () => {
       await deserializeVerifiableCredential(credJson);
-    }).rejects.toThrow(`Invalid Verifiable Credential`);
+    }).rejects.toThrow(yup.ValidationError);
   });
 
   test("should return false if the subject id is not a string", () => {
@@ -309,7 +310,7 @@ describe("util/validateVerifiableCredential", () => {
     const credJson = stringify(rawCred);
     expect(async () => {
       await deserializeVerifiableCredential(credJson);
-    }).rejects.toThrow(`Invalid Verifiable Credential`);
+    }).rejects.toThrow(yup.ValidationError);
   });
 
   test("should return false if the claims are not of valid format", () => {
@@ -330,7 +331,7 @@ describe("util/validateVerifiableCredential", () => {
     const credJson = stringify(rawCred);
     expect(async () => {
       await deserializeVerifiableCredential(credJson);
-    }).rejects.toThrow(`Invalid Verifiable Credential`);
+    }).rejects.toThrow(yup.ValidationError);
   });
 
   test("should return false if the status id is not a string", () => {
@@ -353,7 +354,7 @@ describe("util/validateVerifiableCredential", () => {
     const credJson = stringify(rawCred);
     expect(async () => {
       await deserializeVerifiableCredential(credJson);
-    }).rejects.toThrow(`Invalid Verifiable Credential`);
+    }).rejects.toThrow(yup.ValidationError);
   });
 
   test("should return false if the status type is not a string", () => {
@@ -376,7 +377,7 @@ describe("util/validateVerifiableCredential", () => {
     const credJson = stringify(rawCred);
     expect(async () => {
       await deserializeVerifiableCredential(credJson);
-    }).rejects.toThrow(`Invalid Verifiable Credential`);
+    }).rejects.toThrow(yup.ValidationError);
   });
 
   test("should return false if the proof id is not a string", () => {
@@ -405,7 +406,7 @@ describe("util/validateVerifiableCredential", () => {
     const credJson = stringify(rawCred);
     expect(async () => {
       await deserializeVerifiableCredential(credJson);
-    }).rejects.toThrow(`Invalid Verifiable Credential`);
+    }).rejects.toThrow(yup.ValidationError);
   });
 
   test("should return false if the proof type is not a string", () => {
@@ -434,7 +435,7 @@ describe("util/validateVerifiableCredential", () => {
     const credJson = stringify(rawCred);
     expect(async () => {
       await deserializeVerifiableCredential(credJson);
-    }).rejects.toThrow(`Invalid Verifiable Credential`);
+    }).rejects.toThrow(yup.ValidationError);
   });
 
   test("should return false if the proof purpose is not a string", () => {
@@ -463,7 +464,7 @@ describe("util/validateVerifiableCredential", () => {
     const credJson = stringify(rawCred);
     expect(async () => {
       await deserializeVerifiableCredential(credJson);
-    }).rejects.toThrow(`Invalid Verifiable Credential`);
+    }).rejects.toThrow(yup.ValidationError);
   });
 
   test("should return false if the proof verification method is not a string", () => {
@@ -492,7 +493,7 @@ describe("util/validateVerifiableCredential", () => {
     const credJson = stringify(rawCred);
     expect(async () => {
       await deserializeVerifiableCredential(credJson);
-    }).rejects.toThrow(`Invalid Verifiable Credential`);
+    }).rejects.toThrow(yup.ValidationError);
   });
 
   test("should return false if the proof created time is not a date", () => {
@@ -521,7 +522,7 @@ describe("util/validateVerifiableCredential", () => {
     const credJson = stringify(rawCred);
     expect(async () => {
       await deserializeVerifiableCredential(credJson);
-    }).rejects.toThrow(`Invalid Verifiable Credential`);
+    }).rejects.toThrow(yup.ValidationError);
   });
 
   test("should return false if the proof value is not a string", () => {
@@ -550,7 +551,7 @@ describe("util/validateVerifiableCredential", () => {
     const credJson = stringify(rawCred);
     expect(async () => {
       await deserializeVerifiableCredential(credJson);
-    }).rejects.toThrow(`Invalid Verifiable Credential`);
+    }).rejects.toThrow(yup.ValidationError);
   });
 });
 

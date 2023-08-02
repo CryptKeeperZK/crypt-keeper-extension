@@ -45,15 +45,10 @@ export async function deserializeCryptkeeperVerifiableCredential(
     throw new Error("Serialized Cryptkeeper Verifiable Credential is not provided!");
   }
 
-  let parsedCryptkeeperVerifiableCredential;
-  try {
-    parsedCryptkeeperVerifiableCredential = JSON.parse(serializedCryptkeeperVerifiableCredential) as {
-      verifiableCredential: string;
-      metadata: VerifiableCredentialMetadata;
-    };
-  } catch (error) {
-    throw new Error(`Serialized Cryptkeeper Verifiable Credential is not valid JSON: ${(error as Error).message}`);
-  }
+  const parsedCryptkeeperVerifiableCredential = JSON.parse(serializedCryptkeeperVerifiableCredential) as {
+    verifiableCredential: string;
+    metadata: VerifiableCredentialMetadata;
+  };
 
   return {
     verifiableCredential: await deserializeVerifiableCredential(
@@ -89,12 +84,7 @@ export async function deserializeVerifiableCredential(
     throw new Error("Serialized Verifiable Credential is not provided!");
   }
 
-  let deserializedVerifiableCredential;
-  try {
-    deserializedVerifiableCredential = JSON.parse(serializedVerifiableCredential) as Record<string, unknown>;
-  } catch (error) {
-    throw new Error(`Serialized Verifiable Credential is not valid JSON: ${(error as Error).message}`);
-  }
+  const deserializedVerifiableCredential = JSON.parse(serializedVerifiableCredential) as Record<string, unknown>;
 
   return validateVerifiableCredential(deserializedVerifiableCredential);
 }
@@ -207,11 +197,7 @@ const verifiableCredentialSchema: yup.Schema<VerifiableCredential> = yup.object(
  * @returns The Verifiable Credential if the object is a valid VerifiableCredential, otherwise throws an error.
  */
 export async function validateVerifiableCredential(verifiableCredential: object): Promise<VerifiableCredential> {
-  try {
-    return await verifiableCredentialSchema.validate(verifiableCredential);
-  } catch (error) {
-    throw new Error(`Invalid Verifiable Credential: ${(error as Error).message}`);
-  }
+  return verifiableCredentialSchema.validate(verifiableCredential);
 }
 
 /**
