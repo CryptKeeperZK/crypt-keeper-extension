@@ -169,9 +169,6 @@ export default class LockerService implements IBackupable {
       throw new Error("Incorrect restore format for password");
     }
 
-    this.isUnlocked = false;
-    this.cryptoService.clear();
-    this.unlockCB = undefined;
     await this.passwordStorage.set(data);
   };
 

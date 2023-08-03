@@ -4,7 +4,7 @@ import SimpleStorage from "@src/background/services/storage";
 import type { HostPermission } from "@cryptkeeperzk/types";
 import type { BackupData, IBackupable } from "@src/background/services/backup";
 
-const APPPROVALS_DB_KEY = "@APPROVED@";
+const APPROVALS_DB_KEY = "@APPROVED@";
 
 export default class ApprovalService implements IBackupable {
   private static INSTANCE: ApprovalService;
@@ -17,7 +17,7 @@ export default class ApprovalService implements IBackupable {
 
   private constructor() {
     this.allowedHosts = new Map();
-    this.approvals = new SimpleStorage(APPPROVALS_DB_KEY);
+    this.approvals = new SimpleStorage(APPROVALS_DB_KEY);
     this.cryptoService = CryptoService.getInstance();
   }
 

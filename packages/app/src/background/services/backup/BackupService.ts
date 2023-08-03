@@ -108,6 +108,7 @@ export default class BackupService {
 
       if (isBackupInstall) {
         await this.miscStorage.setInitialization({ initializationStep: InitializationStep.NEW });
+        this.cryptoService.clear();
       }
 
       throw error;
