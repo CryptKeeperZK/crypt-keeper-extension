@@ -18,6 +18,7 @@ jest.mock("@src/background/services/notification", (): unknown => ({
 jest.mock("@src/background/services/crypto", (): unknown => ({
   getInstance: jest.fn(() => ({
     isAuthenticPassword: jest.fn(),
+    clear: jest.fn(),
   })),
 }));
 
