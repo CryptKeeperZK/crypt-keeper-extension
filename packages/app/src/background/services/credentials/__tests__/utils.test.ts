@@ -64,7 +64,7 @@ describe("util/deserializeVerifiableCredential", () => {
 });
 
 describe("util/validateVerifiableCredential", () => {
-  test("should correctly validiate a valid verifiable credential", async () => {
+  test("should correctly validate a valid verifiable credential", async () => {
     const rawCred = {
       context: ["https://www.w3.org/2018/credentials/v1"],
       type: ["VerifiableCredential"],
