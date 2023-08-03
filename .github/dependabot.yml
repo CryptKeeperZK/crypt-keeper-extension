@@ -11,8 +11,3 @@ updates:
     open-pull-requests-limit: 5
     schedule:
       interval: "daily"
-  
-  - package-ecosystem: "npm"
-    directory: "/packages/proofs"
-    schedule:
-      interval: "never"
