@@ -6,7 +6,7 @@ import NotificationService from "@src/background/services/notification";
 import SimpleStorage from "@src/background/services/storage";
 import { OperationType, CryptkeeperVerifiableCredential } from "@src/types";
 
-import type { IBackupable } from "@src/background/services/backup";
+import type { BackupData, IBackupable } from "@src/background/services/backup";
 
 import {
   generateInitialMetadataForVerifiableCredential,
@@ -55,6 +55,7 @@ export default class VerifiableCredentialsService implements IBackupable {
         verifiableCredential,
         metadata,
       };
+
       return this.insertCryptkeeperVerifiableCredentialIntoStore(cryptkeeperVerifiableCredential);
     } catch (error) {
       return false;
@@ -171,6 +172,16 @@ export default class VerifiableCredentialsService implements IBackupable {
     await this.verifiableCredentialsStore.set(ciphertext);
   };
 
+  downloadStorage = (): Promise<string | null> => this.verifiableCredentialsStore.get<string>();
+
+  restoreStorage = async (data: BackupData | null): Promise<void> => {
+    if (data && typeof data !== "string") {
+      throw new Error("Incorrect restore format for credentials");
+    }
+
+    await this.verifiableCredentialsStore.set(data);
+  };
+
   downloadEncryptedStorage = async (backupPassword: string): Promise<string | null> => {
     const backupEncryptedData = await this.verifiableCredentialsStore.get<string>();
 
@@ -192,10 +203,10 @@ export default class VerifiableCredentialsService implements IBackupable {
       return;
     }
 
-    const encryptedBackup = this.cryptoService.getAuthenticCiphertext(backupEncryptedData, backupPassword);
+    const encryptedBackup = this.cryptoService.getAuthenticBackup(backupEncryptedData, backupPassword);
 
     if (typeof encryptedBackup !== "string") {
-      throw new Error("Incorrect backup format for verifiable credentials");
+      throw new Error("Incorrect backup format for credentials");
     }
 
     const backup = this.cryptoService.decrypt(encryptedBackup, { secret: backupPassword });
