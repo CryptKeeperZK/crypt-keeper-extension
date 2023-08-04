@@ -79,10 +79,7 @@ export default class CryptoService {
     return `${hmac}${ciphertext}`;
   }
 
-  getAuthenticCiphertext(
-    ciphertext: string | Record<string, string>,
-    password: string,
-  ): string | Record<string, string> {
+  getAuthenticBackup(ciphertext: string | Record<string, string>, password: string): string | Record<string, string> {
     this.checkSecretInitialized(password);
 
     if (typeof ciphertext === "object") {
@@ -102,7 +99,7 @@ export default class CryptoService {
     const isAuthentic = transitHmac === decryptedHmac;
 
     if (!isAuthentic) {
-      throw new Error("This ciphertext is not authentic");
+      throw new Error("This backup file is not authentic");
     }
 
     return transitCipherContent;

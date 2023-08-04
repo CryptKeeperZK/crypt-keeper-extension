@@ -193,7 +193,7 @@ export default class LockerService implements IBackupable {
       return;
     }
 
-    const authenticBackupCiphertext = this.cryptoService.getAuthenticCiphertext(backupEncryptedData, backupPassword);
+    const authenticBackupCiphertext = this.cryptoService.getAuthenticBackup(backupEncryptedData, backupPassword);
 
     if (typeof authenticBackupCiphertext !== "string") {
       throw new Error("Incorrect backup format for password");

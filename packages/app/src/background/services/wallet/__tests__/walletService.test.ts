@@ -49,7 +49,7 @@ jest.mock("@src/background/services/crypto", (): unknown => ({
     encrypt: jest.fn((arg: string) => mockCryptoResponses[arg] ?? mockSerializedAccounts),
     decrypt: jest.fn((arg: string) => mockCryptoResponses[arg] ?? mockSerializedAccounts),
     generateEncryptedHmac: jest.fn(() => mockBackup),
-    getAuthenticCiphertext: jest.fn((encrypted: string | Record<string, string>) =>
+    getAuthenticBackup: jest.fn((encrypted: string | Record<string, string>) =>
       typeof encrypted === "string" ? encrypted : mockBackup,
     ),
     setMnemonic: jest.fn(),

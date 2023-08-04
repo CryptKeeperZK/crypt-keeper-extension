@@ -434,7 +434,7 @@ export default class ZkIdentityService implements IBackupable {
       return;
     }
 
-    const encryptedBackup = this.cryptoService.getAuthenticCiphertext(backupEncryptedData, backupPassword);
+    const encryptedBackup = this.cryptoService.getAuthenticBackup(backupEncryptedData, backupPassword);
 
     if (typeof encryptedBackup !== "string") {
       throw new Error("Incorrect backup format for identities");

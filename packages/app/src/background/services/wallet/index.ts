@@ -228,7 +228,7 @@ export default class WalletService implements IBackupable {
       return;
     }
 
-    const backup = this.cryptoService.getAuthenticCiphertext(backupEncryptedData, backupPassword) as {
+    const backup = this.cryptoService.getAuthenticBackup(backupEncryptedData, backupPassword) as {
       accounts: string;
       mnemonic: string;
     };

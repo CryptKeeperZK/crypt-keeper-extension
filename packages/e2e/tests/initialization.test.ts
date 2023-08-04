@@ -61,7 +61,7 @@ test.describe("initialization", () => {
         password: DEFAULT_BACKUP_PASSWORD,
         backupFilePath,
       });
-      await expect(popup.getByText("This ciphertext is not authentic")).toBeVisible();
+      await expect(popup.getByText("This backup file is not authentic")).toBeVisible();
     }
     /* eslint-enable no-await-in-loop */
 

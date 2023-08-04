@@ -42,7 +42,7 @@ How should reviewers and QA manually test your changes? For instance:
 
 - [ ] PR template is filled out
 - [ ] Pre-commit and pre-push hook checks are passed
-- [ ] e2e tests are passed locally
+- [ ] E2E tests are passed locally
 - [ ] **IF** this PR fixes a bug, a test that _would have_ caught the bug has been added
 - [ ] PR is linked to the appropriate GitHub issue
 - [ ] PR has been added to the appropriate release Milestone
