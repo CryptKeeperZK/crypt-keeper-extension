@@ -24,6 +24,9 @@ const OPERATIONS: Record<OperationType, string> = {
   [OperationType.DOWNLOAD_BACKUP]: "Backup download",
   [OperationType.UPLOAD_BACKUP]: "Backup upload",
   [OperationType.RESET_PASSWORD]: "Password reset",
+  [OperationType.ADD_VERIFIABLE_CREDENTIAL]: "Verifiable credential added",
+  [OperationType.DELETE_VERIFIABLE_CREDENTIAL]: "Verifiable credential deleted",
+  [OperationType.DELETE_ALL_VERIFIABLE_CREDENTIALS]: "All verifiable credentials deleted",
 };
 
 const web2ProvidersIcons: IconWeb2Providers = {

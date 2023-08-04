@@ -9,6 +9,7 @@ import Handler from "./controllers/handler";
 import RequestManager from "./controllers/requestManager";
 import ApprovalService from "./services/approval";
 import BackupService from "./services/backup";
+import VerifiableCredentialsService from "./services/credentials";
 import HistoryService from "./services/history";
 import InjectorService from "./services/injector";
 import LockerService from "./services/lock";
@@ -57,6 +58,8 @@ export default class CryptKeeperController {
 
   private walletService: WalletService;
 
+  private verifiableCredentialsService: VerifiableCredentialsService;
+
   constructor() {
     this.handler = new Handler();
     this.requestManager = RequestManager.getInstance();
@@ -68,11 +71,14 @@ export default class CryptKeeperController {
     this.browserService = BrowserUtils.getInstance();
     this.historyService = HistoryService.getInstance();
     this.walletService = WalletService.getInstance();
+    this.verifiableCredentialsService = VerifiableCredentialsService.getInstance();
     this.backupService = BackupService.getInstance()
       .add(BackupableServices.LOCK, this.lockService)
       .add(BackupableServices.WALLET, this.walletService)
       .add(BackupableServices.APPROVAL, this.approvalService)
-      .add(BackupableServices.IDENTITY, this.zkIdentityService);
+      .add(BackupableServices.IDENTITY, this.zkIdentityService)
+      .add(BackupableServices.VERIFIABLE_CREDENTIALS, this.verifiableCredentialsService);
+    this.verifiableCredentialsService = VerifiableCredentialsService.getInstance();
   }
 
   handle = (request: RequestHandler, sender: Runtime.MessageSender): Promise<unknown> =>
@@ -161,6 +167,28 @@ export default class CryptKeeperController {
     this.handler.add(RPCAction.GET_SELECTED_ACCOUNT, this.lockService.ensure, this.walletService.getSelectedAccount);
     this.handler.add(RPCAction.CHECK_MNEMONIC, this.walletService.checkMnemonic);
     this.handler.add(RPCAction.GET_MNEMONIC, this.lockService.ensure, this.walletService.getMnemonic);
+
+    // Credentials
+    this.handler.add(
+      RPCAction.ADD_VERIFIABLE_CREDENTIAL,
+      this.lockService.ensure,
+      this.verifiableCredentialsService.addVerifiableCredential,
+    );
+    this.handler.add(
+      RPCAction.GET_ALL_VERIFIABLE_CREDENTIALS,
+      this.lockService.ensure,
+      this.verifiableCredentialsService.getAllVerifiableCredentials,
+    );
+    this.handler.add(
+      RPCAction.DELETE_VERIFIABLE_CREDENTIAL,
+      this.lockService.ensure,
+      this.verifiableCredentialsService.deleteVerifiableCredential,
+    );
+    this.handler.add(
+      RPCAction.DELETE_ALL_VERIFIABLE_CREDENTIALS,
+      this.lockService.ensure,
+      this.verifiableCredentialsService.deleteAllVerifiableCredentials,
+    );
 
     // Injector
     this.handler.add(RPCAction.CONNECT, this.injectorService.connect);

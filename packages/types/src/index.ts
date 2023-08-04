@@ -4,3 +4,4 @@ export * from "./request";
 export * from "./contentScript";
 export * from "./duck";
 export * from "./approval";
+export * from "./verifiableCredentials";
