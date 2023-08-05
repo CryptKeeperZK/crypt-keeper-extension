@@ -173,12 +173,7 @@ export const useCryptKeeper = (): IUseCryptKeeperData => {
     const mockVerifiableCredential = genMockVerifiableCredential();
     const verifiableCredentialJson = JSON.stringify(mockVerifiableCredential);
 
-    const success = await client?.addVerifiableCredential(verifiableCredentialJson);
-    if (success) {
-      toast(`Successfully added verifiable credential!`, { type: "success" });
-    } else {
-      toast(`Failed to add verifiable credential.`, { type: "warning" });
-    }
+    await client?.addVerifiableCredential(verifiableCredentialJson);
   }, [client]);
 
   const getConnectedIdentity = useCallback(async () => {

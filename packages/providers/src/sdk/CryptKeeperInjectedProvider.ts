@@ -385,15 +385,15 @@ export class CryptKeeperInjectedProvider {
   }
 
   /**
-   * Adds a verifiable credential.
+   * Requests user to add a verifiable credential.
    *
-   * @param {string} verifiableCredentialString - The json string representation of the verifiable credential to add.
-   * @returns {Promise<boolean>} A Promise that resolves to a boolean indicating whether or not the verifiable credential was added.
+   * @param {string} serializedVerifiableCredential - The json string representation of the verifiable credential to add.
+   * @returns {void}
    */
-  async addVerifiableCredential(verifiableCredentialString: string): Promise<boolean> {
+  async addVerifiableCredential(serializedVerifiableCredential: string): Promise<void> {
     return this.post({
-      method: RPCAction.ADD_VERIFIABLE_CREDENTIAL,
-      payload: verifiableCredentialString,
-    }) as Promise<boolean>;
+      method: RPCAction.ADD_VERIFIABLE_CREDENTIAL_REQUEST,
+      payload: serializedVerifiableCredential,
+    }) as Promise<void>;
   }
 }

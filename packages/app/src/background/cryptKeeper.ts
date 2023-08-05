@@ -32,7 +32,7 @@ const RPC_METHOD_ACCESS: Record<RPCAction, boolean> = {
   [RPCAction.GENERATE_SEMAPHORE_PROOF]: true,
   [RPCAction.GENERATE_RLN_PROOF]: true,
   [RPCAction.PREPARE_RLN_PROOF_REQUEST]: true,
-  [RPCAction.ADD_VERIFIABLE_CREDENTIAL]: true,
+  [RPCAction.ADD_VERIFIABLE_CREDENTIAL_REQUEST]: true,
 };
 
 Object.freeze(RPC_METHOD_ACCESS);
@@ -180,6 +180,11 @@ export default class CryptKeeperController {
       RPCAction.ADD_VERIFIABLE_CREDENTIAL_REQUEST,
       this.lockService.ensure,
       this.verifiableCredentialsService.addVerifiableCredentialRequest,
+    );
+    this.handler.add(
+      RPCAction.REJECT_VERIFIABLE_CREDENTIAL_REQUEST,
+      this.lockService.ensure,
+      this.verifiableCredentialsService.rejectVerifiableCredentialRequest,
     );
     this.handler.add(
       RPCAction.RENAME_VERIFIABLE_CREDENTIAL,

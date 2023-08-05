@@ -28,6 +28,7 @@ const OPERATIONS: Record<OperationType, string> = {
   [OperationType.RENAME_VERIFIABLE_CREDENTIAL]: "Verifiable credentials renamed",
   [OperationType.DELETE_VERIFIABLE_CREDENTIAL]: "Verifiable credential deleted",
   [OperationType.DELETE_ALL_VERIFIABLE_CREDENTIALS]: "All verifiable credentials deleted",
+  [OperationType.REJECT_VERIFIABLE_CREDENTIAL_REQUEST]: "Verifiable credential request rejected",
 };
 
 const web2ProvidersIcons: IconWeb2Providers = {

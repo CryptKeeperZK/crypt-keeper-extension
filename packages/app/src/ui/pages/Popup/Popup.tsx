@@ -16,6 +16,7 @@ import ResetPassword from "@src/ui/pages/ResetPassword";
 import RevealMnemonic from "@src/ui/pages/RevealMnemonic";
 import Settings from "@src/ui/pages/Settings";
 import UploadBackup from "@src/ui/pages/UploadBackup";
+import AddVerifiableCredential from "@src/ui/pages/AddVerifiableCredential";
 
 import "../../styles.scss";
 
@@ -37,6 +38,7 @@ const routeConfig: RouteObject[] = [
   { path: Paths.CONNECT_IDENTITY, element: <ConnectIdentity /> },
   { path: Paths.RECOVER, element: <Recover /> },
   { path: Paths.RESET_PASSWORD, element: <ResetPassword /> },
+  { path: Paths.ADD_VERIFIABLE_CREDENTIAL, element: <AddVerifiableCredential /> },
   {
     path: "*",
     element: <Navigate to={Paths.HOME} />,

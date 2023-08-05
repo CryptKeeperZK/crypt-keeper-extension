@@ -14,7 +14,3 @@ export interface IRenameVerifiableCredentialArgs {
   verifiableCredentialHash: string;
   newVerifiableCredentialName: string;
 }
-
-export interface IDeleteVerifiableCredentialArgs {
-  verifiableCredentialHash: string;
-}

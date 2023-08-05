@@ -59,6 +59,7 @@ export enum RPCAction {
 >>>>>>> e458d93 (fix: use deserialization when rendering verifiable credentials (#493))
   ADD_VERIFIABLE_CREDENTIAL = "rpc/credentials/addVerifiableCredential",
   ADD_VERIFIABLE_CREDENTIAL_REQUEST = "rpc/credentials/addVerifiableCredentialRequest",
+  REJECT_VERIFIABLE_CREDENTIAL_REQUEST = "rpc/credentials/rejectVerifiableCredentialRequest",
   RENAME_VERIFIABLE_CREDENTIAL = "rpc/credentials/renameVerifiableCredential",
   GET_ALL_VERIFIABLE_CREDENTIALS = "rpc/credentials/getAllVerifiableCredentials",
   DELETE_VERIFIABLE_CREDENTIAL = "rpc/credentials/deleteVerifiableCredential",

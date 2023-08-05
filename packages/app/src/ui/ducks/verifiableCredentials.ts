@@ -3,11 +3,7 @@ import { RPCAction } from "@cryptkeeperzk/providers";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 import { serializeCryptkeeperVerifiableCredential } from "@src/background/services/credentials/utils";
-import {
-  CryptkeeperVerifiableCredential,
-  IDeleteVerifiableCredentialArgs,
-  IRenameVerifiableCredentialArgs,
-} from "@src/types";
+import { CryptkeeperVerifiableCredential, IRenameVerifiableCredentialArgs } from "@src/types";
 import postMessage from "@src/util/postMessage";
 
 import type { TypedThunk } from "@src/ui/store/configureAppStore";
@@ -15,11 +11,11 @@ import type { TypedThunk } from "@src/ui/store/configureAppStore";
 import { useAppSelector } from "./hooks";
 
 export interface VerifiableCredentialState {
-  verifiableCredentials: string[];
+  serializedVerifiableCredentials: string[];
 }
 
 const initialState: VerifiableCredentialState = {
-  verifiableCredentials: [],
+  serializedVerifiableCredentials: [],
 };
 
 const verifiableCredentialsSlice = createSlice({
@@ -27,33 +23,44 @@ const verifiableCredentialsSlice = createSlice({
   initialState,
   reducers: {
     setVerifiableCredentials: (state: VerifiableCredentialState, action: PayloadAction<string[]>) => {
-      state.verifiableCredentials = action.payload;
+      state.serializedVerifiableCredentials = action.payload;
     },
   },
 });
 
 export const { setVerifiableCredentials } = verifiableCredentialsSlice.actions;
 
-export const renameVerifiableCredential =
-  (renameVerifiableCredentialArgs: IRenameVerifiableCredentialArgs) => async (): Promise<void> => {
+export const addVerifiableCredential = (serializedVerifiableCredential: string) => async (): Promise<void> => {
+  await postMessage({
+    method: RPCAction.ADD_VERIFIABLE_CREDENTIAL,
+    payload: serializedVerifiableCredential,
+  });
+};
+
+export const rejectVerifiableCredentialRequest =
+  (serializedVerifiableCredential: string) => async (): Promise<void> => {
     await postMessage({
-      method: RPCAction.RENAME_VERIFIABLE_CREDENTIAL,
-      payload: {
-        renameVerifiableCredentialArgs,
-      },
+      method: RPCAction.REJECT_VERIFIABLE_CREDENTIAL_REQUEST,
+      payload: serializedVerifiableCredential,
     });
   };
 
-export const deleteVerifiableCredential =
-  ({ verifiableCredentialHash }: IDeleteVerifiableCredentialArgs) =>
-  async (): Promise<void> => {
+export const renameVerifiableCredential =
+  (renameVerifiableCredentialArgs: IRenameVerifiableCredentialArgs) => async (): Promise<void> => {
+    console.log("renaming vc", renameVerifiableCredentialArgs);
+
     await postMessage({
-      method: RPCAction.DELETE_VERIFIABLE_CREDENTIAL,
-      payload: {
-        verifiableCredentialHash,
-      },
+      method: RPCAction.RENAME_VERIFIABLE_CREDENTIAL,
+      payload: renameVerifiableCredentialArgs,
     });
   };
+
+export const deleteVerifiableCredential = (verifiableCredentialHash: string) => async (): Promise<void> => {
+  await postMessage({
+    method: RPCAction.DELETE_VERIFIABLE_CREDENTIAL,
+    payload: verifiableCredentialHash,
+  });
+};
 
 export const fetchVerifiableCredentials = (): TypedThunk => async (dispatch) => {
   const cryptkeeperVerifiableCredentials = await postMessage<CryptkeeperVerifiableCredential[]>({
@@ -68,6 +75,6 @@ export const fetchVerifiableCredentials = (): TypedThunk => async (dispatch) => 
 };
 
 export const useVerifiableCredentials = (): string[] =>
-  useAppSelector((state) => state.verifiableCredentials.verifiableCredentials);
+  useAppSelector((state) => state.verifiableCredentials.serializedVerifiableCredentials);
 
 export default verifiableCredentialsSlice.reducer;

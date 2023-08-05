@@ -13,7 +13,7 @@ export interface IUseHomeData {
   identities: IdentityData[];
   connectedIdentity?: IdentityData;
   address?: string;
-  verifiableCredentials: string[];
+  serializedVerifiableCredentials: string[];
   refreshConnectionStatus: () => Promise<boolean>;
 }
 
@@ -21,7 +21,7 @@ export const useHome = (): IUseHomeData => {
   const dispatch = useAppDispatch();
   const identities = useIdentities();
   const connectedIdentity = useConnectedIdentity();
-  const verifiableCredentials = useVerifiableCredentials();
+  const serializedVerifiableCredentials = useVerifiableCredentials();
 
   const { address } = useEthWallet();
 
@@ -45,7 +45,7 @@ export const useHome = (): IUseHomeData => {
     address,
     connectedIdentity,
     identities,
-    verifiableCredentials,
+    serializedVerifiableCredentials,
     refreshConnectionStatus,
   };
 };

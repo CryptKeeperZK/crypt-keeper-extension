@@ -48,6 +48,27 @@ export default class VerifiableCredentialsService implements IBackupable {
     return VerifiableCredentialsService.INSTANCE;
   }
 
+  addVerifiableCredentialRequest = async (serializedVerifiableCredential: string): Promise<void> => {
+    await deserializeVerifiableCredential(serializedVerifiableCredential);
+    await this.browserController.openPopup({
+      params: { redirect: Paths.ADD_VERIFIABLE_CREDENTIAL, serializedVerifiableCredential },
+    });
+  };
+
+  rejectVerifiableCredentialRequest = async (serializedVerifiableCredential: string): Promise<void> => {
+    await this.historyService.trackOperation(OperationType.REJECT_VERIFIABLE_CREDENTIAL_REQUEST, {});
+    await this.notificationService.create({
+      options: {
+        title: "Verifiable Credential request rejected",
+        message: `Rejected a request to add 1 Verifiable Credential.`,
+        iconUrl: browser.runtime.getURL("/icons/logo.png"),
+        type: "basic",
+      },
+    });
+
+    return;
+  };
+
   addVerifiableCredential = async (serializedVerifiableCredential: string): Promise<boolean> => {
     if (!serializedVerifiableCredential) {
       return false;
@@ -67,21 +88,10 @@ export default class VerifiableCredentialsService implements IBackupable {
     }
   };
 
-  addVerifiableCredentialRequest = async (serializedVerifiableCredential: string): Promise<void> => {
-    try {
-      await deserializeVerifiableCredential(serializedVerifiableCredential);
-    } catch (error) {
-      return;
-    }
-
-    await this.browserController.openPopup({
-      params: { redirect: Paths.ADD_VERIFIABLE_CREDENTIAL, serializedVerifiableCredential },
-    });
-  };
-
   renameVerifiableCredential = async (
     renameVerifiableCredentialArgs: IRenameVerifiableCredentialArgs,
   ): Promise<boolean> => {
+    console.log("renaming", renameVerifiableCredentialArgs);
     const { verifiableCredentialHash, newVerifiableCredentialName } = renameVerifiableCredentialArgs;
     if (!verifiableCredentialHash || !newVerifiableCredentialName) {
       return false;

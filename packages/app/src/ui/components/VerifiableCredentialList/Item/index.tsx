@@ -8,11 +8,16 @@ import { Menuable } from "@src/ui/components/Menuable";
 import { ellipsify } from "@src/util/account";
 
 import "./verifiableCredentialListItemStyles.scss";
+import { useAppDispatch } from "@src/ui/ducks/hooks";
+import { fetchVerifiableCredentials } from "@src/ui/ducks/verifiableCredentials";
 
 export interface VerifiableCredentialItemProps {
   verifiableCredential: VerifiableCredential;
   metadata: VerifiableCredentialMetadata;
-  onRenameVerifiableCredential: (verifiableCredentialHash: string, name: string) => Promise<void>;
+  onRenameVerifiableCredential: (
+    verifiableCredentialHash: string,
+    newVerifiableCredentialName: string,
+  ) => Promise<void>;
   onDeleteVerifiableCredential: (verifiableCredentialHash: string) => Promise<void>;
 }
 
@@ -24,6 +29,8 @@ export const VerifiableCredentialItem = ({
 }: VerifiableCredentialItemProps): JSX.Element => {
   const [name, setName] = useState(metadata.name);
   const [isRenaming, setIsRenaming] = useState(false);
+
+  const dispatch = useAppDispatch();
 
   const handleChangeName = useCallback(
     (event: ChangeEvent<HTMLInputElement>) => {
@@ -37,18 +44,23 @@ export const VerifiableCredentialItem = ({
   }, [setIsRenaming]);
 
   const handleUpdateName = useCallback(
-    (event: FormEvent | ReactMouseEvent) => {
+    async (event: FormEvent | ReactMouseEvent) => {
+      console.log("handleUpdateName a", metadata.hash, name);
       event.preventDefault();
-      onRenameVerifiableCredential(metadata.hash, name).finally(() => {
+      console.log("handleUpdateName", metadata.hash, name);
+      await onRenameVerifiableCredential(metadata.hash, name).finally(() => {
+        console.log("handleUpdateName c", metadata.hash, name);
         setIsRenaming(false);
       });
+      dispatch(fetchVerifiableCredentials());
     },
-    [metadata.hash, name, onRenameVerifiableCredential],
+    [metadata, name, onRenameVerifiableCredential, dispatch],
   );
 
-  const handleDeleteVerifiableCredential = useCallback(() => {
-    onDeleteVerifiableCredential(metadata.hash);
-  }, [metadata.hash, onDeleteVerifiableCredential]);
+  const handleDeleteVerifiableCredential = useCallback(async () => {
+    await onDeleteVerifiableCredential(metadata.hash);
+    dispatch(fetchVerifiableCredentials());
+  }, [metadata.hash, onDeleteVerifiableCredential, dispatch]);
 
   const menuItems = [
     { label: "Rename", isDangerItem: false, onClick: handleToggleRenaming },

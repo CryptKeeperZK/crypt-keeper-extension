@@ -10,32 +10,37 @@ import { VerifiableCredentialItem } from "./Item";
 import "./verifiableCredentialListStyles.scss";
 
 export interface VerifiableCredentialsListProps {
-  verifiableCredentials: string[];
+  serializedVerifiableCredentials: string[];
 }
 
-export const VerifiableCredentialsList = ({ verifiableCredentials }: VerifiableCredentialsListProps): JSX.Element => {
+export const VerifiableCredentialsList = ({
+  serializedVerifiableCredentials,
+}: VerifiableCredentialsListProps): JSX.Element => {
   const dispatch = useAppDispatch();
 
-  const [credentials, setCredentials] = useState<CryptkeeperVerifiableCredential[]>([]);
+  const [cryptkeeperVerifiableCredentials, setCryptkeeperVerifiableCredentials] = useState<
+    CryptkeeperVerifiableCredential[]
+  >([]);
 
   useEffect(() => {
     async function deserialize() {
       const deserializedVerifiableCredentials = await Promise.all(
-        verifiableCredentials.map(async (verifiableCredential) =>
-          deserializeCryptkeeperVerifiableCredential(verifiableCredential),
+        serializedVerifiableCredentials.map(async (serializedVerifiableCredential) =>
+          deserializeCryptkeeperVerifiableCredential(serializedVerifiableCredential),
         ),
       );
-      setCredentials(deserializedVerifiableCredentials);
+      setCryptkeeperVerifiableCredentials(deserializedVerifiableCredentials);
     }
     deserialize();
-  }, [verifiableCredentials]);
+  }, [serializedVerifiableCredentials]);
 
   const onRenameVerifiableCredential = useCallback(
-    async (verifiableCredentialHash: string, name: string) => {
+    async (verifiableCredentialHash: string, newVerifiableCredentialName: string) => {
+      console.log("onRenameVerifiableCredential", verifiableCredentialHash, newVerifiableCredentialName);
       await dispatch(
         renameVerifiableCredential({
           verifiableCredentialHash,
-          newVerifiableCredentialName: name,
+          newVerifiableCredentialName,
         }),
       );
     },
@@ -44,14 +49,14 @@ export const VerifiableCredentialsList = ({ verifiableCredentials }: VerifiableC
 
   const onDeleteVerifiableCredential = useCallback(
     async (verifiableCredentialHash: string) => {
-      await dispatch(deleteVerifiableCredential({ verifiableCredentialHash }));
+      await dispatch(deleteVerifiableCredential(verifiableCredentialHash));
     },
     [dispatch],
   );
 
   return (
     <div className="verifiable-credential-content">
-      {credentials.map(({ verifiableCredential, metadata }) => (
+      {cryptkeeperVerifiableCredentials.map(({ verifiableCredential, metadata }) => (
         <VerifiableCredentialItem
           key={metadata.hash}
           metadata={metadata}
@@ -61,7 +66,7 @@ export const VerifiableCredentialsList = ({ verifiableCredentials }: VerifiableC
         />
       ))}
 
-      {verifiableCredentials.length === 0 && (
+      {serializedVerifiableCredentials.length === 0 && (
         <Typography sx={{ my: 2, textAlign: "center" }}>No Verifiable Credentials available</Typography>
       )}
     </div>
