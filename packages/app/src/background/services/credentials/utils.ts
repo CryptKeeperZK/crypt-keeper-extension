@@ -211,7 +211,11 @@ export function generateInitialMetadataForVerifiableCredential(
   };
 }
 
+<<<<<<< HEAD
 function parseDate(_: string, originalValue: string): Date | string {
+=======
+function parseDate(value: string, originalValue: string): Date | string {
+>>>>>>> e458d93 (fix: use deserialization when rendering verifiable credentials (#493))
   const date = new Date(originalValue);
   return Number.isNaN(date.getTime()) ? originalValue : date;
 }

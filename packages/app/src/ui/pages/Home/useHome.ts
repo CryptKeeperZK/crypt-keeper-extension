@@ -13,7 +13,7 @@ export interface IUseHomeData {
   identities: IdentityData[];
   connectedIdentity?: IdentityData;
   address?: string;
-  verifiableCredentials: FlattenedCryptkeeperVerifiableCredential[];
+  verifiableCredentials: string[];
   refreshConnectionStatus: () => Promise<boolean>;
 }
 

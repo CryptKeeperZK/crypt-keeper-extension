@@ -9,9 +9,10 @@ import type { TypedThunk } from "@src/ui/store/configureAppStore";
 import { useAppSelector } from "./hooks";
 import { CryptkeeperVerifiableCredential, FlattenedCryptkeeperVerifiableCredential } from "@src/types";
 import { flattenCryptkeeperVerifiableCredential } from "@src/util/verifiableCredentials";
+import { serializeCryptkeeperVerifiableCredential } from "@src/background/services/credentials/utils";
 
 export interface VerifiableCredentialState {
-  verifiableCredentials: CryptkeeperVerifiableCredential[];
+  verifiableCredentials: string[];
 }
 
 const initialState: VerifiableCredentialState = {
@@ -22,10 +23,7 @@ const verifiableCredentialsSlice = createSlice({
   name: "verifiableCredentials",
   initialState,
   reducers: {
-    setVerifiableCredentials: (
-      state: VerifiableCredentialState,
-      action: PayloadAction<CryptkeeperVerifiableCredential[]>,
-    ) => {
+    setVerifiableCredentials: (state: VerifiableCredentialState, action: PayloadAction<string[]>) => {
       state.verifiableCredentials = action.payload;
     },
   },
@@ -40,16 +38,16 @@ export const fetchVerifiableCredentials = (): TypedThunk => async (dispatch) => 
 
   console.log("fetching vcs", cryptkeeperVerifiableCredentials);
 
-  const flattenedVerifiableCredentials = cryptkeeperVerifiableCredentials.map((cryptkeeperVerifiableCredential) => {
-    return flattenCryptkeeperVerifiableCredential(cryptkeeperVerifiableCredential);
+  const serializedVerifiableCredentials = cryptkeeperVerifiableCredentials.map((cryptkeeperVerifiableCredential) => {
+    return serializeCryptkeeperVerifiableCredential(cryptkeeperVerifiableCredential);
   });
 
-  console.log("flattened vcs", flattenedVerifiableCredentials);
+  console.log("serialized vcs", serializedVerifiableCredentials);
 
-  dispatch(setVerifiableCredentials(flattenedVerifiableCredentials));
+  dispatch(setVerifiableCredentials(serializedVerifiableCredentials));
 };
 
-export const useVerifiableCredentials = (): FlattenedCryptkeeperVerifiableCredential[] => {
+export const useVerifiableCredentials = (): string[] => {
   return useAppSelector((state) => state.verifiableCredentials.verifiableCredentials);
 };
 

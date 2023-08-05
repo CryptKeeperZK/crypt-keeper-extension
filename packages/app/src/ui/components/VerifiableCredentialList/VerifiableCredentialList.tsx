@@ -1,18 +1,33 @@
 import { VerifiableCredential } from "@cryptkeeperzk/types";
 import Typography from "@mui/material/Typography";
-import { FlattenedCryptkeeperVerifiableCredential } from "@src/types";
+import { CryptkeeperVerifiableCredential } from "@src/types";
 import { VerifiableCredentialItem } from "./Item";
 import { useAppDispatch } from "@src/ui/ducks/hooks";
-import { useCallback } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 import "./verifiableCredentialListStyles.scss";
+import { deserializeCryptkeeperVerifiableCredential } from "@src/background/services/credentials/utils";
 
 export interface VerifiableCredentialsListProps {
-  verifiableCredentials: FlattenedCryptkeeperVerifiableCredential[];
+  verifiableCredentials: string[];
 }
 
 export const VerifiableCredentialsList = ({ verifiableCredentials }: VerifiableCredentialsListProps): JSX.Element => {
   const dispatch = useAppDispatch();
+
+  const [credentials, setCredentials] = useState<CryptkeeperVerifiableCredential[]>([]);
+
+  useEffect(() => {
+    async function deserialize() {
+      const deserializedVerifiableCredentials = await Promise.all(
+        verifiableCredentials.map(async (verifiableCredential) => {
+          return deserializeCryptkeeperVerifiableCredential(verifiableCredential);
+        }),
+      );
+      setCredentials(deserializedVerifiableCredentials);
+    }
+    deserialize();
+  }, [verifiableCredentials]);
 
   const onRenameVerifiableCredential = useCallback(
     async (verifiableCredentialHash: string, name: string) => {
@@ -33,7 +48,7 @@ export const VerifiableCredentialsList = ({ verifiableCredentials }: VerifiableC
   return (
     <>
       <div className="verifiable-credential-content">
-        {verifiableCredentials.map(({ verifiableCredential, metadata }) => (
+        {credentials.map(({ verifiableCredential, metadata }) => (
           <VerifiableCredentialItem
             key={metadata.hash}
             verifiableCredential={verifiableCredential}

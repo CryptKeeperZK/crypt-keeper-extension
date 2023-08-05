@@ -51,9 +51,12 @@ export enum RPCAction {
   GENERATE_SEMAPHORE_PROOF = "rpc/proofs/generate-semaphore-proof",
   GENERATE_SEMAPHORE_PROOF_OFFSCREEN = "rpc/proofs/generate-semaphore-proof-offscreen",
   SEMAPHORE_PROOF_RESULT = "rpc/proofs/semaphore-proof-result",
+<<<<<<< HEAD
   GENERATE_RLN_PROOF = "rpc/proofs/generate-rln-proof",
   GENERATE_RLN_PROOF_OFFSCREEN = "rpc/proofs/generate-rln-proof-offscreen",
   RLN_PROOF_RESULT = "rpc/proofs/rln-proof-result",
+=======
+>>>>>>> e458d93 (fix: use deserialization when rendering verifiable credentials (#493))
   ADD_VERIFIABLE_CREDENTIAL = "rpc/credentials/addVerifiableCredential",
   GET_ALL_VERIFIABLE_CREDENTIALS = "rpc/credentials/getAllVerifiableCredentials",
   DELETE_VERIFIABLE_CREDENTIAL = "rpc/credentials/deleteVerifiableCredential",

@@ -45,11 +45,8 @@ const App = () => {
     createIdentity,
     connectIdentity,
     genSemaphoreProof,
-<<<<<<< HEAD
     genRLNProof,
-=======
     addVerifiableCredential,
->>>>>>> 58ae87c (feat: add verifiable credentials sdk and demo functionality (#493))
   } = useCryptKeeper();
 
   useEffect(() => {
