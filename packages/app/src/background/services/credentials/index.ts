@@ -1,10 +1,12 @@
 import browser from "webextension-polyfill";
 
+import BrowserUtils from "@src/background/controllers/browserUtils";
 import CryptoService, { ECryptMode } from "@src/background/services/crypto";
 import HistoryService from "@src/background/services/history";
 import NotificationService from "@src/background/services/notification";
 import SimpleStorage from "@src/background/services/storage";
-import { OperationType, CryptkeeperVerifiableCredential } from "@src/types";
+import { Paths } from "@src/constants";
+import { OperationType, CryptkeeperVerifiableCredential, IRenameVerifiableCredentialArgs } from "@src/types";
 
 import type { BackupData, IBackupable } from "@src/background/services/backup";
 
@@ -28,11 +30,14 @@ export default class VerifiableCredentialsService implements IBackupable {
 
   private notificationService: NotificationService;
 
+  private browserController: BrowserUtils;
+
   private constructor() {
     this.verifiableCredentialsStore = new SimpleStorage(VERIFIABLE_CREDENTIALS_KEY);
     this.cryptoService = CryptoService.getInstance();
     this.historyService = HistoryService.getInstance();
     this.notificationService = NotificationService.getInstance();
+    this.browserController = BrowserUtils.getInstance();
   }
 
   static getInstance(): VerifiableCredentialsService {
@@ -60,6 +65,56 @@ export default class VerifiableCredentialsService implements IBackupable {
     } catch (error) {
       return false;
     }
+  };
+
+  addVerifiableCredentialRequest = async (serializedVerifiableCredential: string): Promise<void> => {
+    try {
+      await deserializeVerifiableCredential(serializedVerifiableCredential);
+    } catch (error) {
+      return;
+    }
+
+    await this.browserController.openPopup({
+      params: { redirect: Paths.ADD_VERIFIABLE_CREDENTIAL, serializedVerifiableCredential },
+    });
+  };
+
+  renameVerifiableCredential = async (
+    renameVerifiableCredentialArgs: IRenameVerifiableCredentialArgs,
+  ): Promise<boolean> => {
+    const { verifiableCredentialHash, newVerifiableCredentialName } = renameVerifiableCredentialArgs;
+    if (!verifiableCredentialHash || !newVerifiableCredentialName) {
+      return false;
+    }
+
+    const cryptkeeperVerifiableCredentials = await this.getCryptkeeperVerifiableCredentialsFromStore();
+
+    if (!cryptkeeperVerifiableCredentials.has(verifiableCredentialHash)) {
+      return false;
+    }
+
+    const serializedCryptkeeperVerifiableCredential = cryptkeeperVerifiableCredentials.get(verifiableCredentialHash)!;
+    const cryptkeeperVerifiableCredential = await deserializeCryptkeeperVerifiableCredential(
+      serializedCryptkeeperVerifiableCredential,
+    );
+
+    cryptkeeperVerifiableCredential.metadata.name = newVerifiableCredentialName;
+    cryptkeeperVerifiableCredentials.set(
+      verifiableCredentialHash,
+      serializeCryptkeeperVerifiableCredential(cryptkeeperVerifiableCredential),
+    );
+    await this.writeCryptkeeperVerifiableCredentials(cryptkeeperVerifiableCredentials);
+    await this.historyService.trackOperation(OperationType.RENAME_VERIFIABLE_CREDENTIAL, {});
+    await this.notificationService.create({
+      options: {
+        title: "Verifiable Credential renamed.",
+        message: `Renamed 1 Verifiable Credential.`,
+        iconUrl: browser.runtime.getURL("/icons/logo.png"),
+        type: "basic",
+      },
+    });
+
+    return true;
   };
 
   getAllVerifiableCredentials = async (): Promise<CryptkeeperVerifiableCredential[]> => {

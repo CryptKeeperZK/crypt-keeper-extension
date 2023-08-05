@@ -1,13 +1,11 @@
 import { VerifiableCredential } from "@cryptkeeperzk/types";
+import { ChangeEvent, FormEvent, MouseEvent as ReactMouseEvent, useCallback, useState } from "react";
+
 import { VerifiableCredentialMetadata } from "@src/types";
-import { useAppDispatch } from "@src/ui/ducks/hooks";
-import { ChangeEvent, FormEvent, MouseEvent, useCallback, useState } from "react";
 import { Icon } from "@src/ui/components/Icon";
 import { Input } from "@src/ui/components/Input";
 import { Menuable } from "@src/ui/components/Menuable";
 import { ellipsify } from "@src/util/account";
-import { redirectToNewTab } from "@src/util/browser";
-import { string } from "yup";
 
 import "./verifiableCredentialListItemStyles.scss";
 
@@ -39,7 +37,7 @@ export const VerifiableCredentialItem = ({
   }, [setIsRenaming]);
 
   const handleUpdateName = useCallback(
-    (event: FormEvent | MouseEvent) => {
+    (event: FormEvent | ReactMouseEvent) => {
       event.preventDefault();
       onRenameVerifiableCredential(metadata.hash, name).finally(() => {
         setIsRenaming(false);
@@ -60,9 +58,7 @@ export const VerifiableCredentialItem = ({
   const issuer =
     typeof verifiableCredential.issuer === "string"
       ? verifiableCredential.issuer
-      : verifiableCredential.issuer.id
-      ? verifiableCredential.issuer.id
-      : "unknown";
+      : verifiableCredential.issuer?.id || "unknown";
 
   return (
     <div key={metadata.hash} className="p-4 verifiable-credential-row">

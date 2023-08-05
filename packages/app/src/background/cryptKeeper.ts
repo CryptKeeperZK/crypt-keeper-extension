@@ -177,6 +177,16 @@ export default class CryptKeeperController {
       this.verifiableCredentialsService.addVerifiableCredential,
     );
     this.handler.add(
+      RPCAction.ADD_VERIFIABLE_CREDENTIAL_REQUEST,
+      this.lockService.ensure,
+      this.verifiableCredentialsService.addVerifiableCredentialRequest,
+    );
+    this.handler.add(
+      RPCAction.RENAME_VERIFIABLE_CREDENTIAL,
+      this.lockService.ensure,
+      this.verifiableCredentialsService.renameVerifiableCredential,
+    );
+    this.handler.add(
       RPCAction.GET_ALL_VERIFIABLE_CREDENTIALS,
       this.lockService.ensure,
       this.verifiableCredentialsService.getAllVerifiableCredentials,

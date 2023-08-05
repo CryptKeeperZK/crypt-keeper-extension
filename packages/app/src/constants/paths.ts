@@ -15,4 +15,5 @@ export enum Paths {
   CONNECT_IDENTITY = "/connect-identity",
   RECOVER = "/recover",
   RESET_PASSWORD = "/reset-password",
+  ADD_VERIFIABLE_CREDENTIAL = "/add-verifiable-credential",
 }

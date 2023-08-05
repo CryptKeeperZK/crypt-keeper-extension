@@ -1,4 +1,4 @@
-import { CredentialIssuer, CredentialProof, CredentialStatus, VerifiableCredential } from "@cryptkeeperzk/types";
+import { VerifiableCredential } from "@cryptkeeperzk/types";
 
 export interface VerifiableCredentialMetadata {
   name: string;
@@ -10,24 +10,11 @@ export interface CryptkeeperVerifiableCredential {
   metadata: VerifiableCredentialMetadata;
 }
 
-export interface FlattenedCredentialSubject {
-  id?: string;
-  claims: Record<string, string>;
+export interface IRenameVerifiableCredentialArgs {
+  verifiableCredentialHash: string;
+  newVerifiableCredentialName: string;
 }
 
-export interface FlattenedVerifiableCredential {
-  context: string[];
-  id?: string;
-  type: string[];
-  issuer: string | CredentialIssuer;
-  issuanceDate: Date;
-  expirationDate?: Date;
-  credentialSubject: FlattenedCredentialSubject;
-  credentialStatus?: CredentialStatus;
-  proof?: CredentialProof[];
-}
-
-export interface FlattenedCryptkeeperVerifiableCredential {
-  verifiableCredential: FlattenedVerifiableCredential;
-  metadata: VerifiableCredentialMetadata;
+export interface IDeleteVerifiableCredentialArgs {
+  verifiableCredentialHash: string;
 }
