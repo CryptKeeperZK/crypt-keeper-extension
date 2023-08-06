@@ -390,10 +390,10 @@ export class CryptKeeperInjectedProvider {
    * @param {string} serializedVerifiableCredential - The json string representation of the verifiable credential to add.
    * @returns {void}
    */
-  async addVerifiableCredential(serializedVerifiableCredential: string): Promise<void> {
-    return this.post({
+  async addVerifiableCredentialRequest(serializedVerifiableCredential: string): Promise<void> {
+    await this.post({
       method: RPCAction.ADD_VERIFIABLE_CREDENTIAL_REQUEST,
       payload: serializedVerifiableCredential,
-    }) as Promise<void>;
+    });
   }
 }

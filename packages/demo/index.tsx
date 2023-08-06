@@ -46,7 +46,7 @@ const App = () => {
     connectIdentity,
     genSemaphoreProof,
     genRLNProof,
-    addVerifiableCredential,
+    addVerifiableCredentialRequest,
   } = useCryptKeeper();
 
   useEffect(() => {
@@ -158,7 +158,7 @@ const App = () => {
       <div>
         <h2>Verifiable Credentials</h2>
 
-        <button data-testid="add-verifiable-credential" type="button" onClick={addVerifiableCredential}>
+        <button data-testid="add-verifiable-credential" type="button" onClick={addVerifiableCredentialRequest}>
           Add a Verifiable Credential
         </button>
       </div>

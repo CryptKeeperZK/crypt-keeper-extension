@@ -1,4 +1,5 @@
 import { useCallback } from "react";
+
 import { closePopup } from "@src/ui/ducks/app";
 import { useAppDispatch } from "@src/ui/ducks/hooks";
 import { addVerifiableCredential, rejectVerifiableCredentialRequest } from "@src/ui/ducks/verifiableCredentials";
@@ -6,7 +7,7 @@ import { addVerifiableCredential, rejectVerifiableCredentialRequest } from "@src
 export interface IUseAddVerifiableCredentialData {
   closeModal: () => void;
   serializedVerifiableCredential: string;
-  onApproveAddVerifiableCredential: () => Promise<void>;
+  onApproveAddVerifiableCredential: () => Promise<boolean>;
   onRejectAddVerifiableCredential: () => void;
 }
 
@@ -24,10 +25,10 @@ export const useAddVerifiableCredential = (): IUseAddVerifiableCredentialData =>
     dispatch(closePopup());
   }, [dispatch]);
 
-  const onApproveAddVerifiableCredential = useCallback(async () => {
-    await dispatch(addVerifiableCredential(serializedVerifiableCredential));
-    closeModal();
-  }, [dispatch, serializedVerifiableCredential, closeModal]);
+  const onApproveAddVerifiableCredential = useCallback(
+    async (): Promise<boolean> => dispatch(addVerifiableCredential(serializedVerifiableCredential)),
+    [dispatch, serializedVerifiableCredential, closeModal],
+  );
 
   const onRejectAddVerifiableCredential = useCallback(async () => {
     await dispatch(rejectVerifiableCredentialRequest(serializedVerifiableCredential));

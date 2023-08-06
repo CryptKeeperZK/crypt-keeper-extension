@@ -63,7 +63,7 @@ interface IUseCryptKeeperData {
   getConnectedIdentity: () => void;
   genSemaphoreProof: (proofType: MerkleProofType) => void;
   genRLNProof: (proofType: MerkleProofType) => void;
-  addVerifiableCredential: () => void;
+  addVerifiableCredentialRequest: () => Promise<void>;
 }
 
 export const useCryptKeeper = (): IUseCryptKeeperData => {
@@ -169,11 +169,11 @@ export const useCryptKeeper = (): IUseCryptKeeperData => {
       });
   };
 
-  const addVerifiableCredential = useCallback(async () => {
+  const addVerifiableCredentialRequest = useCallback(async () => {
     const mockVerifiableCredential = genMockVerifiableCredential();
     const verifiableCredentialJson = JSON.stringify(mockVerifiableCredential);
 
-    await client?.addVerifiableCredential(verifiableCredentialJson);
+    await client?.addVerifiableCredentialRequest(verifiableCredentialJson);
   }, [client]);
 
   const getConnectedIdentity = useCallback(async () => {
@@ -250,6 +250,6 @@ export const useCryptKeeper = (): IUseCryptKeeperData => {
     getConnectedIdentity,
     genSemaphoreProof,
     genRLNProof,
-    addVerifiableCredential,
+    addVerifiableCredentialRequest,
   };
 };

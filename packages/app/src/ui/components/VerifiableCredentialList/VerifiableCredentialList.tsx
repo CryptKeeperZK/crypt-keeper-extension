@@ -36,7 +36,6 @@ export const VerifiableCredentialsList = ({
 
   const onRenameVerifiableCredential = useCallback(
     async (verifiableCredentialHash: string, newVerifiableCredentialName: string) => {
-      console.log("onRenameVerifiableCredential", verifiableCredentialHash, newVerifiableCredentialName);
       await dispatch(
         renameVerifiableCredential({
           verifiableCredentialHash,

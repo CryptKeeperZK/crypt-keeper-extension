@@ -5,11 +5,11 @@ import { VerifiableCredentialMetadata } from "@src/types";
 import { Icon } from "@src/ui/components/Icon";
 import { Input } from "@src/ui/components/Input";
 import { Menuable } from "@src/ui/components/Menuable";
+import { useAppDispatch } from "@src/ui/ducks/hooks";
+import { fetchVerifiableCredentials } from "@src/ui/ducks/verifiableCredentials";
 import { ellipsify } from "@src/util/account";
 
 import "./verifiableCredentialListItemStyles.scss";
-import { useAppDispatch } from "@src/ui/ducks/hooks";
-import { fetchVerifiableCredentials } from "@src/ui/ducks/verifiableCredentials";
 
 export interface VerifiableCredentialItemProps {
   verifiableCredential: VerifiableCredential;
@@ -45,16 +45,13 @@ export const VerifiableCredentialItem = ({
 
   const handleUpdateName = useCallback(
     async (event: FormEvent | ReactMouseEvent) => {
-      console.log("handleUpdateName a", metadata.hash, name);
       event.preventDefault();
-      console.log("handleUpdateName", metadata.hash, name);
       await onRenameVerifiableCredential(metadata.hash, name).finally(() => {
-        console.log("handleUpdateName c", metadata.hash, name);
         setIsRenaming(false);
       });
       dispatch(fetchVerifiableCredentials());
     },
-    [metadata, name, onRenameVerifiableCredential, dispatch],
+    [metadata.hash, name, onRenameVerifiableCredential, dispatch],
   );
 
   const handleDeleteVerifiableCredential = useCallback(async () => {

@@ -55,6 +55,7 @@ export default class VerifiableCredentialsService implements IBackupable {
     });
   };
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   rejectVerifiableCredentialRequest = async (serializedVerifiableCredential: string): Promise<void> => {
     await this.historyService.trackOperation(OperationType.REJECT_VERIFIABLE_CREDENTIAL_REQUEST, {});
     await this.notificationService.create({
@@ -65,8 +66,6 @@ export default class VerifiableCredentialsService implements IBackupable {
         type: "basic",
       },
     });
-
-    return;
   };
 
   addVerifiableCredential = async (serializedVerifiableCredential: string): Promise<boolean> => {
@@ -91,7 +90,6 @@ export default class VerifiableCredentialsService implements IBackupable {
   renameVerifiableCredential = async (
     renameVerifiableCredentialArgs: IRenameVerifiableCredentialArgs,
   ): Promise<boolean> => {
-    console.log("renaming", renameVerifiableCredentialArgs);
     const { verifiableCredentialHash, newVerifiableCredentialName } = renameVerifiableCredentialArgs;
     if (!verifiableCredentialHash || !newVerifiableCredentialName) {
       return false;

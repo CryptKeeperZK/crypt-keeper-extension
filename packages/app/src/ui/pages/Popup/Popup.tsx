@@ -2,6 +2,7 @@ import { Navigate, RouteObject, useRoutes } from "react-router-dom";
 
 import { Paths } from "@src/constants";
 import ConfirmRequestModal from "@src/ui/components/ConfirmRequestModal";
+import AddVerifiableCredential from "@src/ui/pages/AddVerifiableCredential";
 import ConnectIdentity from "@src/ui/pages/ConnectIdentity";
 import CreateIdentity from "@src/ui/pages/CreateIdentity";
 import DownloadBackup from "@src/ui/pages/DownloadBackup";
@@ -16,7 +17,6 @@ import ResetPassword from "@src/ui/pages/ResetPassword";
 import RevealMnemonic from "@src/ui/pages/RevealMnemonic";
 import Settings from "@src/ui/pages/Settings";
 import UploadBackup from "@src/ui/pages/UploadBackup";
-import AddVerifiableCredential from "@src/ui/pages/AddVerifiableCredential";
 
 import "../../styles.scss";
 
