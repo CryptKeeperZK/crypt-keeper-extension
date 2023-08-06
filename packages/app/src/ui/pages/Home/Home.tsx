@@ -2,7 +2,7 @@ import classNames from "classnames";
 
 import { Header } from "@src/ui/components/Header";
 import { IdentityList } from "@src/ui/components/IdentityList";
-import { VerifiableCredentialsList } from "@src/ui/components/VerifiableCredentialList";
+import { VerifiableCredentialsList } from "@src/ui/components/VerifiableCredential";
 
 import { TabList, Info, ActivityList } from "./components";
 import "./home.scss";

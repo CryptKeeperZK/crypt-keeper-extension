@@ -10,6 +10,7 @@ import { IdentityData } from "@src/types";
 import { useAppDispatch } from "@src/ui/ducks/hooks";
 import { useIdentities, fetchIdentities, fetchHistory, useConnectedIdentity } from "@src/ui/ducks/identities";
 import { checkHostApproval } from "@src/ui/ducks/permissions";
+import { fetchVerifiableCredentials, useVerifiableCredentials } from "@src/ui/ducks/verifiableCredentials";
 import { useEthWallet } from "@src/ui/hooks/wallet";
 import { getLastActiveTabUrl } from "@src/util/browser";
 
@@ -66,6 +67,8 @@ describe("ui/pages/Home/useHome", () => {
     },
   ];
 
+  const defaultCredentials: string[] = ["mock-serialized-credential-1, mock-serialized-credential-2"];
+
   const defaultUrl = new URL("http://localhost:3000");
 
   beforeEach(() => {
@@ -82,6 +85,8 @@ describe("ui/pages/Home/useHome", () => {
     (useConnectedIdentity as jest.Mock).mockReturnValue(defaultIdentities[0]);
 
     (checkHostApproval as jest.Mock).mockReturnValue(true);
+
+    (useVerifiableCredentials as jest.Mock).mockReturnValue(defaultCredentials);
   });
 
   afterEach(() => {
@@ -93,9 +98,11 @@ describe("ui/pages/Home/useHome", () => {
 
     expect(result.current.address).toBe(defaultWalletHookData.address);
     expect(result.current.identities).toStrictEqual(defaultIdentities);
+    expect(result.current.serializedVerifiableCredentials).toStrictEqual(defaultCredentials);
     expect(fetchIdentities).toBeCalledTimes(1);
     expect(fetchHistory).toBeCalledTimes(1);
-    expect(mockDispatch).toBeCalledTimes(2);
+    expect(fetchVerifiableCredentials).toBeCalledTimes(1);
+    expect(mockDispatch).toBeCalledTimes(3);
   });
 
   test("should refresh connection status properly", async () => {
