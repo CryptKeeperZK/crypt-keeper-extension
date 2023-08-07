@@ -59,3 +59,42 @@ jobs:
         run: |
           git tag -f last-release
           git push origin last-release --force
+
+  build-chrome-extension:
+    needs: release
+
+    strategy:
+      fail-fast: false
+      matrix:
+        node-version: [18]
+
+    runs-on: ubuntu-22.04
+
+    steps:
+      - uses: actions/checkout@v3
+      - uses: pnpm/action-setup@v2
+        with:
+          version: latest
+
+      - uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: "pnpm"
+
+      - run: |-
+          pnpm install --frozen-lockfile --prefer-offline
+          pnpm install -g chrome-webstore-upload-cli
+
+      - name: Build artifact
+        run: |-
+          pnpm run build
+          zip -r chrome-extension-${{ github.ref }}.zip ./packanges/app/dist
+
+      - name: Upload artifact
+        run: |-
+          chrome-webstore-upload upload \\
+            --source chrome-extension-${{ github.ref }}.zip \\
+            --extension-id ${{ vars.EXTENSION_ID }} \\
+            --client-id ${{ secrets.CI_GOOGLE_CLIENT_ID }} \\
+            --client-secret ${{ secrets.CI_GOOGLE_CLIENT_SECRET }} \\
+            --refresh-token ${{ secrets.CI_GOOGLE_REFRESH_TOKEN }}
