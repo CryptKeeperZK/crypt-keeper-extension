@@ -1,0 +1,42 @@
+{
+  "name": "@cryptkeeperzk/providers",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "projectType": "library",
+  "targets": {
+    "build": {
+      "executor": "@nx/js:tsc",
+      "options": {
+        "main": "packages/providers/src/index.ts",
+        "tsConfig": "packages/providers/tsconfig.build.json",
+        "packageJson": "packages/providers/package.json",
+        "outputPath": "packages/providers/dist",
+        "clean": false
+      },
+      "outputs": ["{options.outputPath}"]
+    },
+    "version": {
+      "executor": "@jscutlery/semver:version",
+      "options": {
+        "preset": "conventional",
+        "trackDeps": true,
+        "push": true,
+        "noVerify": true,
+        "postTargets": ["@cryptkeeperzk/providers:npm", "@cryptkeeperzk/providers:github"]
+      }
+    },
+    "npm": {
+      "executor": "ngx-deploy-npm:deploy",
+      "options": {
+        "access": "public",
+        "dryRun": "${dryRun}"
+      }
+    },
+    "github": {
+      "executor": "@jscutlery/semver:github",
+      "options": {
+        "tag": "${tag}",
+        "notes": "${notes}"
+      }
+    }
+  }
+}

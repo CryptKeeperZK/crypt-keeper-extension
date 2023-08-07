@@ -1,6 +1,6 @@
 {
   "name": "@cryptkeeperzk/zk",
-  "version": "0.1.0",
+  "version": "0.1.0-beta.1",
   "description": "CryptKeeper extension zero-knowledge related functions",
   "main": "./dist/src/index.js",
   "types": "./dist/src/index.d.ts",

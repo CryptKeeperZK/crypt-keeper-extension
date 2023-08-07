@@ -1,0 +1,15 @@
+{
+  "name": "@cryptkeeperzk/eslint-config-base",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "targets": {
+    "version": {
+      "executor": "@jscutlery/semver:version",
+      "options": {
+        "preset": "conventional",
+        "trackDeps": true,
+        "push": true,
+        "noVerify": true
+      }
+    }
+  }
+}
