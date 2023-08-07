@@ -45,10 +45,10 @@ describe("background/services/crypto", () => {
 
   test("should check hmac properly", () => {
     expect(() => service.generateEncryptedHmac("text", "")).toThrow("Password is not provided");
-    expect(() => service.getAuthenticCiphertext("text", "")).toThrow("Password is not provided");
+    expect(() => service.getAuthenticBackup("text", "")).toThrow("Password is not provided");
 
     service.setPassword("password");
-    expect(() => service.getAuthenticCiphertext("text", "password")).toThrow("This ciphertext is not authentic");
+    expect(() => service.getAuthenticBackup("text", "password")).toThrow("This backup file is not authentic");
     expect(() => service.isAuthenticPassword("")).toThrow("Password doesn't match with current");
 
     fc.assert(
@@ -58,8 +58,8 @@ describe("background/services/crypto", () => {
         service.setPassword(password);
 
         const encrypted = service.generateEncryptedHmac(text, password);
-        const decrypted = service.getAuthenticCiphertext(encrypted, password);
-        const object = service.getAuthenticCiphertext({ key: encrypted }, password) as { key: string };
+        const decrypted = service.getAuthenticBackup(encrypted, password);
+        const object = service.getAuthenticBackup({ key: encrypted }, password) as { key: string };
 
         return decrypted === text && object.key === text;
       }),

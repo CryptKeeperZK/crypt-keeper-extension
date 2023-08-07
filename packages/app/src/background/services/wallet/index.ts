@@ -10,7 +10,7 @@ import { setSelectedAccount } from "@src/ui/ducks/app";
 import pushMessage from "@src/util/pushMessage";
 
 import type { IAccount } from "./types";
-import type { IBackupable } from "../backup";
+import type { BackupData, IBackupable } from "../backup";
 
 const ACCOUNT_STORAGE_DB_KEY = "@ACCOUNT-STORAGE@";
 const MNEMONIC_STORAGE_DB_KEY = "@MNEMONIC-STORAGE@";
@@ -183,6 +183,27 @@ export default class WalletService implements IBackupable {
     await this.accountStorage.clear();
   };
 
+  downloadStorage = async (): Promise<BackupData | null> => {
+    const accounts = await this.accountStorage.get<string>();
+    const mnemonic = await this.mnemonicStorage.get<string>();
+
+    if (!accounts || !mnemonic) {
+      return null;
+    }
+
+    return { accounts, mnemonic };
+  };
+
+  restoreStorage = async (data: BackupData | null): Promise<void> => {
+    if (typeof data !== "object") {
+      throw new Error("Incorrect restore format for wallet");
+    }
+
+    // Note: undefined won't rewrite values and keeps the same data
+    await this.mnemonicStorage.set(data?.mnemonic ?? null);
+    await this.accountStorage.set(data?.accounts ?? null);
+  };
+
   downloadEncryptedStorage = async (backupPassword: string): Promise<Record<string, string> | null> => {
     const accountsEncryptedData = await this.accountStorage.get<string>();
     const mnemonicEncryptedData = await this.mnemonicStorage.get<string>();
@@ -202,15 +223,12 @@ export default class WalletService implements IBackupable {
     return { accounts, mnemonic };
   };
 
-  uploadEncryptedStorage = async (
-    backupEncryptedData: string | Record<string, string>,
-    backupPassword: string,
-  ): Promise<void> => {
+  uploadEncryptedStorage = async (backupEncryptedData: BackupData, backupPassword: string): Promise<void> => {
     if (!backupEncryptedData) {
       return;
     }
 
-    const backup = this.cryptoService.getAuthenticCiphertext(backupEncryptedData, backupPassword) as {
+    const backup = this.cryptoService.getAuthenticBackup(backupEncryptedData, backupPassword) as {
       accounts: string;
       mnemonic: string;
     };

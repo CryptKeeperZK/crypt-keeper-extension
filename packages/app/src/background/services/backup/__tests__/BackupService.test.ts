@@ -18,6 +18,7 @@ jest.mock("@src/background/services/notification", (): unknown => ({
 jest.mock("@src/background/services/crypto", (): unknown => ({
   getInstance: jest.fn(() => ({
     isAuthenticPassword: jest.fn(),
+    clear: jest.fn(),
   })),
 }));
 
@@ -27,10 +28,12 @@ jest.mock("@src/background/controllers/browserUtils", (): unknown => ({
   })),
 }));
 
+const mockGetInitialization = jest.fn(() => Promise.resolve(InitializationStep.MNEMONIC));
+
 jest.mock("@src/background/services/misc", (): unknown => ({
   ...jest.requireActual("@src/background/services/misc"),
   getInstance: jest.fn(() => ({
-    getInitialization: jest.fn(() => InitializationStep.MNEMONIC),
+    getInitialization: mockGetInitialization,
     setInitialization: jest.fn(),
   })),
 }));
@@ -41,11 +44,15 @@ describe("background/services/backup/BackupService", () => {
   const defaultBackupable: IBackupable = {
     downloadEncryptedStorage: jest.fn(() => Promise.resolve("encrypted")),
     uploadEncryptedStorage: jest.fn(),
+    downloadStorage: jest.fn(),
+    restoreStorage: jest.fn(),
   };
 
   const nullBackupable: IBackupable = {
     downloadEncryptedStorage: jest.fn(() => Promise.resolve(null)),
     uploadEncryptedStorage: jest.fn(),
+    downloadStorage: jest.fn(),
+    restoreStorage: jest.fn(),
   };
 
   const defaultPasswords = {
@@ -53,8 +60,13 @@ describe("background/services/backup/BackupService", () => {
     backupPassword: "password",
   };
 
+  beforeEach(() => {
+    mockGetInitialization.mockResolvedValue(InitializationStep.MNEMONIC);
+  });
+
   afterEach(() => {
     backupService.clear();
+    jest.clearAllMocks();
   });
 
   test("should create upload backup request properly", async () => {
@@ -143,14 +155,44 @@ describe("background/services/backup/BackupService", () => {
       "File content is corrupted",
     );
 
+    backupService.getBackupables().forEach((service) => {
+      expect(service.downloadStorage).toBeCalledTimes(0);
+      expect(service.restoreStorage).toBeCalledTimes(0);
+    });
+
     backupService
       .add(BackupableServices.LOCK, defaultBackupable)
       .add(BackupableServices.WALLET, defaultBackupable)
       .add(BackupableServices.APPROVAL, {
         downloadEncryptedStorage: jest.fn(),
         uploadEncryptedStorage: jest.fn(() => Promise.reject(new Error("error"))),
+        downloadStorage: jest.fn(),
+        restoreStorage: jest.fn(),
       });
 
     await expect(backupService.upload({ content: fileContent, ...defaultPasswords })).rejects.toThrow("error");
+  });
+
+  test("should rollback to previous storage data properly", async () => {
+    mockGetInitialization.mockResolvedValue(InitializationStep.NEW);
+
+    const fileContent = JSON.stringify({ lock: "encrypted", wallet: "encrypted", approval: "encrypted" }, null, 4);
+
+    backupService
+      .add(BackupableServices.LOCK, { ...defaultBackupable, downloadStorage: jest.fn() })
+      .add(BackupableServices.WALLET, { ...defaultBackupable, restoreStorage: jest.fn() })
+      .add(BackupableServices.APPROVAL, {
+        downloadEncryptedStorage: jest.fn(),
+        uploadEncryptedStorage: jest.fn(() => Promise.reject(new Error("error"))),
+        downloadStorage: jest.fn(),
+        restoreStorage: jest.fn(),
+      });
+
+    await expect(backupService.upload({ content: fileContent, ...defaultPasswords })).rejects.toThrow("error");
+
+    backupService.getBackupables().forEach((service) => {
+      expect(service.downloadStorage).toBeCalledTimes(1);
+      expect(service.restoreStorage).toBeCalledTimes(1);
+    });
   });
 });

@@ -1,0 +1,10 @@
+{
+  "lock": "invalid",
+  "wallet": {
+    "accounts": "invalid",
+    "mnemonic": "invalid"
+  },
+  "approval": "invalid",
+  "identity": "invalid",
+  "credentials": "invalid"
+}

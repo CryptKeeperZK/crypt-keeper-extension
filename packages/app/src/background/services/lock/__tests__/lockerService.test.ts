@@ -22,7 +22,7 @@ jest.mock("@src/background/services/crypto", (): unknown => ({
     isAuthenticPassword: jest.fn(() => true),
     clear: jest.fn(),
     generateEncryptedHmac: jest.fn(() => "encrypted"),
-    getAuthenticCiphertext: jest.fn((encrypted: string | Record<string, string>) => encrypted),
+    getAuthenticBackup: jest.fn((encrypted: string | Record<string, string>) => encrypted),
   })),
 }));
 
@@ -44,6 +44,7 @@ jest.mock("@src/background/services/wallet", (): unknown => ({
 
 jest.mock("@src/background/services/history", (): unknown => ({
   getInstance: jest.fn(() => ({
+    loadSettings: jest.fn(),
     trackOperation: jest.fn(),
   })),
 }));
@@ -253,6 +254,29 @@ describe("background/services/locker", () => {
       await expect(lockService.uploadEncryptedStorage({}, "password")).rejects.toThrow(
         "Incorrect backup format for password",
       );
+    });
+
+    test("should download storage properly", async () => {
+      const [storage] = (SimpleStorage as jest.Mock).mock.instances as [MockStorage];
+      storage.get.mockClear();
+
+      await lockService.downloadStorage();
+
+      expect(storage.get).toBeCalledTimes(1);
+    });
+
+    test("should restore storage properly", async () => {
+      const [storage] = (SimpleStorage as jest.Mock).mock.instances as [MockStorage];
+      storage.set.mockClear();
+
+      await lockService.restoreStorage("storage");
+
+      expect(storage.set).toBeCalledTimes(1);
+      expect(storage.set).toBeCalledWith("storage");
+    });
+
+    test("should throw error when trying to restore incorrect data", async () => {
+      await expect(lockService.restoreStorage({})).rejects.toThrow("Incorrect restore format for password");
     });
   });
 });

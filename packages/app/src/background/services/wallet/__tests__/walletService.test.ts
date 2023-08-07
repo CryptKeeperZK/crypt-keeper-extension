@@ -49,7 +49,7 @@ jest.mock("@src/background/services/crypto", (): unknown => ({
     encrypt: jest.fn((arg: string) => mockCryptoResponses[arg] ?? mockSerializedAccounts),
     decrypt: jest.fn((arg: string) => mockCryptoResponses[arg] ?? mockSerializedAccounts),
     generateEncryptedHmac: jest.fn(() => mockBackup),
-    getAuthenticCiphertext: jest.fn((encrypted: string | Record<string, string>) =>
+    getAuthenticBackup: jest.fn((encrypted: string | Record<string, string>) =>
       typeof encrypted === "string" ? encrypted : mockBackup,
     ),
     setMnemonic: jest.fn(),
@@ -383,6 +383,63 @@ describe("background/services/wallet", () => {
       await expect(walletService.uploadEncryptedStorage("backup", "password")).rejects.toThrow(
         "Incorrect backup format for wallet",
       );
+    });
+
+    test("should download storage properly", async () => {
+      const [accountsStorage, mnemonicStorage] = (SimpleStorage as jest.Mock).mock.instances as [
+        MockStorage,
+        MockStorage,
+      ];
+
+      await walletService.downloadStorage();
+
+      expect(accountsStorage.get).toBeCalledTimes(1);
+      expect(mnemonicStorage.get).toBeCalledTimes(1);
+    });
+
+    test("should return null if storage is empty", async () => {
+      const [accountsStorage, mnemonicStorage] = (SimpleStorage as jest.Mock).mock.instances as [
+        MockStorage,
+        MockStorage,
+      ];
+      accountsStorage.get.mockResolvedValue(null);
+      mnemonicStorage.get.mockResolvedValue(null);
+
+      const result = await walletService.downloadStorage();
+
+      expect(result).toBeNull();
+    });
+
+    test("should restore storage properly", async () => {
+      const [accountStorage, mnemonicStorage] = (SimpleStorage as jest.Mock).mock.instances as [
+        MockStorage,
+        MockStorage,
+      ];
+
+      await walletService.restoreStorage({ accounts: "accounts", mnemonic: "mnemonic" });
+
+      expect(mnemonicStorage.set).toBeCalledTimes(1);
+      expect(mnemonicStorage.set).toBeCalledWith("mnemonic");
+      expect(accountStorage.set).toBeCalledTimes(1);
+      expect(accountStorage.set).toBeCalledWith("accounts");
+    });
+
+    test("should restore empty storage properly", async () => {
+      const [accountStorage, mnemonicStorage] = (SimpleStorage as jest.Mock).mock.instances as [
+        MockStorage,
+        MockStorage,
+      ];
+
+      await walletService.restoreStorage(null);
+
+      expect(mnemonicStorage.set).toBeCalledTimes(1);
+      expect(mnemonicStorage.set).toBeCalledWith(null);
+      expect(accountStorage.set).toBeCalledTimes(1);
+      expect(accountStorage.set).toBeCalledWith(null);
+    });
+
+    test("should throw error when trying to restore incorrect data", async () => {
+      await expect(walletService.restoreStorage("")).rejects.toThrow("Incorrect restore format for wallet");
     });
   });
 });

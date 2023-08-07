@@ -23,10 +23,6 @@ const DEFAULT_VERIFIABLE_CREDENTIAL_NAME = "Verifiable Credential";
 export function serializeCryptkeeperVerifiableCredential(
   cryptkeeperVerifiableCredential: CryptkeeperVerifiableCredential,
 ): string {
-  if (!cryptkeeperVerifiableCredential) {
-    throw new Error("Cryptkeeper Verifiable Credential is not provided!");
-  }
-
   return JSON.stringify({
     verifiableCredential: serializeVerifiableCredential(cryptkeeperVerifiableCredential.verifiableCredential),
     metadata: cryptkeeperVerifiableCredential.metadata,
@@ -42,7 +38,7 @@ export async function deserializeCryptkeeperVerifiableCredential(
   serializedCryptkeeperVerifiableCredential: string,
 ): Promise<CryptkeeperVerifiableCredential> {
   if (!serializedCryptkeeperVerifiableCredential) {
-    throw new Error("Serialized Cryptkeeper Verifiable Credential is not provided!");
+    throw new Error("Serialized Cryptkeeper Verifiable Credential is not provided");
   }
 
   const parsedCryptkeeperVerifiableCredential = JSON.parse(serializedCryptkeeperVerifiableCredential) as {
@@ -62,13 +58,8 @@ export async function deserializeCryptkeeperVerifiableCredential(
  * Serializes a VerifiableCredential object into a JSON string.
  * @param verifiableCredential An object representing a VerifiableCredential.
  * @returns A string representing a VerifiableCredential.
- * @throws Error if the VerifiableCredential is not provided.
  */
 export function serializeVerifiableCredential(verifiableCredential: VerifiableCredential): string {
-  if (!verifiableCredential) {
-    throw new Error("Verifiable Credential is not provided!");
-  }
-
   return stringify(verifiableCredential);
 }
 
@@ -81,10 +72,10 @@ export async function deserializeVerifiableCredential(
   serializedVerifiableCredential: string,
 ): Promise<VerifiableCredential> {
   if (!serializedVerifiableCredential) {
-    throw new Error("Serialized Verifiable Credential is not provided!");
+    throw new Error("Serialized Verifiable Credential is not provided");
   }
 
-  const deserializedVerifiableCredential = JSON.parse(serializedVerifiableCredential) as Record<string, unknown>;
+  const deserializedVerifiableCredential = JSON.parse(serializedVerifiableCredential) as VerifiableCredential;
 
   return validateVerifiableCredential(deserializedVerifiableCredential);
 }
@@ -116,24 +107,21 @@ claimValueSchema = yup
 
     if (Array.isArray(value)) {
       const validationResults = await Promise.all(
-        value.map(async (item) => {
-          try {
-            await claimValueSchema.validate(item);
-            return true;
-          } catch (error) {
-            return false;
-          }
-        }),
+        value.map(async (item) =>
+          claimValueSchema
+            .validate(item)
+            .then(() => true)
+            .catch(() => false),
+        ),
       );
+
       return validationResults.every((result) => result);
     }
 
-    try {
-      await claimValueMapSchema.validate(value);
-      return true;
-    } catch (error) {
-      return false;
-    }
+    return claimValueMapSchema
+      .validate(value)
+      .then(() => true)
+      .catch(() => false);
   });
 
 const credentialSubjectSchema: yup.Schema<CredentialSubject> = yup.object({
@@ -171,12 +159,10 @@ const verifiableCredentialSchema: yup.Schema<VerifiableCredential> = yup.object(
         return true;
       }
 
-      try {
-        await credentialIssuerSchema.validate(value);
-        return true;
-      } catch (error) {
-        return false;
-      }
+      return credentialIssuerSchema
+        .validate(value)
+        .then(() => true)
+        .catch(() => false);
     }),
   issuanceDate: yup.date().transform(parseDate).required(),
   expirationDate: yup.date().transform(parseDate).optional(),
@@ -196,7 +182,9 @@ const verifiableCredentialSchema: yup.Schema<VerifiableCredential> = yup.object(
  * @param verifiableCredential An object representing a VerifiableCredential.
  * @returns The Verifiable Credential if the object is a valid VerifiableCredential, otherwise throws an error.
  */
-export async function validateVerifiableCredential(verifiableCredential: object): Promise<VerifiableCredential> {
+export async function validateVerifiableCredential<T extends VerifiableCredential>(
+  verifiableCredential: T,
+): Promise<VerifiableCredential> {
   return verifiableCredentialSchema.validate(verifiableCredential);
 }
 
@@ -223,7 +211,7 @@ export function generateInitialMetadataForVerifiableCredential(
   };
 }
 
-function parseDate(value: string, originalValue: string): Date | string {
+function parseDate(_: string, originalValue: string): Date | string {
   const date = new Date(originalValue);
   return Number.isNaN(date.getTime()) ? originalValue : date;
 }

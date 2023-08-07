@@ -153,11 +153,6 @@ export const fetchHistory = (): TypedThunk<Promise<void>> => async (dispatch) =>
   dispatch(setSettings(settings));
 };
 
-export const getHistory = (): TypedThunk => async (dispatch) => {
-  const operations = await postMessage<Operation[]>({ method: RPCAction.GET_IDENTITY_HISTORY });
-  dispatch(setOperations(operations));
-};
-
 export const deleteHistoryOperation =
   (id: string): TypedThunk<Promise<void>> =>
   async (dispatch) => {

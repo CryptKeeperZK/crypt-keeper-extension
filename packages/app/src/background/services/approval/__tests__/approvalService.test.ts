@@ -11,7 +11,7 @@ jest.mock("@src/background/services/crypto", (): unknown => ({
     encrypt: jest.fn(() => mockSerializedApprovals),
     decrypt: jest.fn(() => mockSerializedApprovals),
     generateEncryptedHmac: jest.fn(() => "encrypted"),
-    getAuthenticCiphertext: jest.fn((encrypted: string | Record<string, string>) => encrypted),
+    getAuthenticBackup: jest.fn((encrypted: string | Record<string, string>) => encrypted),
   })),
 }));
 
@@ -219,6 +219,27 @@ describe("background/services/approval", () => {
       await expect(approvalService.uploadEncryptedStorage({}, "password")).rejects.toThrow(
         "Incorrect backup format for approvals",
       );
+    });
+
+    test("should download storage properly", async () => {
+      const [storage] = (SimpleStorage as jest.Mock).mock.instances as [MockStorage];
+
+      await approvalService.downloadStorage();
+
+      expect(storage.get).toBeCalledTimes(1);
+    });
+
+    test("should restore storage properly", async () => {
+      const [storage] = (SimpleStorage as jest.Mock).mock.instances as [MockStorage];
+
+      await approvalService.restoreStorage("storage");
+
+      expect(storage.set).toBeCalledTimes(1);
+      expect(storage.set).toBeCalledWith("storage");
+    });
+
+    test("should throw error when trying to restore incorrect data", async () => {
+      await expect(approvalService.restoreStorage({})).rejects.toThrow("Incorrect restore format for approvals");
     });
   });
 });

@@ -37,7 +37,7 @@ jest.mock("@src/background/services/crypto", (): unknown => ({
         : mockSerializedDefaultIdentities,
     ),
     generateEncryptedHmac: jest.fn(() => "encrypted"),
-    getAuthenticCiphertext: jest.fn((encrypted: string | Record<string, string>) => encrypted),
+    getAuthenticBackup: jest.fn((encrypted: string | Record<string, string>) => encrypted),
   })),
 }));
 
@@ -578,6 +578,27 @@ describe("background/services/zkIdentity", () => {
       await expect(zkIdentityService.uploadEncryptedStorage({}, "password")).rejects.toThrow(
         "Incorrect backup format for identities",
       );
+    });
+
+    test("should download storage properly", async () => {
+      const [storage] = (SimpleStorage as jest.Mock).mock.instances as [MockStorage];
+
+      await zkIdentityService.downloadStorage();
+
+      expect(storage.get).toBeCalledTimes(1);
+    });
+
+    test("should restore storage properly", async () => {
+      const [storage] = (SimpleStorage as jest.Mock).mock.instances as [MockStorage];
+
+      await zkIdentityService.restoreStorage("storage");
+
+      expect(storage.set).toBeCalledTimes(1);
+      expect(storage.set).toBeCalledWith("storage");
+    });
+
+    test("should throw error when trying to restore incorrect data", async () => {
+      await expect(zkIdentityService.restoreStorage({})).rejects.toThrow("Incorrect restore format for identities");
     });
   });
 });

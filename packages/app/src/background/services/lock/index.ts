@@ -11,7 +11,7 @@ import { setStatus } from "@src/ui/ducks/app";
 import pushMessage from "@src/util/pushMessage";
 
 import type { AuthenticityCheckData } from "./types";
-import type { IBackupable } from "@src/background/services/backup";
+import type { BackupData, IBackupable } from "@src/background/services/backup";
 
 const PASSWORD_DB_KEY = "@password@";
 
@@ -64,7 +64,7 @@ export default class LockerService implements IBackupable {
   /**
    *  This method is called when install event occurs
    */
-  setupPassword = async (password: string): Promise<void> => {
+  setupPassword = async (password: string, notify = true): Promise<void> => {
     const encryptedPassword = await this.passwordStorage.get();
 
     if (encryptedPassword) {
@@ -73,7 +73,7 @@ export default class LockerService implements IBackupable {
 
     await this.writePassword(password);
     await this.miscStorage.setInitialization({ initializationStep: InitializationStep.PASSWORD });
-    await this.unlock(password);
+    await this.unlock(password, notify);
   };
 
   resetPassword = async ({ mnemonic, password }: ISecretArgs): Promise<void> => {
@@ -82,6 +82,7 @@ export default class LockerService implements IBackupable {
     this.writePassword(password);
     await this.unlock(password);
 
+    await this.historyService.loadSettings();
     await this.historyService.trackOperation(OperationType.RESET_PASSWORD, {});
     await this.notificationService.create({
       options: {
@@ -130,7 +131,7 @@ export default class LockerService implements IBackupable {
     return true;
   };
 
-  unlock = async (password: string): Promise<boolean> => {
+  unlock = async (password: string, notify = true): Promise<boolean> => {
     if (this.isUnlocked) {
       return true;
     }
@@ -146,7 +147,11 @@ export default class LockerService implements IBackupable {
 
         this.isUnlocked = true;
       })
-      .then(() => this.notifyStatusChange())
+      .then(() => {
+        if (notify) {
+          this.notifyStatusChange();
+        }
+      })
       .then(this.onUnlocked)
       .catch((error) => {
         this.cryptoService.clear();
@@ -155,6 +160,16 @@ export default class LockerService implements IBackupable {
       });
 
     return true;
+  };
+
+  downloadStorage = (): Promise<string | null> => this.passwordStorage.get<string>();
+
+  restoreStorage = async (data: BackupData | null): Promise<void> => {
+    if (data && typeof data !== "string") {
+      throw new Error("Incorrect restore format for password");
+    }
+
+    await this.passwordStorage.set(data);
   };
 
   downloadEncryptedStorage = async (backupPassword: string): Promise<string | null> => {
@@ -170,10 +185,7 @@ export default class LockerService implements IBackupable {
     return this.cryptoService.generateEncryptedHmac(encryptedBackup, backupPassword);
   };
 
-  uploadEncryptedStorage = async (
-    backupEncryptedData: string | Record<string, string>,
-    backupPassword: string,
-  ): Promise<void> => {
+  uploadEncryptedStorage = async (backupEncryptedData: BackupData, backupPassword: string): Promise<void> => {
     const isNewOnboarding = await this.isNewOnboarding();
     const canProcessBackup = isNewOnboarding && backupEncryptedData;
 
@@ -181,13 +193,13 @@ export default class LockerService implements IBackupable {
       return;
     }
 
-    const authenticBackupCiphertext = this.cryptoService.getAuthenticCiphertext(backupEncryptedData, backupPassword);
+    const authenticBackupCiphertext = this.cryptoService.getAuthenticBackup(backupEncryptedData, backupPassword);
 
     if (typeof authenticBackupCiphertext !== "string") {
       throw new Error("Incorrect backup format for password");
     }
 
-    await this.setupPassword(backupPassword);
+    await this.setupPassword(backupPassword, false);
   };
 
   private isAuthentic = async (password: string, isBackupAvaiable: boolean): Promise<AuthenticityCheckData> => {
