@@ -16,6 +16,7 @@ env:
   PULSECHAIN_API_KEY: ${{ secrets.PULSECHAIN_API_KEY }}
   TARGET: "chrome"
   DEMO_URL: ${{ vars.DEMO_URL }}
+  EXTENSION_VERSION: ""
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -86,11 +87,14 @@ jobs:
           pnpm install -g chrome-webstore-upload-cli
 
       - name: Build artifact
+        env:
+          TARGET: "chrome"
         run: |-
           pnpm run build
-          zip -r chrome-extension-${{ github.ref }}.zip ./packanges/app/dist
+          zip -r cryptkeeper-extension-${{ github.ref }}.zip ./packanges/app/dist
+          echo "EXTENSION_VERSION=$(node -e "console.log(require('./packages/app/package.json').version)")" >> $GITHUB_ENV
 
-      - name: Upload artifact
+      - name: Upload artifact to chrome store
         run: |-
           chrome-webstore-upload upload \\
             --source chrome-extension-${{ github.ref }}.zip \\
@@ -98,3 +102,8 @@ jobs:
             --client-id ${{ secrets.CI_GOOGLE_CLIENT_ID }} \\
             --client-secret ${{ secrets.CI_GOOGLE_CLIENT_SECRET }} \\
             --refresh-token ${{ secrets.CI_GOOGLE_REFRESH_TOKEN }}
+
+      - uses: actions/upload-artifact@v3
+        with:
+          name: cryptkeeper-extension-v${{ env.EXTENSION_VERSION }}
+          path: ./cryptkeeper-extension-${{ github.ref }}.zip
