@@ -20,6 +20,7 @@ env:
   PULSECHAIN_API_KEY: ${{ secrets.PULSECHAIN_API_KEY }}
   TARGET: "chrome"
   DEMO_URL: ${{ vars.DEMO_URL }}
+  MANIFEST_VERSION: 3
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}

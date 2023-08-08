@@ -1,0 +1,71 @@
+name: Publish firefox extension
+
+on:
+  workflow_dispatch:
+  release:
+    types: [published]
+
+env:
+  CRYPTKEEPER_DEBUG: false
+  INTERREP_IDENTITY: false
+  USER_MNEMONIC: false
+  E2E: false
+  METAMASK_EXTENSION_ID: "webextension@metamask.io"
+  METAMASK_VERSION: "10.28.1"
+  INFURA_API_KEY: ${{ secrets.INFURA_API_KEY }}
+  ALCHEMY_API_KEY: ${{ secrets.ALCHEMY_API_KEY }}
+  FREIGHT_TRUST_NETWORK: ${{ secrets.FREIGHT_TRUST_NETWORK }}
+  PULSECHAIN_API_KEY: ${{ secrets.PULSECHAIN_API_KEY }}
+  TARGET: "firefox"
+  DEMO_URL: ${{ vars.DEMO_URL }}
+  EXTENSION_VERSION: ""
+  MANIFEST_VERSION: 2
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  publish-firefox-extension:
+    strategy:
+      fail-fast: false
+      matrix:
+        node-version: [18]
+
+    runs-on: ubuntu-22.04
+
+    steps:
+      - uses: actions/checkout@v3
+      - uses: pnpm/action-setup@v2
+        with:
+          version: latest
+
+      - uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: "pnpm"
+
+      - run: |-
+          pnpm install --frozen-lockfile --prefer-offline
+          pnpm install -g web-ext-submit
+
+      - name: Get extension version
+        run: |-
+          echo "EXTENSION_VERSION=$(node -e "console.log(require('./packages/app/package.json').version)")" >> $GITHUB_ENV
+
+      - name: Build firefox artifact
+        env:
+          TARGET: "firefox"
+          MANIFEST_VERSION: 2
+        run: |-
+          pnpm run build
+          zip -r cryptkeeper-firefox-extension-${{ github.ref }}.zip ./packanges/app/dist
+
+      - name: Upload artifact to firefox store
+        run: |-
+          web-ext-submit --api-key=${{ secrets.WEB_EXT_API_KEY }} --api-secret=${{ secrets.WEB_EXT_API_SECRET }}
+
+      - uses: actions/upload-artifact@v3
+        with:
+          name: cryptkeeper-firefox-extension-v${{ env.EXTENSION_VERSION }}
+          path: ./cryptkeeper-firefox-extension-${{ github.ref }}.zip
