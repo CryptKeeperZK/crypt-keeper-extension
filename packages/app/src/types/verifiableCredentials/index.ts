@@ -10,6 +10,11 @@ export interface CryptkeeperVerifiableCredential {
   metadata: VerifiableCredentialMetadata;
 }
 
+export interface IAddVerifiableCredentialArgs {
+  serializedVerifiableCredential: string;
+  verifiableCredentialName: string;
+}
+
 export interface IRenameVerifiableCredentialArgs {
   verifiableCredentialHash: string;
   newVerifiableCredentialName: string;

@@ -7,7 +7,7 @@ import { addVerifiableCredential, rejectVerifiableCredentialRequest } from "@src
 export interface IUseAddVerifiableCredentialData {
   closeModal: () => void;
   serializedVerifiableCredential: string;
-  onApproveAddVerifiableCredential: () => Promise<boolean>;
+  onApproveAddVerifiableCredential: (verifiableCredentialName: string) => Promise<boolean>;
   onRejectAddVerifiableCredential: () => void;
 }
 
@@ -26,12 +26,13 @@ export const useAddVerifiableCredential = (): IUseAddVerifiableCredentialData =>
   }, [dispatch]);
 
   const onApproveAddVerifiableCredential = useCallback(
-    async (): Promise<boolean> => dispatch(addVerifiableCredential(serializedVerifiableCredential)),
-    [dispatch, serializedVerifiableCredential, closeModal],
+    async (verifiableCredentialName: string): Promise<boolean> =>
+      dispatch(addVerifiableCredential(serializedVerifiableCredential, verifiableCredentialName)),
+    [dispatch, serializedVerifiableCredential],
   );
 
   const onRejectAddVerifiableCredential = useCallback(async () => {
-    await dispatch(rejectVerifiableCredentialRequest(serializedVerifiableCredential));
+    await dispatch(rejectVerifiableCredentialRequest());
     closeModal();
   }, [dispatch, serializedVerifiableCredential, closeModal]);
 

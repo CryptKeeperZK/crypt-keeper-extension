@@ -26,6 +26,7 @@ interface MockStorage {
 }
 
 describe("background/services/credentials", () => {
+  const defaultCredentialName = "Verifiable Credential";
   const exampleCredential: VerifiableCredential = {
     context: ["https://www.w3.org/2018/credentials/v1"],
     id: "did:example:123",
@@ -40,7 +41,10 @@ describe("background/services/credentials", () => {
     },
   };
   const exampleCredentialString = serializeVerifiableCredential(exampleCredential);
-  const exampleCredentialMetadata = generateInitialMetadataForVerifiableCredential(exampleCredential);
+  const exampleCredentialMetadata = generateInitialMetadataForVerifiableCredential(
+    exampleCredential,
+    defaultCredentialName,
+  );
   const exampleCredentialHash = exampleCredentialMetadata.hash;
   const exampleCryptkeeperCredential: CryptkeeperVerifiableCredential = {
     verifiableCredential: exampleCredential,
@@ -62,7 +66,10 @@ describe("background/services/credentials", () => {
     },
   };
   const exampleCredentialStringTwo = serializeVerifiableCredential(exampleCredentialTwo);
-  const exampleCredentialMetadataTwo = generateInitialMetadataForVerifiableCredential(exampleCredentialTwo);
+  const exampleCredentialMetadataTwo = generateInitialMetadataForVerifiableCredential(
+    exampleCredentialTwo,
+    defaultCredentialName,
+  );
   const exampleCredentialHashTwo = exampleCredentialMetadataTwo.hash;
   const exampleCryptkeeperCredentialTwo: CryptkeeperVerifiableCredential = {
     verifiableCredential: exampleCredentialTwo,
@@ -101,16 +108,23 @@ describe("background/services/credentials", () => {
       credentialsStorage.get.mockReturnValue(undefined);
       credentialsStorage.set.mockReturnValue(undefined);
 
-      const successfullyInsertedCredential = await verifiableCredentialsService.addVerifiableCredential(
-        exampleCredentialString,
-      );
+      const successfullyInsertedCredential = await verifiableCredentialsService.addVerifiableCredential({
+        serializedVerifiableCredential: exampleCredentialString,
+        verifiableCredentialName: defaultCredentialName,
+      });
 
       expect(successfullyInsertedCredential).toBe(true);
     });
 
     test("should add and retrieve a verifiable credential", async () => {
-      await verifiableCredentialsService.addVerifiableCredential(exampleCredentialString);
-      await verifiableCredentialsService.addVerifiableCredential(exampleCredentialStringTwo);
+      await verifiableCredentialsService.addVerifiableCredential({
+        serializedVerifiableCredential: exampleCredentialString,
+        verifiableCredentialName: defaultCredentialName,
+      });
+      await verifiableCredentialsService.addVerifiableCredential({
+        serializedVerifiableCredential: exampleCredentialStringTwo,
+        verifiableCredentialName: defaultCredentialName,
+      });
       const verifiableCredentials = await verifiableCredentialsService.getAllVerifiableCredentials();
 
       expect(verifiableCredentials.length).toBe(2);
@@ -131,9 +145,10 @@ describe("background/services/credentials", () => {
     });
 
     test("should not add a verifiable credential with an invalid format", async () => {
-      const successfullyInsertedCredential = await verifiableCredentialsService.addVerifiableCredential(
-        "invalid credential",
-      );
+      const successfullyInsertedCredential = await verifiableCredentialsService.addVerifiableCredential({
+        serializedVerifiableCredential: "invalid credential",
+        verifiableCredentialName: "test name",
+      });
 
       expect(successfullyInsertedCredential).toBe(false);
     });

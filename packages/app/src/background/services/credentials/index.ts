@@ -6,7 +6,12 @@ import HistoryService from "@src/background/services/history";
 import NotificationService from "@src/background/services/notification";
 import SimpleStorage from "@src/background/services/storage";
 import { Paths } from "@src/constants";
-import { OperationType, CryptkeeperVerifiableCredential, IRenameVerifiableCredentialArgs } from "@src/types";
+import {
+  OperationType,
+  CryptkeeperVerifiableCredential,
+  IRenameVerifiableCredentialArgs,
+  IAddVerifiableCredentialArgs,
+} from "@src/types";
 
 import type { BackupData, IBackupable } from "@src/background/services/backup";
 
@@ -55,12 +60,11 @@ export default class VerifiableCredentialsService implements IBackupable {
     });
   };
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  rejectVerifiableCredentialRequest = async (serializedVerifiableCredential: string): Promise<void> => {
+  rejectVerifiableCredentialRequest = async (): Promise<void> => {
     await this.historyService.trackOperation(OperationType.REJECT_VERIFIABLE_CREDENTIAL_REQUEST, {});
     await this.notificationService.create({
       options: {
-        title: "Verifiable Credential request rejected",
+        title: "Request to add Verifiable Credential rejected",
         message: `Rejected a request to add 1 Verifiable Credential.`,
         iconUrl: browser.runtime.getURL("/icons/logo.png"),
         type: "basic",
@@ -68,14 +72,15 @@ export default class VerifiableCredentialsService implements IBackupable {
     });
   };
 
-  addVerifiableCredential = async (serializedVerifiableCredential: string): Promise<boolean> => {
+  addVerifiableCredential = async (addVerifiableCredentialArgs: IAddVerifiableCredentialArgs): Promise<boolean> => {
+    const { serializedVerifiableCredential, verifiableCredentialName } = addVerifiableCredentialArgs;
     if (!serializedVerifiableCredential) {
       return false;
     }
 
     try {
       const verifiableCredential = await deserializeVerifiableCredential(serializedVerifiableCredential);
-      const metadata = generateInitialMetadataForVerifiableCredential(verifiableCredential);
+      const metadata = generateInitialMetadataForVerifiableCredential(verifiableCredential, verifiableCredentialName);
       const cryptkeeperVerifiableCredential: CryptkeeperVerifiableCredential = {
         verifiableCredential,
         metadata,
@@ -83,6 +88,15 @@ export default class VerifiableCredentialsService implements IBackupable {
 
       return this.insertCryptkeeperVerifiableCredentialIntoStore(cryptkeeperVerifiableCredential);
     } catch (error) {
+      await this.notificationService.create({
+        options: {
+          title: "Failed to add Verifiable Credential.",
+          message: `The Verifiable Credential you are trying to add is invalid.`,
+          iconUrl: browser.runtime.getURL("/icons/logo.png"),
+          type: "basic",
+        },
+      });
+
       return false;
     }
   };
@@ -191,6 +205,14 @@ export default class VerifiableCredentialsService implements IBackupable {
     const cryptkeeperVerifiableCredentials = await this.getCryptkeeperVerifiableCredentialsFromStore();
 
     if (cryptkeeperVerifiableCredentials.has(verifiableCredentialHash)) {
+      await this.notificationService.create({
+        options: {
+          title: "Failed to add Verifiable Credential.",
+          message: `The Verifiable Credential you are trying to add already exists in your wallet.`,
+          iconUrl: browser.runtime.getURL("/icons/logo.png"),
+          type: "basic",
+        },
+      });
       return false;
     }
 

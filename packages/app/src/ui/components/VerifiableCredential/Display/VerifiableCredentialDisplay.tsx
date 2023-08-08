@@ -1,39 +1,84 @@
 import { Typography } from "@mui/material";
-import { useEffect, useState } from "react";
+import { ChangeEvent, FormEvent, MouseEvent as ReactMouseEvent, useCallback, useState } from "react";
 
-import { deserializeVerifiableCredential } from "@src/background/services/credentials/utils";
-import { VerifiableCredential, VerifiableCredentialMetadata } from "@src/types";
+import { CryptkeeperVerifiableCredential } from "@src/types";
+import { Icon } from "@src/ui/components/Icon";
+import { Input } from "@src/ui/components/Input";
+
+import "./verifiableCredentialDisplayStyles.scss";
 
 export interface VerifiableCredentialDisplayProps {
-  serializedVerifiableCredential: string;
-  verifiableCredentialMetadata?: VerifiableCredentialMetadata;
+  cryptkeeperVerifiableCredential: CryptkeeperVerifiableCredential;
+  onRenameVerifiableCredential: (newVerifiableCredentialName: string) => void;
 }
 
 export const VerifiableCredentialDisplay = ({
-  serializedVerifiableCredential,
-  verifiableCredentialMetadata = undefined,
+  cryptkeeperVerifiableCredential,
+  onRenameVerifiableCredential,
 }: VerifiableCredentialDisplayProps): JSX.Element => {
-  const [verifiableCredential, setVerifiableCredential] = useState<VerifiableCredential | undefined>(undefined);
+  const [name, setName] = useState(cryptkeeperVerifiableCredential.metadata.name);
+  const [isRenaming, setIsRenaming] = useState(false);
 
-  useEffect(() => {
-    async function deserialize() {
-      const deserializedVerifiableCredential = await deserializeVerifiableCredential(serializedVerifiableCredential);
-      setVerifiableCredential(deserializedVerifiableCredential);
-    }
-    deserialize();
-  }, [serializedVerifiableCredential]);
+  const handleChangeName = useCallback(
+    (event: ChangeEvent<HTMLInputElement>) => {
+      setName(event.target.value);
+    },
+    [setName],
+  );
 
-  if (!verifiableCredential) {
-    return <Typography>There was an error deserializing the Verifiable Credential.</Typography>;
-  }
+  const handleToggleRenaming = useCallback(() => {
+    setIsRenaming((value) => !value);
+  }, [setIsRenaming]);
 
-  const credentialName = verifiableCredentialMetadata ? verifiableCredentialMetadata.name : "Verifiable Credential";
+  const handleUpdateName = useCallback(
+    (event: FormEvent | ReactMouseEvent) => {
+      event.preventDefault();
+      onRenameVerifiableCredential(name);
+      setIsRenaming(false);
+    },
+    [name, onRenameVerifiableCredential],
+  );
+
+  const { verifiableCredential } = cryptkeeperVerifiableCredential;
   const issuerId =
     typeof verifiableCredential.issuer === "string" ? verifiableCredential.issuer : verifiableCredential.issuer.id;
 
   return (
     <div>
-      <Typography variant="h6">{credentialName}</Typography>
+      {isRenaming ? (
+        <form className="flex flex-row items-center text-lg font-semibold" onSubmit={handleUpdateName}>
+          <Input
+            autoFocus
+            className="verifiable-credential-display__input-field"
+            id="verifiable-credential-display-rename-input"
+            label=""
+            type="text"
+            value={name}
+            onBlur={handleToggleRenaming}
+            onChange={handleChangeName}
+          />
+
+          <Icon
+            className="verifiable-credential-display__select-icon--selected mr-2"
+            data-testid="verifiable-credential-display-submit-rename"
+            fontAwesome="fa-solid fa-check"
+            size={1}
+            onClick={handleUpdateName}
+          />
+        </form>
+      ) : (
+        <div className="flex flex-row items-center text-lg font-semibold">
+          <Icon
+            className="verifiable-credential-display__menu-icon"
+            data-testid="verifiable-credential-display-toggle-rename"
+            fontAwesome="fa-solid fa-pencil-alt"
+            size={1}
+            onClick={handleToggleRenaming}
+          />
+
+          {`${name}`}
+        </div>
+      )}
 
       <Typography variant="body1">
         <u>Type:</u>

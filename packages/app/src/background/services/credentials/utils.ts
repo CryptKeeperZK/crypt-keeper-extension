@@ -13,8 +13,6 @@ import {
   VerifiableCredentialMetadata,
 } from "@src/types";
 
-const DEFAULT_VERIFIABLE_CREDENTIAL_NAME = "Verifiable Credential";
-
 /**
  * Serializes a CryptkeeperVerifiableCredential object into a JSON string.
  * @param cryptkeeperVerifiableCredential An object representing a CryptkeeperVerifiableCredential.
@@ -204,9 +202,10 @@ export function hashVerifiableCredential(verifiableCredential: VerifiableCredent
  */
 export function generateInitialMetadataForVerifiableCredential(
   verifiableCredential: VerifiableCredential,
+  initialVerifiableCredentialName: string,
 ): VerifiableCredentialMetadata {
   return {
-    name: DEFAULT_VERIFIABLE_CREDENTIAL_NAME,
+    name: initialVerifiableCredentialName,
     hash: hashVerifiableCredential(verifiableCredential),
   };
 }

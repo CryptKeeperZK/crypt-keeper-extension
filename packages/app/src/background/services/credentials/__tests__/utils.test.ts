@@ -13,7 +13,8 @@ import {
 
 describe("util/serializeCryptkeeperVerifiableCredential", () => {
   test("should serialize and deserialize CryptkeeperVerifiableCredential object correctly", async () => {
-    const rawCredential = {
+    const defaultCredentialName = "Verifiable Credential";
+    const rawCred = {
       context: ["https://www.w3.org/2018/credentials/v1"],
       type: ["VerifiableCredential"],
       issuer: "did:ethr:0x123",
@@ -25,7 +26,7 @@ describe("util/serializeCryptkeeperVerifiableCredential", () => {
         },
       },
     };
-    const metadata = generateInitialMetadataForVerifiableCredential(rawCredential);
+    const metadata = generateInitialMetadataForVerifiableCredential(rawCred, defaultCredentialName);
     const cryptkeeperCred = {
       verifiableCredential: rawCredential,
       metadata,
@@ -658,8 +659,9 @@ describe("util/hashVerifiableCredential", () => {
 });
 
 describe("util/generateInitialMetadataForVerifiableCredential", () => {
-  test("should generate the correct metadata for a verifiable credential", () => {
-    const rawCredential = {
+  const defaultCredentialName = "Verifiable Credential";
+  it("should generate the correct metadata for a verifiable credential", () => {
+    const rawCred = {
       context: ["https://www.w3.org/2018/credentials/v1"],
       type: ["VerifiableCredential"],
       issuer: "did:ethr:0x123",
@@ -671,7 +673,7 @@ describe("util/generateInitialMetadataForVerifiableCredential", () => {
         },
       },
     };
-    const metadata = generateInitialMetadataForVerifiableCredential(rawCredential);
+    const metadata = generateInitialMetadataForVerifiableCredential(rawCred, defaultCredentialName);
     const expectedMetadata = {
       name: "Verifiable Credential",
       hash: hashVerifiableCredential(rawCredential),

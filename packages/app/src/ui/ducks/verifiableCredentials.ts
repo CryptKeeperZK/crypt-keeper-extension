@@ -30,19 +30,21 @@ const verifiableCredentialsSlice = createSlice({
 
 export const { setVerifiableCredentials } = verifiableCredentialsSlice.actions;
 
-export const addVerifiableCredential = (serializedVerifiableCredential: string) => async (): Promise<boolean> =>
-  postMessage({
-    method: RPCAction.ADD_VERIFIABLE_CREDENTIAL,
-    payload: serializedVerifiableCredential,
-  });
-
-export const rejectVerifiableCredentialRequest =
-  (serializedVerifiableCredential: string) => async (): Promise<void> => {
-    await postMessage({
-      method: RPCAction.REJECT_VERIFIABLE_CREDENTIAL_REQUEST,
-      payload: serializedVerifiableCredential,
+export const addVerifiableCredential =
+  (serializedVerifiableCredential: string, verifiableCredentialName: string) => async (): Promise<boolean> =>
+    postMessage({
+      method: RPCAction.ADD_VERIFIABLE_CREDENTIAL,
+      payload: {
+        serializedVerifiableCredential,
+        verifiableCredentialName,
+      },
     });
-  };
+
+export const rejectVerifiableCredentialRequest = () => async (): Promise<void> => {
+  await postMessage({
+    method: RPCAction.REJECT_VERIFIABLE_CREDENTIAL_REQUEST,
+  });
+};
 
 export const renameVerifiableCredential =
   (renameVerifiableCredentialArgs: IRenameVerifiableCredentialArgs) => async (): Promise<void> => {

@@ -1,5 +1,7 @@
 import { ZkInputs } from "@src/types";
 
+import { deserializeVerifiableCredential } from "../credentials/utils";
+
 import { ArtifactsProofValidator } from "./artifact";
 import { MerkleProofValidator } from "./merkle";
 
@@ -17,4 +19,13 @@ export const validateZkInputs = (payload: Required<ZkInputs>): Required<ZkInputs
   }
 
   return payload;
+};
+
+export const validateVerifiableCredential = async (serializedVerifiableCredential: string): Promise<string> => {
+  try {
+    await deserializeVerifiableCredential(serializedVerifiableCredential);
+    return serializedVerifiableCredential;
+  } catch (e) {
+    throw new Error("Invalid serialized Verifiable Credential.");
+  }
 };
