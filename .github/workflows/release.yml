@@ -1,11 +1,7 @@
-name: Check
+name: Release
 
 on:
-  push:
-    branches: [main]
-
-  pull_request:
-    branches: [main]
+  workflow_dispatch:
 
 env:
   CRYPTKEEPER_DEBUG: false
@@ -20,6 +16,7 @@ env:
   PULSECHAIN_API_KEY: ${{ secrets.PULSECHAIN_API_KEY }}
   TARGET: "chrome"
   DEMO_URL: ${{ vars.DEMO_URL }}
+  EXTENSION_VERSION: ""
   MANIFEST_VERSION: 3
 
 concurrency:
@@ -27,15 +24,13 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  check:
+  release:
     strategy:
       fail-fast: false
       matrix:
         node-version: [18]
-        command: ["prettier", "lint", "types", "test:coverage"]
 
     runs-on: ubuntu-22.04
-
     steps:
       - uses: actions/checkout@v3
       - uses: pnpm/action-setup@v2
@@ -47,19 +42,22 @@ jobs:
           node-version: ${{ matrix.node-version }}
           cache: "pnpm"
 
-      - name: Cache node modules
-        uses: actions/cache@v3
-        continue-on-error: true
-        with:
-          path: |
-            ~/.pnpm-store
-            node_modules
-          key: ${{ runner.os }}-node-${{ hashFiles('**/pnpm-lock.yaml') }}
-          restore-keys: |
-            ${{ runner.os }}-node-
+      - name: Setup publisher
+        run: |
+          git config user.name "${{ github.actor }}"
+          git config user.email "${{ github.actor}}@users.noreply.github.com"
+          npm config set commit-hooks false
+          npm config set //registry.npmjs.org/:_authToken ${{ secrets.NPM_TOKEN }}
 
       - run: pnpm install --frozen-lockfile --prefer-offline
 
-      - run: pnpm run build
+      - name: Version
+        run: pnpm run release -- --base=last-release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
 
-      - run: pnpm run ${{ matrix.command }}
+      - name: Tag last-release
+        run: |
+          git tag -f last-release
+          git push origin last-release --force

@@ -22,7 +22,7 @@ env:
   TARGET: "chrome"
   DEMO_URL: ${{ vars.DEMO_URL }}
   PLAYWRIGHT_VERSION: ""
-  
+  MANIFEST_VERSION: 3
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
