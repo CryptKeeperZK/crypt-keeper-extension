@@ -59,13 +59,31 @@ jobs:
           MANIFEST_VERSION: 2
         run: |-
           pnpm run build
-          zip -r cryptkeeper-firefox-extension-${{ github.ref }}.zip ./packanges/app/dist
+          zip -r cryptkeeper-firefox-extension-v${{ env.EXTENSION_VERSION }}.zip ./packanges/app/dist
 
       - name: Upload artifact to firefox store
         run: |-
-          web-ext-submit --api-key=${{ secrets.WEB_EXT_API_KEY }} --api-secret=${{ secrets.WEB_EXT_API_SECRET }}
+          web-ext-submit \\
+          --api-key=${{ secrets.WEB_EXT_API_KEY }} \\
+          --api-secret=${{ secrets.WEB_EXT_API_SECRET }} \\
+          --use-submission-api \\
+          --channel=listed \\
+          --artifacts-dir=./cryptkeeper-firefox-extension-v${{ env.EXTENSION_VERSION }}.zip
 
-      - uses: actions/upload-artifact@v3
-        with:
-          name: cryptkeeper-firefox-extension-v${{ env.EXTENSION_VERSION }}
-          path: ./cryptkeeper-firefox-extension-${{ github.ref }}.zip
+      - name: Sign build
+        run: |-
+          echo -n "$GPG_SIGNING_KEY" | base64 --decode | gpg --import
+          gpg --detach-sign --armor cryptkeeper-firefox-extension-v${{ env.EXTENSION_VERSION }}.zip
+          echo $(shasum cryptkeeper-firefox-extension-v${{ env.EXTENSION_VERSION }}.zip | \\
+          awk '{ print $1 }') >> cryptkeeper-firefox-extension-checksum-v${{ env.EXTENSION_VERSION }}.txt
+        env:
+          GPG_SIGNING_KEY: ${{ secrets.GPG_SIGNING_KEY }}
+
+      - name: Upload build
+        run: |-
+          gh release upload "${{ github.event.release.tag_name }}" \\
+          "cryptkeeper-firefox-extension-v${{ env.EXTENSION_VERSION }}.zip" \\
+          "cryptkeeper-firefox-extension-checksum-v${{ env.EXTENSION_VERSION }}.txt" \\
+          "cryptkeeper-firefox-extension-v${{ env.EXTENSION_VERSION }}.zip.asc"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
