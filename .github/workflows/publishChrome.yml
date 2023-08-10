@@ -59,18 +59,31 @@ jobs:
           MANIFEST_VERSION: 3
         run: |-
           pnpm run build
-          zip -r cryptkeeper-chrome-extension-${{ github.ref }}.zip ./packanges/app/dist
+          zip -r cryptkeeper-chrome-extension-v${{ env.EXTENSION_VERSION }}.zip ./packanges/app/dist
 
       - name: Upload artifact to chrome store
         run: |-
           chrome-webstore-upload upload \\
-            --source chrome-extension-${{ github.ref }}.zip \\
-            --extension-id ${{ vars.EXTENSION_ID }} \\
+            --source cryptkeeper-chrome-extension-v${{ env.EXTENSION_VERSION }}.zip \\
+            --extension-id ${{ vars.CHROME_EXTENSION_ID }} \\
             --client-id ${{ secrets.CI_GOOGLE_CLIENT_ID }} \\
             --client-secret ${{ secrets.CI_GOOGLE_CLIENT_SECRET }} \\
             --refresh-token ${{ secrets.CI_GOOGLE_REFRESH_TOKEN }}
 
-      - uses: actions/upload-artifact@v3
-        with:
-          name: cryptkeeper-chrome-extension-v${{ env.EXTENSION_VERSION }}
-          path: ./cryptkeeper-chrome-extension-${{ github.ref }}.zip
+      - name: Sign build
+        run: |-
+          echo -n "$GPG_SIGNING_KEY" | base64 --decode | gpg --import
+          gpg --detach-sign --armor cryptkeeper-chrome-extension-v${{ env.EXTENSION_VERSION }}.zip
+          echo $(shasum cryptkeeper-chrome-extension-v${{ env.EXTENSION_VERSION }}.zip | \\
+          awk '{ print $1 }') >> cryptkeeper-chrome-extension-checksum-v${{ env.EXTENSION_VERSION }}.txt
+        env:
+          GPG_SIGNING_KEY: ${{ secrets.GPG_SIGNING_KEY }}
+
+      - name: Upload build
+        run: |-
+          gh release upload "${{ github.event.release.tag_name }}" \\
+          "cryptkeeper-chrome-extension-v${{ env.EXTENSION_VERSION }}.zip" \\
+          "cryptkeeper-chrome-extension-checksum-v${{ env.EXTENSION_VERSION }}.txt" \\
+          "cryptkeeper-chrome-extension-v${{ env.EXTENSION_VERSION }}.zip.asc"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
