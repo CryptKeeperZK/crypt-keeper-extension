@@ -17,13 +17,25 @@ describe("RLN proof", () => {
   const defaultGenerateArgs: IRlnGenerateArgs = {
     identity: "identity",
     payload: {
-      identitySerialized: "identitySerialized",
-      externalNullifier: "externalNullifier",
-      signal: "0x0",
       circuitFilePath: "circuitFilePath",
-      verificationKey: "verificationKey",
       zkeyFilePath: "zkeyFilePath",
       rlnIdentifier: "rlnIdentifier",
+      message: "message",
+      messageId: 1,
+      messageLimit: 0,
+      epoch: "1",
+      merkleProofArtifacts: {
+        leaves: ["0"],
+        depth: 1,
+        leavesPerNode: 1,
+      },
+      merkleProofProvided: {
+        root: "0",
+        leaf: "0",
+        siblings: ["0"],
+        pathIndices: [0],
+      },
+      merkleStorageAddress: "merkleStorageAddress",
     },
   };
 

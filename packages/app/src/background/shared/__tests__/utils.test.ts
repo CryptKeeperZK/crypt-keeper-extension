@@ -98,12 +98,12 @@ describe("background/shared/utils", () => {
     expect(global.chrome.offscreen.createDocument).toHaveBeenCalledWith({
       url: "offscreen.html",
       reasons: [global.chrome.offscreen.Reason.DOM_SCRAPING],
-      justification: "Cryptkeeper Offscrreen for generating ZKP",
+      justification: "CryptKeeper Offscreen for generating ZKP",
     });
   });
 
   test("should not create offscreen if there is a document", async () => {
-    (global.chrome.offscreen.hasDocument as jest.Mock).mockReturnValue(true);
+    (global.chrome.offscreen.hasDocument as jest.Mock).mockReturnValueOnce(true);
     await createChromeOffscreen();
 
     expect(global.chrome.offscreen.hasDocument).toBeCalledTimes(1);

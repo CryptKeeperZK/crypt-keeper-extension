@@ -1,6 +1,9 @@
 import { Group, BigNumberish } from "@semaphore-protocol/group";
 import { MerkleProof } from "@zk-kit/incremental-merkle-tree";
 import { bigintToHex, hexToBigint } from "bigint-conversion";
+// TODO: I think we should have a service for providing Cryptography pure related functions
+// Maybe we need to rename CryptoService to another name, and having a CryptoService that only has these pure functions.
+import { poseidon1, poseidon2 } from "poseidon-lite";
 
 import type { MerkleProofArtifacts, VerificationKey } from "@cryptkeeperzk/types";
 
@@ -37,19 +40,13 @@ export interface IGetMerkleProof {
   identityCommitment: bigint;
   merkleStorageAddress?: string;
   merkleProofArtifacts?: MerkleProofArtifacts;
-  providerMerkleProof?: MerkleProof;
 }
 
 export async function getMerkleProof({
   identityCommitment,
   merkleStorageAddress,
   merkleProofArtifacts,
-  providerMerkleProof,
 }: IGetMerkleProof): Promise<MerkleProof> {
-  if (providerMerkleProof) {
-    return providerMerkleProof;
-  }
-
   return merkleStorageAddress
     ? getRemoteMerkleProof(merkleStorageAddress, bigintToHex(identityCommitment))
     : generateMerkleProof({
@@ -59,7 +56,7 @@ export async function getMerkleProof({
       });
 }
 
-export async function getRlnVerficationKeyJson(rlnVerificationKeyPath: string): Promise<VerificationKey> {
+export async function getRlnVerificationKeyJson(rlnVerificationKeyPath: string): Promise<VerificationKey> {
   return fetch(rlnVerificationKeyPath).then((res) => res.json() as Promise<VerificationKey>);
 }
 
@@ -73,4 +70,20 @@ async function getRemoteMerkleProof(merkleStorageAddress: string, identityCommit
   })
     .then((res) => res.json())
     .then((response: { data: { merkleProof: MerkleProof } }) => deserializeMerkleProof(response.data.merkleProof));
+}
+
+export function str2BigInt(str: string): bigint {
+  let num = "";
+  for (let i = 0; i < str.length; i += 1) {
+    num += str.charCodeAt(i).toString();
+  }
+  return BigInt(num);
+}
+
+export function getMessageHash(message: string): bigint {
+  return poseidon1([str2BigInt(message)]);
+}
+
+export function getRateCommitmentHash(identityCommitment: bigint, userMessageLimit: number | bigint): bigint {
+  return poseidon2([identityCommitment, userMessageLimit]);
 }

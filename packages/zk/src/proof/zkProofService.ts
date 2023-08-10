@@ -1,18 +1,20 @@
+import { RLNSNARKProof } from "@cryptkeeperzk/rln-proof";
+
 import { ZkIdentitySemaphore } from "@src/identity";
 
-import type { RLNFullProof, RLNProofRequest, SemaphoreProof, SemaphoreProofRequest } from "@cryptkeeperzk/types";
+import type { IRlnProofRequest, SemaphoreFullProof, ISemaphoreProofRequest } from "@cryptkeeperzk/types";
 
-import { SemaphoreProofService, RLNProofService } from "./protocols";
+import { RLNProofService, SemaphoreProofService } from "./protocols";
 
 export class ZkProofService {
   private static INSTANCE?: ZkProofService;
 
-  private semapohreProofService: SemaphoreProofService;
+  private semaphoreProofService: SemaphoreProofService;
 
   private rlnProofService: RLNProofService;
 
   constructor() {
-    this.semapohreProofService = new SemaphoreProofService();
+    this.semaphoreProofService = new SemaphoreProofService();
     this.rlnProofService = new RLNProofService();
   }
 
@@ -24,11 +26,69 @@ export class ZkProofService {
     return ZkProofService.INSTANCE;
   }
 
-  generateSemaphoreProof(identity: ZkIdentitySemaphore, request: SemaphoreProofRequest): Promise<SemaphoreProof> {
-    return this.semapohreProofService.genProof(identity, request);
+  /**
+   * Generates a Semaphore proof for the provided identity and request.
+   *
+   * @param {ZkIdentitySemaphore} identity - The identity for theISemaphoreProofRequest
+   * @param {SemaphoreProofRequest} semaphoreProofRequest - The request data for the proof generation.
+   * @returns {Promise<SemaphoreFullProof>} A Promise that resolves to the generated Semaphore proof.
+   */
+  generateSemaphoreProof(
+    identity: ZkIdentitySemaphore,
+    {
+      circuitFilePath,
+      zkeyFilePath,
+      externalNullifier,
+      signal,
+      merkleProofArtifacts,
+      merkleStorageAddress,
+      merkleProofProvided,
+    }: ISemaphoreProofRequest,
+  ): Promise<SemaphoreFullProof> {
+    return this.semaphoreProofService.genProof(identity, {
+      circuitFilePath,
+      zkeyFilePath,
+      externalNullifier,
+      signal,
+      merkleProofArtifacts,
+      merkleStorageAddress,
+      merkleProofProvided,
+    });
   }
 
-  generateRLNProof(identity: ZkIdentitySemaphore, request: RLNProofRequest): Promise<RLNFullProof> {
-    return this.rlnProofService.genProof(identity, request);
+  /**
+   * Generates an RLN (Reputation Linked-Note) proof for the provided identity and request.
+   *
+   * @param {ZkIdentitySemaphore} identity - The identity for the RLN proof.
+   * @param {IRlnProofRequest} rlnProofRequest - The request data for the RLN proof generation.
+   * @returns {Promise<RLNFullProof>} A Promise that resolves to the generated RLN proof.
+   */
+  generateRLNProof(
+    identity: ZkIdentitySemaphore,
+    {
+      rlnIdentifier,
+      message,
+      messageId,
+      messageLimit,
+      epoch,
+      circuitFilePath,
+      zkeyFilePath,
+      merkleProofArtifacts,
+      merkleStorageAddress,
+      merkleProofProvided,
+    }: IRlnProofRequest,
+  ): Promise<RLNSNARKProof> {
+    return this.rlnProofService.genProof(identity, {
+      rlnIdentifier,
+      message,
+      messageId,
+      messageLimit,
+      epoch,
+      circuitFilePath,
+      zkeyFilePath,
+      merkleProofArtifacts,
+      merkleStorageAddress,
+      merkleProofProvided,
+    });
   }
 }

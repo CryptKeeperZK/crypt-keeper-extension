@@ -30,7 +30,7 @@ const RPC_METHOD_ACCESS: Record<RPCAction, boolean> = {
   [RPCAction.SET_HOST_PERMISSIONS]: true,
   [RPCAction.CREATE_IDENTITY_REQUEST]: true,
   [RPCAction.GENERATE_SEMAPHORE_PROOF]: true,
-  [RPCAction.PREPARE_RLN_PROOF_REQUEST]: true,
+  [RPCAction.GENERATE_RLN_PROOF]: true,
 };
 
 Object.freeze(RPC_METHOD_ACCESS);
@@ -193,16 +193,16 @@ export default class CryptKeeperController {
     // Injector
     this.handler.add(RPCAction.CONNECT, this.injectorService.connect);
     this.handler.add(
-      RPCAction.PREPARE_RLN_PROOF_REQUEST,
-      this.lockService.ensure,
-      validateZkInputs,
-      this.injectorService.prepareRlnProofRequest,
-    );
-    this.handler.add(
       RPCAction.GENERATE_SEMAPHORE_PROOF,
       this.lockService.ensure,
       validateZkInputs,
       this.injectorService.generateSemaphoreProof,
+    );
+    this.handler.add(
+      RPCAction.GENERATE_RLN_PROOF,
+      this.lockService.ensure,
+      validateZkInputs,
+      this.injectorService.generateRlnProof,
     );
 
     // Approvals

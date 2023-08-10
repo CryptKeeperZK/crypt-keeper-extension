@@ -36,8 +36,17 @@ const NoConnectedIdentityCommitment = ({ onConnectIdentity }: NoConnectedIdentit
 );
 
 const App = () => {
-  const { client, isLocked, connectedIdentity, proof, connect, createIdentity, connectIdentity, genSemaphoreProof } =
-    useCryptKeeper();
+  const {
+    client,
+    isLocked,
+    connectedIdentity,
+    proof,
+    connect,
+    createIdentity,
+    connectIdentity,
+    genSemaphoreProof,
+    genRLNProof,
+  } = useCryptKeeper();
 
   useEffect(() => {
     connect();
@@ -96,7 +105,7 @@ const App = () => {
             genSemaphoreProof(MerkleProofType.STORAGE_ADDRESS);
           }}
         >
-          Generate proof from merkle proof storage address
+          Generate proof from Merkle proof storage address
         </button>
 
         <br />
@@ -109,31 +118,39 @@ const App = () => {
             genSemaphoreProof(MerkleProofType.ARTIFACTS);
           }}
         >
-          Generate proof from merkle proof artifacts
+          Generate proof from Merkle proof artifacts
         </button>
       </div>
 
       <hr />
 
       <div>
-        <h2>Semaphore proof output:</h2>
+        <h2>Rate-Limiting Nullifier</h2>
 
         <div>
-          <pre>{JSON.stringify(proof, null, 2)}</pre>
+          <button type="button" onClick={() => genRLNProof(MerkleProofType.STORAGE_ADDRESS)}>
+            Generate proof from Merkle proof storage address
+          </button>
+
+          <br />
+
+          <br />
+
+          <button type="button" onClick={() => genRLNProof(MerkleProofType.ARTIFACTS)}>
+            Generate proof from Merkle proof artifacts
+          </button>
         </div>
       </div>
 
-      {/* <div>
-        <h2>RLN</h2>
-        <button onClick={() => genRLNProof(MerkleProofType.STORAGE_ADDRESS)}>
-          Generate proof from Merkle proof storage address
-        </button>{" "}
-        <br />
-        <br />
-        <button onClick={() => genRLNProof(MerkleProofType.ARTIFACTS)}>
-          Generate proof from Merkle proof artifacts
-        </button>
-      </div> */}
+      <hr />
+
+      <div>
+        <h2>Generated proof output:</h2>
+
+        <div>
+          <pre data-testid="proof-json">{JSON.stringify(proof, null, 2)}</pre>
+        </div>
+      </div>
 
       <ToastContainer newestOnTop />
     </div>

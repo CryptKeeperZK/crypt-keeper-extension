@@ -98,6 +98,9 @@ importers:
       '@cryptkeeperzk/providers':
         specifier: workspace:^
         version: link:../providers
+      '@cryptkeeperzk/rln-proof':
+        specifier: workspace:^
+        version: link:../proofs/rln-proof
       '@cryptkeeperzk/semaphore-proof':
         specifier: workspace:^
         version: link:../proofs/semaphore-proof
@@ -230,9 +233,6 @@ importers:
       redux-thunk:
         specifier: ^2.4.2
         version: 2.4.2(redux@4.2.1)
-      rlnjs:
-        specifier: ^2.0.8
-        version: 2.0.8
       subworkers:
         specifier: ^1.0.1
         version: 1.0.1
@@ -411,9 +411,6 @@ importers:
       react-toastify:
         specifier: ^9.1.3
         version: 9.1.3(react-dom@18.2.0)(react@18.2.0)
-      rlnjs:
-        specifier: ^2.0.8
-        version: 2.0.8
     devDependencies:
       '@cryptkeeperzk/eslint-config-react':
         specifier: workspace:^
@@ -777,9 +774,6 @@ importers:
       nanoevents:
         specifier: ^8.0.0
         version: 8.0.0
-      rlnjs:
-        specifier: ^2.0.8
-        version: 2.0.8
     devDependencies:
       '@cryptkeeperzk/eslint-config-base':
         specifier: workspace:^
@@ -814,15 +808,15 @@ importers:
 
   packages/types:
     dependencies:
+      '@cryptkeeperzk/rln-proof':
+        specifier: workspace:^
+        version: link:../proofs/rln-proof
       '@semaphore-protocol/proof':
         specifier: ^3.10.1
         version: 3.10.1(@semaphore-protocol/group@3.10.1)(@semaphore-protocol/identity@3.10.1)
       '@zk-kit/incremental-merkle-tree':
         specifier: ^1.1.0
         version: 1.1.0
-      rlnjs:
-        specifier: ^2.0.8
-        version: 2.0.8
     devDependencies:
       '@cryptkeeperzk/eslint-config-base':
         specifier: workspace:^
@@ -842,6 +836,12 @@ importers:
 
   packages/zk:
     dependencies:
+      '@cryptkeeperzk/rln-proof':
+        specifier: workspace:^
+        version: link:../proofs/rln-proof
+      '@cryptkeeperzk/semaphore-proof':
+        specifier: workspace:^
+        version: link:../proofs/semaphore-proof
       '@cryptkeeperzk/types':
         specifier: workspace:^
         version: link:../types
@@ -851,9 +851,6 @@ importers:
       '@semaphore-protocol/identity':
         specifier: ^3.10.1
         version: 3.10.1
-      '@semaphore-protocol/proof':
-        specifier: ^3.10.1
-        version: 3.10.1(@semaphore-protocol/group@3.10.1)(@semaphore-protocol/identity@3.10.1)
       '@zk-kit/incremental-merkle-tree':
         specifier: ^1.1.0
         version: 1.1.0
@@ -863,9 +860,9 @@ importers:
       lodash:
         specifier: ^4.17.21
         version: 4.17.21
-      rlnjs:
-        specifier: ^2.0.8
-        version: 2.0.8
+      poseidon-lite:
+        specifier: ^0.2.0
+        version: 0.2.0
     devDependencies:
       '@cryptkeeperzk/eslint-config-base':
         specifier: workspace:^
@@ -3451,6 +3448,7 @@ packages:
   /@commitlint/config-validator@17.4.4:
     resolution: {integrity: sha512-bi0+TstqMiqoBAQDvdEP4AFh0GaKyLFlPPEObgI29utoKEYoPQTvF0EYqIwYYLEoJYhj5GfMIhPHJkTJhagfeg==}
     engines: {node: '>=v14'}
+    requiresBuild: true
     dependencies:
       '@commitlint/types': 17.4.4
       ajv: 8.12.0
@@ -3471,6 +3469,7 @@ packages:
   /@commitlint/execute-rule@17.4.0:
     resolution: {integrity: sha512-LIgYXuCSO5Gvtc0t9bebAMSwd68ewzmqLypqI2Kke1rqOqqDbMpYcYfoPfFlv9eyLIh4jocHWwCK5FS7z9icUA==}
     engines: {node: '>=v14'}
+    requiresBuild: true
     dev: true
 
   /@commitlint/format@17.4.4:
@@ -3550,6 +3549,7 @@ packages:
   /@commitlint/resolve-extends@17.4.4:
     resolution: {integrity: sha512-znXr1S0Rr8adInptHw0JeLgumS11lWbk5xAWFVno+HUFVN45875kUtqjrI6AppmD3JI+4s0uZlqqlkepjJd99A==}
     engines: {node: '>=v14'}
+    requiresBuild: true
     dependencies:
       '@commitlint/config-validator': 17.4.4
       '@commitlint/types': 17.4.4
@@ -9453,13 +9453,6 @@ packages:
       ffjavascript: 0.2.48
     dev: false
 
-  /circom_runtime@0.1.20:
-    resolution: {integrity: sha512-61AnccA8Ozo5apyDf3hR1JMDDNx1DttKll2bdxVpNjUaTiawDuuYE0VNmRvuoKlcy/WAY+HtD3K994WGrOFhJQ==}
-    hasBin: true
-    dependencies:
-      ffjavascript: 0.2.55
-    dev: false
-
   /circom_runtime@0.1.23:
     resolution: {integrity: sha512-S0A63qM5LtlcTgsHX4z/U6nWAKo/KQBrz4umxVMyADPHxt6qDWy2AahPc2lAWQT42cFIDuonFPjgCjviSgQU8A==}
     hasBin: true
@@ -10103,6 +10096,7 @@ packages:
   /cosmiconfig-typescript-loader@4.3.0(@types/node@20.3.1)(cosmiconfig@8.2.0)(ts-node@10.9.1)(typescript@5.1.6):
     resolution: {integrity: sha512-NTxV1MFfZDLPiBMjxbHRwSh5LaLcPMwNdCutmnHJCKoVnlvldPWlllonKwrsRJ5pYZBIBGRWWU2tfvzxgeSW5Q==}
     engines: {node: '>=12', npm: '>=6'}
+    requiresBuild: true
     peerDependencies:
       '@types/node': '*'
       cosmiconfig: '>=7'
@@ -15398,6 +15392,7 @@ packages:
 
   /lodash.isplainobject@4.0.6:
     resolution: {integrity: sha512-oSXzaWypCMHkPC3NvBEaPHf0KsA5mvPrOPgQWDsbg8n7orZ290M0BmC/jgRZ4vcJ6DTAhjrsSYgdsW/F+MFOBA==}
+    requiresBuild: true
     dev: true
 
   /lodash.isstring@4.0.1:
@@ -15425,6 +15420,7 @@ packages:
 
   /lodash.mergewith@4.6.2:
     resolution: {integrity: sha512-GK3g5RPZWTRSeLSpgP8Xhra+pnjBC56q9FZYe1d5RN3TJ35dbkGy3YqBSMbyCrlbi+CM9Z3Jk5yTL7RCsqboyQ==}
+    requiresBuild: true
     dev: true
 
   /lodash.once@4.1.1:
@@ -15441,6 +15437,7 @@ packages:
 
   /lodash.uniq@4.5.0:
     resolution: {integrity: sha512-xfBaXQd9ryd9dlSDvnvI0lvxfLJlYAZzXomUYzLKtUeOQvOP5piqAWuGtrhWeqaXK9hhoM/iyJc5AV+XfsX3HQ==}
+    requiresBuild: true
     dev: true
 
   /lodash.upperfirst@4.3.1:
@@ -16143,6 +16140,7 @@ packages:
   /node-gyp-build-optional-packages@5.0.7:
     resolution: {integrity: sha512-YlCCc6Wffkx0kHkmam79GKvDQ6x+QZkMjFGrIMxgFNILFvGSbCp2fCBC55pGTT9gVaz8Na5CLmxt/urtzRv36w==}
     hasBin: true
+    requiresBuild: true
     dev: true
     optional: true
 
@@ -17027,7 +17025,6 @@ packages:
 
   /poseidon-lite@0.2.0:
     resolution: {integrity: sha512-vivDZnGmz8W4G/GzVA72PXkfYStjilu83rjjUfpL4PueKcC8nfX6hCPh2XhoC5FBgC6y0TA3YuUeUo5YCcNoig==}
-    dev: true
 
   /postcss-modules-extract-imports@3.0.0(postcss@8.4.24):
     resolution: {integrity: sha512-bdHleFnP3kZ4NYDhuGlVK+CMrQ/pqUm8bx/oGL93K6gVwiclvX5x0n76fYMKuIGKzlABOy13zsvqjb0f92TEXw==}
@@ -17391,15 +17388,6 @@ packages:
       '@iden3/binfileutils': 0.0.10
       fastfile: 0.0.19
       ffjavascript: 0.2.48
-    dev: false
-
-  /r1csfile@0.0.40:
-    resolution: {integrity: sha512-3tKaFLncf42ZTRpPMlgyiFBdk6kir4S4O3X+u4UQjgLYoDPHfizazNbK0Jzj++PVIXVUFAqugSbIo4W3UDuHcQ==}
-    dependencies:
-      '@iden3/bigarray': 0.0.2
-      '@iden3/binfileutils': 0.0.11
-      fastfile: 0.0.20
-      ffjavascript: 0.2.55
     dev: false
 
   /r1csfile@0.0.46:
@@ -18007,24 +17995,6 @@ packages:
       hash-base: 3.1.0
       inherits: 2.0.4
 
-  /rlnjs@2.0.8:
-    resolution: {integrity: sha512-UbB4wZLryC+w8DM39z0fJrDqkNWB5yG8cUTgQHoMcgfLjVb6yubgmCesFhRn9bcrreSad9+3xe17EUU7vPCG/A==}
-    dependencies:
-      '@ethersproject/bytes': 5.7.0
-      '@ethersproject/solidity': 5.7.0
-      '@ethersproject/strings': 5.7.0
-      '@semaphore-protocol/identity': 2.6.1
-      '@zk-kit/incremental-merkle-tree': 0.4.3
-      ffjavascript: 0.2.55
-      poseidon-lite: 0.0.2
-      snarkjs: 0.4.27
-    transitivePeerDependencies:
-      - bufferutil
-      - encoding
-      - supports-color
-      - utf-8-validate
-    dev: false
-
   /rlp@2.2.7:
     resolution: {integrity: sha512-d5gdPmgQ0Z+AklL2NVXr/IoSjNZFfTVvQWzL/AM2AOcSzYP2xjlb0AC8YyCLc41MSNf6P6QVtjgPdmVtzb+4lQ==}
     hasBin: true
@@ -18497,22 +18467,6 @@ packages:
       logplease: 1.2.15
       r1csfile: 0.0.35
       readline: 1.3.0
-    dev: false
-
-  /snarkjs@0.4.27:
-    resolution: {integrity: sha512-2CH4JpOIkaoEiPvc/d9eiA7Vs0mC2ZnQAhFIFF+qp8eVxhHpDXFZn50hEZhcb8lypGry8ZiiEQ73a3hOFOUbYQ==}
-    hasBin: true
-    dependencies:
-      '@iden3/binfileutils': 0.0.11
-      bfj: 7.0.2
-      blake2b-wasm: 2.4.0
-      circom_runtime: 0.1.20
-      ejs: 3.1.9
-      fastfile: 0.0.20
-      ffjavascript: 0.2.55
-      js-sha3: 0.8.0
-      logplease: 1.2.15
-      r1csfile: 0.0.40
     dev: false
 
   /sockjs@0.3.24:

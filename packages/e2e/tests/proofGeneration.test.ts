@@ -14,39 +14,55 @@ test.describe("proof generation", () => {
     await page.goto("/");
   });
 
-  test("should generate semaphore proof from merkle proof storage address [health-check]", async ({ page }) => {
+  test("should generate semaphore proof from Merkle proof storage address [health-check]", async ({ page }) => {
     await page.getByText("Generate proof from Merkle proof storage address").first().click();
 
     const cryptKeeper = await page.context().waitForEvent("page");
     await cryptKeeper.getByText("Approve").click();
 
     await expect(page.getByText("Semaphore proof generated successfully!")).toBeVisible();
+
+    const proofJsonText = await page.getByTestId("proof-json").innerText();
+    const parsedProof = JSON.parse(proofJsonText) as Record<string, unknown>;
+    expect(parsedProof).toBeDefined();
   });
 
-  test("should generate semaphore proof from merkle proof artifacts [health-check]", async ({ page }) => {
+  test("should generate semaphore proof from Merkle proof artifacts [health-check]", async ({ page }) => {
     await page.getByText("Generate proof from Merkle proof artifacts").first().click();
 
     const cryptKeeper = await page.context().waitForEvent("page");
     await cryptKeeper.getByText("Approve").click();
 
     await expect(page.getByText("Semaphore proof generated successfully!")).toBeVisible();
+
+    const proofJsonText = await page.getByTestId("proof-json").innerText();
+    const parsedProof = JSON.parse(proofJsonText) as Record<string, unknown>;
+    expect(parsedProof).toBeDefined();
   });
 
-  test.skip("should generate rln proof from merkle proof storage address [health-check]", async ({ page }) => {
+  test("should generate rln proof from Merkle proof storage address [health-check]", async ({ page }) => {
     await page.getByText("Generate proof from Merkle proof storage address").nth(1).click();
 
     const cryptKeeper = await page.context().waitForEvent("page");
     await cryptKeeper.getByText("Approve").click();
 
     await expect(page.getByText("RLN proof generated successfully!")).toBeVisible();
+
+    const proofJsonText = await page.getByTestId("proof-json").innerText();
+    const parsedProof = JSON.parse(proofJsonText) as Record<string, unknown>;
+    expect(parsedProof).toBeDefined();
   });
 
-  test.skip("should generate rln proof from merkle proof artifacts [health-check]", async ({ page }) => {
+  test("should generate rln proof from Merkle proof artifacts [health-check]", async ({ page }) => {
     await page.getByText("Generate proof from Merkle proof artifacts").nth(1).click();
 
     const cryptKeeper = await page.context().waitForEvent("page");
     await cryptKeeper.getByText("Approve").click();
 
     await expect(page.getByText("RLN proof generated successfully!")).toBeVisible();
+
+    const proofJsonText = await page.getByTestId("proof-json").innerText();
+    const parsedProof = JSON.parse(proofJsonText) as Record<string, unknown>;
+    expect(parsedProof).toBeDefined();
   });
 });

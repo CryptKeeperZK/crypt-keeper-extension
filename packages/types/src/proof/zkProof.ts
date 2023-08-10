@@ -1,9 +1,16 @@
 import { MerkleProofArtifacts, MerkleProof } from "./merkle";
 
+export interface ZkCircuit {
+  circuitFilePath: string;
+  zkeyFilePath: string;
+  verificationKey?: string;
+}
+
 export interface ZkInputs {
-  merkleStorageAddress?: string;
-  merkleProofArtifacts?: MerkleProofArtifacts;
-  merkleProof?: MerkleProof;
+  merkleStorageAddress: string;
+  merkleProofArtifacts: MerkleProofArtifacts;
+  merkleProofProvided: MerkleProof;
+  merkleProofArtifactsOrStorageAddress: string | MerkleProofArtifacts;
 }
 
 export interface ZKProofPayload {

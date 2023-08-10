@@ -55,6 +55,9 @@ export enum RPCAction {
   GET_ALL_VERIFIABLE_CREDENTIALS = "rpc/credentials/getAllVerifiableCredentials",
   DELETE_VERIFIABLE_CREDENTIAL = "rpc/credentials/deleteVerifiableCredential",
   DELETE_ALL_VERIFIABLE_CREDENTIALS = "rpc/credentials/deleteAllVerifiableCredentials",
+  GENERATE_RLN_PROOF = "rpc/proofs/generate-rln-proof",
+  GENERATE_RLN_PROOF_OFFSCREEN = "rpc/proofs/generate-rln-proof-offscreen",
+  RLN_PROOF_RESULT = "rpc/proofs/rln-proof-result",
   // DEV RPCS
   CLEAR_APPROVED_HOSTS = "rpc/hosts/clear",
   CLEAR_STORAGE = "rpc/browser/clear",

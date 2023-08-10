@@ -5,9 +5,10 @@ import { validateZkInputs } from "..";
 describe("background/services/zkValidator", () => {
   test("should validate proof properly", () => {
     const args = {
+      merkleProofArtifactsOrStorageAddress: "merkleStorageAddress",
       merkleStorageAddress: "merkleStorageAddress",
       merkleProofArtifacts: { depth: 1, leaves: ["leaf-1"], leavesPerNode: 1 },
-      merkleProof: { root: 1n, leaf: 1n, siblings: [1n], pathIndices: [1] },
+      merkleProofProvided: { root: 1n, leaf: 1n, siblings: [1n], pathIndices: [1] },
     };
 
     const result = validateZkInputs(args);

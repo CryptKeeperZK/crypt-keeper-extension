@@ -1,25 +1,33 @@
 import { FullProof } from "@semaphore-protocol/proof";
-import { MerkleProof } from "@zk-kit/incremental-merkle-tree";
 
-import { MerkleProofArtifacts } from "./merkle";
+import { ZkCircuit, ZkInputs } from "./zkProof";
 
-export interface SemaphoreProof {
-  fullProof: FullProof;
+export type SemaphoreFullProof = FullProof;
+
+/**
+ * Represents the arguments required for generating a Semaphore proof.
+ * This interface is intended to be used with the Cryptkeeper InjectedProvider.
+ * @interface
+ */
+export interface ISemaphoreProofRequiredArgs extends Partial<ZkInputs> {
+  /**
+   * The external nullifier for the proof.
+   * @type {string}
+   */
+  externalNullifier: string;
+
+  /**
+   * The signal for the proof.
+   * @type {string}
+   */
+  signal: string;
 }
 
-export interface SemaphoreProofRequest {
-  identitySerialized: string;
-  externalNullifier: string;
-  signal: string;
-  merkleStorageAddress?: string;
-  merkleProofArtifacts?: MerkleProofArtifacts;
-  merkleProof?: MerkleProof;
-  circuitFilePath: string;
-  verificationKey: string;
-  zkeyFilePath: string;
+export interface ISemaphoreProofRequest extends ISemaphoreProofRequiredArgs, Partial<ZkCircuit> {
+  identitySerialized?: string;
 }
 
 export interface ISemaphoreGenerateArgs {
   identity: string;
-  payload: SemaphoreProofRequest;
+  payload: ISemaphoreProofRequest;
 }

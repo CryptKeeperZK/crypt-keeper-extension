@@ -44,8 +44,7 @@
     "@zk-kit/incremental-merkle-tree": "^1.1.0",
     "bigint-conversion": "^2.4.1",
     "lodash": "^4.17.21",
-    "nanoevents": "^8.0.0",
-    "rlnjs": "^2.0.8"
+    "nanoevents": "^8.0.0"
   },
   "devDependencies": {
     "@cryptkeeperzk/eslint-config-base": "workspace:^",

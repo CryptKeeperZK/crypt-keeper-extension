@@ -65,17 +65,21 @@ export function getBrowserPlatform(): BrowserPlatform {
  * @returns {Promise<void>} A promise that resolves when the offscreen document is created or if it already exists.
  */
 export async function createChromeOffscreen(): Promise<void> {
-  const isOffscreenAvaiable = await chrome.offscreen.hasDocument();
+  const isOffscreenAvailable = await chrome.offscreen.hasDocument();
 
-  if (isOffscreenAvaiable) {
+  if (isOffscreenAvailable) {
     return;
   }
 
-  await chrome.offscreen.createDocument({
-    url: "offscreen.html",
-    reasons: [chrome.offscreen.Reason.DOM_SCRAPING],
-    justification: "Cryptkeeper Offscrreen for generating ZKP",
-  });
+  try {
+    await chrome.offscreen.createDocument({
+      url: "offscreen.html",
+      reasons: [chrome.offscreen.Reason.DOM_SCRAPING],
+      justification: "CryptKeeper Offscreen for generating ZKP",
+    });
+  } catch (error) {
+    throw new Error("CryptKeeper could not create an Offscreen.");
+  }
 }
 
 export async function closeChromeOffscreen(): Promise<void> {

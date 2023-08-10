@@ -54,6 +54,10 @@
       "matches": ["*://*/*"]
     },
     {
+      "resources": ["js/offscreen.js"],
+      "matches": ["*://*/*"]
+    },
+    {
       "resources": ["styles/*"],
       "matches": ["*://*/*"]
     },

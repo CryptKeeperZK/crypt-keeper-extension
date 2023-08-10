@@ -1,18 +1,17 @@
 import {
   Approvals,
-  IRlnGenerateArgs,
   InjectedMessageData,
   InjectedProviderRequest,
-  MerkleProofArtifacts,
-  RLNFullProof,
   ConnectedIdentity,
-  SemaphoreProof,
+  SemaphoreFullProof,
   ICreateIdentityRequestArgs,
   IConnectIdentityRequestArgs,
   HostPermission,
+  RLNSNARKProof,
+  ISemaphoreProofRequiredArgs,
+  IRlnProofRequiredArgs,
 } from "@cryptkeeperzk/types";
-import { ZkIdentitySemaphore, ZkProofService } from "@cryptkeeperzk/zk";
-import { MerkleProof } from "@zk-kit/incremental-merkle-tree";
+import { ZkProofService } from "@cryptkeeperzk/zk";
 
 import { RPCAction } from "../constants";
 import { EventEmitter, EventHandler, EventName } from "../event";
@@ -315,16 +314,17 @@ export class CryptKeeperInjectedProvider {
    *
    * @param {string} externalNullifier - The external nullifier.
    * @param {string} signal - The signal.
-   * @param {string | MerkleProofArtifacts} merkleProofArtifactsOrStorageAddress - The merkle proof artifacts or storage address.
    * @param {MerkleProof} merkleProof - The merkle proof (optional).
-   * @returns {Promise<SemaphoreProof>} A Promise that resolves to the semaphore proof.
+   * @param {string | MerkleProofArtifacts} merkleProofArtifactsOrStorageAddress - The merkle proof artifacts or storage address.
+   *
+   * @returns {Promise<SemaphoreFullProof>} A Promise that resolves to the semaphore proof.
    */
-  async generateSemaphoreProof(
-    externalNullifier: string,
-    signal: string,
-    merkleProofArtifactsOrStorageAddress: string | MerkleProofArtifacts,
-    merkleProof?: MerkleProof,
-  ): Promise<SemaphoreProof> {
+  async generateSemaphoreProof({
+    externalNullifier,
+    signal,
+    merkleProofProvided,
+    merkleProofArtifactsOrStorageAddress,
+  }: ISemaphoreProofRequiredArgs): Promise<SemaphoreFullProof> {
     const merkleProofArtifacts =
       typeof merkleProofArtifactsOrStorageAddress === "string" ? undefined : merkleProofArtifactsOrStorageAddress;
     const merkleStorageAddress =
@@ -337,46 +337,50 @@ export class CryptKeeperInjectedProvider {
         signal,
         merkleStorageAddress,
         merkleProofArtifacts,
-        merkleProof,
+        merkleProofProvided,
       },
-      source: "offscreen",
-    }) as Promise<SemaphoreProof>;
+    }) as Promise<SemaphoreFullProof>;
   }
 
   /**
-   * Generates an RLN proof.
+   * Generates an RLN (Reputation Linked-Note) proof based on the provided RLN proof request.
    *
-   * @param {string} externalNullifier - The external nullifier.
-   * @param {string} signal - The signal.
-   * @param {string | MerkleProofArtifacts} merkleProofArtifactsOrStorageAddress - The merkle proof artifacts or storage address.
-   * @param {string} rlnIdentifier - The RLN identifier.
-   * @returns {Promise<RLNFullProof>} A Promise that resolves to the RLN proof.
+   * @param {string} rlnIdentifier - The RLN identifier as a string.
+   * @param {string} message - The message content as a string.
+   * @param {bigint | number} [messageLimit=1] - The message limit as a bigint or number. Defaults to 1 if not provided.
+   * @param {bigint | number} [messageId=0] - The ID of the message as a bigint or number. Defaults to 0 if not provided.
+   * @param {bigint | string} epoch - The epoch value as a bigint or string.
+   * @param {MerkleProof} merkleProof - The merkle proof (optional).
+   * @param {string | MerkleProofArtifacts} merkleProofArtifactsOrStorageAddress - Either the merkle proof artifacts or the merkle storage address as a string or MerkleProofArtifacts.
+   *
+   * @returns {Promise<RLNSNARKProof>} A Promise that resolves to the generated RLN proof.
    */
-  async rlnProof(
-    externalNullifier: string,
-    signal: string,
-    merkleProofArtifactsOrStorageAddress: string | MerkleProofArtifacts,
-    rlnIdentifier: string,
-  ): Promise<RLNFullProof> {
+  async rlnProof({
+    rlnIdentifier,
+    message,
+    messageLimit,
+    messageId,
+    epoch,
+    merkleProofProvided,
+    merkleProofArtifactsOrStorageAddress,
+  }: IRlnProofRequiredArgs): Promise<RLNSNARKProof> {
     const merkleProofArtifacts =
       typeof merkleProofArtifactsOrStorageAddress === "string" ? undefined : merkleProofArtifactsOrStorageAddress;
     const merkleStorageAddress =
       typeof merkleProofArtifactsOrStorageAddress === "string" ? merkleProofArtifactsOrStorageAddress : undefined;
 
-    const request = (await this.post({
-      method: RPCAction.PREPARE_RLN_PROOF_REQUEST,
+    return this.post({
+      method: RPCAction.GENERATE_RLN_PROOF,
       payload: {
-        externalNullifier,
-        signal,
-        merkleStorageAddress,
-        merkleProofArtifacts,
         rlnIdentifier,
+        message,
+        messageId,
+        messageLimit,
+        epoch,
+        merkleProofProvided,
+        merkleProofArtifacts,
+        merkleStorageAddress,
       },
-    })) as IRlnGenerateArgs;
-
-    return this.zkProofService.generateRLNProof(
-      ZkIdentitySemaphore.genFromSerialized(request.identity),
-      request.payload,
-    );
+    }) as Promise<RLNSNARKProof>;
   }
 }

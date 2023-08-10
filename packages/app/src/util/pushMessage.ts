@@ -8,7 +8,8 @@ export default async function pushMessage(message: ReduxAction | RequestHandler)
     const result: unknown = await browser.runtime.sendMessage(message);
     return result;
   } catch (error) {
-    log.warn("Push message error: ", error);
+    log.warn("PushMessage error: ", error);
+    log.warn("PushMessage request: ", message);
     return undefined;
   }
 }

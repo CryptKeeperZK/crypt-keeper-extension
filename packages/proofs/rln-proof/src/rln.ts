@@ -450,7 +450,7 @@ export class RLN implements IRLN {
       userMessageLimit: userMessageLimit,
       messageId,
       merkleProof,
-      x: calculateSignalHash(message),
+      messageHash: calculateSignalHash(message),
       epoch,
     })
     // Double check if the proof will spam or not using the cache.
