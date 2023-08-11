@@ -17,12 +17,22 @@ describe("Semaphore proof", () => {
   const defaultGenerateArgs: ISemaphoreGenerateArgs = {
     identity: "identity",
     payload: {
-      identitySerialized: "identitySerialized",
-      externalNullifier: "externalNullifier",
       signal: "0x0",
+      externalNullifier: "externalNullifier",
       circuitFilePath: "circuitFilePath",
-      verificationKey: "verificationKey",
       zkeyFilePath: "zkeyFilePath",
+      merkleProofArtifacts: {
+        leaves: ["0"],
+        depth: 1,
+        leavesPerNode: 1,
+      },
+      merkleProofProvided: {
+        root: "0",
+        leaf: "0",
+        siblings: ["0"],
+        pathIndices: [0],
+      },
+      merkleStorageAddress: "merkleStorageAddress",
     },
   };
 

@@ -88,6 +88,7 @@
   },
   "dependencies": {
     "@cryptkeeperzk/providers": "workspace:^",
+    "@cryptkeeperzk/rln-proof": "workspace:^",
     "@cryptkeeperzk/semaphore-proof": "workspace:^",
     "@cryptkeeperzk/types": "workspace:^",
     "@cryptkeeperzk/zk": "workspace:^",
@@ -132,7 +133,6 @@
     "react-select": "^5.7.4",
     "redux-logger": "^3.0.6",
     "redux-thunk": "^2.4.2",
-    "rlnjs": "^2.0.8",
     "subworkers": "^1.0.1",
     "webextension-polyfill": "^0.10.0",
     "yup": "^1.2.0"

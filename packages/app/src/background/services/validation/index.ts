@@ -4,10 +4,10 @@ import { ArtifactsProofValidator } from "./artifact";
 import { MerkleProofValidator } from "./merkle";
 
 export const validateZkInputs = (payload: Required<ZkInputs>): Required<ZkInputs> => {
-  const { merkleProofArtifacts, merkleProof, merkleStorageAddress } = payload;
+  const { merkleProofArtifacts, merkleProofProvided, merkleStorageAddress } = payload;
 
-  if (merkleProof) {
-    new MerkleProofValidator(merkleProof).validateProof();
+  if (merkleProofProvided) {
+    new MerkleProofValidator(merkleProofProvided).validateProof();
   } else if (merkleProofArtifacts) {
     new ArtifactsProofValidator(merkleProofArtifacts).validateProof();
   } else if (merkleStorageAddress) {

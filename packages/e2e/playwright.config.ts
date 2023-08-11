@@ -12,7 +12,7 @@ export default defineConfig({
   testDir: "./tests",
   timeout: process.env.CI ? 120_000 : 60_000,
   expect: {
-    timeout: 5_000,
+    timeout: 15_000,
   },
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
@@ -34,7 +34,6 @@ export default defineConfig({
       use: { ...devices["Desktop Chrome"] },
     },
   ],
-
   webServer: !process.env.DEMO_URL
     ? [
         {

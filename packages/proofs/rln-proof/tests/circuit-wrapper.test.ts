@@ -31,7 +31,7 @@ describe('RLN', function () {
       userMessageLimit,
       messageId,
       merkleProof,
-      x,
+      messageHash: x,
       epoch
     });
     const m2 = performance.now();

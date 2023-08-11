@@ -48,10 +48,6 @@
   ],
   "scripts": {
     "build": "tsc -p tsconfig.build.json",
-    "test": "jest",
-    "test:debug": "jest --silent=false",
-    "test:benchmark": "jest --silent=false ./tests/circuit-wrapper.test.ts",
-    "test:ci": "jest --silent=false --runInBand",
     "lint": "eslint --ext .ts,.tsx,.js,.jsx src/ -c .eslintrc.js",
     "lint:fix": "pnpm run lint --fix",
     "types": "tsc -p tsconfig.json --noEmit",

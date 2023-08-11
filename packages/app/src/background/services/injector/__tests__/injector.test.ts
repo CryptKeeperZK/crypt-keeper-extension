@@ -2,9 +2,13 @@
  * @jest-environment jsdom
  */
 
+import { RPCAction } from "@cryptkeeperzk/providers";
+import { generateProof } from "@cryptkeeperzk/semaphore-proof";
 import browser from "webextension-polyfill";
 
-import { PendingRequestType, RLNProofRequest, SemaphoreProofRequest } from "@src/types";
+import { getBrowserPlatform } from "@src/background/shared/utils";
+import { BrowserPlatform } from "@src/constants";
+import { PendingRequestType, IRlnProofRequest, ISemaphoreProofRequest } from "@src/types";
 import pushMessage from "@src/util/pushMessage";
 
 import InjectorService from "..";
@@ -73,6 +77,12 @@ jest.mock("@src/background/services/zkIdentity", (): unknown => ({
 
 jest.mock("@src/util/pushMessage");
 
+jest.mock("@src/background/shared/utils", (): unknown => ({
+  getBrowserPlatform: jest.fn(),
+  closeChromeOffscreen: jest.fn(),
+  createChromeOffscreen: jest.fn(),
+}));
+
 describe("background/services/injector", () => {
   beforeEach(() => {
     (pushMessage as jest.Mock).mockClear();
@@ -133,7 +143,7 @@ describe("background/services/injector", () => {
       jest.clearAllMocks();
     });
 
-    const defaultProofRequest: SemaphoreProofRequest = {
+    const defaultProofRequest: ISemaphoreProofRequest = {
       identitySerialized: "identitySerialized",
       externalNullifier: "externalNullifier",
       signal: "signal",
@@ -146,7 +156,7 @@ describe("background/services/injector", () => {
         depth: 1,
         leavesPerNode: 1,
       },
-      merkleProof: {
+      merkleProofProvided: {
         root: "0",
         leaf: "0",
         siblings: ["0"],
@@ -154,16 +164,26 @@ describe("background/services/injector", () => {
       },
     };
 
-    test("should prepare semaphore proof properly", async () => {
+    const emptyFullProof = {
+      fullProof: {
+        proof: {},
+        publicSignals: {},
+      },
+    };
+
+    test("should prepare semaphore proof properly on Chrome platform browsers", async () => {
+      (pushMessage as jest.Mock).mockReturnValueOnce(emptyFullProof);
       const service = InjectorService.getInstance();
 
-      const result = await service.prepareSemaphoreProofRequest(defaultProofRequest, { origin: mockDefaultHost });
+      const result = await service.generateSemaphoreProof(defaultProofRequest, { origin: mockDefaultHost });
 
-      expect(result).toStrictEqual({
-        identity: mockSerializedIdentity,
-        payload: {
-          ...defaultProofRequest,
-        },
+      expect(result).toStrictEqual(emptyFullProof);
+      expect(pushMessage).toBeCalledTimes(1);
+      expect(pushMessage).toBeCalledWith({
+        method: RPCAction.GENERATE_SEMAPHORE_PROOF,
+        payload: { ...defaultProofRequest, identitySerialized: mockSerializedIdentity },
+        meta: { origin: mockDefaultHost },
+        source: "offscreen",
       });
     });
 
@@ -172,25 +192,33 @@ describe("background/services/injector", () => {
 
       const service = InjectorService.getInstance();
 
-      await expect(service.prepareSemaphoreProofRequest(defaultProofRequest, { origin: "new-host" })).rejects.toThrow(
+      await expect(service.generateSemaphoreProof(defaultProofRequest, { origin: "new-host" })).rejects.toThrow(
         "connected identity not found",
       );
+      expect(pushMessage).toBeCalledTimes(0);
     });
 
     test("should throw error if host isn't approved", async () => {
       const service = InjectorService.getInstance();
 
-      await expect(service.prepareSemaphoreProofRequest(defaultProofRequest, { origin: "new-host" })).rejects.toThrow(
+      await expect(service.generateSemaphoreProof(defaultProofRequest, { origin: "new-host" })).rejects.toThrow(
         "new-host is not approved",
       );
+      expect(pushMessage).toBeCalledTimes(0);
     });
 
-    test("should be able to generate semaphore proof", async () => {
+    test("should prepare semaphore proof properly on Firefox platform browsers", async () => {
+      mockGetConnectedIdentity.mockResolvedValue({
+        serialize: () => mockSerializedIdentity,
+        genIdentityCommitment: () => "mockIdentityCommitment",
+      });
+      (generateProof as jest.Mock).mockReturnValueOnce(emptyFullProof);
+      (getBrowserPlatform as jest.Mock).mockReturnValueOnce(BrowserPlatform.Firefox);
       const service = InjectorService.getInstance();
 
-      await service.connect({ origin: mockDefaultHost });
-      await service.generateSemaphoreProof(defaultProofRequest, { origin: mockDefaultHost });
-      expect(pushMessage).toBeCalledTimes(1);
+      const result = await service.generateSemaphoreProof(defaultProofRequest, { origin: mockDefaultHost });
+      expect(result).toStrictEqual(emptyFullProof);
+      expect(pushMessage).toBeCalledTimes(0);
     });
   });
 
@@ -203,11 +231,12 @@ describe("background/services/injector", () => {
       jest.clearAllMocks();
     });
 
-    const defaultProofRequest: RLNProofRequest = {
+    const defaultProofRequest: IRlnProofRequest = {
       identitySerialized: "identitySerialized",
       rlnIdentifier: "rlnIdentifier",
-      externalNullifier: "externalNullifier",
-      signal: "signal",
+      message: "message",
+      messageId: 0,
+      messageLimit: 1,
       merkleStorageAddress: "merkleStorageAddress",
       circuitFilePath: "js/zkeyFiles/rln/rln.wasm",
       zkeyFilePath: "js/zkeyFiles/rln/rln.zkey",
@@ -217,24 +246,33 @@ describe("background/services/injector", () => {
         depth: 1,
         leavesPerNode: 1,
       },
-      merkleProof: {
+      merkleProofProvided: {
         root: "0",
         leaf: "0",
         siblings: ["0"],
         pathIndices: [0],
       },
+      epoch: Date.now().toString(),
     };
 
-    test("should prepare rln proof properly", async () => {
+    const emptyFullProof = {
+      proof: {},
+      publicSignals: {},
+    };
+
+    test("should generate RLN proof properly in chrome platforms", async () => {
+      (pushMessage as jest.Mock).mockReturnValueOnce(JSON.stringify(emptyFullProof));
+
       const service = InjectorService.getInstance();
 
-      const result = await service.prepareRlnProofRequest(defaultProofRequest, { origin: mockDefaultHost });
-
-      expect(result).toStrictEqual({
-        identity: mockSerializedIdentity,
-        payload: {
-          ...defaultProofRequest,
-        },
+      const result = await service.generateRlnProof(defaultProofRequest, { origin: mockDefaultHost });
+      expect(result).toStrictEqual(emptyFullProof);
+      expect(pushMessage).toBeCalledTimes(1);
+      expect(pushMessage).toBeCalledWith({
+        method: RPCAction.GENERATE_RLN_PROOF_OFFSCREEN,
+        payload: { ...defaultProofRequest, identitySerialized: mockSerializedIdentity },
+        meta: { origin: mockDefaultHost },
+        source: "offscreen",
       });
     });
 
@@ -243,17 +281,33 @@ describe("background/services/injector", () => {
 
       const service = InjectorService.getInstance();
 
-      await expect(service.prepareRlnProofRequest(defaultProofRequest, { origin: "new-host" })).rejects.toThrow(
+      await expect(service.generateRlnProof(defaultProofRequest, { origin: mockDefaultHost })).rejects.toThrow(
         "connected identity not found",
       );
+      expect(pushMessage).toBeCalledTimes(0);
     });
 
     test("should throw error if host isn't approved", async () => {
+      (pushMessage as jest.Mock).mockReturnValueOnce(JSON.stringify(emptyFullProof));
+
       const service = InjectorService.getInstance();
 
-      await expect(service.prepareRlnProofRequest(defaultProofRequest, { origin: "new-host" })).rejects.toThrow(
+      await expect(service.generateRlnProof(defaultProofRequest, { origin: "new-host" })).rejects.toThrow(
         "new-host is not approved",
       );
+      expect(pushMessage).toBeCalledTimes(0);
+    });
+
+    test("should not be able to generate proof on Firefox platforms", async () => {
+      (pushMessage as jest.Mock).mockReturnValueOnce(JSON.stringify(emptyFullProof));
+      (getBrowserPlatform as jest.Mock).mockReturnValueOnce(BrowserPlatform.Firefox);
+
+      const service = InjectorService.getInstance();
+
+      await expect(service.generateRlnProof(defaultProofRequest, { origin: mockDefaultHost })).rejects.toThrow(
+        "RLN proofs are not supported with Firefox",
+      );
+      expect(pushMessage).toBeCalledTimes(0);
     });
   });
 });

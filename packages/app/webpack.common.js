@@ -60,6 +60,12 @@ module.exports = {
       chunks: ["popup"],
       minify: true,
     }),
+    new HtmlWebpackPlugin({
+      template: path.resolve(__dirname, "./src/offscreen/index.html"),
+      filename: "../offscreen.html",
+      chunks: ["offscreen"],
+      minify: true,
+    }),
     new webpack.IgnorePlugin({
       checkResource(resource) {
         return /.*\/wordlists\/(?!english).*\.json/.test(resource);

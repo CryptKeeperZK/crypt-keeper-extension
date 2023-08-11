@@ -72,7 +72,7 @@ export class RLNProver {
     userMessageLimit: bigint;
     messageId: bigint;
     merkleProof: MerkleProof;
-    x: bigint;
+    messageHash: bigint;
     epoch: bigint;
   }): Promise<RLNFullProof> {
     const witness: RLNWitness = {
@@ -81,7 +81,7 @@ export class RLNProver {
       messageId: args.messageId,
       pathElements: args.merkleProof.siblings,
       identityPathIndex: args.merkleProof.pathIndices,
-      x: args.x,
+      x: args.messageHash,
       externalNullifier: calculateExternalNullifier(args.epoch, args.rlnIdentifier),
     }
     const { proof, publicSignals } = await groth16.fullProve(
