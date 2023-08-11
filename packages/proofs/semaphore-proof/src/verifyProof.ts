@@ -1,4 +1,4 @@
-import { groth16 } from "snarkjs"
+import { groth16 } from "@cryptkeeperzk/snarkjs"
 import hash from "./hash"
 import { FullProof } from "./types"
 import unpackProof from "./unpackProof"

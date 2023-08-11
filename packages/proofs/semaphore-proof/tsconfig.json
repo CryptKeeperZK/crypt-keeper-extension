@@ -4,7 +4,15 @@
         "baseUrl": ".",
         "rootDir": ".",
         "outDir": "./dist",
-        "typeRoots": ["node_modules/@types", "src/@types"]
+        "typeRoots": ["node_modules/@types", "src/@types"],
+        "paths": {
+            "@cryptkeeperzk/ffjavascript": [
+              "./src/types/ffjavascript"
+            ],
+            "@cryptkeeperzk/snarkjs": [
+              "./src/types/snarkjs"
+            ],
+          }
     },
     "include": ["src", "src/verificationKeys.json"],
     "exclude": [
