@@ -13,11 +13,8 @@ updates:
       interval: "daily"
 
   - package-ecosystem: "npm"
-    directory: "/proofs"
+    directory: 
+      - "/proofs"
+      - "/tools"
     schedule:
-      interval: "never"
-
-  - package-ecosystem: "npm"
-    directory: "/tools"
-    schedule:
-      interval: "never"
+      interval: "monthly"
