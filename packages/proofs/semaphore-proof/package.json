@@ -19,8 +19,7 @@
   },
   "scripts": {
     "build:watch": "rollup -c rollup.config.ts -w --configPlugin typescript",
-    "build": "tsc -p tsconfig.build.json",
-    "docs": "typedoc src/index.ts --out ../../docs/proof"
+    "build": "tsc -p tsconfig.build.json"
   },
   "devDependencies": {
     "@rollup/plugin-commonjs": "^24.1.0",
@@ -39,11 +38,11 @@
     "@semaphore-protocol/identity": "3.10.1"
   },
   "dependencies": {
+    "@cryptkeeperzk/snarkjs": "workspace:^",
     "@ethersproject/bignumber": "^5.5.0",
     "@ethersproject/bytes": "^5.7.0",
     "@ethersproject/keccak256": "^5.7.0",
     "@ethersproject/strings": "^5.5.0",
-    "@zk-kit/incremental-merkle-tree": "0.4.3",
-    "snarkjs": "git+https://github.com/CryptKeeperZK/snarkjs.git"
+    "@zk-kit/incremental-merkle-tree": "0.4.3"
   }
 }

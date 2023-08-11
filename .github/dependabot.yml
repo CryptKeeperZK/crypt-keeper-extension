@@ -11,3 +11,31 @@ updates:
     open-pull-requests-limit: 5
     schedule:
       interval: "daily"
+
+  # PROBLEM: 
+  # ========
+  # Since Dependabot does not have a way for ignoring sub directories (workspaces) yet in our monorepo.
+  # We'd allow those forked repos to be only updated once every month.
+  # The intention is just to limit the number of PRs coming from those subdirectories as possible. 
+  # - Link issue from Dependabot: (https://github.com/dependabot/dependabot-core/issues/4364)
+  # - Link bug reported issue from CryptKeeper: (https://github.com/CryptKeeperZK/crypt-keeper-extension/issues/667)
+  # 
+  # NOTE: 
+  # =====
+  # ALL the PRs from these subdirectories packages should be CLOSED directly.
+  # /packages/
+  #   proofs/
+  #     rln-proof/*
+  #     semaphore-proof/*
+  #   tools/
+  #     snarkjs/*
+  #     ffjavascript/*
+  - package-ecosystem: "npm"
+    directory: "/proofs"
+    schedule:
+      interval: "monthly"
+
+  - package-ecosystem: "npm"
+    directory: "/tools"
+    schedule:
+      interval: "monthly"

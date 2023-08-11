@@ -47,17 +47,11 @@
     "zero-knowledge-proofs"
   ],
   "scripts": {
-    "build": "tsc -p tsconfig.build.json",
-    "test": "jest",
-    "test:debug": "jest --silent=false",
-    "test:benchmark": "jest --silent=false ./tests/circuit-wrapper.test.ts",
-    "test:ci": "jest --silent=false --runInBand",
-    "lint": "eslint --ext .ts,.tsx,.js,.jsx src/ -c .eslintrc.js",
-    "lint:fix": "pnpm run lint --fix",
-    "types": "tsc -p tsconfig.json --noEmit",
-    "format": "eslint --ext .ts,.tsx,.js,.jsx src/ -c .eslintrc.js --fix"
+    "build": "tsc -p tsconfig.build.json"
   },
   "dependencies": {
+    "@cryptkeeperzk/ffjavascript": "workspace:^",
+    "@cryptkeeperzk/snarkjs": "workspace:^",
     "@ethersproject/bytes": "^5.7.0",
     "@ethersproject/keccak256": "^5.7.0",
     "@ethersproject/solidity": "^5.7.0",
@@ -67,9 +61,7 @@
     "@zk-kit/incremental-merkle-tree": "^0.4.3",
     "base64-js": "^1.5.1",
     "ethers": "^6.4.0",
-    "ffjavascript": "0.2.55",
-    "poseidon-lite": "^0.0.2",
-    "snarkjs": "git+https://github.com/CryptKeeperZK/snarkjs.git"
+    "poseidon-lite": "^0.0.2"
   },
   "devDependencies": {
     "@ethersproject/bignumber": "^5.7.0",
