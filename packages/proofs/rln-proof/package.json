@@ -63,7 +63,7 @@
     "@zk-kit/incremental-merkle-tree": "^0.4.3",
     "base64-js": "^1.5.1",
     "ethers": "^6.4.0",
-    "ffjavascript": "0.2.55",
+    "ffjavascript": "0.2.60",
     "poseidon-lite": "^0.0.2",
     "snarkjs": "git+https://github.com/CryptKeeperZK/snarkjs.git"
   },
