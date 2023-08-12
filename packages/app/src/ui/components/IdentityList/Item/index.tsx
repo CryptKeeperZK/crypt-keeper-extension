@@ -2,7 +2,6 @@ import { IconName, IconPrefix } from "@fortawesome/fontawesome-common-types";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Box from "@mui/material/Box";
 import classNames from "classnames";
-import { ChangeEvent, FormEvent, MouseEvent as ReactMouseEvent, useCallback, useState } from "react";
 
 import { getEnabledFeatures } from "@src/config/features";
 import { IdentityMetadata, IdentityWeb2Provider } from "@src/types";
@@ -10,9 +9,9 @@ import { Icon } from "@src/ui/components/Icon";
 import { Input } from "@src/ui/components/Input";
 import { Menuable } from "@src/ui/components/Menuable";
 import { ellipsify } from "@src/util/account";
-import { redirectToNewTab } from "@src/util/browser";
 
 import "./identityListItemStyles.scss";
+import { useIdentityItem } from "./useIdentityItem";
 
 type IconWeb2Providers = Record<IdentityWeb2Provider, [IconPrefix, IconName]>;
 
@@ -32,6 +31,7 @@ export interface IdentityItemProps {
   onSelectIdentity?: (commitment: string) => void;
 }
 
+// TODO: use react-hook-form
 export const IdentityItem = ({
   commitment,
   isShowMenu,
@@ -41,47 +41,30 @@ export const IdentityItem = ({
   onUpdateIdentityName,
   onSelectIdentity = undefined,
 }: IdentityItemProps): JSX.Element => {
-  const [name, setName] = useState(metadata.name);
-  const [isRenaming, setIsRenaming] = useState(false);
-
-  const handleDeleteIdentity = useCallback(() => {
-    onDeleteIdentity(commitment);
-  }, [commitment, onDeleteIdentity]);
-
-  const handleSelectIdentity = useCallback(() => {
-    onSelectIdentity?.(commitment);
-  }, [commitment, onSelectIdentity]);
-
-  const handleChangeName = useCallback(
-    (event: ChangeEvent<HTMLInputElement>) => {
-      setName(event.target.value);
-    },
-    [setName],
-  );
-
-  const handleToggleRenaming = useCallback(() => {
-    setIsRenaming((value) => !value);
-  }, [setIsRenaming]);
-
-  const handleUpdateName = useCallback(
-    (event: FormEvent | ReactMouseEvent) => {
-      event.preventDefault();
-      onUpdateIdentityName(commitment, name).finally(() => {
-        setIsRenaming(false);
-      });
-    },
-    [commitment, name, onUpdateIdentityName],
-  );
-
-  const handleGoToHost = useCallback(() => {
-    redirectToNewTab(metadata.host!);
-  }, [metadata.host]);
+  const {
+    name,
+    isRenaming,
+    handleChangeName,
+    handleDeleteIdentity,
+    handleGoToHost,
+    handleGoToIdentity,
+    handleSelectIdentity,
+    handleToggleRenaming,
+    handleUpdateName,
+  } = useIdentityItem({
+    commitment,
+    metadata,
+    onDeleteIdentity,
+    onUpdateIdentityName,
+    onSelectIdentity,
+  });
 
   const features = getEnabledFeatures();
   const identityTitle = features.INTERREP_IDENTITY ? "random" : "";
   const canShowIdentityType = Boolean(metadata.web2Provider || identityTitle);
 
   const menuItems = [
+    { label: "View", isDangerItem: false, onClick: handleGoToIdentity },
     { label: "Rename", isDangerItem: false, onClick: handleToggleRenaming },
     { label: "Delete", isDangerItem: true, onClick: handleDeleteIdentity },
   ];
@@ -152,7 +135,7 @@ export const IdentityItem = ({
       </div>
 
       {isShowMenu && (
-        <Menuable className="flex user-menu" items={selected !== commitment ? menuItems : [menuItems[0]]}>
+        <Menuable className="flex user-menu" items={selected !== commitment ? menuItems : [menuItems[0], menuItems[1]]}>
           <Icon className="identity-row__menu-icon" fontAwesome="fas fa-ellipsis-h" />
         </Menuable>
       )}

@@ -3,3 +3,5 @@ test-results/
 playwright-report/
 playwright/.cache/
 tmp/
+user-data/
+test-results/

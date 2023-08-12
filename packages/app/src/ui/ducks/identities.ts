@@ -130,7 +130,7 @@ export const deleteAllIdentities = () => async (): Promise<boolean> =>
     method: RPCAction.DELETE_ALL_IDENTITIES,
   });
 
-export const fetchIdentities = (): TypedThunk => async (dispatch) => {
+export const fetchIdentities = (): TypedThunk<Promise<void>> => async (dispatch) => {
   const data = await postMessage<IdentityData[]>({ method: RPCAction.GET_IDENTITIES });
   const { commitment, web2Provider, host } = await postMessage<ConnectedIdentity>({
     method: RPCAction.GET_CONNECTED_IDENTITY_DATA,
@@ -173,6 +173,11 @@ export const enableHistory =
   };
 
 export const useIdentities = (): IdentityData[] => useAppSelector((state) => state.identities.identities, deepEqual);
+
+export const useIdentity = (commitment?: string): IdentityData | undefined =>
+  useAppSelector((state) =>
+    commitment ? state.identities.identities.find((identity) => identity.commitment === commitment) : undefined,
+  );
 
 export const useLinkedIdentities = (host: string): IdentityData[] =>
   useAppSelector(

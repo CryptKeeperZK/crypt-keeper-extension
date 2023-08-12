@@ -36,6 +36,7 @@ import {
   enableHistory,
   useLinkedIdentities,
   useUnlinkedIdentities,
+  useIdentity,
 } from "../identities";
 
 jest.unmock("@src/ui/ducks/hooks");
@@ -94,6 +95,12 @@ describe("ui/ducks/identities", () => {
     const identitiesHookData = renderHook(() => useIdentities(), {
       wrapper: ({ children }) => <Provider store={store}>{children}</Provider>,
     });
+    const identityHookData = renderHook(() => useIdentity(defaultIdentities[0].commitment), {
+      wrapper: ({ children }) => <Provider store={store}>{children}</Provider>,
+    });
+    const emptyIdentityHookData = renderHook(() => useIdentity(), {
+      wrapper: ({ children }) => <Provider store={store}>{children}</Provider>,
+    });
     const linkedIdentitiesHookData = renderHook(() => useLinkedIdentities("http://localhost:3000"), {
       wrapper: ({ children }) => <Provider store={store}>{children}</Provider>,
     });
@@ -106,6 +113,8 @@ describe("ui/ducks/identities", () => {
 
     expect(identities.identities).toStrictEqual(defaultIdentities);
     expect(identitiesHookData.result.current).toStrictEqual(defaultIdentities);
+    expect(identityHookData.result.current).toStrictEqual(defaultIdentities[0]);
+    expect(emptyIdentityHookData.result.current).toBeUndefined();
     expect(linkedIdentitiesHookData.result.current).toStrictEqual(defaultIdentities.slice(0, 1));
     expect(unlinkedIdentitiesHookData.result.current).toStrictEqual(defaultIdentities.slice(1));
     expect(connectedIdentityHookData.result.current).toStrictEqual(defaultIdentities[0]);

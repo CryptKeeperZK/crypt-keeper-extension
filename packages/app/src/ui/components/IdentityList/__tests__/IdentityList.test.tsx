@@ -3,6 +3,7 @@
  */
 
 import { act, render, screen, fireEvent } from "@testing-library/react";
+import { useNavigate } from "react-router-dom";
 
 import { ZERO_ADDRESS } from "@src/config/const";
 import { IdentityData } from "@src/types";
@@ -10,6 +11,10 @@ import { useAppDispatch } from "@src/ui/ducks/hooks";
 import { deleteIdentity, setIdentityName, useIdentities } from "@src/ui/ducks/identities";
 
 import { IdentityList, IdentityListProps } from "..";
+
+jest.mock("react-router-dom", (): unknown => ({
+  useNavigate: jest.fn(),
+}));
 
 jest.mock("@src/ui/ducks/hooks", (): unknown => ({
   useAppDispatch: jest.fn(),
@@ -24,6 +29,7 @@ jest.mock("@src/ui/ducks/identities", (): unknown => ({
 
 describe("ui/components/IdentityList", () => {
   const mockDispatch = jest.fn(() => Promise.resolve());
+  const mockNavigate = jest.fn();
 
   const defaultIdentities: IdentityData[] = [
     {
@@ -58,6 +64,8 @@ describe("ui/components/IdentityList", () => {
 
   beforeEach(() => {
     (useAppDispatch as jest.Mock).mockReturnValue(mockDispatch);
+
+    (useNavigate as jest.Mock).mockReturnValue(mockNavigate);
 
     (useIdentities as jest.Mock).mockReturnValue(defaultIdentities);
   });

@@ -55,6 +55,7 @@ export class OffscreenController {
       circuitFilePath,
       zkeyFilePath,
     });
+
     return fullProof;
   };
 
@@ -88,6 +89,7 @@ export class OffscreenController {
       merkleStorageAddress,
       merkleProofProvided,
     });
+
     return JSON.stringify(rlnFullProof);
   };
 }

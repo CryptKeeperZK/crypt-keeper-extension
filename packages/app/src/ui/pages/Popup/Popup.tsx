@@ -7,6 +7,7 @@ import CreateIdentity from "@src/ui/pages/CreateIdentity";
 import DownloadBackup from "@src/ui/pages/DownloadBackup";
 import GenerateMnemonic from "@src/ui/pages/GenerateMnemonic";
 import Home from "@src/ui/pages/Home";
+import Identity from "@src/ui/pages/Identity";
 import Login from "@src/ui/pages/Login";
 import Onboarding from "@src/ui/pages/Onboarding";
 import OnboardingBackup from "@src/ui/pages/OnboardingBackup";
@@ -22,6 +23,7 @@ import { usePopup } from "./usePopup";
 
 const routeConfig: RouteObject[] = [
   { path: Paths.HOME, element: <Home /> },
+  { path: Paths.IDENTITY, element: <Identity /> },
   { path: Paths.CREATE_IDENTITY, element: <CreateIdentity /> },
   { path: Paths.LOGIN, element: <Login /> },
   { path: Paths.ONBOARDING, element: <Onboarding /> },

@@ -179,4 +179,24 @@ test.describe("identity", () => {
 
     await expect(extension.getByText(/Account/)).toHaveCount(2);
   });
+
+  test("should check identity page [health-check]", async ({ page }) => {
+    const extension = new CryptKeeper(page);
+    await extension.focus();
+
+    await extension.identities.createIdentityFromHome({ walletType: "eth" });
+    await expect(extension.getByText("Account # 1")).toBeVisible();
+
+    await extension.identities.openIdentityPage(1);
+    await extension.identities.updateIdentityFromPage({ name: "My new account" });
+    await extension.goHome();
+
+    await expect(extension.getByText("My new account")).toBeVisible();
+
+    await extension.identities.openIdentityPage(1);
+    await extension.identities.deleteIdentityFromPage();
+    await extension.goHome();
+
+    await expect(extension.getByText("My new account")).toBeHidden();
+  });
 });

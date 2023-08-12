@@ -5,6 +5,8 @@
 /* eslint-disable @typescript-eslint/unbound-method */
 import browser from "webextension-polyfill";
 
+import { Paths } from "@src/constants";
+
 import {
   getLastActiveTabUrl,
   redirectToNewTab,
@@ -12,6 +14,7 @@ import {
   downloadFile,
   copyToClipboard,
   getUrlOrigin,
+  replaceUrlParams,
 } from "../browser";
 
 describe("util/browser", () => {
@@ -90,5 +93,11 @@ describe("util/browser", () => {
   test("should get url origin properly", () => {
     expect(getUrlOrigin()).toBe("");
     expect(getUrlOrigin("http://localhost:1234/#/page1?search=0")).toBe("http://localhost:1234");
+  });
+
+  test("should replace url params properly", () => {
+    const result = replaceUrlParams(Paths.IDENTITY, { id: "1234", unknown: "4321" });
+
+    expect(result).toBe("/identity/1234");
   });
 });

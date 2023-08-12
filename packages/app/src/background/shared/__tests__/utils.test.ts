@@ -3,13 +3,14 @@
  */
 import { BrowserPlatform } from "@src/constants";
 
-import { createChromeOffscreen, deferredPromise, getBrowserPlatform } from "../utils";
+import { closeChromeOffscreen, createChromeOffscreen, deferredPromise, getBrowserPlatform } from "../utils";
 
 Object.defineProperty(global, "chrome", {
   value: {
     offscreen: {
       hasDocument: jest.fn(),
       createDocument: jest.fn(),
+      closeDocument: jest.fn(),
       Reason: jest.fn(() => ({
         DOM_SCRAPING: "DOM_SCRAPING",
       })),
@@ -44,6 +45,7 @@ describe("background/shared/utils", () => {
 
   test("should check the Chrome browser platform", () => {
     const browserPlatform = getBrowserPlatform();
+
     expect(browserPlatform).toBe(BrowserPlatform.Chrome);
   });
 
@@ -54,6 +56,7 @@ describe("background/shared/utils", () => {
     });
 
     const browserPlatform = getBrowserPlatform();
+
     expect(browserPlatform).toBe(BrowserPlatform.Firefox);
   });
 
@@ -65,6 +68,7 @@ describe("background/shared/utils", () => {
     });
 
     const browserPlatform = getBrowserPlatform();
+
     expect(browserPlatform).toBe(BrowserPlatform.Edge);
   });
 
@@ -76,6 +80,7 @@ describe("background/shared/utils", () => {
     });
 
     const browserPlatform = getBrowserPlatform();
+
     expect(browserPlatform).toBe(BrowserPlatform.Opera);
   });
 
@@ -87,6 +92,7 @@ describe("background/shared/utils", () => {
     Object.defineProperty(window.navigator, "brave", {});
 
     const browserPlatform = getBrowserPlatform();
+
     expect(browserPlatform).toBe(BrowserPlatform.Brave);
   });
 
@@ -108,5 +114,15 @@ describe("background/shared/utils", () => {
 
     expect(global.chrome.offscreen.hasDocument).toBeCalledTimes(1);
     expect(global.chrome.offscreen.createDocument).toBeCalledTimes(0);
+  });
+
+  test("should throw an error if it's not possible to create offscreen", async () => {
+    (global.chrome.offscreen.createDocument as jest.Mock).mockRejectedValue(new Error());
+
+    await expect(createChromeOffscreen()).rejects.toThrowError("CryptKeeper could not create an Offscreen");
+  });
+
+  test("should close offscreen properly", async () => {
+    await expect(closeChromeOffscreen()).resolves.toBeUndefined();
   });
 });

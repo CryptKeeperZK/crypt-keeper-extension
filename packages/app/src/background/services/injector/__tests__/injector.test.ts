@@ -220,6 +220,21 @@ describe("background/services/injector", () => {
       expect(result).toStrictEqual(emptyFullProof);
       expect(pushMessage).toBeCalledTimes(0);
     });
+
+    test("should throw error there is no circuit and zkey files", async () => {
+      mockGetConnectedIdentity.mockResolvedValue({
+        serialize: () => mockSerializedIdentity,
+        genIdentityCommitment: () => "mockIdentityCommitment",
+      });
+      (getBrowserPlatform as jest.Mock).mockReturnValueOnce(BrowserPlatform.Firefox);
+      (browser.runtime.getURL as jest.Mock).mockReturnValue(undefined);
+
+      const service = InjectorService.getInstance();
+
+      await expect(service.generateSemaphoreProof(defaultProofRequest, { origin: mockDefaultHost })).rejects.toThrow(
+        "Error in generateSemaphoreProof(): Injected service: Must set circuitFilePath and zkeyFilePath",
+      );
+    });
   });
 
   describe("rln", () => {
