@@ -1,6 +1,7 @@
 export enum Paths {
   ROOT = "/",
   HOME = "/home",
+  IDENTITY = "/identity/:id",
   CREATE_IDENTITY = "/create-identity",
   LOGIN = "/login",
   ONBOARDING = "/onboarding",

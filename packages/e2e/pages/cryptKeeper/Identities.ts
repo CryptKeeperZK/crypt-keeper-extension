@@ -9,6 +9,10 @@ export interface ICreateIdentityArgs {
   nonce?: number;
 }
 
+export interface IUpdateIdentityArgs {
+  name: string;
+}
+
 type WalletType = "eth" | "ck";
 
 type IdentityType = "InterRep" | "Random";
@@ -29,6 +33,24 @@ const PROVIDER_OPTIONS: Record<ProviderType, number> = {
 export default class Identities extends BasePage {
   async openTab(): Promise<void> {
     await this.page.getByText("Identities", { exact: true }).click();
+  }
+
+  async openIdentityPage(index = 0): Promise<void> {
+    const identities = await this.page.locator(".identity-row").all();
+    await identities[index].getByTestId("menu").click();
+    await this.page.getByText("View").click();
+  }
+
+  async updateIdentityFromPage({ name }: IUpdateIdentityArgs): Promise<void> {
+    await this.page.getByText("Update").click();
+
+    await this.page.locator("#identityRename").fill(name);
+    await this.page.locator("#identityRename").press("Enter");
+  }
+
+  async deleteIdentityFromPage(): Promise<void> {
+    await this.page.getByText("Delete").click();
+    await this.page.getByText("Yes").click();
   }
 
   async createIdentityFromHome(params: ICreateIdentityArgs): Promise<void> {

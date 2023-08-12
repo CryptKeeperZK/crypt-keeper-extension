@@ -3,15 +3,22 @@
  */
 
 import { act, render, screen, fireEvent } from "@testing-library/react";
+import { useNavigate } from "react-router-dom";
 
 import { ZERO_ADDRESS } from "@src/config/const";
 import { getEnabledFeatures } from "@src/config/features";
-import { redirectToNewTab } from "@src/util/browser";
+import { Paths } from "@src/constants";
+import { redirectToNewTab, replaceUrlParams } from "@src/util/browser";
 
 import { IdentityItem, IdentityItemProps } from "../Item";
 
+jest.mock("react-router-dom", (): unknown => ({
+  useNavigate: jest.fn(),
+}));
+
 jest.mock("@src/util/browser", (): unknown => ({
   redirectToNewTab: jest.fn(),
+  replaceUrlParams: jest.fn(),
 }));
 
 describe("ui/components/IdentityList/Item", () => {
@@ -32,7 +39,11 @@ describe("ui/components/IdentityList/Item", () => {
     onUpdateIdentityName: jest.fn(),
   };
 
+  const mockNavigate = jest.fn();
+
   beforeEach(() => {
+    (useNavigate as jest.Mock).mockReturnValue(mockNavigate);
+
     (getEnabledFeatures as jest.Mock).mockReturnValue({ INTERREP_IDENTITY: true });
   });
 
@@ -163,6 +174,19 @@ describe("ui/components/IdentityList/Item", () => {
 
     expect(defaultProps.onUpdateIdentityName).toBeCalledTimes(1);
     expect(defaultProps.onUpdateIdentityName).toBeCalledWith(defaultProps.commitment, "Account #1");
+  });
+
+  test("should go to identity page properly", async () => {
+    render(<IdentityItem {...defaultProps} />);
+
+    const menu = await screen.findByTestId("menu");
+    act(() => menu.click());
+
+    const button = await screen.findByText("View");
+    act(() => button.click());
+
+    expect(mockNavigate).toBeCalledTimes(1);
+    expect(mockNavigate).toBeCalledWith(replaceUrlParams(Paths.IDENTITY, { id: defaultProps.commitment }));
   });
 
   test("should go to host properly", async () => {

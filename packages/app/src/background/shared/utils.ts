@@ -78,7 +78,7 @@ export async function createChromeOffscreen(): Promise<void> {
       justification: "CryptKeeper Offscreen for generating ZKP",
     });
   } catch (error) {
-    throw new Error("CryptKeeper could not create an Offscreen.");
+    throw new Error("CryptKeeper could not create an Offscreen");
   }
 }
 

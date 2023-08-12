@@ -35,3 +35,6 @@ export const getUrlOrigin = (url?: string): string => {
 
   return new URL(url).origin;
 };
+
+export const replaceUrlParams = (path: string, params: Record<string, string>): string =>
+  Object.entries(params).reduce((acc, [key, value]) => acc.replace(`:${key}`, value), path);

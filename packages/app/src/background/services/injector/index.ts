@@ -166,8 +166,8 @@ export default class InjectorService {
       });
 
       return fullProof as SemaphoreFullProof;
-    } catch (e) {
-      throw new Error(`Error in generateSemaphoreProof(): ${e as string}`);
+    } catch (error) {
+      throw new Error(`Error in generateSemaphoreProof(): ${(error as Error).message}`);
     } finally {
       if (browserPlatform !== BrowserPlatform.Firefox) {
         await closeChromeOffscreen();
