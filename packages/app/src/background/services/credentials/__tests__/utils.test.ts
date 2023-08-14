@@ -6,7 +6,7 @@ import {
   deserializeCryptkeeperVerifiableCredential,
   serializeVerifiableCredential,
   deserializeVerifiableCredential,
-  validateVerifiableCredential,
+  validateSerializedVerifiableCredential,
   generateInitialMetadataForVerifiableCredential,
   hashVerifiableCredential,
 } from "../utils";
@@ -64,7 +64,7 @@ describe("util/deserializeVerifiableCredential", () => {
   });
 });
 
-describe("util/validateVerifiableCredential", () => {
+describe("util/validateSerializedVerifiableCredential", () => {
   test("should correctly validate a valid verifiable credential", async () => {
     const rawCred = {
       context: ["https://www.w3.org/2018/credentials/v1"],
@@ -82,7 +82,7 @@ describe("util/validateVerifiableCredential", () => {
     const cred = await deserializeVerifiableCredential(credJson);
 
     expect(cred).not.toBeNull();
-    expect(validateVerifiableCredential(cred)).not.toBeNull();
+    expect(validateSerializedVerifiableCredential(credJson)).not.toBeNull();
   });
 
   test("should return null if the string is not valid JSON", () => {

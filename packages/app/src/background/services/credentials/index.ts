@@ -20,6 +20,7 @@ import {
   serializeCryptkeeperVerifiableCredential,
   deserializeVerifiableCredential,
   deserializeCryptkeeperVerifiableCredential,
+  validateSerializedVerifiableCredential,
 } from "./utils";
 
 const VERIFIABLE_CREDENTIALS_KEY = "@@VERIFIABLE-CREDENTIALS@@";
@@ -54,7 +55,7 @@ export default class VerifiableCredentialsService implements IBackupable {
   }
 
   addVerifiableCredentialRequest = async (serializedVerifiableCredential: string): Promise<void> => {
-    await deserializeVerifiableCredential(serializedVerifiableCredential);
+    await validateSerializedVerifiableCredential(serializedVerifiableCredential);
     await this.browserController.openPopup({
       params: { redirect: Paths.ADD_VERIFIABLE_CREDENTIAL, serializedVerifiableCredential },
     });

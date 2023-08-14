@@ -13,7 +13,7 @@ jest.mock("@src/background/services/crypto", (): unknown => ({
     encrypt: jest.fn((value: string) => value),
     decrypt: jest.fn((value: string) => value),
     generateEncryptedHmac: jest.fn((value: string) => value),
-    getAuthenticCiphertext: jest.fn((value: string) => value),
+    getAuthenticBackup: jest.fn((encrypted: string | Record<string, string>) => encrypted),
   })),
 }));
 

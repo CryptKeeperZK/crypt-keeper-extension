@@ -2,6 +2,8 @@ import Tab from "@mui/material/Tab";
 import Tabs from "@mui/material/Tabs";
 import { type ReactNode, type SyntheticEvent, Children, useState, useMemo, useCallback } from "react";
 
+import { getEnabledFeatures } from "@src/config/features";
+
 import "./tabListStyles.scss";
 
 export interface TabListProps {
@@ -15,6 +17,7 @@ enum HomeTabs {
 }
 
 export const TabList = ({ children }: TabListProps): JSX.Element => {
+  const features = getEnabledFeatures();
   const [selectedTab, setSelectedTab] = useState(HomeTabs.IDENTITIES);
 
   const selectedContent = useMemo(() => Children.toArray(children)[selectedTab], [children, selectedTab]);
@@ -40,7 +43,7 @@ export const TabList = ({ children }: TabListProps): JSX.Element => {
 
         <Tab data-testid="tab-activity" label="Activity" />
 
-        <Tab data-testid="tab-credentials" label="Verifiable Credentials" />
+        {features.VERIFIABLE_CREDENTIALS && <Tab data-testid="tab-credentials" label="Verifiable Credentials" />}
       </Tabs>
 
       {selectedContent}

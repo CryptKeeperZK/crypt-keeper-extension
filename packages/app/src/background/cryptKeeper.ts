@@ -10,11 +10,12 @@ import RequestManager from "./controllers/requestManager";
 import ApprovalService from "./services/approval";
 import BackupService from "./services/backup";
 import VerifiableCredentialsService from "./services/credentials";
+import { validateSerializedVerifiableCredential } from "./services/credentials/utils";
 import HistoryService from "./services/history";
 import InjectorService from "./services/injector";
 import LockerService from "./services/lock";
 import MiscStorageService from "./services/misc";
-import { validateVerifiableCredential, validateZkInputs } from "./services/validation";
+import { validateZkInputs } from "./services/validation";
 import WalletService from "./services/wallet";
 import ZkIdentityService from "./services/zkIdentity";
 
@@ -179,7 +180,7 @@ export default class CryptKeeperController {
     this.handler.add(
       RPCAction.ADD_VERIFIABLE_CREDENTIAL_REQUEST,
       this.lockService.ensure,
-      validateVerifiableCredential,
+      validateSerializedVerifiableCredential,
       this.verifiableCredentialsService.addVerifiableCredentialRequest,
     );
     this.handler.add(
