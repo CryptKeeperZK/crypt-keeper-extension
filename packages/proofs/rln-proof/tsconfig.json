@@ -6,10 +6,10 @@
     "outDir": "./dist",
     "typeRoots": ["node_modules/@types", "src/types"],
     "paths": {
-      "ffjavascript": [
+      "@cryptkeeperzk/ffjavascript": [
         "./src/types/ffjavascript"
       ],
-      "snarkjs": [
+      "@cryptkeeperzk/snarkjs": [
         "./src/types/snarkjs"
       ],
     }

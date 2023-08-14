@@ -2,7 +2,7 @@ import { hexlify } from '@ethersproject/bytes'
 import { toUtf8Bytes } from '@ethersproject/strings'
 import { keccak256 } from '@ethersproject/keccak256'
 
-import { ZqField } from 'ffjavascript'
+import { ZqField } from '@cryptkeeperzk/ffjavascript'
 
 import poseidon from 'poseidon-lite'
 import { Identity } from '@semaphore-protocol/identity'

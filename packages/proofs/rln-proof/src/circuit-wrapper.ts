@@ -1,5 +1,5 @@
 import { MerkleProof } from '@zk-kit/incremental-merkle-tree'
-import { groth16 } from 'snarkjs'
+import { groth16 } from '@cryptkeeperzk/snarkjs'
 
 // Types
 import { StrBigInt, VerificationKey, Proof } from './types'

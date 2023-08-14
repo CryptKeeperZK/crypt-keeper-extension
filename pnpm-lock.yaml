@@ -67,7 +67,7 @@ importers:
         version: 16.5.1(@swc/core@1.3.69)
       nx-cloud:
         specifier: latest
-        version: 16.2.0
+        version: 16.3.0
       os-browserify:
         specifier: ^0.3.0
         version: 0.3.0
@@ -604,6 +604,12 @@ importers:
 
   packages/proofs/rln-proof:
     dependencies:
+      '@cryptkeeperzk/ffjavascript':
+        specifier: ^0.2.59
+        version: 0.2.59
+      '@cryptkeeperzk/snarkjs':
+        specifier: ^0.7.0
+        version: 0.7.0
       '@ethersproject/bytes':
         specifier: ^5.7.0
         version: 5.7.0
@@ -631,15 +637,9 @@ importers:
       ethers:
         specifier: ^6.4.0
         version: 6.4.0
-      ffjavascript:
-        specifier: 0.2.55
-        version: 0.2.55
       poseidon-lite:
         specifier: ^0.0.2
         version: 0.0.2
-      snarkjs:
-        specifier: git+https://github.com/CryptKeeperZK/snarkjs.git
-        version: git/github.com+CryptKeeperZK/snarkjs/a09439b72da7bea8f38e9b4f69236dd4016a3653
     devDependencies:
       '@ethersproject/bignumber':
         specifier: ^5.7.0
@@ -692,6 +692,9 @@ importers:
 
   packages/proofs/semaphore-proof:
     dependencies:
+      '@cryptkeeperzk/snarkjs':
+        specifier: ^0.7.0
+        version: 0.7.0
       '@ethersproject/bignumber':
         specifier: ^5.5.0
         version: 5.7.0
@@ -713,10 +716,10 @@ importers:
       '@zk-kit/incremental-merkle-tree':
         specifier: 0.4.3
         version: 0.4.3
-      snarkjs:
-        specifier: git+https://github.com/CryptKeeperZK/snarkjs.git
-        version: git/github.com+CryptKeeperZK/snarkjs/a09439b72da7bea8f38e9b4f69236dd4016a3653
     devDependencies:
+      '@cryptkeeperzk/ffjavascript':
+        specifier: ^0.2.59
+        version: 0.2.59
       '@rollup/plugin-commonjs':
         specifier: ^24.1.0
         version: 24.1.0(rollup@3.26.2)
@@ -729,9 +732,6 @@ importers:
       '@types/jest':
         specifier: ^29.5.2
         version: 29.5.3
-      ffjavascript:
-        specifier: ^0.2.54
-        version: 0.2.55
       fs:
         specifier: 0.0.1-security
         version: 0.0.1-security
@@ -2602,6 +2602,7 @@ packages:
   /@commitlint/config-validator@17.4.4:
     resolution: {integrity: sha512-bi0+TstqMiqoBAQDvdEP4AFh0GaKyLFlPPEObgI29utoKEYoPQTvF0EYqIwYYLEoJYhj5GfMIhPHJkTJhagfeg==}
     engines: {node: '>=v14'}
+    requiresBuild: true
     dependencies:
       '@commitlint/types': 17.4.4
       ajv: 8.12.0
@@ -2622,6 +2623,7 @@ packages:
   /@commitlint/execute-rule@17.4.0:
     resolution: {integrity: sha512-LIgYXuCSO5Gvtc0t9bebAMSwd68ewzmqLypqI2Kke1rqOqqDbMpYcYfoPfFlv9eyLIh4jocHWwCK5FS7z9icUA==}
     engines: {node: '>=v14'}
+    requiresBuild: true
     dev: true
 
   /@commitlint/format@17.4.4:
@@ -2701,6 +2703,7 @@ packages:
   /@commitlint/resolve-extends@17.4.4:
     resolution: {integrity: sha512-znXr1S0Rr8adInptHw0JeLgumS11lWbk5xAWFVno+HUFVN45875kUtqjrI6AppmD3JI+4s0uZlqqlkepjJd99A==}
     engines: {node: '>=v14'}
+    requiresBuild: true
     dependencies:
       '@commitlint/config-validator': 17.4.4
       '@commitlint/types': 17.4.4
@@ -2739,6 +2742,30 @@ packages:
     dependencies:
       chalk: 4.1.2
     dev: true
+
+  /@cryptkeeperzk/ffjavascript@0.2.59:
+    resolution: {integrity: sha512-K5G1dummndLEOVmxmeT9eHx2+R6GK6TM1ClVmWDAXPYi9fS8IkZQHEvMV2mI2AMhAZcnMgIKzoanAhrFOiEPGg==}
+    dependencies:
+      base64-js: 1.5.1
+      wasmbuilder: 0.0.16
+      wasmcurves: 0.2.1
+      web-worker: 1.2.0
+
+  /@cryptkeeperzk/snarkjs@0.7.0:
+    resolution: {integrity: sha512-UEPI9kboqvHxAAr++LCth0U6c8X+kSaCe90eula8GOOlP/cMBHOXyNZD8QAxqmjdJ45qyTFdhcORX/EeYI2AWA==}
+    hasBin: true
+    dependencies:
+      '@iden3/binfileutils': 0.0.11
+      bfj: 7.0.2
+      blake2b-wasm: 2.4.0
+      circom_runtime: 0.1.23
+      ejs: 3.1.9
+      fastfile: 0.0.20
+      ffjavascript: github.com/CryptKeeperZK/ffjavascript/4007506beb87a64f07db5d8826668196d832ab5e
+      js-sha3: 0.8.0
+      logplease: 1.2.15
+      r1csfile: 0.0.46
+    dev: false
 
   /@cspotcode/source-map-support@0.8.1:
     resolution: {integrity: sha512-IchNf6dN4tHoMFIn/7OE8LWZ19Y6q/67Bmf6vnGREv8RSbBVb9LPJxEcnwrcwX6ixSvaiGoomAUvu4YSxXrVgw==}
@@ -3433,7 +3460,7 @@ packages:
     resolution: {integrity: sha512-LylnJoZ0CTdgErnKY8OxohvW4K+p6UHD3sxt+3P9AmMyBQjYR4IpoqoYZZ+9aMj89cmCQ21UvdhndAx04er3NA==}
     dependencies:
       fastfile: 0.0.20
-      ffjavascript: 0.2.55
+      ffjavascript: 0.2.59
     dev: false
 
   /@interep/identity@0.3.0:
@@ -4425,10 +4452,10 @@ packages:
       - verdaccio
     dev: true
 
-  /@nrwl/nx-cloud@16.2.0:
-    resolution: {integrity: sha512-NNSXBxI6DRndO5SRtvqi9qtTdknbqUNHIJO511S61YmdeQM18OflUB7ejyRQvQVhkB+XpGutSIp/BJPLocJf+w==}
+  /@nrwl/nx-cloud@16.3.0:
+    resolution: {integrity: sha512-nJrGsVufhY74KcP7kM7BqFOGAoO5OEF6+wfiM295DgmEG9c1yW+x5QiQaC42K9SWYn/eKQa1X7466ZA5lynXoQ==}
     dependencies:
-      nx-cloud: 16.2.0
+      nx-cloud: 16.3.0
     transitivePeerDependencies:
       - debug
     dev: true
@@ -9209,6 +9236,7 @@ packages:
   /cosmiconfig-typescript-loader@4.3.0(@types/node@20.3.1)(cosmiconfig@8.2.0)(ts-node@10.9.1)(typescript@5.1.6):
     resolution: {integrity: sha512-NTxV1MFfZDLPiBMjxbHRwSh5LaLcPMwNdCutmnHJCKoVnlvldPWlllonKwrsRJ5pYZBIBGRWWU2tfvzxgeSW5Q==}
     engines: {node: '>=12', npm: '>=6'}
+    requiresBuild: true
     peerDependencies:
       '@types/node': '*'
       cosmiconfig: '>=7'
@@ -11074,7 +11102,7 @@ packages:
     resolution: {integrity: sha512-nksaMCwX+BOdV2NQ1/57OehSD2JtujbhrdC2+Fb9VpvBO0WO6h+WWwu3oMMw7aUiTa5lvQcWX1vl4aOy7Q3CTg==}
     engines: {node: '>=14.0.0'}
     dependencies:
-      '@adraffy/ens-normalize': git/github.com+ricmoo/ens-normalize.js/2d040533e57e4f25f9a7cc4715e219658ad454b5
+      '@adraffy/ens-normalize': github.com/ricmoo/ens-normalize.js/2d040533e57e4f25f9a7cc4715e219658ad454b5
       '@noble/hashes': 1.1.2
       '@noble/secp256k1': 1.7.1
       '@types/node': 18.15.13
@@ -11445,6 +11473,7 @@ packages:
       wasmbuilder: 0.0.12
       wasmcurves: 0.1.0
       web-worker: 1.2.0
+    dev: false
 
   /ffjavascript@0.2.59:
     resolution: {integrity: sha512-QssOEUv+wilz9Sg7Zaj6KWAm7QceOAEsFuEBTltUsDo1cjn11rA/LGYvzFBPbzNfxRlZxwgJ7uxpCQcdDlrNfw==}
@@ -14504,6 +14533,7 @@ packages:
 
   /lodash.isplainobject@4.0.6:
     resolution: {integrity: sha512-oSXzaWypCMHkPC3NvBEaPHf0KsA5mvPrOPgQWDsbg8n7orZ290M0BmC/jgRZ4vcJ6DTAhjrsSYgdsW/F+MFOBA==}
+    requiresBuild: true
     dev: true
 
   /lodash.isstring@4.0.1:
@@ -14531,6 +14561,7 @@ packages:
 
   /lodash.mergewith@4.6.2:
     resolution: {integrity: sha512-GK3g5RPZWTRSeLSpgP8Xhra+pnjBC56q9FZYe1d5RN3TJ35dbkGy3YqBSMbyCrlbi+CM9Z3Jk5yTL7RCsqboyQ==}
+    requiresBuild: true
     dev: true
 
   /lodash.once@4.1.1:
@@ -14547,6 +14578,7 @@ packages:
 
   /lodash.uniq@4.5.0:
     resolution: {integrity: sha512-xfBaXQd9ryd9dlSDvnvI0lvxfLJlYAZzXomUYzLKtUeOQvOP5piqAWuGtrhWeqaXK9hhoM/iyJc5AV+XfsX3HQ==}
+    requiresBuild: true
     dev: true
 
   /lodash.upperfirst@4.3.1:
@@ -15346,11 +15378,11 @@ packages:
     resolution: {integrity: sha512-6xpotnECFy/og7tKSBVmUNft7J3jyXAka4XvG6AUhFWRz+Q/Ljus7znJAA3bxColfQLdS+XsjoodtJfCgeTEFQ==}
     dev: true
 
-  /nx-cloud@16.2.0:
-    resolution: {integrity: sha512-LESjpYO6Ksg4AjbXnzH9qZqyQzTauwFFUITeyz5NAVEFKaBTEICyupSk+3Xq3v4QQurFJOE3rShhYuSQP5moeQ==}
+  /nx-cloud@16.3.0:
+    resolution: {integrity: sha512-hmNgpeLO4v4WDSWa8YhwX+q+9ohIyY8iqxlWyIKixWzQH2XfRgYFjOLH4IDLGOlKa3hg7MB6+4+75cK9CfSmKw==}
     hasBin: true
     dependencies:
-      '@nrwl/nx-cloud': 16.2.0
+      '@nrwl/nx-cloud': 16.3.0
       axios: 1.1.3
       chalk: 4.1.2
       dotenv: 10.0.0
@@ -19182,22 +19214,22 @@ packages:
     resolution: {integrity: sha512-dTMpBgrnLOXrN58i2zakn2ScynsBhq9LfyQIsPz4CyxRF9k1GAORniuqn3xmE9NnI1l7g3iiVCkoB2Cl0/oG8w==}
     dependencies:
       big-integer: 1.6.51
+    dev: false
 
   /wasmbuilder@0.0.16:
     resolution: {integrity: sha512-Qx3lEFqaVvp1cEYW7Bfi+ebRJrOiwz2Ieu7ZG2l7YyeSJIok/reEQCQCuicj/Y32ITIJuGIM9xZQppGx5LrQdA==}
-    dev: false
 
   /wasmcurves@0.1.0:
     resolution: {integrity: sha512-kIlcgbVUAv2uQ6lGsepGz/m5V40+Z6rvTBkqCYn3Y2+OcXst+UaP4filJYLh/xDxjJl62FFjZZeAnpeli1Y5/Q==}
     dependencies:
       big-integer: 1.6.51
       blakejs: 1.2.1
+    dev: false
 
   /wasmcurves@0.2.1:
     resolution: {integrity: sha512-9ciO7bUE5bgpbOcdK7IO3enrSVIKHwrQmPibok4GLJWaCA7Wyqc9PRYnu5HbiFv9NDFNqVKPtU5R6Is5KujBLg==}
     dependencies:
       wasmbuilder: 0.0.16
-    dev: false
 
   /watchpack@2.4.0:
     resolution: {integrity: sha512-Lcvm7MGST/4fup+ifyKi2hjyIAwcdI4HRgtvTpIUxBRhB+RFtUh8XtDOxUfctVCnhVi+QQj49i91OyvzkJl6cg==}
@@ -20083,9 +20115,9 @@ packages:
       use-sync-external-store: 1.2.0(react@18.2.0)
     dev: false
 
-  git/github.com+CryptKeeperZK/ffjavascript/faeed7d09c82ff101044ae354e0d6b75bc93933d:
-    resolution: {commit: faeed7d09c82ff101044ae354e0d6b75bc93933d, repo: git@github.com:CryptKeeperZK/ffjavascript.git, type: git}
-    name: ffjavascript
+  github.com/CryptKeeperZK/ffjavascript/4007506beb87a64f07db5d8826668196d832ab5e:
+    resolution: {tarball: https://codeload.github.com/CryptKeeperZK/ffjavascript/tar.gz/4007506beb87a64f07db5d8826668196d832ab5e}
+    name: '@cryptkeeperzk/ffjavascript'
     version: 0.2.59
     dependencies:
       base64-js: 1.5.1
@@ -20094,26 +20126,8 @@ packages:
       web-worker: 1.2.0
     dev: false
 
-  git/github.com+CryptKeeperZK/snarkjs/a09439b72da7bea8f38e9b4f69236dd4016a3653:
-    resolution: {commit: a09439b72da7bea8f38e9b4f69236dd4016a3653, repo: git@github.com:CryptKeeperZK/snarkjs.git, type: git}
-    name: snarkjs
-    version: 0.7.0
-    hasBin: true
-    dependencies:
-      '@iden3/binfileutils': 0.0.11
-      bfj: 7.0.2
-      blake2b-wasm: 2.4.0
-      circom_runtime: 0.1.23
-      ejs: 3.1.9
-      fastfile: 0.0.20
-      ffjavascript: git/github.com+CryptKeeperZK/ffjavascript/faeed7d09c82ff101044ae354e0d6b75bc93933d
-      js-sha3: 0.8.0
-      logplease: 1.2.15
-      r1csfile: 0.0.46
-    dev: false
-
-  git/github.com+ricmoo/ens-normalize.js/2d040533e57e4f25f9a7cc4715e219658ad454b5:
-    resolution: {commit: 2d040533e57e4f25f9a7cc4715e219658ad454b5, repo: git@github.com:ricmoo/ens-normalize.js.git, type: git}
+  github.com/ricmoo/ens-normalize.js/2d040533e57e4f25f9a7cc4715e219658ad454b5:
+    resolution: {tarball: https://codeload.github.com/ricmoo/ens-normalize.js/tar.gz/2d040533e57e4f25f9a7cc4715e219658ad454b5}
     name: '@adraffy/ens-normalize'
     version: 1.9.0
     dev: false

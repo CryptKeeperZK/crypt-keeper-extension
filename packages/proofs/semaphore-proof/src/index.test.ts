@@ -1,7 +1,7 @@
 import { formatBytes32String } from "@ethersproject/strings"
 import { Group } from "@semaphore-protocol/group"
 import { Identity } from "@semaphore-protocol/identity"
-import { getCurveFromName } from "ffjavascript"
+import { getCurveFromName } from "@cryptkeeperzk/ffjavascript"
 import calculateNullifierHash from "./calculateNullifierHash"
 import generateProof from "./generateProof"
 import hash from "./hash"
