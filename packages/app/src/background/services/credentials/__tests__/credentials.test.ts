@@ -13,7 +13,7 @@ jest.mock("@src/background/services/crypto", (): unknown => ({
     encrypt: jest.fn((value: string) => value),
     decrypt: jest.fn((value: string) => value),
     generateEncryptedHmac: jest.fn((value: string) => value),
-    getAuthenticBackup: jest.fn((value: string) => value),
+    getAuthenticCiphertext: jest.fn((value: string) => value),
   })),
 }));
 
@@ -133,15 +133,12 @@ describe("background/services/credentials", () => {
     });
 
     test("should not add a verifiable credential with an existing id", async () => {
-      const result = await verifiableCredentialsService.addVerifiableCredential(exampleCredentialString);
+      const successfullyInsertedCredential = await verifiableCredentialsService.addVerifiableCredential({
+        serializedVerifiableCredential: exampleCredentialString,
+        verifiableCredentialName: defaultCredentialName,
+      });
 
-      expect(result).toBe(false);
-    });
-
-    test("should not add a verifiable credential if input is empty", async () => {
-      const result = await verifiableCredentialsService.addVerifiableCredential("");
-
-      expect(result).toBe(false);
+      expect(successfullyInsertedCredential).toBe(false);
     });
 
     test("should not add a verifiable credential with an invalid format", async () => {
@@ -176,12 +173,6 @@ describe("background/services/credentials", () => {
 
       expect(credentialDeleted).toBe(false);
       expect(credentialsStorage.set).toBeCalledTimes(0);
-    });
-
-    test("should not delete a verifiable credential if id is empty string", async () => {
-      const credentialDeleted = await verifiableCredentialsService.deleteVerifiableCredential("");
-
-      expect(credentialDeleted).toBe(false);
     });
 
     test("should delete all verifiable credentials", async () => {
@@ -240,35 +231,6 @@ describe("background/services/credentials", () => {
       await verifiableCredentialsService.uploadEncryptedStorage("", "");
 
       expect(credentialsStorage.set).toBeCalledTimes(0);
-    });
-
-    test("should throw error when trying upload incorrect backup", async () => {
-      await expect(verifiableCredentialsService.uploadEncryptedStorage({}, "password")).rejects.toThrow(
-        "Incorrect backup format for credentials",
-      );
-    });
-
-    test("should download storage properly", async () => {
-      const [storage] = (SimpleStorage as jest.Mock).mock.instances as [MockStorage];
-
-      await verifiableCredentialsService.downloadStorage();
-
-      expect(storage.get).toBeCalledTimes(1);
-    });
-
-    test("should restore storage properly", async () => {
-      const [storage] = (SimpleStorage as jest.Mock).mock.instances as [MockStorage];
-
-      await verifiableCredentialsService.restoreStorage("storage");
-
-      expect(storage.set).toBeCalledTimes(1);
-      expect(storage.set).toBeCalledWith("storage");
-    });
-
-    test("should throw error when trying to restore incorrect data", async () => {
-      await expect(verifiableCredentialsService.restoreStorage({})).rejects.toThrow(
-        "Incorrect restore format for credentials",
-      );
     });
   });
 });

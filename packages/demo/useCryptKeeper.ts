@@ -6,12 +6,11 @@ import { encodeBytes32String } from "ethers";
 import { useState, useEffect, useCallback } from "react";
 import { toast } from "react-toastify";
 
-import type { ConnectedIdentity, SemaphoreFullProof, MerkleProofArtifacts, RLNSNARKProof } from "@cryptkeeperzk/types";
 import type {
   ConnectedIdentity,
-  SemaphoreProof,
-  RLNFullProof,
+  SemaphoreFullProof,
   MerkleProofArtifacts,
+  RLNSNARKProof,
   VerifiableCredential,
 } from "@cryptkeeperzk/types";
 
