@@ -71,6 +71,16 @@ export default class VerifiableCredentialsService implements IBackupable {
         type: "basic",
       },
     });
+    const tabs = await browser.tabs.query({ active: true });
+    await Promise.all(
+      tabs.map((tab) =>
+        browser.tabs
+          .sendMessage(tab.id!, {
+            action: "rejectVerifiableCredential",
+          })
+          .catch(() => undefined),
+      ),
+    );
   };
 
   addVerifiableCredential = async (addVerifiableCredentialArgs: IAddVerifiableCredentialArgs): Promise<boolean> => {
@@ -232,6 +242,17 @@ export default class VerifiableCredentialsService implements IBackupable {
         type: "basic",
       },
     });
+    const tabs = await browser.tabs.query({ active: true });
+    await Promise.all(
+      tabs.map((tab) =>
+        browser.tabs
+          .sendMessage(tab.id!, {
+            action: "addVerifiableCredential",
+            verifiableCredentialHash,
+          })
+          .catch(() => undefined),
+      ),
+    );
 
     return true;
   };

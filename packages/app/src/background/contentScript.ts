@@ -60,6 +60,34 @@ function injectScript() {
         log.warn("unknown action in content script");
     }
   });
+
+  browser.runtime.onMessage.addListener((request: { action: string }) => {
+    switch (request.action) {
+      case "addVerifiableCredential": {
+        window.postMessage(
+          {
+            target: "injected-injectedscript",
+            payload: [null, (request as { action: string; verifiableCredentialHash: string }).verifiableCredentialHash],
+            nonce: "addVerifiableCredential",
+          },
+          "*",
+        );
+        break;
+      }
+      case "rejectVerifiableCredential": {
+        window.postMessage(
+          {
+            target: "injected-injectedscript",
+            payload: [null],
+            nonce: "rejectVerifiableCredential",
+          },
+          "*",
+        );
+        break;
+      }
+      default:
+    }
+  });
 }
 
 try {

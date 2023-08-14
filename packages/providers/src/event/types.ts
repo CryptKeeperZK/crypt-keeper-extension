@@ -11,9 +11,14 @@ export type EventHandler = (data: unknown) => void;
  * Represents the name of an event.
  *
  * @type {EventName}
- * @typedef {("login" | "identityChanged" | "logout")} EventName
+ * @typedef {("login" | "identityChanged" | "logout" | "addVerifiableCredential" | "rejectVerifiableCredential")} EventName
  */
-export type EventName = "login" | "identityChanged" | "logout";
+export type EventName =
+  | "login"
+  | "identityChanged"
+  | "logout"
+  | "addVerifiableCredential"
+  | "rejectVerifiableCredential";
 
 /**
  * Represents the events object that maps event names to event handlers.

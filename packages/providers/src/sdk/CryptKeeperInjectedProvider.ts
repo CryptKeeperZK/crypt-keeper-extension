@@ -235,6 +235,18 @@ export class CryptKeeperInjectedProvider {
         return;
       }
 
+      if (data.nonce === "addVerifiableCredential") {
+        const [, res] = data.payload;
+        this.emit("addVerifiableCredential", res);
+        return;
+      }
+
+      if (data.nonce === "rejectVerifiableCredential") {
+        const [, res] = data.payload;
+        this.emit("rejectVerifiableCredential", res);
+        return;
+      }
+
       if (!promises.has(data.nonce.toString())) {
         return;
       }
