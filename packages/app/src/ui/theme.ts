@@ -28,6 +28,9 @@ const PALETTE = {
   text: {
     primary: grey[200],
     secondary: grey[400],
+    500: grey[500],
+    800: grey[800],
+    900: grey[900],
   },
 
   error: {

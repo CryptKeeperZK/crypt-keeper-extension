@@ -36,7 +36,7 @@ export default class Identities extends BasePage {
   }
 
   async openIdentityPage(index = 0): Promise<void> {
-    const identities = await this.page.locator(".identity-row").all();
+    const identities = await this.page.locator(`[data-testid="identity-row"]`).all();
     await identities[index].getByTestId("menu").click();
     await this.page.getByText("View").click();
   }
@@ -86,7 +86,7 @@ export default class Identities extends BasePage {
   }
 
   async renameIdentity(index: number, name: string): Promise<void> {
-    const identities = await this.page.locator(".identity-row").all();
+    const identities = await this.page.locator(`[data-testid="identity-row"]`).all();
     await identities[index].getByTestId("menu").click();
 
     await this.page.getByText("Rename").click();
@@ -96,7 +96,7 @@ export default class Identities extends BasePage {
   }
 
   async deleteIdentity(index = 0): Promise<void> {
-    const identities = await this.page.locator(".identity-row").all();
+    const identities = await this.page.locator(`[data-testid="identity-row"]`).all();
     await identities[index].getByTestId("menu").click();
 
     await this.page.getByText("Delete").click();

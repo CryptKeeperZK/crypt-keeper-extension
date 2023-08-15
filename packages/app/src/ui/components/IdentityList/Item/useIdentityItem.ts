@@ -1,4 +1,5 @@
-import { type ChangeEvent, type FormEvent, type MouseEvent as ReactMouseEvent, useCallback, useState } from "react";
+import { type FormEvent, type MouseEvent as ReactMouseEvent, useCallback, useState } from "react";
+import { UseFormRegister, useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 
 import { Paths } from "@src/constants";
@@ -9,80 +10,89 @@ import type { IdentityMetadata } from "@cryptkeeperzk/types";
 export interface IUseIdentityItemArgs {
   commitment: string;
   metadata: IdentityMetadata;
-  onDeleteIdentity: (commitment: string) => Promise<void>;
-  onUpdateIdentityName: (commitment: string, name: string) => Promise<void>;
-  onSelectIdentity?: (commitment: string) => void;
+  onDelete: (commitment: string) => Promise<void>;
+  onUpdate: (commitment: string, name: string) => Promise<void>;
+  onSelect?: (commitment: string) => void;
 }
 
 export interface IUseIdentityItemData {
-  name: string;
   isRenaming: boolean;
-  handleDeleteIdentity: () => void;
-  handleSelectIdentity: () => void;
-  handleChangeName: (event: ChangeEvent<HTMLInputElement>) => void;
-  handleToggleRenaming: () => void;
-  handleUpdateName: (event: FormEvent | ReactMouseEvent) => void;
-  handleGoToHost: () => void;
-  handleGoToIdentity: () => void;
+  errors: Partial<{ root: string; name: string }>;
+  register: UseFormRegister<IdentityFormFields>;
+  onDeleteIdentity: () => void;
+  onSelectIdentity: () => void;
+  onToggleRenaming: () => void;
+  onGoToHost: () => void;
+  onGoToIdentity: () => void;
+  onUpdateName: (event: FormEvent | ReactMouseEvent) => void;
+}
+
+interface IdentityFormFields {
+  name: string;
 }
 
 export const useIdentityItem = ({
   metadata,
   commitment,
-  onDeleteIdentity,
-  onUpdateIdentityName,
-  onSelectIdentity,
+  onDelete,
+  onUpdate,
+  onSelect,
 }: IUseIdentityItemArgs): IUseIdentityItemData => {
-  const [name, setName] = useState(metadata.name);
   const [isRenaming, setIsRenaming] = useState(false);
   const navigate = useNavigate();
 
-  const handleDeleteIdentity = useCallback(() => {
-    onDeleteIdentity(commitment);
-  }, [commitment, onDeleteIdentity]);
-
-  const handleSelectIdentity = useCallback(() => {
-    onSelectIdentity?.(commitment);
-  }, [commitment, onSelectIdentity]);
-
-  const handleChangeName = useCallback(
-    (event: ChangeEvent<HTMLInputElement>) => {
-      setName(event.target.value);
+  const {
+    formState: { errors },
+    setError,
+    register,
+    handleSubmit,
+  } = useForm({
+    defaultValues: {
+      name: metadata.name,
     },
-    [setName],
-  );
+  });
 
-  const handleToggleRenaming = useCallback(() => {
+  const onDeleteIdentity = useCallback(() => {
+    onDelete(commitment);
+  }, [commitment, onDelete]);
+
+  const onSelectIdentity = useCallback(() => {
+    onSelect?.(commitment);
+  }, [commitment, onSelect]);
+
+  const onToggleRenaming = useCallback(() => {
     setIsRenaming((value) => !value);
   }, [setIsRenaming]);
 
-  const handleUpdateName = useCallback(
-    (event: FormEvent | ReactMouseEvent) => {
-      event.preventDefault();
-      onUpdateIdentityName(commitment, name).finally(() => {
-        setIsRenaming(false);
-      });
+  const onUpdateName = useCallback(
+    (data: IdentityFormFields) => {
+      onUpdate(commitment, data.name)
+        .then(() => setIsRenaming(false))
+        .catch((err: Error) => setError("root", { message: err.message }));
     },
-    [commitment, name, onUpdateIdentityName],
+    [commitment, onUpdate],
   );
 
-  const handleGoToHost = useCallback(() => {
+  const onGoToHost = useCallback(() => {
     redirectToNewTab(metadata.host!);
   }, [metadata.host]);
 
-  const handleGoToIdentity = useCallback(() => {
+  const onGoToIdentity = useCallback(() => {
     navigate(replaceUrlParams(Paths.IDENTITY, { id: commitment }));
   }, [commitment, navigate]);
 
   return {
-    name,
     isRenaming,
-    handleDeleteIdentity,
-    handleSelectIdentity,
-    handleChangeName,
-    handleToggleRenaming,
-    handleUpdateName,
-    handleGoToHost,
-    handleGoToIdentity,
+    errors: {
+      root: errors.root?.message,
+      name: errors.name?.message,
+    },
+    register,
+    onDeleteIdentity,
+    onSelectIdentity,
+    onToggleRenaming,
+    onGoToHost,
+    onGoToIdentity,
+    onUpdateName: handleSubmit(onUpdateName),
   };
 };

@@ -1,3 +1,4 @@
+import pick from "lodash/pick";
 import log from "loglevel";
 import browser from "webextension-polyfill";
 
@@ -9,7 +10,7 @@ export default async function pushMessage(message: ReduxAction | RequestHandler)
     return result;
   } catch (error) {
     log.warn("PushMessage error: ", error);
-    log.warn("PushMessage request: ", message);
+    log.warn("PushMessage request: ", pick(message, ["method", "meta", "error"]));
     return undefined;
   }
 }

@@ -1,15 +1,7 @@
 @import "@src/util/variables";
 
+// TODO: get rid of these styles
 .identity-row {
-  @extend %row-nowrap;
-  align-items: center;
-  border-bottom: 1px solid $gray-900;
-  cursor: pointer;
-
-  &:hover {
-    background-color: $gray-950;
-  }
-
   &__input-field {
     background-color: transparent;
 
