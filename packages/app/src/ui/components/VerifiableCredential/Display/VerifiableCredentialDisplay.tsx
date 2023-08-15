@@ -1,42 +1,27 @@
-import { Typography } from "@mui/material";
-import { ChangeEvent, FormEvent, MouseEvent as ReactMouseEvent, useCallback, useState } from "react";
+import CheckIcon from "@mui/icons-material/Check";
+import EditIcon from "@mui/icons-material/Edit";
+import IconButton from "@mui/material/IconButton";
+import TextField from "@mui/material/TextField";
+import Typography from "@mui/material/Typography";
 
 import { CryptkeeperVerifiableCredential } from "@src/types";
-import { Icon } from "@src/ui/components/Icon";
-import { Input } from "@src/ui/components/Input";
 
+import { useVerifiableCredentialDisplay } from "./useVerifiableCredentialDisplay";
 import "./verifiableCredentialDisplayStyles.scss";
 
 export interface VerifiableCredentialDisplayProps {
   cryptkeeperVerifiableCredential: CryptkeeperVerifiableCredential;
-  onRenameVerifiableCredential: (newVerifiableCredentialName: string) => void;
+  onRenameVerifiableCredential: (name: string) => void;
 }
 
 export const VerifiableCredentialDisplay = ({
   cryptkeeperVerifiableCredential,
   onRenameVerifiableCredential,
 }: VerifiableCredentialDisplayProps): JSX.Element => {
-  const [name, setName] = useState(cryptkeeperVerifiableCredential.metadata.name);
-  const [isRenaming, setIsRenaming] = useState(false);
-
-  const handleChangeName = useCallback(
-    (event: ChangeEvent<HTMLInputElement>) => {
-      setName(event.target.value);
-    },
-    [setName],
-  );
-
-  const handleToggleRenaming = useCallback(() => {
-    setIsRenaming((value) => !value);
-  }, [setIsRenaming]);
-
-  const handleUpdateName = useCallback(
-    (event: FormEvent | ReactMouseEvent) => {
-      event.preventDefault();
-      onRenameVerifiableCredential(name);
-      setIsRenaming(false);
-    },
-    [name, onRenameVerifiableCredential],
+  const initialName = cryptkeeperVerifiableCredential.metadata.name;
+  const { register, handleSubmit, handleToggleRenaming, isRenaming, name, onSubmit } = useVerifiableCredentialDisplay(
+    initialName,
+    onRenameVerifiableCredential,
   );
 
   const { verifiableCredential } = cryptkeeperVerifiableCredential;
@@ -46,35 +31,36 @@ export const VerifiableCredentialDisplay = ({
   return (
     <div>
       {isRenaming ? (
-        <form className="flex flex-row items-center text-lg font-semibold" onSubmit={handleUpdateName}>
-          <Input
+        <form onSubmit={handleSubmit(onSubmit)}>
+          <TextField
+            {...register("name")}
             autoFocus
-            className="verifiable-credential-display__input-field"
             id="verifiable-credential-display-rename-input"
-            label=""
+            size="small"
             type="text"
-            value={name}
+            variant="outlined"
             onBlur={handleToggleRenaming}
-            onChange={handleChangeName}
           />
 
-          <Icon
-            className="verifiable-credential-display__select-icon--selected mr-2"
+          <IconButton
+            className="verifiable-credential-display__select-icon-button--selected mr-2"
             data-testid="verifiable-credential-display-submit-rename"
-            fontAwesome="fa-solid fa-check"
-            size={1}
-            onClick={handleUpdateName}
-          />
+            size="medium"
+            type="submit"
+          >
+            <CheckIcon className="verifiable-credential-display__select-icon--selected" fontSize="inherit" />
+          </IconButton>
         </form>
       ) : (
         <div className="flex flex-row items-center text-lg font-semibold">
-          <Icon
-            className="verifiable-credential-display__menu-icon"
+          <IconButton
+            className="verifiable-credential-display__menu-icon-button"
             data-testid="verifiable-credential-display-toggle-rename"
-            fontAwesome="fa-solid fa-pencil-alt"
-            size={1}
+            size="small"
             onClick={handleToggleRenaming}
-          />
+          >
+            <EditIcon className="verifiable-credential-display__menu-icon" fontSize="inherit" />
+          </IconButton>
 
           {`${name}`}
         </div>

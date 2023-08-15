@@ -1,21 +1,26 @@
-import Typography from "@mui/material/Typography";
 import { useCallback, useEffect, useState } from "react";
 
 import { deserializeCryptkeeperVerifiableCredential } from "@src/background/services/credentials/utils";
 import { CryptkeeperVerifiableCredential } from "@src/types";
 import { useAppDispatch } from "@src/ui/ducks/hooks";
-import { deleteVerifiableCredential, renameVerifiableCredential } from "@src/ui/ducks/verifiableCredentials";
+import {
+  deleteVerifiableCredential,
+  fetchVerifiableCredentials,
+  renameVerifiableCredential,
+} from "@src/ui/ducks/verifiableCredentials";
 
-import { VerifiableCredentialItem } from "./Item";
-import "./verifiableCredentialListStyles.scss";
-
-export interface VerifiableCredentialsListProps {
-  serializedVerifiableCredentials: string[];
+export interface IUseVerifiableCredentialListData {
+  cryptkeeperVerifiableCredentials: CryptkeeperVerifiableCredential[];
+  onRenameVerifiableCredential: (
+    verifiableCredentialHash: string,
+    newVerifiableCredentialName: string,
+  ) => Promise<void>;
+  onDeleteVerifiableCredential: (verifiableCredentialHash: string) => Promise<void>;
 }
 
-export const VerifiableCredentialsList = ({
-  serializedVerifiableCredentials,
-}: VerifiableCredentialsListProps): JSX.Element => {
+export const useVerifiableCredentialList = (
+  serializedVerifiableCredentials: string[],
+): IUseVerifiableCredentialListData => {
   const dispatch = useAppDispatch();
 
   const [cryptkeeperVerifiableCredentials, setCryptkeeperVerifiableCredentials] = useState<
@@ -25,7 +30,7 @@ export const VerifiableCredentialsList = ({
   useEffect(() => {
     async function deserialize() {
       const deserializedVerifiableCredentials = await Promise.all(
-        serializedVerifiableCredentials.map(async (serializedVerifiableCredential) =>
+        serializedVerifiableCredentials.map((serializedVerifiableCredential) =>
           deserializeCryptkeeperVerifiableCredential(serializedVerifiableCredential),
         ),
       );
@@ -42,6 +47,7 @@ export const VerifiableCredentialsList = ({
           newVerifiableCredentialName,
         }),
       );
+      dispatch(fetchVerifiableCredentials());
     },
     [dispatch],
   );
@@ -49,25 +55,14 @@ export const VerifiableCredentialsList = ({
   const onDeleteVerifiableCredential = useCallback(
     async (verifiableCredentialHash: string) => {
       await dispatch(deleteVerifiableCredential(verifiableCredentialHash));
+      dispatch(fetchVerifiableCredentials());
     },
     [dispatch],
   );
 
-  return (
-    <div className="verifiable-credential-content">
-      {cryptkeeperVerifiableCredentials.map(({ verifiableCredential, metadata }) => (
-        <VerifiableCredentialItem
-          key={metadata.hash}
-          metadata={metadata}
-          verifiableCredential={verifiableCredential}
-          onDeleteVerifiableCredential={onDeleteVerifiableCredential}
-          onRenameVerifiableCredential={onRenameVerifiableCredential}
-        />
-      ))}
-
-      {serializedVerifiableCredentials.length === 0 && (
-        <Typography sx={{ my: 2, textAlign: "center" }}>No Verifiable Credentials available</Typography>
-      )}
-    </div>
-  );
+  return {
+    cryptkeeperVerifiableCredentials,
+    onRenameVerifiableCredential,
+    onDeleteVerifiableCredential,
+  };
 };

@@ -1,1 +1,1 @@
-export * from "./VerifiableCredentialDisplay";
+export { type VerifiableCredentialDisplayProps, VerifiableCredentialDisplay } from "./VerifiableCredentialDisplay";

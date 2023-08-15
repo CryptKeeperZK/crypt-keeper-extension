@@ -108,15 +108,18 @@ describe("background/services/credentials", () => {
       credentialsStorage.get.mockReturnValue(undefined);
       credentialsStorage.set.mockReturnValue(undefined);
 
-      const successfullyInsertedCredential = await verifiableCredentialsService.addVerifiableCredential({
+      const result = verifiableCredentialsService.addVerifiableCredential({
         serializedVerifiableCredential: exampleCredentialString,
         verifiableCredentialName: defaultCredentialName,
       });
 
-      expect(successfullyInsertedCredential).toBe(true);
+      await expect(result).resolves.toBe(undefined);
     });
 
     test("should add and retrieve a verifiable credential", async () => {
+      const [credentialsStorage] = (SimpleStorage as jest.Mock).mock.instances as [MockStorage];
+      credentialsStorage.get.mockReturnValue(undefined);
+
       await verifiableCredentialsService.addVerifiableCredential({
         serializedVerifiableCredential: exampleCredentialString,
         verifiableCredentialName: defaultCredentialName,
@@ -125,6 +128,8 @@ describe("background/services/credentials", () => {
         serializedVerifiableCredential: exampleCredentialStringTwo,
         verifiableCredentialName: defaultCredentialName,
       });
+
+      credentialsStorage.get.mockReturnValue(credentialsStorageString);
       const verifiableCredentials = await verifiableCredentialsService.getAllVerifiableCredentials();
 
       expect(verifiableCredentials.length).toBe(2);
@@ -132,22 +137,26 @@ describe("background/services/credentials", () => {
       expect(verifiableCredentials[1].verifiableCredential).toEqual(exampleCredentialTwo);
     });
 
-    test("should not add a verifiable credential with an existing id", async () => {
-      const successfullyInsertedCredential = await verifiableCredentialsService.addVerifiableCredential({
-        serializedVerifiableCredential: exampleCredentialString,
-        verifiableCredentialName: defaultCredentialName,
-      });
+    test("should not add a verifiable credential with an existing id", () => {
+      const [credentialsStorage] = (SimpleStorage as jest.Mock).mock.instances as [MockStorage];
+      credentialsStorage.get.mockReturnValue(credentialsStorageString);
+      credentialsStorage.set.mockReturnValue(undefined);
 
-      expect(successfullyInsertedCredential).toBe(false);
+      expect(async () => {
+        await verifiableCredentialsService.addVerifiableCredential({
+          serializedVerifiableCredential: exampleCredentialString,
+          verifiableCredentialName: defaultCredentialName,
+        });
+      }).rejects.toThrow("Verifiable Credential already exists.");
     });
 
-    test("should not add a verifiable credential with an invalid format", async () => {
-      const successfullyInsertedCredential = await verifiableCredentialsService.addVerifiableCredential({
-        serializedVerifiableCredential: "invalid credential",
-        verifiableCredentialName: "test name",
-      });
-
-      expect(successfullyInsertedCredential).toBe(false);
+    test("should not add a verifiable credential with an invalid format", () => {
+      expect(async () => {
+        await verifiableCredentialsService.addVerifiableCredential({
+          serializedVerifiableCredential: "invalid credential",
+          verifiableCredentialName: "test name",
+        });
+      }).rejects.toThrow(SyntaxError);
     });
   });
 
@@ -157,21 +166,20 @@ describe("background/services/credentials", () => {
       credentialsStorage.get.mockReturnValue(credentialsStorageString);
       credentialsStorage.set.mockReturnValue(undefined);
 
-      const credentialDeleted = await verifiableCredentialsService.deleteVerifiableCredential(exampleCredentialHash);
+      await verifiableCredentialsService.deleteVerifiableCredential(exampleCredentialHash);
 
-      expect(credentialDeleted).toBe(true);
       expect(credentialsStorage.set).toBeCalledTimes(1);
       expect(credentialsStorage.set).toBeCalledWith(JSON.stringify([[...credentialsMap.entries()][1]]));
     });
 
-    test("should not delete a verifiable credential if it does not exist", async () => {
+    test("should not delete a verifiable credential if it does not exist", () => {
       const [credentialsStorage] = (SimpleStorage as jest.Mock).mock.instances as [MockStorage];
       credentialsStorage.get.mockReturnValue(credentialsStorageString);
       credentialsStorage.set.mockReturnValue(undefined);
 
-      const credentialDeleted = await verifiableCredentialsService.deleteVerifiableCredential("example hash");
-
-      expect(credentialDeleted).toBe(false);
+      expect(async () => {
+        await verifiableCredentialsService.deleteVerifiableCredential("example hash");
+      }).rejects.toThrow("Verifiable Credential does not exist.");
       expect(credentialsStorage.set).toBeCalledTimes(0);
     });
 
@@ -180,20 +188,19 @@ describe("background/services/credentials", () => {
       credentialsStorage.get.mockReturnValue(credentialsStorageString);
       credentialsStorage.set.mockReturnValue(undefined);
 
-      const allCredentialsDeleted = await verifiableCredentialsService.deleteAllVerifiableCredentials();
+      await verifiableCredentialsService.deleteAllVerifiableCredentials();
 
-      expect(allCredentialsDeleted).toBe(true);
       expect(credentialsStorage.clear).toBeCalledTimes(1);
     });
 
-    test("should return false when deleting all verifiable credentials from empty storage", async () => {
+    test("should return false when deleting all verifiable credentials from empty storage", () => {
       const [credentialsStorage] = (SimpleStorage as jest.Mock).mock.instances as [MockStorage];
       credentialsStorage.get.mockReturnValue(undefined);
       credentialsStorage.set.mockReturnValue(undefined);
 
-      const allCredentialsDeleted = await verifiableCredentialsService.deleteAllVerifiableCredentials();
-
-      expect(allCredentialsDeleted).toBe(false);
+      expect(async () => {
+        await verifiableCredentialsService.deleteAllVerifiableCredentials();
+      }).rejects.toThrow("No Verifiable Credentials to delete.");
       expect(credentialsStorage.clear).toBeCalledTimes(0);
     });
   });

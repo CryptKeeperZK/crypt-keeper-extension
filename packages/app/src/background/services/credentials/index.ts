@@ -83,10 +83,10 @@ export default class VerifiableCredentialsService implements IBackupable {
     );
   };
 
-  addVerifiableCredential = async (addVerifiableCredentialArgs: IAddVerifiableCredentialArgs): Promise<boolean> => {
+  addVerifiableCredential = async (addVerifiableCredentialArgs: IAddVerifiableCredentialArgs): Promise<void> => {
     const { serializedVerifiableCredential, verifiableCredentialName } = addVerifiableCredentialArgs;
     if (!serializedVerifiableCredential) {
-      return false;
+      throw new Error("Serialized Verifiable Credential is required.");
     }
 
     try {
@@ -97,7 +97,7 @@ export default class VerifiableCredentialsService implements IBackupable {
         metadata,
       };
 
-      return this.insertCryptkeeperVerifiableCredentialIntoStore(cryptkeeperVerifiableCredential);
+      await this.insertCryptkeeperVerifiableCredentialIntoStore(cryptkeeperVerifiableCredential);
     } catch (error) {
       await this.notificationService.create({
         options: {
@@ -108,22 +108,22 @@ export default class VerifiableCredentialsService implements IBackupable {
         },
       });
 
-      return false;
+      throw error;
     }
   };
 
   renameVerifiableCredential = async (
     renameVerifiableCredentialArgs: IRenameVerifiableCredentialArgs,
-  ): Promise<boolean> => {
+  ): Promise<void> => {
     const { verifiableCredentialHash, newVerifiableCredentialName } = renameVerifiableCredentialArgs;
     if (!verifiableCredentialHash || !newVerifiableCredentialName) {
-      return false;
+      throw new Error("Verifiable Credential hash and name are required.");
     }
 
     const cryptkeeperVerifiableCredentials = await this.getCryptkeeperVerifiableCredentialsFromStore();
 
     if (!cryptkeeperVerifiableCredentials.has(verifiableCredentialHash)) {
-      return false;
+      throw new Error("Verifiable Credential does not exist.");
     }
 
     const serializedCryptkeeperVerifiableCredential = cryptkeeperVerifiableCredentials.get(verifiableCredentialHash)!;
@@ -146,8 +146,6 @@ export default class VerifiableCredentialsService implements IBackupable {
         type: "basic",
       },
     });
-
-    return true;
   };
 
   getAllVerifiableCredentials = async (): Promise<CryptkeeperVerifiableCredential[]> => {
@@ -161,15 +159,15 @@ export default class VerifiableCredentialsService implements IBackupable {
     );
   };
 
-  deleteVerifiableCredential = async (verifiableCredentialHash: string): Promise<boolean> => {
+  deleteVerifiableCredential = async (verifiableCredentialHash: string): Promise<void> => {
     if (!verifiableCredentialHash) {
-      return false;
+      throw new Error("Verifiable Credential hash is required.");
     }
 
     const cryptkeeperVerifiableCredentials = await this.getCryptkeeperVerifiableCredentialsFromStore();
 
     if (!cryptkeeperVerifiableCredentials.has(verifiableCredentialHash)) {
-      return false;
+      throw new Error("Verifiable Credential does not exist.");
     }
 
     cryptkeeperVerifiableCredentials.delete(verifiableCredentialHash);
@@ -183,15 +181,13 @@ export default class VerifiableCredentialsService implements IBackupable {
         type: "basic",
       },
     });
-
-    return true;
   };
 
-  deleteAllVerifiableCredentials = async (): Promise<boolean> => {
+  deleteAllVerifiableCredentials = async (): Promise<void> => {
     const cryptkeeperVerifiableCredentials = await this.getCryptkeeperVerifiableCredentialsFromStore();
 
     if (cryptkeeperVerifiableCredentials.size === 0) {
-      return false;
+      throw new Error("No Verifiable Credentials to delete.");
     }
 
     await this.verifiableCredentialsStore.clear();
@@ -204,13 +200,11 @@ export default class VerifiableCredentialsService implements IBackupable {
         type: "basic",
       },
     });
-
-    return true;
   };
 
   private insertCryptkeeperVerifiableCredentialIntoStore = async (
     cryptkeeperVerifiableCredential: CryptkeeperVerifiableCredential,
-  ): Promise<boolean> => {
+  ): Promise<void> => {
     const verifiableCredentialHash = cryptkeeperVerifiableCredential.metadata.hash;
 
     const cryptkeeperVerifiableCredentials = await this.getCryptkeeperVerifiableCredentialsFromStore();
@@ -224,7 +218,8 @@ export default class VerifiableCredentialsService implements IBackupable {
           type: "basic",
         },
       });
-      return false;
+
+      throw new Error("Verifiable Credential already exists.");
     }
 
     cryptkeeperVerifiableCredentials.set(
@@ -253,8 +248,6 @@ export default class VerifiableCredentialsService implements IBackupable {
           .catch(() => undefined),
       ),
     );
-
-    return true;
   };
 
   private getCryptkeeperVerifiableCredentialsFromStore = async (): Promise<Map<string, string>> => {

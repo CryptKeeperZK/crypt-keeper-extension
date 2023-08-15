@@ -1,67 +1,21 @@
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
-import { useCallback, useEffect, useState } from "react";
 
-import { deserializeVerifiableCredential, hashVerifiableCredential } from "@src/background/services/credentials/utils";
-import { CryptkeeperVerifiableCredential } from "@src/types";
 import { FullModal, FullModalHeader, FullModalContent, FullModalFooter } from "@src/ui/components/FullModal";
 import { VerifiableCredentialDisplay } from "@src/ui/components/VerifiableCredential";
 
 import { useAddVerifiableCredential } from "./useAddVerifiableCredential";
 
-const defaultVerifiableCredentialName = "Verifiable Credential";
-
 const AddVerifiableCredential = (): JSX.Element => {
   const {
+    cryptkeeperVerifiableCredential,
     closeModal,
-    serializedVerifiableCredential,
-    onApproveAddVerifiableCredential,
-    onRejectAddVerifiableCredential,
+    onRenameVerifiableCredential,
+    onApproveVerifiableCredential,
+    onRejectVerifiableCredential,
+    error,
   } = useAddVerifiableCredential();
-  const [cryptkeeperVerifiableCredential, setCryptkeeperVerifiableCredential] = useState<
-    CryptkeeperVerifiableCredential | undefined
-  >(undefined);
-
-  useEffect(() => {
-    async function deserialize() {
-      const deserializedVerifiableCredential = await deserializeVerifiableCredential(serializedVerifiableCredential);
-      setCryptkeeperVerifiableCredential({
-        verifiableCredential: deserializedVerifiableCredential,
-        metadata: {
-          hash: hashVerifiableCredential(deserializedVerifiableCredential),
-          name: defaultVerifiableCredentialName,
-        },
-      });
-    }
-    deserialize();
-  }, [serializedVerifiableCredential]);
-
-  const onRenameVerifiableCredential = useCallback(
-    (newVerifiableCredentialName: string) => {
-      if (!cryptkeeperVerifiableCredential) {
-        return;
-      }
-
-      setCryptkeeperVerifiableCredential({
-        verifiableCredential: cryptkeeperVerifiableCredential.verifiableCredential,
-        metadata: {
-          hash: cryptkeeperVerifiableCredential.metadata.hash,
-          name: newVerifiableCredentialName,
-        },
-      });
-    },
-    [cryptkeeperVerifiableCredential],
-  );
-
-  const onApproveVerifiableCredential = useCallback(async () => {
-    if (!cryptkeeperVerifiableCredential) {
-      return;
-    }
-
-    await onApproveAddVerifiableCredential(cryptkeeperVerifiableCredential.metadata.name);
-    closeModal();
-  }, [cryptkeeperVerifiableCredential, onApproveAddVerifiableCredential, closeModal]);
 
   const isError = !cryptkeeperVerifiableCredential;
 
@@ -82,6 +36,8 @@ const AddVerifiableCredential = (): JSX.Element => {
         )}
       </FullModalContent>
 
+      {error && <Typography className="text-xs text-red-500 text-center pb-1">{error}</Typography>}
+
       <FullModalFooter>
         <Box sx={{ alignItems: "center", display: "flex", justifyContent: "space-between", width: "100%" }}>
           <Button
@@ -90,7 +46,7 @@ const AddVerifiableCredential = (): JSX.Element => {
             sx={{ textTransform: "none" }}
             type="button"
             variant="outlined"
-            onClick={onRejectAddVerifiableCredential}
+            onClick={onRejectVerifiableCredential}
           >
             Reject
           </Button>

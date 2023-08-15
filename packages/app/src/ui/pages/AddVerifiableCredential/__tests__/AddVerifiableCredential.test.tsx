@@ -5,7 +5,6 @@
 import { VerifiableCredential } from "@cryptkeeperzk/types";
 import { render, waitFor } from "@testing-library/react";
 
-import { serializeVerifiableCredential } from "@src/background/services/credentials/utils";
 import { createModalRoot, deleteModalRoot } from "@src/config/mock/modal";
 
 import AddVerifiableCredential from "..";
@@ -32,11 +31,21 @@ describe("ui/pages/AddVerifiableCredential", () => {
     },
   };
 
+  const cryptkeeperVerifiableCredential = {
+    verifiableCredential,
+    metadata: {
+      hash: "0x123",
+      name: "Credential #0",
+    },
+  };
+
   const defaultHookData: IUseAddVerifiableCredentialData = {
-    serializedVerifiableCredential: serializeVerifiableCredential(verifiableCredential),
+    cryptkeeperVerifiableCredential,
     closeModal: jest.fn(),
-    onRejectAddVerifiableCredential: jest.fn(),
-    onApproveAddVerifiableCredential: jest.fn(),
+    onRenameVerifiableCredential: jest.fn(),
+    onApproveVerifiableCredential: jest.fn(),
+    onRejectVerifiableCredential: jest.fn(),
+    error: undefined,
   };
 
   beforeEach(() => {
