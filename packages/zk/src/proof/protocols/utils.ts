@@ -1,4 +1,4 @@
-import { Group, BigNumberish } from "@semaphore-protocol/group";
+import { Group, BigNumberish } from "@cryptkeeperzk/semaphore-group";
 import { MerkleProof } from "@zk-kit/incremental-merkle-tree";
 import { bigintToHex, hexToBigint } from "bigint-conversion";
 // TODO: I think we should have a service for providing Cryptography pure related functions

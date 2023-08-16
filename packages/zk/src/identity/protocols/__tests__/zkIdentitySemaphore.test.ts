@@ -1,4 +1,4 @@
-import { Identity } from "@semaphore-protocol/identity";
+import { Identity } from "@cryptkeeperzk/semaphore-identity";
 
 import type { IdentityMetadata } from "@cryptkeeperzk/types";
 

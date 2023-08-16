@@ -1,4 +1,4 @@
-import { FullProof } from "@semaphore-protocol/proof";
+import { FullProof } from "@cryptkeeperzk/semaphore-proof";
 
 import { ZkCircuit, ZkInputs } from "./zkProof";
 

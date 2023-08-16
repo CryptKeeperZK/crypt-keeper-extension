@@ -1,8 +1,8 @@
-import { MerkleProof } from "@cryptkeeperzk/rln-proof";
+import { MerkleProof } from "@cryptkeeperzk/rlnjs";
 
 import { ZkCircuit, ZkInputs } from "./zkProof";
 
-export type { RLNFullProof, VerificationKey, RLNSNARKProof } from "@cryptkeeperzk/rln-proof";
+export type { RLNFullProof, VerificationKey, RLNSNARKProof } from "@cryptkeeperzk/rlnjs";
 
 /**
  * Represents the arguments required for generating an RLN proof.
@@ -56,6 +56,6 @@ export interface IRlnProverInputs {
   userMessageLimit: bigint;
   messageId: bigint;
   merkleProof: MerkleProof;
-  messageHash: bigint;
+  x: bigint;
   epoch: bigint;
 }

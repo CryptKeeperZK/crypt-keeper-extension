@@ -17,7 +17,7 @@
   "dependencies": {
     "@cryptkeeperzk/providers": "workspace:^",
     "@cryptkeeperzk/types": "workspace:^",
-    "@semaphore-protocol/identity": "^3.10.1",
+    "@cryptkeeperzk/semaphore-identity": "^3.10.1",
     "bigint-conversion": "^2.4.1",
     "ethers": "^6.6.3",
     "react": "^18.2.0",

@@ -1,4 +1,4 @@
-import { RLNProver, RLNSNARKProof } from "@cryptkeeperzk/rln-proof";
+import { RLNProver, RLNSNARKProof } from "@cryptkeeperzk/rlnjs";
 
 import { ZkIdentitySemaphore } from "@src/identity";
 
@@ -49,7 +49,7 @@ export class RLNProofService implements IZkProof<IRlnProofRequest, RLNSNARKProof
       userMessageLimit,
       messageId: BigInt(messageId),
       merkleProof,
-      messageHash,
+      x: messageHash,
       epoch: epochBigInt,
     };
 
