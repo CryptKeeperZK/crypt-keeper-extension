@@ -8,5 +8,4 @@ export const style = {
   border: "2px solid #000",
   outline: "none",
   boxShadow: 24,
-  p: 4,
 };

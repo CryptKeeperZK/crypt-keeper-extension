@@ -256,8 +256,8 @@ export default class InjectorService {
       });
 
       return JSON.parse(rlnFullProof as string) as RLNSNARKProof;
-    } catch (e) {
-      throw new Error(`Error in generateRlnProof(): ${e as string}`);
+    } catch (error) {
+      throw new Error(`Error in generateRlnProof(): ${(error as Error).message}`);
     } finally {
       if (browserPlatform !== BrowserPlatform.Firefox) {
         await closeChromeOffscreen();

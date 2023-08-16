@@ -3,7 +3,7 @@ import dotenv from "dotenv";
 
 import path from "path";
 
-dotenv.config({ path: "./.env.test" });
+dotenv.config({ path: path.resolve(__dirname, "../..", ".env.test"), override: true });
 
 /**
  * See https://playwright.dev/docs/test-configuration.

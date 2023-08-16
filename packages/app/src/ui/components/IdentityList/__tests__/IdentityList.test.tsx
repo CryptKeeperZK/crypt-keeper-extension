@@ -63,6 +63,8 @@ describe("ui/components/IdentityList", () => {
   };
 
   beforeEach(() => {
+    mockDispatch.mockResolvedValue(undefined);
+
     (useAppDispatch as jest.Mock).mockReturnValue(mockDispatch);
 
     (useNavigate as jest.Mock).mockReturnValue(mockNavigate);
@@ -119,6 +121,29 @@ describe("ui/components/IdentityList", () => {
     expect(setIdentityName).toBeCalledTimes(1);
     expect(setIdentityName).toBeCalledWith(defaultIdentities[0].commitment, "New name");
     expect(mockDispatch).toBeCalledTimes(1);
+  });
+
+  test("should handle rename error properly", async () => {
+    const error = new Error("error");
+    (mockDispatch as jest.Mock).mockRejectedValue(error);
+
+    render(<IdentityList {...defaultProps} />);
+
+    const [menuIcon] = await screen.findAllByTestId("menu");
+    act(() => menuIcon.click());
+
+    const renameButton = await screen.findByText("Rename");
+    act(() => renameButton.click());
+
+    const input = await screen.findByDisplayValue(defaultIdentities[0].metadata.name);
+    fireEvent.change(input, { target: { value: "New name" } });
+
+    const renameIcon = await screen.findByTestId(`identity-rename-${defaultIdentities[0].commitment}`);
+    await act(async () => Promise.resolve(renameIcon.click()));
+
+    const errorText = await screen.findByText(error.message);
+
+    expect(errorText).toBeInTheDocument();
   });
 
   test("should accept to delete identity properly", async () => {

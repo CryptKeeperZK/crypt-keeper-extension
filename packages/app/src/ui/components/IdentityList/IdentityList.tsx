@@ -1,5 +1,6 @@
+import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
-import classNames from "classnames";
 import { useCallback } from "react";
 
 import { Icon } from "@src/ui/components/Icon";
@@ -8,7 +9,6 @@ import { createIdentityRequest, deleteIdentity, setIdentityName } from "@src/ui/
 
 import type { IdentityData } from "@src/types";
 
-import "./identityListStyles.scss";
 import { IdentityItem } from "./Item";
 
 export interface IdentityListProps {
@@ -50,7 +50,22 @@ export const IdentityList = ({
 
   return (
     <>
-      <div className={classNames("identities-content", className)}>
+      <Box
+        className={className}
+        sx={{
+          overflowX: "hidden",
+          overflowY: "auto",
+          top: 56,
+          bottom: 56,
+          position: "absolute",
+          width: "100%",
+          scrollbarWidth: "none",
+
+          "&::-webkit-scrollbar": {
+            display: "none",
+          },
+        }}
+      >
         {identities.map(({ commitment, metadata }) => (
           <IdentityItem
             key={commitment}
@@ -67,24 +82,38 @@ export const IdentityList = ({
         {identities.length === 0 && (
           <Typography sx={{ my: 2, textAlign: "center" }}>No identities available</Typography>
         )}
-      </div>
+      </Box>
 
       {isShowAddNew && (
-        <div className="flex flex-row items-center p-4 identities-footer">
-          <button
-            className={classNames(
-              "flex flex-row items-center justify-center cursor-pointer text-gray-600",
-              "create-identity-row__active",
-            )}
+        <Box
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            p: 2,
+            bottom: 0,
+            position: "absolute",
+            height: 56,
+            width: "100%",
+          }}
+        >
+          <Button
             data-testid="create-new-identity"
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              cursor: "pointer",
+              color: "text.500",
+              width: "100%",
+            }}
             type="button"
             onClick={onCreateIdentityRequest}
           >
-            <Icon className="mr-2" fontAwesome="fas fa-plus" size={1} />
+            <Icon fontAwesome="fas fa-plus" size={1} />
 
-            <div>Add Identity</div>
-          </button>
-        </div>
+            <Typography sx={{ ml: 1 }}>Add Identity</Typography>
+          </Button>
+        </Box>
       )}
     </>
   );

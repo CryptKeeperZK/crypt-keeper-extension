@@ -4,6 +4,7 @@ on:
     branches: [main]
     paths:
       - "packages/demo/**"
+      - "packages/merkle-mock-server/**"
 
   workflow_dispatch:
     inputs:

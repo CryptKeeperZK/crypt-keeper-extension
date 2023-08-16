@@ -1,6 +1,7 @@
 import { IconName, IconPrefix } from "@fortawesome/fontawesome-common-types";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Box from "@mui/material/Box";
+import Typography from "@mui/material/Typography";
 import classNames from "classnames";
 
 import { getEnabledFeatures } from "@src/config/features";
@@ -31,7 +32,6 @@ export interface IdentityItemProps {
   onSelectIdentity?: (commitment: string) => void;
 }
 
-// TODO: use react-hook-form
 export const IdentityItem = ({
   commitment,
   isShowMenu,
@@ -42,21 +42,21 @@ export const IdentityItem = ({
   onSelectIdentity = undefined,
 }: IdentityItemProps): JSX.Element => {
   const {
-    name,
     isRenaming,
-    handleChangeName,
-    handleDeleteIdentity,
-    handleGoToHost,
-    handleGoToIdentity,
-    handleSelectIdentity,
-    handleToggleRenaming,
-    handleUpdateName,
+    errors,
+    register,
+    onGoToHost,
+    onGoToIdentity,
+    onUpdateName,
+    onToggleRenaming,
+    onDeleteIdentity: onDelete,
+    onSelectIdentity: onSelect,
   } = useIdentityItem({
     commitment,
     metadata,
-    onDeleteIdentity,
-    onUpdateIdentityName,
-    onSelectIdentity,
+    onDelete: onDeleteIdentity,
+    onUpdate: onUpdateIdentityName,
+    onSelect: onSelectIdentity,
   });
 
   const features = getEnabledFeatures();
@@ -64,13 +64,29 @@ export const IdentityItem = ({
   const canShowIdentityType = Boolean(metadata.web2Provider || identityTitle);
 
   const menuItems = [
-    { label: "View", isDangerItem: false, onClick: handleGoToIdentity },
-    { label: "Rename", isDangerItem: false, onClick: handleToggleRenaming },
-    { label: "Delete", isDangerItem: true, onClick: handleDeleteIdentity },
+    { label: "View", isDangerItem: false, onClick: onGoToIdentity },
+    { label: "Rename", isDangerItem: false, onClick: onToggleRenaming },
+    { label: "Delete", isDangerItem: true, onClick: onDelete },
   ];
 
   return (
-    <div key={commitment} className="p-4 identity-row">
+    <Box
+      key={commitment}
+      data-testid="identity-row"
+      sx={{
+        p: 2,
+        display: "flex",
+        alignItems: "center",
+        flexWrap: "nowrap",
+        borderBottom: "1px solid",
+        borderColor: "text.800",
+        cursor: "pointer",
+
+        "&:hover": {
+          backgroundColor: "text.900",
+        },
+      }}
+    >
       <Icon
         className={classNames("identity-row__select-icon", {
           "identity-row__select-icon--selected": selected === commitment,
@@ -78,67 +94,113 @@ export const IdentityItem = ({
         })}
         data-testid={`identity-select-${commitment}`}
         fontAwesome="fas fa-check"
-        onClick={handleSelectIdentity}
+        onClick={onSelect}
       />
 
-      <div className="flex flex-col flex-grow">
+      <Box sx={{ display: "flex", flexDirection: "column", flexGrow: 1 }}>
         {isRenaming ? (
-          <form className="flex flex-row items-center text-lg font-semibold" onSubmit={handleUpdateName}>
+          <Box
+            component="form"
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              fontWeight: "bold",
+              fontSize: "1.125rem",
+              lineHeight: "1.75rem",
+            }}
+            onSubmit={onUpdateName}
+          >
             <Input
               autoFocus
               className="identity-row__input-field"
+              errorMessage={errors.root || errors.name}
               id="identityRename"
               label=""
               type="text"
-              value={name}
-              onBlur={handleToggleRenaming}
-              onChange={handleChangeName}
+              {...register("name", { required: "Name is required" })}
             />
 
             <Icon
-              className="identity-row__select-icon--selected mr-2"
+              className="identity-row__select-icon--selected"
               data-testid={`identity-rename-${commitment}`}
               fontAwesome="fa-solid fa-check"
               size={1}
-              onClick={handleUpdateName}
+              onClick={onUpdateName}
             />
-          </form>
+          </Box>
         ) : (
-          <div className="flex flex-row items-center text-lg font-semibold">
-            {`${metadata.name}`}
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              fontWeight: "bold",
+              fontSize: "1.125rem",
+              lineHeight: "1.75rem",
+            }}
+          >
+            {metadata.name}
 
             {canShowIdentityType && (
-              <span className="text-xs py-1 px-2 ml-2 rounded-full bg-gray-500 text-gray-800">
+              <Box
+                sx={{
+                  alignItems: "center",
+                  display: "flex",
+                  justifyContent: "center",
+                  ml: 1,
+                  py: 0.5,
+                  px: 1,
+                  height: 28,
+                  borderRadius: 100,
+                  backgroundColor: "text.500",
+                  color: "text.800",
+                  fontSize: "0.9rem",
+                }}
+              >
                 {metadata.web2Provider ? (
                   <FontAwesomeIcon icon={web2ProvidersIcons[metadata.web2Provider]} title={metadata.web2Provider} />
                 ) : (
                   identityTitle
                 )}
-              </span>
+              </Box>
             )}
 
             {metadata.host && (
               <Box
-                className="text-xs py-1 px-2 ml-2 rounded-full bg-gray-500 text-gray-800"
                 data-testid="host-icon"
-                onClick={handleGoToHost}
+                sx={{
+                  alignItems: "center",
+                  display: "flex",
+                  justifyContent: "center",
+                  ml: 1,
+                  height: 28,
+                  width: 28,
+                  backgroundColor: "text.500",
+                  borderRadius: "100%",
+                  color: "text.800",
+                  fontSize: "0.9rem",
+                }}
+                onClick={onGoToHost}
               >
                 <FontAwesomeIcon icon="link" title={metadata.host} />
               </Box>
             )}
-          </div>
+          </Box>
         )}
 
-        <div className="text-base text-gray-300">Commitment: {ellipsify(commitment)}</div>
+        <Typography color="text.primary">Commitment: {ellipsify(commitment)}</Typography>
 
-        {metadata.account && <div className="text-xs text-gray-500">Address: {ellipsify(metadata.account)}</div>}
-      </div>
+        {metadata.account && (
+          <Typography color="text.secondary" variant="body2">
+            Address: {ellipsify(metadata.account)}
+          </Typography>
+        )}
+      </Box>
 
       {isShowMenu && (
         <Menuable className="flex user-menu" items={selected !== commitment ? menuItems : [menuItems[0], menuItems[1]]}>
           <Icon className="identity-row__menu-icon" fontAwesome="fas fa-ellipsis-h" />
         </Menuable>
       )}
-    </div>
+    </Box>
   );
 };
