@@ -30,7 +30,7 @@
     "eslint": "^8.44.0",
     "eslint-plugin-playwright": "^0.15.3",
     "lint-staged": "^13.2.3",
-    "prettier": "^3.0.0",
+    "prettier": "^3.0.2",
     "typescript": "^5.1.6",
     "wait-for-expect": "^3.0.2"
   }
