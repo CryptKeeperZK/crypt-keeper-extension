@@ -41,11 +41,11 @@ describe("ui/pages/AddVerifiableCredential", () => {
 
   const defaultHookData: IUseAddVerifiableCredentialData = {
     cryptkeeperVerifiableCredential,
+    error: undefined,
     closeModal: jest.fn(),
     onRenameVerifiableCredential: jest.fn(),
     onApproveVerifiableCredential: jest.fn(),
     onRejectVerifiableCredential: jest.fn(),
-    error: undefined,
   };
 
   beforeEach(() => {
@@ -68,5 +68,22 @@ describe("ui/pages/AddVerifiableCredential", () => {
     const page = await findByTestId("add-verifiable-credential-page");
 
     expect(page).toBeInTheDocument();
+  });
+
+  test("should render an error properly", async () => {
+    const error = "Error";
+
+    (useAddVerifiableCredential as jest.Mock).mockReturnValue({
+      ...defaultHookData,
+      error,
+    });
+
+    const { container, findByText } = render(<AddVerifiableCredential />);
+
+    await waitFor(() => container.firstChild !== null);
+
+    const errorMessage = await findByText("Error");
+
+    expect(errorMessage).toBeInTheDocument();
   });
 });

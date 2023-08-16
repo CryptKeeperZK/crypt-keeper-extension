@@ -1,22 +1,23 @@
+import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 
 import { VerifiableCredentialItem } from "../Item";
 
 import { useVerifiableCredentialList } from "./useVerifiableCredentialList";
-import "./verifiableCredentialListStyles.scss";
 
-export interface VerifiableCredentialListProps {
-  serializedVerifiableCredentials: string[];
-}
-
-export const VerifiableCredentialList = ({
-  serializedVerifiableCredentials,
-}: VerifiableCredentialListProps): JSX.Element => {
+export const VerifiableCredentialList = (): JSX.Element => {
   const { cryptkeeperVerifiableCredentials, onRenameVerifiableCredential, onDeleteVerifiableCredential } =
-    useVerifiableCredentialList(serializedVerifiableCredentials);
+    useVerifiableCredentialList();
 
   return (
-    <div className="verifiable-credential-content">
+    <Box
+      sx={{
+        top: 56,
+        bottom: 56,
+        position: "absolute",
+        width: "100%",
+      }}
+    >
       {cryptkeeperVerifiableCredentials.map(({ verifiableCredential, metadata }) => (
         <VerifiableCredentialItem
           key={metadata.hash}
@@ -27,9 +28,9 @@ export const VerifiableCredentialList = ({
         />
       ))}
 
-      {serializedVerifiableCredentials.length === 0 && (
+      {cryptkeeperVerifiableCredentials.length === 0 && (
         <Typography sx={{ my: 2, textAlign: "center" }}>No Verifiable Credentials available</Typography>
       )}
-    </div>
+    </Box>
   );
 };

@@ -1,1 +1,1 @@
-export { type VerifiableCredentialListProps, VerifiableCredentialList } from "./VerifiableCredentialList";
+export { VerifiableCredentialList } from "./VerifiableCredentialList";

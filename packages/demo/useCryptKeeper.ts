@@ -222,11 +222,11 @@ export const useCryptKeeper = (): IUseCryptKeeperData => {
     setIsLocked(true);
   }, [setConnectedIdentity, setIsLocked]);
 
-  const addVerifiableCredential = useCallback((verifiableCredentialHash: unknown) => {
+  const onAddVerifiableCredential = useCallback((verifiableCredentialHash: unknown) => {
     toast(`Added a Verifiable Credential! ${verifiableCredentialHash as string}`, { type: "success" });
   }, []);
 
-  const rejectVerifiableCredential = useCallback(() => {
+  const onRejectVerifiableCredential = useCallback(() => {
     toast(`Rejected request to add a Verifiable Credential.`, { type: "error" });
   }, []);
 
@@ -238,15 +238,15 @@ export const useCryptKeeper = (): IUseCryptKeeperData => {
     client.on("login", onLogin);
     client.on("identityChanged", onIdentityChanged);
     client.on("logout", onLogout);
-    client.on("addVerifiableCredential", addVerifiableCredential);
-    client.on("rejectVerifiableCredential", rejectVerifiableCredential);
+    client.on("addVerifiableCredential", onAddVerifiableCredential);
+    client.on("rejectVerifiableCredential", onRejectVerifiableCredential);
 
     getConnectedIdentity();
 
     return () => {
       client.cleanListeners();
     };
-  }, [client, onLogout, onIdentityChanged, onLogin, addVerifiableCredential, rejectVerifiableCredential]);
+  }, [client, onLogout, onIdentityChanged, onLogin, onAddVerifiableCredential, onRejectVerifiableCredential]);
 
   return {
     client,

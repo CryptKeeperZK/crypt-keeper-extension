@@ -7,7 +7,6 @@ import Typography from "@mui/material/Typography";
 import { CryptkeeperVerifiableCredential } from "@src/types";
 
 import { useVerifiableCredentialDisplay } from "./useVerifiableCredentialDisplay";
-import "./verifiableCredentialDisplayStyles.scss";
 
 export interface VerifiableCredentialDisplayProps {
   cryptkeeperVerifiableCredential: CryptkeeperVerifiableCredential;
@@ -19,10 +18,10 @@ export const VerifiableCredentialDisplay = ({
   onRenameVerifiableCredential,
 }: VerifiableCredentialDisplayProps): JSX.Element => {
   const initialName = cryptkeeperVerifiableCredential.metadata.name;
-  const { register, handleSubmit, handleToggleRenaming, isRenaming, name, onSubmit } = useVerifiableCredentialDisplay(
+  const { isRenaming, name, register, onSubmit, onToggleRenaming } = useVerifiableCredentialDisplay({
     initialName,
-    onRenameVerifiableCredential,
-  );
+    onRename: onRenameVerifiableCredential,
+  });
 
   const { verifiableCredential } = cryptkeeperVerifiableCredential;
   const issuerId =
@@ -31,15 +30,16 @@ export const VerifiableCredentialDisplay = ({
   return (
     <div>
       {isRenaming ? (
-        <form onSubmit={handleSubmit(onSubmit)}>
+        <form onSubmit={onSubmit}>
           <TextField
             {...register("name")}
             autoFocus
+            data-testid="verifiable-credential-display-rename-input"
             id="verifiable-credential-display-rename-input"
             size="small"
             type="text"
             variant="outlined"
-            onBlur={handleToggleRenaming}
+            onBlur={onToggleRenaming}
           />
 
           <IconButton
@@ -48,7 +48,11 @@ export const VerifiableCredentialDisplay = ({
             size="medium"
             type="submit"
           >
-            <CheckIcon className="verifiable-credential-display__select-icon--selected" fontSize="inherit" />
+            <CheckIcon
+              className="verifiable-credential-display__select-icon--selected"
+              color="primary"
+              fontSize="inherit"
+            />
           </IconButton>
         </form>
       ) : (
@@ -57,9 +61,9 @@ export const VerifiableCredentialDisplay = ({
             className="verifiable-credential-display__menu-icon-button"
             data-testid="verifiable-credential-display-toggle-rename"
             size="small"
-            onClick={handleToggleRenaming}
+            onClick={onToggleRenaming}
           >
-            <EditIcon className="verifiable-credential-display__menu-icon" fontSize="inherit" />
+            <EditIcon className="verifiable-credential-display__menu-icon" color="primary" fontSize="inherit" />
           </IconButton>
 
           {`${name}`}

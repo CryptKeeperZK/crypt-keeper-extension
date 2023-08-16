@@ -10,11 +10,11 @@ import { useAddVerifiableCredential } from "./useAddVerifiableCredential";
 const AddVerifiableCredential = (): JSX.Element => {
   const {
     cryptkeeperVerifiableCredential,
+    error,
     closeModal,
     onRenameVerifiableCredential,
     onApproveVerifiableCredential,
     onRejectVerifiableCredential,
-    error,
   } = useAddVerifiableCredential();
 
   const isError = !cryptkeeperVerifiableCredential;

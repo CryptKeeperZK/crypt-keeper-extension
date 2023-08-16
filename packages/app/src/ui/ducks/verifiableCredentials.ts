@@ -1,8 +1,12 @@
 /* eslint-disable no-param-reassign */
 import { RPCAction } from "@cryptkeeperzk/providers";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { useEffect, useState } from "react";
 
-import { serializeCryptkeeperVerifiableCredential } from "@src/background/services/credentials/utils";
+import {
+  deserializeCryptkeeperVerifiableCredential,
+  serializeCryptkeeperVerifiableCredential,
+} from "@src/background/services/credentials/utils";
 import { CryptkeeperVerifiableCredential, IRenameVerifiableCredentialArgs } from "@src/types";
 import postMessage from "@src/util/postMessage";
 
@@ -75,5 +79,27 @@ export const fetchVerifiableCredentials = (): TypedThunk => async (dispatch) => 
 
 export const useVerifiableCredentials = (): string[] =>
   useAppSelector((state) => state.verifiableCredentials.serializedVerifiableCredentials);
+
+export const useCryptkeeperVerifiableCredentials = (): CryptkeeperVerifiableCredential[] => {
+  const serializedVerifiableCredentials = useVerifiableCredentials();
+
+  const [cryptkeeperVerifiableCredentials, setCryptkeeperVerifiableCredentials] = useState<
+    CryptkeeperVerifiableCredential[]
+  >([]);
+
+  useEffect(() => {
+    async function deserializeCredentials() {
+      const deserializedVerifiableCredentials = await Promise.all(
+        serializedVerifiableCredentials.map((serializedVerifiableCredential) =>
+          deserializeCryptkeeperVerifiableCredential(serializedVerifiableCredential),
+        ),
+      );
+      setCryptkeeperVerifiableCredentials(deserializedVerifiableCredentials);
+    }
+    deserializeCredentials();
+  }, [serializedVerifiableCredentials]);
+
+  return cryptkeeperVerifiableCredentials;
+};
 
 export default verifiableCredentialsSlice.reducer;

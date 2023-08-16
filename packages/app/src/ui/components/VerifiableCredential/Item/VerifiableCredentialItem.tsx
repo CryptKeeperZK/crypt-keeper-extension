@@ -10,7 +10,6 @@ import { Menuable } from "@src/ui/components/Menuable";
 import { ellipsify } from "@src/util/account";
 
 import { useVerifiableCredentialItem } from "./useVerifiableCredentialItem";
-import "./verifiableCredentialListItemStyles.scss";
 
 export interface VerifiableCredentialItemProps {
   verifiableCredential: VerifiableCredential;
@@ -25,17 +24,15 @@ export const VerifiableCredentialItem = ({
   onRenameVerifiableCredential,
   onDeleteVerifiableCredential,
 }: VerifiableCredentialItemProps): JSX.Element => {
-  const { register, handleSubmit, handleToggleRenaming, onSubmit, isRenaming, handleDeleteVerifiableCredential } =
-    useVerifiableCredentialItem(
-      metadata.name,
-      metadata.hash,
-      onRenameVerifiableCredential,
-      onDeleteVerifiableCredential,
-    );
+  const { isRenaming, name, register, onSubmit, onToggleRenaming, onDelete } = useVerifiableCredentialItem({
+    metadata,
+    onRename: onRenameVerifiableCredential,
+    onDelete: onDeleteVerifiableCredential,
+  });
 
   const menuItems = [
-    { label: "Rename", isDangerItem: false, onClick: handleToggleRenaming },
-    { label: "Delete", isDangerItem: true, onClick: handleDeleteVerifiableCredential },
+    { label: "Rename", isDangerItem: false, onClick: onToggleRenaming },
+    { label: "Delete", isDangerItem: true, onClick: onDelete },
   ];
 
   const issuer =
@@ -44,10 +41,10 @@ export const VerifiableCredentialItem = ({
       : verifiableCredential.issuer?.id || "unknown";
 
   return (
-    <div key={metadata.hash} className="p-4 verifiable-credential-row">
+    <div key={metadata.hash} className="p-4 flex flex-row items-center flex-nowrap">
       <div className="flex flex-col flex-grow">
         {isRenaming ? (
-          <form className="flex flex-row items-center text-lg font-semibold" onSubmit={handleSubmit(onSubmit)}>
+          <form className="flex flex-row items-center text-lg font-semibold" onSubmit={onSubmit}>
             <TextField
               {...register("name")}
               autoFocus
@@ -56,7 +53,7 @@ export const VerifiableCredentialItem = ({
               size="small"
               type="text"
               variant="outlined"
-              onBlur={handleToggleRenaming}
+              onBlur={onToggleRenaming}
             />
 
             <IconButton
@@ -65,11 +62,15 @@ export const VerifiableCredentialItem = ({
               size="medium"
               type="submit"
             >
-              <CheckIcon className="verifiable-credential-row__select-icon--selected" fontSize="inherit" />
+              <CheckIcon
+                className="verifiable-credential-row__select-icon--selected"
+                color="primary"
+                fontSize="inherit"
+              />
             </IconButton>
           </form>
         ) : (
-          <Typography className="flex flex-row items-center text-lg font-semibold">{`${metadata.name}`}</Typography>
+          <Typography className="flex flex-row items-center text-lg font-semibold">{`${name}`}</Typography>
         )}
 
         <Typography className="text-base text-gray-300">Credential hash: {ellipsify(metadata.hash)}</Typography>
@@ -78,13 +79,7 @@ export const VerifiableCredentialItem = ({
       </div>
 
       <Menuable className="flex user-menu" items={menuItems}>
-        <IconButton
-          className="verifiable-credential-row__menu-icon-button"
-          data-testid="verifiable-credential-row__menu-icon"
-          size="small"
-        >
-          <MoreHorizIcon className="verifiable-credential-row__menu-icon" fontSize="inherit" />
-        </IconButton>
+        <MoreHorizIcon className="verifiable-credential-row__menu-icon" color="secondary" fontSize="inherit" />
       </Menuable>
     </div>
   );

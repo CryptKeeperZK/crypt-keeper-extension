@@ -37,7 +37,6 @@ describe("ui/pages/Home", () => {
     identities: [],
     address: defaultWalletHookData.address,
     refreshConnectionStatus: jest.fn().mockResolvedValue(true),
-    serializedVerifiableCredentials: [],
   };
 
   beforeEach(() => {

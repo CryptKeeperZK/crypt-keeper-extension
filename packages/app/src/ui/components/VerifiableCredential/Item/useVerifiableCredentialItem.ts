@@ -1,6 +1,7 @@
 import { useCallback, useState } from "react";
-import { UseFormHandleSubmit, UseFormRegister, useForm } from "react-hook-form";
+import { UseFormRegister, useForm } from "react-hook-form";
 
+import { VerifiableCredentialMetadata } from "@src/types";
 import { useAppDispatch } from "@src/ui/ducks/hooks";
 
 export interface RenameVerifiableCredentialItemData {
@@ -8,28 +9,29 @@ export interface RenameVerifiableCredentialItemData {
 }
 
 export interface IUseVerifiableCredentialItemData {
-  register: UseFormRegister<RenameVerifiableCredentialItemData>;
-  handleSubmit: UseFormHandleSubmit<RenameVerifiableCredentialItemData>;
-  handleToggleRenaming: () => void;
-  onSubmit: (data: RenameVerifiableCredentialItemData) => Promise<void>;
   isRenaming: boolean;
   name: string;
-  handleDeleteVerifiableCredential: () => Promise<void>;
+  register: UseFormRegister<RenameVerifiableCredentialItemData>;
+  onSubmit: (event: React.FormEvent<HTMLFormElement>) => void;
+  onToggleRenaming: () => void;
+  onDelete: () => Promise<void>;
+}
+
+export interface UseVerifiableCredentialItemArgs {
+  metadata: VerifiableCredentialMetadata;
+  onRename: (hash: string, name: string) => Promise<void>;
+  onDelete: (hash: string) => Promise<void>;
 }
 
 export const useVerifiableCredentialItem = (
-  initialName: string,
-  hash: string,
-  onRenameVerifiableCredential: (hash: string, name: string) => Promise<void>,
-  onDeleteVerifiableCredential: (hash: string) => Promise<void>,
+  useVerifiableCredentialItemArgs: UseVerifiableCredentialItemArgs,
 ): IUseVerifiableCredentialItemData => {
+  const { metadata, onRename, onDelete } = useVerifiableCredentialItemArgs;
+  const { hash, name: initialName } = metadata;
+
   const dispatch = useAppDispatch();
 
-  const handleDeleteVerifiableCredential = useCallback(async () => {
-    await onDeleteVerifiableCredential(hash);
-  }, [onDeleteVerifiableCredential, dispatch]);
-
-  const { register, handleSubmit, watch } = useForm<RenameVerifiableCredentialItemData>({
+  const { register, watch } = useForm<RenameVerifiableCredentialItemData>({
     defaultValues: {
       name: initialName,
     },
@@ -39,25 +41,29 @@ export const useVerifiableCredentialItem = (
 
   const [isRenaming, setIsRenaming] = useState(false);
 
-  const handleToggleRenaming = useCallback(() => {
+  const onToggleRenaming = useCallback(() => {
     setIsRenaming((value) => !value);
   }, [setIsRenaming]);
 
   const onSubmit = useCallback(
-    async (data: RenameVerifiableCredentialItemData) => {
-      await onRenameVerifiableCredential(hash, data.name);
+    async (event: React.FormEvent<HTMLFormElement>) => {
+      event.preventDefault();
+      await onRename(hash, name);
       setIsRenaming(false);
     },
-    [onRenameVerifiableCredential],
+    [onRename, name, setIsRenaming],
   );
 
+  const onDeleteVerifiableCredential = useCallback(async () => {
+    await onDelete(hash);
+  }, [onDelete, dispatch]);
+
   return {
-    register,
-    handleSubmit,
-    handleToggleRenaming,
-    onSubmit,
     isRenaming,
     name,
-    handleDeleteVerifiableCredential,
+    register,
+    onSubmit,
+    onToggleRenaming,
+    onDelete: onDeleteVerifiableCredential,
   };
 };

@@ -1,12 +1,12 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback } from "react";
 
-import { deserializeCryptkeeperVerifiableCredential } from "@src/background/services/credentials/utils";
 import { CryptkeeperVerifiableCredential } from "@src/types";
 import { useAppDispatch } from "@src/ui/ducks/hooks";
 import {
   deleteVerifiableCredential,
   fetchVerifiableCredentials,
   renameVerifiableCredential,
+  useCryptkeeperVerifiableCredentials,
 } from "@src/ui/ducks/verifiableCredentials";
 
 export interface IUseVerifiableCredentialListData {
@@ -18,26 +18,11 @@ export interface IUseVerifiableCredentialListData {
   onDeleteVerifiableCredential: (verifiableCredentialHash: string) => Promise<void>;
 }
 
-export const useVerifiableCredentialList = (
-  serializedVerifiableCredentials: string[],
-): IUseVerifiableCredentialListData => {
+export const useVerifiableCredentialList = (): IUseVerifiableCredentialListData => {
   const dispatch = useAppDispatch();
+  dispatch(fetchVerifiableCredentials());
 
-  const [cryptkeeperVerifiableCredentials, setCryptkeeperVerifiableCredentials] = useState<
-    CryptkeeperVerifiableCredential[]
-  >([]);
-
-  useEffect(() => {
-    async function deserialize() {
-      const deserializedVerifiableCredentials = await Promise.all(
-        serializedVerifiableCredentials.map((serializedVerifiableCredential) =>
-          deserializeCryptkeeperVerifiableCredential(serializedVerifiableCredential),
-        ),
-      );
-      setCryptkeeperVerifiableCredentials(deserializedVerifiableCredentials);
-    }
-    deserialize();
-  }, [serializedVerifiableCredentials]);
+  const cryptkeeperVerifiableCredentials = useCryptkeeperVerifiableCredentials();
 
   const onRenameVerifiableCredential = useCallback(
     async (verifiableCredentialHash: string, newVerifiableCredentialName: string) => {

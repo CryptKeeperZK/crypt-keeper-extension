@@ -9,7 +9,7 @@ import "./home.scss";
 import { useHome } from "./useHome";
 
 const Home = (): JSX.Element => {
-  const { identities, connectedIdentity, refreshConnectionStatus, serializedVerifiableCredentials } = useHome();
+  const { identities, connectedIdentity, refreshConnectionStatus } = useHome();
 
   return (
     <div className="w-full h-full flex flex-col home" data-testid="home-page">
@@ -28,7 +28,7 @@ const Home = (): JSX.Element => {
 
           <ActivityList />
 
-          <VerifiableCredentialList serializedVerifiableCredentials={serializedVerifiableCredentials} />
+          <VerifiableCredentialList />
         </TabList>
       </div>
     </div>
