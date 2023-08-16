@@ -24,6 +24,7 @@ export interface IUseAccountMenuData {
   onGoToMetamaskPage: () => void;
   onGoToSettings: () => void;
   onSelectAccount: (address: string) => void;
+  onOpenInNewTab: () => void;
 }
 
 const METAMASK_INSTALL_URL = "https://metamask.io/";
@@ -77,6 +78,10 @@ export const useAccountMenu = ({ ethWallet, cryptKeeperWallet }: IUseAccountMenu
     [dispatch],
   );
 
+  const onOpenInNewTab = useCallback(() => {
+    redirectToNewTab(`${window.location.pathname}${window.location.hash}`);
+  }, []);
+
   const isOpen = useMemo(() => Boolean(anchorEl), [Boolean(anchorEl)]);
 
   const ethAddresses = useMemo(
@@ -113,5 +118,6 @@ export const useAccountMenu = ({ ethWallet, cryptKeeperWallet }: IUseAccountMenu
     onGoToSettings,
     onGoToMetamaskPage,
     onSelectAccount,
+    onOpenInNewTab,
   };
 };

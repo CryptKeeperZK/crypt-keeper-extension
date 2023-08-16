@@ -39,6 +39,8 @@ jest.mock("@src/util/postMessage");
 
 jest.mock("@src/util/pushMessage");
 
+jest.mock("@src/util/browser");
+
 jest.mock("@src/config/features", (): unknown => ({
   ...jest.requireActual("@src/config/features"),
   getEnabledFeatures: jest.fn().mockReturnValue({ INTERREP_IDENTITY: true, USER_MNEMONIC: true }),
@@ -84,6 +86,10 @@ jest.mock("webextension-polyfill", (): unknown => {
         connect: jest.fn(),
         sendMessage: jest.fn(),
         getURL: jest.fn(),
+      },
+
+      extension: {
+        getViews: jest.fn(() => []),
       },
 
       notifications: {

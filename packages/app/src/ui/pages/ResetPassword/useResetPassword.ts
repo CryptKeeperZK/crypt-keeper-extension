@@ -1,4 +1,4 @@
-import { BaseSyntheticEvent, useCallback, useEffect, useState } from "react";
+import { BaseSyntheticEvent, useCallback, useEffect, useMemo, useState } from "react";
 import { useForm, UseFormRegister } from "react-hook-form";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { object, ref, string } from "yup";
@@ -7,7 +7,7 @@ import { Paths } from "@src/constants";
 import { PasswordFormFields } from "@src/types";
 import { resetPassword } from "@src/ui/ducks/app";
 import { useAppDispatch } from "@src/ui/ducks/hooks";
-import { useValidationResolver } from "@src/ui/hooks/validation";
+import { passwordRules, useValidationResolver } from "@src/ui/hooks/validation";
 
 export interface IUseResetPasswordData {
   isLoading: boolean;
@@ -19,14 +19,8 @@ export interface IUseResetPasswordData {
   onClose: () => void;
 }
 
-const passwordRules = /^(?=.*[0-9])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{8,}$/;
-
 const validationSchema = object({
-  password: string()
-    .matches(passwordRules, {
-      message: "Password isn't strong",
-    })
-    .required("Password is required"),
+  password: string().required("Password is required"),
   confirmPassword: string()
     .oneOf([ref("password"), ""], "Passwords must match")
     .required("Confirm your password"),
@@ -40,8 +34,9 @@ export const useResetPassword = (): IUseResetPasswordData => {
 
   const resolver = useValidationResolver(validationSchema);
   const {
-    formState: { isLoading, isSubmitting, errors },
+    formState: { isLoading, isSubmitting, isDirty, errors },
     setError,
+    watch,
     register,
     handleSubmit,
   } = useForm<PasswordFormFields>({
@@ -64,7 +59,7 @@ export const useResetPassword = (): IUseResetPasswordData => {
   );
 
   const onClose = useCallback(() => {
-    navigate(-1);
+    navigate(Paths.RECOVER);
   }, [navigate]);
 
   const onShowPassword = useCallback(() => {
@@ -77,11 +72,15 @@ export const useResetPassword = (): IUseResetPasswordData => {
     }
   }, [mnemonic, navigate]);
 
+  const password = watch("password");
+  const isPasswordWeak = useMemo(() => !passwordRules.test(password), [password]);
+  const weakPasswordError = isDirty && isPasswordWeak ? "Password is weak" : undefined;
+
   return {
     isLoading: isLoading || isSubmitting,
     isShowPassword,
     errors: {
-      password: errors.password?.message,
+      password: errors.password?.message || weakPasswordError,
       confirmPassword: errors.confirmPassword?.message,
       root: errors.root?.message,
     },

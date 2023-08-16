@@ -7,6 +7,7 @@ import { ChangeEvent } from "react";
 import { useNavigate } from "react-router-dom";
 
 import { defaultMnemonic } from "@src/config/mock/wallet";
+import { Paths } from "@src/constants";
 import { checkPassword, getMnemonic } from "@src/ui/ducks/app";
 import { useAppDispatch } from "@src/ui/ducks/hooks";
 
@@ -65,7 +66,7 @@ describe("ui/pages/RevealMnemonic/useRevealMnemonic", () => {
     await act(() => Promise.resolve(result.current.onGoBack()));
 
     expect(mockNavigate).toBeCalledTimes(1);
-    expect(mockNavigate).toBeCalledWith(-1);
+    expect(mockNavigate).toBeCalledWith(Paths.SETTINGS);
   });
 
   test("should handle submit error properly", async () => {

@@ -26,6 +26,7 @@ jest.mock("@src/ui/ducks/hooks", (): unknown => ({
 }));
 
 jest.mock("@src/ui/hooks/validation", (): unknown => ({
+  ...jest.requireActual("@src/ui/hooks/validation"),
   useValidationResolver: jest.fn(),
 }));
 
@@ -124,6 +125,6 @@ describe("ui/pages/ResetPassword/useResetPassword", () => {
     await act(async () => Promise.resolve(result.current.onClose()));
 
     expect(mockNavigate).toBeCalledTimes(1);
-    expect(mockNavigate).toBeCalledWith(-1);
+    expect(mockNavigate).toBeCalledWith(Paths.RECOVER);
   });
 });

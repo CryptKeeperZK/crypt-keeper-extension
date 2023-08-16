@@ -6,6 +6,9 @@ import { validateMnemonic } from "@src/background/services/mnemonic";
 export type ValidationResolver<T> = (data: T) => Promise<{ values: T; errors: Errors }>;
 type Errors = Record<string, { type: string; message: string }>;
 
+export const passwordRules =
+  /^(?=.*[0-9])(?=.*[~`!@#$%^&*()-_+={}[\]|/:;"'<>,.?])[a-zA-Z0-9!~`!@#$%^&*()-_+={}[\]|/:;"'<>,.?]{8,}$/;
+
 export const mnemonicValidationSchema = object({
   mnemonic: string()
     .test("mnemonic", "Mnemonic is invalid", (mnemonic?: string) => (mnemonic ? validateMnemonic(mnemonic) : false))

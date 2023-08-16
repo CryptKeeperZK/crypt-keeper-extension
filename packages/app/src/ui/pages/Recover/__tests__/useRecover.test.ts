@@ -58,7 +58,7 @@ describe("ui/pages/Recover/useRecover", () => {
     await act(async () => Promise.resolve(result.current.onClose()));
 
     expect(mockNavigate).toBeCalledTimes(1);
-    expect(mockNavigate).toBeCalledWith(-1);
+    expect(mockNavigate).toBeCalledWith(Paths.SETTINGS);
   });
 
   test("should submit form properly", async () => {

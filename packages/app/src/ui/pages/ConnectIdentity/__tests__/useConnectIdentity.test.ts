@@ -8,6 +8,7 @@ import { SyntheticEvent } from "react";
 import { useNavigate } from "react-router-dom";
 
 import { ZERO_ADDRESS } from "@src/config/const";
+import { Paths } from "@src/constants";
 import { closePopup } from "@src/ui/ducks/app";
 import { useAppDispatch } from "@src/ui/ducks/hooks";
 import {
@@ -139,7 +140,7 @@ describe("ui/pages/ConnectIdentity/useConnectIdentity", () => {
     expect(fetchIdentities).toBeCalledTimes(1);
     expect(closePopup).toBeCalledTimes(1);
     expect(mockNavigate).toBeCalledTimes(1);
-    expect(mockNavigate).toBeCalledWith(-1);
+    expect(mockNavigate).toBeCalledWith(Paths.HOME);
   });
 
   test("should connect properly", async () => {
@@ -155,7 +156,7 @@ describe("ui/pages/ConnectIdentity/useConnectIdentity", () => {
     expect(connectIdentity).toBeCalledWith({ identityCommitment: "1", host: "http://localhost:3000" });
     expect(closePopup).toBeCalledTimes(1);
     expect(mockNavigate).toBeCalledTimes(1);
-    expect(mockNavigate).toBeCalledWith(-1);
+    expect(mockNavigate).toBeCalledWith(Paths.HOME);
   });
 
   test("should change tab properly", async () => {

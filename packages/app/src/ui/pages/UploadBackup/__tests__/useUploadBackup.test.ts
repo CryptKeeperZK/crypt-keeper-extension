@@ -89,7 +89,7 @@ describe("ui/pages/UploadBackup/useUploadBackup", () => {
     expect(mockDispatch).toBeCalledTimes(1);
     expect(closePopup).toBeCalledTimes(1);
     expect(mockNavigate).toBeCalledTimes(1);
-    expect(mockNavigate).toBeCalledWith(-1);
+    expect(mockNavigate).toBeCalledWith(Paths.SETTINGS);
   });
 
   test("should drop files properly", () => {

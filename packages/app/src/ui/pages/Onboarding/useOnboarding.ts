@@ -1,4 +1,4 @@
-import { BaseSyntheticEvent, useCallback, useState } from "react";
+import { BaseSyntheticEvent, useCallback, useMemo, useState } from "react";
 import { useForm, UseFormRegister } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { object, ref, string } from "yup";
@@ -8,7 +8,7 @@ import { PasswordFormFields } from "@src/types";
 import { setupPassword } from "@src/ui/ducks/app";
 import { createOnboardingBackupRequest } from "@src/ui/ducks/backup";
 import { useAppDispatch } from "@src/ui/ducks/hooks";
-import { useValidationResolver } from "@src/ui/hooks/validation";
+import { passwordRules, useValidationResolver } from "@src/ui/hooks/validation";
 
 export interface IUseOnboardingData {
   isLoading: boolean;
@@ -20,14 +20,8 @@ export interface IUseOnboardingData {
   onGoToOnboardingBackup: () => void;
 }
 
-const passwordRules = /^(?=.*[0-9])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{8,}$/;
-
 const validationSchema = object({
-  password: string()
-    .matches(passwordRules, {
-      message: "Password isn't strong",
-    })
-    .required("Password is required"),
+  password: string().required("Password is required"),
   confirmPassword: string()
     .oneOf([ref("password"), ""], "Passwords must match")
     .required("Confirm your password"),
@@ -38,8 +32,9 @@ export const useOnboarding = (): IUseOnboardingData => {
 
   const resolver = useValidationResolver(validationSchema);
   const {
-    formState: { isLoading, isSubmitting, errors },
+    formState: { isLoading, isSubmitting, isDirty, errors },
     setError,
+    watch,
     register,
     handleSubmit,
   } = useForm<PasswordFormFields>({
@@ -70,11 +65,15 @@ export const useOnboarding = (): IUseOnboardingData => {
     dispatch(createOnboardingBackupRequest()).then(() => navigate(Paths.ONBOARDING_BACKUP));
   }, [dispatch, navigate]);
 
+  const password = watch("password");
+  const isPasswordWeak = useMemo(() => !passwordRules.test(password), [password]);
+  const weakPasswordError = isDirty && isPasswordWeak ? "Password is weak" : undefined;
+
   return {
     isLoading: isLoading || isSubmitting,
     isShowPassword,
     errors: {
-      password: errors.password?.message,
+      password: errors.password?.message || weakPasswordError,
       confirmPassword: errors.confirmPassword?.message,
       root: errors.root?.message,
     },

@@ -30,10 +30,6 @@ jest.mock("@src/ui/hooks/url", (): unknown => ({
   useUrlParam: jest.fn(),
 }));
 
-jest.mock("@src/util/browser", (): unknown => ({
-  redirectToNewTab: jest.fn(),
-}));
-
 jest.mock("@src/ui/ducks/hooks", (): unknown => ({
   useAppDispatch: jest.fn(),
 }));
@@ -102,7 +98,7 @@ describe("ui/pages/Identity/useIdentityPage", () => {
     await act(() => Promise.resolve(result.current.onGoBack()));
 
     expect(mockNavigate).toBeCalledTimes(1);
-    expect(mockNavigate).toBeCalledWith(-1);
+    expect(mockNavigate).toBeCalledWith(Paths.HOME);
   });
 
   test("should handle error properly", async () => {

@@ -89,7 +89,7 @@ describe("ui/pages/OnboardingBackup/useOnboardingBackup", () => {
     expect(mockDispatch).toBeCalledTimes(1);
     expect(closePopup).toBeCalledTimes(1);
     expect(mockNavigate).toBeCalledTimes(1);
-    expect(mockNavigate).toBeCalledWith(-1);
+    expect(mockNavigate).toBeCalledWith(Paths.ONBOARDING);
   });
 
   test("should drop files properly", () => {

@@ -65,7 +65,7 @@ export const useOnboardingBackup = (): IUseOnboardingBackupData => {
 
   const onGoBack = useCallback(() => {
     dispatch(closePopup());
-    navigate(-1);
+    navigate(Paths.ONBOARDING);
   }, [dispatch, navigate]);
 
   const onSubmit = useCallback(

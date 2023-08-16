@@ -13,11 +13,6 @@ jest.mock("@src/ui/hooks/timeout", (): unknown => ({
   useTimeout: jest.fn(),
 }));
 
-jest.mock("@src/util/browser", (): unknown => ({
-  copyToClipboard: jest.fn(),
-  downloadFile: jest.fn(),
-}));
-
 describe("ui/components/MnemonicInput/useMnemonicInput", () => {
   const defaultTimeoutHookData: IUseTimeoutData = {
     isActive: false,

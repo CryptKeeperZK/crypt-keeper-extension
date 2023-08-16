@@ -55,6 +55,12 @@ export default class Identities extends BasePage {
 
   async createIdentityFromHome(params: ICreateIdentityArgs): Promise<void> {
     await this.page.getByTestId("create-new-identity").click({ delay: 1000 });
+
+    await this.createIdentity(this.page, params);
+  }
+
+  async createIdentityFromDemo(params: ICreateIdentityArgs): Promise<void> {
+    await this.page.getByTestId("create-new-identity").click({ delay: 1000 });
     const cryptKeeper = await this.page.context().waitForEvent("page");
 
     await this.createIdentity(cryptKeeper, params);

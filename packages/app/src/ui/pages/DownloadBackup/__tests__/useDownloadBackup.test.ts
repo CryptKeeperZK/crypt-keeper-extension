@@ -5,6 +5,7 @@
 import { act, renderHook, waitFor } from "@testing-library/react";
 import { useNavigate } from "react-router-dom";
 
+import { Paths } from "@src/constants";
 import { downloadBackup } from "@src/ui/ducks/backup";
 import { useAppDispatch } from "@src/ui/ducks/hooks";
 import { downloadFile } from "@src/util/browser";
@@ -23,10 +24,6 @@ jest.mock("@src/ui/ducks/hooks", (): unknown => ({
 
 jest.mock("@src/ui/ducks/backup", (): unknown => ({
   downloadBackup: jest.fn(),
-}));
-
-jest.mock("@src/util/browser", (): unknown => ({
-  downloadFile: jest.fn(),
 }));
 
 describe("ui/pages/DownloadBackup/useDownloadBackup", () => {
@@ -77,7 +74,7 @@ describe("ui/pages/DownloadBackup/useDownloadBackup", () => {
     expect(downloadBackup).toBeCalledTimes(1);
     expect(downloadFile).toBeCalledTimes(1);
     expect(mockNavigate).toBeCalledTimes(1);
-    expect(mockNavigate).toBeCalledWith(-1);
+    expect(mockNavigate).toBeCalledWith(Paths.SETTINGS);
   });
 
   test("should handle submit error", async () => {

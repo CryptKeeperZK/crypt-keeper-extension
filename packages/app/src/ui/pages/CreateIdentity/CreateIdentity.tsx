@@ -8,7 +8,7 @@ import { getEnabledFeatures } from "@src/config/features";
 import { IDENTITY_TYPES, WEB2_PROVIDER_OPTIONS } from "@src/constants";
 import { SelectOption } from "@src/types";
 import { Dropdown } from "@src/ui/components/Dropdown";
-import { FullModal, FullModalContent, FullModalFooter, FullModalHeader } from "@src/ui/components/FullModal";
+import { FullModalContent, FullModalFooter, FullModalHeader } from "@src/ui/components/FullModal";
 import { Icon } from "@src/ui/components/Icon";
 import { Input } from "@src/ui/components/Input";
 
@@ -28,7 +28,7 @@ const CreateIdentity = (): JSX.Element => {
     isWalletConnected,
     errors,
     control,
-    closeModal,
+    onCloseModal,
     onConnectWallet,
     onCreateWithCryptkeeper,
     onCreateWithEthWallet,
@@ -37,9 +37,9 @@ const CreateIdentity = (): JSX.Element => {
   const ethWalletTitle = isWalletConnected ? "Metamask" : "Connect to Metamask";
 
   return (
-    <FullModal data-testid="create-identity-page" onClose={closeModal}>
+    <Box data-testid="create-identity-page" sx={{ height: "100%" }}>
       <form className="create-identity-form">
-        <FullModalHeader onClose={closeModal}>Create identity</FullModalHeader>
+        <FullModalHeader onClose={onCloseModal}>Create identity</FullModalHeader>
 
         <FullModalContent>
           {features.INTERREP_IDENTITY ? (
@@ -121,7 +121,7 @@ const CreateIdentity = (): JSX.Element => {
             <Button
               disabled={isLoading || !isWalletInstalled}
               name="metamask"
-              sx={{ textTransform: "none" }}
+              sx={{ textTransform: "none", flex: 1, mr: 1 }}
               type="submit"
               variant="outlined"
               onClick={isWalletConnected ? onCreateWithEthWallet : onConnectWallet}
@@ -132,7 +132,7 @@ const CreateIdentity = (): JSX.Element => {
             <Button
               disabled={isLoading}
               name="cryptkeeper"
-              sx={{ textTransform: "none" }}
+              sx={{ textTransform: "none", flex: 1, ml: 1 }}
               type="submit"
               variant="contained"
               onClick={onCreateWithCryptkeeper}
@@ -142,7 +142,7 @@ const CreateIdentity = (): JSX.Element => {
           </Box>
         </FullModalFooter>
       </form>
-    </FullModal>
+    </Box>
   );
 };
 

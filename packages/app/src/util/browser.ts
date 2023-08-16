@@ -38,3 +38,5 @@ export const getUrlOrigin = (url?: string): string => {
 
 export const replaceUrlParams = (path: string, params: Record<string, string>): string =>
   Object.entries(params).reduce((acc, [key, value]) => acc.replace(`:${key}`, value), path);
+
+export const isExtensionPopupOpen = (): boolean => browser.extension.getViews({ type: "popup" }).length > 0;
