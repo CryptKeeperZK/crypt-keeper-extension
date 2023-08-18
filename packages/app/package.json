@@ -88,8 +88,8 @@
   },
   "dependencies": {
     "@cryptkeeperzk/providers": "workspace:^",
-    "@cryptkeeperzk/rln-proof": "workspace:^",
-    "@cryptkeeperzk/semaphore-proof": "workspace:^",
+    "@cryptkeeperzk/rlnjs": "^3.1.10",
+    "@cryptkeeperzk/semaphore-proof": "^3.10.3",
     "@cryptkeeperzk/types": "workspace:^",
     "@cryptkeeperzk/zk": "workspace:^",
     "@emotion/styled": "^11.11.0",

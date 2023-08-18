@@ -32,8 +32,8 @@
   },
   "dependencies": {
     "@cryptkeeperzk/zk": "workspace:^",
-    "@semaphore-protocol/group": "^3.10.1",
-    "@semaphore-protocol/identity": "^3.10.1",
+    "@cryptkeeperzk/semaphore-group": "^3.10.3",
+    "@cryptkeeperzk/semaphore-identity": "^3.10.3",
     "@zk-kit/incremental-merkle-tree": "^1.1.0",
     "bigint-conversion": "^2.4.1",
     "cors": "^2.8.5",

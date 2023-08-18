@@ -1,4 +1,4 @@
-import { RLNSNARKProof } from "@cryptkeeperzk/rln-proof";
+import { RLNSNARKProof } from "@cryptkeeperzk/rlnjs";
 
 import { ZkIdentitySemaphore } from "@src/identity";
 

@@ -1,5 +1,5 @@
+import { Identity } from "@cryptkeeperzk/semaphore-identity";
 import { ICreateIdentityArgs, StrategiesMap } from "@cryptkeeperzk/types";
-import { Identity } from "@semaphore-protocol/identity";
 
 import { ZkIdentitySemaphore } from "../protocols";
 

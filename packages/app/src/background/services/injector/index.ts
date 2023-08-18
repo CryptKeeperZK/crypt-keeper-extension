@@ -1,5 +1,5 @@
 import { RPCAction } from "@cryptkeeperzk/providers";
-import { RLNSNARKProof } from "@cryptkeeperzk/rln-proof";
+import { RLNSNARKProof } from "@cryptkeeperzk/rlnjs";
 import { generateProof } from "@cryptkeeperzk/semaphore-proof";
 import { getMerkleProof } from "@cryptkeeperzk/zk";
 import { omit } from "lodash";

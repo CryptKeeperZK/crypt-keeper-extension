@@ -1,5 +1,5 @@
+import { Identity } from "@cryptkeeperzk/semaphore-identity";
 import { IdentityMetadata, IRlnProofRequest, ISemaphoreProofRequest } from "@cryptkeeperzk/types";
-import { Identity } from "@semaphore-protocol/identity";
 import { MerkleProof } from "@zk-kit/incremental-merkle-tree";
 
 import { ZkIdentitySemaphore } from "@src/identity";
@@ -9,7 +9,7 @@ import { RLNProofService } from "../RLNProof";
 import { SemaphoreProofService } from "../SemaphoreProof";
 import { getMerkleProof } from "../utils";
 
-jest.mock("@cryptkeeperzk/rln-proof", (): unknown => ({
+jest.mock("@cryptkeeperzk/rlnjs", (): unknown => ({
   RLNProver: jest.fn(() => ({
     generateProof: mockRlnGenerateProof, // Mock the generateProof function to resolve with emptyFullProof
   })),

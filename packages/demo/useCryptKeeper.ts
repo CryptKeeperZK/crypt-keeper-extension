@@ -1,6 +1,6 @@
 /* eslint-disable no-console */
 import { cryptkeeperConnect, type CryptKeeperInjectedProvider } from "@cryptkeeperzk/providers";
-import { Identity } from "@semaphore-protocol/identity";
+import { Identity } from "@cryptkeeperzk/semaphore-identity";
 import { bigintToHex } from "bigint-conversion";
 import { encodeBytes32String } from "ethers";
 import { useState, useEffect, useCallback } from "react";

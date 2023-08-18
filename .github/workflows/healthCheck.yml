@@ -81,7 +81,7 @@ jobs:
         if: runner.os == 'Linux'
         run: pnpm run build
         env:
-          METAMASK_EXTENSION_ID: "fhohjionocjbacbejikmmnnloidaalnj"
+          METAMASK_EXTENSION_ID: "apabigcacjahmioldedonehjbfipdbkf"
 
       - name: Build extension (Windows)
         if: runner.os == 'Windows'

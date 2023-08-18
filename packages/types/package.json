@@ -34,8 +34,8 @@
     "githook:precommit": "lint-staged && pnpm run types"
   },
   "dependencies": {
-    "@cryptkeeperzk/rln-proof": "workspace:^",
-    "@semaphore-protocol/proof": "^3.10.1",
+    "@cryptkeeperzk/rlnjs": "^3.1.10",
+    "@cryptkeeperzk/semaphore-proof": "^3.10.3",
     "@zk-kit/incremental-merkle-tree": "^1.1.0"
   },
   "devDependencies": {
