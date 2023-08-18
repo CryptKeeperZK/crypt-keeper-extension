@@ -34,10 +34,10 @@
     "githook:prepush": "pnpm run test:coverage"
   },
   "dependencies": {
-    "@cryptkeeperzk/rlnjs": "^3.1.8",
-    "@cryptkeeperzk/semaphore-group": "^3.10.1",
-    "@cryptkeeperzk/semaphore-identity": "^3.10.1",
-    "@cryptkeeperzk/semaphore-proof": "^3.10.1",
+    "@cryptkeeperzk/rlnjs": "^3.1.10",
+    "@cryptkeeperzk/semaphore-group": "^3.10.3",
+    "@cryptkeeperzk/semaphore-identity": "^3.10.3",
+    "@cryptkeeperzk/semaphore-proof": "^3.10.3",
     "@cryptkeeperzk/types": "workspace:^",
     "@zk-kit/incremental-merkle-tree": "^1.1.0",
     "bigint-conversion": "^2.4.1",

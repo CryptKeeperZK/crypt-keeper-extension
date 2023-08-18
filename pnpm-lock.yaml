@@ -67,7 +67,7 @@ importers:
         version: 16.5.1(@swc/core@1.3.69)
       nx-cloud:
         specifier: latest
-        version: 16.3.0
+        version: 16.4.0-beta.1
       os-browserify:
         specifier: ^0.3.0
         version: 0.3.0
@@ -99,11 +99,11 @@ importers:
         specifier: workspace:^
         version: link:../providers
       '@cryptkeeperzk/rlnjs':
-        specifier: ^3.1.8
-        version: 3.1.8
+        specifier: ^3.1.10
+        version: 3.1.10
       '@cryptkeeperzk/semaphore-proof':
-        specifier: ^3.10.1
-        version: 3.10.1(@cryptkeeperzk/semaphore-group@3.10.1)(@cryptkeeperzk/semaphore-identity@3.10.1)
+        specifier: ^3.10.3
+        version: 3.10.3(@cryptkeeperzk/semaphore-group@3.10.3)(@cryptkeeperzk/semaphore-identity@3.10.3)
       '@cryptkeeperzk/types':
         specifier: workspace:^
         version: link:../types
@@ -391,8 +391,8 @@ importers:
         specifier: workspace:^
         version: link:../providers
       '@cryptkeeperzk/semaphore-identity':
-        specifier: ^3.10.1
-        version: 3.10.1
+        specifier: ^3.10.3
+        version: 3.10.3
       '@cryptkeeperzk/types':
         specifier: workspace:^
         version: link:../types
@@ -550,11 +550,11 @@ importers:
   packages/merkle-mock-server:
     dependencies:
       '@cryptkeeperzk/semaphore-group':
-        specifier: ^3.10.1
-        version: 3.10.1
+        specifier: ^3.10.3
+        version: 3.10.3
       '@cryptkeeperzk/semaphore-identity':
-        specifier: ^3.10.1
-        version: 3.10.1
+        specifier: ^3.10.3
+        version: 3.10.3
       '@cryptkeeperzk/zk':
         specifier: workspace:^
         version: link:../zk
@@ -602,11 +602,11 @@ importers:
   packages/providers:
     dependencies:
       '@cryptkeeperzk/semaphore-identity':
-        specifier: ^3.10.1
-        version: 3.10.1
+        specifier: ^3.10.3
+        version: 3.10.3
       '@cryptkeeperzk/semaphore-proof':
-        specifier: ^3.10.1
-        version: 3.10.1(@cryptkeeperzk/semaphore-group@3.10.1)(@cryptkeeperzk/semaphore-identity@3.10.1)
+        specifier: ^3.10.3
+        version: 3.10.3(@cryptkeeperzk/semaphore-group@3.10.3)(@cryptkeeperzk/semaphore-identity@3.10.3)
       '@cryptkeeperzk/types':
         specifier: workspace:^
         version: link:../types
@@ -660,11 +660,11 @@ importers:
   packages/types:
     dependencies:
       '@cryptkeeperzk/rlnjs':
-        specifier: ^3.1.8
-        version: 3.1.8
+        specifier: ^3.1.10
+        version: 3.1.10
       '@cryptkeeperzk/semaphore-proof':
-        specifier: ^3.10.1
-        version: 3.10.1(@cryptkeeperzk/semaphore-group@3.10.1)(@cryptkeeperzk/semaphore-identity@3.10.1)
+        specifier: ^3.10.3
+        version: 3.10.3(@cryptkeeperzk/semaphore-group@3.10.3)(@cryptkeeperzk/semaphore-identity@3.10.3)
       '@zk-kit/incremental-merkle-tree':
         specifier: ^1.1.0
         version: 1.1.0
@@ -688,17 +688,17 @@ importers:
   packages/zk:
     dependencies:
       '@cryptkeeperzk/rlnjs':
-        specifier: ^3.1.8
-        version: 3.1.8
+        specifier: ^3.1.10
+        version: 3.1.10
       '@cryptkeeperzk/semaphore-group':
-        specifier: ^3.10.1
-        version: 3.10.1
+        specifier: ^3.10.3
+        version: 3.10.3
       '@cryptkeeperzk/semaphore-identity':
-        specifier: ^3.10.1
-        version: 3.10.1
+        specifier: ^3.10.3
+        version: 3.10.3
       '@cryptkeeperzk/semaphore-proof':
-        specifier: ^3.10.1
-        version: 3.10.1(@cryptkeeperzk/semaphore-group@3.10.1)(@cryptkeeperzk/semaphore-identity@3.10.1)
+        specifier: ^3.10.3
+        version: 3.10.3(@cryptkeeperzk/semaphore-group@3.10.3)(@cryptkeeperzk/semaphore-identity@3.10.3)
       '@cryptkeeperzk/types':
         specifier: workspace:^
         version: link:../types
@@ -2560,6 +2560,14 @@ packages:
       chalk: 4.1.2
     dev: true
 
+  /@cryptkeeperzk/ejs@3.1.9:
+    resolution: {integrity: sha512-cx5BuXOfPxfbAeA7EW/bsoEU8omuBG6ZEC9Ph4pyUnrP1JD5D6DdtL7nhucIAKtjAthlpz9os1TPR24E2t4i9Q==}
+    engines: {node: '>=0.10.0'}
+    hasBin: true
+    dependencies:
+      jake: 10.8.7
+    dev: false
+
   /@cryptkeeperzk/ffjavascript@0.2.59:
     resolution: {integrity: sha512-K5G1dummndLEOVmxmeT9eHx2+R6GK6TM1ClVmWDAXPYi9fS8IkZQHEvMV2mI2AMhAZcnMgIKzoanAhrFOiEPGg==}
     dependencies:
@@ -2569,11 +2577,11 @@ packages:
       web-worker: 1.2.0
     dev: false
 
-  /@cryptkeeperzk/rlnjs@3.1.8:
-    resolution: {integrity: sha512-8OEx4S5pti5EPKRe5vDgdP6emRkbVe902/r1KE43vjHL1Fovzsw+uCRoWiMjW4VMbwYKifcgnZS6g2Ms6naYNw==}
+  /@cryptkeeperzk/rlnjs@3.1.10:
+    resolution: {integrity: sha512-Av98zRo9MulqePxS/V7RvI32mbRr9HBiRVcWFq0fqC8w0mMzhAgiL4ohJ3bvnl2W7AgSySg2MpEchsTFOAc0bw==}
     dependencies:
       '@cryptkeeperzk/ffjavascript': 0.2.59
-      '@cryptkeeperzk/snarkjs': 0.7.1
+      '@cryptkeeperzk/snarkjs': 0.7.2
       '@ethersproject/bytes': 5.7.0
       '@ethersproject/keccak256': 5.7.0
       '@ethersproject/solidity': 5.7.0
@@ -2589,8 +2597,8 @@ packages:
       - utf-8-validate
     dev: false
 
-  /@cryptkeeperzk/semaphore-group@3.10.1:
-    resolution: {integrity: sha512-LWUgbIIozsORwxBQ/P+SyxLWhcoN8eVeREbbs1586qtdUtDCwYdr1PhyCokpV1GJs3QTWVEjQtnnkAhR9YsCMg==}
+  /@cryptkeeperzk/semaphore-group@3.10.3:
+    resolution: {integrity: sha512-ebwSD+y7mVkbxFygCTsueAHMQYun8Dk3xhGdeSaHe4E8EYJN/yD6xJ+u+2nTUcQnhoPEajOh7T3AZbkE4w0NlA==}
     dependencies:
       '@ethersproject/bignumber': 5.7.0
       '@ethersproject/bytes': 5.7.0
@@ -2598,8 +2606,8 @@ packages:
       '@zk-kit/incremental-merkle-tree': 1.1.0
     dev: false
 
-  /@cryptkeeperzk/semaphore-identity@3.10.1:
-    resolution: {integrity: sha512-jItZeYcXXE3oKuZ7FMUEnOvhr8PHUP+E6bpAqyqXz2Nq97+XUIEuuzwpHp59VHlVK58nSGYjVHG428xq3bZDNw==}
+  /@cryptkeeperzk/semaphore-identity@3.10.3:
+    resolution: {integrity: sha512-HCvfPmfXpONuBrvcu9UEvq4nRl6uLIq8h6rbST0gt6BDXW/7t4tJLLFQdMhv/YlkRlFq0SQJmq1HIv4QBleyAg==}
     dependencies:
       '@ethersproject/bignumber': 5.7.0
       '@ethersproject/keccak256': 5.7.0
@@ -2608,16 +2616,16 @@ packages:
       js-sha512: 0.8.0
     dev: false
 
-  /@cryptkeeperzk/semaphore-proof@3.10.1(@cryptkeeperzk/semaphore-group@3.10.1)(@cryptkeeperzk/semaphore-identity@3.10.1):
-    resolution: {integrity: sha512-bLK86GmQjZ9ulbJuY3M/q4bIevj0l0JZc2ejx6VTt+96/EltaeABZC7Ks4Pn8QHYZoknnuQxj3efV387IdX3kA==}
+  /@cryptkeeperzk/semaphore-proof@3.10.3(@cryptkeeperzk/semaphore-group@3.10.3)(@cryptkeeperzk/semaphore-identity@3.10.3):
+    resolution: {integrity: sha512-FLMQonIjExnp9Q5xJoKDMYcfDRZ86KMfyZOb+tFpHkCFpODJP0+KQHzmtFACdKkRIEw4dXzXSqagxc2wjOn2/g==}
     peerDependencies:
-      '@cryptkeeperzk/semaphore-group': 3.10.1
-      '@cryptkeeperzk/semaphore-identity': 3.10.1
+      '@cryptkeeperzk/semaphore-group': 3.10.3
+      '@cryptkeeperzk/semaphore-identity': 3.10.3
     dependencies:
       '@cryptkeeperzk/ffjavascript': 0.2.59
-      '@cryptkeeperzk/semaphore-group': 3.10.1
-      '@cryptkeeperzk/semaphore-identity': 3.10.1
-      '@cryptkeeperzk/snarkjs': 0.7.1
+      '@cryptkeeperzk/semaphore-group': 3.10.3
+      '@cryptkeeperzk/semaphore-identity': 3.10.3
+      '@cryptkeeperzk/snarkjs': 0.7.2
       '@ethersproject/bignumber': 5.7.0
       '@ethersproject/bytes': 5.7.0
       '@ethersproject/keccak256': 5.7.0
@@ -2625,16 +2633,16 @@ packages:
       '@zk-kit/incremental-merkle-tree': 0.4.3
     dev: false
 
-  /@cryptkeeperzk/snarkjs@0.7.1:
-    resolution: {integrity: sha512-TrzCgCsioFsFdzEcuzywvhN4PBcEZZbAIvkCVtawgYRuiOBumQxY5vhs8bt8S5efmu/AhSXQ0YoYLIYASeiCIw==}
+  /@cryptkeeperzk/snarkjs@0.7.2:
+    resolution: {integrity: sha512-00oQhQroxxfITmwuBIta8BZVzuIWk2hkjJJsXXVZd+BBaetIWXzJDSGZu+OlroiUKANHwlGvyiIcIkUZ5iRrLg==}
     hasBin: true
     dependencies:
+      '@cryptkeeperzk/ejs': 3.1.9
       '@cryptkeeperzk/ffjavascript': 0.2.59
       '@iden3/binfileutils': 0.0.11
       bfj: 7.0.2
       blake2b-wasm: 2.4.0
       circom_runtime: 0.1.23
-      ejs: 3.1.9
       fastfile: 0.0.20
       js-sha3: 0.8.0
       logplease: 1.2.15
@@ -3961,10 +3969,10 @@ packages:
       - verdaccio
     dev: true
 
-  /@nrwl/nx-cloud@16.3.0:
-    resolution: {integrity: sha512-nJrGsVufhY74KcP7kM7BqFOGAoO5OEF6+wfiM295DgmEG9c1yW+x5QiQaC42K9SWYn/eKQa1X7466ZA5lynXoQ==}
+  /@nrwl/nx-cloud@16.4.0-beta.1:
+    resolution: {integrity: sha512-XQFmpVtGJghvR+JJWgp2so0eeJSG7U1W0/WcyAskTnCSMt8M5FFotJmF4upFfRK1rexlECZ7xbcZzUXuIEqzsw==}
     dependencies:
-      nx-cloud: 16.3.0
+      nx-cloud: 16.4.0-beta.1
     transitivePeerDependencies:
       - debug
     dev: true
@@ -9211,6 +9219,7 @@ packages:
     hasBin: true
     dependencies:
       jake: 10.8.7
+    dev: true
 
   /electron-to-chromium@1.4.434:
     resolution: {integrity: sha512-5Gvm09UZTQRaWrimRtWRO5rvaX6Kpk5WHAPKDa7A4Gj6NIPuJ8w8WNpnxCXdd+CJJt6RBU6tUw0KyULoW6XuHw==}
@@ -13831,11 +13840,12 @@ packages:
     resolution: {integrity: sha512-6xpotnECFy/og7tKSBVmUNft7J3jyXAka4XvG6AUhFWRz+Q/Ljus7znJAA3bxColfQLdS+XsjoodtJfCgeTEFQ==}
     dev: true
 
-  /nx-cloud@16.3.0:
-    resolution: {integrity: sha512-hmNgpeLO4v4WDSWa8YhwX+q+9ohIyY8iqxlWyIKixWzQH2XfRgYFjOLH4IDLGOlKa3hg7MB6+4+75cK9CfSmKw==}
+  /nx-cloud@16.4.0-beta.1:
+    resolution: {integrity: sha512-I62IBQDjbA3h+P8JVFrannVllj8O9/3YYfyg8sPLVYxFKwnqqsgR6kG2zHxB9Q2k0hoSU7JZ02d9oPJsRzL5rg==}
     hasBin: true
     dependencies:
-      '@nrwl/nx-cloud': 16.3.0
+      '@nrwl/nx-cloud': 16.4.0-beta.1
+      '@swc/helpers': 0.5.1
       axios: 1.1.3
       chalk: 4.1.2
       dotenv: 10.0.0
