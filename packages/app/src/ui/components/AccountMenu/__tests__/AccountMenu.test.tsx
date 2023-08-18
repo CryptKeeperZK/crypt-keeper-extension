@@ -7,6 +7,7 @@ import { act, render } from "@testing-library/react";
 import { ZERO_ADDRESS } from "@src/config/const";
 import { defaultWalletHookData } from "@src/config/mock/wallet";
 import { EWallet } from "@src/types";
+import { isExtensionPopupOpen } from "@src/util/browser";
 
 import { AccountMenu, IAccountMenuProps } from "..";
 import { IUseAccountMenuData, useAccountMenu } from "../useAccountMenu";
@@ -36,9 +37,12 @@ describe("ui/components/Header", () => {
     onGoToMetamaskPage: jest.fn(),
     onGoToSettings: jest.fn(),
     onSelectAccount: jest.fn(),
+    onOpenInNewTab: jest.fn(),
   };
 
   beforeEach(() => {
+    (isExtensionPopupOpen as jest.Mock).mockReturnValue(true);
+
     (useAccountMenu as jest.Mock).mockReturnValue(defaultHookData);
   });
 

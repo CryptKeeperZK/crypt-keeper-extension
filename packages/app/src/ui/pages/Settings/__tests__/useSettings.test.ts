@@ -17,6 +17,7 @@ import {
   fetchHistory,
   useHistorySettings,
 } from "@src/ui/ducks/identities";
+import { isExtensionPopupOpen } from "@src/util/browser";
 
 import type { SyntheticEvent } from "react";
 
@@ -57,6 +58,8 @@ describe("ui/pages/Settings/useSettings", () => {
   };
 
   beforeEach(() => {
+    (isExtensionPopupOpen as jest.Mock).mockReturnValue(true);
+
     (useAppDispatch as jest.Mock).mockReturnValue(mockDispatch);
 
     (useNavigate as jest.Mock).mockReturnValue(mockNavigate);
@@ -157,7 +160,7 @@ describe("ui/pages/Settings/useSettings", () => {
     await act(async () => Promise.resolve(result.current.onGoBack()));
 
     expect(mockNavigate).toBeCalledTimes(1);
-    expect(mockNavigate).toBeCalledWith(-1);
+    expect(mockNavigate).toBeCalledWith(Paths.HOME);
   });
 
   test("should go to download backup page properly", async () => {
@@ -171,7 +174,7 @@ describe("ui/pages/Settings/useSettings", () => {
     expect(mockNavigate).toBeCalledWith(Paths.DOWNLOAD_BACKUP);
   });
 
-  test("should go to upload backup page properly", async () => {
+  test("should open upload backup modal properly", async () => {
     const { result } = renderHook(() => useSettings());
 
     await waitFor(() => result.current.isLoading === false);
@@ -181,6 +184,18 @@ describe("ui/pages/Settings/useSettings", () => {
     expect(mockDispatch).toBeCalledTimes(2);
     expect(fetchHistory).toBeCalledTimes(1);
     expect(createUploadBackupRequest).toBeCalledTimes(1);
+  });
+
+  test("should go to upload backup page properly", async () => {
+    (isExtensionPopupOpen as jest.Mock).mockReturnValue(false);
+    const { result } = renderHook(() => useSettings());
+
+    await waitFor(() => result.current.isLoading === false);
+
+    await act(async () => Promise.resolve(result.current.onGoToUploadBackup()));
+
+    expect(mockNavigate).toBeCalledTimes(1);
+    expect(mockNavigate).toBeCalledWith(Paths.UPLOAD_BACKUP);
   });
 
   test("should go to reset password page properly", async () => {

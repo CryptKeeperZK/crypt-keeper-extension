@@ -33,11 +33,6 @@ jest.mock("@src/ui/hooks/wallet", (): unknown => ({
   useCryptKeeperWallet: jest.fn(),
 }));
 
-jest.mock("@src/util/browser", (): unknown => ({
-  redirectToNewTab: jest.fn(),
-  getExtensionUrl: jest.fn(),
-}));
-
 describe("ui/components/AccountMenu/useAccountMenu", () => {
   const mockNavigate = jest.fn();
   const mockDispatch = jest.fn();
@@ -149,5 +144,14 @@ describe("ui/components/AccountMenu/useAccountMenu", () => {
     expect(mockDispatch).toBeCalledTimes(1);
     expect(selectAccount).toBeCalledTimes(1);
     expect(selectAccount).toBeCalledWith(ZERO_ADDRESS);
+  });
+
+  test("should open extension in new tab properly", async () => {
+    const { result } = renderHook(() => useAccountMenu(defaultArgs));
+
+    await act(async () => Promise.resolve(result.current.onOpenInNewTab()));
+
+    expect(redirectToNewTab).toBeCalledTimes(1);
+    expect(redirectToNewTab).toBeCalledWith(`${window.location.pathname}${window.location.hash}`);
   });
 });

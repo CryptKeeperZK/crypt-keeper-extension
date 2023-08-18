@@ -2,6 +2,7 @@ import { BaseSyntheticEvent, useCallback, useState } from "react";
 import { UseFormRegister, useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 
+import { Paths } from "@src/constants";
 import { PasswordFormFields } from "@src/types";
 import { downloadBackup } from "@src/ui/ducks/backup";
 import { useAppDispatch } from "@src/ui/ducks/hooks";
@@ -39,7 +40,7 @@ export const useDownloadBackup = (): IUseDownloadBackupData => {
   const dispatch = useAppDispatch();
 
   const onGoBack = useCallback(() => {
-    navigate(-1);
+    navigate(Paths.SETTINGS);
   }, [navigate]);
 
   const onSubmit = useCallback(

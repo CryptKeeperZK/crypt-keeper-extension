@@ -98,13 +98,7 @@ describe("ui/pages/Onboarding", () => {
     const passwordInput = await screen.findByLabelText("Password");
     await act(async () => Promise.resolve(fireEvent.change(passwordInput, { target: { value: "12345" } })));
 
-    const confirmPasswordInput = await screen.findByLabelText("Confirm Password");
-    await act(async () => Promise.resolve(fireEvent.change(confirmPasswordInput, { target: { value: "12345" } })));
-
-    const button = await screen.findByTestId("submit-button");
-    await act(async () => Promise.resolve(fireEvent.submit(button)));
-
-    const error = await screen.findByText("Password isn't strong");
+    const error = await screen.findByText("Password is weak");
     expect(error).toBeInTheDocument();
   });
 

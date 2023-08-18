@@ -2,12 +2,6 @@ import { getUrlOrigin } from "@src/util/browser";
 
 import Handler from "../handler";
 
-jest.mock("@src/util/browser", (): unknown => ({
-  ...jest.requireActual("@src/util/browser"),
-  getUrlOrigin: jest.fn(),
-  getExtensionUrl: jest.fn(),
-}));
-
 describe("background/controllers/handler", () => {
   const defaultSender = { url: "http://localhost:3000" };
   const defaultOptions = { sender: defaultSender };

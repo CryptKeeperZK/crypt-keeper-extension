@@ -46,7 +46,7 @@ export const useRecover = (): IUseRecoverData => {
   );
 
   const onClose = useCallback(() => {
-    navigate(-1);
+    navigate(Paths.SETTINGS);
   }, [navigate]);
 
   return {

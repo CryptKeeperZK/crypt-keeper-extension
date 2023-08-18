@@ -21,11 +21,6 @@ jest.mock("@src/ui/hooks/wallet", (): unknown => ({
   useCryptKeeperWallet: jest.fn(),
 }));
 
-jest.mock("@src/util/browser", (): unknown => ({
-  redirectToNewTab: jest.fn(),
-  getExtensionUrl: jest.fn(),
-}));
-
 describe("ui/components/Header", () => {
   const mockNavigate = jest.fn();
 

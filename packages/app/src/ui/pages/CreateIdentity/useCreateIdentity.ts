@@ -24,7 +24,7 @@ export interface IUseCreateIdentityData {
   }>;
   control: Control<FormFields, unknown>;
   host?: string;
-  closeModal: () => void;
+  onCloseModal: () => void;
   register: UseFormRegister<FormFields>;
   onConnectWallet: () => Promise<void>;
   onCreateWithEthWallet: (event?: BaseSyntheticEvent) => Promise<void>;
@@ -132,11 +132,11 @@ export const useCreateIdentity = (): IUseCreateIdentityData => {
     await ethWallet.onConnect().catch(() => setError("root", { type: "submit", message: "Wallet connection error" }));
   }, [setError, ethWallet.onConnect]);
 
-  const closeModal = useCallback(() => {
+  const onCloseModal = useCallback(() => {
     if (isGoBack) {
       navigate(-1);
     } else {
-      dispatch(closePopup());
+      dispatch(closePopup()).then(() => navigate(Paths.HOME));
     }
   }, [isGoBack, navigate, dispatch]);
 
@@ -153,8 +153,8 @@ export const useCreateIdentity = (): IUseCreateIdentityData => {
     },
     control,
     host,
-    closeModal,
     register,
+    onCloseModal,
     onConnectWallet: handleSubmit(onConnectWallet),
     onCreateWithEthWallet: handleSubmit(onCreateIdentityWithEthWallet),
     onCreateWithCryptkeeper: handleSubmit(onCreateIdentityWithCryptkeeper),

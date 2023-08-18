@@ -16,11 +16,6 @@ jest.mock("react-router-dom", (): unknown => ({
   useNavigate: jest.fn(),
 }));
 
-jest.mock("@src/util/browser", (): unknown => ({
-  redirectToNewTab: jest.fn(),
-  replaceUrlParams: jest.fn(),
-}));
-
 describe("ui/components/IdentityList/Item", () => {
   const defaultProps: IdentityItemProps = {
     isShowMenu: true,

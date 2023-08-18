@@ -10,6 +10,7 @@ import Jazzicon, { jsNumberForAddress } from "react-jazzicon";
 
 import { EWallet, IUseWalletData } from "@src/types";
 import { ellipsify } from "@src/util/account";
+import { isExtensionPopupOpen } from "@src/util/browser";
 
 import { useAccountMenu } from "./useAccountMenu";
 
@@ -36,6 +37,7 @@ export const AccountMenu = ({ ethWallet, cryptKeeperWallet }: IAccountMenuProps)
     onGoToSettings,
     onGoToMetamaskPage,
     onSelectAccount,
+    onOpenInNewTab,
   } = useAccountMenu({
     ethWallet,
     cryptKeeperWallet,
@@ -95,6 +97,8 @@ export const AccountMenu = ({ ethWallet, cryptKeeperWallet }: IAccountMenuProps)
         ) : (
           <MenuItem onClick={onGoToMetamaskPage}>Install MetaMask</MenuItem>
         )}
+
+        {isExtensionPopupOpen() && <MenuItem onClick={onOpenInNewTab}>Open in new tab</MenuItem>}
 
         <MenuItem onClick={onGoToSettings}>Settings</MenuItem>
 

@@ -13,6 +13,7 @@ import {
   fetchHistory,
   useHistorySettings,
 } from "@src/ui/ducks/identities";
+import { isExtensionPopupOpen } from "@src/util/browser";
 
 export interface IUseSettingsData {
   isLoading: boolean;
@@ -73,7 +74,7 @@ export const useSettings = (): IUseSettingsData => {
   }, [dispatch, onConfirmModalShow]);
 
   const onGoBack = useCallback(() => {
-    navigate(-1);
+    navigate(Paths.HOME);
   }, [navigate]);
 
   const onGoToBackup = useCallback(() => {
@@ -81,8 +82,12 @@ export const useSettings = (): IUseSettingsData => {
   }, [navigate]);
 
   const onGoToUploadBackup = useCallback(() => {
-    dispatch(createUploadBackupRequest());
-  }, [dispatch]);
+    if (isExtensionPopupOpen()) {
+      dispatch(createUploadBackupRequest());
+    } else {
+      navigate(Paths.UPLOAD_BACKUP);
+    }
+  }, [dispatch, navigate]);
 
   const onGoToResetPassword = useCallback(() => {
     navigate(Paths.RECOVER);

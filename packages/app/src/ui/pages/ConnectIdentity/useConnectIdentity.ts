@@ -2,6 +2,7 @@ import { getLinkPreview } from "link-preview-js";
 import { type SyntheticEvent, useState, useCallback, useEffect, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 
+import { Paths } from "@src/constants";
 import { closePopup } from "@src/ui/ducks/app";
 import { useAppDispatch } from "@src/ui/ducks/hooks";
 import {
@@ -61,12 +62,12 @@ export const useConnectIdentity = (): IUseConnectIdentityData => {
   );
 
   const onReject = useCallback(() => {
-    dispatch(closePopup()).then(() => navigate(-1));
+    dispatch(closePopup()).then(() => navigate(Paths.HOME));
   }, [dispatch, navigate]);
 
   const onConnect = useCallback(async () => {
     await dispatch(connectIdentity({ identityCommitment: selectedIdentityCommitment!, host }));
-    await dispatch(closePopup()).then(() => navigate(-1));
+    await dispatch(closePopup()).then(() => navigate(Paths.HOME));
   }, [selectedIdentityCommitment, host, dispatch]);
 
   useEffect(() => {

@@ -74,13 +74,12 @@ export default class Settings extends BasePage {
     backupPassword = CRYPT_KEEPER_PASSWORD,
   }: IUploadBackupArgs): Promise<void> {
     await this.page.getByText("Upload backup", { exact: true }).click({ delay: 1000 });
-    const popup = await this.page.context().waitForEvent("page");
 
-    await popup.setInputFiles(`input[name="backupFile"]`, backupFilePath);
-    await popup.getByLabel("Password", { exact: true }).type(password);
-    await popup.getByLabel("Backup password", { exact: true }).type(backupPassword);
+    await this.page.setInputFiles(`input[name="backupFile"]`, backupFilePath);
+    await this.page.getByLabel("Password", { exact: true }).type(password);
+    await this.page.getByLabel("Backup password", { exact: true }).type(backupPassword);
 
-    await popup.getByText("Upload", { exact: true }).click();
+    await this.page.getByText("Upload", { exact: true }).click();
   }
 
   async goToChangePassword(): Promise<void> {

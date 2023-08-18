@@ -2,6 +2,7 @@ import { BaseSyntheticEvent, useCallback, useState } from "react";
 import { UseFormRegister, useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 
+import { Paths } from "@src/constants";
 import { checkPassword, getMnemonic } from "@src/ui/ducks/app";
 import { useAppDispatch } from "@src/ui/ducks/hooks";
 
@@ -49,7 +50,7 @@ export const useRevealMnemonic = (): IUseRevealMnemonicData => {
   );
 
   const onGoBack = useCallback(() => {
-    navigate(-1);
+    navigate(Paths.SETTINGS);
   }, [navigate]);
 
   const onShowPassword = useCallback(() => {

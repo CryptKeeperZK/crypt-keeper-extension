@@ -67,7 +67,7 @@ export const useUploadBackup = (): IUseUploadBackupData => {
 
   const onGoBack = useCallback(() => {
     dispatch(closePopup());
-    navigate(-1);
+    navigate(Paths.SETTINGS);
   }, [dispatch, navigate]);
 
   const onSubmit = useCallback(

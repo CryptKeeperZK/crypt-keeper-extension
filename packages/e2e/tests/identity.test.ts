@@ -154,8 +154,8 @@ test.describe("identity", () => {
     const extension = new CryptKeeper(page);
     await extension.focus();
 
-    await extension.identities.createIdentityFromHome({ walletType: "eth", identityType: "Random" });
-    await extension.identities.createIdentityFromHome({ walletType: "ck", identityType: "Random" });
+    await extension.identities.createIdentityFromDemo({ walletType: "eth", identityType: "Random" });
+    await extension.identities.createIdentityFromDemo({ walletType: "ck", identityType: "Random" });
 
     await page.goto(`chrome-extension://${cryptKeeperExtensionId}/popup.html`);
     await expect(extension.getByText(/Account/)).toHaveCount(3);
@@ -166,8 +166,8 @@ test.describe("identity", () => {
     const extension = new CryptKeeper(page);
     await extension.focus();
 
-    await extension.identities.createIdentityFromHome({ walletType: "eth", identityType: "Random" });
-    await extension.identities.createIdentityFromHome({ walletType: "ck", identityType: "Random" });
+    await extension.identities.createIdentityFromDemo({ walletType: "eth", identityType: "Random" });
+    await extension.identities.createIdentityFromDemo({ walletType: "ck", identityType: "Random" });
 
     await page.getByTestId("connect-identity").click({ delay: 1_000 });
     await extension.selectIdentity(1);

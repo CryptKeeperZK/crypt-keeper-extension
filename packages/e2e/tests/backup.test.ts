@@ -129,12 +129,15 @@ test.describe("backup", () => {
     expect(backupFilePath).toBeDefined();
 
     await extension.goHome();
+    await extension.settings.openPage();
+    await extension.settings.openTab("Backup");
+    await extension.settings.uploadBackup({ backupFilePath: backupFilePath! });
 
     await extension.settings.openPage();
     await extension.settings.openTab("Backup");
     await extension.settings.uploadBackup({ backupFilePath: backupFilePath! });
-    await extension.settings.uploadBackup({ backupFilePath: backupFilePath! });
     await extension.goHome();
+
     await expect(extension.getByText(/Account/)).toHaveCount(3);
   });
 
@@ -252,8 +255,8 @@ test.describe("backup", () => {
     await extension.settings.uploadBackup({
       backupFilePath: path.resolve(__dirname, "../backups/1_invalid_backup.json"),
     });
+    await extension.settings.getByTestId("close-icon").click();
 
-    await extension.goHome();
     await extension.lock();
     await extension.unlock(CRYPT_KEEPER_PASSWORD);
 

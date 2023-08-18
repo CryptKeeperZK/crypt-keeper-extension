@@ -61,7 +61,7 @@ export const useIdentityPage = (): IUseIdentityPageData => {
   });
 
   const onGoBack = useCallback(() => {
-    navigate(-1);
+    navigate(Paths.HOME);
   }, [navigate]);
 
   useEffect(() => {

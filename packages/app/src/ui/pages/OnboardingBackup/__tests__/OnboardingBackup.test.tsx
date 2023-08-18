@@ -9,7 +9,7 @@ import { createDataTransfer, mockJsonFile } from "@src/config/mock/file";
 import { defaultWalletHookData } from "@src/config/mock/wallet";
 import { useCryptKeeperWallet, useEthWallet } from "@src/ui/hooks/wallet";
 
-import UploadBackup from "..";
+import OnboardingBackup from "..";
 import { IUseOnboardingBackupData, useOnboardingBackup } from "../useOnboardingBackup";
 
 jest.mock("react-router-dom", () => ({
@@ -56,7 +56,7 @@ describe("ui/pages/OnboardingBackup", () => {
   test("should render properly", async () => {
     const { container, findByTestId } = render(
       <Suspense>
-        <UploadBackup />
+        <OnboardingBackup />
       </Suspense>,
     );
 
@@ -70,7 +70,7 @@ describe("ui/pages/OnboardingBackup", () => {
   test("should submit form properly", async () => {
     const { container, findByLabelText, findByTestId } = render(
       <Suspense>
-        <UploadBackup />
+        <OnboardingBackup />
       </Suspense>,
     );
 

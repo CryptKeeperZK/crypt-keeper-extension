@@ -2,10 +2,13 @@ import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import { useCallback } from "react";
+import { useNavigate } from "react-router-dom";
 
+import { Paths } from "@src/constants";
 import { Icon } from "@src/ui/components/Icon";
 import { useAppDispatch } from "@src/ui/ducks/hooks";
 import { createIdentityRequest, deleteIdentity, setIdentityName } from "@src/ui/ducks/identities";
+import { isExtensionPopupOpen } from "@src/util/browser";
 
 import type { IdentityData } from "@src/types";
 
@@ -29,6 +32,7 @@ export const IdentityList = ({
   onSelect = undefined,
 }: IdentityListProps): JSX.Element => {
   const dispatch = useAppDispatch();
+  const navigate = useNavigate();
 
   const onUpdateIdentityName = useCallback(
     async (identityCommitment: string, name: string) => {
@@ -45,8 +49,12 @@ export const IdentityList = ({
   );
 
   const onCreateIdentityRequest = useCallback(() => {
-    dispatch(createIdentityRequest({ host: "" }));
-  }, [dispatch]);
+    if (isExtensionPopupOpen()) {
+      dispatch(createIdentityRequest({ host: "" }));
+    } else {
+      navigate(Paths.CREATE_IDENTITY);
+    }
+  }, [dispatch, navigate]);
 
   return (
     <>
@@ -60,6 +68,9 @@ export const IdentityList = ({
           position: "absolute",
           width: "100%",
           scrollbarWidth: "none",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
 
           "&::-webkit-scrollbar": {
             display: "none",

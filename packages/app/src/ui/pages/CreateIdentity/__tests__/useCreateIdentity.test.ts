@@ -213,7 +213,7 @@ describe("ui/pages/CreateIdentity/useCreateIdentity", () => {
   test("should close modal properly", async () => {
     const { result } = renderHook(() => useCreateIdentity());
 
-    await act(() => Promise.resolve(result.current.closeModal()));
+    await act(() => Promise.resolve(result.current.onCloseModal()));
 
     expect(mockDispatch).toBeCalledTimes(1);
   });
@@ -223,7 +223,7 @@ describe("ui/pages/CreateIdentity/useCreateIdentity", () => {
 
     const { result } = renderHook(() => useCreateIdentity());
 
-    await act(() => Promise.resolve(result.current.closeModal()));
+    await act(() => Promise.resolve(result.current.onCloseModal()));
 
     expect(mockNavigate).toBeCalledTimes(1);
     expect(mockNavigate).toBeCalledWith(-1);

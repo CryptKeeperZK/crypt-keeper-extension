@@ -15,7 +15,10 @@ import {
   copyToClipboard,
   getUrlOrigin,
   replaceUrlParams,
+  isExtensionPopupOpen,
 } from "../browser";
+
+jest.unmock("../browser");
 
 describe("util/browser", () => {
   const defaultTabs = [{ url: "http://localhost:3000" }];
@@ -99,5 +102,12 @@ describe("util/browser", () => {
     const result = replaceUrlParams(Paths.IDENTITY, { id: "1234", unknown: "4321" });
 
     expect(result).toBe("/identity/1234");
+  });
+
+  test("should check if extension is running in popup mode", () => {
+    const result = isExtensionPopupOpen();
+
+    expect(result).toBe(false);
+    expect(browser.extension.getViews).toBeCalledTimes(1);
   });
 });

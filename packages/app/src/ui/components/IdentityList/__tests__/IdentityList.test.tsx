@@ -6,9 +6,11 @@ import { act, render, screen, fireEvent } from "@testing-library/react";
 import { useNavigate } from "react-router-dom";
 
 import { ZERO_ADDRESS } from "@src/config/const";
+import { Paths } from "@src/constants";
 import { IdentityData } from "@src/types";
 import { useAppDispatch } from "@src/ui/ducks/hooks";
 import { deleteIdentity, setIdentityName, useIdentities } from "@src/ui/ducks/identities";
+import { isExtensionPopupOpen } from "@src/util/browser";
 
 import { IdentityList, IdentityListProps } from "..";
 
@@ -64,6 +66,8 @@ describe("ui/components/IdentityList", () => {
 
   beforeEach(() => {
     mockDispatch.mockResolvedValue(undefined);
+
+    (isExtensionPopupOpen as jest.Mock).mockReturnValue(true);
 
     (useAppDispatch as jest.Mock).mockReturnValue(mockDispatch);
 
@@ -196,5 +200,17 @@ describe("ui/components/IdentityList", () => {
     await act(async () => Promise.resolve(createIdentityButton.click()));
 
     expect(mockDispatch).toBeCalledTimes(1);
+  });
+
+  test("should redirect to create identity page properly", async () => {
+    (isExtensionPopupOpen as jest.Mock).mockReturnValue(false);
+
+    render(<IdentityList {...defaultProps} />);
+
+    const createIdentityButton = await screen.findByTestId("create-new-identity");
+    await act(async () => Promise.resolve(createIdentityButton.click()));
+
+    expect(mockNavigate).toBeCalledTimes(1);
+    expect(mockNavigate).toBeCalledWith(Paths.CREATE_IDENTITY);
   });
 });

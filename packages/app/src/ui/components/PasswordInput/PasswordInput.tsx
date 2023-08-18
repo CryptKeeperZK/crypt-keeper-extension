@@ -44,11 +44,11 @@ const PasswordInputUI = (
 
                 <p>- At least 8 characters</p>
 
-                <p>- At least 1 upper case and letter</p>
+                <p>- At least 1 upper case letter</p>
 
                 <p>- At least 1 lower case letter</p>
 
-                <p>- At least 1 special character (!@#$%^&*)</p>
+                <p>- At least 1 special character</p>
 
                 <p>- At least 1 number</p>
               </div>

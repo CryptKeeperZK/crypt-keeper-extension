@@ -9,7 +9,7 @@ import { PasswordInput } from "@src/ui/components/PasswordInput";
 import { useOnboarding } from "./useOnboarding";
 
 const Onboarding = (): JSX.Element => {
-  const { errors, isLoading, register, onSubmit, isShowPassword, onShowPassword, onGoToOnboardingBackup } =
+  const { isLoading, isShowPassword, errors, register, onSubmit, onShowPassword, onGoToOnboardingBackup } =
     useOnboarding();
 
   return (

@@ -22,10 +22,6 @@ jest.mock("@src/ui/ducks/permissions", (): unknown => ({
   removeHost: jest.fn(),
 }));
 
-jest.mock("@src/util/browser", (): unknown => ({
-  getLastActiveTabUrl: jest.fn(),
-}));
-
 describe("ui/components/ConnectionModal/useConnectionModal", () => {
   const mockDispatch = jest.fn(() => Promise.resolve());
 
