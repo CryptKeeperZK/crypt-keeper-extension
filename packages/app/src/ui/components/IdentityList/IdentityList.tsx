@@ -68,6 +68,9 @@ export const IdentityList = ({
           position: "absolute",
           width: "100%",
           scrollbarWidth: "none",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
 
           "&::-webkit-scrollbar": {
             display: "none",

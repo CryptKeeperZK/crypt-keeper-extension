@@ -4,14 +4,17 @@
   overflow-x: hidden;
   overflow-y: auto;
   scrollbar-width: none;
-  position: absolute;
-  top: 56px;
-  bottom: 56px;
-  width: 100%;
 
   &::-webkit-scrollbar {
     display: none;
   }
+}
+
+.activity-container {
+  position: absolute;
+  top: 56px;
+  bottom: 56px;
+  width: 100%;
 }
 
 .activity-row {

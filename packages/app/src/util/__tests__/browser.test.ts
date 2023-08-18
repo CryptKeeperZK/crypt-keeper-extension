@@ -104,7 +104,7 @@ describe("util/browser", () => {
     expect(result).toBe("/identity/1234");
   });
 
-  test("should check is extension is running in popup mode", () => {
+  test("should check if extension is running in popup mode", () => {
     const result = isExtensionPopupOpen();
 
     expect(result).toBe(false);
