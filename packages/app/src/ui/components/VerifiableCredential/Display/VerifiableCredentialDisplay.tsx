@@ -1,5 +1,6 @@
 import CheckIcon from "@mui/icons-material/Check";
 import EditIcon from "@mui/icons-material/Edit";
+import Box from "@mui/material/Box";
 import IconButton from "@mui/material/IconButton";
 import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
@@ -26,11 +27,23 @@ export const VerifiableCredentialDisplay = ({
   const { verifiableCredential } = cryptkeeperVerifiableCredential;
   const issuerId =
     typeof verifiableCredential.issuer === "string" ? verifiableCredential.issuer : verifiableCredential.issuer.id;
+  const expirationDate = verifiableCredential.expirationDate ? verifiableCredential.expirationDate.toString() : "N/A";
 
   return (
-    <div>
+    <Box
+      sx={{
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "left",
+        m: 1,
+        width: "100%",
+        overflowX: "hidden",
+        overflowY: "auto",
+        overflowWrap: "anywhere",
+      }}
+    >
       {isRenaming ? (
-        <form onSubmit={onSubmit}>
+        <Box component="form" onSubmit={onSubmit}>
           <TextField
             {...register("name")}
             autoFocus
@@ -45,52 +58,90 @@ export const VerifiableCredentialDisplay = ({
           <IconButton data-testid="verifiable-credential-display-submit-rename" size="medium" type="submit">
             <CheckIcon color="primary" fontSize="inherit" />
           </IconButton>
-        </form>
+        </Box>
       ) : (
-        <div className="flex flex-row items-center text-lg font-semibold">
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "row",
+            alignItems: "center",
+            fontSize: "large",
+            fontWeight: "semibold",
+          }}
+        >
           <IconButton data-testid="verifiable-credential-display-toggle-rename" size="small" onClick={onToggleRenaming}>
             <EditIcon color="primary" fontSize="inherit" />
           </IconButton>
 
-          {`${name}`}
-        </div>
+          {name}
+        </Box>
       )}
 
-      <Typography variant="body1">
-        <u>Type:</u>
+      <Box
+        sx={{
+          fontSize: "medium",
+          mt: 1,
+        }}
+      >
+        <Typography fontWeight="bold">Type:</Typography>
 
-        {` ${verifiableCredential.type.join(", ")}`}
-      </Typography>
+        <Typography sx={{ ml: 2 }}>{verifiableCredential.type.join(", ")}</Typography>
+      </Box>
 
-      <Typography variant="body1">
-        <u>Issuer:</u>
+      <Box
+        sx={{
+          fontSize: "medium",
+          mt: 1,
+        }}
+      >
+        <Typography fontWeight="bold">Issuer:</Typography>
 
-        {` ${issuerId}`}
-      </Typography>
+        <Typography sx={{ ml: 2 }}>{issuerId}</Typography>
+      </Box>
 
-      <Typography variant="body1">
-        <u>Issuance Date:</u>
+      <Box
+        sx={{
+          fontSize: "medium",
+          mt: 1,
+        }}
+      >
+        <Typography fontWeight="bold">Issued Date:</Typography>
 
-        {` ${verifiableCredential.issuanceDate.toString()}`}
-      </Typography>
+        <Typography sx={{ ml: 2 }}>{verifiableCredential.issuanceDate.toString()}</Typography>
+      </Box>
 
-      <Typography variant="body1">
-        <u>Expiration Date:</u>
+      <Box
+        sx={{
+          fontSize: "medium",
+          mt: 1,
+        }}
+      >
+        <Typography fontWeight="bold">Expiration Date:</Typography>
 
-        {` ${verifiableCredential.expirationDate?.toString()}`}
-      </Typography>
+        <Typography sx={{ ml: 2 }}>{expirationDate}</Typography>
+      </Box>
 
-      <Typography variant="body1">
-        <u>Credential Subject Id:</u>
+      <Box
+        sx={{
+          fontSize: "medium",
+          mt: 1,
+        }}
+      >
+        <Typography fontWeight="bold">Credential Subject:</Typography>
 
-        {` ${verifiableCredential.credentialSubject.id}`}
-      </Typography>
+        <Typography sx={{ ml: 2 }}>{verifiableCredential.credentialSubject.id}</Typography>
+      </Box>
 
-      <Typography variant="body1">
-        <u>Credential Subject Claims:</u>
+      <Box
+        sx={{
+          fontSize: "medium",
+          mt: 1,
+        }}
+      >
+        <Typography fontWeight="bold">Claims:</Typography>
 
-        {` ${JSON.stringify(verifiableCredential.credentialSubject.claims)}`}
-      </Typography>
-    </div>
+        <Typography sx={{ ml: 2 }}>{JSON.stringify(verifiableCredential.credentialSubject.claims)}</Typography>
+      </Box>
+    </Box>
   );
 };

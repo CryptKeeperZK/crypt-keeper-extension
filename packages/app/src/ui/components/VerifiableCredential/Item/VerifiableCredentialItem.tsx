@@ -1,6 +1,7 @@
 import { VerifiableCredential } from "@cryptkeeperzk/types";
 import CheckIcon from "@mui/icons-material/Check";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
+import Box from "@mui/material/Box";
 import IconButton from "@mui/material/IconButton";
 import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
@@ -41,14 +42,42 @@ export const VerifiableCredentialItem = ({
       : verifiableCredential.issuer?.id || "unknown";
 
   return (
-    <div key={metadata.hash} className="p-4 flex flex-row items-center flex-nowrap">
-      <div className="flex flex-col flex-grow">
+    <Box
+      key={metadata.hash}
+      sx={{
+        p: 3,
+        display: "flex",
+        flexDirection: "row",
+        flexWrap: "nowrap",
+        alignItems: "center",
+
+        "&::-webkit-scrollbar": {
+          display: "none",
+        },
+      }}
+    >
+      <Box
+        sx={{
+          display: "flex",
+          flexDirection: "column",
+          flexGrow: 1,
+        }}
+      >
         {isRenaming ? (
-          <form className="flex flex-row items-center text-lg font-semibold" onSubmit={onSubmit}>
+          <Box
+            component="form"
+            sx={{
+              display: "flex",
+              flexDirection: "row",
+              alignItems: "center",
+              fontSize: "large",
+              fontWeight: "semibold",
+            }}
+            onSubmit={onSubmit}
+          >
             <TextField
               {...register("name")}
               autoFocus
-              className="verifiable-credential-row__input-field"
               id="verifiable-credential-row-rename-input"
               size="small"
               type="text"
@@ -57,30 +86,32 @@ export const VerifiableCredentialItem = ({
             />
 
             <IconButton
-              className="verifiable-credential-row__select-icon--selected mr-2"
               data-testid="verifiable-credential-row-submit-rename"
               size="medium"
+              sx={{ mr: 2 }}
               type="submit"
             >
-              <CheckIcon
-                className="verifiable-credential-row__select-icon--selected"
-                color="primary"
-                fontSize="inherit"
-              />
+              <CheckIcon color="primary" fontSize="inherit" />
             </IconButton>
-          </form>
+          </Box>
         ) : (
-          <Typography className="flex flex-row items-center text-lg font-semibold">{`${name}`}</Typography>
+          <Typography fontSize="1.125rem" fontWeight="bold" lineHeight="1.75rem">
+            {name}
+          </Typography>
         )}
 
-        <Typography className="text-base text-gray-300">Credential hash: {ellipsify(metadata.hash)}</Typography>
+        <Typography color="text.secondary" fontSize="1.0rem">
+          Credential hash: {ellipsify(metadata.hash)}
+        </Typography>
 
-        <Typography className="text-xs text-gray-500">Issuer: {ellipsify(issuer)}</Typography>
-      </div>
+        <Typography color="text.secondary" fontSize="1.0rem">
+          Issuer: {ellipsify(issuer)}
+        </Typography>
+      </Box>
 
       <Menuable className="flex user-menu" items={menuItems}>
-        <MoreHorizIcon className="verifiable-credential-row__menu-icon" color="secondary" fontSize="inherit" />
+        <MoreHorizIcon color="secondary" fontSize="inherit" />
       </Menuable>
-    </div>
+    </Box>
   );
 };

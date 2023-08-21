@@ -20,50 +20,56 @@ const AddVerifiableCredential = (): JSX.Element => {
   const isError = !cryptkeeperVerifiableCredential;
 
   return (
-    <FullModal data-testid="add-verifiable-credential-page" onClose={onCloseModal}>
-      <FullModalHeader onClose={onCloseModal}>Add Verifiable Credential</FullModalHeader>
+    <Box sx={{ width: "100%", overflowX: "hidden", overflowY: "auto" }}>
+      <FullModal data-testid="add-verifiable-credential-page" onClose={onCloseModal}>
+        <FullModalHeader onClose={onCloseModal}>Add Verifiable Credential</FullModalHeader>
 
-      <FullModalContent>
-        <Typography>You have received a request to add a Verifiable Credential to your wallet:</Typography>
+        <FullModalContent>
+          <Typography>You have received a request to add a Verifiable Credential to your wallet:</Typography>
 
-        {cryptkeeperVerifiableCredential ? (
-          <VerifiableCredentialDisplay
-            cryptkeeperVerifiableCredential={cryptkeeperVerifiableCredential}
-            onRenameVerifiableCredential={onRenameVerifiableCredential}
-          />
-        ) : (
-          <Typography>There was an error retrieving the Verifiable Credential.</Typography>
+          {cryptkeeperVerifiableCredential ? (
+            <VerifiableCredentialDisplay
+              cryptkeeperVerifiableCredential={cryptkeeperVerifiableCredential}
+              onRenameVerifiableCredential={onRenameVerifiableCredential}
+            />
+          ) : (
+            <Typography>There was an error retrieving the Verifiable Credential.</Typography>
+          )}
+        </FullModalContent>
+
+        {error && (
+          <Typography color="error.main" fontSize="xs" sx={{ pb: 1 }} textAlign="center">
+            {error}
+          </Typography>
         )}
-      </FullModalContent>
 
-      {error && <Typography className="text-xs text-red-500 text-center pb-1">{error}</Typography>}
+        <FullModalFooter>
+          <Box sx={{ alignItems: "center", display: "flex", justifyContent: "space-between", width: "100%" }}>
+            <Button
+              disabled={isError}
+              name="reject"
+              sx={{ textTransform: "none" }}
+              type="button"
+              variant="outlined"
+              onClick={onRejectVerifiableCredential}
+            >
+              Reject
+            </Button>
 
-      <FullModalFooter>
-        <Box sx={{ alignItems: "center", display: "flex", justifyContent: "space-between", width: "100%" }}>
-          <Button
-            disabled={isError}
-            name="reject"
-            sx={{ textTransform: "none" }}
-            type="button"
-            variant="outlined"
-            onClick={onRejectVerifiableCredential}
-          >
-            Reject
-          </Button>
-
-          <Button
-            disabled={isError}
-            name="approve"
-            sx={{ textTransform: "none" }}
-            type="button"
-            variant="contained"
-            onClick={onApproveVerifiableCredential}
-          >
-            Accept
-          </Button>
-        </Box>
-      </FullModalFooter>
-    </FullModal>
+            <Button
+              disabled={isError}
+              name="approve"
+              sx={{ textTransform: "none" }}
+              type="button"
+              variant="contained"
+              onClick={onApproveVerifiableCredential}
+            >
+              Accept
+            </Button>
+          </Box>
+        </FullModalFooter>
+      </FullModal>
+    </Box>
   );
 };
 

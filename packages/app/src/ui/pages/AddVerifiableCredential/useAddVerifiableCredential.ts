@@ -83,11 +83,10 @@ export const useAddVerifiableCredential = (): IUseAddVerifiableCredentialData =>
       await dispatch(
         addVerifiableCredential(serializedVerifiableCredential, cryptkeeperVerifiableCredential.metadata.name),
       );
+      onCloseModal();
     } catch (err) {
       setError((err as Error).message);
-      return;
     }
-    onCloseModal();
   }, [cryptkeeperVerifiableCredential, onCloseModal]);
 
   const onRejectVerifiableCredential = useCallback(async () => {
