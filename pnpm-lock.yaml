@@ -452,8 +452,8 @@ importers:
         specifier: workspace:^
         version: link:../eslint-config-base
       '@playwright/test':
-        specifier: ^1.36.0
-        version: 1.36.0
+        specifier: ^1.37.1
+        version: 1.37.1
       '@synthetixio/synpress':
         specifier: ^3.7.1
         version: 3.7.1(@babel/core@7.22.10)(@babel/preset-env@7.22.10)(babel-loader@9.1.2)(react-dom@18.2.0)(react@18.2.0)(typescript@5.1.6)(webpack@5.88.1)
@@ -4677,13 +4677,13 @@ packages:
       tslib: 2.5.3
     dev: false
 
-  /@playwright/test@1.36.0:
-    resolution: {integrity: sha512-yN+fvMYtiyLFDCQos+lWzoX4XW3DNuaxjBu68G0lkgLgC6BP+m/iTxJQoSicz/x2G5EsrqlZTqTIP9sTgLQerg==}
+  /@playwright/test@1.37.1:
+    resolution: {integrity: sha512-bq9zTli3vWJo8S3LwB91U0qDNQDpEXnw7knhxLM0nwDvexQAwx9tO8iKDZSqqneVq+URd/WIoz+BALMqUTgdSg==}
     engines: {node: '>=16'}
     hasBin: true
     dependencies:
       '@types/node': 20.3.1
-      playwright-core: 1.36.0
+      playwright-core: 1.37.1
     optionalDependencies:
       fsevents: 2.3.2
     dev: true
@@ -5048,7 +5048,7 @@ packages:
       '@cypress/webpack-dev-server': 3.4.1(debug@4.3.4)(webpack@5.88.1)
       '@drptbl/gremlins.js': 2.2.1
       '@foundry-rs/easy-foundryup': 0.1.3
-      '@playwright/test': 1.36.0
+      '@playwright/test': 1.37.1
       '@testing-library/cypress': 9.0.0(cypress@12.14.0)
       '@testing-library/react': 14.0.0(react-dom@18.2.0)(react@18.2.0)
       '@types/testing-library__cypress': 5.0.9
@@ -14471,8 +14471,8 @@ packages:
       find-up: 4.1.0
     dev: true
 
-  /playwright-core@1.36.0:
-    resolution: {integrity: sha512-7RTr8P6YJPAqB+8j5ATGHqD6LvLLM39sYVNsslh78g8QeLcBs5750c6+msjrHUwwGt+kEbczBj1XB22WMwn+WA==}
+  /playwright-core@1.37.1:
+    resolution: {integrity: sha512-17EuQxlSIYCmEMwzMqusJ2ztDgJePjrbttaefgdsiqeLWidjYz9BxXaTaZWxH1J95SHGk6tjE+dwgWILJoUZfA==}
     engines: {node: '>=16'}
     hasBin: true
     dev: true
