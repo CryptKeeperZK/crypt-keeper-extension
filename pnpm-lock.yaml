@@ -446,8 +446,8 @@ importers:
   packages/e2e:
     devDependencies:
       '@babel/eslint-parser':
-        specifier: ^7.22.9
-        version: 7.22.9(@babel/core@7.22.10)(eslint@8.44.0)
+        specifier: ^7.22.10
+        version: 7.22.10(@babel/core@7.22.10)(eslint@8.44.0)
       '@cryptkeeperzk/eslint-config-base':
         specifier: workspace:^
         version: link:../eslint-config-base
@@ -479,8 +479,8 @@ importers:
   packages/eslint-config-base:
     dependencies:
       '@babel/eslint-parser':
-        specifier: ^7.22.9
-        version: 7.22.9(@babel/core@7.22.10)(eslint@8.44.0)
+        specifier: ^7.22.10
+        version: 7.22.10(@babel/core@7.22.10)(eslint@8.44.0)
       '@typescript-eslint/eslint-plugin':
         specifier: ^6.0.0
         version: 6.0.0(@typescript-eslint/parser@6.4.1)(eslint@8.44.0)(typescript@5.1.6)
@@ -519,8 +519,8 @@ importers:
   packages/eslint-config-react:
     dependencies:
       '@babel/eslint-parser':
-        specifier: ^7.22.9
-        version: 7.22.9(@babel/core@7.22.10)(eslint@8.44.0)
+        specifier: ^7.22.10
+        version: 7.22.10(@babel/core@7.22.10)(eslint@8.44.0)
       '@cryptkeeperzk/eslint-config-base':
         specifier: workspace:^
         version: link:../eslint-config-base
@@ -803,11 +803,11 @@ packages:
     transitivePeerDependencies:
       - supports-color
 
-  /@babel/eslint-parser@7.22.9(@babel/core@7.22.10)(eslint@8.44.0):
-    resolution: {integrity: sha512-xdMkt39/nviO/4vpVdrEYPwXCsYIXSSAr6mC7WQsNIlGnuxKyKE7GZjalcnbSWiC4OXGNNN3UQPeHfjSC6sTDA==}
+  /@babel/eslint-parser@7.22.10(@babel/core@7.22.10)(eslint@8.44.0):
+    resolution: {integrity: sha512-0J8DNPRXQRLeR9rPaUMM3fA+RbixjnVLe/MRMYCkp3hzgsSuxCHQ8NN8xQG1wIHKJ4a1DTROTvFJdW+B5/eOsg==}
     engines: {node: ^10.13.0 || ^12.13.0 || >=14.0.0}
     peerDependencies:
-      '@babel/core': '>=7.11.0'
+      '@babel/core': ^7.11.0
       eslint: ^7.5.0 || ^8.0.0
     dependencies:
       '@babel/core': 7.22.10
