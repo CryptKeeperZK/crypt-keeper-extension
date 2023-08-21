@@ -534,7 +534,7 @@ describe("util/validateSerializedVerifiableCredential", () => {
 });
 
 describe("util/hashVerifiableCredential", () => {
-  it("should produce deterministic hashes", () => {
+  test("should produce deterministic hashes", () => {
     const credOne = {
       context: ["https://www.w3.org/2018/credentials/v1"],
       type: ["VerifiableCredential"],
@@ -563,7 +563,7 @@ describe("util/hashVerifiableCredential", () => {
     expect(hashVerifiableCredential(credOne)).toBe(hashVerifiableCredential(credTwo));
   });
 
-  it("should produce the same hash after serialization/deserialization", async () => {
+  test("should produce the same hash after serialization/deserialization", async () => {
     const cred = {
       context: ["https://www.w3.org/2018/credentials/v1"],
       type: ["VerifiableCredential"],
@@ -585,7 +585,8 @@ describe("util/hashVerifiableCredential", () => {
 
 describe("util/generateInitialMetadataForVerifiableCredential", () => {
   const defaultCredentialName = "Verifiable Credential";
-  it("should generate the correct metadata for a verifiable credential", () => {
+
+  test("should generate the correct metadata for a verifiable credential", () => {
     const rawCredential = {
       context: ["https://www.w3.org/2018/credentials/v1"],
       type: ["VerifiableCredential"],

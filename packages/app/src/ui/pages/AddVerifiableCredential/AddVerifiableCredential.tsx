@@ -11,7 +11,7 @@ const AddVerifiableCredential = (): JSX.Element => {
   const {
     cryptkeeperVerifiableCredential,
     error,
-    closeModal,
+    onCloseModal,
     onRenameVerifiableCredential,
     onApproveVerifiableCredential,
     onRejectVerifiableCredential,
@@ -20,8 +20,8 @@ const AddVerifiableCredential = (): JSX.Element => {
   const isError = !cryptkeeperVerifiableCredential;
 
   return (
-    <FullModal data-testid="add-verifiable-credential-page" onClose={closeModal}>
-      <FullModalHeader onClose={closeModal}>Add Verifiable Credential</FullModalHeader>
+    <FullModal data-testid="add-verifiable-credential-page" onClose={onCloseModal}>
+      <FullModalHeader onClose={onCloseModal}>Add Verifiable Credential</FullModalHeader>
 
       <FullModalContent>
         <Typography>You have received a request to add a Verifiable Credential to your wallet:</Typography>

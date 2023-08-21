@@ -42,28 +42,14 @@ export const VerifiableCredentialDisplay = ({
             onBlur={onToggleRenaming}
           />
 
-          <IconButton
-            className="verifiable-credential-display__select-icon-button--selected mr-2"
-            data-testid="verifiable-credential-display-submit-rename"
-            size="medium"
-            type="submit"
-          >
-            <CheckIcon
-              className="verifiable-credential-display__select-icon--selected"
-              color="primary"
-              fontSize="inherit"
-            />
+          <IconButton data-testid="verifiable-credential-display-submit-rename" size="medium" type="submit">
+            <CheckIcon color="primary" fontSize="inherit" />
           </IconButton>
         </form>
       ) : (
         <div className="flex flex-row items-center text-lg font-semibold">
-          <IconButton
-            className="verifiable-credential-display__menu-icon-button"
-            data-testid="verifiable-credential-display-toggle-rename"
-            size="small"
-            onClick={onToggleRenaming}
-          >
-            <EditIcon className="verifiable-credential-display__menu-icon" color="primary" fontSize="inherit" />
+          <IconButton data-testid="verifiable-credential-display-toggle-rename" size="small" onClick={onToggleRenaming}>
+            <EditIcon color="primary" fontSize="inherit" />
           </IconButton>
 
           {`${name}`}

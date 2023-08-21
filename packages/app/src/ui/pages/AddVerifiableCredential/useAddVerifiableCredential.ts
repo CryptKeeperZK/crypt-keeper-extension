@@ -15,7 +15,7 @@ export const defaultVerifiableCredentialName = "Verifiable Credential";
 export interface IUseAddVerifiableCredentialData {
   cryptkeeperVerifiableCredential?: CryptkeeperVerifiableCredential;
   error?: string;
-  closeModal: () => void;
+  onCloseModal: () => void;
   onRenameVerifiableCredential: (newVerifiableCredentialName: string) => void;
   onApproveVerifiableCredential: () => Promise<void>;
   onRejectVerifiableCredential: () => void;
@@ -45,11 +45,11 @@ export const useAddVerifiableCredential = (): IUseAddVerifiableCredentialData =>
       });
     }
     deserialize();
-  }, []);
+  }, [setCryptkeeperVerifiableCredential]);
 
   const dispatch = useAppDispatch();
 
-  const closeModal = useCallback(() => {
+  const onCloseModal = useCallback(() => {
     dispatch(closePopup());
   }, [dispatch]);
 
@@ -87,18 +87,18 @@ export const useAddVerifiableCredential = (): IUseAddVerifiableCredentialData =>
       setError((err as Error).message);
       return;
     }
-    closeModal();
-  }, [cryptkeeperVerifiableCredential, closeModal]);
+    onCloseModal();
+  }, [cryptkeeperVerifiableCredential, onCloseModal]);
 
   const onRejectVerifiableCredential = useCallback(async () => {
     await dispatch(rejectVerifiableCredentialRequest());
-    closeModal();
-  }, [dispatch, closeModal]);
+    onCloseModal();
+  }, [dispatch, onCloseModal]);
 
   return {
     cryptkeeperVerifiableCredential,
     error,
-    closeModal,
+    onCloseModal,
     onRenameVerifiableCredential,
     onApproveVerifiableCredential,
     onRejectVerifiableCredential,

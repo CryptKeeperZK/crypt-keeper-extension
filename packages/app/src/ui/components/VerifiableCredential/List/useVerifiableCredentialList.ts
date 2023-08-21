@@ -1,4 +1,4 @@
-import { useCallback } from "react";
+import { useCallback, useEffect } from "react";
 
 import { CryptkeeperVerifiableCredential } from "@src/types";
 import { useAppDispatch } from "@src/ui/ducks/hooks";
@@ -6,8 +6,8 @@ import {
   deleteVerifiableCredential,
   fetchVerifiableCredentials,
   renameVerifiableCredential,
-  useCryptkeeperVerifiableCredentials,
 } from "@src/ui/ducks/verifiableCredentials";
+import { useCryptkeeperVerifiableCredentials } from "@src/ui/hooks/verifiableCredentials";
 
 export interface IUseVerifiableCredentialListData {
   cryptkeeperVerifiableCredentials: CryptkeeperVerifiableCredential[];
@@ -20,7 +20,10 @@ export interface IUseVerifiableCredentialListData {
 
 export const useVerifiableCredentialList = (): IUseVerifiableCredentialListData => {
   const dispatch = useAppDispatch();
-  dispatch(fetchVerifiableCredentials());
+
+  useEffect(() => {
+    dispatch(fetchVerifiableCredentials());
+  }, [dispatch, fetchVerifiableCredentials]);
 
   const cryptkeeperVerifiableCredentials = useCryptkeeperVerifiableCredentials();
 

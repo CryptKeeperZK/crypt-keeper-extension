@@ -10,6 +10,7 @@ import {
   fetchVerifiableCredentials,
   renameVerifiableCredential,
 } from "@src/ui/ducks/verifiableCredentials";
+import { useCryptkeeperVerifiableCredentials } from "@src/ui/hooks/verifiableCredentials";
 
 import { useVerifiableCredentialList } from "../useVerifiableCredentialList";
 
@@ -56,6 +57,10 @@ const mockCryptkeeperVerifiableCredentials = [
   },
 ];
 
+jest.mock("@src/ui/hooks/verifiableCredentials", (): unknown => ({
+  useCryptkeeperVerifiableCredentials: jest.fn(),
+}));
+
 jest.mock("@src/ui/ducks/hooks", (): unknown => ({
   useAppDispatch: jest.fn(),
 }));
@@ -67,13 +72,13 @@ jest.mock("@src/ui/ducks/verifiableCredentials", (): unknown => ({
   deleteVerifiableCredential: jest.fn(),
   fetchVerifiableCredentials: jest.fn(),
   useVerifiableCredentials: jest.fn(),
-  useCryptkeeperVerifiableCredentials: () => mockCryptkeeperVerifiableCredentials,
 }));
 
 describe("ui/components/VerifiableCredential/List/useVerifiableCredentialList", () => {
   const mockDispatch = jest.fn();
 
   beforeEach(() => {
+    (useCryptkeeperVerifiableCredentials as jest.Mock).mockReturnValue(mockCryptkeeperVerifiableCredentials);
     (useAppDispatch as jest.Mock).mockReturnValue(mockDispatch);
   });
 

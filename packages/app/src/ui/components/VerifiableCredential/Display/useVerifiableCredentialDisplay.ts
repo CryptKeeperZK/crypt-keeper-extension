@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { useCallback, useState, FormEvent as ReactFormEvent } from "react";
 import { UseFormRegister, useForm } from "react-hook-form";
 
 export interface RenameVerifiableCredentialDisplayData {
@@ -9,7 +9,7 @@ export interface IUseVerifiableCredentialDisplayData {
   isRenaming: boolean;
   name: string;
   register: UseFormRegister<RenameVerifiableCredentialDisplayData>;
-  onSubmit: (event: React.FormEvent<HTMLFormElement>) => void;
+  onSubmit: (event: ReactFormEvent<HTMLFormElement>) => void;
   onToggleRenaming: () => void;
 }
 
@@ -38,7 +38,7 @@ export const useVerifiableCredentialDisplay = (
   }, [setIsRenaming]);
 
   const onSubmit = useCallback(
-    (event: React.FormEvent<HTMLFormElement>) => {
+    (event: ReactFormEvent<HTMLFormElement>) => {
       event.preventDefault();
       onRename(name);
       setIsRenaming(false);

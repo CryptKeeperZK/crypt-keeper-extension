@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { useCallback, useState, FormEvent as ReactFormEvent } from "react";
 import { UseFormRegister, useForm } from "react-hook-form";
 
 import { VerifiableCredentialMetadata } from "@src/types";
@@ -12,7 +12,7 @@ export interface IUseVerifiableCredentialItemData {
   isRenaming: boolean;
   name: string;
   register: UseFormRegister<RenameVerifiableCredentialItemData>;
-  onSubmit: (event: React.FormEvent<HTMLFormElement>) => void;
+  onSubmit: (event: ReactFormEvent<HTMLFormElement>) => void;
   onToggleRenaming: () => void;
   onDelete: () => Promise<void>;
 }
@@ -46,7 +46,7 @@ export const useVerifiableCredentialItem = (
   }, [setIsRenaming]);
 
   const onSubmit = useCallback(
-    async (event: React.FormEvent<HTMLFormElement>) => {
+    async (event: ReactFormEvent<HTMLFormElement>) => {
       event.preventDefault();
       await onRename(hash, name);
       setIsRenaming(false);

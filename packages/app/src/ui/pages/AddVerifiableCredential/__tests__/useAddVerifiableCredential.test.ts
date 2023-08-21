@@ -93,7 +93,7 @@ describe("ui/pages/AddVerifiableCredential/useAddVerifiableCredential", () => {
       expect(result.current.cryptkeeperVerifiableCredential).toStrictEqual(expectedCryptkeeperVerifiableCredential);
     });
 
-    act(() => result.current.closeModal());
+    act(() => result.current.onCloseModal());
 
     expect(closePopup).toBeCalledTimes(1);
     expect(mockDispatch).toBeCalledTimes(1);
