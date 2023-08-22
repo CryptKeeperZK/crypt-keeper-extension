@@ -2,7 +2,6 @@ import { library } from "@fortawesome/fontawesome-svg-core";
 import { faTwitter, faGithub, faReddit } from "@fortawesome/free-brands-svg-icons";
 import { faLink } from "@fortawesome/free-solid-svg-icons";
 import "@testing-library/jest-dom";
-import "@testing-library/jest-dom/extend-expect";
 import "isomorphic-fetch";
 
 import type { ReactElement } from "react";
