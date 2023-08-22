@@ -39,7 +39,7 @@
   "homepage": "https://github.com/CryptKeeperZK/crypt-keeper-extension",
   "devDependencies": {
     "@cryptkeeperzk/eslint-config-react": "workspace:^",
-    "@testing-library/jest-dom": "^5.16.5",
+    "@testing-library/jest-dom": "^6.0.1",
     "@testing-library/react": "^14.0.0",
     "@types/chrome": "^0.0.243",
     "@types/crypto-js": "^4.1.1",
@@ -49,7 +49,6 @@
     "@types/react-dom": "^18.2.7",
     "@types/react-router-dom": "^5.3.3",
     "@types/redux-logger": "^3.0.9",
-    "@types/testing-library__jest-dom": "^5.14.8",
     "@types/webextension-polyfill": "^0.10.1",
     "browserify": "^17.0.0",
     "copy-webpack-plugin": "^11.0.0",
