@@ -145,13 +145,13 @@ importers:
         version: 1.0.34
       '@web3-react/core':
         specifier: ^8.2.0
-        version: 8.2.0(react@18.2.0)
+        version: 8.2.0(@types/react@18.2.20)(react@18.2.0)
       '@web3-react/metamask':
         specifier: ^8.2.1
-        version: 8.2.1(react@18.2.0)
+        version: 8.2.1(@types/react@18.2.20)(react@18.2.0)
       '@web3-react/types':
-        specifier: ^8.2.0
-        version: 8.2.0(react@18.2.0)
+        specifier: ^8.2.2
+        version: 8.2.2(@types/react@18.2.20)(react@18.2.0)
       '@zk-kit/incremental-merkle-tree':
         specifier: ^1.1.0
         version: 1.1.0
@@ -5715,49 +5715,53 @@ packages:
       typescript: 5.1.6
     dev: true
 
-  /@web3-react/core@8.2.0(react@18.2.0):
+  /@web3-react/core@8.2.0(@types/react@18.2.20)(react@18.2.0):
     resolution: {integrity: sha512-r7dmK2E8Jrpvm/DF93hGMB+8lECHSI3Oo0NrHbhxkisK6in6rdgAXeYFhZtM48LBAm9py6fQvLzjCM6Qx9q0oQ==}
     peerDependencies:
       react: '>=16.8'
     dependencies:
-      '@web3-react/store': 8.2.0(react@18.2.0)
-      '@web3-react/types': 8.2.0(react@18.2.0)
+      '@web3-react/store': 8.2.0(@types/react@18.2.20)(react@18.2.0)
+      '@web3-react/types': 8.2.2(@types/react@18.2.20)(react@18.2.0)
       react: 18.2.0
       zustand: 4.3.8(react@18.2.0)
     optionalDependencies:
       '@ethersproject/providers': 5.7.2
     transitivePeerDependencies:
+      - '@types/react'
       - bufferutil
       - immer
       - utf-8-validate
     dev: false
 
-  /@web3-react/metamask@8.2.1(react@18.2.0):
+  /@web3-react/metamask@8.2.1(@types/react@18.2.20)(react@18.2.0):
     resolution: {integrity: sha512-JysxkAImIygkD95Bimrj7HwcTq79tq4ZSlphZt24LBMrEVY5K8k+e5mCAuJuDZ7Fu+aBxqpS0lgPjaBGKdNu/A==}
     dependencies:
       '@metamask/detect-provider': 1.2.0
-      '@web3-react/types': 8.2.0(react@18.2.0)
+      '@web3-react/types': 8.2.2(@types/react@18.2.20)(react@18.2.0)
     transitivePeerDependencies:
+      - '@types/react'
       - immer
       - react
     dev: false
 
-  /@web3-react/store@8.2.0(react@18.2.0):
+  /@web3-react/store@8.2.0(@types/react@18.2.20)(react@18.2.0):
     resolution: {integrity: sha512-cG8nb+tBeRUJu+98ko6YZuAWmoipGMEbR3bhineCNd4x2mXv3GbWSPtE17GeWVshZgDbZu2/Du0okTx+22VWCg==}
     dependencies:
       '@ethersproject/address': 5.7.0
-      '@web3-react/types': 8.2.0(react@18.2.0)
-      zustand: 4.3.8(react@18.2.0)
+      '@web3-react/types': 8.2.2(@types/react@18.2.20)(react@18.2.0)
+      zustand: 4.4.0(@types/react@18.2.20)(react@18.2.0)
     transitivePeerDependencies:
+      - '@types/react'
       - immer
       - react
     dev: false
 
-  /@web3-react/types@8.2.0(react@18.2.0):
-    resolution: {integrity: sha512-TBYTFlqJZaEpVbuAAKRJFX5PZc3lI1TqDZzY94zwCrCh4GBepwwK7+PxmRAppMFuNa5x0vFX/ghLEC44e6TCFg==}
+  /@web3-react/types@8.2.2(@types/react@18.2.20)(react@18.2.0):
+    resolution: {integrity: sha512-PrPrJNjJhUX3lL/365llAZwY0bpUm9N52OjGMFyzCIX7IR13f7WLUk/LyQa9ALneCBu3cJUVTZANuFdqdREuvw==}
     dependencies:
-      zustand: 4.3.8(react@18.2.0)
+      zustand: 4.4.0(@types/react@18.2.20)(react@18.2.0)
     transitivePeerDependencies:
+      - '@types/react'
       - immer
       - react
     dev: false
@@ -17983,6 +17987,26 @@ packages:
       react:
         optional: true
     dependencies:
+      react: 18.2.0
+      use-sync-external-store: 1.2.0(react@18.2.0)
+    dev: false
+
+  /zustand@4.4.0(@types/react@18.2.20)(react@18.2.0):
+    resolution: {integrity: sha512-2dq6wq4dSxbiPTamGar0NlIG/av0wpyWZJGeQYtUOLegIUvhM2Bf86ekPlmgpUtS5uR7HyetSiktYrGsdsyZgQ==}
+    engines: {node: '>=12.7.0'}
+    peerDependencies:
+      '@types/react': '>=16.8'
+      immer: '>=9.0'
+      react: '>=16.8'
+    peerDependenciesMeta:
+      '@types/react':
+        optional: true
+      immer:
+        optional: true
+      react:
+        optional: true
+    dependencies:
+      '@types/react': 18.2.20
       react: 18.2.0
       use-sync-external-store: 1.2.0(react@18.2.0)
     dev: false
