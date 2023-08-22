@@ -26,7 +26,6 @@ const RPC_METHOD_ACCESS: Record<RPCAction, boolean> = {
   [RPCAction.APPROVE_HOST]: true,
   [RPCAction.GET_CONNECTED_IDENTITY_DATA]: true,
   [RPCAction.CONNECT_IDENTITY_REQUEST]: true,
-  [RPCAction.GET_COMMITMENTS]: true,
   [RPCAction.GET_HOST_PERMISSIONS]: true,
   [RPCAction.SET_HOST_PERMISSIONS]: true,
   [RPCAction.CREATE_IDENTITY_REQUEST]: true,
@@ -116,12 +115,16 @@ export default class CryptKeeperController {
     this.handler.add(RPCAction.CHECK_PASSWORD, this.lockService.ensure, this.lockService.checkPassword);
 
     // Identities
-    this.handler.add(RPCAction.GET_COMMITMENTS, this.lockService.ensure, this.zkIdentityService.getIdentityCommitments);
     this.handler.add(RPCAction.GET_IDENTITIES, this.lockService.ensure, this.zkIdentityService.getIdentities);
     this.handler.add(
       RPCAction.GET_CONNECTED_IDENTITY_DATA,
       this.lockService.ensure,
       this.zkIdentityService.getConnectedIdentityData,
+    );
+    this.handler.add(
+      RPCAction.GET_CONNECTED_IDENTITY_COMMITMENT,
+      this.lockService.ensure,
+      this.zkIdentityService.getConnectedIdentityCommitment,
     );
     this.handler.add(RPCAction.CONNECT_IDENTITY, this.lockService.ensure, this.zkIdentityService.connectIdentity);
     this.handler.add(

@@ -7,10 +7,10 @@ import { useState, useEffect, useCallback } from "react";
 import { toast } from "react-toastify";
 
 import type {
-  ConnectedIdentity,
   SemaphoreFullProof,
   MerkleProofArtifacts,
   RLNSNARKProof,
+  ConnectedIdentityMetadata,
   VerifiableCredential,
 } from "@cryptkeeperzk/types";
 
@@ -53,7 +53,7 @@ export enum MerkleProofType {
 
 interface IUseCryptKeeperData {
   isLocked: boolean;
-  connectedIdentity: ConnectedIdentity;
+  connectedIdentityMetadata?: ConnectedIdentityMetadata;
   client?: CryptKeeperInjectedProvider;
   proof?: SemaphoreFullProof | RLNSNARKProof;
   connect: () => void;
@@ -69,11 +69,7 @@ export const useCryptKeeper = (): IUseCryptKeeperData => {
   const [client, setClient] = useState<CryptKeeperInjectedProvider>();
   const [isLocked, setIsLocked] = useState(true);
   const [proof, setProof] = useState<SemaphoreFullProof | RLNSNARKProof>();
-  const [connectedIdentity, setConnectedIdentity] = useState<ConnectedIdentity>({
-    commitment: "",
-    web2Provider: "",
-    host: "",
-  });
+  const [connectedIdentityMetadata, setConnectedIdentityMetadata] = useState<ConnectedIdentityMetadata>();
   const mockIdentityCommitments: string[] = genMockIdentityCommitments();
 
   const connect = useCallback(async () => {
@@ -91,10 +87,6 @@ export const useCryptKeeper = (): IUseCryptKeeperData => {
     const externalNullifier = encodeBytes32String("voting-1");
     const signal = encodeBytes32String("hello-world");
     let merkleProofArtifactsOrStorageAddress: string | MerkleProofArtifacts = `${merkleStorageAddress}/Semaphore`;
-
-    if (!mockIdentityCommitments.includes(connectedIdentity.commitment)) {
-      mockIdentityCommitments.push(connectedIdentity.commitment);
-    }
 
     if (proofType === MerkleProofType.ARTIFACTS) {
       merkleProofArtifactsOrStorageAddress = {
@@ -133,10 +125,6 @@ export const useCryptKeeper = (): IUseCryptKeeperData => {
     const messageId = 0;
     const epoch = Date.now().toString();
     let merkleProofArtifactsOrStorageAddress: string | MerkleProofArtifacts = `${merkleStorageAddress}/RLN`;
-
-    if (!mockIdentityCommitments.includes(connectedIdentity.commitment)) {
-      mockIdentityCommitments.push(connectedIdentity.commitment);
-    }
 
     if (proofType === MerkleProofType.ARTIFACTS) {
       merkleProofArtifactsOrStorageAddress = {
@@ -182,14 +170,10 @@ export const useCryptKeeper = (): IUseCryptKeeperData => {
       return;
     }
 
-    setConnectedIdentity({
-      commitment: payload.commitment,
-      web2Provider: payload.web2Provider,
-      host: payload.host,
-    });
+    setConnectedIdentityMetadata(payload as unknown as ConnectedIdentityMetadata);
 
-    toast(`Getting Identity Commitment successfully! ${payload.commitment}`, { type: "success" });
-  }, [client, setConnectedIdentity]);
+    toast(`Getting Identity Commitment successfully!`, { type: "success" });
+  }, [client, setConnectedIdentityMetadata]);
 
   const createIdentity = useCallback(() => {
     client?.createIdentity({ host: window.location.origin });
@@ -201,12 +185,14 @@ export const useCryptKeeper = (): IUseCryptKeeperData => {
 
   const onIdentityChanged = useCallback(
     (payload: unknown) => {
-      const { commitment, web2Provider, host } = payload as ConnectedIdentity;
+      const metadata = payload as ConnectedIdentityMetadata;
+      setConnectedIdentityMetadata(metadata);
 
-      setConnectedIdentity({ commitment, web2Provider, host });
-      toast(`Identity has changed! ${commitment}`, { type: "success" });
+      toast(`Identity has changed! ${metadata.name}`, {
+        type: "success",
+      });
     },
-    [setConnectedIdentity],
+    [setConnectedIdentityMetadata],
   );
 
   const onLogin = useCallback(() => {
@@ -214,13 +200,9 @@ export const useCryptKeeper = (): IUseCryptKeeperData => {
   }, [setIsLocked]);
 
   const onLogout = useCallback(() => {
-    setConnectedIdentity({
-      commitment: "",
-      web2Provider: "",
-      host: "",
-    });
+    setConnectedIdentityMetadata(undefined);
     setIsLocked(true);
-  }, [setConnectedIdentity, setIsLocked]);
+  }, [setConnectedIdentityMetadata, setIsLocked]);
 
   const onAddVerifiableCredential = useCallback((verifiableCredentialHash: unknown) => {
     toast(`Added a Verifiable Credential! ${verifiableCredentialHash as string}`, { type: "success" });
@@ -251,7 +233,7 @@ export const useCryptKeeper = (): IUseCryptKeeperData => {
   return {
     client,
     isLocked,
-    connectedIdentity,
+    connectedIdentityMetadata,
     proof,
     connect,
     createIdentity,

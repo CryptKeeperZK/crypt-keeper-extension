@@ -1,5 +1,6 @@
 import { ZkIdentitySemaphore, createNewIdentity } from "@cryptkeeperzk/zk";
 import { bigintToHex } from "bigint-conversion";
+import { pick } from "lodash";
 import browser from "webextension-polyfill";
 
 import BrowserUtils from "@src/background/controllers/browserUtils";
@@ -16,7 +17,7 @@ import {
   SetIdentityNameArgs,
   NewIdentityRequest,
   OperationType,
-  ConnectedIdentity,
+  ConnectedIdentityMetadata,
   SetIdentityHostArgs,
   ConnectIdentityArgs,
   ICreateIdentityRequestArgs,
@@ -69,14 +70,20 @@ export default class ZkIdentityService implements IBackupable {
     return ZkIdentityService.INSTANCE;
   };
 
-  getConnectedIdentityData = async (): Promise<ConnectedIdentity> => {
+  getConnectedIdentityCommitment = async (): Promise<string> => {
     const identity = await this.getConnectedIdentity();
 
-    return {
-      commitment: identity ? bigintToHex(identity.genIdentityCommitment()) : "",
-      web2Provider: identity?.metadata.web2Provider || "",
-      host: identity?.metadata.host || "",
-    };
+    return identity ? bigintToHex(identity.genIdentityCommitment()) : "";
+  };
+
+  getConnectedIdentityData = async (): Promise<ConnectedIdentityMetadata | undefined> => {
+    const identity = await this.getConnectedIdentity();
+
+    if (!identity) {
+      return undefined;
+    }
+
+    return this.getConnectedIdentityMetadata(identity.metadata);
   };
 
   getConnectedIdentity = async (): Promise<ZkIdentitySemaphore | undefined> => {
@@ -189,33 +196,27 @@ export default class ZkIdentityService implements IBackupable {
   private writeConnectedIdentity = async (commitment: string, metadata?: IdentityMetadata): Promise<void> => {
     const ciphertext = this.cryptoService.encrypt(commitment, { mode: ECryptMode.MNEMONIC });
     await this.connectedIdentityStore.set(ciphertext);
+    const connectedMetadata = this.getConnectedIdentityMetadata(metadata);
 
     const [tabs] = await Promise.all([
       browser.tabs.query({ active: true }),
-      pushMessage(
-        setConnectedIdentity({
-          commitment,
-          web2Provider: metadata?.web2Provider,
-          host: metadata?.host,
-        }),
-      ),
+      pushMessage(setConnectedIdentity(connectedMetadata)),
     ]);
 
     await Promise.all(
       tabs.map((tab) =>
-        browser.tabs
-          .sendMessage(
-            tab.id!,
-            setConnectedIdentity({
-              commitment,
-              web2Provider: metadata?.web2Provider,
-              host: metadata?.host,
-            }),
-          )
-          .catch(() => undefined),
+        browser.tabs.sendMessage(tab.id!, setConnectedIdentity(connectedMetadata)).catch(() => undefined),
       ),
     );
   };
+
+  private getConnectedIdentityMetadata(metadata?: IdentityMetadata): ConnectedIdentityMetadata | undefined {
+    if (!metadata) {
+      return undefined;
+    }
+
+    return pick(metadata, ["name", "identityStrategy", "web2Provider", "host"]);
+  }
 
   setIdentityName = async ({ identityCommitment, name }: SetIdentityNameArgs): Promise<boolean> => {
     const identities = await this.getIdentitiesFromStore();

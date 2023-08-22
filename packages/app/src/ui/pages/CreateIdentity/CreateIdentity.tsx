@@ -121,6 +121,7 @@ const CreateIdentity = (): JSX.Element => {
             <Button
               disabled={isLoading || !isWalletInstalled}
               name="metamask"
+              size="small"
               sx={{ textTransform: "none", flex: 1, mr: 1 }}
               type="submit"
               variant="outlined"
@@ -132,6 +133,7 @@ const CreateIdentity = (): JSX.Element => {
             <Button
               disabled={isLoading}
               name="cryptkeeper"
+              size="small"
               sx={{ textTransform: "none", flex: 1, ml: 1 }}
               type="submit"
               variant="contained"

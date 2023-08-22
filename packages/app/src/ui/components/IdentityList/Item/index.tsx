@@ -81,6 +81,8 @@ export const IdentityItem = ({
         borderBottom: "1px solid",
         borderColor: "text.800",
         cursor: "pointer",
+        height: 100,
+        width: "100%",
 
         "&:hover": {
           backgroundColor: "text.900",

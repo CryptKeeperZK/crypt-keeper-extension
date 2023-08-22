@@ -1,11 +1,5 @@
 import type { CreateIdentityOptions, EWallet, GroupData, IdentityStrategy } from "../identity";
 
-export interface ConnectedIdentity {
-  commitment: string;
-  web2Provider?: string;
-  host?: string;
-}
-
 export interface ICreateIdentityUiArgs {
   strategy: IdentityStrategy;
   options: CreateIdentityOptions;

@@ -70,7 +70,7 @@ export const IdentityList = ({
           scrollbarWidth: "none",
           display: "flex",
           alignItems: "center",
-          justifyContent: "center",
+          flexDirection: "column",
 
           "&::-webkit-scrollbar": {
             display: "none",
