@@ -235,6 +235,18 @@ export class CryptKeeperInjectedProvider {
         return;
       }
 
+      if (data.nonce === "addVerifiableCredential") {
+        const [, res] = data.payload;
+        this.emit("addVerifiableCredential", res);
+        return;
+      }
+
+      if (data.nonce === "rejectVerifiableCredential") {
+        const [, res] = data.payload;
+        this.emit("rejectVerifiableCredential", res);
+        return;
+      }
+
       if (!promises.has(data.nonce.toString())) {
         return;
       }
@@ -382,5 +394,18 @@ export class CryptKeeperInjectedProvider {
         merkleStorageAddress,
       },
     }) as Promise<RLNSNARKProof>;
+  }
+
+  /**
+   * Requests user to add a verifiable credential.
+   *
+   * @param {string} serializedVerifiableCredential - The json string representation of the verifiable credential to add.
+   * @returns {void}
+   */
+  async addVerifiableCredentialRequest(serializedVerifiableCredential: string): Promise<void> {
+    await this.post({
+      method: RPCAction.ADD_VERIFIABLE_CREDENTIAL_REQUEST,
+      payload: serializedVerifiableCredential,
+    });
   }
 }

@@ -2,6 +2,7 @@ import { Navigate, RouteObject, useRoutes } from "react-router-dom";
 
 import { Paths } from "@src/constants";
 import ConfirmRequestModal from "@src/ui/components/ConfirmRequestModal";
+import AddVerifiableCredential from "@src/ui/pages/AddVerifiableCredential";
 import ConnectIdentity from "@src/ui/pages/ConnectIdentity";
 import CreateIdentity from "@src/ui/pages/CreateIdentity";
 import DownloadBackup from "@src/ui/pages/DownloadBackup";
@@ -37,6 +38,7 @@ const routeConfig: RouteObject[] = [
   { path: Paths.CONNECT_IDENTITY, element: <ConnectIdentity /> },
   { path: Paths.RECOVER, element: <Recover /> },
   { path: Paths.RESET_PASSWORD, element: <ResetPassword /> },
+  { path: Paths.ADD_VERIFIABLE_CREDENTIAL, element: <AddVerifiableCredential /> },
   {
     path: "*",
     element: <Navigate to={Paths.HOME} />,

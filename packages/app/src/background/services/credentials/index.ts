@@ -1,10 +1,17 @@
 import browser from "webextension-polyfill";
 
+import BrowserUtils from "@src/background/controllers/browserUtils";
 import CryptoService, { ECryptMode } from "@src/background/services/crypto";
 import HistoryService from "@src/background/services/history";
 import NotificationService from "@src/background/services/notification";
 import SimpleStorage from "@src/background/services/storage";
-import { OperationType, CryptkeeperVerifiableCredential } from "@src/types";
+import { Paths } from "@src/constants";
+import {
+  OperationType,
+  CryptkeeperVerifiableCredential,
+  IRenameVerifiableCredentialArgs,
+  IAddVerifiableCredentialArgs,
+} from "@src/types";
 
 import type { BackupData, IBackupable } from "@src/background/services/backup";
 
@@ -13,6 +20,7 @@ import {
   serializeCryptkeeperVerifiableCredential,
   deserializeVerifiableCredential,
   deserializeCryptkeeperVerifiableCredential,
+  validateSerializedVerifiableCredential,
 } from "./utils";
 
 const VERIFIABLE_CREDENTIALS_KEY = "@@VERIFIABLE-CREDENTIALS@@";
@@ -28,11 +36,14 @@ export default class VerifiableCredentialsService implements IBackupable {
 
   private notificationService: NotificationService;
 
+  private browserController: BrowserUtils;
+
   private constructor() {
     this.verifiableCredentialsStore = new SimpleStorage(VERIFIABLE_CREDENTIALS_KEY);
     this.cryptoService = CryptoService.getInstance();
     this.historyService = HistoryService.getInstance();
     this.notificationService = NotificationService.getInstance();
+    this.browserController = BrowserUtils.getInstance();
   }
 
   static getInstance(): VerifiableCredentialsService {
@@ -43,23 +54,98 @@ export default class VerifiableCredentialsService implements IBackupable {
     return VerifiableCredentialsService.INSTANCE;
   }
 
-  addVerifiableCredential = async (serializedVerifiableCredential: string): Promise<boolean> => {
+  addVerifiableCredentialRequest = async (serializedVerifiableCredential: string): Promise<void> => {
+    await validateSerializedVerifiableCredential(serializedVerifiableCredential);
+    await this.browserController.openPopup({
+      params: { redirect: Paths.ADD_VERIFIABLE_CREDENTIAL, serializedVerifiableCredential },
+    });
+  };
+
+  rejectVerifiableCredentialRequest = async (): Promise<void> => {
+    await this.historyService.trackOperation(OperationType.REJECT_VERIFIABLE_CREDENTIAL_REQUEST, {});
+    await this.notificationService.create({
+      options: {
+        title: "Request to add Verifiable Credential rejected",
+        message: `Rejected a request to add 1 Verifiable Credential.`,
+        iconUrl: browser.runtime.getURL("/icons/logo.png"),
+        type: "basic",
+      },
+    });
+    const tabs = await browser.tabs.query({ active: true });
+    await Promise.all(
+      tabs.map((tab) =>
+        browser.tabs
+          .sendMessage(tab.id!, {
+            action: "rejectVerifiableCredential",
+          })
+          .catch(() => undefined),
+      ),
+    );
+  };
+
+  addVerifiableCredential = async (addVerifiableCredentialArgs: IAddVerifiableCredentialArgs): Promise<void> => {
+    const { serializedVerifiableCredential, verifiableCredentialName } = addVerifiableCredentialArgs;
     if (!serializedVerifiableCredential) {
-      return false;
+      throw new Error("Serialized Verifiable Credential is required.");
     }
 
     try {
       const verifiableCredential = await deserializeVerifiableCredential(serializedVerifiableCredential);
-      const metadata = generateInitialMetadataForVerifiableCredential(verifiableCredential);
+      const metadata = generateInitialMetadataForVerifiableCredential(verifiableCredential, verifiableCredentialName);
       const cryptkeeperVerifiableCredential: CryptkeeperVerifiableCredential = {
         verifiableCredential,
         metadata,
       };
 
-      return this.insertCryptkeeperVerifiableCredentialIntoStore(cryptkeeperVerifiableCredential);
+      await this.insertCryptkeeperVerifiableCredentialIntoStore(cryptkeeperVerifiableCredential);
     } catch (error) {
-      return false;
+      await this.notificationService.create({
+        options: {
+          title: "Failed to add Verifiable Credential.",
+          message: `The Verifiable Credential you are trying to add is invalid.`,
+          iconUrl: browser.runtime.getURL("/icons/logo.png"),
+          type: "basic",
+        },
+      });
+
+      throw error;
     }
+  };
+
+  renameVerifiableCredential = async (
+    renameVerifiableCredentialArgs: IRenameVerifiableCredentialArgs,
+  ): Promise<void> => {
+    const { verifiableCredentialHash, newVerifiableCredentialName } = renameVerifiableCredentialArgs;
+    if (!verifiableCredentialHash || !newVerifiableCredentialName) {
+      throw new Error("Verifiable Credential hash and name are required.");
+    }
+
+    const cryptkeeperVerifiableCredentials = await this.getCryptkeeperVerifiableCredentialsFromStore();
+
+    if (!cryptkeeperVerifiableCredentials.has(verifiableCredentialHash)) {
+      throw new Error("Verifiable Credential does not exist.");
+    }
+
+    const serializedCryptkeeperVerifiableCredential = cryptkeeperVerifiableCredentials.get(verifiableCredentialHash)!;
+    const cryptkeeperVerifiableCredential = await deserializeCryptkeeperVerifiableCredential(
+      serializedCryptkeeperVerifiableCredential,
+    );
+
+    cryptkeeperVerifiableCredential.metadata.name = newVerifiableCredentialName;
+    cryptkeeperVerifiableCredentials.set(
+      verifiableCredentialHash,
+      serializeCryptkeeperVerifiableCredential(cryptkeeperVerifiableCredential),
+    );
+    await this.writeCryptkeeperVerifiableCredentials(cryptkeeperVerifiableCredentials);
+    await this.historyService.trackOperation(OperationType.RENAME_VERIFIABLE_CREDENTIAL, {});
+    await this.notificationService.create({
+      options: {
+        title: "Verifiable Credential renamed.",
+        message: `Renamed 1 Verifiable Credential.`,
+        iconUrl: browser.runtime.getURL("/icons/logo.png"),
+        type: "basic",
+      },
+    });
   };
 
   getAllVerifiableCredentials = async (): Promise<CryptkeeperVerifiableCredential[]> => {
@@ -73,15 +159,15 @@ export default class VerifiableCredentialsService implements IBackupable {
     );
   };
 
-  deleteVerifiableCredential = async (verifiableCredentialHash: string): Promise<boolean> => {
+  deleteVerifiableCredential = async (verifiableCredentialHash: string): Promise<void> => {
     if (!verifiableCredentialHash) {
-      return false;
+      throw new Error("Verifiable Credential hash is required.");
     }
 
     const cryptkeeperVerifiableCredentials = await this.getCryptkeeperVerifiableCredentialsFromStore();
 
     if (!cryptkeeperVerifiableCredentials.has(verifiableCredentialHash)) {
-      return false;
+      throw new Error("Verifiable Credential does not exist.");
     }
 
     cryptkeeperVerifiableCredentials.delete(verifiableCredentialHash);
@@ -95,15 +181,13 @@ export default class VerifiableCredentialsService implements IBackupable {
         type: "basic",
       },
     });
-
-    return true;
   };
 
-  deleteAllVerifiableCredentials = async (): Promise<boolean> => {
+  deleteAllVerifiableCredentials = async (): Promise<void> => {
     const cryptkeeperVerifiableCredentials = await this.getCryptkeeperVerifiableCredentialsFromStore();
 
     if (cryptkeeperVerifiableCredentials.size === 0) {
-      return false;
+      throw new Error("No Verifiable Credentials to delete.");
     }
 
     await this.verifiableCredentialsStore.clear();
@@ -116,19 +200,26 @@ export default class VerifiableCredentialsService implements IBackupable {
         type: "basic",
       },
     });
-
-    return true;
   };
 
   private insertCryptkeeperVerifiableCredentialIntoStore = async (
     cryptkeeperVerifiableCredential: CryptkeeperVerifiableCredential,
-  ): Promise<boolean> => {
+  ): Promise<void> => {
     const verifiableCredentialHash = cryptkeeperVerifiableCredential.metadata.hash;
 
     const cryptkeeperVerifiableCredentials = await this.getCryptkeeperVerifiableCredentialsFromStore();
 
     if (cryptkeeperVerifiableCredentials.has(verifiableCredentialHash)) {
-      return false;
+      await this.notificationService.create({
+        options: {
+          title: "Failed to add Verifiable Credential.",
+          message: `The Verifiable Credential you are trying to add already exists in your wallet.`,
+          iconUrl: browser.runtime.getURL("/icons/logo.png"),
+          type: "basic",
+        },
+      });
+
+      throw new Error("Verifiable Credential already exists.");
     }
 
     cryptkeeperVerifiableCredentials.set(
@@ -146,8 +237,17 @@ export default class VerifiableCredentialsService implements IBackupable {
         type: "basic",
       },
     });
-
-    return true;
+    const tabs = await browser.tabs.query({ active: true });
+    await Promise.all(
+      tabs.map((tab) =>
+        browser.tabs
+          .sendMessage(tab.id!, {
+            action: "addVerifiableCredential",
+            verifiableCredentialHash,
+          })
+          .catch(() => undefined),
+      ),
+    );
   };
 
   private getCryptkeeperVerifiableCredentialsFromStore = async (): Promise<Map<string, string>> => {

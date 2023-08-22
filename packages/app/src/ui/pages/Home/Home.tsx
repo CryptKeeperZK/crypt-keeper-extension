@@ -2,6 +2,7 @@ import classNames from "classnames";
 
 import { Header } from "@src/ui/components/Header";
 import { IdentityList } from "@src/ui/components/IdentityList";
+import { VerifiableCredentialList } from "@src/ui/components/VerifiableCredential";
 
 import { TabList, Info, ActivityList } from "./components";
 import "./home.scss";
@@ -26,6 +27,8 @@ const Home = (): JSX.Element => {
           />
 
           <ActivityList />
+
+          <VerifiableCredentialList />
         </TabList>
       </div>
     </div>

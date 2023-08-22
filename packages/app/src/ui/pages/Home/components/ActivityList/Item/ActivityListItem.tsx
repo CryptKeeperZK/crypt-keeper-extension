@@ -25,8 +25,10 @@ const OPERATIONS: Record<OperationType, string> = {
   [OperationType.UPLOAD_BACKUP]: "Backup upload",
   [OperationType.RESET_PASSWORD]: "Password reset",
   [OperationType.ADD_VERIFIABLE_CREDENTIAL]: "Verifiable credential added",
+  [OperationType.RENAME_VERIFIABLE_CREDENTIAL]: "Verifiable credential renamed",
   [OperationType.DELETE_VERIFIABLE_CREDENTIAL]: "Verifiable credential deleted",
   [OperationType.DELETE_ALL_VERIFIABLE_CREDENTIALS]: "All verifiable credentials deleted",
+  [OperationType.REJECT_VERIFIABLE_CREDENTIAL_REQUEST]: "Verifiable credential request rejected",
 };
 
 const web2ProvidersIcons: IconWeb2Providers = {

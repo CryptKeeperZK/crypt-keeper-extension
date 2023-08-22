@@ -10,6 +10,7 @@ import RequestManager from "./controllers/requestManager";
 import ApprovalService from "./services/approval";
 import BackupService from "./services/backup";
 import VerifiableCredentialsService from "./services/credentials";
+import { validateSerializedVerifiableCredential } from "./services/credentials/utils";
 import HistoryService from "./services/history";
 import InjectorService from "./services/injector";
 import LockerService from "./services/lock";
@@ -31,6 +32,7 @@ const RPC_METHOD_ACCESS: Record<RPCAction, boolean> = {
   [RPCAction.CREATE_IDENTITY_REQUEST]: true,
   [RPCAction.GENERATE_SEMAPHORE_PROOF]: true,
   [RPCAction.GENERATE_RLN_PROOF]: true,
+  [RPCAction.ADD_VERIFIABLE_CREDENTIAL_REQUEST]: true,
 };
 
 Object.freeze(RPC_METHOD_ACCESS);
@@ -173,6 +175,22 @@ export default class CryptKeeperController {
       RPCAction.ADD_VERIFIABLE_CREDENTIAL,
       this.lockService.ensure,
       this.verifiableCredentialsService.addVerifiableCredential,
+    );
+    this.handler.add(
+      RPCAction.ADD_VERIFIABLE_CREDENTIAL_REQUEST,
+      this.lockService.ensure,
+      validateSerializedVerifiableCredential,
+      this.verifiableCredentialsService.addVerifiableCredentialRequest,
+    );
+    this.handler.add(
+      RPCAction.REJECT_VERIFIABLE_CREDENTIAL_REQUEST,
+      this.lockService.ensure,
+      this.verifiableCredentialsService.rejectVerifiableCredentialRequest,
+    );
+    this.handler.add(
+      RPCAction.RENAME_VERIFIABLE_CREDENTIAL,
+      this.lockService.ensure,
+      this.verifiableCredentialsService.renameVerifiableCredential,
     );
     this.handler.add(
       RPCAction.GET_ALL_VERIFIABLE_CREDENTIALS,

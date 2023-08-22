@@ -6,7 +6,13 @@ import { encodeBytes32String } from "ethers";
 import { useState, useEffect, useCallback } from "react";
 import { toast } from "react-toastify";
 
-import type { ConnectedIdentity, SemaphoreFullProof, MerkleProofArtifacts, RLNSNARKProof } from "@cryptkeeperzk/types";
+import type {
+  ConnectedIdentity,
+  SemaphoreFullProof,
+  MerkleProofArtifacts,
+  RLNSNARKProof,
+  VerifiableCredential,
+} from "@cryptkeeperzk/types";
 
 const SERVER_URL = "http://localhost:8090";
 
@@ -22,6 +28,23 @@ const genMockIdentityCommitments = (): string[] => {
   }
   return identityCommitments;
 };
+
+const genMockVerifiableCredential = (): VerifiableCredential => ({
+  context: ["https://www.w3.org/2018/credentials/v1"],
+  id: "http://example.edu/credentials/1872",
+  type: ["VerifiableCredential", "UniversityDegreeCredential"],
+  issuer: {
+    id: "did:example:76e12ec712ebc6f1c221ebfeb1f",
+  },
+  issuanceDate: new Date("2010-01-01T19:23:24Z"),
+  credentialSubject: {
+    id: "did:example:ebfeb1f712ebc6f1c276e12ec21",
+    claims: {
+      type: "BachelorDegree",
+      name: "Bachelor of Science and Arts",
+    },
+  },
+});
 
 export enum MerkleProofType {
   STORAGE_ADDRESS,
@@ -39,6 +62,7 @@ interface IUseCryptKeeperData {
   getConnectedIdentity: () => void;
   genSemaphoreProof: (proofType: MerkleProofType) => void;
   genRLNProof: (proofType: MerkleProofType) => void;
+  addVerifiableCredentialRequest: () => Promise<void>;
 }
 
 export const useCryptKeeper = (): IUseCryptKeeperData => {
@@ -144,6 +168,13 @@ export const useCryptKeeper = (): IUseCryptKeeperData => {
       });
   };
 
+  const addVerifiableCredentialRequest = useCallback(async () => {
+    const mockVerifiableCredential = genMockVerifiableCredential();
+    const verifiableCredentialJson = JSON.stringify(mockVerifiableCredential);
+
+    await client?.addVerifiableCredentialRequest(verifiableCredentialJson);
+  }, [client]);
+
   const getConnectedIdentity = useCallback(async () => {
     const payload = await client?.getConnectedIdentity();
 
@@ -191,6 +222,14 @@ export const useCryptKeeper = (): IUseCryptKeeperData => {
     setIsLocked(true);
   }, [setConnectedIdentity, setIsLocked]);
 
+  const onAddVerifiableCredential = useCallback((verifiableCredentialHash: unknown) => {
+    toast(`Added a Verifiable Credential! ${verifiableCredentialHash as string}`, { type: "success" });
+  }, []);
+
+  const onRejectVerifiableCredential = useCallback(() => {
+    toast(`Rejected request to add a Verifiable Credential.`, { type: "error" });
+  }, []);
+
   useEffect(() => {
     if (!client) {
       return undefined;
@@ -199,13 +238,15 @@ export const useCryptKeeper = (): IUseCryptKeeperData => {
     client.on("login", onLogin);
     client.on("identityChanged", onIdentityChanged);
     client.on("logout", onLogout);
+    client.on("addVerifiableCredential", onAddVerifiableCredential);
+    client.on("rejectVerifiableCredential", onRejectVerifiableCredential);
 
     getConnectedIdentity();
 
     return () => {
       client.cleanListeners();
     };
-  }, [client, onLogout, onIdentityChanged, onLogin]);
+  }, [client, onLogout, onIdentityChanged, onLogin, onAddVerifiableCredential, onRejectVerifiableCredential]);
 
   return {
     client,
@@ -218,5 +259,6 @@ export const useCryptKeeper = (): IUseCryptKeeperData => {
     getConnectedIdentity,
     genSemaphoreProof,
     genRLNProof,
+    addVerifiableCredentialRequest,
   };
 };

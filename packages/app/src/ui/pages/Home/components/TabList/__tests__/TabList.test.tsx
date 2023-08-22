@@ -4,12 +4,18 @@
 
 import { act, render, screen } from "@testing-library/react";
 
+import { getEnabledFeatures } from "@src/config/features";
+
 import { TabList, TabListProps } from "..";
 
 describe("ui/pages/Home/components/TabList", () => {
   const defaultProps: TabListProps = {
     children: [<div key={0}>Identities content</div>, <div key={1}>Activity content</div>],
   };
+
+  beforeEach(() => {
+    (getEnabledFeatures as jest.Mock).mockReturnValue({ VERIFIABLE_CREDENTIALS: true });
+  });
 
   afterEach(() => {
     jest.resetAllMocks();

@@ -7,12 +7,14 @@ import app from "@src/ui/ducks/app";
 import identities from "@src/ui/ducks/identities";
 import permissions from "@src/ui/ducks/permissions";
 import requests from "@src/ui/ducks/requests";
+import verifiableCredentials from "@src/ui/ducks/verifiableCredentials";
 
 const rootReducer = {
   identities,
   requests,
   app,
   permissions,
+  verifiableCredentials,
 };
 
 const middlewares = isDebugMode() ? [thunk, createLogger({ collapsed: true })] : [thunk];

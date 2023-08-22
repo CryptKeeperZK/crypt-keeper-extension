@@ -39,6 +39,10 @@ jest.mock("@src/ui/ducks/permissions", (): unknown => ({
   checkHostApproval: jest.fn(),
 }));
 
+jest.mock("@src/util/browser", (): unknown => ({
+  getLastActiveTabUrl: jest.fn(),
+}));
+
 describe("ui/pages/Home/useHome", () => {
   const mockDispatch = jest.fn();
 

@@ -6,13 +6,14 @@ import {
   deserializeCryptkeeperVerifiableCredential,
   serializeVerifiableCredential,
   deserializeVerifiableCredential,
-  validateVerifiableCredential,
+  validateSerializedVerifiableCredential,
   generateInitialMetadataForVerifiableCredential,
   hashVerifiableCredential,
 } from "../utils";
 
 describe("util/serializeCryptkeeperVerifiableCredential", () => {
   test("should serialize and deserialize CryptkeeperVerifiableCredential object correctly", async () => {
+    const defaultCredentialName = "Verifiable Credential";
     const rawCredential = {
       context: ["https://www.w3.org/2018/credentials/v1"],
       type: ["VerifiableCredential"],
@@ -25,7 +26,7 @@ describe("util/serializeCryptkeeperVerifiableCredential", () => {
         },
       },
     };
-    const metadata = generateInitialMetadataForVerifiableCredential(rawCredential);
+    const metadata = generateInitialMetadataForVerifiableCredential(rawCredential, defaultCredentialName);
     const cryptkeeperCred = {
       verifiableCredential: rawCredential,
       metadata,
@@ -55,25 +56,15 @@ describe("util/deserializeVerifiableCredential", () => {
         },
       },
     };
-    const credentialJson = serializeVerifiableCredential(rawCredential);
-    const deserializedCred = await deserializeVerifiableCredential(credentialJson);
+    const credJson = serializeVerifiableCredential(rawCredential);
+    const deserializedCred = await deserializeVerifiableCredential(credJson);
 
     expect(deserializedCred).toStrictEqual(rawCredential);
-    expect(serializeVerifiableCredential(deserializedCred)).toBe(credentialJson);
-  });
-
-  test("should throw an error if verifiable credential is not provider", async () => {
-    await expect(deserializeVerifiableCredential("")).rejects.toThrow(
-      "Serialized Verifiable Credential is not provided",
-    );
-
-    await expect(deserializeCryptkeeperVerifiableCredential("")).rejects.toThrow(
-      "Serialized Cryptkeeper Verifiable Credential is not provided",
-    );
+    expect(serializeVerifiableCredential(deserializedCred)).toBe(credJson);
   });
 });
 
-describe("util/validateVerifiableCredential", () => {
+describe("util/validateSerializedVerifiableCredential", () => {
   test("should correctly validate a valid verifiable credential", async () => {
     const rawCredential = {
       context: ["https://www.w3.org/2018/credentials/v1"],
@@ -87,80 +78,16 @@ describe("util/validateVerifiableCredential", () => {
         },
       },
     };
-    const credentialJson = serializeVerifiableCredential(rawCredential);
-    const credential = await deserializeVerifiableCredential(credentialJson);
+    const credJson = serializeVerifiableCredential(rawCredential);
+    const cred = await deserializeVerifiableCredential(credJson);
 
-    expect(credential).not.toBeNull();
-    await expect(validateVerifiableCredential(credential)).resolves.not.toBeNull();
-  });
-
-  test("should correctly validate a valid verifiable credential with array", async () => {
-    const rawCredential = {
-      context: ["https://www.w3.org/2018/credentials/v1"],
-      type: ["VerifiableCredential"],
-      issuer: "did:ethr:0x123",
-      issuanceDate: new Date("2010-01-01T19:23:24Z"),
-      credentialSubject: {
-        id: "did:ethr:0x123",
-        claims: {
-          names: ["John Doe", "Mary Jane"],
-        },
-      },
-    };
-    const credentialJson = serializeVerifiableCredential(rawCredential);
-    const credential = await deserializeVerifiableCredential(credentialJson);
-
-    expect(credential).not.toBeNull();
-    await expect(validateVerifiableCredential(credential)).resolves.not.toBeNull();
-  });
-
-  test("should throw an error is there are validation errors", async () => {
-    const rawCredential = {
-      context: ["https://www.w3.org/2018/credentials/v1"],
-      type: ["VerifiableCredential"],
-      issuer: "did:ethr:0x123",
-      issuanceDate: new Date("2010-01-01T19:23:24Z"),
-      credentialSubject: {
-        id: "did:ethr:0x123",
-        claims: {
-          names: [null] as unknown as string[],
-          name: undefined as unknown as string,
-        },
-      },
-    };
-    const credentialJson = serializeVerifiableCredential(rawCredential);
-
-    await expect(deserializeVerifiableCredential(credentialJson)).rejects.toThrow(
-      "claim value must be a string, array, or object",
-    );
+    expect(cred).not.toBeNull();
+    expect(validateSerializedVerifiableCredential(credJson)).not.toBeNull();
   });
 
   test("should return null if the string is not valid JSON", async () => {
     const rawCredential = "asdf";
-
     await expect(deserializeVerifiableCredential(rawCredential)).rejects.toThrow(SyntaxError);
-  });
-
-  test("should return verifiable credention if validation is passed successfully", async () => {
-    const rawCredential = {
-      context: ["https://www.w3.org/2018/credentials/v1"],
-      id: "3",
-      type: ["VerifiableCredential"],
-      issuer: { id: "did:ethr:0x123" },
-      issuanceDate: new Date("2010-01-01T19:23:24Z"),
-      credentialSubject: {
-        id: "did:ethr:0x123",
-        claims: {
-          name: {
-            firstName: "John",
-            lastName: "Doe",
-          },
-        },
-      },
-    };
-    const credentialJson = stringify(rawCredential);
-
-    await expect(deserializeVerifiableCredential(credentialJson)).resolves.not.toBeNull();
   });
 
   test("should return false if the context property is not an array", async () => {
@@ -608,7 +535,19 @@ describe("util/validateVerifiableCredential", () => {
 
 describe("util/hashVerifiableCredential", () => {
   test("should produce deterministic hashes", () => {
-    const credentialOne = {
+    const credOne = {
+      context: ["https://www.w3.org/2018/credentials/v1"],
+      type: ["VerifiableCredential"],
+      issuer: "did:ethr:0x123",
+      issuanceDate: new Date("2010-01-01T19:23:24Z"),
+      credentialSubject: {
+        id: "did:ethr:0x123",
+        claims: {
+          name: "John Doe",
+        },
+      },
+    };
+    const credTwo = {
       context: ["https://www.w3.org/2018/credentials/v1"],
       type: ["VerifiableCredential"],
       issuer: "did:ethr:0x123",
@@ -621,24 +560,11 @@ describe("util/hashVerifiableCredential", () => {
       },
     };
 
-    const credentialTwo = {
-      context: ["https://www.w3.org/2018/credentials/v1"],
-      type: ["VerifiableCredential"],
-      issuer: "did:ethr:0x123",
-      issuanceDate: new Date("2010-01-01T19:23:24Z"),
-      credentialSubject: {
-        id: "did:ethr:0x123",
-        claims: {
-          name: "John Doe",
-        },
-      },
-    };
-
-    expect(hashVerifiableCredential(credentialOne)).toBe(hashVerifiableCredential(credentialTwo));
+    expect(hashVerifiableCredential(credOne)).toBe(hashVerifiableCredential(credTwo));
   });
 
   test("should produce the same hash after serialization/deserialization", async () => {
-    const credential = {
+    const cred = {
       context: ["https://www.w3.org/2018/credentials/v1"],
       type: ["VerifiableCredential"],
       issuer: "did:ethr:0x123",
@@ -650,14 +576,16 @@ describe("util/hashVerifiableCredential", () => {
         },
       },
     };
-    const credentialJson = serializeVerifiableCredential(credential);
-    const deserializedCred = await deserializeVerifiableCredential(credentialJson);
+    const credJson = serializeVerifiableCredential(cred);
+    const deserializedCred = await deserializeVerifiableCredential(credJson);
 
-    expect(hashVerifiableCredential(credential)).toBe(hashVerifiableCredential(deserializedCred));
+    expect(hashVerifiableCredential(cred)).toBe(hashVerifiableCredential(deserializedCred));
   });
 });
 
 describe("util/generateInitialMetadataForVerifiableCredential", () => {
+  const defaultCredentialName = "Verifiable Credential";
+
   test("should generate the correct metadata for a verifiable credential", () => {
     const rawCredential = {
       context: ["https://www.w3.org/2018/credentials/v1"],
@@ -671,7 +599,7 @@ describe("util/generateInitialMetadataForVerifiableCredential", () => {
         },
       },
     };
-    const metadata = generateInitialMetadataForVerifiableCredential(rawCredential);
+    const metadata = generateInitialMetadataForVerifiableCredential(rawCredential, defaultCredentialName);
     const expectedMetadata = {
       name: "Verifiable Credential",
       hash: hashVerifiableCredential(rawCredential),
