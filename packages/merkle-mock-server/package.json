@@ -45,7 +45,7 @@
     "@types/cors": "^2.8.13",
     "@types/express": "^4.17.17",
     "eslint": "^8.47.0",
-    "lint-staged": "^13.2.3",
+    "lint-staged": "^14.0.1",
     "prettier": "^3.0.0",
     "ts-node": "^10.9.1",
     "typescript": "^5.1.6"
