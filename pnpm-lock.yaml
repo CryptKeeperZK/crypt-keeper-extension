@@ -144,8 +144,8 @@ importers:
         specifier: ^1.0.34
         version: 1.0.34
       '@web3-react/core':
-        specifier: ^8.2.0
-        version: 8.2.0(@types/react@18.2.20)(react@18.2.0)
+        specifier: ^8.2.2
+        version: 8.2.2(@types/react@18.2.20)(react@18.2.0)
       '@web3-react/metamask':
         specifier: ^8.2.1
         version: 8.2.1(@types/react@18.2.20)(react@18.2.0)
@@ -5715,15 +5715,15 @@ packages:
       typescript: 5.1.6
     dev: true
 
-  /@web3-react/core@8.2.0(@types/react@18.2.20)(react@18.2.0):
-    resolution: {integrity: sha512-r7dmK2E8Jrpvm/DF93hGMB+8lECHSI3Oo0NrHbhxkisK6in6rdgAXeYFhZtM48LBAm9py6fQvLzjCM6Qx9q0oQ==}
+  /@web3-react/core@8.2.2(@types/react@18.2.20)(react@18.2.0):
+    resolution: {integrity: sha512-4AFWqOBisBBMj22/RB3+w6px66YxtK0iVIReQj1h1Rssko2ptIHjGMLyyRInN8eVemx8QaOE481odOHfFKZkUQ==}
     peerDependencies:
       react: '>=16.8'
     dependencies:
-      '@web3-react/store': 8.2.0(@types/react@18.2.20)(react@18.2.0)
+      '@web3-react/store': 8.2.2(@types/react@18.2.20)(react@18.2.0)
       '@web3-react/types': 8.2.2(@types/react@18.2.20)(react@18.2.0)
       react: 18.2.0
-      zustand: 4.3.8(react@18.2.0)
+      zustand: 4.4.0(@types/react@18.2.20)(react@18.2.0)
     optionalDependencies:
       '@ethersproject/providers': 5.7.2
     transitivePeerDependencies:
@@ -5744,8 +5744,8 @@ packages:
       - react
     dev: false
 
-  /@web3-react/store@8.2.0(@types/react@18.2.20)(react@18.2.0):
-    resolution: {integrity: sha512-cG8nb+tBeRUJu+98ko6YZuAWmoipGMEbR3bhineCNd4x2mXv3GbWSPtE17GeWVshZgDbZu2/Du0okTx+22VWCg==}
+  /@web3-react/store@8.2.2(@types/react@18.2.20)(react@18.2.0):
+    resolution: {integrity: sha512-ITMkLzyw8tSTTEf8NcjIdewphbCpWHwK4EmwRxPCZMMRs+apZwoj3R/YNflMBoPMC+ybWKnVVpDd6CprF1TU9A==}
     dependencies:
       '@ethersproject/address': 5.7.0
       '@web3-react/types': 8.2.2(@types/react@18.2.20)(react@18.2.0)
@@ -10816,6 +10816,7 @@ packages:
 
   /hmac-drbg@1.0.1:
     resolution: {integrity: sha512-Tti3gMqLdZfhOQY1Mzf/AanLiqh1WTiJgEj26ZuYQ9fbkLomzGchCws4FyrSd4VkpBfiNhaE1On+lOz894jvXg==}
+    requiresBuild: true
     dependencies:
       hash.js: 1.1.7
       minimalistic-assert: 1.0.1
@@ -13198,6 +13199,7 @@ packages:
 
   /minimalistic-crypto-utils@1.0.1:
     resolution: {integrity: sha512-JIYlbt6g8i5jKfJ3xz7rF0LXmv2TkDxBLUkiBeZ7bAx4GnnNMr8xFpGnOxn6GhTEHx3SjRrZEoU+j04prX1ktg==}
+    requiresBuild: true
 
   /minimatch@3.0.5:
     resolution: {integrity: sha512-tUpxzX0VAzJHjLu0xUfFv1gwVp9ba3IOuRAVH2EGuRW8a5emA2FlACLqiT/lDVtS1W+TGNwqz3sWaNyLgDJWuw==}
@@ -17969,22 +17971,6 @@ packages:
       tiny-case: 1.0.3
       toposort: 2.0.2
       type-fest: 2.19.0
-    dev: false
-
-  /zustand@4.3.8(react@18.2.0):
-    resolution: {integrity: sha512-4h28KCkHg5ii/wcFFJ5Fp+k1J3gJoasaIbppdgZFO4BPJnsNxL0mQXBSFgOgAdCdBj35aDTPvdAJReTMntFPGg==}
-    engines: {node: '>=12.7.0'}
-    peerDependencies:
-      immer: '>=9.0'
-      react: '>=16.8'
-    peerDependenciesMeta:
-      immer:
-        optional: true
-      react:
-        optional: true
-    dependencies:
-      react: 18.2.0
-      use-sync-external-store: 1.2.0(react@18.2.0)
     dev: false
 
   /zustand@4.4.0(@types/react@18.2.20)(react@18.2.0):
