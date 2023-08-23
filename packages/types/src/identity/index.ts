@@ -41,6 +41,8 @@ export interface IdentityMetadata {
   host?: string;
 }
 
+export type ConnectedIdentityMetadata = Pick<IdentityMetadata, "name" | "identityStrategy" | "web2Provider" | "host">;
+
 export interface GroupData {
   id: string;
   name: string;

@@ -7,7 +7,7 @@ import { renderHook } from "@testing-library/react";
 import { Provider } from "react-redux";
 
 import { ZERO_ADDRESS } from "@src/config/const";
-import { EWallet, HistorySettings, OperationType, ConnectedIdentity } from "@src/types";
+import { EWallet, HistorySettings, OperationType, IdentityMetadata } from "@src/types";
 import { store } from "@src/ui/store/configureAppStore";
 import postMessage from "@src/util/postMessage";
 
@@ -77,10 +77,8 @@ describe("ui/ducks/identities", () => {
 
   const defaultSettings: HistorySettings = { isEnabled: true };
 
-  const defaultConnectedIdentity: ConnectedIdentity = {
-    commitment: defaultIdentities[0].commitment,
-    web2Provider: defaultIdentities[0].metadata.web2Provider,
-    host: defaultIdentities[0].metadata.host,
+  const defaultConnectedIdentityMetadata: IdentityMetadata = {
+    ...defaultIdentities[0].metadata,
   };
 
   afterEach(() => {
@@ -88,7 +86,10 @@ describe("ui/ducks/identities", () => {
   });
 
   test("should fetch identities properly", async () => {
-    (postMessage as jest.Mock).mockResolvedValueOnce(defaultIdentities).mockResolvedValueOnce(defaultConnectedIdentity);
+    (postMessage as jest.Mock)
+      .mockResolvedValueOnce(defaultIdentities)
+      .mockResolvedValueOnce(defaultConnectedIdentityMetadata)
+      .mockResolvedValueOnce(defaultIdentities[0].commitment);
 
     await Promise.resolve(store.dispatch(fetchIdentities()));
     const { identities } = store.getState();
@@ -173,12 +174,10 @@ describe("ui/ducks/identities", () => {
   });
 
   test("should set connected identity properly", async () => {
-    await Promise.resolve(store.dispatch(setConnectedIdentity(defaultConnectedIdentity)));
+    await Promise.resolve(store.dispatch(setConnectedIdentity(defaultConnectedIdentityMetadata)));
     const { identities } = store.getState();
 
-    expect(identities.connected.commitment).toBe("1");
-    expect(identities.connected.web2Provider).toBe("twitter");
-    expect(identities.connected.host).toBe("http://localhost:3000");
+    expect(identities.connectedMetadata).toStrictEqual(defaultIdentities[0].metadata);
   });
 
   test("should set identities properly", async () => {

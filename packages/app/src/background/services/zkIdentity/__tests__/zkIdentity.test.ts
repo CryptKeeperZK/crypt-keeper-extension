@@ -1,13 +1,14 @@
 /* eslint-disable @typescript-eslint/unbound-method */
 import { createNewIdentity } from "@cryptkeeperzk/zk";
 import { bigintToHex } from "bigint-conversion";
+import pick from "lodash/pick";
 import browser from "webextension-polyfill";
 
 import SimpleStorage from "@src/background/services/storage";
 import ZkIdentityService from "@src/background/services/zkIdentity";
 import { ZERO_ADDRESS } from "@src/config/const";
 import { getEnabledFeatures } from "@src/config/features";
-import { CreateIdentityOptions, EWallet, IdentityStrategy } from "@src/types";
+import { CreateIdentityOptions, EWallet, ConnectedIdentityMetadata, IdentityStrategy } from "@src/types";
 import { setConnectedIdentity, setIdentities } from "@src/ui/ducks/identities";
 import pushMessage from "@src/util/pushMessage";
 
@@ -19,7 +20,6 @@ const mockDefaultIdentity = {
     account: ZERO_ADDRESS,
     groups: [],
     name: "Account",
-    web2Provider: undefined,
     identityStrategy: "interrep" as const,
     host: "http://localhost:3000",
   },
@@ -84,7 +84,7 @@ describe("background/services/zkIdentity", () => {
   const defaultNewIdentity = {
     serialize: () => JSON.stringify({ secret: "1234", metadata: { identityStrategy: "random" } }),
     genIdentityCommitment: () => "commitment",
-    metadata: { host: "http://localhost:3000" },
+    metadata: { host: "http://localhost:3000" } as ConnectedIdentityMetadata,
   };
 
   beforeEach(() => {
@@ -131,9 +131,7 @@ describe("background/services/zkIdentity", () => {
       expect(result).toBe(true);
       expect(pushMessage).toBeCalledTimes(1);
       expect(pushMessage).toBeCalledWith(
-        setConnectedIdentity({
-          commitment: mockDefaultIdentityCommitment,
-        }),
+        setConnectedIdentity({ ...pick(mockDefaultIdentity.metadata, ["name", "identityStrategy"]), host: undefined }),
       );
       expect(browser.tabs.sendMessage).toBeCalledTimes(defaultTabs.length);
 
@@ -142,7 +140,8 @@ describe("background/services/zkIdentity", () => {
           index + 1,
           defaultTabs[index].id,
           setConnectedIdentity({
-            commitment: mockDefaultIdentityCommitment,
+            ...pick(mockDefaultIdentity.metadata, ["name", "identityStrategy"]),
+            host: undefined,
           }),
         );
       }
@@ -170,11 +169,7 @@ describe("background/services/zkIdentity", () => {
       expect(pushMessage).toBeCalledTimes(2);
       expect(pushMessage).toHaveBeenNthCalledWith(
         1,
-        setConnectedIdentity({
-          commitment: mockDefaultIdentityCommitment,
-          host: "http://localhost:3000",
-          web2Provider: undefined,
-        }),
+        setConnectedIdentity(pick(mockDefaultIdentity.metadata, ["name", "host", "identityStrategy"])),
       );
       expect(pushMessage).toHaveBeenNthCalledWith(
         2,
@@ -186,11 +181,7 @@ describe("background/services/zkIdentity", () => {
         expect(browser.tabs.sendMessage).toHaveBeenNthCalledWith(
           index + 1,
           defaultTabs[index].id,
-          setConnectedIdentity({
-            commitment: mockDefaultIdentityCommitment,
-            host: "http://localhost:3000",
-            web2Provider: undefined,
-          }),
+          setConnectedIdentity(pick(mockDefaultIdentity.metadata, ["name", "host", "identityStrategy"])),
         );
       }
     });
@@ -337,11 +328,21 @@ describe("background/services/zkIdentity", () => {
 
       const data = await zkIdentityService.getConnectedIdentityData();
 
-      expect(data).toStrictEqual({
-        commitment: mockDefaultIdentityCommitment,
-        web2Provider: "",
-        host: "http://localhost:3000",
-      });
+      expect(data).toStrictEqual(pick(mockDefaultIdentity.metadata, ["name", "host", "identityStrategy"]));
+    });
+
+    test("should get connected identity commitment properly", async () => {
+      const [identityStorage, connectedIdentityStorage] = (SimpleStorage as jest.Mock).mock.instances as [
+        MockStorage,
+        MockStorage,
+      ];
+
+      identityStorage.get.mockReturnValue(mockSerializedDefaultIdentities);
+      connectedIdentityStorage.get.mockReturnValue(mockDefaultIdentityCommitment);
+
+      const commitment = await zkIdentityService.getConnectedIdentityCommitment();
+
+      expect(commitment).toBe(mockDefaultIdentityCommitment);
     });
 
     test("should not get connected identity if there is no any connected identity", async () => {
@@ -349,11 +350,7 @@ describe("background/services/zkIdentity", () => {
       const data = await zkIdentityService.getConnectedIdentityData();
 
       expect(identity).toBeUndefined();
-      expect(data).toStrictEqual({
-        commitment: "",
-        web2Provider: "",
-        host: "",
-      });
+      expect(data).toBeUndefined();
     });
 
     test("should not get connected identity if there is no any identity", async () => {
@@ -367,6 +364,19 @@ describe("background/services/zkIdentity", () => {
       const result = await zkIdentityService.getConnectedIdentity();
 
       expect(result).toBeUndefined();
+    });
+
+    test("should not get connected identity commitment if there is no any identity", async () => {
+      const [identityStorage, connectedIdentityStorage] = (SimpleStorage as jest.Mock).mock.instances as [
+        MockStorage,
+        MockStorage,
+      ];
+      identityStorage.get.mockReturnValue(undefined);
+      connectedIdentityStorage.get.mockReturnValue(mockDefaultIdentityCommitment);
+
+      const result = await zkIdentityService.getConnectedIdentityCommitment();
+
+      expect(result).toBe("");
     });
   });
 

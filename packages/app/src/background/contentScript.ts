@@ -4,7 +4,7 @@ import browser from "webextension-polyfill";
 import { setStatus } from "@src/ui/ducks/app";
 import { setConnectedIdentity } from "@src/ui/ducks/identities";
 
-import type { InjectedMessageData, ReduxAction, ConnectedIdentity } from "@cryptkeeperzk/types";
+import type { InjectedMessageData, ReduxAction, ConnectedIdentityMetadata } from "@cryptkeeperzk/types";
 
 function injectScript() {
   const url = browser.runtime.getURL("js/injected.js");
@@ -38,7 +38,7 @@ function injectScript() {
         window.postMessage(
           {
             target: "injected-injectedscript",
-            payload: [null, action.payload as ConnectedIdentity],
+            payload: [null, action.payload as ConnectedIdentityMetadata],
             nonce: "identityChanged",
           },
           "*",

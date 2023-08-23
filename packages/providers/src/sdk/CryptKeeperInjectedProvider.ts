@@ -2,7 +2,6 @@ import {
   Approvals,
   InjectedMessageData,
   InjectedProviderRequest,
-  ConnectedIdentity,
   SemaphoreFullProof,
   ICreateIdentityRequestArgs,
   IConnectIdentityRequestArgs,
@@ -10,6 +9,7 @@ import {
   RLNSNARKProof,
   ISemaphoreProofRequiredArgs,
   IRlnProofRequiredArgs,
+  ConnectedIdentityMetadata,
 } from "@cryptkeeperzk/types";
 import { ZkProofService } from "@cryptkeeperzk/zk";
 
@@ -115,7 +115,7 @@ export class CryptKeeperInjectedProvider {
 
     const connectedIdentity = await this.getConnectedIdentity();
 
-    if (!connectedIdentity.commitment) {
+    if (!connectedIdentity) {
       await this.connectIdentity({ host: window.location.origin });
     }
 
@@ -186,10 +186,10 @@ export class CryptKeeperInjectedProvider {
    *
    * @returns {Promise<ConnectedIdentity>} A Promise that resolves to the connected identity.
    */
-  async getConnectedIdentity(): Promise<ConnectedIdentity> {
+  async getConnectedIdentity(): Promise<ConnectedIdentityMetadata | undefined> {
     return this.post({
       method: RPCAction.GET_CONNECTED_IDENTITY_DATA,
-    }) as Promise<ConnectedIdentity>;
+    }) as Promise<ConnectedIdentityMetadata>;
   }
 
   /**
@@ -264,17 +264,6 @@ export class CryptKeeperInjectedProvider {
       promises.delete(data.nonce.toString());
     }
   };
-
-  /**
-   * Retrieves the identity commitments.
-   *
-   * @returns {Promise<unknown>} A Promise that resolves to the identity commitments.
-   */
-  async getIdentityCommitments(): Promise<unknown> {
-    return this.post({
-      method: RPCAction.GET_COMMITMENTS,
-    });
-  }
 
   /**
    * Retrieves the host permissions for the specified host.

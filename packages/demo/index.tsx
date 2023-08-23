@@ -39,7 +39,7 @@ const App = () => {
   const {
     client,
     isLocked,
-    connectedIdentity,
+    connectedIdentityMetadata,
     proof,
     connect,
     createIdentity,
@@ -57,7 +57,7 @@ const App = () => {
     return <NotConnected onClick={connect} />;
   }
 
-  if (!connectedIdentity.commitment) {
+  if (!connectedIdentityMetadata) {
     return <NoConnectedIdentityCommitment onConnectIdentity={connectIdentity} />;
   }
 
@@ -66,15 +66,33 @@ const App = () => {
       <hr />
 
       <div>
-        <h2>Identity commitment for the connected identity:</h2>
+        <h2>Connected identity:</h2>
 
-        <p data-testid="connected-commitment">{connectedIdentity.commitment}</p>
-      </div>
+        <div>
+          <strong>Name:</strong>
 
-      <div>
-        <h2>Host name for the connected identity:</h2>
+          <p data-testid="connected-name">{connectedIdentityMetadata.name}</p>
+        </div>
 
-        <p data-testid="connected-host">{connectedIdentity.host}</p>
+        <div>
+          <strong>Strategy:</strong>
+
+          <p data-testid="connected-strategy">{connectedIdentityMetadata.identityStrategy}</p>
+        </div>
+
+        {connectedIdentityMetadata.web2Provider && (
+          <div>
+            <strong>Web2 Provider:</strong>
+
+            <p data-testid="connected-web2-provider">{connectedIdentityMetadata.web2Provider}</p>
+          </div>
+        )}
+
+        <div>
+          <strong>Host:</strong>
+
+          <p data-testid="connected-host">{connectedIdentityMetadata.host}</p>
+        </div>
       </div>
 
       <hr />
