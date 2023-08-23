@@ -34,6 +34,10 @@ jobs:
     runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+          token: ${{ secrets.PAT }}
       - uses: pnpm/action-setup@v2
         with:
           version: latest
