@@ -1,4 +1,5 @@
 import { type CryptKeeperInjectedProvider, initializeCryptKeeperProvider, RPCAction } from "@cryptkeeperzk/providers";
+import { EventName } from "@cryptkeeperzk/providers/dist/src/event/types";
 import { initializeConnector } from "@web3-react/core";
 import { Connector } from "@web3-react/types";
 
@@ -57,12 +58,12 @@ export class CryptkeeperConnector extends Connector {
 
     this.customProvider = initializeCryptKeeperProvider();
     this.eagerConnection = this.customProvider?.connect().then(() => {
-      this.customProvider?.on("login", async () => {
+      this.customProvider?.on(EventName.LOGIN, async () => {
         const accounts = await this.loadAccounts();
         this.actions.update({ accounts });
       });
 
-      this.customProvider?.on("logout", () => {
+      this.customProvider?.on(EventName.LOGOUT, () => {
         this.actions.resetState();
       });
     });

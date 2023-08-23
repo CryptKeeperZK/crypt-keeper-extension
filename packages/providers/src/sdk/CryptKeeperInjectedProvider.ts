@@ -217,33 +217,33 @@ export class CryptKeeperInjectedProvider {
     const { data } = event;
 
     if (data.target === "injected-injectedscript") {
-      if (data.nonce === "identityChanged") {
+      if (data.nonce === (EventName.IDENTITY_CHANGED as string)) {
         const [, res] = data.payload;
-        this.emit("identityChanged", res);
+        this.emit(EventName.IDENTITY_CHANGED, res);
         return;
       }
 
-      if (data.nonce === "logout") {
+      if (data.nonce === (EventName.LOGOUT as string)) {
         const [, res] = data.payload;
-        this.emit("logout", res);
+        this.emit(EventName.LOGOUT, res);
         return;
       }
 
-      if (data.nonce === "login") {
+      if (data.nonce === (EventName.LOGIN as string)) {
         const [, res] = data.payload;
-        this.emit("login", res);
+        this.emit(EventName.LOGIN, res);
         return;
       }
 
-      if (data.nonce === "addVerifiableCredential") {
+      if (data.nonce === (EventName.ADD_VERIFIABLE_CREDENTIAL as string)) {
         const [, res] = data.payload;
-        this.emit("addVerifiableCredential", res);
+        this.emit(EventName.ADD_VERIFIABLE_CREDENTIAL, res);
         return;
       }
 
-      if (data.nonce === "rejectVerifiableCredential") {
+      if (data.nonce === (EventName.REJECT_VERIFIABLE_CREDENTIAL as string)) {
         const [, res] = data.payload;
-        this.emit("rejectVerifiableCredential", res);
+        this.emit(EventName.REJECT_VERIFIABLE_CREDENTIAL, res);
         return;
       }
 

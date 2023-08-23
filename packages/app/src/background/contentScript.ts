@@ -1,3 +1,4 @@
+import { EventName } from "@cryptkeeperzk/providers/dist/src/event/types";
 import log from "loglevel";
 import browser from "webextension-polyfill";
 
@@ -39,7 +40,7 @@ function injectScript() {
           {
             target: "injected-injectedscript",
             payload: [null, action.payload as ConnectedIdentityMetadata],
-            nonce: "identityChanged",
+            nonce: EventName.IDENTITY_CHANGED,
           },
           "*",
         );
@@ -50,7 +51,7 @@ function injectScript() {
           {
             target: "injected-injectedscript",
             payload: [null],
-            nonce: !(action.payload as { isUnlocked: boolean }).isUnlocked ? "logout" : "login",
+            nonce: !(action.payload as { isUnlocked: boolean }).isUnlocked ? EventName.LOGOUT : EventName.LOGIN,
           },
           "*",
         );
@@ -63,23 +64,23 @@ function injectScript() {
 
   browser.runtime.onMessage.addListener((request: { action: string }) => {
     switch (request.action) {
-      case "addVerifiableCredential": {
+      case EventName.ADD_VERIFIABLE_CREDENTIAL: {
         window.postMessage(
           {
             target: "injected-injectedscript",
             payload: [null, (request as { action: string; verifiableCredentialHash: string }).verifiableCredentialHash],
-            nonce: "addVerifiableCredential",
+            nonce: EventName.ADD_VERIFIABLE_CREDENTIAL,
           },
           "*",
         );
         break;
       }
-      case "rejectVerifiableCredential": {
+      case EventName.REJECT_VERIFIABLE_CREDENTIAL: {
         window.postMessage(
           {
             target: "injected-injectedscript",
             payload: [null],
-            nonce: "rejectVerifiableCredential",
+            nonce: EventName.REJECT_VERIFIABLE_CREDENTIAL,
           },
           "*",
         );

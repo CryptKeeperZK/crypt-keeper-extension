@@ -3,6 +3,7 @@
  */
 
 import { initializeCryptKeeperProvider } from "@cryptkeeperzk/providers";
+import { EventName } from "@cryptkeeperzk/providers/dist/src/event/types";
 import EventEmitter2 from "eventemitter2";
 
 import { ZERO_ADDRESS } from "@src/config/const";
@@ -97,8 +98,8 @@ describe("connectors/cryptKeeper", () => {
 
     await connector.activate();
 
-    await Promise.resolve(mockProvider.emit("login"));
-    await Promise.resolve(mockProvider.emit("logout"));
+    await Promise.resolve(mockProvider.emit(EventName.LOGIN));
+    await Promise.resolve(mockProvider.emit(EventName.LOGOUT));
 
     expect(mockActions.update).toBeCalledTimes(1);
     expect(mockActions.update).toBeCalledWith({ accounts: mockAddresses });

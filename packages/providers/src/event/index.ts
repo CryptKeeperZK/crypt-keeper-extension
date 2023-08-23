@@ -1,2 +1,3 @@
 export { EventEmitter } from "./EventEmitter";
-export type { EventHandler, EventName, Events } from "./types";
+export type { EventHandler, Events } from "./types";
+export { EventName } from "./types";

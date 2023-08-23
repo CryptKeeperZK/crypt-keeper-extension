@@ -1,3 +1,4 @@
+import { EventName } from "@cryptkeeperzk/providers/dist/src/event/types";
 import browser from "webextension-polyfill";
 
 import BrowserUtils from "@src/background/controllers/browserUtils";
@@ -76,7 +77,7 @@ export default class VerifiableCredentialsService implements IBackupable {
       tabs.map((tab) =>
         browser.tabs
           .sendMessage(tab.id!, {
-            action: "rejectVerifiableCredential",
+            action: EventName.REJECT_VERIFIABLE_CREDENTIAL,
           })
           .catch(() => undefined),
       ),
@@ -242,7 +243,7 @@ export default class VerifiableCredentialsService implements IBackupable {
       tabs.map((tab) =>
         browser.tabs
           .sendMessage(tab.id!, {
-            action: "addVerifiableCredential",
+            action: EventName.ADD_VERIFIABLE_CREDENTIAL,
             verifiableCredentialHash,
           })
           .catch(() => undefined),
