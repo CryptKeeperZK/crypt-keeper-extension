@@ -30,7 +30,7 @@
     "prettier:fix": "pnpm exec nx run-many --target=prettier:fix --output-style=stream",
     "types": "pnpm exec nx run-many --target=types --output-style=stream",
     "commit": "cz",
-    "release": "nx affected --target=version --releaseAs=prerelease --preid=beta",
+    "release": "pnpm exec nx run-many --target=version --releaseAs=prerelease --preid=beta",
     "release:dry-run": "pnpm run release -- --dryRun",
     "githook:precommit": "pnpm exec nx run-many --target=githook:precommit --output-style=stream",
     "githook:prepush": "pnpm exec nx run-many --target=githook:prepush --output-style=stream",
