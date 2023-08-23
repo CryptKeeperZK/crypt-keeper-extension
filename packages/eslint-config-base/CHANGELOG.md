@@ -10,3 +10,12 @@ This file was generated using [@jscutlery/semver](https://github.com/jscutlery/s
 * add upload backup ui page ([#647](https://github.com/CryptKeeperZK/crypt-keeper-extension/issues/647)) ([9fc2eda](https://github.com/CryptKeeperZK/crypt-keeper-extension/commit/9fc2edad53b53f323020cb03e6523c96dce41258))
 * integrate `nx` ([#564](https://github.com/CryptKeeperZK/crypt-keeper-extension/issues/564)) ([caa597b](https://github.com/CryptKeeperZK/crypt-keeper-extension/commit/caa597b7ba3acabd98502f8e860b482702887263))
 * offline support ([#661](https://github.com/CryptKeeperZK/crypt-keeper-extension/issues/661)) ([2957706](https://github.com/CryptKeeperZK/crypt-keeper-extension/commit/2957706276d7f9b55ed8dcbd68d9bfbc5cba866e))
+
+## 0.1.0 (2023-08-23)
+
+
+### Features
+
+* add upload backup ui page ([#647](https://github.com/CryptKeeperZK/crypt-keeper-extension/issues/647)) ([9fc2eda](https://github.com/CryptKeeperZK/crypt-keeper-extension/commit/9fc2edad53b53f323020cb03e6523c96dce41258))
+* integrate `nx` ([#564](https://github.com/CryptKeeperZK/crypt-keeper-extension/issues/564)) ([caa597b](https://github.com/CryptKeeperZK/crypt-keeper-extension/commit/caa597b7ba3acabd98502f8e860b482702887263))
+* offline support ([#661](https://github.com/CryptKeeperZK/crypt-keeper-extension/issues/661)) ([2957706](https://github.com/CryptKeeperZK/crypt-keeper-extension/commit/2957706276d7f9b55ed8dcbd68d9bfbc5cba866e))
