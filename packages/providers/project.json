@@ -20,7 +20,22 @@
         "preset": "conventional",
         "trackDeps": true,
         "push": true,
-        "noVerify": true
+        "noVerify": true,
+        "postTargets": ["@cryptkeeperzk/providers:npm", "@cryptkeeperzk/providers:github"]
+      }
+    },
+    "npm": {
+      "executor": "ngx-deploy-npm:deploy",
+      "options": {
+        "access": "public",
+        "dryRun": "${dryRun}"
+      }
+    },
+    "github": {
+      "executor": "@jscutlery/semver:github",
+      "options": {
+        "tag": "${tag}",
+        "notes": "${notes}"
       }
     }
   }

@@ -8,7 +8,15 @@
         "preset": "conventional",
         "trackDeps": true,
         "push": true,
-        "noVerify": true
+        "noVerify": true,
+        "postTargets": ["@cryptkeeperzk/app:github"]
+      }
+    },
+    "github": {
+      "executor": "@jscutlery/semver:github",
+      "options": {
+        "tag": "${tag}",
+        "notes": "${notes}"
       }
     }
   }
