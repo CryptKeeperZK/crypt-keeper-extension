@@ -1,5 +1,6 @@
 /* eslint-disable no-console */
 import { cryptkeeperConnect, type CryptKeeperInjectedProvider } from "@cryptkeeperzk/providers";
+import { EventName } from "@cryptkeeperzk/providers/dist/src/event/types";
 import { Identity } from "@cryptkeeperzk/semaphore-identity";
 import { bigintToHex } from "bigint-conversion";
 import { encodeBytes32String } from "ethers";
@@ -217,11 +218,11 @@ export const useCryptKeeper = (): IUseCryptKeeperData => {
       return undefined;
     }
 
-    client.on("login", onLogin);
-    client.on("identityChanged", onIdentityChanged);
-    client.on("logout", onLogout);
-    client.on("addVerifiableCredential", onAddVerifiableCredential);
-    client.on("rejectVerifiableCredential", onRejectVerifiableCredential);
+    client.on(EventName.LOGIN, onLogin);
+    client.on(EventName.IDENTITY_CHANGED, onIdentityChanged);
+    client.on(EventName.LOGOUT, onLogout);
+    client.on(EventName.ADD_VERIFIABLE_CREDENTIAL, onAddVerifiableCredential);
+    client.on(EventName.REJECT_VERIFIABLE_CREDENTIAL, onRejectVerifiableCredential);
 
     getConnectedIdentity();
 

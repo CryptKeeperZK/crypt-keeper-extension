@@ -8,17 +8,23 @@
 export type EventHandler = (data: unknown) => void;
 
 /**
- * Represents the name of an event.
+ * Enumeration representing possible event names.
  *
- * @type {EventName}
- * @typedef {("login" | "identityChanged" | "logout" | "addVerifiableCredential" | "rejectVerifiableCredential")} EventName
+ * @enum {string}
+ * @readonly
+ * @property {string} LOGIN - "login"
+ * @property {string} IDENTITY_CHANGED - "identityChanged"
+ * @property {string} LOGOUT - "logout"
+ * @property {string} ADD_VERIFIABLE_CREDENTIAL - "addVerifiableCredential"
+ * @property {string} REJECT_VERIFIABLE_CREDENTIAL - "rejectVerifiableCredential"
  */
-export type EventName =
-  | "login"
-  | "identityChanged"
-  | "logout"
-  | "addVerifiableCredential"
-  | "rejectVerifiableCredential";
+export enum EventName {
+  LOGIN = "login",
+  IDENTITY_CHANGED = "identityChanged",
+  LOGOUT = "logout",
+  ADD_VERIFIABLE_CREDENTIAL = "addVerifiableCredential",
+  REJECT_VERIFIABLE_CREDENTIAL = "rejectVerifiableCredential",
+}
 
 /**
  * Represents the events object that maps event names to event handlers.
