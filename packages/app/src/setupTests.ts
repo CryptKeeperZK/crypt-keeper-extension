@@ -30,8 +30,8 @@ jest.mock("link-preview-js", (): unknown => ({
 }));
 
 jest.mock("@src/ui/ducks/hooks", (): unknown => ({
-  useAppSelector: jest.fn(),
   useAppDispatch: jest.fn(() => Promise.resolve()),
+  useAppSelector: jest.fn(),
 }));
 
 jest.mock("@src/util/postMessage");
