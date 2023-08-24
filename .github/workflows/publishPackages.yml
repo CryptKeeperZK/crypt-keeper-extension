@@ -38,10 +38,6 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - name: Exit if not on main branch
-        if: endsWith(github.event.base_ref, 'main') == false
-        run: exit -1
-
       - uses: pnpm/action-setup@v2
         with:
           version: latest
