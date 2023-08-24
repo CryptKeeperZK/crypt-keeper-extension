@@ -28,7 +28,7 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  release:
+  publish-packages:
     strategy:
       fail-fast: false
       matrix:
@@ -52,7 +52,7 @@ jobs:
           git config user.name "${{ github.actor }}"
           git config user.email "${{ github.actor}}@users.noreply.github.com"
           pnpm config set commit-hooks false
-          pnpm consig set git-checks false 
+          pnpm config set git-checks false 
           pnpm config set //registry.npmjs.org/:_authToken ${{ secrets.NPM_TOKEN }}
 
       - run: pnpm install --frozen-lockfile --prefer-offline
