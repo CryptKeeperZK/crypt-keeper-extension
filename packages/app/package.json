@@ -66,7 +66,7 @@
     "imagemin-svgo": "^10.0.1",
     "is-ci": "^3.0.1",
     "isomorphic-fetch": "^3.0.0",
-    "jest": "^29.6.3",
+    "jest": "^29.6.4",
     "jest-environment-jsdom": "^29.6.4",
     "lint-staged": "^14.0.1",
     "prettier": "^3.0.0",
