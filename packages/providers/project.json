@@ -24,13 +24,6 @@
         "postTargets": ["@cryptkeeperzk/providers:npm", "@cryptkeeperzk/providers:github"]
       }
     },
-    "npm": {
-      "executor": "ngx-deploy-npm:deploy",
-      "options": {
-        "access": "public",
-        "dryRun": "${dryRun}"
-      }
-    },
     "github": {
       "executor": "@jscutlery/semver:github",
       "options": {
