@@ -21,7 +21,7 @@
         "trackDeps": true,
         "push": true,
         "noVerify": true,
-        "postTargets": ["@cryptkeeperzk/providers:npm", "@cryptkeeperzk/providers:github"]
+        "postTargets": ["@cryptkeeperzk/providers:github"]
       }
     },
     "github": {
