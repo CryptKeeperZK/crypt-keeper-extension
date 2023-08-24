@@ -2,8 +2,6 @@ name: Publish firefox extension
 
 on:
   workflow_dispatch:
-  release:
-    types: [published]
 
 env:
   CRYPTKEEPER_DEBUG: false
