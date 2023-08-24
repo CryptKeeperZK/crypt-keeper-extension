@@ -2,6 +2,10 @@ name: Publish chrome extension
 
 on:
   workflow_dispatch:
+  push:
+    tags:
+      - "@cryptkeeperzk/app-*"
+    
 
 env:
   CRYPTKEEPER_DEBUG: false
