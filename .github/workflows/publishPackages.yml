@@ -63,7 +63,7 @@ jobs:
       - run: pnpm run build
 
       - name: Publish @cryptkeeperzk/providers
-        run: npm publish --access=public
+        run: pnpm publish --access=public
         working-directory: ./packages/providers
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
