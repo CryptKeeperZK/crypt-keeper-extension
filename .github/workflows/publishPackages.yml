@@ -51,15 +51,16 @@ jobs:
         run: |
           git config user.name "${{ github.actor }}"
           git config user.email "${{ github.actor}}@users.noreply.github.com"
-          npm config set commit-hooks false
-          npm config set //registry.npmjs.org/:_authToken ${{ secrets.NPM_TOKEN }}
+          pnpm config set commit-hooks false
+          pnpm consig set git-checks false 
+          pnpm config set //registry.npmjs.org/:_authToken ${{ secrets.NPM_TOKEN }}
 
       - run: pnpm install --frozen-lockfile --prefer-offline
 
       - run: pnpm run build
 
       - name: Publish @cryptkeeperzk/providers
-        run: pnpm publish --access=public
+        run: pnpm publish --access=public --no-git-checks
         working-directory: ./packages/providers
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

@@ -61,7 +61,7 @@ jobs:
           MANIFEST_VERSION: 2
         run: |-
           pnpm run build
-          zip -r cryptkeeper-firefox-extension-v${{ env.EXTENSION_VERSION }}.zip ./packanges/app/dist
+          zip -r cryptkeeper-firefox-extension-v${{ env.EXTENSION_VERSION }}.zip ./packages/app/dist
 
       - name: Upload artifact to firefox store
         run: |-
