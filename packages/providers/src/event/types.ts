@@ -24,6 +24,8 @@ export enum EventName {
   LOGOUT = "logout",
   ADD_VERIFIABLE_CREDENTIAL = "addVerifiableCredential",
   REJECT_VERIFIABLE_CREDENTIAL = "rejectVerifiableCredential",
+  GENERATE_VERIFIABLE_PRESENTATION = "generateVerifiablePresentation",
+  REJECT_VERIFIABLE_PRESENTATION_REQUEST = "rejectVerifiablePresentationRequest",
   REVEAL_COMMITMENT = "revealCommitment",
 }
 

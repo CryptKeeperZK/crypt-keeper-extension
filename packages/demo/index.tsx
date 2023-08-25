@@ -52,8 +52,9 @@ const App = () => {
     connectIdentity,
     genSemaphoreProof,
     genRLNProof,
-    addVerifiableCredentialRequest,
     onRevealConnectedIdentityCommitment,
+    addVerifiableCredentialRequest,
+    generateVerifiablePresentationRequest,
   } = useCryptKeeper();
 
   const params = new URLSearchParams(window.location.search);
@@ -219,8 +220,32 @@ const App = () => {
         <div>
           <h2>Verifiable Credentials</h2>
 
-          <button data-testid="add-verifiable-credential" type="button" onClick={addVerifiableCredentialRequest}>
-            Add a Verifiable Credential
+          <button
+            data-testid="add-verifiable-credential"
+            type="button"
+            onClick={() => addVerifiableCredentialRequest("UniversityDegreeCredential")}
+          >
+            Add a University Degree Verifiable Credential
+          </button>
+
+          <br />
+
+          <br />
+
+          <button
+            data-testid="add-verifiable-credential"
+            type="button"
+            onClick={() => addVerifiableCredentialRequest("DriversLicenseCredential")}
+          >
+            Add a Drivers License Verifiable Credential
+          </button>
+
+          <br />
+
+          <br />
+
+          <button data-testid="add-verifiable-credential" type="button" onClick={generateVerifiablePresentationRequest}>
+            Generate a Verifiable Presentation
           </button>
         </div>
       )}

@@ -5,7 +5,12 @@ import browser from "webextension-polyfill";
 import { setStatus } from "@src/ui/ducks/app";
 import { setConnectedIdentity } from "@src/ui/ducks/identities";
 
-import type { IInjectedMessageData, IReduxAction, ConnectedIdentityMetadata } from "@cryptkeeperzk/types";
+import type {
+  IInjectedMessageData,
+  IReduxAction,
+  ConnectedIdentityMetadata,
+  IVerifiablePresentation,
+} from "@cryptkeeperzk/types";
 
 function injectScript() {
   const url = browser.runtime.getURL("js/injected.js");
@@ -58,6 +63,17 @@ function injectScript() {
         );
         return;
       }
+      case EventName.REVEAL_COMMITMENT: {
+        window.postMessage(
+          {
+            target: "injected-injectedscript",
+            payload: [null, action.payload as { commitment: string }],
+            nonce: EventName.REVEAL_COMMITMENT,
+          },
+          "*",
+        );
+        break;
+      }
       case EventName.ADD_VERIFIABLE_CREDENTIAL: {
         window.postMessage(
           {
@@ -80,12 +96,26 @@ function injectScript() {
         );
         break;
       }
-      case EventName.REVEAL_COMMITMENT: {
+      case EventName.GENERATE_VERIFIABLE_PRESENTATION: {
         window.postMessage(
           {
             target: "injected-injectedscript",
-            payload: [null, action.payload as { commitment: string }],
-            nonce: EventName.REVEAL_COMMITMENT,
+            payload: [
+              null,
+              (action.payload as { verifiablePresentation: IVerifiablePresentation }).verifiablePresentation,
+            ],
+            nonce: EventName.GENERATE_VERIFIABLE_PRESENTATION,
+          },
+          "*",
+        );
+        break;
+      }
+      case EventName.REJECT_VERIFIABLE_PRESENTATION_REQUEST: {
+        window.postMessage(
+          {
+            target: "injected-injectedscript",
+            payload: [null],
+            nonce: EventName.REJECT_VERIFIABLE_PRESENTATION_REQUEST,
           },
           "*",
         );

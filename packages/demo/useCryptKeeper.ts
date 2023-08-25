@@ -13,6 +13,8 @@ import type {
   IRLNSNARKProof,
   ConnectedIdentityMetadata,
   IVerifiableCredential,
+  IVerifiablePresentation,
+  IVerifiablePresentationRequest,
 } from "@cryptkeeperzk/types";
 
 const SERVER_URL = process.env.MERKLE_MOCK_SERVER;
@@ -30,21 +32,51 @@ const genMockIdentityCommitments = (): string[] => {
   return identityCommitments;
 };
 
-const genMockVerifiableCredential = (): IVerifiableCredential => ({
-  context: ["https://www.w3.org/2018/credentials/v1"],
-  id: "http://example.edu/credentials/1872",
-  type: ["VerifiableCredential", "UniversityDegreeCredential"],
-  issuer: {
-    id: "did:example:76e12ec712ebc6f1c221ebfeb1f",
-  },
-  issuanceDate: new Date("2010-01-01T19:23:24Z"),
-  credentialSubject: {
-    id: "did:example:ebfeb1f712ebc6f1c276e12ec21",
-    claims: {
-      type: "BachelorDegree",
-      name: "Bachelor of Science and Arts",
+const genMockVerifiableCredential = (credentialType: string): IVerifiableCredential => {
+  const mockVerifiableCredentialMap: Record<string, IVerifiableCredential> = {
+    UniversityDegreeCredential: {
+      context: ["https://www.w3.org/2018/credentials/v1"],
+      id: "http://example.edu/credentials/1872",
+      type: ["VerifiableCredential", "UniversityDegreeCredential"],
+      issuer: {
+        id: "did:example:76e12ec712ebc6f1c221ebfeb1f",
+      },
+      issuanceDate: new Date("2010-01-01T19:23:24Z"),
+      credentialSubject: {
+        id: "did:example:ebfeb1f712ebc6f1c276e12ec21",
+        claims: {
+          type: "BachelorDegree",
+          name: "Bachelor of Science and Arts",
+        },
+      },
     },
-  },
+    DriversLicenseCredential: {
+      context: ["https://www.w3.org/2018/credentials/v1"],
+      id: "http://example.edu/credentials/1873",
+      type: ["VerifiableCredential", "DriversLicenseCredential"],
+      issuer: {
+        id: "did:example:76e12ec712ebc6f1c221ebfeb1e",
+      },
+      issuanceDate: new Date("2020-01-01T19:23:24Z"),
+      credentialSubject: {
+        id: "did:example:ebfeb1f712ebc6f1c276e12ec21",
+        claims: {
+          name: "John Smith",
+          licenseNumber: "123-abc",
+        },
+      },
+    },
+  };
+
+  if (!(credentialType in mockVerifiableCredentialMap)) {
+    throw new Error("Invalid credential type");
+  }
+
+  return mockVerifiableCredentialMap[credentialType];
+};
+
+const genMockVerifiablePresentationRequest = (): IVerifiablePresentationRequest => ({
+  request: "Please provide your University Degree Credential AND Drivers License Credential.",
 });
 
 export enum MerkleProofType {
@@ -64,8 +96,9 @@ interface IUseCryptKeeperData {
   getConnectedIdentity: () => void;
   genSemaphoreProof: (proofType: MerkleProofType) => void;
   genRLNProof: (proofType: MerkleProofType) => void;
-  addVerifiableCredentialRequest: () => Promise<void>;
   onRevealConnectedIdentityCommitment: () => Promise<void>;
+  addVerifiableCredentialRequest: (credentialType: string) => Promise<void>;
+  generateVerifiablePresentationRequest: () => Promise<void>;
 }
 
 export const useCryptKeeper = (): IUseCryptKeeperData => {
@@ -160,11 +193,19 @@ export const useCryptKeeper = (): IUseCryptKeeperData => {
       });
   };
 
-  const addVerifiableCredentialRequest = useCallback(async () => {
-    const mockVerifiableCredential = genMockVerifiableCredential();
-    const verifiableCredentialJson = JSON.stringify(mockVerifiableCredential);
+  const addVerifiableCredentialRequest = useCallback(
+    async (credentialType: string) => {
+      const mockVerifiableCredential = genMockVerifiableCredential(credentialType);
+      const verifiableCredentialJson = JSON.stringify(mockVerifiableCredential);
 
-    await client?.addVerifiableCredentialRequest(verifiableCredentialJson);
+      await client?.addVerifiableCredentialRequest(verifiableCredentialJson);
+    },
+    [client],
+  );
+
+  const generateVerifiablePresentationRequest = useCallback(async () => {
+    const verifiablePresentationRequest = genMockVerifiablePresentationRequest();
+    await client?.generateVerifiablePresentationRequest(verifiablePresentationRequest);
   }, [client]);
 
   const getConnectedIdentity = useCallback(async () => {
@@ -227,6 +268,16 @@ export const useCryptKeeper = (): IUseCryptKeeperData => {
     [setConnectedIdentityCommitment],
   );
 
+  const onGenerateVerifiablePresentation = useCallback((verifiablePresentation: unknown) => {
+    const credentialList = (verifiablePresentation as IVerifiablePresentation).verifiableCredential;
+    const credentialCount = credentialList ? credentialList.length : 0;
+    toast(`Generated a Verifiable Presentation from ${credentialCount} credentials!`, { type: "success" });
+  }, []);
+
+  const onRejectVerifiablePresentationRequest = useCallback(() => {
+    toast(`Rejected request to generate a Verifiable Presentation.`, { type: "error" });
+  }, []);
+
   useEffect(() => {
     if (!client) {
       return undefined;
@@ -237,6 +288,8 @@ export const useCryptKeeper = (): IUseCryptKeeperData => {
     client.on(EventName.LOGOUT, onLogout);
     client.on(EventName.ADD_VERIFIABLE_CREDENTIAL, onAddVerifiableCredential);
     client.on(EventName.REJECT_VERIFIABLE_CREDENTIAL, onRejectVerifiableCredential);
+    client.on(EventName.GENERATE_VERIFIABLE_PRESENTATION, onGenerateVerifiablePresentation);
+    client.on(EventName.REJECT_VERIFIABLE_PRESENTATION_REQUEST, onRejectVerifiablePresentationRequest);
     client.on(EventName.REVEAL_COMMITMENT, onRevealCommitment);
 
     getConnectedIdentity();
@@ -267,6 +320,7 @@ export const useCryptKeeper = (): IUseCryptKeeperData => {
     genSemaphoreProof,
     genRLNProof,
     addVerifiableCredentialRequest,
+    generateVerifiablePresentationRequest,
     onRevealConnectedIdentityCommitment,
   };
 };

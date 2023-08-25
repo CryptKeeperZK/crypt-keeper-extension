@@ -38,6 +38,7 @@ const RPC_METHOD_ACCESS: Record<RPCAction, boolean> = {
   [RPCAction.GENERATE_SEMAPHORE_PROOF]: true,
   [RPCAction.GENERATE_RLN_PROOF]: true,
   [RPCAction.ADD_VERIFIABLE_CREDENTIAL_REQUEST]: true,
+  [RPCAction.GENERATE_VERIFIABLE_PRESENTATION_REQUEST]: true,
   [RPCAction.REVEAL_CONNECTED_IDENTITY_COMMITMENT_REQUEST]: true,
 };
 
@@ -226,6 +227,21 @@ export default class CryptKeeperController {
       RPCAction.DELETE_ALL_VERIFIABLE_CREDENTIALS,
       this.lockService.ensure,
       this.verifiableCredentialsService.deleteAllVerifiableCredentials,
+    );
+    this.handler.add(
+      RPCAction.GENERATE_VERIFIABLE_PRESENTATION,
+      this.lockService.ensure,
+      this.verifiableCredentialsService.generateVerifiablePresentation,
+    );
+    this.handler.add(
+      RPCAction.GENERATE_VERIFIABLE_PRESENTATION_REQUEST,
+      this.lockService.ensure,
+      this.verifiableCredentialsService.generateVerifiablePresentationRequest,
+    );
+    this.handler.add(
+      RPCAction.REJECT_VERIFIABLE_PRESENTATION_REQUEST,
+      this.lockService.ensure,
+      this.verifiableCredentialsService.rejectVerifiablePresentationRequest,
     );
 
     // Injector
