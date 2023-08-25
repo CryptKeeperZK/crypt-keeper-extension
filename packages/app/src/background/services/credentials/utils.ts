@@ -5,6 +5,7 @@ import {
   ICredentialSubject,
   ICredentialStatus,
   ClaimValue,
+  IVerifiablePresentation,
 } from "@cryptkeeperzk/types";
 import { SHA256 } from "crypto-js";
 import stringify from "json-stable-stringify";
@@ -206,6 +207,16 @@ export function generateInitialMetadataForVerifiableCredential(
   return {
     name: initialVerifiableCredentialName,
     hash: hashVerifiableCredential(verifiableCredential),
+  };
+}
+
+export function generateVerifiablePresentationFromVerifiableCredentials(
+  verifiableCredentials: IVerifiableCredential[],
+): IVerifiablePresentation {
+  return {
+    context: ["https://www.w3.org/2018/credentials/v1"],
+    type: ["VerifiablePresentation"],
+    verifiableCredential: verifiableCredentials,
   };
 }
 

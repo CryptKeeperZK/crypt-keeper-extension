@@ -11,6 +11,7 @@ import type {
   ConnectedIdentityMetadata,
   IRejectedRequest,
   IMerkleProof,
+  IVerifiablePresentation,
 } from "@cryptkeeperzk/types";
 
 function injectScript() {
@@ -64,6 +65,17 @@ function injectScript() {
         );
         return;
       }
+      case EventName.REVEAL_COMMITMENT: {
+        window.postMessage(
+          {
+            target: "injected-injectedscript",
+            payload: [null, action.payload as { commitment: string }],
+            nonce: EventName.REVEAL_COMMITMENT,
+          },
+          "*",
+        );
+        break;
+      }
       case EventName.ADD_VERIFIABLE_CREDENTIAL: {
         window.postMessage(
           {
@@ -114,6 +126,31 @@ function injectScript() {
             target: "injected-injectedscript",
             payload: [null, action.payload as IRejectedRequest],
             nonce: EventName.USER_REJECT,
+          },
+          "*",
+        );
+        break;
+      }
+      case EventName.GENERATE_VERIFIABLE_PRESENTATION: {
+        window.postMessage(
+          {
+            target: "injected-injectedscript",
+            payload: [
+              null,
+              (action.payload as { verifiablePresentation: IVerifiablePresentation }).verifiablePresentation,
+            ],
+            nonce: EventName.GENERATE_VERIFIABLE_PRESENTATION,
+          },
+          "*",
+        );
+        break;
+      }
+      case EventName.REJECT_VERIFIABLE_PRESENTATION_REQUEST: {
+        window.postMessage(
+          {
+            target: "injected-injectedscript",
+            payload: [null],
+            nonce: EventName.REJECT_VERIFIABLE_PRESENTATION_REQUEST,
           },
           "*",
         );

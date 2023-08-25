@@ -8,6 +8,7 @@ import NotificationService from "@src/background/services/notification";
 import SimpleStorage from "@src/background/services/storage";
 import { Paths } from "@src/constants";
 import { OperationType, IRenameVerifiableCredentialArgs, ICryptkeeperVerifiableCredential } from "@src/types";
+import { IVerifiablePresentationRequest } from "@cryptkeeperzk/types";
 import { IAddVerifiableCredentialArgs } from "@src/types/verifiableCredentials";
 
 import type { BackupData, IBackupable } from "@src/background/services/backup";
@@ -18,6 +19,7 @@ import {
   deserializeVerifiableCredential,
   deserializeCryptkeeperVerifiableCredential,
   validateSerializedVerifiableCredential,
+  generateVerifiablePresentationFromVerifiableCredentials,
 } from "./utils";
 
 const VERIFIABLE_CREDENTIALS_KEY = "@@VERIFIABLE-CREDENTIALS@@";
@@ -198,6 +200,83 @@ export default class VerifiableCredentialsService implements IBackupable {
         type: "basic",
       },
     });
+  };
+
+  generateVerifiablePresentationRequest = async (
+    verifiablePresentationRequest: IVerifiablePresentationRequest,
+  ): Promise<void> => {
+    await this.browserController.openPopup({
+      params: {
+        redirect: Paths.GENERATE_VERIFIABLE_PRESENTATION_REQUEST,
+        request: verifiablePresentationRequest.request,
+      },
+    });
+  };
+
+  generateVerifiablePresentation = async (credentialHashes: string[]): Promise<void> => {
+    if (!credentialHashes || credentialHashes.length === 0) {
+      throw new Error("Verifiable Credential hashes are required.");
+    }
+
+    const cryptkeeperVerifiableCredentials = await this.getCryptkeeperVerifiableCredentialsFromStore();
+    const verifiableCredentials = await Promise.all(
+      credentialHashes.map(async (credentialHash) => {
+        if (!cryptkeeperVerifiableCredentials.has(credentialHash)) {
+          throw new Error("Verifiable Credential does not exist.");
+        }
+
+        const serializedCryptkeeperVerifiableCredential = cryptkeeperVerifiableCredentials.get(credentialHash)!;
+        const cryptkeeperVerifiableCredential = await deserializeCryptkeeperVerifiableCredential(
+          serializedCryptkeeperVerifiableCredential,
+        );
+
+        return cryptkeeperVerifiableCredential.verifiableCredential;
+      }),
+    );
+    const verifiablePresentation = generateVerifiablePresentationFromVerifiableCredentials(verifiableCredentials);
+
+    await this.historyService.trackOperation(OperationType.GENERATE_VERIFIABLE_PRESENTATION, {});
+    await this.notificationService.create({
+      options: {
+        title: "Verifiable Presentation generated.",
+        message: `Generated 1 Verifiable Presentation.`,
+        iconUrl: browser.runtime.getURL("/icons/logo.png"),
+        type: "basic",
+      },
+    });
+    const tabs = await browser.tabs.query({ active: true });
+    await Promise.all(
+      tabs.map((tab) =>
+        browser.tabs
+          .sendMessage(tab.id!, {
+            action: EventName.GENERATE_VERIFIABLE_PRESENTATION,
+            verifiablePresentation,
+          })
+          .catch(() => undefined),
+      ),
+    );
+  };
+
+  rejectVerifiablePresentationRequest = async (): Promise<void> => {
+    await this.historyService.trackOperation(OperationType.REJECT_VERIFIABLE_PRESENTATION_REQUEST, {});
+    await this.notificationService.create({
+      options: {
+        title: "Request to generate Verifiable Presentation rejected",
+        message: `Rejected a request to generate 1 Verifiable Presentation.`,
+        iconUrl: browser.runtime.getURL("/icons/logo.png"),
+        type: "basic",
+      },
+    });
+    const tabs = await browser.tabs.query({ active: true });
+    await Promise.all(
+      tabs.map((tab) =>
+        browser.tabs
+          .sendMessage(tab.id!, {
+            action: EventName.REJECT_VERIFIABLE_PRESENTATION_REQUEST,
+          })
+          .catch(() => undefined),
+      ),
+    );
   };
 
   private insertCryptkeeperVerifiableCredentialIntoStore = async (

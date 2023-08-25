@@ -12,6 +12,7 @@ import {
   IRLNSNARKProof,
   IJoinGroupMemberArgs,
   IGenerateGroupMerkleProofArgs,
+  IVerifiablePresentationRequest,
 } from "@cryptkeeperzk/types";
 
 import { RPCAction } from "../constants";
@@ -229,6 +230,18 @@ export class CryptKeeperInjectedProvider {
         return;
       }
 
+      if (data.nonce === (EventName.GENERATE_VERIFIABLE_PRESENTATION as string)) {
+        const [, res] = data.payload;
+        this.emit(EventName.GENERATE_VERIFIABLE_PRESENTATION, res);
+        return;
+      }
+
+      if (data.nonce === (EventName.REJECT_VERIFIABLE_PRESENTATION_REQUEST as string)) {
+        const [, res] = data.payload;
+        this.emit(EventName.REJECT_VERIFIABLE_PRESENTATION_REQUEST, res);
+        return;
+      }
+
       if (!promises.has(data.nonce.toString())) {
         return;
       }
@@ -377,6 +390,21 @@ export class CryptKeeperInjectedProvider {
     await this.post({
       method: RPCAction.ADD_VERIFIABLE_CREDENTIAL_REQUEST,
       payload: serializedVerifiableCredential,
+    });
+  }
+
+  /**
+   * Requests user to provide a verifiable presentation.
+   *
+   * @param {IVerifiablePresentationRequest} verifiablePresentationRequest - The information provided to the user when requesting a verifiable presentation.
+   * @returns {void}
+   */
+  async generateVerifiablePresentationRequest(
+    verifiablePresentationRequest: IVerifiablePresentationRequest,
+  ): Promise<void> {
+    await this.post({
+      method: RPCAction.GENERATE_VERIFIABLE_PRESENTATION_REQUEST,
+      payload: verifiablePresentationRequest,
     });
   }
 

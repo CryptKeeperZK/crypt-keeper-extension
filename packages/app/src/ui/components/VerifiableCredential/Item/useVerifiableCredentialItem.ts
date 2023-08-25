@@ -2,7 +2,6 @@ import { useCallback, useState, FormEvent as ReactFormEvent } from "react";
 import { UseFormRegister, useForm } from "react-hook-form";
 
 import { IVerifiableCredentialMetadata } from "@src/types";
-import { useAppDispatch } from "@src/ui/ducks/hooks";
 
 export interface RenameVerifiableCredentialItemData {
   name: string;
@@ -15,21 +14,21 @@ export interface IUseVerifiableCredentialItemData {
   onSubmit: (event: ReactFormEvent<HTMLFormElement>) => void;
   onToggleRenaming: () => void;
   onDelete: () => Promise<void>;
+  onToggleSelect: () => void;
 }
 
 export interface UseVerifiableCredentialItemArgs {
   metadata: IVerifiableCredentialMetadata;
-  onRename: (hash: string, name: string) => Promise<void>;
-  onDelete: (hash: string) => Promise<void>;
+  onRename?: (hash: string, name: string) => Promise<void>;
+  onDelete?: (hash: string) => Promise<void>;
+  onSelect?: (hash: string) => void;
 }
 
 export const useVerifiableCredentialItem = (
   useVerifiableCredentialItemArgs: UseVerifiableCredentialItemArgs,
 ): IUseVerifiableCredentialItemData => {
-  const { metadata, onRename, onDelete } = useVerifiableCredentialItemArgs;
+  const { metadata, onRename, onDelete, onSelect } = useVerifiableCredentialItemArgs;
   const { hash, name: initialName } = metadata;
-
-  const dispatch = useAppDispatch();
 
   const { register, watch } = useForm<RenameVerifiableCredentialItemData>({
     defaultValues: {
@@ -48,15 +47,25 @@ export const useVerifiableCredentialItem = (
   const onSubmit = useCallback(
     async (event: ReactFormEvent<HTMLFormElement>) => {
       event.preventDefault();
-      await onRename(hash, name);
-      setIsRenaming(false);
+      if (onRename) {
+        await onRename(hash, name);
+        setIsRenaming(false);
+      }
     },
     [onRename, name, setIsRenaming],
   );
 
   const onDeleteVerifiableCredential = useCallback(async () => {
-    await onDelete(hash);
-  }, [onDelete, dispatch]);
+    if (onDelete) {
+      await onDelete(hash);
+    }
+  }, [onDelete, hash]);
+
+  const onToggleSelect = useCallback(() => {
+    if (onSelect) {
+      onSelect(hash);
+    }
+  }, [onSelect, hash]);
 
   return {
     isRenaming,
@@ -65,5 +74,6 @@ export const useVerifiableCredentialItem = (
     onSubmit,
     onToggleRenaming,
     onDelete: onDeleteVerifiableCredential,
+    onToggleSelect,
   };
 };

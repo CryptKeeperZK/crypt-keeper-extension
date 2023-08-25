@@ -1,5 +1,7 @@
 import { IVerifiableCredential } from "@cryptkeeperzk/types";
 import CheckIcon from "@mui/icons-material/Check";
+import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import Box from "@mui/material/Box";
 import IconButton from "@mui/material/IconButton";
@@ -15,21 +17,27 @@ import { useVerifiableCredentialItem } from "./useVerifiableCredentialItem";
 export interface VerifiableCredentialItemProps {
   verifiableCredential: IVerifiableCredential;
   metadata: IVerifiableCredentialMetadata;
-  onRenameVerifiableCredential: (hash: string, name: string) => Promise<void>;
-  onDeleteVerifiableCredential: (hash: string) => Promise<void>;
+  selected?: boolean;
+  onRenameVerifiableCredential?: (hash: string, name: string) => Promise<void>;
+  onDeleteVerifiableCredential?: (hash: string) => Promise<void>;
+  onToggleSelectVerifiableCredential?: (hash: string) => void;
 }
 
 export const VerifiableCredentialItem = ({
   verifiableCredential,
   metadata,
-  onRenameVerifiableCredential,
-  onDeleteVerifiableCredential,
+  selected = undefined,
+  onRenameVerifiableCredential = undefined,
+  onDeleteVerifiableCredential = undefined,
+  onToggleSelectVerifiableCredential = undefined,
 }: VerifiableCredentialItemProps): JSX.Element => {
-  const { isRenaming, name, register, onSubmit, onToggleRenaming, onDelete } = useVerifiableCredentialItem({
-    metadata,
-    onRename: onRenameVerifiableCredential,
-    onDelete: onDeleteVerifiableCredential,
-  });
+  const { isRenaming, name, register, onSubmit, onToggleRenaming, onDelete, onToggleSelect } =
+    useVerifiableCredentialItem({
+      metadata,
+      onRename: onRenameVerifiableCredential,
+      onDelete: onDeleteVerifiableCredential,
+      onSelect: onToggleSelectVerifiableCredential,
+    });
 
   const menuItems = [
     { label: "Rename", isDangerItem: false, onClick: onToggleRenaming },
@@ -40,6 +48,10 @@ export const VerifiableCredentialItem = ({
     typeof verifiableCredential.issuer === "string"
       ? verifiableCredential.issuer
       : verifiableCredential.issuer.id || "unknown";
+
+  const enableSelector = selected !== undefined;
+
+  const enableMenu = onRenameVerifiableCredential !== undefined && onDeleteVerifiableCredential !== undefined;
 
   return (
     <Box
@@ -56,6 +68,27 @@ export const VerifiableCredentialItem = ({
         },
       }}
     >
+      {enableSelector &&
+        (selected ? (
+          <IconButton
+            data-testid={`verifiable-credential-selected-${metadata.hash}`}
+            size="medium"
+            sx={{ mr: 2 }}
+            onClick={onToggleSelect}
+          >
+            <CheckCircleIcon color="primary" fontSize="inherit" />
+          </IconButton>
+        ) : (
+          <IconButton
+            data-testid={`verifiable-credential-unselected-${metadata.hash}`}
+            size="medium"
+            sx={{ mr: 2 }}
+            onClick={onToggleSelect}
+          >
+            <CheckCircleOutlineIcon color="disabled" fontSize="inherit" />
+          </IconButton>
+        ))}
+
       <Box
         sx={{
           display: "flex",
@@ -109,9 +142,11 @@ export const VerifiableCredentialItem = ({
         </Typography>
       </Box>
 
-      <Menu className="flex user-menu" items={menuItems}>
-        <MoreHorizIcon color="secondary" fontSize="inherit" />
-      </Menu>
+      {enableMenu && (
+        <Menu className="flex user-menu" items={menuItems}>
+          <MoreHorizIcon color="secondary" fontSize="inherit" />
+        </Menu>
+      )}
     </Box>
   );
 };

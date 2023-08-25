@@ -61,6 +61,19 @@ export const deleteVerifiableCredential = (verifiableCredentialHash: string) => 
   });
 };
 
+export const generateVerifiablePresentation = (credentialHashes: string[]) => async (): Promise<void> => {
+  await postMessage({
+    method: RPCAction.GENERATE_VERIFIABLE_PRESENTATION,
+    payload: credentialHashes,
+  });
+};
+
+export const rejectVerifiablePresentationRequest = () => async (): Promise<void> => {
+  await postMessage({
+    method: RPCAction.REJECT_VERIFIABLE_PRESENTATION_REQUEST,
+  });
+};
+
 export const fetchVerifiableCredentials = (): TypedThunk => async (dispatch) => {
   const cryptkeeperVerifiableCredentials = await postMessage<ICryptkeeperVerifiableCredential[]>({
     method: RPCAction.GET_ALL_VERIFIABLE_CREDENTIALS,
