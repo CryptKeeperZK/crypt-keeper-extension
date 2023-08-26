@@ -69,7 +69,7 @@ describe("background/services/protocols", () => {
 
     test("should generate rln proof properly with remote merkle proof", async () => {
       const rln = new RLNProofService();
-      mockRlnGenerateProof.mockResolvedValueOnce(emptyFullProof);
+      mockRlnGenerateProof.mockResolvedValue(emptyFullProof);
 
       await rln.genProof(identityDecorater, { ...proofRequest, merkleStorageAddress: "http://localhost:3000/merkle" });
 
@@ -78,7 +78,7 @@ describe("background/services/protocols", () => {
 
     test("should generate rln proof properly with remote merkle proof but with string epoch", async () => {
       const rln = new RLNProofService();
-      mockRlnGenerateProof.mockResolvedValueOnce(emptyFullProof);
+      mockRlnGenerateProof.mockResolvedValue(emptyFullProof);
 
       const proofRequestString: IRlnProofRequest = {
         identitySerialized: "identitySerialized",

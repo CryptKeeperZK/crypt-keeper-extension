@@ -1,4 +1,4 @@
-import type { MerkleProofArtifacts } from "@src/types";
+import type { MerkleProofArtifacts } from "@cryptkeeperzk/types";
 
 export enum ArtifactsProofValidatorErrors {
   INVALID_DEPTH = "invalid-depth",

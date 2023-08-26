@@ -10,7 +10,7 @@ import { useAppDispatch } from "@src/ui/ducks/hooks";
 import { createIdentityRequest, deleteIdentity, setIdentityName } from "@src/ui/ducks/identities";
 import { isExtensionPopupOpen } from "@src/util/browser";
 
-import type { IdentityData } from "@src/types";
+import type { IdentityData } from "@cryptkeeperzk/types";
 
 import { IdentityItem } from "./Item";
 

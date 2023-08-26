@@ -1,6 +1,6 @@
+import { PendingRequest, RequestResolutionAction, RequestResolutionStatus } from "@cryptkeeperzk/types";
 import { useCallback, useState } from "react";
 
-import { PendingRequest, RequestResolutionAction, RequestResolutionStatus } from "@src/types";
 import { useAppDispatch } from "@src/ui/ducks/hooks";
 import { fetchPendingRequests, finalizeRequest, usePendingRequests } from "@src/ui/ducks/requests";
 

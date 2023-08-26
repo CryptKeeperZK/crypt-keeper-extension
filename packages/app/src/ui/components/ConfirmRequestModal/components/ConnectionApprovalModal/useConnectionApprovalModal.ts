@@ -1,7 +1,7 @@
+import { PendingRequest } from "@cryptkeeperzk/types";
 import { getLinkPreview } from "link-preview-js";
 import { ChangeEvent, useCallback, useEffect, useState } from "react";
 
-import { PendingRequest } from "@src/types";
 import { useAppDispatch } from "@src/ui/ducks/hooks";
 import { fetchHostPermissions, setHostPermissions, useHostPermission } from "@src/ui/ducks/permissions";
 

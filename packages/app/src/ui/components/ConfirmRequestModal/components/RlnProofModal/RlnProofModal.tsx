@@ -1,4 +1,5 @@
-import { PendingRequest, ZKProofPayload } from "@src/types";
+import { IRlnProofRequest, PendingRequest } from "@cryptkeeperzk/types";
+
 import { ButtonType, Button } from "@src/ui/components/Button";
 import { FullModal, FullModalContent, FullModalFooter, FullModalHeader } from "@src/ui/components/FullModal";
 import { Icon } from "@src/ui/components/Icon";
@@ -6,21 +7,27 @@ import { Input } from "@src/ui/components/Input";
 
 import "../../confirmModal.scss";
 
-import { useProofModal } from "./useProofModal";
+import { useRlnProofModal } from "./useRlnProofModal";
 
-export interface ProofModalProps {
+export interface RlnProofModalProps {
   len: number;
   loading: boolean;
   error: string;
-  pendingRequest: PendingRequest<ZKProofPayload>;
+  pendingRequest: PendingRequest<Omit<IRlnProofRequest, "identitySerialized">>;
   accept: () => void;
   reject: () => void;
 }
 
-export const ProofModal = ({ pendingRequest, len, reject, accept, loading, error }: ProofModalProps): JSX.Element => {
+export const RlnProofModal = ({
+  pendingRequest,
+  len,
+  reject,
+  accept,
+  loading,
+  error,
+}: RlnProofModalProps): JSX.Element => {
   const {
-    host,
-    operation,
+    urlOrigin,
     payload,
     faviconUrl,
     onAccept,
@@ -28,7 +35,7 @@ export const ProofModal = ({ pendingRequest, len, reject, accept, loading, error
     onOpenCircuitFile,
     onOpenVerificationKeyFile,
     onOpenZkeyFile,
-  } = useProofModal({
+  } = useRlnProofModal({
     pendingRequest,
     accept,
     reject,
@@ -37,8 +44,7 @@ export const ProofModal = ({ pendingRequest, len, reject, accept, loading, error
   return (
     <FullModal className="confirm-modal" data-testid="proof-modal" onClose={onReject}>
       <FullModalHeader>
-        {operation}
-
+        Generate Rate-Limiting Nullifier (RLN) Proof
         {len > 1 && <div className="flex-grow flex flex-row justify-end">{`1 of ${len}`}</div>}
       </FullModalHeader>
 
@@ -55,7 +61,7 @@ export const ProofModal = ({ pendingRequest, len, reject, accept, loading, error
           />
         </div>
 
-        <div className="text-lg font-semibold mb-2 text-center">{`${host} is requesting a semaphore proof`}</div>
+        <div className="text-lg font-semibold mb-2 text-center">{`${urlOrigin} is requesting a Rate-Limiting Nullifier (RLN) proof`}</div>
 
         <div className="semaphore-proof__files flex flex-row items-center mb-2">
           <div className="semaphore-proof__file">
@@ -81,9 +87,22 @@ export const ProofModal = ({ pendingRequest, len, reject, accept, loading, error
           </div>
         </div>
 
-        <Input readOnly className="w-full mb-2" defaultValue={payload?.externalNullifier} label="External Nullifier" />
+        <Input
+          readOnly
+          className="w-full mb-2"
+          defaultValue={payload?.rlnIdentifier.toString()}
+          label="Rln Identifier"
+        />
 
-        <Input readOnly className="w-full mb-2" defaultValue={payload?.signal} label="Signal" />
+        <Input readOnly className="w-full mb-2" defaultValue={payload?.message} label="Message" />
+
+        <Input readOnly className="w-full mb-2" defaultValue={payload?.messageId.toString()} label="Message Id" />
+
+        <Input readOnly className="w-full mb-2" defaultValue={payload?.messageLimit.toString()} label="Message Limit" />
+
+        <Input readOnly className="w-full mb-2" defaultValue={payload?.messageId.toString()} label="Message Id" />
+
+        <Input readOnly className="w-full mb-2" defaultValue={payload?.epoch.toString()} label="Epoch" />
       </FullModalContent>
 
       {error && <div className="text-xs text-red-500 text-center pb-1">{error}</div>}

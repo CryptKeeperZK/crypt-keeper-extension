@@ -1,4 +1,5 @@
-import { PendingRequestType, RequestResolutionStatus } from "@src/types";
+import { PendingRequestType, RequestResolutionStatus } from "@cryptkeeperzk/types";
+
 import { setPendingRequests } from "@src/ui/ducks/requests";
 import pushMessage from "@src/util/pushMessage";
 

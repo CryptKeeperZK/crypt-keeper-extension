@@ -1,3 +1,4 @@
+import { IdentityMetadata, IdentityWeb2Provider } from "@cryptkeeperzk/types";
 import { IconName, IconPrefix } from "@fortawesome/fontawesome-common-types";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Box from "@mui/material/Box";
@@ -5,7 +6,6 @@ import Typography from "@mui/material/Typography";
 import classNames from "classnames";
 
 import { getEnabledFeatures } from "@src/config/features";
-import { IdentityMetadata, IdentityWeb2Provider } from "@src/types";
 import { Icon } from "@src/ui/components/Icon";
 import { Input } from "@src/ui/components/Input";
 import { Menuable } from "@src/ui/components/Menuable";

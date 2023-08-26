@@ -1,6 +1,6 @@
 import { FullProof } from "@cryptkeeperzk/semaphore-proof";
 
-import { ZkCircuit, ZkInputs } from "./zkProof";
+import { IZkMetadata, ZkCircuit, ZkInputs } from "./zkProof";
 
 export type SemaphoreFullProof = FullProof;
 
@@ -23,7 +23,7 @@ export interface ISemaphoreProofRequiredArgs extends Partial<ZkInputs> {
   signal: string;
 }
 
-export interface ISemaphoreProofRequest extends ISemaphoreProofRequiredArgs, Partial<ZkCircuit> {
+export interface ISemaphoreProofRequest extends ISemaphoreProofRequiredArgs, IZkMetadata, Partial<ZkCircuit> {
   identitySerialized?: string;
 }
 

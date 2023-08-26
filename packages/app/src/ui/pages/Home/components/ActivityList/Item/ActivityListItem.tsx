@@ -1,8 +1,9 @@
+import { IdentityWeb2Provider } from "@cryptkeeperzk/types";
 import { IconName, IconPrefix } from "@fortawesome/fontawesome-common-types";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useCallback } from "react";
 
-import { IdentityWeb2Provider, Operation, OperationType } from "@src/types";
+import { Operation, OperationType } from "@src/types";
 import { Icon } from "@src/ui/components/Icon";
 import { Menuable } from "@src/ui/components/Menuable";
 import { ellipsify } from "@src/util/account";

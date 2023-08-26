@@ -1,4 +1,4 @@
-import { ZkInputs } from "@src/types";
+import { ZkInputs } from "@cryptkeeperzk/types";
 
 import { ArtifactsProofValidator } from "./artifact";
 import { MerkleProofValidator } from "./merkle";

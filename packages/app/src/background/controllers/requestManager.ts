@@ -1,6 +1,11 @@
+import {
+  PendingRequest,
+  PendingRequestType,
+  RequestResolutionAction,
+  RequestResolutionStatus,
+} from "@cryptkeeperzk/types";
 import { EventEmitter2 } from "eventemitter2";
 
-import { PendingRequest, PendingRequestType, RequestResolutionAction, RequestResolutionStatus } from "@src/types";
 import { setPendingRequests } from "@src/ui/ducks/requests";
 import pushMessage from "@src/util/pushMessage";
 

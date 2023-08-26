@@ -8,11 +8,10 @@ import browser from "webextension-polyfill";
 
 import { getBrowserPlatform } from "@src/background/shared/utils";
 import { BrowserPlatform } from "@src/constants";
-import { PendingRequestType, IRlnProofRequest, ISemaphoreProofRequest } from "@src/types";
+import { PendingRequestType, IRlnProofRequest, ISemaphoreProofRequest, IZkMetadata } from "@src/types";
 import pushMessage from "@src/util/pushMessage";
 
 import InjectorService from "..";
-import { IMeta } from "../types";
 
 const mockDefaultHost = "http://localhost:3000";
 const mockSerializedIdentity = "identity";
@@ -48,8 +47,8 @@ jest.mock("@src/background/controllers/browserUtils", (): unknown => ({
 
 jest.mock("@src/background/controllers/requestManager", (): unknown => ({
   getInstance: jest.fn(() => ({
-    newRequest: jest.fn((_: PendingRequestType, meta: IMeta) =>
-      meta.origin === "reject" ? Promise.reject() : Promise.resolve(),
+    newRequest: jest.fn((_: PendingRequestType, meta: IZkMetadata) =>
+      meta.urlOrigin === "reject" ? Promise.reject() : Promise.resolve(),
     ),
   })),
 }));
@@ -97,7 +96,7 @@ describe("background/services/injector", () => {
     test("should connect properly", async () => {
       const service = InjectorService.getInstance();
 
-      const result = await service.connect({ origin: mockDefaultHost });
+      const result = await service.connect({ urlOrigin: mockDefaultHost });
 
       expect(result).toStrictEqual({
         canSkipApprove: true,
@@ -108,13 +107,13 @@ describe("background/services/injector", () => {
     test("should throw error if there is no host", async () => {
       const service = InjectorService.getInstance();
 
-      await expect(service.connect({ origin: "" })).rejects.toThrow("Origin not provided");
+      await expect(service.connect({ urlOrigin: "" })).rejects.toThrow("Origin is not set");
     });
 
     test("should connect with approval request properly", async () => {
       const service = InjectorService.getInstance();
 
-      const result = await service.connect({ origin: "new-host" });
+      const result = await service.connect({ urlOrigin: "new-host" });
 
       expect(result).toStrictEqual({
         isApproved: true,
@@ -125,7 +124,7 @@ describe("background/services/injector", () => {
     test("should reject connect request properly", async () => {
       const service = InjectorService.getInstance();
 
-      const result = await service.connect({ origin: "reject" });
+      const result = await service.connect({ urlOrigin: "reject" });
 
       expect(result).toStrictEqual({
         isApproved: false,
@@ -148,9 +147,6 @@ describe("background/services/injector", () => {
       externalNullifier: "externalNullifier",
       signal: "signal",
       merkleStorageAddress: "merkleStorageAddress",
-      circuitFilePath: "js/zkeyFiles/semaphore/semaphore.wasm",
-      zkeyFilePath: "js/zkeyFiles/semaphore/semaphore.zkey",
-      verificationKey: "js/zkeyFiles/semaphore/semaphore.json",
       merkleProofArtifacts: {
         leaves: ["0"],
         depth: 1,
@@ -162,6 +158,9 @@ describe("background/services/injector", () => {
         siblings: ["0"],
         pathIndices: [0],
       },
+      circuitFilePath: "js/zkeyFiles/semaphore/semaphore.wasm",
+      zkeyFilePath: "js/zkeyFiles/semaphore/semaphore.zkey",
+      verificationKey: "js/zkeyFiles/semaphore/semaphore.json",
     };
 
     const emptyFullProof = {
@@ -175,14 +174,14 @@ describe("background/services/injector", () => {
       (pushMessage as jest.Mock).mockReturnValueOnce(emptyFullProof);
       const service = InjectorService.getInstance();
 
-      const result = await service.generateSemaphoreProof(defaultProofRequest, { origin: mockDefaultHost });
+      const result = await service.generateSemaphoreProof(defaultProofRequest, { urlOrigin: mockDefaultHost });
 
       expect(result).toStrictEqual(emptyFullProof);
       expect(pushMessage).toBeCalledTimes(1);
       expect(pushMessage).toBeCalledWith({
         method: RPCAction.GENERATE_SEMAPHORE_PROOF,
-        payload: { ...defaultProofRequest, identitySerialized: mockSerializedIdentity },
-        meta: { origin: mockDefaultHost },
+        payload: { ...defaultProofRequest, urlOrigin: mockDefaultHost, identitySerialized: mockSerializedIdentity },
+        meta: mockDefaultHost,
         source: "offscreen",
       });
     });
@@ -192,7 +191,7 @@ describe("background/services/injector", () => {
 
       const service = InjectorService.getInstance();
 
-      await expect(service.generateSemaphoreProof(defaultProofRequest, { origin: "new-host" })).rejects.toThrow(
+      await expect(service.generateSemaphoreProof(defaultProofRequest, { urlOrigin: "new-host" })).rejects.toThrow(
         "connected identity not found",
       );
       expect(pushMessage).toBeCalledTimes(0);
@@ -201,7 +200,7 @@ describe("background/services/injector", () => {
     test("should throw error if host isn't approved", async () => {
       const service = InjectorService.getInstance();
 
-      await expect(service.generateSemaphoreProof(defaultProofRequest, { origin: "new-host" })).rejects.toThrow(
+      await expect(service.generateSemaphoreProof(defaultProofRequest, { urlOrigin: "new-host" })).rejects.toThrow(
         "new-host is not approved",
       );
       expect(pushMessage).toBeCalledTimes(0);
@@ -216,7 +215,7 @@ describe("background/services/injector", () => {
       (getBrowserPlatform as jest.Mock).mockReturnValueOnce(BrowserPlatform.Firefox);
       const service = InjectorService.getInstance();
 
-      const result = await service.generateSemaphoreProof(defaultProofRequest, { origin: mockDefaultHost });
+      const result = await service.generateSemaphoreProof(defaultProofRequest, { urlOrigin: mockDefaultHost });
       expect(result).toStrictEqual(emptyFullProof);
       expect(pushMessage).toBeCalledTimes(0);
     });
@@ -231,7 +230,7 @@ describe("background/services/injector", () => {
 
       const service = InjectorService.getInstance();
 
-      await expect(service.generateSemaphoreProof(defaultProofRequest, { origin: mockDefaultHost })).rejects.toThrow(
+      await expect(service.generateSemaphoreProof(defaultProofRequest, { urlOrigin: mockDefaultHost })).rejects.toThrow(
         "Error in generateSemaphoreProof(): Injected service: Must set circuitFilePath and zkeyFilePath",
       );
     });
@@ -280,13 +279,13 @@ describe("background/services/injector", () => {
 
       const service = InjectorService.getInstance();
 
-      const result = await service.generateRlnProof(defaultProofRequest, { origin: mockDefaultHost });
+      const result = await service.generateRlnProof(defaultProofRequest, { urlOrigin: mockDefaultHost });
       expect(result).toStrictEqual(emptyFullProof);
       expect(pushMessage).toBeCalledTimes(1);
       expect(pushMessage).toBeCalledWith({
         method: RPCAction.GENERATE_RLN_PROOF_OFFSCREEN,
-        payload: { ...defaultProofRequest, identitySerialized: mockSerializedIdentity },
-        meta: { origin: mockDefaultHost },
+        payload: { ...defaultProofRequest, urlOrigin: mockDefaultHost, identitySerialized: mockSerializedIdentity },
+        meta: mockDefaultHost,
         source: "offscreen",
       });
     });
@@ -296,7 +295,7 @@ describe("background/services/injector", () => {
 
       const service = InjectorService.getInstance();
 
-      await expect(service.generateRlnProof(defaultProofRequest, { origin: mockDefaultHost })).rejects.toThrow(
+      await expect(service.generateRlnProof(defaultProofRequest, { urlOrigin: mockDefaultHost })).rejects.toThrow(
         "connected identity not found",
       );
       expect(pushMessage).toBeCalledTimes(0);
@@ -307,7 +306,7 @@ describe("background/services/injector", () => {
 
       const service = InjectorService.getInstance();
 
-      await expect(service.generateRlnProof(defaultProofRequest, { origin: "new-host" })).rejects.toThrow(
+      await expect(service.generateRlnProof(defaultProofRequest, { urlOrigin: "new-host" })).rejects.toThrow(
         "new-host is not approved",
       );
       expect(pushMessage).toBeCalledTimes(0);
@@ -319,7 +318,7 @@ describe("background/services/injector", () => {
 
       const service = InjectorService.getInstance();
 
-      await expect(service.generateRlnProof(defaultProofRequest, { origin: mockDefaultHost })).rejects.toThrow(
+      await expect(service.generateRlnProof(defaultProofRequest, { urlOrigin: mockDefaultHost })).rejects.toThrow(
         "RLN proofs are not supported with Firefox",
       );
       expect(pushMessage).toBeCalledTimes(0);

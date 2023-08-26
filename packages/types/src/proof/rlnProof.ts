@@ -1,6 +1,6 @@
 import { MerkleProof } from "@cryptkeeperzk/rlnjs";
 
-import { ZkCircuit, ZkInputs } from "./zkProof";
+import { IZkMetadata, ZkCircuit, ZkInputs } from "./zkProof";
 
 export type { RLNFullProof, VerificationKey, RLNSNARKProof } from "@cryptkeeperzk/rlnjs";
 
@@ -41,7 +41,7 @@ export interface IRlnProofRequiredArgs extends Partial<ZkInputs> {
   epoch: string;
 }
 
-export interface IRlnProofRequest extends IRlnProofRequiredArgs, Partial<ZkCircuit> {
+export interface IRlnProofRequest extends IRlnProofRequiredArgs, IZkMetadata, Partial<ZkCircuit> {
   identitySerialized?: string;
 }
 

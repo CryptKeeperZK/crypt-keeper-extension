@@ -1,10 +1,11 @@
+import { EWallet, IdentityStrategy, IdentityWeb2Provider } from "@cryptkeeperzk/types";
 import { BaseSyntheticEvent, useCallback, useMemo } from "react";
 import { Control, useForm, UseFormRegister } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 
 import { getEnabledFeatures } from "@src/config/features";
 import { WEB2_PROVIDER_OPTIONS, IDENTITY_TYPES, Paths } from "@src/constants";
-import { EWallet, IdentityStrategy, IdentityWeb2Provider, SelectOption } from "@src/types";
+import { SelectOption } from "@src/types";
 import { closePopup } from "@src/ui/ducks/app";
 import { useAppDispatch } from "@src/ui/ducks/hooks";
 import { createIdentity } from "@src/ui/ducks/identities";

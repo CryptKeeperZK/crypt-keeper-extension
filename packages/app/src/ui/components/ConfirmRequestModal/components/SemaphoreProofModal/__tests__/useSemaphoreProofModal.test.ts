@@ -2,14 +2,17 @@
  * @jest-environment jsdom
  */
 
+import { PendingRequestType } from "@cryptkeeperzk/types";
 import { act, renderHook, waitFor } from "@testing-library/react";
 
-import { PendingRequestType } from "@src/types";
+import {
+  IUseSemaphoreProofModalArgs,
+  IUseSemaphoreProofModalData,
+  useSemaphoreProofModal,
+} from "../useSemaphoreProofModal";
 
-import { IUseProofModalArgs, IUseProofModalData, useProofModal } from "../useProofModal";
-
-describe("ui/components/ConfirmRequestModal/components/ProofModal/useProofModal", () => {
-  const defaultArgs: IUseProofModalArgs = {
+describe("ui/components/ConfirmRequestModal/components/ProofModal/useSemaphoreProofModal", () => {
+  const defaultArgs: IUseSemaphoreProofModalArgs = {
     pendingRequest: {
       id: "1",
       type: PendingRequestType.SEMAPHORE_PROOF,
@@ -19,7 +22,7 @@ describe("ui/components/ConfirmRequestModal/components/ProofModal/useProofModal"
         circuitFilePath: "circuitFilePath",
         verificationKey: "verificationKey",
         zkeyFilePath: "zkeyFilePath",
-        origin: "http://localhost:3000",
+        urlOrigin: "http://localhost:3000",
       },
     },
     accept: jest.fn(),
@@ -28,8 +31,8 @@ describe("ui/components/ConfirmRequestModal/components/ProofModal/useProofModal"
 
   const jsdomOpen = window.open;
 
-  const waitForData = async (current: IUseProofModalData) => {
-    await waitFor(() => current.host !== "");
+  const waitForData = async (current: IUseSemaphoreProofModalData) => {
+    await waitFor(() => current.urlOrigin !== "");
     await waitFor(() => current.faviconUrl !== "");
   };
 
@@ -47,7 +50,7 @@ describe("ui/components/ConfirmRequestModal/components/ProofModal/useProofModal"
 
   test("should return empty data", () => {
     const { result } = renderHook(() =>
-      useProofModal({
+      useSemaphoreProofModal({
         ...defaultArgs,
         pendingRequest: {
           ...defaultArgs.pendingRequest,
@@ -59,22 +62,22 @@ describe("ui/components/ConfirmRequestModal/components/ProofModal/useProofModal"
 
     expect(result.current.operation).toBe("Generate proof");
     expect(result.current.faviconUrl).toBe("");
-    expect(result.current.host).toBe("");
+    expect(result.current.urlOrigin).toBe("");
     expect(result.current.payload).toBeUndefined();
   });
 
   test("should return initial data", async () => {
-    const { result } = renderHook(() => useProofModal(defaultArgs));
+    const { result } = renderHook(() => useSemaphoreProofModal(defaultArgs));
     await waitForData(result.current);
 
     expect(result.current.operation).toBe("Generate Semaphore Proof");
     expect(result.current.faviconUrl).toBe("http://localhost:3000/favicon.ico");
-    expect(result.current.host).toBe(defaultArgs.pendingRequest.payload?.origin);
+    expect(result.current.urlOrigin).toBe(defaultArgs.pendingRequest.payload?.urlOrigin);
     expect(result.current.payload).toStrictEqual(defaultArgs.pendingRequest.payload);
   });
 
   test("should accept proof generation properly", async () => {
-    const { result } = renderHook(() => useProofModal(defaultArgs));
+    const { result } = renderHook(() => useSemaphoreProofModal(defaultArgs));
     await waitForData(result.current);
 
     act(() => result.current.onAccept());
@@ -83,7 +86,7 @@ describe("ui/components/ConfirmRequestModal/components/ProofModal/useProofModal"
   });
 
   test("should reject proof generation properly", async () => {
-    const { result } = renderHook(() => useProofModal(defaultArgs));
+    const { result } = renderHook(() => useSemaphoreProofModal(defaultArgs));
     await waitForData(result.current);
 
     act(() => result.current.onReject());
@@ -93,7 +96,7 @@ describe("ui/components/ConfirmRequestModal/components/ProofModal/useProofModal"
 
   test("should open circuit file properly", async () => {
     const openSpy = jest.spyOn(window, "open");
-    const { result } = renderHook(() => useProofModal(defaultArgs));
+    const { result } = renderHook(() => useSemaphoreProofModal(defaultArgs));
     await waitForData(result.current);
 
     act(() => result.current.onOpenCircuitFile());
@@ -104,7 +107,7 @@ describe("ui/components/ConfirmRequestModal/components/ProofModal/useProofModal"
 
   test("should open zkey file properly", async () => {
     const openSpy = jest.spyOn(window, "open");
-    const { result } = renderHook(() => useProofModal(defaultArgs));
+    const { result } = renderHook(() => useSemaphoreProofModal(defaultArgs));
     await waitForData(result.current);
 
     act(() => result.current.onOpenZkeyFile());
@@ -115,7 +118,7 @@ describe("ui/components/ConfirmRequestModal/components/ProofModal/useProofModal"
 
   test("should open verification key file properly", async () => {
     const openSpy = jest.spyOn(window, "open");
-    const { result } = renderHook(() => useProofModal(defaultArgs));
+    const { result } = renderHook(() => useSemaphoreProofModal(defaultArgs));
     await waitForData(result.current);
 
     act(() => result.current.onOpenVerificationKeyFile());

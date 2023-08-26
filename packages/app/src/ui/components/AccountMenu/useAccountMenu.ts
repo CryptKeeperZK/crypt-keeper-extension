@@ -1,8 +1,9 @@
+import { EWallet } from "@cryptkeeperzk/types";
 import { useCallback, useMemo, useState, MouseEvent as ReactMouseEvent } from "react";
 import { useNavigate } from "react-router-dom";
 
 import { Paths } from "@src/constants";
-import { EWallet, IUseWalletData } from "@src/types";
+import { IUseWalletData } from "@src/types";
 import { selectAccount } from "@src/ui/ducks/app";
 import { useAppDispatch } from "@src/ui/ducks/hooks";
 import { redirectToNewTab } from "@src/util/browser";
