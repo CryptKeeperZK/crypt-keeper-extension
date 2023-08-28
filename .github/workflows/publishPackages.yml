@@ -1,7 +1,6 @@
 name: Publish packages
 
 on:
-  workflow_dispatch:
   push:
     tags:
       - "@cryptkeeperzk/providers-*"
