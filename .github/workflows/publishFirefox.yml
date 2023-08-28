@@ -64,18 +64,19 @@ jobs:
           mkdir artifacts
           mv cryptkeeper-firefox-extension-v${{ env.EXTENSION_VERSION }}.zip artifacts
 
-      - name: Upload artifact to firefox store
-        run: |-
-          web-ext-submit --api-key=${{ secrets.WEB_EXT_API_KEY }} --api-secret=${{ secrets.WEB_EXT_API_SECRET }} --use-submission-api --channel=listed --artifacts-dir=./artifacts
-
       - name: Sign build
         run: |-
           mv ./artifacts/cryptkeeper-firefox-extension-v${{ env.EXTENSION_VERSION }}.zip .
-          echo $GPG_SIGNING_KEY | base64 --decode | gpg --batch --import
-          gpg --detach-sign --armor cryptkeeper-firefox-extension-v${{ env.EXTENSION_VERSION }}.zip
+          echo $GPG_SIGNING_KEY | base64 --decode | gpg --passphrase $GPG_SIGNING_KEY_PASSPHRASE --batch --pinentry-mode loopback --import
+          gpg --passphrase $GPG_SIGNING_KEY_PASSPHRASE --batch --pinentry-mode loopback --detach-sign --armor cryptkeeper-firefox-extension-v${{ env.EXTENSION_VERSION }}.zip
           echo $(shasum cryptkeeper-firefox-extension-v${{ env.EXTENSION_VERSION }}.zip | awk '{ print $1 }') >> cryptkeeper-firefox-extension-checksum-v${{ env.EXTENSION_VERSION }}.txt
         env:
           GPG_SIGNING_KEY: ${{ secrets.GPG_SIGNING_KEY }}
+          GPG_SIGNING_KEY_PASSPHRASE: ${{ secrets.GPG_SIGNING_KEY_PASSPHRASE }}
+
+      - name: Upload artifact to firefox store
+        run: |-
+          web-ext-submit --api-key=${{ secrets.WEB_EXT_API_KEY }} --api-secret=${{ secrets.WEB_EXT_API_SECRET }} --use-submission-api --channel=listed --artifacts-dir=./artifacts
 
       - name: Upload build
         run: |-
