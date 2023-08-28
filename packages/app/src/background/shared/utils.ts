@@ -15,7 +15,7 @@ import { DeferredPromise } from "@src/types";
  */
 
 /**
- * Create a defered Promise.
+ * Create a deferred Promise.
  *
  * @returns {DeferredPromise} A deferred Promise.
  */

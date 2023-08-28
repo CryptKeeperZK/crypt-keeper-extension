@@ -3,7 +3,7 @@ import { RPCAction } from "@cryptkeeperzk/providers";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 import { serializeCryptkeeperVerifiableCredential } from "@src/background/services/credentials/utils";
-import { CryptkeeperVerifiableCredential, IRenameVerifiableCredentialArgs } from "@src/types";
+import { ICryptkeeperVerifiableCredential, IRenameVerifiableCredentialArgs } from "@src/types";
 import postMessage from "@src/util/postMessage";
 
 import type { TypedThunk } from "@src/ui/store/configureAppStore";
@@ -62,7 +62,7 @@ export const deleteVerifiableCredential = (verifiableCredentialHash: string) => 
 };
 
 export const fetchVerifiableCredentials = (): TypedThunk => async (dispatch) => {
-  const cryptkeeperVerifiableCredentials = await postMessage<CryptkeeperVerifiableCredential[]>({
+  const cryptkeeperVerifiableCredentials = await postMessage<ICryptkeeperVerifiableCredential[]>({
     method: RPCAction.GET_ALL_VERIFIABLE_CREDENTIALS,
   });
 

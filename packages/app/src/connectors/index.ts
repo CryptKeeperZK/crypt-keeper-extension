@@ -9,6 +9,6 @@ export const connectors: [[MetaMask, Web3ReactHooks], [CryptkeeperConnector, Web
   [cryptKeeper, cryptKeeperHooks],
 ];
 
-export * from "./metamask";
-export * from "./cryptKeeper";
-export * from "./utils";
+export { metamask, metamaskHooks } from "./metamask";
+export { CryptkeeperConnector, cryptKeeper, cryptKeeperHooks } from "./cryptKeeper";
+export { getConnectorName } from "./utils";

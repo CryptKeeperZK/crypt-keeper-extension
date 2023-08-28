@@ -1,4 +1,4 @@
-import { PendingRequest } from "@cryptkeeperzk/types";
+import { IPendingRequest } from "@cryptkeeperzk/types";
 
 import { ButtonType, Button } from "@src/ui/components/Button";
 import { Checkbox } from "@src/ui/components/Checkbox";
@@ -8,11 +8,11 @@ import "../../confirmModal.scss";
 
 import { useConnectionApprovalModal } from "./useConnectionApprovalModal";
 
-export interface ConnectionApprovalModalProps {
+export interface IConnectionApprovalModalProps {
   len: number;
   loading: boolean;
   error: string;
-  pendingRequest: PendingRequest<{ origin: string }>;
+  pendingRequest: IPendingRequest<{ origin: string }>;
   accept: () => void;
   reject: () => void;
 }
@@ -24,7 +24,7 @@ export const ConnectionApprovalModal = ({
   loading,
   accept,
   reject,
-}: ConnectionApprovalModalProps): JSX.Element => {
+}: IConnectionApprovalModalProps): JSX.Element => {
   const { checked, host, faviconUrl, onAccept, onReject, onSetApproval } = useConnectionApprovalModal({
     pendingRequest,
     accept,

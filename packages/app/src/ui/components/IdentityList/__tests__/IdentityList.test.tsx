@@ -2,17 +2,17 @@
  * @jest-environment jsdom
  */
 
+import { IIdentityData } from "@cryptkeeperzk/types";
 import { act, render, screen, fireEvent } from "@testing-library/react";
 import { useNavigate } from "react-router-dom";
 
 import { ZERO_ADDRESS } from "@src/config/const";
 import { Paths } from "@src/constants";
-import { IdentityData } from "@src/types";
 import { useAppDispatch } from "@src/ui/ducks/hooks";
 import { deleteIdentity, setIdentityName, useIdentities } from "@src/ui/ducks/identities";
 import { isExtensionPopupOpen } from "@src/util/browser";
 
-import { IdentityList, IdentityListProps } from "..";
+import { IdentityList, IIdentityListProps } from "..";
 
 jest.mock("react-router-dom", (): unknown => ({
   useNavigate: jest.fn(),
@@ -33,13 +33,13 @@ describe("ui/components/IdentityList", () => {
   const mockDispatch = jest.fn(() => Promise.resolve());
   const mockNavigate = jest.fn();
 
-  const defaultIdentities: IdentityData[] = [
+  const defaultIdentities: IIdentityData[] = [
     {
       commitment: "0",
       metadata: {
         account: ZERO_ADDRESS,
         name: "Account #0",
-        identityStrategy: "interrep",
+        identityStrategy: "interep",
         web2Provider: "twitter",
         groups: [],
         host: "http://localhost:3000",
@@ -56,7 +56,7 @@ describe("ui/components/IdentityList", () => {
     },
   ];
 
-  const defaultProps: IdentityListProps = {
+  const defaultProps: IIdentityListProps = {
     isShowAddNew: true,
     isShowMenu: true,
     identities: defaultIdentities,
@@ -163,8 +163,8 @@ describe("ui/components/IdentityList", () => {
 
     expect(dangerModal).toBeInTheDocument();
 
-    const dangerModalaccept = await screen.findByTestId("danger-modal-accept");
-    await act(async () => Promise.resolve(dangerModalaccept.click()));
+    const dangerModalAccept = await screen.findByTestId("danger-modal-accept");
+    await act(async () => Promise.resolve(dangerModalAccept.click()));
 
     expect(deleteIdentity).toBeCalledTimes(1);
     expect(deleteIdentity).toBeCalledWith(defaultIdentities[0].commitment);
@@ -185,8 +185,8 @@ describe("ui/components/IdentityList", () => {
 
     expect(dangerModal).toBeInTheDocument();
 
-    const dangerModalreject = await screen.findByTestId("danger-modal-reject");
-    await act(async () => Promise.resolve(dangerModalreject.click()));
+    const dangerModalReject = await screen.findByTestId("danger-modal-reject");
+    await act(async () => Promise.resolve(dangerModalReject.click()));
 
     expect(deleteIdentity).toBeCalledTimes(0);
     expect(mockDispatch).toBeCalledTimes(0);

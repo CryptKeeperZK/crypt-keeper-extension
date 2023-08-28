@@ -3,9 +3,9 @@ import omit from "lodash/omit";
 import { createNewIdentity } from "..";
 
 describe("identity/factory", () => {
-  test("should return new interrep identity ", () => {
+  test("should return new interep identity ", () => {
     const defaultArgs = {
-      identityStrategy: "interrep" as const,
+      identityStrategy: "interep" as const,
       name: "name",
       account: "account",
       messageSignature: "signature",
@@ -14,7 +14,7 @@ describe("identity/factory", () => {
       host: "http://localhost:3000",
     };
 
-    const identity = createNewIdentity("interrep", defaultArgs);
+    const identity = createNewIdentity("interep", defaultArgs);
 
     expect(identity.metadata).toStrictEqual(omit(defaultArgs, ["messageSignature"]));
   });

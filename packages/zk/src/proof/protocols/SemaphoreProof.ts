@@ -2,12 +2,12 @@ import { generateProof } from "@cryptkeeperzk/semaphore-proof";
 
 import { ZkIdentitySemaphore } from "@src/identity";
 
-import type { SemaphoreFullProof, ISemaphoreProofRequest } from "@cryptkeeperzk/types";
+import type { ISemaphoreFullProof, ISemaphoreProofRequest } from "@cryptkeeperzk/types";
 
 import { IZkProof } from "./types";
 import { getMerkleProof } from "./utils";
 
-export class SemaphoreProofService implements IZkProof<ISemaphoreProofRequest, SemaphoreFullProof> {
+export class SemaphoreProofService implements IZkProof<ISemaphoreProofRequest, ISemaphoreFullProof> {
   async genProof(
     identity: ZkIdentitySemaphore,
     {
@@ -19,7 +19,7 @@ export class SemaphoreProofService implements IZkProof<ISemaphoreProofRequest, S
       merkleStorageAddress,
       merkleProofProvided,
     }: ISemaphoreProofRequest,
-  ): Promise<SemaphoreFullProof> {
+  ): Promise<ISemaphoreFullProof> {
     if (!circuitFilePath || !zkeyFilePath) {
       throw new Error("Zk service: Must set circuitFilePath and zkeyFilePath");
     }
@@ -34,7 +34,11 @@ export class SemaphoreProofService implements IZkProof<ISemaphoreProofRequest, S
         merkleStorageAddress,
       }));
 
-    // TODO: do we need to leave `SnarkArtifacts` param as undefinded?
+    if (!merkleProof) {
+      throw new Error("Error in generating Merkle Proof");
+    }
+
+    // TODO: do we need to leave `SnarkArtifacts` param as undefined?
     const fullProof = await generateProof(identity.zkIdentity, merkleProof, externalNullifier, signal, {
       wasmFilePath: circuitFilePath,
       zkeyFilePath,

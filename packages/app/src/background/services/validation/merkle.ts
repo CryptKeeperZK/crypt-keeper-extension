@@ -3,7 +3,7 @@ import type { MerkleProof } from "@zk-kit/incremental-merkle-tree";
 export enum MerkleProofValidatorErrors {
   INVALID_ROOT = "invalid-root",
   INVALID_SIBLINGS = "invalid-siblings",
-  INVALID_PATH_INDICIES = "invalid-path-indicies",
+  INVALID_PATH_INDICES = "invalid-path-indices",
   INVALID_LEAF = "invalid-leaf",
 }
 
@@ -15,7 +15,7 @@ export class MerkleProofValidator {
   }
 
   validateProof = (): MerkleProofValidator =>
-    this.validateRoot().validateSiblings().validatePathIndicies().validateLeaf();
+    this.validateRoot().validateSiblings().validatePathIndices().validateLeaf();
 
   validateRoot = (): MerkleProofValidator => {
     if (!this.proof.root) {
@@ -33,9 +33,9 @@ export class MerkleProofValidator {
     return this;
   };
 
-  validatePathIndicies = (): MerkleProofValidator => {
+  validatePathIndices = (): MerkleProofValidator => {
     if (!this.proof.pathIndices.length) {
-      throw new Error(MerkleProofValidatorErrors.INVALID_PATH_INDICIES);
+      throw new Error(MerkleProofValidatorErrors.INVALID_PATH_INDICES);
     }
 
     return this;

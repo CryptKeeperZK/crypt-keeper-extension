@@ -1,4 +1,4 @@
-import { RequestHandler } from "@cryptkeeperzk/types";
+import { IRequestHandler } from "@cryptkeeperzk/types";
 import log from "loglevel";
 import browser, { Runtime } from "webextension-polyfill";
 
@@ -8,7 +8,7 @@ import { OffscreenController } from "./Offscreen";
 
 log.setDefaultLevel(isDebugMode() ? "debug" : "info");
 
-const offscreenMessageListener = async (request: RequestHandler, sender: Runtime.MessageSender) => {
+const offscreenMessageListener = async (request: IRequestHandler, sender: Runtime.MessageSender) => {
   log.debug("Inside Offscreen onMessage", request);
   if (request.source !== "offscreen") {
     return;

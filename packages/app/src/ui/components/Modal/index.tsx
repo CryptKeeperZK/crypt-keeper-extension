@@ -6,13 +6,13 @@ import "./modal.scss";
 
 let modalRoot: HTMLDivElement | null;
 
-export interface ModalProps {
+export interface IModalProps {
   className?: string;
   children: ReactNode | ReactNode[];
   onClose: MouseEventHandler;
 }
 
-export const Modal = ({ className, onClose, children, ...rest }: ModalProps): JSX.Element | null => {
+export const Modal = ({ className, onClose, children, ...rest }: IModalProps): JSX.Element | null => {
   modalRoot = document.querySelector("#modal");
 
   const onClick: MouseEventHandler = useCallback((e) => e.stopPropagation(), []);

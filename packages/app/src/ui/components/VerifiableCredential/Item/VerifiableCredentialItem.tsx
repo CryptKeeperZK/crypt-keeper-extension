@@ -1,4 +1,4 @@
-import { VerifiableCredential } from "@cryptkeeperzk/types";
+import { IVerifiableCredential } from "@cryptkeeperzk/types";
 import CheckIcon from "@mui/icons-material/Check";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import Box from "@mui/material/Box";
@@ -6,15 +6,15 @@ import IconButton from "@mui/material/IconButton";
 import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
 
-import { VerifiableCredentialMetadata } from "@src/types";
-import { Menuable } from "@src/ui/components/Menuable";
+import { IVerifiableCredentialMetadata } from "@src/types";
+import { Menu } from "@src/ui/components/Menu";
 import { ellipsify } from "@src/util/account";
 
 import { useVerifiableCredentialItem } from "./useVerifiableCredentialItem";
 
 export interface VerifiableCredentialItemProps {
-  verifiableCredential: VerifiableCredential;
-  metadata: VerifiableCredentialMetadata;
+  verifiableCredential: IVerifiableCredential;
+  metadata: IVerifiableCredentialMetadata;
   onRenameVerifiableCredential: (hash: string, name: string) => Promise<void>;
   onDeleteVerifiableCredential: (hash: string) => Promise<void>;
 }
@@ -109,9 +109,9 @@ export const VerifiableCredentialItem = ({
         </Typography>
       </Box>
 
-      <Menuable className="flex user-menu" items={menuItems}>
+      <Menu className="flex user-menu" items={menuItems}>
         <MoreHorizIcon color="secondary" fontSize="inherit" />
-      </Menuable>
+      </Menu>
     </Box>
   );
 };

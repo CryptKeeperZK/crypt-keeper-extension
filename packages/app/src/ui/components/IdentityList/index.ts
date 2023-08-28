@@ -1,1 +1,1 @@
-export * from "./IdentityList";
+export { type IIdentityListProps, IdentityList } from "./IdentityList";

@@ -2,15 +2,15 @@
  * @jest-environment jsdom
  */
 
+import { PendingRequestType } from "@cryptkeeperzk/types";
 import { act, render, screen } from "@testing-library/react";
 
 import { createModalRoot, deleteModalRoot } from "@src/config/mock/modal";
-import { PendingRequestType } from "@src/types";
 
-import { DefaultApprovalModal, DefaultApprovalModalProps } from "..";
+import { DefaultApprovalModal, IDefaultApprovalModalProps } from "..";
 
 describe("ui/components/ConfirmRequestModal/components/DefaultApprovalModal", () => {
-  const defaultProps: DefaultApprovalModalProps = {
+  const defaultProps: IDefaultApprovalModalProps = {
     len: 1,
     loading: false,
     error: "",

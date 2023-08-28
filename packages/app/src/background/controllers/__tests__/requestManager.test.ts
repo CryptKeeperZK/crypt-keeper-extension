@@ -105,7 +105,7 @@ describe("background/controllers/requestManager", () => {
     });
 
     expect(finalized).toBe(true);
-    expect(requestPromise).rejects.toStrictEqual(new Error("action: unknown not supproted"));
+    expect(requestPromise).rejects.toStrictEqual(new Error("action: unknown not supported"));
   });
 
   test("should handle reject request finalization type properly if user closes popup", async () => {

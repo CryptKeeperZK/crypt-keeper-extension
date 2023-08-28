@@ -5,7 +5,7 @@ import { useCallback } from "react";
 
 import { Operation, OperationType } from "@src/types";
 import { Icon } from "@src/ui/components/Icon";
-import { Menuable } from "@src/ui/components/Menuable";
+import { Menu } from "@src/ui/components/Menu";
 import { ellipsify } from "@src/util/account";
 import { formatDate } from "@src/util/date";
 
@@ -69,9 +69,9 @@ export const ActivityItem = ({ operation, onDelete }: IActivityItemProps): JSX.E
         <div className="text-sm text-gray-500">{formatDate(new Date(operation.createdAt))}</div>
       </div>
 
-      <Menuable className="flex user-menu" items={[{ label: "Delete", isDangerItem: true, onClick: handleDelete }]}>
+      <Menu className="flex user-menu" items={[{ label: "Delete", isDangerItem: true, onClick: handleDelete }]}>
         <Icon className="activity-row__menu-icon" fontAwesome="fas fa-ellipsis-h" />
-      </Menuable>
+      </Menu>
     </div>
   );
 };

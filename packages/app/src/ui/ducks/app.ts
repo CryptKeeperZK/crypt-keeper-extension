@@ -12,7 +12,7 @@ import type { TypedThunk } from "@src/ui/store/configureAppStore";
 
 import { useAppSelector } from "./hooks";
 
-export interface AppState {
+export interface IAppState {
   isInitialized: boolean;
   isUnlocked: boolean;
   isMnemonicGenerated: boolean;
@@ -21,7 +21,7 @@ export interface AppState {
   isDisconnectedPermanently?: boolean;
 }
 
-const initialState: AppState = {
+const initialState: IAppState = {
   isInitialized: false,
   isUnlocked: false,
   isMnemonicGenerated: false,
@@ -33,21 +33,21 @@ const appSlice = createSlice({
   name: "app",
   initialState,
   reducers: {
-    setStatus: (state: AppState, action: PayloadAction<Omit<AppState, "isDisconnectedPermanently">>) => {
+    setStatus: (state: IAppState, action: PayloadAction<Omit<IAppState, "isDisconnectedPermanently">>) => {
       state.isInitialized = action.payload.isInitialized;
       state.isUnlocked = action.payload.isUnlocked;
       state.isMnemonicGenerated = action.payload.isMnemonicGenerated;
     },
 
-    setMnemonic: (state: AppState, action: PayloadAction<string>) => {
+    setMnemonic: (state: IAppState, action: PayloadAction<string>) => {
       state.mnemonic = action.payload;
     },
 
-    setDisconnectedPermanently: (state: AppState, action: PayloadAction<boolean>) => {
+    setDisconnectedPermanently: (state: IAppState, action: PayloadAction<boolean>) => {
       state.isDisconnectedPermanently = action.payload;
     },
 
-    setSelectedAccount: (state: AppState, action: PayloadAction<string>) => {
+    setSelectedAccount: (state: IAppState, action: PayloadAction<string>) => {
       state.selectedAccount = action.payload;
     },
   },
@@ -75,7 +75,7 @@ export const resetPassword =
     postMessage({ method: RPCAction.RESET_PASSWORD, payload: { password, mnemonic } });
 
 export const fetchStatus = (): TypedThunk => async (dispatch) => {
-  const status = await postMessage<AppState>({ method: RPCAction.GET_STATUS });
+  const status = await postMessage<IAppState>({ method: RPCAction.GET_STATUS });
   dispatch(setStatus(status));
 };
 
@@ -137,7 +137,7 @@ export const deleteStorage = (): TypedThunk<Promise<void>> => () => postMessage(
 
 export const useGeneratedMnemonic = (): string | undefined => useAppSelector((state) => state.app.mnemonic, deepEqual);
 
-export const useAppStatus = (): Omit<AppState, "mnemonic"> =>
+export const useAppStatus = (): Omit<IAppState, "mnemonic"> =>
   useAppSelector((state) => omit(state.app, ["mnemonic"]), deepEqual);
 
 export default appSlice.reducer;

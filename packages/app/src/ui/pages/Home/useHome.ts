@@ -6,11 +6,11 @@ import { checkHostApproval } from "@src/ui/ducks/permissions";
 import { useEthWallet } from "@src/ui/hooks/wallet";
 import { getLastActiveTabUrl } from "@src/util/browser";
 
-import type { IdentityData } from "@cryptkeeperzk/types";
+import type { IIdentityData } from "@cryptkeeperzk/types";
 
 export interface IUseHomeData {
-  identities: IdentityData[];
-  connectedIdentity?: IdentityData;
+  identities: IIdentityData[];
+  connectedIdentity?: IIdentityData;
   address?: string;
   refreshConnectionStatus: () => Promise<boolean>;
 }

@@ -1,20 +1,20 @@
-import { MerkleProofArtifacts, MerkleProof } from "./merkle";
+import { IMerkleProofArtifacts, IMerkleProof } from "./merkle";
 
-export interface ZkCircuit {
+export interface IZkCircuit {
   circuitFilePath: string;
   zkeyFilePath: string;
   verificationKey?: string;
 }
 
-export interface ZkInputs {
+export interface IZkInputs {
   merkleStorageAddress: string;
-  merkleProofArtifacts: MerkleProofArtifacts;
-  merkleProofProvided: MerkleProof;
-  merkleProofArtifactsOrStorageAddress: string | MerkleProofArtifacts;
+  merkleProofArtifacts: IMerkleProofArtifacts;
+  merkleProofProvided: IMerkleProof;
+  merkleProofArtifactsOrStorageAddress: string | IMerkleProofArtifacts;
 }
 
 // TODO: that is a redandant
-export interface ZKProofPayload {
+export interface IZKProofPayload {
   externalNullifier: string;
   signal: string;
   merkleStorageAddress?: string;

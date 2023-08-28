@@ -8,7 +8,7 @@ import "./dropdown.scss";
 import { IconOption } from "./IconOption";
 import { IconSingleValue } from "./IconSingleValue";
 
-export interface DropdownProps extends SelectProps<SelectOption> {
+export interface IDropdownProps extends SelectProps<SelectOption> {
   id: string;
   label: string;
   errorMessage?: string;
@@ -16,7 +16,7 @@ export interface DropdownProps extends SelectProps<SelectOption> {
 }
 
 const DropdownUI = (
-  { id, defaultValue, label, errorMessage = "", className, options, value, ...rest }: DropdownProps,
+  { id, defaultValue, label, errorMessage = "", className, options, value, ...rest }: IDropdownProps,
   ref: Ref<SelectInstance<SelectOption, boolean>>,
 ): JSX.Element => (
   <div className={classNames("dropdown", className)}>
@@ -47,4 +47,4 @@ const DropdownUI = (
   </div>
 );
 
-export const Dropdown = forwardRef<SelectInstance<SelectOption, boolean>, DropdownProps>(DropdownUI);
+export const Dropdown = forwardRef<SelectInstance<SelectOption, boolean>, IDropdownProps>(DropdownUI);

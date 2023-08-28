@@ -1,9 +1,9 @@
-import { ReduxAction, RequestHandler } from "@cryptkeeperzk/types";
+import { IReduxAction, IRequestHandler } from "@cryptkeeperzk/types";
 import pick from "lodash/pick";
 import log from "loglevel";
 import browser from "webextension-polyfill";
 
-export default async function pushMessage(message: ReduxAction | RequestHandler): Promise<unknown> {
+export default async function pushMessage(message: IReduxAction | IRequestHandler): Promise<unknown> {
   try {
     const result: unknown = await browser.runtime.sendMessage(message);
     return result;

@@ -1,9 +1,9 @@
-import { IRlnProofRequest, PendingRequest } from "@cryptkeeperzk/types";
+import { IRLNProofRequest, IPendingRequest } from "@cryptkeeperzk/types";
 import { getLinkPreview } from "link-preview-js";
 import { useCallback, useEffect, useState } from "react";
 
 export interface IUseRlnProofModalArgs {
-  pendingRequest: PendingRequest<Omit<IRlnProofRequest, "identitySerialized">>;
+  pendingRequest: IPendingRequest<Omit<IRLNProofRequest, "identitySerialized">>;
   accept: () => void;
   reject: () => void;
 }
@@ -11,7 +11,7 @@ export interface IUseRlnProofModalArgs {
 export interface IUseRlnProofModalData {
   urlOrigin?: string;
   faviconUrl: string;
-  payload?: Omit<IRlnProofRequest, "identitySerialized">;
+  payload?: Omit<IRLNProofRequest, "identitySerialized">;
   onAccept: () => void;
   onReject: () => void;
   onOpenCircuitFile: () => void;

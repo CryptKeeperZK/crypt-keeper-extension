@@ -1,25 +1,24 @@
 /* eslint-disable no-param-reassign */
 import { RPCAction } from "@cryptkeeperzk/providers";
+import {
+  ICreateIdentityUiArgs,
+  IIdentityData,
+  ICreateIdentityRequestArgs,
+  ConnectedIdentityMetadata,
+  IConnectIdentityArgs,
+} from "@cryptkeeperzk/types";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import deepEqual from "fast-deep-equal";
 
-import {
-  HistorySettings,
-  ICreateIdentityUiArgs,
-  IdentityData,
-  Operation,
-  ConnectIdentityArgs,
-  ICreateIdentityRequestArgs,
-  ConnectedIdentityMetadata,
-} from "@src/types";
+import { Operation, HistorySettings } from "@src/types";
 import postMessage from "@src/util/postMessage";
 
 import type { TypedThunk } from "@src/ui/store/configureAppStore";
 
 import { useAppSelector } from "./hooks";
 
-export interface IdentitiesState {
-  identities: IdentityData[];
+export interface IIdentitiesState {
+  identities: IIdentityData[];
   operations: Operation[];
   requestPending: boolean;
   connectedCommitment: string;
@@ -27,7 +26,7 @@ export interface IdentitiesState {
   settings?: HistorySettings;
 }
 
-const initialState: IdentitiesState = {
+const initialState: IIdentitiesState = {
   identities: [],
   operations: [],
   settings: undefined,
@@ -40,27 +39,27 @@ const identitiesSlice = createSlice({
   name: "identities",
   initialState,
   reducers: {
-    setConnectedIdentity: (state: IdentitiesState, action: PayloadAction<ConnectedIdentityMetadata | undefined>) => {
+    setConnectedIdentity: (state: IIdentitiesState, action: PayloadAction<ConnectedIdentityMetadata | undefined>) => {
       state.connectedMetadata = action.payload;
     },
 
-    setConnectedCommitment: (state: IdentitiesState, action: PayloadAction<string>) => {
+    setConnectedCommitment: (state: IIdentitiesState, action: PayloadAction<string>) => {
       state.connectedCommitment = action.payload;
     },
 
-    setIdentityRequestPending: (state: IdentitiesState, action: PayloadAction<boolean>) => {
+    setIdentityRequestPending: (state: IIdentitiesState, action: PayloadAction<boolean>) => {
       state.requestPending = action.payload;
     },
 
-    setIdentities: (state: IdentitiesState, action: PayloadAction<IdentityData[]>) => {
+    setIdentities: (state: IIdentitiesState, action: PayloadAction<IIdentityData[]>) => {
       state.identities = action.payload;
     },
 
-    setOperations: (state: IdentitiesState, action: PayloadAction<Operation[]>) => {
+    setOperations: (state: IIdentitiesState, action: PayloadAction<Operation[]>) => {
       state.operations = action.payload;
     },
 
-    setSettings: (state: IdentitiesState, action: PayloadAction<HistorySettings>) => {
+    setSettings: (state: IIdentitiesState, action: PayloadAction<HistorySettings>) => {
       state.settings = action.payload;
     },
   },
@@ -96,7 +95,7 @@ export const createIdentity =
     });
 
 export const connectIdentity =
-  ({ identityCommitment, host }: ConnectIdentityArgs) =>
+  ({ identityCommitment, host }: IConnectIdentityArgs) =>
   async (): Promise<boolean> =>
     postMessage({
       method: RPCAction.CONNECT_IDENTITY,
@@ -130,7 +129,7 @@ export const deleteAllIdentities = () => async (): Promise<boolean> =>
 
 export const fetchIdentities = (): TypedThunk<Promise<void>> => async (dispatch) => {
   const [identities, metadata, commitment] = await Promise.all([
-    postMessage<IdentityData[]>({ method: RPCAction.GET_IDENTITIES }),
+    postMessage<IIdentityData[]>({ method: RPCAction.GET_IDENTITIES }),
     postMessage<ConnectedIdentityMetadata | undefined>({ method: RPCAction.GET_CONNECTED_IDENTITY_DATA }),
     postMessage<string>({ method: RPCAction.GET_CONNECTED_IDENTITY_COMMITMENT }),
   ]);
@@ -167,23 +166,23 @@ export const enableHistory =
     dispatch(setSettings({ isEnabled }));
   };
 
-export const useIdentities = (): IdentityData[] => useAppSelector((state) => state.identities.identities, deepEqual);
+export const useIdentities = (): IIdentityData[] => useAppSelector((state) => state.identities.identities, deepEqual);
 
-export const useIdentity = (commitment?: string): IdentityData | undefined =>
+export const useIdentity = (commitment?: string): IIdentityData | undefined =>
   useAppSelector((state) =>
     commitment ? state.identities.identities.find((identity) => identity.commitment === commitment) : undefined,
   );
 
-export const useLinkedIdentities = (host: string): IdentityData[] =>
+export const useLinkedIdentities = (host: string): IIdentityData[] =>
   useAppSelector(
     (state) => state.identities.identities.filter((identity) => identity.metadata.host === host),
     deepEqual,
   );
 
-export const useUnlinkedIdentities = (): IdentityData[] =>
+export const useUnlinkedIdentities = (): IIdentityData[] =>
   useAppSelector((state) => state.identities.identities.filter((identity) => !identity.metadata.host), deepEqual);
 
-export const useConnectedIdentity = (): IdentityData | undefined =>
+export const useConnectedIdentity = (): IIdentityData | undefined =>
   useAppSelector((state) => {
     const { identities, connectedCommitment } = state.identities;
     return identities.find(({ commitment }) => commitment === connectedCommitment);

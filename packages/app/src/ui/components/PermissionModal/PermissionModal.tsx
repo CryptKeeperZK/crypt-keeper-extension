@@ -5,12 +5,12 @@ import { Icon } from "@src/ui/components/Icon";
 
 import { usePermissionModal } from "./usePermissionModal";
 
-export interface ConnectionModalProps {
+export interface IPermissionModalProps {
   refreshConnectionStatus: () => Promise<void>;
   onClose: () => void;
 }
 
-export const PermissionModal = ({ refreshConnectionStatus, onClose }: ConnectionModalProps): JSX.Element => {
+export const PermissionModal = ({ refreshConnectionStatus, onClose }: IPermissionModalProps): JSX.Element => {
   const { url, checked, faviconUrl, onRemoveHost, onSetApproval } = usePermissionModal({
     refreshConnectionStatus,
     onClose,

@@ -1,3 +1,5 @@
+import { IVerifiableCredential } from "@cryptkeeperzk/types";
+
 import VerifiableCredentialsService from "@src/background/services/credentials";
 import {
   generateInitialMetadataForVerifiableCredential,
@@ -5,7 +7,7 @@ import {
   serializeVerifiableCredential,
 } from "@src/background/services/credentials/utils";
 import SimpleStorage from "@src/background/services/storage";
-import { CryptkeeperVerifiableCredential, VerifiableCredential } from "@src/types";
+import { ICryptkeeperVerifiableCredential } from "@src/types";
 
 jest.mock("@src/background/services/crypto", (): unknown => ({
   ...jest.requireActual("@src/background/services/crypto"),
@@ -27,7 +29,7 @@ interface MockStorage {
 
 describe("background/services/credentials", () => {
   const defaultCredentialName = "Verifiable Credential";
-  const exampleCredential: VerifiableCredential = {
+  const exampleCredential: IVerifiableCredential = {
     context: ["https://www.w3.org/2018/credentials/v1"],
     id: "did:example:123",
     type: ["VerifiableCredential"],
@@ -46,13 +48,13 @@ describe("background/services/credentials", () => {
     defaultCredentialName,
   );
   const exampleCredentialHash = exampleCredentialMetadata.hash;
-  const exampleCryptkeeperCredential: CryptkeeperVerifiableCredential = {
+  const exampleCryptkeeperCredential: ICryptkeeperVerifiableCredential = {
     verifiableCredential: exampleCredential,
     metadata: exampleCredentialMetadata,
   };
   const exampleCryptkeeperCredentialString = serializeCryptkeeperVerifiableCredential(exampleCryptkeeperCredential);
 
-  const exampleCredentialTwo: VerifiableCredential = {
+  const exampleCredentialTwo: IVerifiableCredential = {
     context: ["https://www.w3.org/2018/credentials/v1"],
     id: "did:example:1234",
     type: ["VerifiableCredential", "NameCredential"],
@@ -71,7 +73,7 @@ describe("background/services/credentials", () => {
     defaultCredentialName,
   );
   const exampleCredentialHashTwo = exampleCredentialMetadataTwo.hash;
-  const exampleCryptkeeperCredentialTwo: CryptkeeperVerifiableCredential = {
+  const exampleCryptkeeperCredentialTwo: ICryptkeeperVerifiableCredential = {
     verifiableCredential: exampleCredentialTwo,
     metadata: exampleCredentialMetadataTwo,
   };

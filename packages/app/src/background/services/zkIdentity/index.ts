@@ -1,3 +1,14 @@
+import {
+  IIdentityMetadata,
+  ISetIdentityNameArgs,
+  EWallet,
+  INewIdentityRequest,
+  ConnectedIdentityMetadata,
+  ISetIdentityHostArgs,
+  IConnectIdentityArgs,
+  ICreateIdentityRequestArgs,
+  IConnectIdentityRequestArgs,
+} from "@cryptkeeperzk/types";
 import { ZkIdentitySemaphore, createNewIdentity } from "@cryptkeeperzk/zk";
 import { bigintToHex } from "bigint-conversion";
 import { pick } from "lodash";
@@ -11,18 +22,7 @@ import SimpleStorage from "@src/background/services/storage";
 import WalletService from "@src/background/services/wallet";
 import { getEnabledFeatures } from "@src/config/features";
 import { Paths } from "@src/constants";
-import {
-  EWallet,
-  IdentityMetadata,
-  SetIdentityNameArgs,
-  NewIdentityRequest,
-  OperationType,
-  ConnectedIdentityMetadata,
-  SetIdentityHostArgs,
-  ConnectIdentityArgs,
-  ICreateIdentityRequestArgs,
-  IConnectIdentityRequestArgs,
-} from "@src/types";
+import { OperationType } from "@src/types";
 import { setIdentities, setConnectedIdentity } from "@src/ui/ducks/identities";
 import { ellipsify } from "@src/util/account";
 import pushMessage from "@src/util/pushMessage";
@@ -121,14 +121,14 @@ export default class ZkIdentityService implements IBackupable {
     }
 
     const features = getEnabledFeatures();
-    const identitesDecrypted = this.cryptoService.decrypt(ciphertext, { mode: ECryptMode.MNEMONIC });
-    const iterableIdentities = JSON.parse(identitesDecrypted) as Iterable<readonly [string, string]>;
+    const identitiesDecrypted = this.cryptoService.decrypt(ciphertext, { mode: ECryptMode.MNEMONIC });
+    const iterableIdentities = JSON.parse(identitiesDecrypted) as Iterable<readonly [string, string]>;
 
     return new Map(
-      features.INTERREP_IDENTITY
+      features.INTEREP_IDENTITY
         ? iterableIdentities
         : [...iterableIdentities].filter(
-            ([, identity]) => ZkIdentitySemaphore.genFromSerialized(identity).metadata.identityStrategy !== "interrep",
+            ([, identity]) => ZkIdentitySemaphore.genFromSerialized(identity).metadata.identityStrategy !== "interep",
           ),
     );
   };
@@ -140,7 +140,7 @@ export default class ZkIdentityService implements IBackupable {
     return { commitments, identities };
   };
 
-  getIdentities = async (): Promise<{ commitment: string; metadata: IdentityMetadata }[]> => {
+  getIdentities = async (): Promise<{ commitment: string; metadata: IIdentityMetadata }[]> => {
     const { commitments, identities } = await this.getIdentityCommitments();
 
     return commitments
@@ -156,12 +156,12 @@ export default class ZkIdentityService implements IBackupable {
       });
   };
 
-  getNumOfIdentites = async (): Promise<number> => {
+  getNumOfIdentities = async (): Promise<number> => {
     const identities = await this.getIdentitiesFromStore();
     return identities.size;
   };
 
-  connectIdentity = async ({ host, identityCommitment }: ConnectIdentityArgs): Promise<boolean> => {
+  connectIdentity = async ({ host, identityCommitment }: IConnectIdentityArgs): Promise<boolean> => {
     const identities = await this.getIdentitiesFromStore();
 
     return this.updateConnectedIdentity({ identities, identityCommitment, host });
@@ -193,7 +193,7 @@ export default class ZkIdentityService implements IBackupable {
     return true;
   };
 
-  private writeConnectedIdentity = async (commitment: string, metadata?: IdentityMetadata): Promise<void> => {
+  private writeConnectedIdentity = async (commitment: string, metadata?: IIdentityMetadata): Promise<void> => {
     const ciphertext = this.cryptoService.encrypt(commitment, { mode: ECryptMode.MNEMONIC });
     await this.connectedIdentityStore.set(ciphertext);
     const connectedMetadata = this.getConnectedIdentityMetadata(metadata);
@@ -210,7 +210,7 @@ export default class ZkIdentityService implements IBackupable {
     );
   };
 
-  private getConnectedIdentityMetadata(metadata?: IdentityMetadata): ConnectedIdentityMetadata | undefined {
+  private getConnectedIdentityMetadata(metadata?: IIdentityMetadata): ConnectedIdentityMetadata | undefined {
     if (!metadata) {
       return undefined;
     }
@@ -218,7 +218,7 @@ export default class ZkIdentityService implements IBackupable {
     return pick(metadata, ["name", "identityStrategy", "web2Provider", "host"]);
   }
 
-  setIdentityName = async ({ identityCommitment, name }: SetIdentityNameArgs): Promise<boolean> => {
+  setIdentityName = async ({ identityCommitment, name }: ISetIdentityNameArgs): Promise<boolean> => {
     const identities = await this.getIdentitiesFromStore();
     const rawIdentity = identities.get(identityCommitment);
 
@@ -235,7 +235,7 @@ export default class ZkIdentityService implements IBackupable {
     return true;
   };
 
-  setIdentityHost = async ({ identityCommitment, host }: SetIdentityHostArgs): Promise<boolean> => {
+  setIdentityHost = async ({ identityCommitment, host }: ISetIdentityHostArgs): Promise<boolean> => {
     const identities = await this.getIdentitiesFromStore();
     const rawIdentity = identities.get(identityCommitment);
 
@@ -291,23 +291,23 @@ export default class ZkIdentityService implements IBackupable {
     groups,
     host,
     options,
-  }: NewIdentityRequest): Promise<string | undefined> => {
+  }: INewIdentityRequest): Promise<string | undefined> => {
     if (walletType === EWallet.ETH_WALLET && !messageSignature) {
       throw new Error("No signature provided");
     }
 
-    const numOfIdentites = await this.getNumOfIdentites();
+    const numOfIdentities = await this.getNumOfIdentities();
 
     const config = {
       ...options,
       groups,
       host,
       identityStrategy: strategy,
-      name: options?.name || `Account # ${numOfIdentites}`,
-      messageSignature: strategy === "interrep" ? messageSignature : undefined,
+      name: options?.name || `Account # ${numOfIdentities}`,
+      messageSignature: strategy === "interep" ? messageSignature : undefined,
     };
 
-    if (walletType === EWallet.CRYPTKEEPER_WALLET && strategy === "interrep") {
+    if (walletType === EWallet.CRYPTKEEPER_WALLET && strategy === "interep") {
       config.messageSignature = await this.walletService.signMessage({
         message: options.message,
         address: options.account,

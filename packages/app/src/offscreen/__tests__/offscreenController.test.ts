@@ -1,4 +1,4 @@
-import { MerkleProof, ISemaphoreProofRequest } from "@cryptkeeperzk/types";
+import { IMerkleProof, ISemaphoreProofRequest } from "@cryptkeeperzk/types";
 import { ZkIdentitySemaphore, getMerkleProof } from "@cryptkeeperzk/zk";
 
 import { mockSemaphoreGenerateProof } from "../mocks";
@@ -34,7 +34,7 @@ describe("offscreen/offscreenController", () => {
     urlOrigin: "origin",
   };
 
-  const defaultMerkleProof: MerkleProof = {
+  const defaultMerkleProof: IMerkleProof = {
     root: 0n,
     leaf: 1n,
     siblings: [],

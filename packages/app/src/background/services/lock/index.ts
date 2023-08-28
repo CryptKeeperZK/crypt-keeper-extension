@@ -202,7 +202,7 @@ export default class LockerService implements IBackupable {
     await this.setupPassword(backupPassword, false);
   };
 
-  private isAuthentic = async (password: string, isBackupAvaiable: boolean): Promise<AuthenticityCheckData> => {
+  private isAuthentic = async (password: string, isBackupAvailable: boolean): Promise<AuthenticityCheckData> => {
     const isPasswordAuthentic = await this.isLockerPasswordAuthentic(password);
     const isNewOnboarding = await this.isNewOnboarding();
 
@@ -210,7 +210,7 @@ export default class LockerService implements IBackupable {
       throw new Error("Incorrect password");
     }
 
-    if (isNewOnboarding && !isBackupAvaiable) {
+    if (isNewOnboarding && !isBackupAvailable) {
       throw new Error("Something badly gone wrong (reinstallation probably required)");
     }
 

@@ -5,7 +5,7 @@ import { useAppDispatch } from "@src/ui/ducks/hooks";
 import { fetchHostPermissions, removeHost, setHostPermissions, useHostPermission } from "@src/ui/ducks/permissions";
 import { getLastActiveTabUrl } from "@src/util/browser";
 
-export interface IUseConnectionModalArgs {
+export interface IUsePermissionModalArgs {
   refreshConnectionStatus: () => Promise<void>;
   onClose: () => void;
 }
@@ -21,7 +21,7 @@ export interface IUsePermissionModalData {
 export const usePermissionModal = ({
   refreshConnectionStatus,
   onClose,
-}: IUseConnectionModalArgs): IUsePermissionModalData => {
+}: IUsePermissionModalArgs): IUsePermissionModalData => {
   const [url, setUrl] = useState<URL>();
   const [faviconUrl, setFaviconUrl] = useState("");
   const host = url?.origin ?? "";

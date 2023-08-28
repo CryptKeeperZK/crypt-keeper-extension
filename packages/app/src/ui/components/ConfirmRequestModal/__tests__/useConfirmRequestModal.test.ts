@@ -2,9 +2,9 @@
  * @jest-environment jsdom
  */
 
+import { RequestResolutionStatus } from "@cryptkeeperzk/types";
 import { act, renderHook, waitFor } from "@testing-library/react";
 
-import { RequestResolutionStatus } from "@src/types";
 import { useAppDispatch } from "@src/ui/ducks/hooks";
 import { fetchPendingRequests, finalizeRequest, usePendingRequests } from "@src/ui/ducks/requests";
 

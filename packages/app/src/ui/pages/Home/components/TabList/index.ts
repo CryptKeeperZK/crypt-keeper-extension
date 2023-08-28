@@ -1,1 +1,1 @@
-export * from "./TabList";
+export { type ITabListProps, TabList } from "./TabList";

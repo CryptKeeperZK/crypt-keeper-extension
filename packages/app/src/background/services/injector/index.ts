@@ -1,5 +1,12 @@
 import { RPCAction } from "@cryptkeeperzk/providers";
 import { generateProof } from "@cryptkeeperzk/semaphore-proof";
+import {
+  PendingRequestType,
+  IRLNProofRequest,
+  ISemaphoreFullProof,
+  ISemaphoreProofRequest,
+  IZkMetadata,
+} from "@cryptkeeperzk/types";
 import { getMerkleProof } from "@cryptkeeperzk/zk";
 import { omit } from "lodash";
 import browser from "webextension-polyfill";
@@ -11,13 +18,6 @@ import LockerService from "@src/background/services/lock";
 import ZkIdentityService from "@src/background/services/zkIdentity";
 import { closeChromeOffscreen, createChromeOffscreen, getBrowserPlatform } from "@src/background/shared/utils";
 import { BrowserPlatform } from "@src/constants";
-import {
-  PendingRequestType,
-  IRlnProofRequest,
-  SemaphoreFullProof,
-  ISemaphoreProofRequest,
-  IZkMetadata,
-} from "@src/types";
 import pushMessage from "@src/util/pushMessage";
 
 import type { IConnectData } from "./types";
@@ -90,7 +90,7 @@ export default class InjectorService {
       merkleStorageAddress,
     }: ISemaphoreProofRequest,
     { urlOrigin }: IZkMetadata,
-  ): Promise<SemaphoreFullProof> => {
+  ): Promise<ISemaphoreFullProof> => {
     if (!urlOrigin) {
       throw new Error("Origin is not set");
     }
@@ -173,7 +173,7 @@ export default class InjectorService {
         source: "offscreen",
       });
 
-      return fullProof as SemaphoreFullProof;
+      return fullProof as ISemaphoreFullProof;
     } catch (error) {
       throw new Error(`Error in generateSemaphoreProof(): ${(error as Error).message}`);
     } finally {
@@ -193,7 +193,7 @@ export default class InjectorService {
       merkleStorageAddress,
       messageLimit,
       messageId,
-    }: IRlnProofRequest,
+    }: IRLNProofRequest,
     { urlOrigin }: IZkMetadata,
   ): Promise<RLNSNARKProof> => {
     if (!urlOrigin) {
@@ -227,7 +227,7 @@ export default class InjectorService {
       throw new Error(`${urlOrigin} is not approved`);
     }
 
-    const rlnProofRequest: IRlnProofRequest = {
+    const rlnProofRequest: IRLNProofRequest = {
       rlnIdentifier,
       message,
       epoch,

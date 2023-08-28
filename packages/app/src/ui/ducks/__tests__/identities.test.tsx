@@ -3,11 +3,12 @@
  */
 
 import { RPCAction } from "@cryptkeeperzk/providers";
+import { EWallet, IIdentityMetadata } from "@cryptkeeperzk/types";
 import { renderHook } from "@testing-library/react";
 import { Provider } from "react-redux";
 
 import { ZERO_ADDRESS } from "@src/config/const";
-import { EWallet, HistorySettings, OperationType, IdentityMetadata } from "@src/types";
+import { HistorySettings, OperationType } from "@src/types";
 import { store } from "@src/ui/store/configureAppStore";
 import postMessage from "@src/util/postMessage";
 
@@ -19,7 +20,7 @@ import {
   deleteIdentity,
   deleteAllIdentities,
   fetchIdentities,
-  IdentitiesState,
+  IIdentitiesState,
   setIdentities,
   setIdentityRequestPending,
   connectIdentity,
@@ -42,13 +43,13 @@ import {
 jest.unmock("@src/ui/ducks/hooks");
 
 describe("ui/ducks/identities", () => {
-  const defaultIdentities: IdentitiesState["identities"] = [
+  const defaultIdentities: IIdentitiesState["identities"] = [
     {
       commitment: "1",
       metadata: {
         account: ZERO_ADDRESS,
         name: "Account #1",
-        identityStrategy: "interrep",
+        identityStrategy: "interep",
         web2Provider: "twitter",
         groups: [],
         host: "http://localhost:3000",
@@ -59,14 +60,14 @@ describe("ui/ducks/identities", () => {
       metadata: {
         account: ZERO_ADDRESS,
         name: "Account #2",
-        identityStrategy: "interrep",
+        identityStrategy: "interep",
         web2Provider: "twitter",
         groups: [],
       },
     },
   ];
 
-  const defaultOperations: IdentitiesState["operations"] = [
+  const defaultOperations: IIdentitiesState["operations"] = [
     {
       id: "1",
       type: OperationType.CREATE_IDENTITY,
@@ -77,7 +78,7 @@ describe("ui/ducks/identities", () => {
 
   const defaultSettings: HistorySettings = { isEnabled: true };
 
-  const defaultConnectedIdentityMetadata: IdentityMetadata = {
+  const defaultConnectedIdentityMetadata: IIdentityMetadata = {
     ...defaultIdentities[0].metadata,
   };
 
@@ -213,7 +214,7 @@ describe("ui/ducks/identities", () => {
       store.dispatch(
         createIdentity({
           walletType: EWallet.ETH_WALLET,
-          strategy: "interrep",
+          strategy: "interep",
           messageSignature: "signature",
           groups: [],
           host: "http://localhost:3000",
@@ -226,7 +227,7 @@ describe("ui/ducks/identities", () => {
     expect(postMessage).toBeCalledWith({
       method: RPCAction.CREATE_IDENTITY,
       payload: {
-        strategy: "interrep",
+        strategy: "interep",
         messageSignature: "signature",
         walletType: EWallet.ETH_WALLET,
         groups: [],

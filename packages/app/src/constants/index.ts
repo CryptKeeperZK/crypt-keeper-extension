@@ -1,4 +1,6 @@
-import { IdentityStrategy, IdentityWeb2Provider, SelectOption } from "@src/types";
+import { IdentityStrategy, IdentityWeb2Provider } from "@cryptkeeperzk/types";
+
+import { SelectOption } from "@src/types";
 
 export const WEB2_PROVIDER_OPTIONS: readonly SelectOption[] = [
   { value: "twitter", label: "Twitter", icon: ["fab", "twitter"] },
@@ -7,7 +9,7 @@ export const WEB2_PROVIDER_OPTIONS: readonly SelectOption[] = [
 ];
 
 export const IDENTITY_TYPES: readonly SelectOption[] = [
-  { value: "interrep", label: "InterRep", icon: null },
+  { value: "interep", label: "InterRep", icon: null },
   { value: "random", label: "Random", icon: null },
 ];
 
@@ -18,7 +20,7 @@ export const WEB2_PROVIDER_TITLE_MAP: Record<IdentityWeb2Provider, string> = {
 };
 
 export const IDENTITY_TYPES_TITLE_MAP: Record<IdentityStrategy, string> = {
-  interrep: "InterRep",
+  interep: "InterRep",
   random: "Random",
 };
 

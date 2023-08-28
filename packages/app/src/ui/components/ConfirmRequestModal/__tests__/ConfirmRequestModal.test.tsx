@@ -2,11 +2,11 @@
  * @jest-environment jsdom
  */
 
+import { PendingRequestType } from "@cryptkeeperzk/types";
 import { render, screen, waitFor } from "@testing-library/react";
 import { Suspense } from "react";
 
 import { createModalRoot, deleteModalRoot } from "@src/config/mock/modal";
-import { PendingRequestType } from "@src/types";
 
 import ConfirmRequestModal from "..";
 import {

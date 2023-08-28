@@ -1,15 +1,15 @@
-import { PendingRequest } from "@cryptkeeperzk/types";
+import { IPendingRequest } from "@cryptkeeperzk/types";
 
 import { ButtonType, Button } from "@src/ui/components/Button";
 import { FullModal, FullModalContent, FullModalFooter, FullModalHeader } from "@src/ui/components/FullModal";
 
 import "../../confirmModal.scss";
 
-export interface DefaultApprovalModalProps {
+export interface IDefaultApprovalModalProps {
   len: number;
   loading: boolean;
   error: string;
-  pendingRequest?: PendingRequest;
+  pendingRequest?: IPendingRequest;
   accept: () => void;
   reject: () => void;
 }
@@ -21,7 +21,7 @@ export const DefaultApprovalModal = ({
   pendingRequest = undefined,
   accept,
   reject,
-}: DefaultApprovalModalProps): JSX.Element => (
+}: IDefaultApprovalModalProps): JSX.Element => (
   <FullModal className="confirm-modal" data-testid="default-approval-modal" onClose={reject}>
     <FullModalHeader>
       Unhandled Request

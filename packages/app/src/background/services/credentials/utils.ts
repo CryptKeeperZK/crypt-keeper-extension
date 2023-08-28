@@ -1,17 +1,16 @@
+import {
+  IVerifiableCredential,
+  ICredentialIssuer,
+  ICredentialProof,
+  ICredentialSubject,
+  ICredentialStatus,
+  ClaimValue,
+} from "@cryptkeeperzk/types";
 import { SHA256 } from "crypto-js";
 import stringify from "json-stable-stringify";
 import * as yup from "yup";
 
-import {
-  VerifiableCredential,
-  CredentialIssuer,
-  CredentialProof,
-  CredentialSubject,
-  CredentialStatus,
-  ClaimValue,
-  CryptkeeperVerifiableCredential,
-  VerifiableCredentialMetadata,
-} from "@src/types";
+import { ICryptkeeperVerifiableCredential, IVerifiableCredentialMetadata } from "@src/types";
 
 let claimValueSchema: yup.Schema<ClaimValue>;
 
@@ -57,16 +56,16 @@ claimValueSchema = yup
       .catch(() => false);
   });
 
-const credentialSubjectSchema: yup.Schema<CredentialSubject> = yup.object({
+const credentialSubjectSchema: yup.Schema<ICredentialSubject> = yup.object({
   id: yup.string().strict().optional(),
   claims: claimValueMapSchema,
 });
 
-const credentialIssuerSchema: yup.Schema<CredentialIssuer> = yup.object({
+const credentialIssuerSchema: yup.Schema<ICredentialIssuer> = yup.object({
   id: yup.string().strict().optional(),
 });
 
-const credentialProofSchema: yup.Schema<CredentialProof> = yup.object({
+const credentialProofSchema: yup.Schema<ICredentialProof> = yup.object({
   id: yup.string().strict().optional(),
   type: yup.array().strict().of(yup.string().required()).required(),
   proofPurpose: yup.string().strict().required(),
@@ -75,12 +74,12 @@ const credentialProofSchema: yup.Schema<CredentialProof> = yup.object({
   proofValue: yup.string().strict().required(),
 });
 
-const credentialStatusSchema: yup.Schema<CredentialStatus> = yup.object({
+const credentialStatusSchema: yup.Schema<ICredentialStatus> = yup.object({
   id: yup.string().strict().required(),
   type: yup.string().strict().required(),
 });
 
-const verifiableCredentialSchema: yup.Schema<VerifiableCredential> = yup.object({
+const verifiableCredentialSchema: yup.Schema<IVerifiableCredential> = yup.object({
   context: yup.array().strict().of(yup.string().required()).required(),
   id: yup.string().strict().optional(),
   type: yup.array().strict().of(yup.string().required()).required(),
@@ -116,7 +115,7 @@ const verifiableCredentialSchema: yup.Schema<VerifiableCredential> = yup.object(
  * @returns A string representing a CryptkeeperVerifiableCredential.
  */
 export function serializeCryptkeeperVerifiableCredential(
-  cryptkeeperVerifiableCredential: CryptkeeperVerifiableCredential,
+  cryptkeeperVerifiableCredential: ICryptkeeperVerifiableCredential,
 ): string {
   return JSON.stringify({
     verifiableCredential: serializeVerifiableCredential(cryptkeeperVerifiableCredential.verifiableCredential),
@@ -131,14 +130,14 @@ export function serializeCryptkeeperVerifiableCredential(
  */
 export async function deserializeCryptkeeperVerifiableCredential(
   serializedCryptkeeperVerifiableCredential: string,
-): Promise<CryptkeeperVerifiableCredential> {
+): Promise<ICryptkeeperVerifiableCredential> {
   if (!serializedCryptkeeperVerifiableCredential) {
     throw new Error("Serialized Cryptkeeper Verifiable Credential is not provided");
   }
 
   const parsedCryptkeeperVerifiableCredential = JSON.parse(serializedCryptkeeperVerifiableCredential) as {
     verifiableCredential: string;
-    metadata: VerifiableCredentialMetadata;
+    metadata: IVerifiableCredentialMetadata;
   };
 
   return {
@@ -154,7 +153,7 @@ export async function deserializeCryptkeeperVerifiableCredential(
  * @param verifiableCredential An object representing a VerifiableCredential.
  * @returns A string representing a VerifiableCredential.
  */
-export function serializeVerifiableCredential(verifiableCredential: VerifiableCredential): string {
+export function serializeVerifiableCredential(verifiableCredential: IVerifiableCredential): string {
   return stringify(verifiableCredential);
 }
 
@@ -165,12 +164,12 @@ export function serializeVerifiableCredential(verifiableCredential: VerifiableCr
  */
 export async function deserializeVerifiableCredential(
   serializedVerifiableCredential: string,
-): Promise<VerifiableCredential> {
+): Promise<IVerifiableCredential> {
   if (!serializedVerifiableCredential) {
     throw new Error("Serialized Verifiable Credential is not provided");
   }
 
-  const deserializedVerifiableCredential = JSON.parse(serializedVerifiableCredential) as VerifiableCredential;
+  const deserializedVerifiableCredential = JSON.parse(serializedVerifiableCredential) as IVerifiableCredential;
 
   return verifiableCredentialSchema.validate(deserializedVerifiableCredential);
 }
@@ -191,7 +190,7 @@ export async function validateSerializedVerifiableCredential(serializedVerifiabl
  * @param verifiableCredential An object representing a VerifiableCredential.
  * @returns A string representing the hash of the VerifiableCredential.
  */
-export function hashVerifiableCredential(verifiableCredential: VerifiableCredential): string {
+export function hashVerifiableCredential(verifiableCredential: IVerifiableCredential): string {
   return SHA256(serializeVerifiableCredential(verifiableCredential)).toString();
 }
 
@@ -201,9 +200,9 @@ export function hashVerifiableCredential(verifiableCredential: VerifiableCredent
  * @returns An object representing the initial metadata for the VerifiableCredential.
  */
 export function generateInitialMetadataForVerifiableCredential(
-  verifiableCredential: VerifiableCredential,
+  verifiableCredential: IVerifiableCredential,
   initialVerifiableCredentialName: string,
-): VerifiableCredentialMetadata {
+): IVerifiableCredentialMetadata {
   return {
     name: initialVerifiableCredentialName,
     hash: hashVerifiableCredential(verifiableCredential),

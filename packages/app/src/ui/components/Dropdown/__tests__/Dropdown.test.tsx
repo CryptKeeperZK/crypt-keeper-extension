@@ -7,10 +7,10 @@ import selectEvent from "react-select-event";
 
 import { WEB2_PROVIDER_OPTIONS } from "@src/constants";
 
-import { Dropdown, DropdownProps } from "..";
+import { Dropdown, IDropdownProps } from "..";
 
 describe("ui/components/Dropdown", () => {
-  const defaultProps: DropdownProps = {
+  const defaultProps: IDropdownProps = {
     id: "web2Provider",
     label: "Web2 Provider",
     options: WEB2_PROVIDER_OPTIONS,

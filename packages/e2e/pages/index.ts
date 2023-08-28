@@ -1,1 +1,1 @@
-export * from "./cryptKeeper";
+export { CryptKeeper } from "./cryptKeeper";

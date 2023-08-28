@@ -1,13 +1,13 @@
-import { RLNProver, type RLNSNARKProof } from "@cryptkeeperzk/rlnjs";
+import { RLNProver } from "@cryptkeeperzk/rlnjs";
 
 import { ZkIdentitySemaphore } from "@src/identity";
 
-import type { IRlnProofRequest, IRlnProverInputs } from "@cryptkeeperzk/types";
+import type { IRLNProofRequest, IRLNProverInputs, IRLNSNARKProof } from "@cryptkeeperzk/types";
 
 import { IZkProof } from "./types";
 import { getMerkleProof, getMessageHash } from "./utils";
 
-export class RLNProofService implements IZkProof<IRlnProofRequest, RLNSNARKProof> {
+export class RLNProofService implements IZkProof<IRLNProofRequest, IRLNSNARKProof> {
   async genProof(
     identity: ZkIdentitySemaphore,
     {
@@ -21,8 +21,8 @@ export class RLNProofService implements IZkProof<IRlnProofRequest, RLNSNARKProof
       merkleProofArtifacts,
       merkleStorageAddress,
       merkleProofProvided,
-    }: IRlnProofRequest,
-  ): Promise<RLNSNARKProof> {
+    }: IRLNProofRequest,
+  ): Promise<IRLNSNARKProof> {
     if (!circuitFilePath || !zkeyFilePath) {
       throw new Error("Zk service: Must set circuitFilePath and zkeyFilePath");
     }
@@ -43,7 +43,7 @@ export class RLNProofService implements IZkProof<IRlnProofRequest, RLNSNARKProof
         merkleStorageAddress,
       }));
 
-    const proofInputs: IRlnProverInputs = {
+    const proofInputs: IRLNProverInputs = {
       rlnIdentifier: rlnIdentifierBigInt,
       identitySecret,
       userMessageLimit,

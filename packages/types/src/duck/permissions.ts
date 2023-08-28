@@ -1,4 +1,4 @@
-export interface HostPermission {
+export interface IHostPermission {
   canSkipApprove: boolean;
   host: string;
 }

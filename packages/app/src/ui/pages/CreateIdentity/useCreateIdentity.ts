@@ -49,7 +49,7 @@ export const useCreateIdentity = (): IUseCreateIdentityData => {
     handleSubmit,
   } = useForm({
     defaultValues: {
-      identityStrategyType: features.INTERREP_IDENTITY ? IDENTITY_TYPES[0] : IDENTITY_TYPES[1],
+      identityStrategyType: features.INTEREP_IDENTITY ? IDENTITY_TYPES[0] : IDENTITY_TYPES[1],
       web2Provider: WEB2_PROVIDER_OPTIONS[0],
       nonce: 0,
     },
@@ -145,7 +145,7 @@ export const useCreateIdentity = (): IUseCreateIdentityData => {
     isLoading: ethWallet.isActivating || cryptKeeperWallet.isActivating || isLoading || isSubmitting,
     isWalletInstalled: ethWallet.isInjectedWallet,
     isWalletConnected: ethWallet.isActive,
-    isProviderAvailable: values.identityStrategyType.value === "interrep",
+    isProviderAvailable: values.identityStrategyType.value === "interep",
     errors: {
       web2Provider: errors.web2Provider?.message,
       identityStrategyType: errors.identityStrategyType?.message,

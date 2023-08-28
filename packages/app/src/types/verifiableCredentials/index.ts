@@ -1,13 +1,13 @@
-import { VerifiableCredential } from "@cryptkeeperzk/types";
+import { IVerifiableCredential } from "@cryptkeeperzk/types";
 
-export interface VerifiableCredentialMetadata {
+export interface IVerifiableCredentialMetadata {
   name: string;
   hash: string;
 }
 
-export interface CryptkeeperVerifiableCredential {
-  verifiableCredential: VerifiableCredential;
-  metadata: VerifiableCredentialMetadata;
+export interface ICryptkeeperVerifiableCredential {
+  verifiableCredential: IVerifiableCredential;
+  metadata: IVerifiableCredentialMetadata;
 }
 
 export interface IAddVerifiableCredentialArgs {

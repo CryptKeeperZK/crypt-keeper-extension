@@ -1,4 +1,4 @@
-import type { MerkleProofArtifacts } from "@cryptkeeperzk/types";
+import type { IMerkleProofArtifacts } from "@cryptkeeperzk/types";
 
 export enum ArtifactsProofValidatorErrors {
   INVALID_DEPTH = "invalid-depth",
@@ -7,9 +7,9 @@ export enum ArtifactsProofValidatorErrors {
 }
 
 export class ArtifactsProofValidator {
-  private proof: MerkleProofArtifacts;
+  private proof: IMerkleProofArtifacts;
 
-  constructor(proof: MerkleProofArtifacts) {
+  constructor(proof: IMerkleProofArtifacts) {
     this.proof = proof;
   }
 

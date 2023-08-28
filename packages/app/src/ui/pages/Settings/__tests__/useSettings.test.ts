@@ -71,7 +71,7 @@ describe("ui/pages/Settings/useSettings", () => {
     jest.clearAllMocks();
   });
 
-  test("should return intitial data", async () => {
+  test("should return initial data", async () => {
     const { result } = renderHook(() => useSettings());
 
     await waitFor(() => result.current.isLoading === false);

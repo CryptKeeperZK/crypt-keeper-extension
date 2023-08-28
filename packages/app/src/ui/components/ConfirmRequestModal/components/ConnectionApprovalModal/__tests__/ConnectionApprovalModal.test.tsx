@@ -2,10 +2,10 @@
  * @jest-environment jsdom
  */
 
+import { PendingRequestType } from "@cryptkeeperzk/types";
 import { act, render, screen } from "@testing-library/react";
 
 import { createModalRoot, deleteModalRoot } from "@src/config/mock/modal";
-import { PendingRequestType } from "@src/types";
 
 import { ConnectionApprovalModal, ConnectionApprovalModalProps } from "..";
 import { useConnectionApprovalModal, IUseConnectionApprovalModalData } from "../useConnectionApprovalModal";

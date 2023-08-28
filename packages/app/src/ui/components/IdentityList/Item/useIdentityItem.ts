@@ -1,3 +1,4 @@
+import { IIdentityMetadata } from "@cryptkeeperzk/types";
 import { type FormEvent, type MouseEvent as ReactMouseEvent, useCallback, useState } from "react";
 import { UseFormRegister, useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
@@ -5,11 +6,9 @@ import { useNavigate } from "react-router-dom";
 import { Paths } from "@src/constants";
 import { redirectToNewTab, replaceUrlParams } from "@src/util/browser";
 
-import type { IdentityMetadata } from "@cryptkeeperzk/types";
-
 export interface IUseIdentityItemArgs {
   commitment: string;
-  metadata: IdentityMetadata;
+  metadata: IIdentityMetadata;
   onDelete: (commitment: string) => Promise<void>;
   onUpdate: (commitment: string, name: string) => Promise<void>;
   onSelect?: (commitment: string) => void;

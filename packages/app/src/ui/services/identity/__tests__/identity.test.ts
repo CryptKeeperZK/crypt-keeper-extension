@@ -5,13 +5,13 @@ import type { JsonRpcSigner } from "ethers";
 import { getMessageTemplate, signWithSigner } from "..";
 
 describe("ui/services/identity", () => {
-  test("should sign message properly for interrep strategy", async () => {
+  test("should sign message properly for interep strategy", async () => {
     const mockSigner = {
-      signMessage: jest.fn().mockResolvedValue("signed-interrep"),
+      signMessage: jest.fn().mockResolvedValue("signed-interep"),
     };
 
     const message = getMessageTemplate({
-      identityStrategyType: "interrep",
+      identityStrategyType: "interep",
       nonce: 0,
       web2Provider: "twitter",
       account: ZERO_ADDRESS,
@@ -25,7 +25,7 @@ describe("ui/services/identity", () => {
     expect(mockSigner.signMessage).toBeCalledWith(
       `Sign this message with account ${ZERO_ADDRESS} to generate your twitter Semaphore identity with key nonce: 0`,
     );
-    expect(result).toBe("signed-interrep");
+    expect(result).toBe("signed-interep");
   });
 
   test("should sign message properly for random strategy", async () => {

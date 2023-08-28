@@ -1,6 +1,5 @@
 import { RPCAction } from "@cryptkeeperzk/providers";
-import { FullProof } from "@cryptkeeperzk/semaphore-proof";
-import { IRlnProofRequest, RequestHandler, ISemaphoreProofRequest } from "@cryptkeeperzk/types";
+import { IRLNProofRequest, IRequestHandler, ISemaphoreProofRequest, ISemaphoreFullProof } from "@cryptkeeperzk/types";
 import { ZkIdentitySemaphore, ZkProofService } from "@cryptkeeperzk/zk";
 import { Runtime } from "webextension-polyfill";
 
@@ -22,7 +21,7 @@ export class OffscreenController {
     this.zkProofService = new ZkProofService();
   }
 
-  handle = (request: RequestHandler, sender: Runtime.MessageSender): Promise<unknown> =>
+  handle = (request: IRequestHandler, sender: Runtime.MessageSender): Promise<unknown> =>
     this.handler.handle(request, { sender, bypass: RPC_METHOD_ACCESS[request.method as RPCAction] });
 
   initialize = (): OffscreenController => {
@@ -40,7 +39,7 @@ export class OffscreenController {
     merkleProofProvided,
     circuitFilePath,
     zkeyFilePath,
-  }: ISemaphoreProofRequest): Promise<FullProof> => {
+  }: ISemaphoreProofRequest): Promise<ISemaphoreFullProof> => {
     if (!identitySerialized) {
       throw new Error("Offscreen: Serialized Identity is not set");
     }
@@ -71,7 +70,7 @@ export class OffscreenController {
     merkleProofProvided,
     circuitFilePath,
     zkeyFilePath,
-  }: IRlnProofRequest): Promise<string> => {
+  }: IRLNProofRequest): Promise<string> => {
     if (!identitySerialized) {
       throw new Error("Offscreen: Serialized Identity is not set");
     }

@@ -1,4 +1,4 @@
-import { IRlnProofRequest, PendingRequest, PendingRequestType, ZKProofPayload } from "@cryptkeeperzk/types";
+import { IRLNProofRequest, IPendingRequest, PendingRequestType, IZKProofPayload } from "@cryptkeeperzk/types";
 
 import { SemaphoreProofModal, ConnectionApprovalModal, DefaultApprovalModal } from "./components";
 import { RlnProofModal } from "./components/RlnProofModal";
@@ -18,7 +18,7 @@ const ConfirmRequestModal = (): JSX.Element | null => {
           error={error}
           len={pendingRequests.length}
           loading={loading}
-          pendingRequest={pendingRequest as PendingRequest<{ origin: string }>}
+          pendingRequest={pendingRequest as IPendingRequest<{ origin: string }>}
           reject={reject}
         />
       );
@@ -29,7 +29,7 @@ const ConfirmRequestModal = (): JSX.Element | null => {
           error={error}
           len={pendingRequests.length}
           loading={loading}
-          pendingRequest={pendingRequest as PendingRequest<ZKProofPayload>}
+          pendingRequest={pendingRequest as IPendingRequest<IZKProofPayload>}
           reject={reject}
         />
       );
@@ -40,7 +40,7 @@ const ConfirmRequestModal = (): JSX.Element | null => {
           error={error}
           len={pendingRequests.length}
           loading={loading}
-          pendingRequest={pendingRequest as PendingRequest<Omit<IRlnProofRequest, "identitySerialized">>}
+          pendingRequest={pendingRequest as IPendingRequest<Omit<IRLNProofRequest, "identitySerialized">>}
           reject={reject}
         />
       );

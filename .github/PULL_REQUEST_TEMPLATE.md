@@ -15,7 +15,7 @@ This is a problem because ...
 In order to solve this problem, this pull request ...
 -->
 
-## More Information
+## Related Issues
 
 <!--
 Are there any issues, Slack conversations, Zendesk issues, user stories, etc. reviewers should consult to understand this pull request better? For instance:
@@ -24,7 +24,7 @@ Are there any issues, Slack conversations, Zendesk issues, user stories, etc. re
 * See: #67890
 -->
 
-## Screenshots/Screencaps
+## Screenshots
 
 <!-- If you're making a change to the UI, make sure to capture a screenshot or a short video showing off your work! -->
 

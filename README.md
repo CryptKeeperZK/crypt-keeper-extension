@@ -42,7 +42,7 @@ These injected providers allow applications to establish a connection with the C
 Proof generation in the Semaphore library can be enabled in two ways:
 
 1. **Providing Merkle Witness Directly:** You can generate a proof by directly providing the necessary Merkle witness. This allows you to use pre-computed witness data.
-2. **Using a Secure Service Address:** by providing a secure service address from which the merkle witness should be obtained
+2. **Using a Secure Service Address:** by providing a secure service address from which the Merkle witness should be obtained
 
 # Development
 To set up the development environment, follow these steps:

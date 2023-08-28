@@ -1,4 +1,4 @@
-import { ZkInputs } from "@cryptkeeperzk/types";
+import { IZkInputs } from "@cryptkeeperzk/types";
 
 import { validateZkInputs } from "..";
 
@@ -19,7 +19,7 @@ describe("background/services/zkValidator", () => {
   test("should validate artifacts properly", () => {
     const args = {
       merkleProofArtifacts: { depth: 1, leaves: ["leaf-1"], leavesPerNode: 1 },
-    } as Required<ZkInputs>;
+    } as Required<IZkInputs>;
 
     const result = validateZkInputs(args);
 
@@ -29,7 +29,7 @@ describe("background/services/zkValidator", () => {
   test("should validate proof properly with storage address", () => {
     const args = {
       merkleStorageAddress: "merkleStorageAddress",
-    } as Required<ZkInputs>;
+    } as Required<IZkInputs>;
 
     const result = validateZkInputs(args);
 
@@ -37,6 +37,6 @@ describe("background/services/zkValidator", () => {
   });
 
   test("should throw error if there is no any input", () => {
-    expect(() => validateZkInputs({} as Required<ZkInputs>)).toThrowError("no proof provided");
+    expect(() => validateZkInputs({} as Required<IZkInputs>)).toThrowError("no proof provided");
   });
 });

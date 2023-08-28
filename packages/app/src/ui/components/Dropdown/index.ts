@@ -1,1 +1,1 @@
-export * from "./Dropdown";
+export { type IDropdownProps, Dropdown } from "./Dropdown";

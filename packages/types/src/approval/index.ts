@@ -1,4 +1,4 @@
-export interface Approvals {
+export interface IApprovals {
   isApproved: boolean;
   canSkipApprove: boolean;
 }

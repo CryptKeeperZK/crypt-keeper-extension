@@ -42,7 +42,7 @@ const CreateIdentity = (): JSX.Element => {
         <FullModalHeader onClose={onCloseModal}>Create identity</FullModalHeader>
 
         <FullModalContent>
-          {features.INTERREP_IDENTITY ? (
+          {features.INTEREP_IDENTITY ? (
             <>
               <Controller
                 control={control}
@@ -54,7 +54,7 @@ const CreateIdentity = (): JSX.Element => {
                     className="my-2"
                     errorMessage={errors.identityStrategyType}
                     id="identityStrategyType"
-                    isDisabled={!features.INTERREP_IDENTITY}
+                    isDisabled={!features.INTEREP_IDENTITY}
                     label="Identity type"
                     options={IDENTITY_TYPES}
                     onChange={field.onChange as DropdownChangeHandler}

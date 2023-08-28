@@ -7,12 +7,8 @@ import HistoryService from "@src/background/services/history";
 import NotificationService from "@src/background/services/notification";
 import SimpleStorage from "@src/background/services/storage";
 import { Paths } from "@src/constants";
-import {
-  OperationType,
-  CryptkeeperVerifiableCredential,
-  IRenameVerifiableCredentialArgs,
-  IAddVerifiableCredentialArgs,
-} from "@src/types";
+import { OperationType, IRenameVerifiableCredentialArgs, ICryptkeeperVerifiableCredential } from "@src/types";
+import { IAddVerifiableCredentialArgs } from "@src/types/verifiableCredentials";
 
 import type { BackupData, IBackupable } from "@src/background/services/backup";
 
@@ -93,7 +89,7 @@ export default class VerifiableCredentialsService implements IBackupable {
     try {
       const verifiableCredential = await deserializeVerifiableCredential(serializedVerifiableCredential);
       const metadata = generateInitialMetadataForVerifiableCredential(verifiableCredential, verifiableCredentialName);
-      const cryptkeeperVerifiableCredential: CryptkeeperVerifiableCredential = {
+      const cryptkeeperVerifiableCredential: ICryptkeeperVerifiableCredential = {
         verifiableCredential,
         metadata,
       };
@@ -149,7 +145,7 @@ export default class VerifiableCredentialsService implements IBackupable {
     });
   };
 
-  getAllVerifiableCredentials = async (): Promise<CryptkeeperVerifiableCredential[]> => {
+  getAllVerifiableCredentials = async (): Promise<ICryptkeeperVerifiableCredential[]> => {
     const cryptkeeperVerifiableCredentials = await this.getCryptkeeperVerifiableCredentialsFromStore();
     const cryptkeeperVerifiableCredentialsArray = Array.from(cryptkeeperVerifiableCredentials.values());
 
@@ -204,7 +200,7 @@ export default class VerifiableCredentialsService implements IBackupable {
   };
 
   private insertCryptkeeperVerifiableCredentialIntoStore = async (
-    cryptkeeperVerifiableCredential: CryptkeeperVerifiableCredential,
+    cryptkeeperVerifiableCredential: ICryptkeeperVerifiableCredential,
   ): Promise<void> => {
     const verifiableCredentialHash = cryptkeeperVerifiableCredential.metadata.hash;
 

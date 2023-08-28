@@ -6,11 +6,11 @@ export interface ItemProps {
   onClick: (e: ReactMouseEvent) => Promise<void> | void;
 }
 
-export interface IUseMenuableArgs {
+export interface IUseMenuArgs {
   items: ItemProps[];
 }
 
-export interface IUseMenuableData {
+export interface IUseMenuData {
   menuRef: RefObject<HTMLButtonElement>;
   isShowing: boolean;
   menuItems: ItemProps[];
@@ -22,7 +22,7 @@ export interface IUseMenuableData {
   onDangerModalShow: (event: ReactMouseEvent) => void;
 }
 
-export const useMenuable = ({ items }: IUseMenuableArgs): IUseMenuableData => {
+export const useMenu = ({ items }: IUseMenuArgs): IUseMenuData => {
   const [isShowing, setShowing] = useState(false);
   const [dangerItem, setDangerItem] = useState<ItemProps>();
   const [isOpenDangerModal, setOpenDangerModal] = useState(false);

@@ -2,9 +2,9 @@
  * @jest-environment jsdom
  */
 
+import { PendingRequestType } from "@cryptkeeperzk/types";
 import { act, renderHook, waitFor } from "@testing-library/react";
 
-import { PendingRequestType } from "@src/types";
 import { useAppDispatch } from "@src/ui/ducks/hooks";
 import { fetchHostPermissions, setHostPermissions, useHostPermission } from "@src/ui/ducks/permissions";
 

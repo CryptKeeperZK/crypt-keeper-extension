@@ -1,1 +1,1 @@
-export { DefaultApprovalModal, type DefaultApprovalModalProps } from "./DefaultApprovalModal";
+export { DefaultApprovalModal, type IDefaultApprovalModalProps } from "./DefaultApprovalModal";

@@ -27,7 +27,7 @@ const mockDefaultOperations: Operation[] = [
     identity: {
       commitment: "1234",
       metadata: {
-        identityStrategy: "interrep",
+        identityStrategy: "interep",
         account: ZERO_ADDRESS,
         name: "Account #2",
         groups: [],
@@ -42,7 +42,7 @@ const mockDefaultOperations: Operation[] = [
     identity: {
       commitment: "1234",
       metadata: {
-        identityStrategy: "interrep",
+        identityStrategy: "interep",
         account: ZERO_ADDRESS,
         name: "Account #3",
         groups: [],
@@ -86,7 +86,7 @@ describe("background/services/history", () => {
   const service = HistoryService.getInstance();
 
   beforeEach(() => {
-    (getEnabledFeatures as jest.Mock).mockReturnValue({ INTERREP_IDENTITY: true });
+    (getEnabledFeatures as jest.Mock).mockReturnValue({ INTEREP_IDENTITY: true });
   });
 
   afterEach(async () => {
@@ -118,8 +118,8 @@ describe("background/services/history", () => {
     expect(service.getSettings()).toStrictEqual(mockDefaultSettings);
   });
 
-  test("should load history operations without interrep identities", async () => {
-    (getEnabledFeatures as jest.Mock).mockReturnValue({ INTERREP_IDENTITY: false });
+  test("should load history operations without interep identities", async () => {
+    (getEnabledFeatures as jest.Mock).mockReturnValue({ INTEREP_IDENTITY: false });
 
     const [historyStore, settingsStore] = (SimpleStorage as jest.Mock).mock.instances as [MockStorage, MockStorage];
     historyStore.get.mockResolvedValue(mockSerializedDefaultOperations);

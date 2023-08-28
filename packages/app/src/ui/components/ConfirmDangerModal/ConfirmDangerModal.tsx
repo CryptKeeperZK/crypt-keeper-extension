@@ -7,13 +7,13 @@ import { FullModalContent, FullModalFooter, FullModalHeader } from "@src/ui/comp
 
 import { style } from "./style";
 
-export interface BasicModalProps {
+export interface IBasicModalProps {
   isOpenModal: boolean;
   reject: (e: ReactMouseEvent) => void;
   accept: (e: ReactMouseEvent) => void;
 }
 
-export const ConfirmDangerModal = ({ isOpenModal, reject, accept }: BasicModalProps): JSX.Element => (
+export const ConfirmDangerModal = ({ isOpenModal, reject, accept }: IBasicModalProps): JSX.Element => (
   <Modal
     aria-describedby="modal-modal-description"
     aria-labelledby="modal-modal-title"

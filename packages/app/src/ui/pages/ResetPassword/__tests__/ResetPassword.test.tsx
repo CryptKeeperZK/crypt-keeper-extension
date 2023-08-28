@@ -50,7 +50,7 @@ describe("ui/pages/ResetPassword", () => {
     expect(page).toBeInTheDocument();
   });
 
-  test("should render unmatch passwords error properly", async () => {
+  test("should render unmatched passwords error properly", async () => {
     const { container } = render(<ResetPassword />);
 
     await waitFor(() => container.firstChild !== null);

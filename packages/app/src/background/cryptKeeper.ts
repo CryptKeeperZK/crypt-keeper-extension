@@ -1,5 +1,5 @@
 import { RPCAction } from "@cryptkeeperzk/providers";
-import { RequestHandler } from "@cryptkeeperzk/types";
+import { IRequestHandler } from "@cryptkeeperzk/types";
 
 import { BackupableServices } from "@src/types";
 
@@ -74,16 +74,16 @@ export default class CryptKeeperController {
     this.historyService = HistoryService.getInstance();
     this.walletService = WalletService.getInstance();
     this.verifiableCredentialsService = VerifiableCredentialsService.getInstance();
+    this.verifiableCredentialsService = VerifiableCredentialsService.getInstance();
     this.backupService = BackupService.getInstance()
       .add(BackupableServices.LOCK, this.lockService)
       .add(BackupableServices.WALLET, this.walletService)
       .add(BackupableServices.APPROVAL, this.approvalService)
       .add(BackupableServices.IDENTITY, this.zkIdentityService)
       .add(BackupableServices.VERIFIABLE_CREDENTIALS, this.verifiableCredentialsService);
-    this.verifiableCredentialsService = VerifiableCredentialsService.getInstance();
   }
 
-  handle = (request: RequestHandler, sender: Runtime.MessageSender): Promise<unknown> =>
+  handle = (request: IRequestHandler, sender: Runtime.MessageSender): Promise<unknown> =>
     this.handler.handle(request, { sender, bypass: RPC_METHOD_ACCESS[request.method as RPCAction] });
 
   initialize = (): CryptKeeperController => {

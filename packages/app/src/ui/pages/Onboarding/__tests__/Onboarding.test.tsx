@@ -70,7 +70,7 @@ describe("ui/pages/Onboarding", () => {
     expect(error).toBeInTheDocument();
   });
 
-  test("should render unmatch passwords error properly", async () => {
+  test("should render unmatched passwords error properly", async () => {
     const { container } = render(<Onboarding />);
 
     await waitFor(() => container.firstChild !== null);

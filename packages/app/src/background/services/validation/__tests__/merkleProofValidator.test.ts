@@ -31,7 +31,7 @@ describe("background/services/validation/merkle", () => {
   test("should throw error if the is an empty path indicies array", () => {
     const validator = new MerkleProofValidator({ root: 1n, leaf: 1n, siblings: [1n], pathIndices: [] });
 
-    expect(() => validator.validateProof()).toThrowError(MerkleProofValidatorErrors.INVALID_PATH_INDICIES);
-    expect(() => validator.validatePathIndicies()).toThrowError(MerkleProofValidatorErrors.INVALID_PATH_INDICIES);
+    expect(() => validator.validateProof()).toThrowError(MerkleProofValidatorErrors.INVALID_PATH_INDICES);
+    expect(() => validator.validatePathIndices()).toThrowError(MerkleProofValidatorErrors.INVALID_PATH_INDICES);
   });
 });

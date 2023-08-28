@@ -1,7 +1,7 @@
 import { useCallback, useState, FormEvent as ReactFormEvent } from "react";
 import { UseFormRegister, useForm } from "react-hook-form";
 
-import { VerifiableCredentialMetadata } from "@src/types";
+import { IVerifiableCredentialMetadata } from "@src/types";
 import { useAppDispatch } from "@src/ui/ducks/hooks";
 
 export interface RenameVerifiableCredentialItemData {
@@ -18,7 +18,7 @@ export interface IUseVerifiableCredentialItemData {
 }
 
 export interface UseVerifiableCredentialItemArgs {
-  metadata: VerifiableCredentialMetadata;
+  metadata: IVerifiableCredentialMetadata;
   onRename: (hash: string, name: string) => Promise<void>;
   onDelete: (hash: string) => Promise<void>;
 }

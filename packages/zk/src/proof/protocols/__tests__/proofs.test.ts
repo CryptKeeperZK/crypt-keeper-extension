@@ -1,5 +1,5 @@
 import { Identity } from "@cryptkeeperzk/semaphore-identity";
-import { IdentityMetadata, IRlnProofRequest, ISemaphoreProofRequest } from "@cryptkeeperzk/types";
+import { IIdentityMetadata, IRLNProofRequest, ISemaphoreProofRequest } from "@cryptkeeperzk/types";
 import { MerkleProof } from "@zk-kit/incremental-merkle-tree";
 
 import { ZkIdentitySemaphore } from "@src/identity";
@@ -27,10 +27,10 @@ jest.mock("../utils", (): unknown => ({
 describe("background/services/protocols", () => {
   const defaultIdentity = new Identity("1234");
 
-  const defaultIdentityMetadata: IdentityMetadata = {
+  const defaultIdentityMetadata: IIdentityMetadata = {
     account: "account",
     name: "Identity #1",
-    identityStrategy: "interrep",
+    identityStrategy: "interep",
     web2Provider: "twitter",
     groups: [],
     host: "http://localhost:3000",
@@ -43,7 +43,7 @@ describe("background/services/protocols", () => {
     pathIndices: [],
   };
 
-  const identityDecorater = new ZkIdentitySemaphore(defaultIdentity, defaultIdentityMetadata);
+  const identityDecorator = new ZkIdentitySemaphore(defaultIdentity, defaultIdentityMetadata);
 
   beforeEach(() => {
     (getMerkleProof as jest.Mock).mockReturnValue(defaultMerkleProof);
@@ -54,7 +54,7 @@ describe("background/services/protocols", () => {
   });
 
   describe("rln", () => {
-    const proofRequest: IRlnProofRequest = {
+    const proofRequest: IRLNProofRequest = {
       identitySerialized: "identitySerialized",
       circuitFilePath: "circuitFilePath",
       verificationKey: "verificationKey",
@@ -71,7 +71,7 @@ describe("background/services/protocols", () => {
       const rln = new RLNProofService();
       mockRlnGenerateProof.mockResolvedValue(emptyFullProof);
 
-      await rln.genProof(identityDecorater, { ...proofRequest, merkleStorageAddress: "http://localhost:3000/merkle" });
+      await rln.genProof(identityDecorator, { ...proofRequest, merkleStorageAddress: "http://localhost:3000/merkle" });
 
       expect(mockRlnGenerateProof).toBeCalledTimes(1);
     });
@@ -80,7 +80,7 @@ describe("background/services/protocols", () => {
       const rln = new RLNProofService();
       mockRlnGenerateProof.mockResolvedValue(emptyFullProof);
 
-      const proofRequestString: IRlnProofRequest = {
+      const proofRequestString: IRLNProofRequest = {
         identitySerialized: "identitySerialized",
         circuitFilePath: "circuitFilePath",
         verificationKey: "verificationKey",
@@ -93,7 +93,7 @@ describe("background/services/protocols", () => {
         merkleProofProvided: defaultMerkleProof,
       };
 
-      await rln.genProof(identityDecorater, {
+      await rln.genProof(identityDecorator, {
         ...proofRequestString,
         merkleStorageAddress: "http://localhost:3000/merkle",
       });
@@ -106,7 +106,7 @@ describe("background/services/protocols", () => {
       (getMerkleProof as jest.Mock).mockClear();
       (getMerkleProof as jest.Mock).mockRejectedValue(new Error("error"));
 
-      const rlnProofRequest: IRlnProofRequest = {
+      const rlnProofRequest: IRLNProofRequest = {
         identitySerialized: "identitySerialized",
         rlnIdentifier: "1",
         message: "message",
@@ -117,7 +117,7 @@ describe("background/services/protocols", () => {
 
       const rln = new RLNProofService();
 
-      const promise = rln.genProof(identityDecorater, {
+      const promise = rln.genProof(identityDecorator, {
         ...rlnProofRequest,
         merkleStorageAddress: "http://localhost:3000/merkle",
       });
@@ -130,7 +130,7 @@ describe("background/services/protocols", () => {
       (getMerkleProof as jest.Mock).mockClear();
       (getMerkleProof as jest.Mock).mockRejectedValue(new Error("error"));
 
-      const rlnProofRequest: IRlnProofRequest = {
+      const rlnProofRequest: IRLNProofRequest = {
         identitySerialized: "identitySerialized",
         circuitFilePath: "circuitFilePath",
         verificationKey: "verificationKey",
@@ -144,7 +144,7 @@ describe("background/services/protocols", () => {
 
       const rln = new RLNProofService();
 
-      const promise = rln.genProof(identityDecorater, {
+      const promise = rln.genProof(identityDecorator, {
         ...rlnProofRequest,
         merkleStorageAddress: "http://localhost:3000/merkle",
       });
@@ -166,14 +166,14 @@ describe("background/services/protocols", () => {
     test("should generate semaphore proof properly with remote merkle proof", async () => {
       const semaphore = new SemaphoreProofService();
 
-      await semaphore.genProof(identityDecorater, {
+      await semaphore.genProof(identityDecorator, {
         ...proofRequest,
         merkleStorageAddress: "http://localhost:3000/merkle",
       });
 
       expect(mockSemaphoreGenerateProof).toBeCalledTimes(1);
       expect(mockSemaphoreGenerateProof).toBeCalledWith(
-        identityDecorater.zkIdentity,
+        identityDecorator.zkIdentity,
         defaultMerkleProof,
         proofRequest.externalNullifier,
         proofRequest.signal,
@@ -189,7 +189,7 @@ describe("background/services/protocols", () => {
       };
       const semaphore = new SemaphoreProofService();
 
-      const promise = semaphore.genProof(identityDecorater, {
+      const promise = semaphore.genProof(identityDecorator, {
         ...proofRequestWrong,
         merkleStorageAddress: "http://localhost:3000/merkle",
       });
@@ -201,7 +201,7 @@ describe("background/services/protocols", () => {
       (getMerkleProof as jest.Mock).mockRejectedValue(new Error("error"));
       const semaphore = new SemaphoreProofService();
 
-      const promise = semaphore.genProof(identityDecorater, {
+      const promise = semaphore.genProof(identityDecorator, {
         ...proofRequest,
         merkleStorageAddress: "http://localhost:3000/merkle",
       });

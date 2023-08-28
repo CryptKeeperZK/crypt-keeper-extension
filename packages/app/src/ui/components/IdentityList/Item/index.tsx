@@ -1,4 +1,4 @@
-import { IdentityMetadata, IdentityWeb2Provider } from "@cryptkeeperzk/types";
+import { IIdentityMetadata, IdentityWeb2Provider } from "@cryptkeeperzk/types";
 import { IconName, IconPrefix } from "@fortawesome/fontawesome-common-types";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Box from "@mui/material/Box";
@@ -8,7 +8,7 @@ import classNames from "classnames";
 import { getEnabledFeatures } from "@src/config/features";
 import { Icon } from "@src/ui/components/Icon";
 import { Input } from "@src/ui/components/Input";
-import { Menuable } from "@src/ui/components/Menuable";
+import { Menu } from "@src/ui/components/Menu";
 import { ellipsify } from "@src/util/account";
 
 import "./identityListItemStyles.scss";
@@ -24,7 +24,7 @@ const web2ProvidersIcons: IconWeb2Providers = {
 
 export interface IdentityItemProps {
   commitment: string;
-  metadata: IdentityMetadata;
+  metadata: IIdentityMetadata;
   isShowMenu: boolean;
   selected?: string;
   onDeleteIdentity: (commitment: string) => Promise<void>;
@@ -60,7 +60,7 @@ export const IdentityItem = ({
   });
 
   const features = getEnabledFeatures();
-  const identityTitle = features.INTERREP_IDENTITY ? "random" : "";
+  const identityTitle = features.INTEREP_IDENTITY ? "random" : "";
   const canShowIdentityType = Boolean(metadata.web2Provider || identityTitle);
 
   const menuItems = [
@@ -199,9 +199,9 @@ export const IdentityItem = ({
       </Box>
 
       {isShowMenu && (
-        <Menuable className="flex user-menu" items={selected !== commitment ? menuItems : [menuItems[0], menuItems[1]]}>
+        <Menu className="flex user-menu" items={selected !== commitment ? menuItems : [menuItems[0], menuItems[1]]}>
           <Icon className="identity-row__menu-icon" fontAwesome="fas fa-ellipsis-h" />
-        </Menuable>
+        </Menu>
       )}
     </Box>
   );

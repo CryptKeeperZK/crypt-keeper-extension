@@ -9,15 +9,15 @@ import { useAppDispatch } from "@src/ui/ducks/hooks";
 export interface IUseRevealMnemonicData {
   isLoading: boolean;
   isShowPassword: boolean;
-  errors: Partial<MnemonicFormFields & { root: string }>;
+  errors: Partial<IMnemonicFormFields & { root: string }>;
   mnemonic: string;
   onGoBack: () => void;
-  register: UseFormRegister<MnemonicFormFields>;
+  register: UseFormRegister<IMnemonicFormFields>;
   onSubmit: (event?: BaseSyntheticEvent) => Promise<void>;
   onShowPassword: () => void;
 }
 
-interface MnemonicFormFields {
+interface IMnemonicFormFields {
   password: string;
 }
 
@@ -27,7 +27,7 @@ export const useRevealMnemonic = (): IUseRevealMnemonicData => {
     setError,
     register,
     handleSubmit,
-  } = useForm<MnemonicFormFields>({
+  } = useForm<IMnemonicFormFields>({
     defaultValues: {
       password: "",
     },
@@ -40,7 +40,7 @@ export const useRevealMnemonic = (): IUseRevealMnemonicData => {
   const navigate = useNavigate();
 
   const onCheckPassword = useCallback(
-    (data: MnemonicFormFields) => {
+    (data: IMnemonicFormFields) => {
       dispatch(checkPassword(data.password))
         .then(() => dispatch(getMnemonic()))
         .then((result: string) => setMnemonic(result))

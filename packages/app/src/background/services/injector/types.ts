@@ -1,6 +1,6 @@
-import type { IRlnProofRequest, ISemaphoreProofRequest } from "@src/types";
+import type { IRLNProofRequest, ISemaphoreProofRequest } from "@cryptkeeperzk/types";
 
-export interface IProofRequest<P = IRlnProofRequest | ISemaphoreProofRequest> {
+export interface IProofRequest<P = IRLNProofRequest | ISemaphoreProofRequest> {
   identity: string;
   payload: P;
 }

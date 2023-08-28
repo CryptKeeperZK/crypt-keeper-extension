@@ -2,7 +2,7 @@ import Box from "@mui/material/Box";
 import classNames from "classnames";
 import { useCallback, type MouseEvent as ReactMouseEvent } from "react";
 
-import { ItemProps } from "./useMenuable";
+import { ItemProps } from "./useMenu";
 
 export interface IMenuItemProps {
   item: ItemProps;

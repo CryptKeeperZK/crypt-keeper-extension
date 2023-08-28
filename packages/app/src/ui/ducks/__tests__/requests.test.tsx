@@ -3,10 +3,10 @@
  */
 
 import { RPCAction } from "@cryptkeeperzk/providers";
+import { IPendingRequest, PendingRequestType, RequestResolutionStatus } from "@cryptkeeperzk/types";
 import { renderHook } from "@testing-library/react";
 import { Provider } from "react-redux";
 
-import { PendingRequest, PendingRequestType, RequestResolutionStatus } from "@src/types";
 import { store } from "@src/ui/store/configureAppStore";
 import postMessage from "@src/util/postMessage";
 
@@ -15,7 +15,7 @@ import { fetchPendingRequests, finalizeRequest, setPendingRequests, usePendingRe
 jest.unmock("@src/ui/ducks/hooks");
 
 describe("ui/ducks/requests", () => {
-  const defaultPendingRequests: PendingRequest[] = [{ id: "1", windowId: 1, type: PendingRequestType.APPROVE }];
+  const defaultPendingRequests: IPendingRequest[] = [{ id: "1", windowId: 1, type: PendingRequestType.APPROVE }];
 
   afterEach(() => {
     jest.clearAllMocks();

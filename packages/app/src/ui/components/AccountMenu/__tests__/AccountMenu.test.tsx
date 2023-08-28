@@ -2,11 +2,11 @@
  * @jest-environment jsdom
  */
 
+import { EWallet } from "@cryptkeeperzk/types";
 import { act, render } from "@testing-library/react";
 
 import { ZERO_ADDRESS } from "@src/config/const";
 import { defaultWalletHookData } from "@src/config/mock/wallet";
-import { EWallet } from "@src/types";
 import { isExtensionPopupOpen } from "@src/util/browser";
 
 import { AccountMenu, IAccountMenuProps } from "..";
@@ -17,7 +17,7 @@ jest.mock("../useAccountMenu", (): unknown => ({
 }));
 
 describe("ui/components/Header", () => {
-  const defaulltProps: IAccountMenuProps = {
+  const defaultProps: IAccountMenuProps = {
     ethWallet: defaultWalletHookData,
     cryptKeeperWallet: defaultWalletHookData,
   };
@@ -51,7 +51,7 @@ describe("ui/components/Header", () => {
   });
 
   test("should render properly", async () => {
-    const { findByTestId } = render(<AccountMenu {...defaulltProps} />);
+    const { findByTestId } = render(<AccountMenu {...defaultProps} />);
 
     const menu = await findByTestId("menu");
 
@@ -60,7 +60,7 @@ describe("ui/components/Header", () => {
 
   test("should render properly without connected wallet", async () => {
     const { findByText } = render(
-      <AccountMenu {...defaulltProps} ethWallet={{ ...defaulltProps.ethWallet, isActive: false }} />,
+      <AccountMenu {...defaultProps} ethWallet={{ ...defaultProps.ethWallet, isActive: false }} />,
     );
 
     const item = await findByText("Connect MetaMask");
@@ -71,7 +71,7 @@ describe("ui/components/Header", () => {
 
   test("should render properly activating state", async () => {
     const { findByTestId } = render(
-      <AccountMenu {...defaulltProps} cryptKeeperWallet={{ ...defaulltProps.ethWallet, address: undefined }} />,
+      <AccountMenu {...defaultProps} cryptKeeperWallet={{ ...defaultProps.ethWallet, address: undefined }} />,
     );
 
     const loading = await findByTestId("address-loading");
@@ -82,8 +82,8 @@ describe("ui/components/Header", () => {
   test("should render without installed wallet", async () => {
     const { findByText } = render(
       <AccountMenu
-        {...defaulltProps}
-        ethWallet={{ ...defaulltProps.ethWallet, isActive: false, isInjectedWallet: false }}
+        {...defaultProps}
+        ethWallet={{ ...defaultProps.ethWallet, isActive: false, isInjectedWallet: false }}
       />,
     );
 
@@ -94,7 +94,7 @@ describe("ui/components/Header", () => {
   });
 
   test("should go to settings page", async () => {
-    const { findByText } = render(<AccountMenu {...defaulltProps} />);
+    const { findByText } = render(<AccountMenu {...defaultProps} />);
 
     const settings = await findByText("Settings");
     await act(async () => Promise.resolve(settings.click()));
@@ -103,7 +103,7 @@ describe("ui/components/Header", () => {
   });
 
   test("should lock app properly", async () => {
-    const { findByText } = render(<AccountMenu {...defaulltProps} />);
+    const { findByText } = render(<AccountMenu {...defaultProps} />);
 
     const lock = await findByText("Lock");
     await act(async () => Promise.resolve(lock.click()));
@@ -113,7 +113,7 @@ describe("ui/components/Header", () => {
 
   test("should disconnect metamask properly", async () => {
     const { findByText } = render(
-      <AccountMenu {...defaulltProps} ethWallet={{ ...defaultWalletHookData, isActive: true }} />,
+      <AccountMenu {...defaultProps} ethWallet={{ ...defaultWalletHookData, isActive: true }} />,
     );
 
     const disconnect = await findByText("Disconnect MetaMask");
@@ -123,7 +123,7 @@ describe("ui/components/Header", () => {
   });
 
   test("should select account properly", async () => {
-    const { findByTestId } = render(<AccountMenu {...defaulltProps} />);
+    const { findByTestId } = render(<AccountMenu {...defaultProps} />);
 
     const [cryptKeeperAccount] = defaultHookData.accounts;
     const account = await findByTestId(`${cryptKeeperAccount.type}-${cryptKeeperAccount.address}`);

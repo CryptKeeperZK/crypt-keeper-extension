@@ -24,7 +24,7 @@ describe("ui/pages/Home/components/ActivityList", () => {
         metadata: {
           account: ZERO_ADDRESS,
           name: "Account #1",
-          identityStrategy: "interrep",
+          identityStrategy: "interep",
           web2Provider: "twitter",
           groups: [],
           host: "http://localhost:3000",

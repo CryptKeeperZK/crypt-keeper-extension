@@ -7,7 +7,7 @@ import { Input } from "../Input";
 
 import "./passwordInput.scss";
 
-interface PasswordInputProps extends InputHTMLAttributes<HTMLInputElement> {
+interface IPasswordInputProps extends InputHTMLAttributes<HTMLInputElement> {
   id: string;
   label: string;
   isShowPassword: boolean;
@@ -27,7 +27,7 @@ const PasswordInputUI = (
     isShowPassword,
     onShowPassword,
     ...passwordInputProps
-  }: PasswordInputProps,
+  }: IPasswordInputProps,
   ref: Ref<HTMLInputElement>,
 ): JSX.Element => (
   <Input
@@ -83,4 +83,4 @@ const PasswordInputUI = (
   />
 );
 
-export const PasswordInput = forwardRef<HTMLInputElement, PasswordInputProps>(PasswordInputUI);
+export const PasswordInput = forwardRef<HTMLInputElement, IPasswordInputProps>(PasswordInputUI);

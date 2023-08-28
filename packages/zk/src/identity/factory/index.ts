@@ -1,18 +1,18 @@
 import { Identity } from "@cryptkeeperzk/semaphore-identity";
-import { ICreateIdentityArgs, StrategiesMap } from "@cryptkeeperzk/types";
+import { ICreateIdentityArgs, IStrategiesMap } from "@cryptkeeperzk/types";
 
 import { ZkIdentitySemaphore } from "../protocols";
 
 const strategies = {
   random: createRandomIdentity,
-  interrep: createInterrepIdentity,
+  interep: createInterepIdentity,
 };
 
-export function createNewIdentity(strategy: keyof StrategiesMap, config: ICreateIdentityArgs): ZkIdentitySemaphore {
+export function createNewIdentity(strategy: keyof IStrategiesMap, config: ICreateIdentityArgs): ZkIdentitySemaphore {
   return strategies[strategy](config);
 }
 
-function createInterrepIdentity(config: ICreateIdentityArgs): ZkIdentitySemaphore {
+function createInterepIdentity(config: ICreateIdentityArgs): ZkIdentitySemaphore {
   const { identityStrategy, web2Provider, name, messageSignature, account, groups, host } = config;
 
   const identity = new Identity(messageSignature);
