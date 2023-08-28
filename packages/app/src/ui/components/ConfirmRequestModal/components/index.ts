@@ -1,3 +1,4 @@
-export * from "./ProofModal";
-export * from "./ConnectionApprovalModal";
-export * from "./DefaultApprovalModal";
+export { SemaphoreProofModal } from "./SemaphoreProofModal";
+export { RlnProofModal } from "./RlnProofModal";
+export { ConnectionApprovalModal } from "./ConnectionApprovalModal";
+export { DefaultApprovalModal } from "./DefaultApprovalModal";

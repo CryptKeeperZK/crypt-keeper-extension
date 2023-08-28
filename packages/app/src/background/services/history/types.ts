@@ -1,4 +1,6 @@
-import { IdentityData, OperationType, Operation, HistorySettings } from "@src/types";
+import { IdentityData } from "@cryptkeeperzk/types";
+
+import { OperationType, Operation, HistorySettings } from "@src/types";
 
 export interface OperationOptions {
   identity?: IdentityData;

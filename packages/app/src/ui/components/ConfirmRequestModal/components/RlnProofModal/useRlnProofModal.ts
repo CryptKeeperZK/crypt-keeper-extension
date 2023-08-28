@@ -1,19 +1,17 @@
+import { IRlnProofRequest, PendingRequest } from "@cryptkeeperzk/types";
 import { getLinkPreview } from "link-preview-js";
 import { useCallback, useEffect, useState } from "react";
 
-import { PendingRequest, PendingRequestType, ZKProofPayload } from "@src/types";
-
-export interface IUseProofModalArgs {
-  pendingRequest: PendingRequest<ZKProofPayload>;
+export interface IUseRlnProofModalArgs {
+  pendingRequest: PendingRequest<Omit<IRlnProofRequest, "identitySerialized">>;
   accept: () => void;
   reject: () => void;
 }
 
-export interface IUseProofModalData {
-  host: string;
+export interface IUseRlnProofModalData {
+  urlOrigin?: string;
   faviconUrl: string;
-  operation: string;
-  payload?: ZKProofPayload;
+  payload?: Omit<IRlnProofRequest, "identitySerialized">;
   onAccept: () => void;
   onReject: () => void;
   onOpenCircuitFile: () => void;
@@ -21,17 +19,9 @@ export interface IUseProofModalData {
   onOpenVerificationKeyFile: () => void;
 }
 
-type ProofType = PendingRequestType.SEMAPHORE_PROOF | PendingRequestType.RLN_PROOF;
-
-const PROOF_MODAL_TITLES: Record<ProofType, string> = {
-  [PendingRequestType.SEMAPHORE_PROOF]: "Generate Semaphore Proof",
-  [PendingRequestType.RLN_PROOF]: "Generate RLN Proof",
-};
-
-export const useProofModal = ({ pendingRequest, accept, reject }: IUseProofModalArgs): IUseProofModalData => {
+export const useRlnProofModal = ({ pendingRequest, accept, reject }: IUseRlnProofModalArgs): IUseRlnProofModalData => {
   const [faviconUrl, setFaviconUrl] = useState("");
-  const operation = PROOF_MODAL_TITLES[pendingRequest?.type as ProofType] || "Generate proof";
-  const { origin: host = "", circuitFilePath, zkeyFilePath, verificationKey } = pendingRequest.payload || {};
+  const { urlOrigin = "", circuitFilePath, zkeyFilePath, verificationKey } = pendingRequest.payload || {};
 
   const onAccept = useCallback(() => {
     accept();
@@ -51,20 +41,19 @@ export const useProofModal = ({ pendingRequest, accept, reject }: IUseProofModal
   );
 
   useEffect(() => {
-    if (!host) {
+    if (!urlOrigin) {
       return;
     }
 
-    getLinkPreview(host).then((data) => {
+    getLinkPreview(urlOrigin).then((data) => {
       const [favicon] = data.favicons;
       setFaviconUrl(favicon);
     });
-  }, [host, setFaviconUrl]);
+  }, [urlOrigin, setFaviconUrl]);
 
   return {
-    host,
+    urlOrigin,
     payload: pendingRequest.payload,
-    operation,
     faviconUrl,
     onAccept,
     onReject,

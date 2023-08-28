@@ -2,20 +2,20 @@
  * @jest-environment jsdom
  */
 
+import { PendingRequestType } from "@cryptkeeperzk/types";
 import { act, render, screen } from "@testing-library/react";
 
 import { createModalRoot, deleteModalRoot } from "@src/config/mock/modal";
-import { PendingRequestType } from "@src/types";
 
-import { ProofModal, ProofModalProps } from "..";
-import { IUseProofModalData, useProofModal } from "../useProofModal";
+import { SemaphoreProofModal, SemaphoreProofModalProps } from "..";
+import { IUseSemaphoreProofModalData, useSemaphoreProofModal } from "../useSemaphoreProofModal";
 
-jest.mock("../useProofModal", (): unknown => ({
-  useProofModal: jest.fn(),
+jest.mock("../useSemaphoreProofModal", (): unknown => ({
+  useSemaphoreProofModal: jest.fn(),
 }));
 
 describe("ui/components/ConfirmRequestModal/components/ProofModal", () => {
-  const defaultProps: ProofModalProps = {
+  const defaultProps: SemaphoreProofModalProps = {
     len: 1,
     loading: false,
     error: "",
@@ -28,15 +28,15 @@ describe("ui/components/ConfirmRequestModal/components/ProofModal", () => {
         circuitFilePath: "circuitFilePath",
         verificationKey: "verificationKey",
         zkeyFilePath: "zkeyFilePath",
-        origin: "http://localhost:3000",
+        urlOrigin: "http://localhost:3000",
       },
     },
     accept: jest.fn(),
     reject: jest.fn(),
   };
 
-  const defaultHookData: IUseProofModalData = {
-    host: defaultProps.pendingRequest.payload!.origin,
+  const defaultHookData: IUseSemaphoreProofModalData = {
+    urlOrigin: defaultProps.pendingRequest.payload!.urlOrigin,
     faviconUrl: "",
     operation: "Generate Semaphore Proof",
     payload: defaultProps.pendingRequest.payload,
@@ -48,7 +48,7 @@ describe("ui/components/ConfirmRequestModal/components/ProofModal", () => {
   };
 
   beforeEach(() => {
-    (useProofModal as jest.Mock).mockReturnValue(defaultHookData);
+    (useSemaphoreProofModal as jest.Mock).mockReturnValue(defaultHookData);
 
     createModalRoot();
   });
@@ -58,7 +58,7 @@ describe("ui/components/ConfirmRequestModal/components/ProofModal", () => {
   });
 
   test("should render properly", async () => {
-    render(<ProofModal {...defaultProps} />);
+    render(<SemaphoreProofModal {...defaultProps} />);
 
     const modal = await screen.findByTestId("proof-modal");
 
@@ -66,7 +66,7 @@ describe("ui/components/ConfirmRequestModal/components/ProofModal", () => {
   });
 
   test("should render properly with error", async () => {
-    render(<ProofModal {...defaultProps} error="Error" len={2} />);
+    render(<SemaphoreProofModal {...defaultProps} error="Error" len={2} />);
 
     const error = await screen.findByText("Error");
 
@@ -74,7 +74,7 @@ describe("ui/components/ConfirmRequestModal/components/ProofModal", () => {
   });
 
   test("should approve generation properly", async () => {
-    render(<ProofModal {...defaultProps} />);
+    render(<SemaphoreProofModal {...defaultProps} />);
 
     const button = await screen.findByText("Approve");
     act(() => button.click());
@@ -83,7 +83,7 @@ describe("ui/components/ConfirmRequestModal/components/ProofModal", () => {
   });
 
   test("should reject proof generation properly", async () => {
-    render(<ProofModal {...defaultProps} />);
+    render(<SemaphoreProofModal {...defaultProps} />);
 
     const button = await screen.findByText("Reject");
     act(() => button.click());
@@ -92,7 +92,7 @@ describe("ui/components/ConfirmRequestModal/components/ProofModal", () => {
   });
 
   test("should open circuit file properly", async () => {
-    render(<ProofModal {...defaultProps} />);
+    render(<SemaphoreProofModal {...defaultProps} />);
 
     const link = await screen.findByTestId("circuit-file-link");
     act(() => link.click());
@@ -101,7 +101,7 @@ describe("ui/components/ConfirmRequestModal/components/ProofModal", () => {
   });
 
   test("should open zkey file properly", async () => {
-    render(<ProofModal {...defaultProps} />);
+    render(<SemaphoreProofModal {...defaultProps} />);
 
     const link = await screen.findByTestId("zkey-file-link");
     act(() => link.click());
@@ -110,7 +110,7 @@ describe("ui/components/ConfirmRequestModal/components/ProofModal", () => {
   });
 
   test("should open verification key file properly", async () => {
-    render(<ProofModal {...defaultProps} />);
+    render(<SemaphoreProofModal {...defaultProps} />);
 
     const link = await screen.findByTestId("verification-key-file-link");
     act(() => link.click());

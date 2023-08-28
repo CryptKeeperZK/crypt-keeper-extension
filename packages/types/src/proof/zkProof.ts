@@ -13,6 +13,7 @@ export interface ZkInputs {
   merkleProofArtifactsOrStorageAddress: string | MerkleProofArtifacts;
 }
 
+// TODO: that is a redandant
 export interface ZKProofPayload {
   externalNullifier: string;
   signal: string;
@@ -20,7 +21,11 @@ export interface ZKProofPayload {
   circuitFilePath: string;
   verificationKey: string;
   zkeyFilePath: string;
-  origin: string;
+  urlOrigin: string;
+}
+
+export interface IZkMetadata {
+  urlOrigin?: string;
 }
 
 export enum ZkProofType {

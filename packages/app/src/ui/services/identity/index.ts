@@ -1,4 +1,4 @@
-import type { IdentityStrategy, IdentityWeb2Provider } from "@src/types";
+import type { IdentityStrategy, IdentityWeb2Provider } from "@cryptkeeperzk/types";
 import type { JsonRpcSigner } from "ethers";
 
 export interface ISignIdentityMessageArgs {

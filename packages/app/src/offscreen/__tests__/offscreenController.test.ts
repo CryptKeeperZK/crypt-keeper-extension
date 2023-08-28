@@ -31,6 +31,7 @@ describe("offscreen/offscreenController", () => {
     circuitFilePath: "circuitFilePath",
     verificationKey: "verificationKey",
     zkeyFilePath: "zkeyFilePath",
+    urlOrigin: "origin",
   };
 
   const defaultMerkleProof: MerkleProof = {

@@ -1,3 +1,4 @@
+import { EWallet } from "@cryptkeeperzk/types";
 import Badge from "@mui/material/Badge";
 import Box from "@mui/material/Box";
 import Divider from "@mui/material/Divider";
@@ -8,7 +9,7 @@ import Skeleton from "@mui/material/Skeleton";
 import Typography from "@mui/material/Typography";
 import Jazzicon, { jsNumberForAddress } from "react-jazzicon";
 
-import { EWallet, IUseWalletData } from "@src/types";
+import { IUseWalletData } from "@src/types";
 import { ellipsify } from "@src/util/account";
 import { isExtensionPopupOpen } from "@src/util/browser";
 

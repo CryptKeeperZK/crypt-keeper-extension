@@ -125,13 +125,13 @@ export class CryptKeeperInjectedProvider {
   /**
    * Attempts to connect to the extension.
    *
-   * @param {string} host - The host origin to connect to.
+   * @param {string} urlOrigin - The host origin to connect to.
    * @returns {Promise<Approvals>} A Promise that resolves to an object containing approval information.
    */
-  private async tryConnect(host: string): Promise<Approvals> {
+  private async tryConnect(urlOrigin: string): Promise<Approvals> {
     return this.post({
       method: RPCAction.CONNECT,
-      payload: { origin: host },
+      payload: { urlOrigin },
     }) as Promise<Approvals>;
   }
 
@@ -154,7 +154,7 @@ export class CryptKeeperInjectedProvider {
             ...message,
             meta: {
               ...message.meta,
-              origin: window.location.origin,
+              urlOrigin: window.location.origin,
             },
             type: message.method,
           },

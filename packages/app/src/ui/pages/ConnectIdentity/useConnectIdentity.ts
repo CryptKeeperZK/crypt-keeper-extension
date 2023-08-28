@@ -13,7 +13,7 @@ import {
   useUnlinkedIdentities,
 } from "@src/ui/ducks/identities";
 
-import type { IdentityData } from "@src/types";
+import type { IdentityData } from "@cryptkeeperzk/types";
 
 export interface IUseConnectIdentityData {
   host: string;

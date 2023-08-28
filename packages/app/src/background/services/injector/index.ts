@@ -12,10 +12,16 @@ import LockerService from "@src/background/services/lock";
 import ZkIdentityService from "@src/background/services/zkIdentity";
 import { closeChromeOffscreen, createChromeOffscreen, getBrowserPlatform } from "@src/background/shared/utils";
 import { BrowserPlatform } from "@src/constants";
-import { PendingRequestType, IRlnProofRequest, SemaphoreFullProof, ISemaphoreProofRequest } from "@src/types";
+import {
+  PendingRequestType,
+  IRlnProofRequest,
+  SemaphoreFullProof,
+  ISemaphoreProofRequest,
+  IZkMetadata,
+} from "@src/types";
 import pushMessage from "@src/util/pushMessage";
 
-import type { IConnectData, IMeta } from "./types";
+import type { IConnectData } from "./types";
 
 export default class InjectorService {
   private static INSTANCE: InjectorService;
@@ -46,9 +52,9 @@ export default class InjectorService {
     return InjectorService.INSTANCE;
   }
 
-  connect = async ({ origin: host }: IMeta): Promise<IConnectData> => {
-    if (!host) {
-      throw new Error("Origin not provided");
+  connect = async ({ urlOrigin }: IZkMetadata): Promise<IConnectData> => {
+    if (!urlOrigin) {
+      throw new Error("Origin is not set");
     }
 
     const { isUnlocked } = await this.lockerService.getStatus();
@@ -58,15 +64,15 @@ export default class InjectorService {
       await this.lockerService.awaitUnlock();
     }
 
-    const isApproved = this.approvalService.isApproved(host);
-    const canSkipApprove = this.approvalService.canSkipApprove(host);
+    const isApproved = this.approvalService.isApproved(urlOrigin);
+    const canSkipApprove = this.approvalService.canSkipApprove(urlOrigin);
 
     if (isApproved) {
       return { isApproved, canSkipApprove };
     }
 
     try {
-      await this.requestManager.newRequest(PendingRequestType.CONNECT, { origin: host });
+      await this.requestManager.newRequest(PendingRequestType.CONNECT, { urlOrigin });
       return { isApproved: true, canSkipApprove: false };
     } catch (e) {
       return { isApproved: false, canSkipApprove: false };
@@ -83,8 +89,12 @@ export default class InjectorService {
       merkleProofArtifacts,
       merkleStorageAddress,
     }: ISemaphoreProofRequest,
-    meta: IMeta,
+    { urlOrigin }: IZkMetadata,
   ): Promise<SemaphoreFullProof> => {
+    if (!urlOrigin) {
+      throw new Error("Origin is not set");
+    }
+
     const browserPlatform = getBrowserPlatform();
     const { isUnlocked } = await this.lockerService.getStatus();
 
@@ -100,8 +110,8 @@ export default class InjectorService {
     }
 
     const identity = await this.zkIdentityService.getConnectedIdentity();
-    const approved = this.approvalService.isApproved(meta.origin);
-    const permission = this.approvalService.getPermission(meta.origin);
+    const approved = this.approvalService.isApproved(urlOrigin);
+    const permission = this.approvalService.getPermission(urlOrigin);
     const identitySerialized = identity?.serialize();
 
     if (!identity || !identitySerialized) {
@@ -109,7 +119,7 @@ export default class InjectorService {
     }
 
     if (!approved) {
-      throw new Error(`${meta.origin} is not approved`);
+      throw new Error(`${urlOrigin} is not approved`);
     }
 
     const semaphoreRequest: ISemaphoreProofRequest = {
@@ -122,15 +132,13 @@ export default class InjectorService {
       circuitFilePath: semaphorePath.circuitFilePath,
       zkeyFilePath: semaphorePath.zkeyFilePath,
       verificationKey: semaphorePath.verificationKey,
+      urlOrigin,
     };
 
     if (!permission.canSkipApprove) {
       const request = omit(semaphoreRequest, ["identitySerialized"]);
 
-      await this.requestManager.newRequest(PendingRequestType.SEMAPHORE_PROOF, {
-        ...request,
-        origin: meta.origin,
-      });
+      await this.requestManager.newRequest(PendingRequestType.SEMAPHORE_PROOF, request);
       await this.browserService.closePopup();
     }
 
@@ -161,7 +169,7 @@ export default class InjectorService {
       const fullProof = await pushMessage({
         method: RPCAction.GENERATE_SEMAPHORE_PROOF_OFFSCREEN,
         payload: semaphoreRequest,
-        meta,
+        meta: urlOrigin,
         source: "offscreen",
       });
 
@@ -186,8 +194,12 @@ export default class InjectorService {
       messageLimit,
       messageId,
     }: IRlnProofRequest,
-    meta: IMeta,
+    { urlOrigin }: IZkMetadata,
   ): Promise<RLNSNARKProof> => {
+    if (!urlOrigin) {
+      throw new Error("Origin is not set");
+    }
+
     const browserPlatform = getBrowserPlatform();
     const { isUnlocked } = await this.lockerService.getStatus();
 
@@ -203,8 +215,8 @@ export default class InjectorService {
     }
 
     const identity = await this.zkIdentityService.getConnectedIdentity();
-    const approved = this.approvalService.isApproved(meta.origin);
-    const permission = this.approvalService.getPermission(meta.origin);
+    const approved = this.approvalService.isApproved(urlOrigin);
+    const permission = this.approvalService.getPermission(urlOrigin);
     const serializedIdentity = identity?.serialize();
 
     if (!identity || !serializedIdentity) {
@@ -212,7 +224,7 @@ export default class InjectorService {
     }
 
     if (!approved) {
-      throw new Error(`${meta.origin} is not approved`);
+      throw new Error(`${urlOrigin} is not approved`);
     }
 
     const rlnProofRequest: IRlnProofRequest = {
@@ -228,15 +240,13 @@ export default class InjectorService {
       circuitFilePath: rlnPath.circuitFilePath,
       zkeyFilePath: rlnPath.zkeyFilePath,
       verificationKey: rlnPath.verificationKey,
+      urlOrigin,
     };
 
     if (!permission.canSkipApprove) {
       const request = omit(rlnProofRequest, ["identitySerialized"]);
 
-      await this.requestManager.newRequest(PendingRequestType.RLN_PROOF, {
-        ...request,
-        origin: meta.origin,
-      });
+      await this.requestManager.newRequest(PendingRequestType.RLN_PROOF, request);
       await this.browserService.closePopup();
     }
 
@@ -251,7 +261,7 @@ export default class InjectorService {
       const rlnFullProof = await pushMessage({
         method: RPCAction.GENERATE_RLN_PROOF_OFFSCREEN,
         payload: rlnProofRequest,
-        meta,
+        meta: urlOrigin,
         source: "offscreen",
       });
 

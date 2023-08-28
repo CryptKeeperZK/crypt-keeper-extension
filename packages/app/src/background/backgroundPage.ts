@@ -1,11 +1,12 @@
+import { RequestHandler } from "@cryptkeeperzk/types";
 import log from "loglevel";
 import browser, { type Runtime } from "webextension-polyfill";
 
 import "@src/background/appInit";
 import CryptKeeperController from "@src/background/cryptKeeper";
-import { deferredPromise } from "@src/background/shared/utils";
+import { createChromeOffscreen, deferredPromise, getBrowserPlatform } from "@src/background/shared/utils";
 import { isDebugMode } from "@src/config/env";
-import { RequestHandler } from "@src/types";
+import { BrowserPlatform } from "@src/constants";
 
 log.setDefaultLevel(isDebugMode() ? "debug" : "info");
 
@@ -28,12 +29,17 @@ browser.runtime.onConnect.addListener(async () => {
 });
 
 try {
+  const browserPlatform = getBrowserPlatform();
   const app = new CryptKeeperController();
 
   app.initialize();
 
   browser.runtime.onMessage.addListener(async (request: RequestHandler, sender: Runtime.MessageSender) => {
     log.debug("Background: request: ", request);
+
+    if (browserPlatform !== BrowserPlatform.Firefox && request.source === "offscreen") {
+      await createChromeOffscreen();
+    }
 
     try {
       const response = await app.handle(request, sender);

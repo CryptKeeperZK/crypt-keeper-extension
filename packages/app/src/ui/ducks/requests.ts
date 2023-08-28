@@ -5,7 +5,7 @@ import deepEqual from "fast-deep-equal";
 
 import postMessage from "@src/util/postMessage";
 
-import type { PendingRequest, RequestResolutionAction } from "@src/types";
+import type { PendingRequest, RequestResolutionAction } from "@cryptkeeperzk/types";
 import type { TypedThunk } from "@src/ui/store/configureAppStore";
 
 import { useAppSelector } from "./hooks";

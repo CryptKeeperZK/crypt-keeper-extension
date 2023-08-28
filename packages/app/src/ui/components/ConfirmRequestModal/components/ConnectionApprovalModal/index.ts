@@ -1,1 +1,1 @@
-export * from "./ConnectionApprovalModal";
+export { ConnectionApprovalModal, type ConnectionApprovalModalProps } from "./ConnectionApprovalModal";

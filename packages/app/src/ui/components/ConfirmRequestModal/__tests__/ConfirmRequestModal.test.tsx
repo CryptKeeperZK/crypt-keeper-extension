@@ -128,7 +128,7 @@ describe("ui/components/ConfirmRequestModal", () => {
 
     await waitFor(() => container.firstChild !== null);
 
-    const title = await screen.findByText("Generate RLN Proof");
+    const title = await screen.findByText("Generate Rate-Limiting Nullifier (RLN) Proof");
 
     expect(title).toBeInTheDocument();
   });

@@ -6,7 +6,7 @@ import { checkHostApproval } from "@src/ui/ducks/permissions";
 import { useEthWallet } from "@src/ui/hooks/wallet";
 import { getLastActiveTabUrl } from "@src/util/browser";
 
-import type { IdentityData } from "@src/types";
+import type { IdentityData } from "@cryptkeeperzk/types";
 
 export interface IUseHomeData {
   identities: IdentityData[];

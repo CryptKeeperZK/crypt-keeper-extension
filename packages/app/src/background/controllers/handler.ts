@@ -1,6 +1,6 @@
 import { getExtensionUrl, getUrlOrigin } from "@src/util/browser";
 
-import type { RequestHandler } from "@src/types";
+import type { RequestHandler } from "@cryptkeeperzk/types";
 import type { Runtime } from "webextension-polyfill";
 
 // TODO: eslint fix any

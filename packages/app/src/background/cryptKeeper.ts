@@ -1,6 +1,7 @@
 import { RPCAction } from "@cryptkeeperzk/providers";
+import { RequestHandler } from "@cryptkeeperzk/types";
 
-import { BackupableServices, RequestHandler } from "@src/types";
+import { BackupableServices } from "@src/types";
 
 import type { Runtime } from "webextension-polyfill";
 
