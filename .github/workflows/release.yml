@@ -57,8 +57,8 @@ jobs:
           git config user.name "${{ github.actor }}"
           git config user.email "${{ github.actor}}@users.noreply.github.com"
           npm config set commit-hooks false
-          # git config commit.gpgsign true
-          # git config user.signingkey $GPG_SIGNING_KEY_ID
+          git config commit.gpgsign true
+          git config user.signingkey $GPG_SIGNING_KEY_ID
           npm config set //registry.npmjs.org/:_authToken ${{ secrets.NPM_TOKEN }}
         env:
           GPG_SIGNING_KEY_ID: ${{ secrets.GPG_SIGNING_KEY_ID }}
