@@ -75,7 +75,7 @@ jobs:
       - name: Sign @cryptkeeperzk/providers
         if: startsWith(github.ref_name, '@cryptkeeperzk/providers-') == true
         run: |-
-          echo $GPG_SIGNING_KEY | base64 --decode | gpg --batch --import
+          echo -n "$GPG_SIGNING_KEY" | base64 --decode | gpg --import
           gpg --detach-sign --armor cryptkeeper-providers-v${{ env.PROVIDERS_VERSION }}.zip
           echo $(shasum cryptkeeper-providers-v${{ env.PROVIDERS_VERSION }}.zip | awk '{ print $1 }') >> cryptkeeper-providers-v${{ env.PROVIDERS_VERSION }}.txt
         env:
