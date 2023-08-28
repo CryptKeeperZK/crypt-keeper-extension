@@ -19,7 +19,7 @@ env:
   PULSECHAIN_API_KEY: ${{ secrets.PULSECHAIN_API_KEY }}
   TARGET: "chrome"
   DEMO_URL: ${{ vars.DEMO_URL }}
-  EXTENSION_VERSION: ""
+  PROVIDERS_VERSION: ""
   MANIFEST_VERSION: 3
   VERIFIABLE_CREDENTIALS: false
 
@@ -47,6 +47,16 @@ jobs:
           node-version: ${{ matrix.node-version }}
           cache: "pnpm"
 
+      - run: pnpm install --frozen-lockfile --prefer-offline
+
+      - name: Get versions
+        run: |-
+          echo "PROVIDERS_VERSION=$(node -e "console.log(require('./packages/providers/package.json').version)")" >> $GITHUB_ENV
+
+      - run: |-
+          pnpm run build
+          zip -r cryptkeeper-providers-v${{ env.PROVIDERS_VERSION }}.zip ./packages/providers/dist
+
       - name: Setup publisher
         run: |
           git config user.name "${{ github.actor }}"
@@ -55,12 +65,25 @@ jobs:
           pnpm config set git-checks false 
           pnpm config set //registry.npmjs.org/:_authToken ${{ secrets.NPM_TOKEN }}
 
-      - run: pnpm install --frozen-lockfile --prefer-offline
-
-      - run: pnpm run build
-
       - name: Publish @cryptkeeperzk/providers
-        run: pnpm publish --access=public --no-git-checks
+        if: startsWith(github.ref_name, '@cryptkeeperzk/providers-') == true
+        run: pnpm run publish -- --access=public --no-git-checks
         working-directory: ./packages/providers
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Sign @cryptkeeperzk/providers
+        if: startsWith(github.ref_name, '@cryptkeeperzk/providers-') == true
+        run: |-
+          echo $GPG_SIGNING_KEY | base64 --decode | gpg --batch --import
+          gpg --detach-sign --armor cryptkeeper-providers-v${{ env.PROVIDERS_VERSION }}.zip
+          echo $(shasum cryptkeeper-providers-v${{ env.PROVIDERS_VERSION }}.zip | awk '{ print $1 }') >> cryptkeeper-providers-v${{ env.PROVIDERS_VERSION }}.txt
+        env:
+          GPG_SIGNING_KEY: ${{ secrets.GPG_SIGNING_KEY }}
+
+      - name: Upload @cryptkeeperzk/providers
+        if: startsWith(github.ref_name, '@cryptkeeperzk/providers-') == true
+        run: |-
+          gh release upload "${{ github.ref_name }}" "cryptkeeper-providers-v${{ env.PROVIDERS_VERSION }}.zip" "cryptkeeper-providers-checksum-v${{ env.PROVIDERS_VERSION }}.txt" "cryptkeeper-providers-v${{ env.PROVIDERS_VERSION }}.zip.asc"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
