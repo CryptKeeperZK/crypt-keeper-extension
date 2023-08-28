@@ -41,7 +41,7 @@
     "@cryptkeeperzk/eslint-config-react": "workspace:^",
     "@testing-library/jest-dom": "^6.1.2",
     "@testing-library/react": "^14.0.0",
-    "@types/chrome": "^0.0.243",
+    "@types/chrome": "^0.0.244",
     "@types/crypto-js": "^4.1.1",
     "@types/jest": "^29.5.4",
     "@types/lodash": "^4.14.197",
