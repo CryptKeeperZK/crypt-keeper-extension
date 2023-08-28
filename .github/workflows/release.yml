@@ -48,9 +48,11 @@ jobs:
           cache: "pnpm"
 
       - name: Import GPG key
-        run: echo $GPG_SIGNING_KEY | base64 --decode | gpg --batch --import
+        run: |-
+          echo $GPG_SIGNING_KEY | base64 --decode | gpg --passphrase $GPG_SIGNING_KEY_PASSPHRASE --batch --pinentry-mode loopback --import
         env:
           GPG_SIGNING_KEY: ${{ secrets.GPG_SIGNING_KEY }}
+          GPG_SIGNING_KEY_PASSPHRASE: ${{ secrets.GPG_SIGNING_KEY_PASSPHRASE }}
 
       - name: Setup git
         run: |

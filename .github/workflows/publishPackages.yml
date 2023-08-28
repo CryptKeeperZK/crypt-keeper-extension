@@ -64,21 +64,23 @@ jobs:
           pnpm config set git-checks false 
           pnpm config set //registry.npmjs.org/:_authToken ${{ secrets.NPM_TOKEN }}
 
+      
+      - name: Sign @cryptkeeperzk/providers
+        if: startsWith(github.ref_name, '@cryptkeeperzk/providers-') == true
+        run: |-
+          echo $GPG_SIGNING_KEY | base64 --decode | gpg --passphrase $GPG_SIGNING_KEY_PASSPHRASE --batch --pinentry-mode loopback --import
+          gpg --passphrase $GPG_SIGNING_KEY_PASSPHRASE --batch --pinentry-mode loopback --detach-sign --armor cryptkeeper-providers-v${{ env.PROVIDERS_VERSION }}.zip
+          echo $(shasum cryptkeeper-providers-v${{ env.PROVIDERS_VERSION }}.zip | awk '{ print $1 }') >> cryptkeeper-providers-v${{ env.PROVIDERS_VERSION }}.txt
+        env:
+          GPG_SIGNING_KEY: ${{ secrets.GPG_SIGNING_KEY }}
+          GPG_SIGNING_KEY_PASSPHRASE: ${{ secrets.GPG_SIGNING_KEY_PASSPHRASE }}
+
       - name: Publish @cryptkeeperzk/providers
         if: startsWith(github.ref_name, '@cryptkeeperzk/providers-') == true
         run: pnpm run publish -- --access=public --no-git-checks
         working-directory: ./packages/providers
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-
-      - name: Sign @cryptkeeperzk/providers
-        if: startsWith(github.ref_name, '@cryptkeeperzk/providers-') == true
-        run: |-
-          echo $GPG_SIGNING_KEY | base64 --decode | gpg --batch --import
-          gpg --detach-sign --armor cryptkeeper-providers-v${{ env.PROVIDERS_VERSION }}.zip
-          echo $(shasum cryptkeeper-providers-v${{ env.PROVIDERS_VERSION }}.zip | awk '{ print $1 }') >> cryptkeeper-providers-v${{ env.PROVIDERS_VERSION }}.txt
-        env:
-          GPG_SIGNING_KEY: ${{ secrets.GPG_SIGNING_KEY }}
 
       - name: Upload @cryptkeeperzk/providers
         if: startsWith(github.ref_name, '@cryptkeeperzk/providers-') == true
