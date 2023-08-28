@@ -27,7 +27,7 @@
     "@cryptkeeperzk/eslint-config-base": "workspace:^",
     "@playwright/test": "^1.37.1",
     "@synthetixio/synpress": "^3.7.1",
-    "eslint": "^8.47.0",
+    "eslint": "^8.48.0",
     "eslint-plugin-playwright": "^0.16.0",
     "lint-staged": "^14.0.1",
     "prettier": "^3.0.0",
