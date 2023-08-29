@@ -64,7 +64,8 @@ jobs:
 
       - name: Sign build
         run: |-
-          echo $GPG_SIGNING_KEY | base64 --decode | gpg --passphrase $GPG_SIGNING_KEY_PASSPHRASE --batch --pinentry-mode loopback --import
+          export GPG_TTY=`tty`
+          echo -n "$GPG_SIGNING_KEY" | base64 --decode | gpg --passphrase "$GPG_SIGNING_KEY_PASSPHRASE" --batch --pinentry-mode loopback --import
           gpg --passphrase $GPG_SIGNING_KEY_PASSPHRASE --batch --pinentry-mode loopback --detach-sign --armor cryptkeeper-chrome-extension-v${{ env.EXTENSION_VERSION }}.zip
           echo $(shasum cryptkeeper-chrome-extension-v${{ env.EXTENSION_VERSION }}.zip | awk '{ print $1 }') >> cryptkeeper-chrome-extension-checksum-v${{ env.EXTENSION_VERSION }}.txt
         env:
