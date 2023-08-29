@@ -88,4 +88,4 @@ jobs:
         run: |-
           gh release upload "${{ github.ref_name }}" "cryptkeeper-providers-v${{ env.PROVIDERS_VERSION }}.zip" "cryptkeeper-providers-checksum-v${{ env.PROVIDERS_VERSION }}.txt" "cryptkeeper-providers-v${{ env.PROVIDERS_VERSION }}.zip.asc"
         env:
-          GITHUB_TOKEN: ${{ secrets.PAT }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
