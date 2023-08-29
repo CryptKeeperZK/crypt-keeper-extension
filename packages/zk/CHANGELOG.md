@@ -2,6 +2,17 @@
 
 This file was generated using [@jscutlery/semver](https://github.com/jscutlery/semver).
 
+## [0.2.0](https://github.com/CryptKeeperZK/crypt-keeper-extension/compare/@cryptkeeperzk/zk-0.1.1...@cryptkeeperzk/zk-0.2.0) (2023-08-29)
+
+### Dependency Updates
+
+* `@cryptkeeperzk/types` updated to version `0.2.0`
+* `@cryptkeeperzk/eslint-config-base` updated to version `0.1.2`
+
+### Features
+
+* implementing a RLN ui prove approval ([#671](https://github.com/CryptKeeperZK/crypt-keeper-extension/issues/671)) ([2cde3f9](https://github.com/CryptKeeperZK/crypt-keeper-extension/commit/2cde3f92947db7734c5e756c164f452be09f786e))
+
 ## [0.1.1](https://github.com/CryptKeeperZK/crypt-keeper-extension/compare/@cryptkeeperzk/zk-0.1.0...@cryptkeeperzk/zk-0.1.1) (2023-08-24)
 
 ### Dependency Updates
