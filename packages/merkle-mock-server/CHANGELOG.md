@@ -2,6 +2,12 @@
 
 This file was generated using [@jscutlery/semver](https://github.com/jscutlery/semver).
 
+## [0.1.2](https://github.com/CryptKeeperZK/crypt-keeper-extension/compare/@cryptkeeperzk/merkle-mock-server-0.1.1...@cryptkeeperzk/merkle-mock-server-0.1.2) (2023-08-29)
+
+### Dependency Updates
+
+* `@cryptkeeperzk/zk` updated to version `0.2.0`
+* `@cryptkeeperzk/eslint-config-base` updated to version `0.1.2`
 ## [0.1.1](https://github.com/CryptKeeperZK/crypt-keeper-extension/compare/@cryptkeeperzk/merkle-mock-server-0.1.0...@cryptkeeperzk/merkle-mock-server-0.1.1) (2023-08-24)
 
 ### Dependency Updates
