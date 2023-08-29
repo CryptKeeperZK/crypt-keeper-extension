@@ -2,6 +2,13 @@
 
 This file was generated using [@jscutlery/semver](https://github.com/jscutlery/semver).
 
+## [0.2.2](https://github.com/CryptKeeperZK/crypt-keeper-extension/compare/@cryptkeeperzk/providers-0.2.1...@cryptkeeperzk/providers-0.2.2) (2023-08-29)
+
+
+### Bug Fixes
+
+* publish firefox ([#792](https://github.com/CryptKeeperZK/crypt-keeper-extension/issues/792)) ([e050413](https://github.com/CryptKeeperZK/crypt-keeper-extension/commit/e05041344600c5d18800dc6ad4cfffa6273cb9b6))
+
 ## [0.2.1](https://github.com/CryptKeeperZK/crypt-keeper-extension/compare/@cryptkeeperzk/providers-0.2.0...@cryptkeeperzk/providers-0.2.1) (2023-08-29)
 
 
