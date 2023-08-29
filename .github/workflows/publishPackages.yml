@@ -77,7 +77,7 @@ jobs:
           GPG_SIGNING_KEY_PASSPHRASE: ${{ secrets.GPG_SIGNING_KEY_PASSPHRASE }}
 
       - name: Publish packages
-        run: pnpm run publish
+        run: pnpm run publish:packages -- --access=public --no-git-checks
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
