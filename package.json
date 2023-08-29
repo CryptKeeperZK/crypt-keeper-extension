@@ -17,7 +17,7 @@
     "dev:chrome": "cross-env TARGET=chrome pnpm run dev --output-style=stream",
     "build:firefox": "cross-env TARGET=firefox pnpm run build --output-style=stream",
     "dev:firefox": "cross-env TARGET=firefox pnpm run dev --output-style=stream",
-    "publish": "pnpm exec nx run-many --target=publish --output-style=stream --parallel=1",
+    "publish:packages": "pnpm exec nx run-many --target=publish:package --output-style=stream --parallel=1",
     "merkle": "pnpm exec nx run-many --target=merkle --output-style=stream",
     "test": "pnpm exec nx run-many --target=test --output-style=stream",
     "test:coverage": "pnpm exec nx run-many --target=test:coverage --output-style=stream",
