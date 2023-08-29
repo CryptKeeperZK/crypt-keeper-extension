@@ -7,7 +7,7 @@ import { act, render, screen } from "@testing-library/react";
 
 import { createModalRoot, deleteModalRoot } from "@src/config/mock/modal";
 
-import { ConnectionApprovalModal, ConnectionApprovalModalProps } from "..";
+import { ConnectionApprovalModal, IConnectionApprovalModalProps } from "..";
 import { useConnectionApprovalModal, IUseConnectionApprovalModalData } from "../useConnectionApprovalModal";
 
 jest.mock("../useConnectionApprovalModal", (): unknown => ({
@@ -15,7 +15,7 @@ jest.mock("../useConnectionApprovalModal", (): unknown => ({
 }));
 
 describe("ui/components/ConfirmRequestModal/components/ConnectionApprovalModal", () => {
-  const defaultProps: ConnectionApprovalModalProps = {
+  const defaultProps: IConnectionApprovalModalProps = {
     len: 1,
     loading: false,
     error: "",

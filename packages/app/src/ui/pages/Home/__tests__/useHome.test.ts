@@ -2,11 +2,11 @@
  * @jest-environment jsdom
  */
 
+import { IIdentityData } from "@cryptkeeperzk/types";
 import { act, renderHook } from "@testing-library/react";
 import { useRef } from "react";
 
 import { defaultWalletHookData } from "@src/config/mock/wallet";
-import { IIdentityData } from "@src/types";
 import { useAppDispatch } from "@src/ui/ducks/hooks";
 import { useIdentities, fetchIdentities, fetchHistory, useConnectedIdentity } from "@src/ui/ducks/identities";
 import { checkHostApproval } from "@src/ui/ducks/permissions";
