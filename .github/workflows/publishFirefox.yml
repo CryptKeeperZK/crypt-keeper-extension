@@ -66,8 +66,9 @@ jobs:
 
       - name: Sign build
         run: |-
+          export GPG_TTY=`tty`
           mv ./artifacts/cryptkeeper-firefox-extension-v${{ env.EXTENSION_VERSION }}.zip .
-          echo $GPG_SIGNING_KEY | base64 --decode | gpg --passphrase $GPG_SIGNING_KEY_PASSPHRASE --batch --pinentry-mode loopback --import
+          echo -n "$GPG_SIGNING_KEY" | base64 --decode | gpg --passphrase "$GPG_SIGNING_KEY_PASSPHRASE" --batch --pinentry-mode loopback --import
           gpg --passphrase $GPG_SIGNING_KEY_PASSPHRASE --batch --pinentry-mode loopback --detach-sign --armor cryptkeeper-firefox-extension-v${{ env.EXTENSION_VERSION }}.zip
           echo $(shasum cryptkeeper-firefox-extension-v${{ env.EXTENSION_VERSION }}.zip | awk '{ print $1 }') >> cryptkeeper-firefox-extension-checksum-v${{ env.EXTENSION_VERSION }}.txt
         env:
