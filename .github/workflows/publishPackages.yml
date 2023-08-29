@@ -71,7 +71,7 @@ jobs:
           export GPG_TTY=`tty`
           echo -n "$GPG_SIGNING_KEY" | base64 --decode | gpg --passphrase "$GPG_SIGNING_KEY_PASSPHRASE" --batch --pinentry-mode loopback --import
           gpg --passphrase $GPG_SIGNING_KEY_PASSPHRASE --batch --pinentry-mode loopback --detach-sign --armor cryptkeeper-providers-v${{ env.PROVIDERS_VERSION }}.zip
-          echo $(shasum cryptkeeper-providers-v${{ env.PROVIDERS_VERSION }}.zip | awk '{ print $1 }') >> cryptkeeper-providers-v${{ env.PROVIDERS_VERSION }}.txt
+          echo $(shasum cryptkeeper-providers-v${{ env.PROVIDERS_VERSION }}.zip | awk '{ print $1 }') >> cryptkeeper-providers-checksum-v${{ env.PROVIDERS_VERSION }}.txt
         env:
           GPG_SIGNING_KEY: ${{ secrets.GPG_SIGNING_KEY }}
           GPG_SIGNING_KEY_PASSPHRASE: ${{ secrets.GPG_SIGNING_KEY_PASSPHRASE }}

@@ -75,7 +75,10 @@ jobs:
       - name: Upload artifact to firefox store
         run: |-
           mv cryptkeeper-firefox-extension-v${{ env.EXTENSION_VERSION }}.zip ./packages/app/dist
-          web-ext-submit --api-key=${{ secrets.WEB_EXT_API_KEY }} --api-secret=${{ secrets.WEB_EXT_API_SECRET }} --use-submission-api --channel=listed --artifacts-dir=./packages/app/dist
+          cd ./packages/app/dist
+          ls -a
+          web-ext-submit --api-key=${{ secrets.WEB_EXT_API_KEY }} --api-secret=${{ secrets.WEB_EXT_API_SECRET }} --use-submission-api --channel=listed
+          cd ../../..
 
       - name: Upload build
         run: |-
