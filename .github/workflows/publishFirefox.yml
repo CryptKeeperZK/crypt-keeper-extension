@@ -83,4 +83,4 @@ jobs:
         run: |-
           gh release upload "${{ github.ref_name }}" "cryptkeeper-firefox-extension-v${{ env.EXTENSION_VERSION }}.zip" "cryptkeeper-firefox-extension-checksum-v${{ env.EXTENSION_VERSION }}.txt" "cryptkeeper-firefox-extension-v${{ env.EXTENSION_VERSION }}.zip.asc"
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.PAT }}
