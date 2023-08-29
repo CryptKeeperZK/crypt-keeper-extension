@@ -76,10 +76,8 @@ jobs:
           GPG_SIGNING_KEY: ${{ secrets.GPG_SIGNING_KEY }}
           GPG_SIGNING_KEY_PASSPHRASE: ${{ secrets.GPG_SIGNING_KEY_PASSPHRASE }}
 
-      - name: Publish @cryptkeeperzk/providers
-        if: startsWith(github.ref_name, '@cryptkeeperzk/providers-') == true
-        run: pnpm run publish -- --access=public --no-git-checks
-        working-directory: ./packages/providers
+      - name: Publish packages
+        run: pnpm run publish
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
