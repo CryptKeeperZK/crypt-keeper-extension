@@ -1,0 +1,9 @@
+{
+  "executors": {
+    "bump": {
+      "implementation": "./src/executors/bump/executor",
+      "schema": "./src/executors/bump/schema.json",
+      "description": "bump executor"
+    }
+  }
+}

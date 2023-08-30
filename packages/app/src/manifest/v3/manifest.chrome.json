@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "CryptKeeper",
   "description": "A ZK Identity and Proof Management Wallet",
-  "version": "0.2.3",
+  "version": "0.2.4",
   "minimum_chrome_version": "93",
   "action": {
     "default_icon": "./icons/logo.png",
@@ -13,14 +13,26 @@
   },
   "content_scripts": [
     {
-      "matches": ["file://*/*", "http://*/*", "https://*/*"],
-      "js": ["js/content.js"],
+      "matches": [
+        "file://*/*",
+        "http://*/*",
+        "https://*/*"
+      ],
+      "js": [
+        "js/content.js"
+      ],
       "run_at": "document_start",
       "all_frames": true
     },
     {
-      "matches": ["file://*/*", "http://*/*", "https://*/*"],
-      "js": ["js/injected.js"],
+      "matches": [
+        "file://*/*",
+        "http://*/*",
+        "https://*/*"
+      ],
+      "js": [
+        "js/injected.js"
+      ],
       "run_at": "document_start",
       "all_frames": true,
       "world": "MAIN"
@@ -43,27 +55,50 @@
     "unlimitedStorage",
     "offscreen"
   ],
-  "host_permissions": ["http://*/", "https://*/"],
+  "host_permissions": [
+    "http://*/",
+    "https://*/"
+  ],
   "web_accessible_resources": [
     {
-      "resources": ["js/content.js"],
-      "matches": ["*://*/*"]
+      "resources": [
+        "js/content.js"
+      ],
+      "matches": [
+        "*://*/*"
+      ]
     },
     {
-      "resources": ["js/injected.js"],
-      "matches": ["*://*/*"]
+      "resources": [
+        "js/injected.js"
+      ],
+      "matches": [
+        "*://*/*"
+      ]
     },
     {
-      "resources": ["js/offscreen.js"],
-      "matches": ["*://*/*"]
+      "resources": [
+        "js/offscreen.js"
+      ],
+      "matches": [
+        "*://*/*"
+      ]
     },
     {
-      "resources": ["styles/*"],
-      "matches": ["*://*/*"]
+      "resources": [
+        "styles/*"
+      ],
+      "matches": [
+        "*://*/*"
+      ]
     },
     {
-      "resources": ["js/zkeyFiles/*"],
-      "matches": ["*://*/*"]
+      "resources": [
+        "js/zkeyFiles/*"
+      ],
+      "matches": [
+        "*://*/*"
+      ]
     }
   ]
 }

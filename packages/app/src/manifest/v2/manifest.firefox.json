@@ -2,25 +2,39 @@
   "manifest_version": 2,
   "name": "CryptKeeper",
   "description": "A ZK Identity and Proof Management Wallet",
-  "version": "0.2.3",
+  "version": "0.2.4",
   "browser_action": {
     "default_icon": "./icons/logo.png",
     "default_popup": "popup.html"
   },
   "background": {
-    "scripts": ["js/backgroundPage.js"],
+    "scripts": [
+      "js/backgroundPage.js"
+    ],
     "persistent": true
   },
   "content_scripts": [
     {
-      "matches": ["file://*/*", "http://*/*", "https://*/*"],
-      "js": ["js/content.js"],
+      "matches": [
+        "file://*/*",
+        "http://*/*",
+        "https://*/*"
+      ],
+      "js": [
+        "js/content.js"
+      ],
       "run_at": "document_start",
       "all_frames": true
     },
     {
-      "matches": ["file://*/*", "http://*/*", "https://*/*"],
-      "js": ["js/injected.js"],
+      "matches": [
+        "file://*/*",
+        "http://*/*",
+        "https://*/*"
+      ],
+      "js": [
+        "js/injected.js"
+      ],
       "run_at": "document_start",
       "all_frames": true
     }
@@ -41,11 +55,15 @@
     "notifications",
     "unlimitedStorage"
   ],
-  "web_accessible_resources": ["js/content.js", "js/injected.js", "js/zkeyFiles/*"],
-  "applications": {
+  "web_accessible_resources": [
+    "js/content.js",
+    "js/injected.js",
+    "js/zkeyFiles/*"
+  ],
+  "browser_specific_settings": {
     "gecko": {
       "id": "{840d8da7-e1a6-48ac-afe2-59e07fa0c390}",
-      "strict_min_version": "91"
+      "strict_min_version": "91.0"
     }
   }
 }

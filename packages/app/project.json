@@ -7,9 +7,10 @@
       "options": {
         "preset": "conventional",
         "trackDeps": true,
-        "push": true,
+        "push": false,
+        "skipCommit": true,
         "noVerify": true,
-        "postTargets": ["@cryptkeeperzk/app:github"]
+        "postTargets": ["@cryptkeeperzk/app:bump", "@cryptkeeperzk/app:commit-changes"]
       }
     },
     "github": {
@@ -17,6 +18,23 @@
       "options": {
         "tag": "${tag}",
         "notes": "${notes}"
+      }
+    },
+    "bump": {
+      "executor": "@cryptkeeperzk/manifest-bump:bump",
+      "options": {
+        "tag": "${tag}",
+        "manifestPaths": [
+          "packages/app/src/manifest/v2/manifest.firefox.json",
+          "packages/app/src/manifest/v3/manifest.firefox.json",
+          "packages/app/src/manifest/v3/manifest.chrome.json"
+        ]
+      }
+    },
+    "commit-changes": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "git commit -a -m 'chore(@cryptkeeperzk/app): release version ${tag}' --no-verify"
       }
     }
   }

@@ -2,6 +2,7 @@ const CopyPlugin = require("copy-webpack-plugin");
 const Dotenv = require("dotenv-webpack");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const webpack = require("webpack");
+const { BundleAnalyzerPlugin } = require("webpack-bundle-analyzer");
 
 const path = require("path");
 
@@ -30,6 +31,10 @@ module.exports = {
   },
   plugins: [
     envPlugin,
+    new BundleAnalyzerPlugin({
+      analyzerMode: process.env.WEBPACK_ANALYZER ? "static" : "disabled",
+      openAnalyzer: false,
+    }),
     new webpack.ProvidePlugin({
       Buffer: ["buffer", "Buffer"],
     }),

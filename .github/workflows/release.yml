@@ -22,6 +22,7 @@ env:
   EXTENSION_VERSION: ""
   MANIFEST_VERSION: 3
   VERIFIABLE_CREDENTIALS: false
+  WEBPACK_ANALYZER: false
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -73,8 +74,9 @@ jobs:
       - run: pnpm install --frozen-lockfile --prefer-offline
 
       - name: Release
-        run: |
+        run: |-
           pnpm run release
+          git push --follow-tags
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}

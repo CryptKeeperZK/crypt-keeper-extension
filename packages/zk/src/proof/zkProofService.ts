@@ -1,7 +1,6 @@
-import { RLNSNARKProof } from "@cryptkeeperzk/rlnjs";
-
 import { ZkIdentitySemaphore } from "@src/identity";
 
+import type { RLNSNARKProof } from "@cryptkeeperzk/rlnjs";
 import type { IRlnProofRequest, SemaphoreFullProof, ISemaphoreProofRequest } from "@cryptkeeperzk/types";
 
 import { RLNProofService, SemaphoreProofService } from "./protocols";

@@ -1,4 +1,4 @@
-import { MerkleProof } from "@cryptkeeperzk/rlnjs";
+import type { MerkleProof } from "@cryptkeeperzk/rlnjs";
 
 import { IZkMetadata, ZkCircuit, ZkInputs } from "./zkProof";
 

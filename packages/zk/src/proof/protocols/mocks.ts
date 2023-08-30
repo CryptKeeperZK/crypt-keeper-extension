@@ -1,4 +1,4 @@
-import { Proof, RLNFullProof, RLNPublicSignals } from "@cryptkeeperzk/rlnjs";
+import type { Proof, RLNFullProof, RLNPublicSignals } from "@cryptkeeperzk/rlnjs";
 
 export const mockRlnGenerateProof = jest.fn();
 export const mockSemaphoreGenerateProof = jest.fn();

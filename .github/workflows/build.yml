@@ -22,6 +22,7 @@ env:
   DEMO_URL: ${{ vars.DEMO_URL }}
   MANIFEST_VERSION: 3
   VERIFIABLE_CREDENTIALS: false
+  WEBPACK_ANALYZER: false
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
