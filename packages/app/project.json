@@ -10,7 +10,11 @@
         "push": false,
         "skipCommit": true,
         "noVerify": true,
-        "postTargets": ["@cryptkeeperzk/app:bump", "@cryptkeeperzk/app:commit-changes"]
+        "postTargets": [
+          "@cryptkeeperzk/app:bump",
+          "@cryptkeeperzk/app:commit-changes",
+          "@cryptkeeperzk/providers:github"
+        ]
       }
     },
     "github": {
@@ -34,7 +38,7 @@
     "commit-changes": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "git commit -a -m 'chore(@cryptkeeperzk/app): release version ${tag}' --no-verify"
+        "command": "git add . && git commit -m 'chore(@cryptkeeperzk/app): release version ${tag}' --no-verify"
       }
     }
   }
