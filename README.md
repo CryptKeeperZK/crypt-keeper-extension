@@ -36,7 +36,8 @@ These injected providers allow applications to establish a connection with the C
 1. **Identity Secret and Identity Commitment Generation:** Generate Semaphore identity secrets and commitments securely. 
 2. **Seamless Connection with Semaphore Identity:** Connect seamlessly with your Semaphore identity when interacting with websites and online services. 
 3. **Semaphore Zero-Knowledge Proof (ZK-Proof) Generation:**  Generate Zero-Knowledge Proofs using the Semaphore library. ZK-Proofs enable you to validate the authenticity of data and assertions without revealing any sensitive information. This feature enhances privacy and security in various cryptographic applications.
-
+4. **Rate-Limiting Nullifier (RLN) Zero-Knowledge Proof (ZK-Proof) Generation:**  Generate Zero-Knowledge Proofs using the RLN JS library. RLN is a zk-gadget/protocol that enables spam prevention in anonymous environments.
+ 
 ### Enabling Proof Generation:
 Proof generation in the Semaphore library can be enabled in two ways:
 
