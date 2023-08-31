@@ -2,8 +2,8 @@
  * @jest-environment jsdom
  */
 
-import { initializeCryptKeeperProvider } from "@cryptkeeperzk/providers";
-import { EventName } from "@cryptkeeperzk/providers/dist/src/event/types";
+import { initializeCryptKeeperProvider, EventName } from "@cryptkeeperzk/providers";
+import { waitFor } from "@testing-library/react";
 import EventEmitter2 from "eventemitter2";
 
 import { ZERO_ADDRESS } from "@src/config/const";
@@ -97,12 +97,11 @@ describe("connectors/cryptKeeper", () => {
     const connector = new CryptkeeperConnector(mockActions);
 
     await connector.activate();
+    await waitFor(() => expect(mockActions.update).toBeCalledTimes(1));
+    await waitFor(() => expect(mockActions.update).toBeCalledWith({ accounts: mockAddresses }));
 
-    await Promise.resolve(mockProvider.emit(EventName.LOGIN));
     await Promise.resolve(mockProvider.emit(EventName.LOGOUT));
 
-    expect(mockActions.update).toBeCalledTimes(1);
-    expect(mockActions.update).toBeCalledWith({ accounts: mockAddresses });
     expect(mockActions.resetState).toBeCalledTimes(1);
   });
 

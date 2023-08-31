@@ -2,8 +2,7 @@ import { ZkIdentitySemaphore } from "@src/identity";
 
 import type { IRLNGenerateArgs } from "@cryptkeeperzk/types";
 
-import { ZkProofService } from "..";
-import { RLNProofService } from "../protocols";
+import { ZkProofService, RLNProofService } from "..";
 
 jest.mock("@src/identity", (): unknown => ({
   ZkIdentitySemaphore: {

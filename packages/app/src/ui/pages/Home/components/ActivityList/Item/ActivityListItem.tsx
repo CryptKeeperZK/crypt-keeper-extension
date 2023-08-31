@@ -1,12 +1,14 @@
 import { IdentityWeb2Provider } from "@cryptkeeperzk/types";
 import { IconName, IconPrefix } from "@fortawesome/fontawesome-common-types";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import Tooltip from "@mui/material/Tooltip";
 import { useCallback } from "react";
 
 import { Operation, OperationType } from "@src/types";
 import { Icon } from "@src/ui/components/Icon";
 import { Menu } from "@src/ui/components/Menu";
 import { ellipsify } from "@src/util/account";
+import { redirectToNewTab } from "@src/util/browser";
 import { formatDate } from "@src/util/date";
 
 import "./activityListItemStyles.scss";
@@ -30,6 +32,7 @@ const OPERATIONS: Record<OperationType, string> = {
   [OperationType.DELETE_VERIFIABLE_CREDENTIAL]: "Verifiable credential deleted",
   [OperationType.DELETE_ALL_VERIFIABLE_CREDENTIALS]: "All verifiable credentials deleted",
   [OperationType.REJECT_VERIFIABLE_CREDENTIAL_REQUEST]: "Verifiable credential request rejected",
+  [OperationType.REVEAL_IDENTITY_COMMITMENT]: "Identity revealed",
 };
 
 const web2ProvidersIcons: IconWeb2Providers = {
@@ -45,6 +48,10 @@ export const ActivityItem = ({ operation, onDelete }: IActivityItemProps): JSX.E
     onDelete(operation.id);
   }, [operation.id, onDelete]);
 
+  const onGoToHost = useCallback(() => {
+    redirectToNewTab(metadata!.host!);
+  }, [metadata?.host]);
+
   return (
     <div className="p-4 activity-row" data-testid={`activity-operation-${operation.id}`}>
       <div className="flex flex-col flex-grow">
@@ -58,6 +65,14 @@ export const ActivityItem = ({ operation, onDelete }: IActivityItemProps): JSX.E
               ) : (
                 "random"
               )}
+            </span>
+          )}
+
+          {metadata?.host && (
+            <span className="text-xs py-1 px-2 ml-2 rounded-full bg-gray-500 text-gray-800">
+              <Tooltip title={metadata.host}>
+                <FontAwesomeIcon data-testid="host" icon="link" style={{ cursor: "pointer" }} onClick={onGoToHost} />
+              </Tooltip>
             </span>
           )}
         </div>

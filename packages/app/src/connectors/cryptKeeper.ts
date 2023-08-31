@@ -1,5 +1,5 @@
 import { type CryptKeeperInjectedProvider, initializeCryptKeeperProvider, RPCAction } from "@cryptkeeperzk/providers";
-import { EventName } from "@cryptkeeperzk/providers/dist/src/event/types";
+import { EventName } from "@cryptkeeperzk/providers";
 import { initializeConnector } from "@web3-react/core";
 import { Connector } from "@web3-react/types";
 

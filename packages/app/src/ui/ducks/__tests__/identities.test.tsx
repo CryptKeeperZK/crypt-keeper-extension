@@ -38,6 +38,7 @@ import {
   useLinkedIdentities,
   useUnlinkedIdentities,
   useIdentity,
+  revealConnectedIdentityCommitment,
 } from "../identities";
 
 jest.unmock("@src/ui/ducks/hooks");
@@ -234,6 +235,15 @@ describe("ui/ducks/identities", () => {
         host: "http://localhost:3000",
         options: { message: "message", account: ZERO_ADDRESS },
       },
+    });
+  });
+
+  test("should reveal identity commitment properly", async () => {
+    await Promise.resolve(store.dispatch(revealConnectedIdentityCommitment()));
+
+    expect(postMessage).toBeCalledTimes(1);
+    expect(postMessage).toBeCalledWith({
+      method: RPCAction.REVEAL_CONNECTED_IDENTITY_COMMITMENT,
     });
   });
 

@@ -14,6 +14,7 @@ import Onboarding from "@src/ui/pages/Onboarding";
 import OnboardingBackup from "@src/ui/pages/OnboardingBackup";
 import Recover from "@src/ui/pages/Recover";
 import ResetPassword from "@src/ui/pages/ResetPassword";
+import RevealIdentityCommitment from "@src/ui/pages/RevealIdentityCommitment";
 import RevealMnemonic from "@src/ui/pages/RevealMnemonic";
 import Settings from "@src/ui/pages/Settings";
 import UploadBackup from "@src/ui/pages/UploadBackup";
@@ -26,6 +27,7 @@ const routeConfig: RouteObject[] = [
   { path: Paths.HOME, element: <Home /> },
   { path: Paths.IDENTITY, element: <Identity /> },
   { path: Paths.CREATE_IDENTITY, element: <CreateIdentity /> },
+  { path: Paths.REVEAL_IDENTITY_COMMITMENT, element: <RevealIdentityCommitment /> },
   { path: Paths.LOGIN, element: <Login /> },
   { path: Paths.ONBOARDING, element: <Onboarding /> },
   { path: Paths.ONBOARDING_BACKUP, element: <OnboardingBackup /> },

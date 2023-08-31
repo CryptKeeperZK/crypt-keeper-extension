@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/unbound-method */
+import { EventName } from "@cryptkeeperzk/providers";
 import { EWallet, ConnectedIdentityMetadata, IdentityStrategy, ICreateIdentityOptions } from "@cryptkeeperzk/types";
 import { createNewIdentity } from "@cryptkeeperzk/zk";
 import { bigintToHex } from "bigint-conversion";
@@ -77,7 +78,11 @@ interface MockStorage {
 describe("background/services/zkIdentity", () => {
   const zkIdentityService = ZkIdentityService.getInstance();
 
-  const defaultTabs = [{ id: 1 }, { id: 2 }];
+  const defaultTabs = [
+    { id: 1, url: mockDefaultIdentity.metadata.host },
+    { id: 2, url: mockDefaultIdentity.metadata.host },
+    { id: 3 },
+  ];
 
   const defaultPopupTab = { id: 3, active: true, highlighted: true };
 
@@ -326,7 +331,24 @@ describe("background/services/zkIdentity", () => {
       identityStorage.get.mockReturnValue(mockSerializedDefaultIdentities);
       connectedIdentityStorage.get.mockReturnValue(mockDefaultIdentityCommitment);
 
-      const data = await zkIdentityService.getConnectedIdentityData();
+      const data = await zkIdentityService.getConnectedIdentityData(
+        {},
+        { urlOrigin: mockDefaultIdentity.metadata.host },
+      );
+
+      expect(data).toStrictEqual(pick(mockDefaultIdentity.metadata, ["name", "host", "identityStrategy"]));
+    });
+
+    test("should read connected identity data properly", async () => {
+      const [identityStorage, connectedIdentityStorage] = (SimpleStorage as jest.Mock).mock.instances as [
+        MockStorage,
+        MockStorage,
+      ];
+
+      identityStorage.get.mockReturnValue(mockSerializedDefaultIdentities);
+      connectedIdentityStorage.get.mockReturnValue(mockDefaultIdentityCommitment);
+
+      const data = await zkIdentityService.readConnectedIdentityData();
 
       expect(data).toStrictEqual(pick(mockDefaultIdentity.metadata, ["name", "host", "identityStrategy"]));
     });
@@ -347,7 +369,18 @@ describe("background/services/zkIdentity", () => {
 
     test("should not get connected identity if there is no any connected identity", async () => {
       const identity = await zkIdentityService.getConnectedIdentity();
-      const data = await zkIdentityService.getConnectedIdentityData();
+      const data = await zkIdentityService.getConnectedIdentityData(
+        {},
+        { urlOrigin: mockDefaultIdentity.metadata.host },
+      );
+
+      expect(identity).toBeUndefined();
+      expect(data).toBeUndefined();
+    });
+
+    test("should not get connected identity if there is no connected host", async () => {
+      const identity = await zkIdentityService.getConnectedIdentity();
+      const data = await zkIdentityService.getConnectedIdentityData({}, { urlOrigin: "" });
 
       expect(identity).toBeUndefined();
       expect(data).toBeUndefined();
@@ -366,6 +399,19 @@ describe("background/services/zkIdentity", () => {
       expect(result).toBeUndefined();
     });
 
+    test("should not read connected identity data if there is no any identity", async () => {
+      const [identityStorage, connectedIdentityStorage] = (SimpleStorage as jest.Mock).mock.instances as [
+        MockStorage,
+        MockStorage,
+      ];
+      identityStorage.get.mockReturnValue(undefined);
+      connectedIdentityStorage.get.mockReturnValue(mockDefaultIdentityCommitment);
+
+      const result = await zkIdentityService.readConnectedIdentityData();
+
+      expect(result).toBeUndefined();
+    });
+
     test("should not get connected identity commitment if there is no any identity", async () => {
       const [identityStorage, connectedIdentityStorage] = (SimpleStorage as jest.Mock).mock.instances as [
         MockStorage,
@@ -377,6 +423,61 @@ describe("background/services/zkIdentity", () => {
       const result = await zkIdentityService.getConnectedIdentityCommitment();
 
       expect(result).toBe("");
+    });
+
+    test("should request identity commitment modal properly", async () => {
+      await zkIdentityService.revealConnectedIdentityCommitmentRequest();
+
+      expect(browser.tabs.query).toBeCalledWith({ lastFocusedWindow: true });
+
+      const defaultOptions = {
+        tabId: defaultPopupTab.id,
+        type: "popup",
+        focused: true,
+        width: 385,
+        height: 610,
+      };
+
+      expect(browser.windows.create).toBeCalledWith(defaultOptions);
+    });
+
+    test("should reveal identity commitment properly", async () => {
+      const [identityStorage, connectedIdentityStorage] = (SimpleStorage as jest.Mock).mock.instances as [
+        MockStorage,
+        MockStorage,
+      ];
+
+      identityStorage.get.mockReturnValue(mockSerializedDefaultIdentities);
+      connectedIdentityStorage.get.mockReturnValue(mockDefaultIdentityCommitment);
+
+      await zkIdentityService.revealConnectedIdentityCommitment();
+
+      expect(browser.tabs.query).toBeCalledWith({ active: true });
+
+      expect(browser.tabs.sendMessage).toBeCalledTimes(2);
+
+      expect(browser.tabs.sendMessage).toHaveBeenNthCalledWith(1, defaultTabs[0].id, {
+        type: EventName.REVEAL_COMMITMENT,
+        payload: { commitment: mockDefaultIdentityCommitment },
+      });
+      expect(browser.tabs.sendMessage).toHaveBeenNthCalledWith(2, defaultTabs[1].id, {
+        type: EventName.REVEAL_COMMITMENT,
+        payload: { commitment: mockDefaultIdentityCommitment },
+      });
+    });
+
+    test("should not reveal identity commitment if there is not connected identity properly", async () => {
+      const [identityStorage, connectedIdentityStorage] = (SimpleStorage as jest.Mock).mock.instances as [
+        MockStorage,
+        MockStorage,
+      ];
+
+      identityStorage.get.mockReturnValue(undefined);
+      connectedIdentityStorage.get.mockReturnValue(undefined);
+
+      await expect(zkIdentityService.revealConnectedIdentityCommitment()).rejects.toThrow(
+        "No connected identity found",
+      );
     });
   });
 

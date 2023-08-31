@@ -51,6 +51,7 @@
     "scripting",
     "clipboardWrite",
     "activeTab",
+    "tabs",
     "storage",
     "notifications",
     "unlimitedStorage"

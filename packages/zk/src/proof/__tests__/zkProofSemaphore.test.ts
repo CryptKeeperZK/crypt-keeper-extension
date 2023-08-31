@@ -2,8 +2,7 @@ import { ZkIdentitySemaphore } from "@src/identity";
 
 import type { ISemaphoreGenerateArgs } from "@cryptkeeperzk/types";
 
-import { ZkProofService } from "..";
-import { SemaphoreProofService } from "../protocols";
+import { ZkProofService, SemaphoreProofService } from "..";
 
 jest.mock("@src/identity", (): unknown => ({
   ZkIdentitySemaphore: {

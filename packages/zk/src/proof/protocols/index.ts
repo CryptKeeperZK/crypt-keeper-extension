@@ -7,4 +7,7 @@ export {
   generateMerkleProof,
   getMerkleProof,
   getRlnVerificationKeyJson,
+  getMessageHash,
+  getRateCommitmentHash,
+  str2BigInt,
 } from "./utils";

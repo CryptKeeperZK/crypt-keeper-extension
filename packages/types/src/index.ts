@@ -41,6 +41,8 @@ export {
   type IZkInputs,
   type IZKProofPayload,
   type IZkMetadata,
+  type IRLNProofRequiredArgs,
+  type ISemaphoreProofRequiredArgs,
   ZkProofType,
 } from "./proof";
 export { type IRequestHandler, type IPendingRequest, RequestResolutionStatus, PendingRequestType } from "./request";

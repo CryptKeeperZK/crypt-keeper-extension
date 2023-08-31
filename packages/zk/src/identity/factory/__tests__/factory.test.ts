@@ -1,6 +1,6 @@
 import omit from "lodash/omit";
 
-import { createNewIdentity } from "..";
+import { createNewIdentity } from "../..";
 
 describe("identity/factory", () => {
   test("should return new interep identity ", () => {
