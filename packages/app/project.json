@@ -34,7 +34,14 @@
     "commit-changes": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "git add . && git commit -m \"chore(@cryptkeeperzk/app): release version ${version}\" --no-verify"
+        "commands": [
+          { "command": "git add .", "forwardAllArgs": false },
+          {
+            "command": "git commit -m 'chore(@cryptkeeperzk/app): release version ${version}' --no-verify",
+            "forwardAllArgs": false
+          }
+        ],
+        "parallel": false
       }
     }
   }
