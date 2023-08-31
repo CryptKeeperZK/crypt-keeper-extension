@@ -307,7 +307,7 @@ export default class ZkIdentityService implements IBackupable {
       throw new Error("No connected identity found");
     }
 
-    const tabs = await browser.tabs.query({ active: true });
+    const tabs = await browser.tabs.query({});
     const hostTabs = tabs.filter(({ url }) => (url ? new URL(url).origin === connectedIdentity.metadata.host : false));
     const commitment = bigintToHex(connectedIdentity.genIdentityCommitment());
 

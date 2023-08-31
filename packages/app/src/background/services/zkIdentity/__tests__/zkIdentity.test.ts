@@ -452,10 +452,8 @@ describe("background/services/zkIdentity", () => {
 
       await zkIdentityService.revealConnectedIdentityCommitment();
 
-      expect(browser.tabs.query).toBeCalledWith({ active: true });
-
+      expect(browser.tabs.query).toBeCalledWith({});
       expect(browser.tabs.sendMessage).toBeCalledTimes(2);
-
       expect(browser.tabs.sendMessage).toHaveBeenNthCalledWith(1, defaultTabs[0].id, {
         type: EventName.REVEAL_COMMITMENT,
         payload: { commitment: mockDefaultIdentityCommitment },
