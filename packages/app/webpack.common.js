@@ -32,7 +32,7 @@ module.exports = {
   plugins: [
     envPlugin,
     new BundleAnalyzerPlugin({
-      analyzerMode: process.env.WEBPACK_ANALYZER ? "static" : "disabled",
+      analyzerMode: process.env.WEBPACK_ANALYZER === "true" ? "static" : "disabled",
       openAnalyzer: false,
     }),
     new webpack.ProvidePlugin({
