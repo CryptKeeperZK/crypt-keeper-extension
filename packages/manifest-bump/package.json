@@ -39,7 +39,7 @@
   },
   "dependencies": {
     "@nx/devkit": "16.7.4",
-    "tslib": "^2.3.0"
+    "tslib": "^2.6.2"
   },
   "devDependencies": {
     "@cryptkeeperzk/eslint-config-base": "workspace:^",
