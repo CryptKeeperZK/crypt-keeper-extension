@@ -7,23 +7,31 @@ import { FullModal, FullModalHeader, FullModalContent, FullModalFooter } from "@
 import { VerifiableCredentialItem } from "@src/ui/components/VerifiableCredential/Item";
 
 export interface ISignVerifiablePresentationProps {
+  isWalletConnected: boolean;
+  isWalletInstalled: boolean;
   cryptkeeperVerifiableCredentials: CryptkeeperVerifiableCredential[];
   selectedVerifiableCredentialHashes: string[];
   onCloseModal: () => void;
   onReturnToSelection: () => void;
-  onGenerateVerifiablePresentation: () => void;
+  onConnectWallet: () => Promise<void>;
+  onSubmitVerifiablePresentation: (needsSignature: boolean) => void;
 }
 
 const SignVerifiablePresentation = ({
+  isWalletConnected,
+  isWalletInstalled,
   cryptkeeperVerifiableCredentials,
   selectedVerifiableCredentialHashes,
   onCloseModal,
   onReturnToSelection,
-  onGenerateVerifiablePresentation,
+  onConnectWallet,
+  onSubmitVerifiablePresentation,
 }: ISignVerifiablePresentationProps): JSX.Element => {
   const selectedVerifableCredentials = cryptkeeperVerifiableCredentials.filter(({ metadata }) =>
     selectedVerifiableCredentialHashes.includes(metadata.hash),
   );
+
+  const ethWalletTitle = isWalletConnected ? "Metamask" : "Connect to Metamask";
 
   return (
     <Box sx={{ width: "100%", overflowX: "hidden", overflowY: "auto" }}>
@@ -32,7 +40,8 @@ const SignVerifiablePresentation = ({
 
         <FullModalContent>
           <Typography sx={{ textAlign: "center" }}>
-            You have selected the following Verifiable Credentials. Please sign them to proceed.
+            You have selected the following Verifiable Credentials. You may now sign them with your Metamask wallet, or
+            send them unsigned.
           </Typography>
 
           {selectedVerifableCredentials.map(({ verifiableCredential, metadata }) => (
@@ -47,21 +56,24 @@ const SignVerifiablePresentation = ({
         <FullModalFooter>
           <Box sx={{ alignItems: "center", display: "flex", justifyContent: "space-between", width: "100%" }}>
             <Button
-              name="confirm"
-              sx={{ textTransform: "none" }}
-              type="button"
-              variant="contained"
-              onClick={onGenerateVerifiablePresentation}
+              disabled={!isWalletInstalled}
+              name="metamask"
+              size="small"
+              sx={{ textTransform: "none", flex: 1, mr: 1 }}
+              type="submit"
+              variant="outlined"
+              onClick={isWalletConnected ? () => onSubmitVerifiablePresentation(true) : onConnectWallet}
             >
-              Sign with Metamask
+              {isWalletInstalled ? ethWalletTitle : "Install MetaMask"}
             </Button>
 
             <Button
-              name="confirm"
-              sx={{ textTransform: "none" }}
-              type="button"
+              name="cryptkeeper"
+              size="small"
+              sx={{ textTransform: "none", flex: 1, ml: 1 }}
+              type="submit"
               variant="contained"
-              onClick={onGenerateVerifiablePresentation}
+              onClick={() => onSubmitVerifiablePresentation(false)}
             >
               Proceed Without Signing
             </Button>
