@@ -8,7 +8,7 @@ import NotificationService from "@src/background/services/notification";
 import SimpleStorage from "@src/background/services/storage";
 import { Paths } from "@src/constants";
 import { OperationType, IRenameVerifiableCredentialArgs, ICryptkeeperVerifiableCredential } from "@src/types";
-import { IVerifiablePresentationRequest } from "@cryptkeeperzk/types";
+import { IVerifiablePresentation, IVerifiablePresentationRequest } from "@cryptkeeperzk/types";
 import { IAddVerifiableCredentialArgs } from "@src/types/verifiableCredentials";
 
 import type { BackupData, IBackupable } from "@src/background/services/backup";
@@ -19,7 +19,6 @@ import {
   deserializeVerifiableCredential,
   deserializeCryptkeeperVerifiableCredential,
   validateSerializedVerifiableCredential,
-  generateVerifiablePresentationFromVerifiableCredentials,
 } from "./utils";
 
 const VERIFIABLE_CREDENTIALS_KEY = "@@VERIFIABLE-CREDENTIALS@@";
@@ -212,28 +211,7 @@ export default class VerifiableCredentialsService implements IBackupable {
     });
   };
 
-  generateVerifiablePresentation = async (credentialHashes: string[]): Promise<void> => {
-    if (!credentialHashes || credentialHashes.length === 0) {
-      throw new Error("Verifiable Credential hashes are required.");
-    }
-
-    const cryptkeeperVerifiableCredentials = await this.getCryptkeeperVerifiableCredentialsFromStore();
-    const verifiableCredentials = await Promise.all(
-      credentialHashes.map(async (credentialHash) => {
-        if (!cryptkeeperVerifiableCredentials.has(credentialHash)) {
-          throw new Error("Verifiable Credential does not exist.");
-        }
-
-        const serializedCryptkeeperVerifiableCredential = cryptkeeperVerifiableCredentials.get(credentialHash)!;
-        const cryptkeeperVerifiableCredential = await deserializeCryptkeeperVerifiableCredential(
-          serializedCryptkeeperVerifiableCredential,
-        );
-
-        return cryptkeeperVerifiableCredential.verifiableCredential;
-      }),
-    );
-    const verifiablePresentation = generateVerifiablePresentationFromVerifiableCredentials(verifiableCredentials);
-
+  generateVerifiablePresentation = async (verifiablePresentation: VerifiablePresentation): Promise<void> => {
     await this.historyService.trackOperation(OperationType.GENERATE_VERIFIABLE_PRESENTATION, {});
     await this.notificationService.create({
       options: {

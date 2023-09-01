@@ -176,6 +176,26 @@ export async function deserializeVerifiableCredential(
 }
 
 /**
+ * Serializes a VerifiablePresentation object into a JSON string.
+ * @param verifiablePresentation An object representing a VerifiablePresentation.
+ * @returns A string representing a VerifiablePresentation.
+ */
+export function serializeVerifiablePresentation(verifiablePresentation: VerifiablePresentation): string {
+  if (!verifiablePresentation.verifiableCredential) {
+    return stringify(verifiablePresentation);
+  }
+
+  const serializedVerifiableCredentials = verifiablePresentation.verifiableCredential.map((verifiableCredential) =>
+    serializeVerifiableCredential(verifiableCredential),
+  );
+
+  return stringify({
+    ...verifiablePresentation,
+    verifiableCredential: serializedVerifiableCredentials,
+  });
+}
+
+/**
  * Determines if a string represents a valid VerifiableCredential.
  * @param serializedVerifiableCredential An string representing a VerifiableCredential.
  * @returns The string if it is a valid VerifiableCredential, otherwise throws an error.

@@ -1,38 +1,50 @@
 import { useCallback, useEffect, useState } from "react";
 
-import { CryptkeeperVerifiableCredential } from "@src/types";
+import {
+  generateVerifiablePresentationFromVerifiableCredentials,
+  serializeVerifiablePresentation,
+} from "@src/background/services/credentials/utils";
+import { CryptkeeperVerifiableCredential, VerifiablePresentation } from "@src/types";
 import { closePopup } from "@src/ui/ducks/app";
 import { useAppDispatch } from "@src/ui/ducks/hooks";
 import {
   fetchVerifiableCredentials,
-  generateVerifiablePresentation,
   rejectVerifiablePresentationRequest,
+  generateVerifiablePresentation,
 } from "@src/ui/ducks/verifiableCredentials";
 import { useCryptkeeperVerifiableCredentials } from "@src/ui/hooks/verifiableCredentials";
+import { useEthWallet } from "@src/ui/hooks/wallet";
+
+const ETHEREUM_SIGNATURE_SPECIFICATION_TYPE = "EthereumEip712Signature2021";
+const VERIFIABLE_CREDENTIAL_PROOF_PURPOSE = "assertionMethod";
 
 export type PresentVerifiableCredentialDisplayState = "select" | "sign";
 
 export interface IUsePresentVerifiableCredentialData {
+  isWalletConnected: boolean;
+  isWalletInstalled: boolean;
   verifiablePresentationRequest?: string;
   cryptkeeperVerifiableCredentials: CryptkeeperVerifiableCredential[];
   selectedVerifiableCredentialHashes: string[];
-  displayState: PresentVerifiableCredentialDisplayState;
+  verifiablePresentation?: VerifiablePresentation;
   error?: string;
   onCloseModal: () => void;
   onRejectRequest: () => void;
   onToggleSelection: (hash: string) => void;
   onConfirmSelection: () => void;
   onReturnToSelection: () => void;
-  onGenerateVerifiablePresentation: () => Promise<void>;
+  onConnectWallet: () => Promise<void>;
+  onSubmitVerifiablePresentation: (needsSignature: boolean) => Promise<void>;
 }
 
 export const usePresentVerifiableCredential = (): IUsePresentVerifiableCredentialData => {
-  const [displayState, setDisplayState] = useState<PresentVerifiableCredentialDisplayState>("select");
-  const [error, setError] = useState<string>();
   const [verifiablePresentationRequest, setVerifiablePresentationRequest] = useState<string>();
   const cryptkeeperVerifiableCredentials = useCryptkeeperVerifiableCredentials();
   const [selectedVerifiableCredentialHashes, setSelectedVerifiableCredentialHashes] = useState<string[]>([]);
+  const [verifiablePresentation, setVerifiablePresentation] = useState<VerifiablePresentation>();
+  const [error, setError] = useState<string>();
 
+  const ethWallet = useEthWallet();
   const dispatch = useAppDispatch();
 
   useEffect(() => {
@@ -80,29 +92,84 @@ export const usePresentVerifiableCredential = (): IUsePresentVerifiableCredentia
       setError("Please select at least one credential");
       return;
     }
-    setDisplayState("sign");
-  }, [setDisplayState, selectedVerifiableCredentialHashes, setError]);
+
+    const verifiableCredentials = cryptkeeperVerifiableCredentials
+      .filter((cryptkeeperVerifiableCredential) =>
+        selectedVerifiableCredentialHashes.includes(cryptkeeperVerifiableCredential.metadata.hash),
+      )
+      .map((cryptkeeperVerifiableCredential) => cryptkeeperVerifiableCredential.verifiableCredential);
+    const newVerifiablePresentation = generateVerifiablePresentationFromVerifiableCredentials(verifiableCredentials);
+
+    setVerifiablePresentation(newVerifiablePresentation);
+  }, [cryptkeeperVerifiableCredentials, selectedVerifiableCredentialHashes, setVerifiablePresentation, setError]);
 
   const onReturnToVerifiableCredentialSelection = useCallback(() => {
-    setDisplayState("select");
-  }, [setDisplayState]);
+    setVerifiablePresentation(undefined);
+  }, [setVerifiablePresentation]);
 
-  const onGenerateVerifiablePresentation = useCallback(async () => {
-    await dispatch(generateVerifiablePresentation(selectedVerifiableCredentialHashes));
-    onCloseModal();
-  }, [selectedVerifiableCredentialHashes, generateVerifiablePresentation, dispatch, onCloseModal]);
+  const onConnectWallet = useCallback(async () => {
+    await ethWallet.onConnect().catch(() => setError("Wallet connection error"));
+  }, [setError, ethWallet.onConnect]);
+
+  const onSubmitVerifiablePresentation = useCallback(
+    async (needsSignature: boolean) => {
+      if (!verifiablePresentation) {
+        setError("Failed to generate Verifiable Presentation.");
+        return;
+      }
+
+      if (!needsSignature) {
+        await dispatch(generateVerifiablePresentation(verifiablePresentation));
+        onCloseModal();
+        return;
+      }
+
+      const address = ethWallet.address?.toLowerCase();
+      const signer = await ethWallet.provider?.getSigner();
+      if (!address || !signer) {
+        setError("Could not connect to Ethereum account.");
+        return;
+      }
+
+      try {
+        const serializedVerifiablePresentation = serializeVerifiablePresentation(verifiablePresentation);
+        const signature = await signer.signMessage(serializedVerifiablePresentation);
+        const signedVerifiablePresentation = {
+          ...verifiablePresentation,
+          proof: [
+            {
+              type: [ETHEREUM_SIGNATURE_SPECIFICATION_TYPE],
+              proofPurpose: VERIFIABLE_CREDENTIAL_PROOF_PURPOSE,
+              verificationMethod: address,
+              created: new Date(),
+              proofValue: signature,
+            },
+          ],
+        };
+
+        await dispatch(generateVerifiablePresentation(signedVerifiablePresentation));
+        onCloseModal();
+      } catch (e) {
+        setError("Failed to sign Verifiable Presentation.");
+      }
+    },
+    [verifiablePresentation, setError, dispatch, onCloseModal, generateVerifiablePresentation, ethWallet],
+  );
 
   return {
+    isWalletInstalled: ethWallet.isInjectedWallet,
+    isWalletConnected: ethWallet.isActive,
     verifiablePresentationRequest,
     cryptkeeperVerifiableCredentials,
     selectedVerifiableCredentialHashes,
-    displayState,
+    verifiablePresentation,
     error,
     onCloseModal,
     onRejectRequest: onRejectVerifiablePresentationRequest,
     onToggleSelection: onToggleSelectVerifiableCredential,
     onConfirmSelection: onConfirmVerifiableCredentialSelection,
     onReturnToSelection: onReturnToVerifiableCredentialSelection,
-    onGenerateVerifiablePresentation,
+    onConnectWallet,
+    onSubmitVerifiablePresentation,
   };
 };

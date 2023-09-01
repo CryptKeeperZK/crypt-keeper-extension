@@ -3,7 +3,7 @@ import { RPCAction } from "@cryptkeeperzk/providers";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 import { serializeCryptkeeperVerifiableCredential } from "@src/background/services/credentials/utils";
-import { ICryptkeeperVerifiableCredential, IRenameVerifiableCredentialArgs } from "@src/types";
+import { ICryptkeeperVerifiableCredential, IRenameVerifiableCredentialArgs, IVerifiablePresentation } from "@src/types";
 import postMessage from "@src/util/postMessage";
 
 import type { TypedThunk } from "@src/ui/store/configureAppStore";
@@ -61,12 +61,13 @@ export const deleteVerifiableCredential = (verifiableCredentialHash: string) => 
   });
 };
 
-export const generateVerifiablePresentation = (credentialHashes: string[]) => async (): Promise<void> => {
-  await postMessage({
-    method: RPCAction.GENERATE_VERIFIABLE_PRESENTATION,
-    payload: credentialHashes,
-  });
-};
+export const generateVerifiablePresentation =
+  (verifiablePresentation: VerifiablePresentation) => async (): Promise<void> => {
+    await postMessage({
+      method: RPCAction.GENERATE_VERIFIABLE_PRESENTATION,
+      payload: verifiablePresentation,
+    });
+  };
 
 export const rejectVerifiablePresentationRequest = () => async (): Promise<void> => {
   await postMessage({
