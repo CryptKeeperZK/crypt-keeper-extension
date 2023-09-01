@@ -15,4 +15,6 @@ pnpm-lock.yaml
 **/tmp/
 **/.parcel-cache/
 packages/app/src/static/
+packages/app/src/manifest/
 CHANGELOG.md
+.eslintignore

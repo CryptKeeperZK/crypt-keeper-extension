@@ -1,0 +1,18 @@
+{
+  "$schema": "http://json-schema.org/schema",
+  "version": 2,
+  "title": "Bump executor",
+  "description": "Manifest version bump executor",
+  "type": "object",
+  "properties": {
+    "tag": {
+      "type": "string",
+      "description": "Version tag"
+    },
+    "manifestPaths": {
+      "type": "array",
+      "description": "Paths to manifest files"
+    }
+  },
+  "required": ["tag", "manifestPaths"]
+}

@@ -1,0 +1,50 @@
+{
+  "name": "@cryptkeeperzk/manifest-bump",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "packages/manifest-bump/src",
+  "projectType": "library",
+  "targets": {
+    "build": {
+      "executor": "@nx/js:tsc",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/packages/manifest-bump",
+        "main": "packages/manifest-bump/src/index.ts",
+        "tsConfig": "packages/manifest-bump/tsconfig.build.json",
+        "assets": [
+          "packages/manifest-bump/*.md",
+          {
+            "input": "./packages/manifest-bump/src",
+            "glob": "**/!(*.ts)",
+            "output": "./src"
+          },
+          {
+            "input": "./packages/manifest-bump/src",
+            "glob": "**/*.d.ts",
+            "output": "./src"
+          },
+          {
+            "input": "./packages/manifest-bump",
+            "glob": "generators.json",
+            "output": "."
+          },
+          {
+            "input": "./packages/manifest-bump",
+            "glob": "executors.json",
+            "output": "."
+          }
+        ]
+      }
+    },
+    "version": {
+      "executor": "@jscutlery/semver:version",
+      "options": {
+        "preset": "conventional",
+        "trackDeps": true,
+        "push": false,
+        "skipCommit": true,
+        "noVerify": true
+      }
+    }
+  }
+}

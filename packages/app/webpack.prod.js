@@ -23,15 +23,13 @@ module.exports = merge(common, {
         },
       },
     },
+    minimize: true,
     minimizer: [
       new TerserPlugin({
         terserOptions: {
-          compress: {
-            drop_console: true,
-            drop_debugger: true,
-            pure_funcs: ["console.log", "console.info"],
-          },
+          compress: true,
         },
+        extractComments: false,
       }),
       new ImageMinimizerPlugin({
         minimizer: {

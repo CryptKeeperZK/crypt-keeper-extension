@@ -21,6 +21,7 @@ env:
   EXTENSION_VERSION: ""
   MANIFEST_VERSION: 2
   VERIFIABLE_CREDENTIALS: false
+  WEBPACK_ANALYZER: false
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -76,7 +77,6 @@ jobs:
         run: |-
           mv cryptkeeper-firefox-extension-v${{ env.EXTENSION_VERSION }}.zip ./packages/app/dist
           cd ./packages/app/dist
-          ls -a
           web-ext-submit --api-key=${{ secrets.WEB_EXT_API_KEY }} --api-secret=${{ secrets.WEB_EXT_API_SECRET }} --use-submission-api --channel=listed
           cd ../../..
 

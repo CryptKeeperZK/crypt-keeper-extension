@@ -1,0 +1,10 @@
+{
+  "manifest_version": 3,
+  "name": "CryptKeeper",
+  "description": "A ZK Identity and Proof Management Wallet",
+  "version": "0.2.4",
+  "action": {
+    "default_icon": "./icons/logo.png",
+    "default_popup": "popup.html"
+  }
+}

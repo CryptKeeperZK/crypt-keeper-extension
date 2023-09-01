@@ -1,5 +1,4 @@
 import { RPCAction } from "@cryptkeeperzk/providers";
-import { RLNSNARKProof } from "@cryptkeeperzk/rlnjs";
 import { generateProof } from "@cryptkeeperzk/semaphore-proof";
 import { getMerkleProof } from "@cryptkeeperzk/zk";
 import { omit } from "lodash";
@@ -22,6 +21,7 @@ import {
 import pushMessage from "@src/util/pushMessage";
 
 import type { IConnectData } from "./types";
+import type { RLNSNARKProof } from "@cryptkeeperzk/rlnjs";
 
 export default class InjectorService {
   private static INSTANCE: InjectorService;

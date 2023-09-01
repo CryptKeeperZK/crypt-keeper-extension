@@ -7,7 +7,7 @@
       "options": {
         "preset": "conventional",
         "trackDeps": true,
-        "push": true,
+        "push": false,
         "noVerify": true
       }
     }
