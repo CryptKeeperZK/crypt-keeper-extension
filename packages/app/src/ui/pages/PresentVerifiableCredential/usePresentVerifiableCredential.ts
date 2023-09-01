@@ -18,8 +18,6 @@ import { useEthWallet } from "@src/ui/hooks/wallet";
 const ETHEREUM_SIGNATURE_SPECIFICATION_TYPE = "EthereumEip712Signature2021";
 const VERIFIABLE_CREDENTIAL_PROOF_PURPOSE = "assertionMethod";
 
-export type PresentVerifiableCredentialDisplayState = "select" | "sign";
-
 export interface IUsePresentVerifiableCredentialData {
   isWalletConnected: boolean;
   isWalletInstalled: boolean;
