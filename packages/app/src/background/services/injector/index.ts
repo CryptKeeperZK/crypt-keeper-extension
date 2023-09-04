@@ -24,7 +24,7 @@ import type { IConnectData } from "./types";
 import type { RLNSNARKProof } from "@cryptkeeperzk/rlnjs";
 
 export default class InjectorService {
-  private static INSTANCE: InjectorService;
+  private static INSTANCE?: InjectorService;
 
   private requestManager: RequestManager;
 
@@ -151,6 +151,10 @@ export default class InjectorService {
           identityCommitment,
           merkleProofArtifacts,
         });
+
+        if (!merkleProof) {
+          throw new Error("No merkle proof error");
+        }
 
         if (!semaphoreRequest.circuitFilePath || !semaphoreRequest.zkeyFilePath) {
           throw new Error("Injected service: Must set circuitFilePath and zkeyFilePath");

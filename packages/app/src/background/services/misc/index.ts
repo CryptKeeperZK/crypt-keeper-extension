@@ -8,7 +8,7 @@ const WALLET_STORAGE_KEY = "@@WALLET@@";
 const INITIALIZATION_STORAGE_KEY = "@@INITIALIZED@@";
 
 export default class MiscStorageService {
-  private static INSTANCE: MiscStorageService;
+  private static INSTANCE?: MiscStorageService;
 
   private externalWalletStorage: SimpleStorage;
 
@@ -32,10 +32,13 @@ export default class MiscStorageService {
       .get<InitializationData>()
       .then((res) => res?.initializationStep ?? InitializationStep.NEW);
 
-  setInitialization = async (payload: InitializationData): Promise<void> => this.initializationStorage.set(payload);
+  setInitialization = async (payload: InitializationData): Promise<void> => {
+    await this.initializationStorage.set(payload);
+  };
 
-  setExternalWalletConnection = async (payload: ExternalWalletConnectionData): Promise<void> =>
-    this.externalWalletStorage.set(payload);
+  setExternalWalletConnection = async (payload: ExternalWalletConnectionData): Promise<void> => {
+    await this.externalWalletStorage.set(payload);
+  };
 
   getExternalWalletConnection = async (): Promise<ExternalWalletConnectionData | null> =>
     this.externalWalletStorage.get();

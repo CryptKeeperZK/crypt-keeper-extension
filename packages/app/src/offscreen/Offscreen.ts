@@ -5,8 +5,13 @@ import { Runtime } from "webextension-polyfill";
 
 import Handler from "@src/background/controllers/handler";
 
+const defaultMap = Object.values(RPCAction).reduce(
+  (acc, method) => ({ ...acc, [method]: false }),
+  {},
+) as unknown as Record<RPCAction, boolean>;
+
 const RPC_METHOD_ACCESS: Record<RPCAction, boolean> = {
-  ...Object.values(RPCAction).reduce((acc, method) => ({ ...acc, [method]: false }), {} as Record<RPCAction, boolean>),
+  ...defaultMap,
   [RPCAction.GENERATE_SEMAPHORE_PROOF_OFFSCREEN]: true,
   [RPCAction.GENERATE_RLN_PROOF_OFFSCREEN]: true,
 };
@@ -24,7 +29,7 @@ export class OffscreenController {
   handle = (request: IRequestHandler, sender: Runtime.MessageSender): Promise<unknown> =>
     this.handler.handle(request, { sender, bypass: RPC_METHOD_ACCESS[request.method as RPCAction] });
 
-  initialize = (): OffscreenController => {
+  initialize = (): this => {
     this.handler.add(RPCAction.GENERATE_SEMAPHORE_PROOF_OFFSCREEN, this.generateSemaphoreProof);
     this.handler.add(RPCAction.GENERATE_RLN_PROOF_OFFSCREEN, this.generateRlnProof);
     return this;

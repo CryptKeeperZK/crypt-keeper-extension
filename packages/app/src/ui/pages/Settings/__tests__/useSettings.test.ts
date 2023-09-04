@@ -74,7 +74,7 @@ describe("ui/pages/Settings/useSettings", () => {
   test("should return initial data", async () => {
     const { result } = renderHook(() => useSettings());
 
-    await waitFor(() => result.current.isLoading === false);
+    await waitFor(() => !result.current.isLoading);
 
     expect(result.current.isConfirmModalOpen).toBe(false);
     expect(result.current.isLoading).toBe(false);
@@ -85,14 +85,14 @@ describe("ui/pages/Settings/useSettings", () => {
   test("should show confirm modal", async () => {
     const { result } = renderHook(() => useSettings());
 
-    await waitFor(() => result.current.isLoading === false);
+    await waitFor(() => !result.current.isLoading);
 
     await act(async () => Promise.resolve(result.current.onConfirmModalShow()));
-    await waitFor(() => result.current.isConfirmModalOpen === true);
+    await waitFor(() => result.current.isConfirmModalOpen);
 
     await act(async () => Promise.resolve(result.current.onDeleteAllHistory()));
 
-    await waitFor(() => result.current.isConfirmModalOpen === false);
+    await waitFor(() => !result.current.isConfirmModalOpen);
 
     expect(mockDispatch).toBeCalledTimes(2);
     expect(fetchHistory).toBeCalledTimes(1);
@@ -102,14 +102,14 @@ describe("ui/pages/Settings/useSettings", () => {
   test("should show confirm storage clear modal", async () => {
     const { result } = renderHook(() => useSettings());
 
-    await waitFor(() => result.current.isLoading === false);
+    await waitFor(() => !result.current.isLoading);
 
     await act(async () => Promise.resolve(result.current.onConfirmStorageDelete()));
-    await waitFor(() => result.current.isConfirmStorageDelete === true);
+    await waitFor(() => result.current.isConfirmStorageDelete);
 
     await act(async () => Promise.resolve(result.current.onDeleteStorage()));
 
-    await waitFor(() => result.current.isConfirmStorageDelete === false);
+    await waitFor(() => !result.current.isConfirmStorageDelete);
 
     expect(mockDispatch).toBeCalledTimes(3);
     expect(fetchHistory).toBeCalledTimes(1);
@@ -120,7 +120,7 @@ describe("ui/pages/Settings/useSettings", () => {
   test("should delete all history properly", async () => {
     const { result } = renderHook(() => useSettings());
 
-    await waitFor(() => result.current.isLoading === false);
+    await waitFor(() => !result.current.isLoading);
 
     await act(async () => Promise.resolve(result.current.onDeleteAllHistory()));
 
@@ -132,7 +132,7 @@ describe("ui/pages/Settings/useSettings", () => {
   test("should delete history operation properly", async () => {
     const { result } = renderHook(() => useSettings());
 
-    await waitFor(() => result.current.isLoading === false);
+    await waitFor(() => !result.current.isLoading);
 
     await act(async () => Promise.resolve(result.current.onEnableHistory()));
 
@@ -145,7 +145,7 @@ describe("ui/pages/Settings/useSettings", () => {
   test("should change tab properly", async () => {
     const { result } = renderHook(() => useSettings());
 
-    await waitFor(() => result.current.isLoading === false);
+    await waitFor(() => !result.current.isLoading);
 
     await act(async () => Promise.resolve(result.current.onTabChange({} as SyntheticEvent, SettingsTabs.BACKUP)));
 
@@ -155,7 +155,7 @@ describe("ui/pages/Settings/useSettings", () => {
   test("should go back properly", async () => {
     const { result } = renderHook(() => useSettings());
 
-    await waitFor(() => result.current.isLoading === false);
+    await waitFor(() => !result.current.isLoading);
 
     await act(async () => Promise.resolve(result.current.onGoBack()));
 
@@ -166,7 +166,7 @@ describe("ui/pages/Settings/useSettings", () => {
   test("should go to download backup page properly", async () => {
     const { result } = renderHook(() => useSettings());
 
-    await waitFor(() => result.current.isLoading === false);
+    await waitFor(() => !result.current.isLoading);
 
     await act(async () => Promise.resolve(result.current.onGoToBackup()));
 
@@ -177,7 +177,7 @@ describe("ui/pages/Settings/useSettings", () => {
   test("should open upload backup modal properly", async () => {
     const { result } = renderHook(() => useSettings());
 
-    await waitFor(() => result.current.isLoading === false);
+    await waitFor(() => !result.current.isLoading);
 
     await act(async () => Promise.resolve(result.current.onGoToUploadBackup()));
 
@@ -190,7 +190,7 @@ describe("ui/pages/Settings/useSettings", () => {
     (isExtensionPopupOpen as jest.Mock).mockReturnValue(false);
     const { result } = renderHook(() => useSettings());
 
-    await waitFor(() => result.current.isLoading === false);
+    await waitFor(() => !result.current.isLoading);
 
     await act(async () => Promise.resolve(result.current.onGoToUploadBackup()));
 
@@ -201,7 +201,7 @@ describe("ui/pages/Settings/useSettings", () => {
   test("should go to reset password page properly", async () => {
     const { result } = renderHook(() => useSettings());
 
-    await waitFor(() => result.current.isLoading === false);
+    await waitFor(() => !result.current.isLoading);
 
     await act(async () => Promise.resolve(result.current.onGoToResetPassword()));
 
@@ -212,7 +212,7 @@ describe("ui/pages/Settings/useSettings", () => {
   test("should delete all identities properly", async () => {
     const { result } = renderHook(() => useSettings());
 
-    await waitFor(() => result.current.isLoading === false);
+    await waitFor(() => !result.current.isLoading);
 
     await act(async () => Promise.resolve(result.current.onDeleteAllIdentities()));
 
@@ -224,7 +224,7 @@ describe("ui/pages/Settings/useSettings", () => {
   test("should go to reveal mnemonic page properly", async () => {
     const { result } = renderHook(() => useSettings());
 
-    await waitFor(() => result.current.isLoading === false);
+    await waitFor(() => !result.current.isLoading);
 
     await act(async () => Promise.resolve(result.current.onGoRevealMnemonic()));
 

@@ -107,8 +107,12 @@ describe("ui/pages/ConnectIdentity/useConnectIdentity", () => {
 
   const waitForData = async (current: IUseConnectIdentityData) => {
     await waitFor(() => current.faviconUrl !== "");
-    await waitFor(() => expect(mockDispatch).toBeCalledTimes(1));
-    await waitFor(() => expect(fetchIdentities).toBeCalledTimes(1));
+    await waitFor(() => {
+      expect(mockDispatch).toBeCalledTimes(1);
+    });
+    await waitFor(() => {
+      expect(fetchIdentities).toBeCalledTimes(1);
+    });
   };
 
   test("should return initial data", async () => {

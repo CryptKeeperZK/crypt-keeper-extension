@@ -24,7 +24,7 @@ describe("ui/components/ConfirmRequestModal/useConfirmRequestModal", () => {
   const mockDispatch = jest.fn(() => Promise.resolve());
 
   const waitForData = async (current: IUseConfirmRequestModalData) => {
-    await waitFor(() => current.loading !== true);
+    await waitFor(() => !current.loading);
   };
 
   beforeEach(() => {
@@ -57,7 +57,7 @@ describe("ui/components/ConfirmRequestModal/useConfirmRequestModal", () => {
     await waitForData(result.current);
 
     await act(async () => Promise.resolve(result.current.accept()));
-    await waitFor(() => result.current.loading === false);
+    await waitFor(() => !result.current.loading);
 
     expect(finalizeRequest).toBeCalledTimes(1);
     expect(finalizeRequest).toBeCalledWith({
@@ -75,7 +75,7 @@ describe("ui/components/ConfirmRequestModal/useConfirmRequestModal", () => {
     await waitForData(result.current);
 
     await act(async () => Promise.resolve(result.current.accept()));
-    await waitFor(() => result.current.loading === false);
+    await waitFor(() => !result.current.loading);
 
     expect(result.current.error).toBe(error.message);
   });
@@ -85,7 +85,7 @@ describe("ui/components/ConfirmRequestModal/useConfirmRequestModal", () => {
     await waitForData(result.current);
 
     await act(async () => Promise.resolve(result.current.reject()));
-    await waitFor(() => result.current.loading === false);
+    await waitFor(() => !result.current.loading);
 
     expect(finalizeRequest).toBeCalledTimes(1);
     expect(finalizeRequest).toBeCalledWith({
@@ -103,7 +103,7 @@ describe("ui/components/ConfirmRequestModal/useConfirmRequestModal", () => {
     await waitForData(result.current);
 
     await act(async () => Promise.resolve(result.current.reject()));
-    await waitFor(() => result.current.loading === false);
+    await waitFor(() => !result.current.loading);
 
     expect(result.current.error).toBe(error.message);
   });

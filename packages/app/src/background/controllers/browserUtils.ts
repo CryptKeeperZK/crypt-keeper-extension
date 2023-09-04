@@ -21,7 +21,7 @@ interface OpenPopupArgs {
 }
 
 export default class BrowserUtils {
-  private static INSTANCE: BrowserUtils;
+  private static INSTANCE?: BrowserUtils;
 
   private cached: Windows.Window | null = null;
 

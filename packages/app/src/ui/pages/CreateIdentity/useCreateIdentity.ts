@@ -110,7 +110,9 @@ export const useCreateIdentity = (): IUseCreateIdentityData => {
         if (isGoBack) {
           navigate(-1);
         } else {
-          dispatch(closePopup()).then(() => navigate(Paths.HOME));
+          dispatch(closePopup()).then(() => {
+            navigate(Paths.HOME);
+          });
         }
       } catch (err) {
         setError("root", { type: "submit", message: (err as Error).message });
@@ -130,14 +132,18 @@ export const useCreateIdentity = (): IUseCreateIdentityData => {
   );
 
   const onConnectWallet = useCallback(async () => {
-    await ethWallet.onConnect().catch(() => setError("root", { type: "submit", message: "Wallet connection error" }));
+    await ethWallet.onConnect().catch(() => {
+      setError("root", { type: "submit", message: "Wallet connection error" });
+    });
   }, [setError, ethWallet.onConnect]);
 
   const onCloseModal = useCallback(() => {
     if (isGoBack) {
       navigate(-1);
     } else {
-      dispatch(closePopup()).then(() => navigate(Paths.HOME));
+      dispatch(closePopup()).then(() => {
+        navigate(Paths.HOME);
+      });
     }
   }, [isGoBack, navigate, dispatch]);
 

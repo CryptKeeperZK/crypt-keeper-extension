@@ -30,7 +30,7 @@ const requestsSlice = createSlice({
 
 export const { setPendingRequests } = requestsSlice.actions;
 
-export const fetchPendingRequests = (): TypedThunk => async (dispatch) => {
+export const fetchPendingRequests = (): TypedThunk<Promise<void>> => async (dispatch) => {
   const pendingRequests = await postMessage<IPendingRequest[]>({ method: RPCAction.GET_PENDING_REQUESTS });
   dispatch(setPendingRequests(pendingRequests));
 };

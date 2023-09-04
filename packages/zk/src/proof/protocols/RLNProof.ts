@@ -43,6 +43,10 @@ export class RLNProofService implements IZkProof<IRLNProofRequest, IRLNSNARKProo
         merkleStorageAddress,
       }));
 
+    if (!merkleProof) {
+      throw new Error("No merkle proof error");
+    }
+
     const proofInputs: IRLNProverInputs = {
       rlnIdentifier: rlnIdentifierBigInt,
       identitySecret,

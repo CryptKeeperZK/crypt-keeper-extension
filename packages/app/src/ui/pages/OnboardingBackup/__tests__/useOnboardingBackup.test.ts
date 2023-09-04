@@ -74,17 +74,23 @@ describe("ui/pages/OnboardingBackup/useOnboardingBackup", () => {
   test("should toggle password properly", () => {
     const { result } = renderHook(() => useOnboardingBackup());
 
-    act(() => result.current.onShowPassword());
+    act(() => {
+      result.current.onShowPassword();
+    });
     expect(result.current.isShowPassword).toStrictEqual(true);
 
-    act(() => result.current.onShowPassword());
+    act(() => {
+      result.current.onShowPassword();
+    });
     expect(result.current.isShowPassword).toStrictEqual(false);
   });
 
   test("should go back properly", () => {
     const { result } = renderHook(() => useOnboardingBackup());
 
-    act(() => result.current.onGoBack());
+    act(() => {
+      result.current.onGoBack();
+    });
 
     expect(mockDispatch).toBeCalledTimes(1);
     expect(closePopup).toBeCalledTimes(1);
@@ -97,7 +103,9 @@ describe("ui/pages/OnboardingBackup/useOnboardingBackup", () => {
 
     const { result } = renderHook(() => useOnboardingBackup());
 
-    act(() => result.current.onDrop(acceptedFiles, [], new Event("drop")));
+    act(() => {
+      result.current.onDrop(acceptedFiles, [], new Event("drop"));
+    });
 
     expect(result.current.errors.backupFile).toBeUndefined();
   });
@@ -107,7 +115,9 @@ describe("ui/pages/OnboardingBackup/useOnboardingBackup", () => {
 
     const { result } = renderHook(() => useOnboardingBackup());
 
-    act(() => result.current.onDrop([], rejectedFiles, new Event("drop")));
+    act(() => {
+      result.current.onDrop([], rejectedFiles, new Event("drop"));
+    });
 
     expect(result.current.errors.backupFile).toBe("error");
   });

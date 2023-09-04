@@ -37,6 +37,8 @@ jest.mock("../usePopup", (): unknown => ({
 describe("ui/pages/Popup", () => {
   const defaultHookData: IUsePopupData = {
     isLoading: false,
+    isMnemonicGenerated: false,
+    isUnlocked: false,
   };
 
   beforeEach(() => {

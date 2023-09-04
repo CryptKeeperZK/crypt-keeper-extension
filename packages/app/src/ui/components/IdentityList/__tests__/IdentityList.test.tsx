@@ -102,7 +102,9 @@ describe("ui/components/IdentityList", () => {
     render(<IdentityList {...defaultProps} />);
 
     const selectIcon = await screen.findByTestId(`identity-select-${defaultIdentities[1].commitment}`);
-    act(() => selectIcon.click());
+    act(() => {
+      selectIcon.click();
+    });
 
     expect(defaultProps.onSelect).toBeCalledTimes(1);
   });
@@ -111,10 +113,14 @@ describe("ui/components/IdentityList", () => {
     render(<IdentityList {...defaultProps} />);
 
     const [menuIcon] = await screen.findAllByTestId("menu");
-    act(() => menuIcon.click());
+    act(() => {
+      menuIcon.click();
+    });
 
     const renameButton = await screen.findByText("Rename");
-    act(() => renameButton.click());
+    act(() => {
+      renameButton.click();
+    });
 
     const input = await screen.findByDisplayValue(defaultIdentities[0].metadata.name);
     fireEvent.change(input, { target: { value: "New name" } });
@@ -134,10 +140,14 @@ describe("ui/components/IdentityList", () => {
     render(<IdentityList {...defaultProps} />);
 
     const [menuIcon] = await screen.findAllByTestId("menu");
-    act(() => menuIcon.click());
+    act(() => {
+      menuIcon.click();
+    });
 
     const renameButton = await screen.findByText("Rename");
-    act(() => renameButton.click());
+    act(() => {
+      renameButton.click();
+    });
 
     const input = await screen.findByDisplayValue(defaultIdentities[0].metadata.name);
     fireEvent.change(input, { target: { value: "New name" } });
@@ -154,10 +164,14 @@ describe("ui/components/IdentityList", () => {
     render(<IdentityList {...defaultProps} selectedCommitment={undefined} />);
 
     const [menuIcon] = await screen.findAllByTestId("menu");
-    act(() => menuIcon.click());
+    act(() => {
+      menuIcon.click();
+    });
 
     const deleteButton = await screen.findByText("Delete");
-    act(() => deleteButton.click());
+    act(() => {
+      deleteButton.click();
+    });
 
     const dangerModal = await screen.findByTestId("danger-modal");
 
@@ -176,10 +190,14 @@ describe("ui/components/IdentityList", () => {
     render(<IdentityList {...defaultProps} selectedCommitment={undefined} />);
 
     const [menuIcon] = await screen.findAllByTestId("menu");
-    act(() => menuIcon.click());
+    act(() => {
+      menuIcon.click();
+    });
 
     const deleteButton = await screen.findByText("Delete");
-    act(() => deleteButton.click());
+    act(() => {
+      deleteButton.click();
+    });
 
     const dangerModal = await screen.findByTestId("danger-modal");
 

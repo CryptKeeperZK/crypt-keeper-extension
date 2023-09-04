@@ -75,7 +75,7 @@ describe("ui/pages/Recover/useRecover", () => {
     );
 
     await act(async () => Promise.resolve(result.current.onSubmit()));
-    await waitFor(() => result.current.isLoading === false);
+    await waitFor(() => !result.current.isLoading);
 
     expect(result.current.isLoading).toBe(false);
     expect(mockDispatch).toBeCalledTimes(1);
@@ -98,7 +98,7 @@ describe("ui/pages/Recover/useRecover", () => {
     );
 
     await act(async () => Promise.resolve(result.current.onSubmit()));
-    await waitFor(() => result.current.errors.mnemonic !== "" && result.current.isLoading !== true);
+    await waitFor(() => result.current.errors.mnemonic !== "" && !result.current.isLoading);
 
     expect(result.current.isLoading).toBe(false);
     expect(result.current.errors.mnemonic).toBe(error.message);

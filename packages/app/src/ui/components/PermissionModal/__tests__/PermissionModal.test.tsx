@@ -62,7 +62,9 @@ describe("ui/components/ConnectionModal/ConnectionModal", () => {
     render(<PermissionModal {...defaultProps} />);
 
     const button = await screen.findByText("Disconnect");
-    act(() => button.click());
+    act(() => {
+      button.click();
+    });
 
     expect(defaultHookData.onRemoveHost).toBeCalledTimes(1);
   });
@@ -71,7 +73,9 @@ describe("ui/components/ConnectionModal/ConnectionModal", () => {
     render(<PermissionModal {...defaultProps} />);
 
     const button = await screen.findByText("Close");
-    act(() => button.click());
+    act(() => {
+      button.click();
+    });
 
     expect(defaultProps.onClose).toBeCalledTimes(1);
   });
@@ -80,7 +84,9 @@ describe("ui/components/ConnectionModal/ConnectionModal", () => {
     render(<PermissionModal {...defaultProps} />);
 
     const button = await screen.findByLabelText("Allow host to create proof without approvals");
-    act(() => button.click());
+    act(() => {
+      button.click();
+    });
 
     expect(defaultHookData.onSetApproval).toBeCalledTimes(1);
   });

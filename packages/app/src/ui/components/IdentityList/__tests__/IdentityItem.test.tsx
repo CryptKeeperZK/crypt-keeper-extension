@@ -97,10 +97,14 @@ describe("ui/components/IdentityList/Item", () => {
     render(<IdentityItem {...defaultProps} />);
 
     const menu = await screen.findByTestId("menu");
-    act(() => menu.click());
+    act(() => {
+      menu.click();
+    });
 
     const deleteButton = await screen.findByText("Delete");
-    act(() => deleteButton.click());
+    act(() => {
+      deleteButton.click();
+    });
 
     const dangerModal = await screen.findByTestId("danger-modal");
 
@@ -118,10 +122,14 @@ describe("ui/components/IdentityList/Item", () => {
     render(<IdentityItem {...defaultProps} />);
 
     const menu = await screen.findByTestId("menu");
-    act(() => menu.click());
+    act(() => {
+      menu.click();
+    });
 
     const deleteButton = await screen.findByText("Delete");
-    act(() => deleteButton.click());
+    act(() => {
+      deleteButton.click();
+    });
 
     const dangerModal = await screen.findByTestId("danger-modal");
 
@@ -144,7 +152,9 @@ describe("ui/components/IdentityList/Item", () => {
     );
 
     const selectIcon = await screen.findByTestId(`identity-select-${defaultProps.commitment}`);
-    act(() => selectIcon.click());
+    act(() => {
+      selectIcon.click();
+    });
 
     expect(defaultProps.onSelectIdentity).toBeCalledTimes(1);
     expect(defaultProps.onSelectIdentity).toBeCalledWith(defaultProps.commitment);
@@ -156,10 +166,14 @@ describe("ui/components/IdentityList/Item", () => {
     render(<IdentityItem {...defaultProps} />);
 
     const menu = await screen.findByTestId("menu");
-    act(() => menu.click());
+    act(() => {
+      menu.click();
+    });
 
     const renameButton = await screen.findByText("Rename");
-    act(() => renameButton.click());
+    act(() => {
+      renameButton.click();
+    });
 
     const input = await screen.findByDisplayValue(defaultProps.metadata.name);
     fireEvent.change(input, { target: { value: "Account #1" } });
@@ -175,10 +189,14 @@ describe("ui/components/IdentityList/Item", () => {
     render(<IdentityItem {...defaultProps} />);
 
     const menu = await screen.findByTestId("menu");
-    act(() => menu.click());
+    act(() => {
+      menu.click();
+    });
 
     const button = await screen.findByText("View");
-    act(() => button.click());
+    act(() => {
+      button.click();
+    });
 
     expect(mockNavigate).toBeCalledTimes(1);
     expect(mockNavigate).toBeCalledWith(replaceUrlParams(Paths.IDENTITY, { id: defaultProps.commitment }));

@@ -67,7 +67,7 @@ describe("ui/pages/DownloadBackup/useDownloadBackup", () => {
     await act(async () =>
       Promise.resolve(result.current.onSubmit({ preventDefault: jest.fn() } as unknown as FormEvent<HTMLFormElement>)),
     );
-    await waitFor(() => result.current.isLoading !== true);
+    await waitFor(() => !result.current.isLoading);
 
     expect(result.current.isLoading).toBe(false);
     expect(mockDispatch).toBeCalledTimes(1);
@@ -93,7 +93,7 @@ describe("ui/pages/DownloadBackup/useDownloadBackup", () => {
     await act(async () =>
       Promise.resolve(result.current.onSubmit({ preventDefault: jest.fn() } as unknown as FormEvent<HTMLFormElement>)),
     );
-    await waitFor(() => result.current.errors.password !== "" && result.current.isLoading !== true);
+    await waitFor(() => result.current.errors.password !== "" && !result.current.isLoading);
 
     expect(result.current.errors.password).toBe(error.message);
     expect(result.current.isLoading).toBe(false);
@@ -102,10 +102,14 @@ describe("ui/pages/DownloadBackup/useDownloadBackup", () => {
   test("should toggle password properly", () => {
     const { result } = renderHook(() => useDownloadBackup());
 
-    act(() => result.current.onShowPassword());
+    act(() => {
+      result.current.onShowPassword();
+    });
     expect(result.current.isShowPassword).toStrictEqual(true);
 
-    act(() => result.current.onShowPassword());
+    act(() => {
+      result.current.onShowPassword();
+    });
     expect(result.current.isShowPassword).toStrictEqual(false);
   });
 });

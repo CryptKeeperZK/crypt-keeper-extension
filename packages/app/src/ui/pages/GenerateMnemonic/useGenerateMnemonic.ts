@@ -55,8 +55,12 @@ export const useGenerateMnemonic = (): IUseGenerateMnemonicData => {
     (data: MnemonicFormFields) => {
       (mode === EGenerateMnemonicMode.INPUT ? dispatch(generateMnemonic(data.mnemonic)) : Promise.resolve())
         .then(() => dispatch(saveMnemonic()))
-        .then(() => navigate(Paths.HOME))
-        .catch((err: Error) => setError("mnemonic", { message: err.message }));
+        .then(() => {
+          navigate(Paths.HOME);
+        })
+        .catch((err: Error) => {
+          setError("mnemonic", { message: err.message });
+        });
     },
     [generatedMnemonic, mode, navigate, dispatch, setError],
   );

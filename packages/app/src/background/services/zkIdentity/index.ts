@@ -33,7 +33,7 @@ const IDENTITY_KEY = "@@ID@@";
 const CONNECTED_IDENTITY_KEY = "@@CONNECTED-IDENTITY@@";
 
 export default class ZkIdentityService implements IBackupable {
-  private static INSTANCE: ZkIdentityService;
+  private static INSTANCE?: ZkIdentityService;
 
   private identitiesStore: SimpleStorage;
 
@@ -151,7 +151,7 @@ export default class ZkIdentityService implements IBackupable {
 
         return {
           commitment,
-          metadata: identity?.metadata,
+          metadata: identity.metadata,
         };
       });
   };
@@ -303,7 +303,7 @@ export default class ZkIdentityService implements IBackupable {
       groups,
       host,
       identityStrategy: strategy,
-      name: options?.name || `Account # ${numOfIdentities}`,
+      name: options.name || `Account # ${numOfIdentities}`,
       messageSignature: strategy === "interep" ? messageSignature : undefined,
     };
 

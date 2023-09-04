@@ -95,7 +95,9 @@ describe("ui/hooks/useEthWallet", () => {
 
     const { result } = renderHook(() => useEthWallet());
 
-    await waitFor(() => expect(result.current.balance).toBeDefined());
+    await waitFor(() => {
+      expect(result.current.balance).toBeDefined();
+    });
 
     expect(result.current.isActive).toBe(true);
     expect(result.current.isActivating).toBe(false);

@@ -18,7 +18,7 @@ describe("ui/hooks/timeout", () => {
   test("should return initial data", async () => {
     const { result } = renderHook(() => useTimeout());
 
-    await waitFor(() => result.current.isActive === false);
+    await waitFor(() => !result.current.isActive);
 
     expect(result.current.isActive).toBe(false);
   });
@@ -34,7 +34,7 @@ describe("ui/hooks/timeout", () => {
     await act(async () => {
       jest.runOnlyPendingTimers();
 
-      await waitFor(() => result.current.isActive === false);
+      await waitFor(() => !result.current.isActive);
     });
   });
 });

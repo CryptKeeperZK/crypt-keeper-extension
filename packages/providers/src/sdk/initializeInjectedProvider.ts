@@ -23,9 +23,9 @@ declare global {
 /**
  * Initializes the CryptKeeper provider within the CryptKeeper extension.
  * This function is meant to be used exclusively within the CryptKeeper extension.
- * @returns {CryptKeeperInjectedProvider} The initialized CryptKeeperInjectedProvider instance.
+ * @returns {CryptKeeperInjectedProvider | undefined} The initialized CryptKeeperInjectedProvider instance or undefined.
  */
-export function initializeCryptKeeperProvider(): CryptKeeperInjectedProvider {
+export function initializeCryptKeeperProvider(): CryptKeeperInjectedProvider | undefined {
   const cryptkeeperInjectedProvider = new CryptKeeperInjectedProvider();
   window.cryptkeeper = cryptkeeperInjectedProvider;
   window.dispatchEvent(new Event(`cryptkeeper#initialized`));
@@ -40,5 +40,5 @@ export function initializeCryptKeeperProvider(): CryptKeeperInjectedProvider {
  * @returns {CryptKeeperInjectedProvider | undefined} A Promise that resolves to the connected CryptKeeperInjectedProvider instance, or undefined if the CryptKeeper extension is not installed.
  */
 export async function cryptkeeperConnect(): Promise<CryptKeeperInjectedProvider | undefined> {
-  return initializeCryptKeeperProvider().connect();
+  return initializeCryptKeeperProvider()?.connect();
 }

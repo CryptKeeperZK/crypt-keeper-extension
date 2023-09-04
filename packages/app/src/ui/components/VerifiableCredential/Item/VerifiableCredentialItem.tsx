@@ -39,7 +39,7 @@ export const VerifiableCredentialItem = ({
   const issuer =
     typeof verifiableCredential.issuer === "string"
       ? verifiableCredential.issuer
-      : verifiableCredential.issuer?.id || "unknown";
+      : verifiableCredential.issuer.id || "unknown";
 
   return (
     <Box

@@ -36,7 +36,7 @@ describe("ui/components/ConnectionModal/useConnectionModal", () => {
 
   const waitForData = async (current: IUsePermissionModalData) => {
     await waitFor(() => current.url !== undefined);
-    await waitFor(() => current.checked === true);
+    await waitFor(() => current.checked);
     await waitFor(() => current.faviconUrl !== "");
   };
 

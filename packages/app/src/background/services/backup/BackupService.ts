@@ -11,7 +11,7 @@ import { OperationType, type IUploadArgs, InitializationStep, BackupableServices
 import { BackupData, type IBackupable } from "./types";
 
 export default class BackupService {
-  private static INSTANCE: BackupService;
+  private static INSTANCE?: BackupService;
 
   private backupables: Map<string, IBackupable>;
 
@@ -134,8 +134,8 @@ export default class BackupService {
 
     return keys.reduce(
       (acc, key, index) => ({ ...acc, [key as BackupableServices]: backupArray[index] }),
-      {} as Record<BackupableServices, BackupData | null>,
-    );
+      {},
+    ) as Record<BackupableServices, BackupData | null>;
   };
 
   private rollback = async (restoreData: Record<BackupableServices, BackupData | null>): Promise<void> => {
@@ -146,17 +146,17 @@ export default class BackupService {
 
   getBackupables = (): Map<string, IBackupable> => this.backupables;
 
-  add = (key: string, backupable: IBackupable): BackupService => {
+  add = (key: string, backupable: IBackupable): this => {
     this.backupables.set(key, backupable);
     return this;
   };
 
-  remove = (key: string): BackupService => {
+  remove = (key: string): this => {
     this.backupables.delete(key);
     return this;
   };
 
-  clear = (): BackupService => {
+  clear = (): this => {
     this.backupables.clear();
     return this;
   };

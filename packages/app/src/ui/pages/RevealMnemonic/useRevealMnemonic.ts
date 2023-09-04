@@ -43,8 +43,12 @@ export const useRevealMnemonic = (): IUseRevealMnemonicData => {
     (data: IMnemonicFormFields) => {
       dispatch(checkPassword(data.password))
         .then(() => dispatch(getMnemonic()))
-        .then((result: string) => setMnemonic(result))
-        .catch((err: Error) => setError("root", { message: err.message }));
+        .then((result: string) => {
+          setMnemonic(result);
+        })
+        .catch((err: Error) => {
+          setError("root", { message: err.message });
+        });
     },
     [dispatch, setMnemonic, setError],
   );

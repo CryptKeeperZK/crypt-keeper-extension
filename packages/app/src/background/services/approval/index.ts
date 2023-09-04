@@ -7,7 +7,7 @@ import type { BackupData, IBackupable } from "@src/background/services/backup";
 const APPROVALS_DB_KEY = "@APPROVED@";
 
 export default class ApprovalService implements IBackupable {
-  private static INSTANCE: ApprovalService;
+  private static INSTANCE?: ApprovalService;
 
   private allowedHosts: Map<string, IHostPermission>;
 
@@ -30,7 +30,7 @@ export default class ApprovalService implements IBackupable {
   };
 
   getAllowedHosts = (): string[] =>
-    [...this.allowedHosts.entries()].filter(([, isApproved]) => isApproved).map(([key]) => key);
+    [...this.allowedHosts.entries()].filter(([, { canSkipApprove }]) => canSkipApprove).map(([key]) => key);
 
   isApproved = (host: string): boolean => this.allowedHosts.has(host);
 

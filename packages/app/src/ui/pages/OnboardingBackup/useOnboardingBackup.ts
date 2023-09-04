@@ -47,11 +47,11 @@ export const useOnboardingBackup = (): IUseOnboardingBackupData => {
   });
 
   const onDrop = useCallback(
-    ([acceptedFile]: File[], [rejectedFile]: FileRejection[]) => {
-      setValue("backupFile", acceptedFile);
+    (acceptedFiles: File[], rejectedFiles: FileRejection[]) => {
+      setValue("backupFile", acceptedFiles[0]);
 
-      if (rejectedFile) {
-        setError("backupFile", { message: rejectedFile.errors[0].message });
+      if (rejectedFiles[0]) {
+        setError("backupFile", { message: rejectedFiles[0].errors[0].message });
       } else {
         clearErrors();
       }
@@ -80,7 +80,9 @@ export const useOnboardingBackup = (): IUseOnboardingBackupData => {
 
           return text?.toString();
         })
-        .catch((error: Error) => setError("root", { message: error.message }));
+        .catch((error: Error) => {
+          setError("root", { message: error.message });
+        });
 
       if (!content) {
         return;
@@ -88,10 +90,16 @@ export const useOnboardingBackup = (): IUseOnboardingBackupData => {
 
       dispatch(uploadBackup({ password: "", backupPassword: data.backupPassword, content }))
         .then(() => onConnect())
-        .then(() => dispatch(fetchStatus()))
+        .then(() => {
+          dispatch(fetchStatus());
+        })
         .then(() => dispatch(closePopup()))
-        .then(() => navigate(Paths.HOME))
-        .catch((error: Error) => setError("root", { message: error.message }));
+        .then(() => {
+          navigate(Paths.HOME);
+        })
+        .catch((error: Error) => {
+          setError("root", { message: error.message });
+        });
     },
     [dispatch, navigate, setError, onConnect],
   );

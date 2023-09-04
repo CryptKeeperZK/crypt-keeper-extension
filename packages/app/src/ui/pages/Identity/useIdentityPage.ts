@@ -66,8 +66,12 @@ export const useIdentityPage = (): IUseIdentityPageData => {
   useEffect(() => {
     setIsLoading(true);
     dispatch(fetchIdentities())
-      .catch((err: Error) => setError("root", { message: err.message }))
-      .finally(() => setIsLoading(false));
+      .catch((err: Error) => {
+        setError("root", { message: err.message });
+      })
+      .finally(() => {
+        setIsLoading(false);
+      });
   }, [dispatch, setIsLoading, setError]);
 
   useEffect(() => {
@@ -84,9 +88,15 @@ export const useIdentityPage = (): IUseIdentityPageData => {
 
   const onDeleteIdentity = useCallback(() => {
     dispatch(deleteIdentity(commitment!))
-      .then(() => setConfirmModalOpen(false))
-      .then(() => navigate(Paths.HOME))
-      .catch((err: Error) => setError("root", { message: err.message }));
+      .then(() => {
+        setConfirmModalOpen(false);
+      })
+      .then(() => {
+        navigate(Paths.HOME);
+      })
+      .catch((err: Error) => {
+        setError("root", { message: err.message });
+      });
   }, [commitment, dispatch, navigate, setConfirmModalOpen, setError]);
 
   const onUpdateIdentity = useCallback(() => {
@@ -100,8 +110,12 @@ export const useIdentityPage = (): IUseIdentityPageData => {
   const onConfirmUpdate = useCallback(
     (data: FormFields) => {
       dispatch(setIdentityName(commitment!, data.name))
-        .then(() => setUpdating(false))
-        .catch((err: Error) => setError("root", { message: err.message }));
+        .then(() => {
+          setUpdating(false);
+        })
+        .catch((err: Error) => {
+          setError("root", { message: err.message });
+        });
     },
     [commitment, dispatch, setUpdating, setError],
   );

@@ -50,7 +50,9 @@ describe("ui/components/ConfirmRequestModal/components/DefaultApprovalModal", ()
     render(<DefaultApprovalModal {...defaultProps} />);
 
     const button = await screen.findByText("Approve");
-    act(() => button.click());
+    act(() => {
+      button.click();
+    });
 
     expect(defaultProps.accept).not.toBeCalled();
   });
@@ -59,7 +61,9 @@ describe("ui/components/ConfirmRequestModal/components/DefaultApprovalModal", ()
     render(<DefaultApprovalModal {...defaultProps} />);
 
     const button = await screen.findByText("Reject");
-    act(() => button.click());
+    act(() => {
+      button.click();
+    });
 
     expect(defaultProps.reject).toBeCalledTimes(1);
   });

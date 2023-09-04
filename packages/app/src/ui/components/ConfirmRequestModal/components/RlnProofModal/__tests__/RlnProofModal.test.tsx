@@ -79,7 +79,9 @@ describe("ui/components/ConfirmRequestModal/components/ProofModal", () => {
     render(<RlnProofModal {...defaultProps} />);
 
     const button = await screen.findByText("Approve");
-    act(() => button.click());
+    act(() => {
+      button.click();
+    });
 
     expect(defaultHookData.onAccept).toBeCalledTimes(1);
   });
@@ -88,7 +90,9 @@ describe("ui/components/ConfirmRequestModal/components/ProofModal", () => {
     render(<RlnProofModal {...defaultProps} />);
 
     const button = await screen.findByText("Reject");
-    act(() => button.click());
+    act(() => {
+      button.click();
+    });
 
     expect(defaultHookData.onReject).toBeCalledTimes(1);
   });
@@ -97,7 +101,9 @@ describe("ui/components/ConfirmRequestModal/components/ProofModal", () => {
     render(<RlnProofModal {...defaultProps} />);
 
     const link = await screen.findByTestId("circuit-file-link");
-    act(() => link.click());
+    act(() => {
+      link.click();
+    });
 
     expect(defaultHookData.onOpenCircuitFile).toBeCalledTimes(1);
   });
@@ -106,7 +112,9 @@ describe("ui/components/ConfirmRequestModal/components/ProofModal", () => {
     render(<RlnProofModal {...defaultProps} />);
 
     const link = await screen.findByTestId("zkey-file-link");
-    act(() => link.click());
+    act(() => {
+      link.click();
+    });
 
     expect(defaultHookData.onOpenZkeyFile).toBeCalledTimes(1);
   });
@@ -115,7 +123,9 @@ describe("ui/components/ConfirmRequestModal/components/ProofModal", () => {
     render(<RlnProofModal {...defaultProps} />);
 
     const link = await screen.findByTestId("verification-key-file-link");
-    act(() => link.click());
+    act(() => {
+      link.click();
+    });
 
     expect(defaultHookData.onOpenVerificationKeyFile).toBeCalledTimes(1);
   });

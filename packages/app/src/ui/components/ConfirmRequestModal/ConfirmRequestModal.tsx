@@ -7,9 +7,8 @@ import { useConfirmRequestModal } from "./useConfirmRequestModal";
 
 const ConfirmRequestModal = (): JSX.Element | null => {
   const { pendingRequests, loading, error, accept, reject } = useConfirmRequestModal();
-  const [pendingRequest] = pendingRequests;
 
-  switch (pendingRequest?.type) {
+  switch (pendingRequests[0]?.type) {
     case PendingRequestType.CONNECT:
     case PendingRequestType.APPROVE:
       return (
@@ -18,7 +17,7 @@ const ConfirmRequestModal = (): JSX.Element | null => {
           error={error}
           len={pendingRequests.length}
           loading={loading}
-          pendingRequest={pendingRequest as IPendingRequest<{ origin: string }>}
+          pendingRequest={pendingRequests[0] as IPendingRequest<{ origin: string }>}
           reject={reject}
         />
       );
@@ -29,7 +28,7 @@ const ConfirmRequestModal = (): JSX.Element | null => {
           error={error}
           len={pendingRequests.length}
           loading={loading}
-          pendingRequest={pendingRequest as IPendingRequest<IZKProofPayload>}
+          pendingRequest={pendingRequests[0] as IPendingRequest<IZKProofPayload>}
           reject={reject}
         />
       );
@@ -40,7 +39,7 @@ const ConfirmRequestModal = (): JSX.Element | null => {
           error={error}
           len={pendingRequests.length}
           loading={loading}
-          pendingRequest={pendingRequest as IPendingRequest<Omit<IRLNProofRequest, "identitySerialized">>}
+          pendingRequest={pendingRequests[0] as IPendingRequest<Omit<IRLNProofRequest, "identitySerialized">>}
           reject={reject}
         />
       );
@@ -51,7 +50,7 @@ const ConfirmRequestModal = (): JSX.Element | null => {
           error={error}
           len={pendingRequests.length}
           loading={loading}
-          pendingRequest={pendingRequest}
+          pendingRequest={pendingRequests[0]}
           reject={reject}
         />
       );

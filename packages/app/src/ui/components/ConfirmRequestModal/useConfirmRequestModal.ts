@@ -23,9 +23,15 @@ export const useConfirmRequestModal = (): IUseConfirmRequestModalData => {
     (req: IRequestResolutionAction) => {
       setLoading(true);
       dispatch(finalizeRequest(req))
-        .then(() => dispatch(fetchPendingRequests()))
-        .catch((e: Error) => setError(e.message))
-        .finally(() => setLoading(false));
+        .then(() => {
+          dispatch(fetchPendingRequests());
+        })
+        .catch((e: Error) => {
+          setError(e.message);
+        })
+        .finally(() => {
+          setLoading(false);
+        });
     },
     [setLoading, setError, dispatch],
   );
@@ -33,23 +39,23 @@ export const useConfirmRequestModal = (): IUseConfirmRequestModalData => {
   const reject = useCallback(
     (err?: Error) => {
       finalize({
-        id: pendingRequest?.id,
+        id: pendingRequest.id,
         status: RequestResolutionStatus.REJECT,
         data: err,
       });
     },
-    [pendingRequest?.id, finalize],
+    [pendingRequest.id, finalize],
   );
 
   const accept = useCallback(
     (data?: unknown) => {
       finalize({
-        id: pendingRequest?.id,
+        id: pendingRequest.id,
         status: RequestResolutionStatus.ACCEPT,
         data,
       });
     },
-    [pendingRequest?.id, finalize],
+    [pendingRequest.id, finalize],
   );
 
   return {

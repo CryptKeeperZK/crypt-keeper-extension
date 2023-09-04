@@ -30,7 +30,9 @@ export const usePermissionModal = ({
   const permission = useHostPermission(host);
 
   useEffect(() => {
-    getLastActiveTabUrl().then((tabUrl) => setUrl(tabUrl));
+    getLastActiveTabUrl().then((tabUrl) => {
+      setUrl(tabUrl);
+    });
   }, [setUrl]);
 
   useEffect(() => {
@@ -49,7 +51,9 @@ export const usePermissionModal = ({
   const onRemoveHost = useCallback(() => {
     dispatch(removeHost(host))
       .then(() => refreshConnectionStatus())
-      .then(() => onClose());
+      .then(() => {
+        onClose();
+      });
   }, [host, dispatch, refreshConnectionStatus, onClose]);
 
   const onSetApproval = useCallback(

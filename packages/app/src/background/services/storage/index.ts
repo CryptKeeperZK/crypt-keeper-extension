@@ -17,7 +17,7 @@ export default class SimpleStorage {
   }
 
   async get<T>(): Promise<T | null> {
-    const content = (await browser.storage.sync.get(this.key)) as Record<string, T>;
+    const content = (await browser.storage.sync.get(this.key)) as Record<string, T> | undefined;
     return content?.[this.key] ?? null;
   }
 

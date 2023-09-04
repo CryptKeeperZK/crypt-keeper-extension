@@ -5,7 +5,7 @@ import { validateMnemonic } from "@src/background/services/mnemonic";
 import { ECryptMode, ICryptoServiceArgs, IDecryptArgs, IEncryptArgs } from "./types";
 
 export default class CryptoService {
-  private static INSTANCE: CryptoService;
+  private static INSTANCE?: CryptoService;
 
   private secrets: Record<ECryptMode, string | undefined> = {
     [ECryptMode.PASSWORD]: undefined,
@@ -25,13 +25,13 @@ export default class CryptoService {
     return CryptoService.INSTANCE;
   }
 
-  setPassword(password: string): CryptoService {
+  setPassword(password: string): this {
     this.secrets[ECryptMode.PASSWORD] = password;
 
     return this;
   }
 
-  setMnemonic(mnemonic: string): CryptoService {
+  setMnemonic(mnemonic: string): this {
     if (!validateMnemonic(mnemonic)) {
       throw new Error("Mnemonic is invalid");
     }

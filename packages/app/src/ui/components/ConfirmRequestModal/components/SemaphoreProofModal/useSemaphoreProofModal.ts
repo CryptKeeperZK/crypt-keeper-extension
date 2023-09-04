@@ -33,7 +33,7 @@ export const useSemaphoreProofModal = ({
   reject,
 }: IUseSemaphoreProofModalArgs): IUseSemaphoreProofModalData => {
   const [faviconUrl, setFaviconUrl] = useState("");
-  const operation = PROOF_MODAL_TITLES[pendingRequest?.type as ProofType] || "Generate proof";
+  const operation = PROOF_MODAL_TITLES[pendingRequest.type as ProofType] || "Generate proof";
   const { urlOrigin = "", circuitFilePath, zkeyFilePath, verificationKey } = pendingRequest.payload || {};
 
   const onAccept = useCallback(() => {

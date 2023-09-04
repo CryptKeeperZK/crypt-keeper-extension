@@ -33,13 +33,17 @@ describe("ui/pages/Home/components/TabList", () => {
     render(<TabList {...defaultProps} />);
 
     const tabIdentities = await screen.findByTestId("tab-identities");
-    act(() => tabIdentities.click());
+    act(() => {
+      tabIdentities.click();
+    });
 
     const identitiesContent = await screen.findByText("Identities content");
     expect(identitiesContent).toBeInTheDocument();
 
     const tabActivity = await screen.findByTestId("tab-activity");
-    act(() => tabActivity.click());
+    act(() => {
+      tabActivity.click();
+    });
 
     const activityContent = await screen.findByText("Activity content");
     expect(activityContent).toBeInTheDocument();

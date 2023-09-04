@@ -15,7 +15,9 @@ export interface IModalProps {
 export const Modal = ({ className, onClose, children, ...rest }: IModalProps): JSX.Element | null => {
   modalRoot = document.querySelector("#modal");
 
-  const onClick: MouseEventHandler = useCallback((e) => e.stopPropagation(), []);
+  const onClick: MouseEventHandler = useCallback((e) => {
+    e.stopPropagation();
+  }, []);
 
   return ReactDOM.createPortal(
     <Box {...rest} className="modal__overlay" role="none" onClick={onClose}>

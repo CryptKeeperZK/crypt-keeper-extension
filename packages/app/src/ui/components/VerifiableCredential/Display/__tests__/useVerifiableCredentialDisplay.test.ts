@@ -47,7 +47,9 @@ describe("ui/components/VerifiableCredential/Display/useVerifiableCredentialDisp
   test("should toggle renaming properly", () => {
     const { result } = renderHook(() => useVerifiableCredentialDisplay(useVerifiableCredentialDisplayArgs));
 
-    act(() => result.current.onToggleRenaming());
+    act(() => {
+      result.current.onToggleRenaming();
+    });
 
     expect(result.current.isRenaming).toBe(true);
   });
@@ -57,8 +59,12 @@ describe("ui/components/VerifiableCredential/Display/useVerifiableCredentialDisp
     const mockEvent = {} as React.FormEvent<HTMLFormElement>;
     mockEvent.preventDefault = jest.fn();
 
-    act(() => result.current.onToggleRenaming());
-    act(() => result.current.onSubmit(mockEvent));
+    act(() => {
+      result.current.onToggleRenaming();
+    });
+    act(() => {
+      result.current.onSubmit(mockEvent);
+    });
 
     expect(useVerifiableCredentialDisplayArgs.onRename).toBeCalledTimes(1);
     expect(result.current.isRenaming).toBe(false);

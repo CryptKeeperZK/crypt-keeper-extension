@@ -61,12 +61,16 @@ export const useConnectIdentity = (): IUseConnectIdentityData => {
   );
 
   const onReject = useCallback(() => {
-    dispatch(closePopup()).then(() => navigate(Paths.HOME));
+    dispatch(closePopup()).then(() => {
+      navigate(Paths.HOME);
+    });
   }, [dispatch, navigate]);
 
   const onConnect = useCallback(async () => {
     await dispatch(connectIdentity({ identityCommitment: selectedIdentityCommitment!, host }));
-    await dispatch(closePopup()).then(() => navigate(Paths.HOME));
+    await dispatch(closePopup()).then(() => {
+      navigate(Paths.HOME);
+    });
   }, [selectedIdentityCommitment, host, dispatch]);
 
   useEffect(() => {
@@ -75,7 +79,7 @@ export const useConnectIdentity = (): IUseConnectIdentityData => {
 
   useEffect(() => {
     if (connectedIdentity?.commitment) {
-      setSelectedIdentityCommitment(connectedIdentity?.commitment);
+      setSelectedIdentityCommitment(connectedIdentity.commitment);
     }
   }, [connectedIdentity?.commitment]);
 

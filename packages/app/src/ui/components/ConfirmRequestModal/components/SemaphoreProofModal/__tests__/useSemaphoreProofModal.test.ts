@@ -80,7 +80,9 @@ describe("ui/components/ConfirmRequestModal/components/ProofModal/useSemaphorePr
     const { result } = renderHook(() => useSemaphoreProofModal(defaultArgs));
     await waitForData(result.current);
 
-    act(() => result.current.onAccept());
+    act(() => {
+      result.current.onAccept();
+    });
 
     expect(defaultArgs.accept).toBeCalledTimes(1);
   });
@@ -89,7 +91,9 @@ describe("ui/components/ConfirmRequestModal/components/ProofModal/useSemaphorePr
     const { result } = renderHook(() => useSemaphoreProofModal(defaultArgs));
     await waitForData(result.current);
 
-    act(() => result.current.onReject());
+    act(() => {
+      result.current.onReject();
+    });
 
     expect(defaultArgs.reject).toBeCalledTimes(1);
   });
@@ -99,7 +103,9 @@ describe("ui/components/ConfirmRequestModal/components/ProofModal/useSemaphorePr
     const { result } = renderHook(() => useSemaphoreProofModal(defaultArgs));
     await waitForData(result.current);
 
-    act(() => result.current.onOpenCircuitFile());
+    act(() => {
+      result.current.onOpenCircuitFile();
+    });
 
     expect(openSpy).toBeCalledTimes(1);
     expect(openSpy).toBeCalledWith(defaultArgs.pendingRequest.payload?.circuitFilePath, "_blank");
@@ -110,7 +116,9 @@ describe("ui/components/ConfirmRequestModal/components/ProofModal/useSemaphorePr
     const { result } = renderHook(() => useSemaphoreProofModal(defaultArgs));
     await waitForData(result.current);
 
-    act(() => result.current.onOpenZkeyFile());
+    act(() => {
+      result.current.onOpenZkeyFile();
+    });
 
     expect(openSpy).toBeCalledTimes(1);
     expect(openSpy).toBeCalledWith(defaultArgs.pendingRequest.payload?.zkeyFilePath, "_blank");
@@ -121,7 +129,9 @@ describe("ui/components/ConfirmRequestModal/components/ProofModal/useSemaphorePr
     const { result } = renderHook(() => useSemaphoreProofModal(defaultArgs));
     await waitForData(result.current);
 
-    act(() => result.current.onOpenVerificationKeyFile());
+    act(() => {
+      result.current.onOpenVerificationKeyFile();
+    });
 
     expect(openSpy).toBeCalledTimes(1);
     expect(openSpy).toBeCalledWith(defaultArgs.pendingRequest.payload?.verificationKey, "_blank");

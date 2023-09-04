@@ -83,7 +83,7 @@ describe("ui/pages/Home/components/ActivityList/useActivityList", () => {
   test("should return initial data", async () => {
     const { result } = renderHook(() => useActivityList());
 
-    await waitFor(() => result.current.isLoading === false);
+    await waitFor(() => !result.current.isLoading);
 
     expect(result.current.isLoading).toBe(false);
     expect(result.current.operations).toStrictEqual(defaultIdentityOperations);
@@ -92,7 +92,7 @@ describe("ui/pages/Home/components/ActivityList/useActivityList", () => {
   test("should delete history operation properly", async () => {
     const { result } = renderHook(() => useActivityList());
 
-    await waitFor(() => result.current.isLoading === false);
+    await waitFor(() => !result.current.isLoading);
 
     await act(async () => Promise.resolve(result.current.onDeleteHistoryOperation("1")));
 

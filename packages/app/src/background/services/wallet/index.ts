@@ -17,7 +17,7 @@ const MNEMONIC_STORAGE_DB_KEY = "@MNEMONIC-STORAGE@";
 const SELECTED_ACCOUNT_STORAGE_DB_KEY = "@SELECTED-ACCOUNT-STORAGE@";
 
 export default class WalletService implements IBackupable {
-  private static INSTANCE: WalletService;
+  private static INSTANCE?: WalletService;
 
   private accountStorage: SimpleStorage;
 

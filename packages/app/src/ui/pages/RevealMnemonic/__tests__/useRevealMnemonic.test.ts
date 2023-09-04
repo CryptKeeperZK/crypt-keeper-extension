@@ -103,10 +103,14 @@ describe("ui/pages/RevealMnemonic/useRevealMnemonic", () => {
   test("should toggle password visibility properly", () => {
     const { result } = renderHook(() => useRevealMnemonic());
 
-    act(() => result.current.onShowPassword());
+    act(() => {
+      result.current.onShowPassword();
+    });
     expect(result.current.isShowPassword).toStrictEqual(true);
 
-    act(() => result.current.onShowPassword());
+    act(() => {
+      result.current.onShowPassword();
+    });
     expect(result.current.isShowPassword).toStrictEqual(false);
   });
 });

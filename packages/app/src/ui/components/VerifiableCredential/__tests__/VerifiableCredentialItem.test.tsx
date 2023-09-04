@@ -63,10 +63,14 @@ describe("ui/components/VerifiableCredential/Item", () => {
     render(<VerifiableCredentialItem {...defaultProps} />);
 
     const menu = await screen.findByTestId("menu");
-    act(() => menu.click());
+    act(() => {
+      menu.click();
+    });
 
     const deleteButton = await screen.findByText("Delete");
-    act(() => deleteButton.click());
+    act(() => {
+      deleteButton.click();
+    });
 
     const dangerModal = await screen.findByTestId("danger-modal");
 
@@ -84,10 +88,14 @@ describe("ui/components/VerifiableCredential/Item", () => {
     render(<VerifiableCredentialItem {...defaultProps} />);
 
     const menu = await screen.findByTestId("menu");
-    act(() => menu.click());
+    act(() => {
+      menu.click();
+    });
 
     const deleteButton = await screen.findByText("Delete");
-    act(() => deleteButton.click());
+    act(() => {
+      deleteButton.click();
+    });
 
     const dangerModal = await screen.findByTestId("danger-modal");
 

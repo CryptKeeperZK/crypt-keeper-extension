@@ -52,8 +52,12 @@ export const useResetPassword = (): IUseResetPasswordData => {
   const onSubmit = useCallback(
     (data: PasswordFormFields) => {
       dispatch(resetPassword({ password: data.password, mnemonic }))
-        .then(() => navigate(Paths.HOME))
-        .catch((error: Error) => setError("root", { message: error.message }));
+        .then(() => {
+          navigate(Paths.HOME);
+        })
+        .catch((error: Error) => {
+          setError("root", { message: error.message });
+        });
     },
     [mnemonic, setError, navigate, dispatch],
   );

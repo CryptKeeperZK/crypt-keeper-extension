@@ -10,6 +10,8 @@ import { useCryptKeeperWallet, useEthWallet } from "@src/ui/hooks/wallet";
 
 export interface IUsePopupData {
   isLoading: boolean;
+  isUnlocked: boolean;
+  isMnemonicGenerated: boolean;
 }
 
 const REDIRECT_PATHS: Record<string, Paths> = {
@@ -47,7 +49,8 @@ export const usePopup = (): IUsePopupData => {
   );
 
   const fetchData = useCallback(async () => {
-    await Promise.all([dispatch(fetchStatus()), dispatch(fetchPendingRequests())]);
+    await dispatch(fetchStatus());
+    await dispatch(fetchPendingRequests());
 
     if (isUnlocked && isMnemonicGenerated) {
       await dispatch(getSelectedAccount());
@@ -91,8 +94,12 @@ export const usePopup = (): IUsePopupData => {
   useEffect(() => {
     setIsLoading(true);
     fetchData()
-      .catch((error) => log.error(error))
-      .finally(() => setIsLoading(false));
+      .catch((error) => {
+        log.error(error);
+      })
+      .finally(() => {
+        setIsLoading(false);
+      });
   }, [isUnlocked, fetchData, setIsLoading]);
 
   useEffect(() => {
@@ -102,5 +109,7 @@ export const usePopup = (): IUsePopupData => {
 
   return {
     isLoading,
+    isUnlocked,
+    isMnemonicGenerated,
   };
 };

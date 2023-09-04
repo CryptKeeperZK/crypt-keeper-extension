@@ -74,7 +74,7 @@ export const resetPassword =
   async (): Promise<void> =>
     postMessage({ method: RPCAction.RESET_PASSWORD, payload: { password, mnemonic } });
 
-export const fetchStatus = (): TypedThunk => async (dispatch) => {
+export const fetchStatus = (): TypedThunk<Promise<void>> => async (dispatch) => {
   const status = await postMessage<IAppState>({ method: RPCAction.GET_STATUS });
   dispatch(setStatus(status));
 };
@@ -89,7 +89,7 @@ export const setWalletConnection =
 export const getWalletConnection =
   (): TypedThunk =>
   async (dispatch): Promise<void> => {
-    const response = await postMessage<{ isDisconnectedPermanently: boolean }>({
+    const response = await postMessage<{ isDisconnectedPermanently?: boolean } | null | undefined>({
       method: RPCAction.GET_CONNECT_WALLET,
     });
     dispatch(appSlice.actions.setDisconnectedPermanently(Boolean(response?.isDisconnectedPermanently)));

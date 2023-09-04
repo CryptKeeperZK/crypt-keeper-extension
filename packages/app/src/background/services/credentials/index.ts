@@ -23,7 +23,7 @@ import {
 const VERIFIABLE_CREDENTIALS_KEY = "@@VERIFIABLE-CREDENTIALS@@";
 
 export default class VerifiableCredentialsService implements IBackupable {
-  private static INSTANCE: VerifiableCredentialsService;
+  private static INSTANCE?: VerifiableCredentialsService;
 
   private verifiableCredentialsStore: SimpleStorage;
 

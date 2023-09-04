@@ -24,7 +24,9 @@ export const useActivityList = (): IUseActivityListData => {
 
   useEffect(() => {
     setIsLoading(true);
-    dispatch(fetchHistory()).finally(() => setIsLoading(false));
+    dispatch(fetchHistory()).finally(() => {
+      setIsLoading(false);
+    });
   }, [dispatch, setIsLoading]);
 
   return {

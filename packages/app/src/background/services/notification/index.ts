@@ -11,7 +11,7 @@ export interface CreateNotificationArgs {
 }
 
 export default class NotificationService {
-  private static INSTANCE: NotificationService;
+  private static INSTANCE?: NotificationService;
 
   // eslint-disable-next-line @typescript-eslint/no-empty-function
   private constructor() {}
