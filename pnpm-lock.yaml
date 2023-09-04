@@ -132,8 +132,8 @@ importers:
         specifier: ^0.3.0
         version: 0.3.0
       '@metamask/providers':
-        specifier: ^11.1.0
-        version: 11.1.1
+        specifier: ^11.1.2
+        version: 11.1.2
       '@mui/icons-material':
         specifier: ^5.14.7
         version: 5.14.7(@mui/material@5.14.7)(@types/react@18.2.21)(react@18.2.0)
@@ -3370,8 +3370,8 @@ packages:
       readable-stream: 2.3.8
     dev: false
 
-  /@metamask/providers@11.1.1:
-    resolution: {integrity: sha512-zvsa7wRO6E1vQOb6CvRlpcWwS1LQEIV7cPEcXGZEsy3wFwRjvLDTT4vDy2FzSSHyspJZsOls+WGkFXPl+0bL/g==}
+  /@metamask/providers@11.1.2:
+    resolution: {integrity: sha512-xjE4cKrGpKZjripkMKMStc0H4LXrWJPijfbaj1kKeDLVhRH2Yu3ZecV3iIhf1EIJePeA+Kx6Pcm7d0IVJ+ea7g==}
     engines: {node: '>=16.0.0'}
     dependencies:
       '@metamask/object-multiplex': 1.2.0
