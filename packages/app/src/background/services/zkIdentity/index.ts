@@ -81,17 +81,11 @@ export default class ZkIdentityService implements IBackupable {
   getConnectedIdentityData = async (_: unknown, meta: IZkMetadata): Promise<ConnectedIdentityMetadata | undefined> => {
     const identity = await this.getConnectedIdentity();
 
-    if (!identity || identity.metadata.host !== meta.urlOrigin) {
+    if (!identity) {
       return undefined;
     }
 
-    return this.getConnectedIdentityMetadata(identity.metadata);
-  };
-
-  readConnectedIdentityData = async (): Promise<ConnectedIdentityMetadata | undefined> => {
-    const identity = await this.getConnectedIdentity();
-
-    if (!identity) {
+    if (meta?.urlOrigin && identity.metadata.host !== meta.urlOrigin) {
       return undefined;
     }
 

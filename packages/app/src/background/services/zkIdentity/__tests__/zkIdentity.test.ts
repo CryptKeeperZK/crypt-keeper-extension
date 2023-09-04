@@ -339,7 +339,7 @@ describe("background/services/zkIdentity", () => {
       expect(data).toStrictEqual(pick(mockDefaultIdentity.metadata, ["name", "host", "identityStrategy"]));
     });
 
-    test("should read connected identity data properly", async () => {
+    test("should no get connected identity data if host is not the same properly", async () => {
       const [identityStorage, connectedIdentityStorage] = (SimpleStorage as jest.Mock).mock.instances as [
         MockStorage,
         MockStorage,
@@ -348,9 +348,9 @@ describe("background/services/zkIdentity", () => {
       identityStorage.get.mockReturnValue(mockSerializedDefaultIdentities);
       connectedIdentityStorage.get.mockReturnValue(mockDefaultIdentityCommitment);
 
-      const data = await zkIdentityService.readConnectedIdentityData();
+      const data = await zkIdentityService.getConnectedIdentityData({}, { urlOrigin: "unknown" });
 
-      expect(data).toStrictEqual(pick(mockDefaultIdentity.metadata, ["name", "host", "identityStrategy"]));
+      expect(data).toBeUndefined();
     });
 
     test("should get connected identity commitment properly", async () => {
@@ -407,7 +407,7 @@ describe("background/services/zkIdentity", () => {
       identityStorage.get.mockReturnValue(undefined);
       connectedIdentityStorage.get.mockReturnValue(mockDefaultIdentityCommitment);
 
-      const result = await zkIdentityService.readConnectedIdentityData();
+      const result = await zkIdentityService.getConnectedIdentityData({}, {});
 
       expect(result).toBeUndefined();
     });

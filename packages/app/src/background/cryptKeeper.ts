@@ -129,11 +129,6 @@ export default class CryptKeeperController {
       this.zkIdentityService.getConnectedIdentityData,
     );
     this.handler.add(
-      RPCAction.READ_CONNECTED_IDENTITY_DATA,
-      this.lockService.ensure,
-      this.zkIdentityService.readConnectedIdentityData,
-    );
-    this.handler.add(
       RPCAction.GET_CONNECTED_IDENTITY_COMMITMENT,
       this.lockService.ensure,
       this.zkIdentityService.getConnectedIdentityCommitment,

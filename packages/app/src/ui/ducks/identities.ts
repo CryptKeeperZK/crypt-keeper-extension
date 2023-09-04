@@ -131,7 +131,7 @@ export const fetchIdentities = (): TypedThunk<Promise<void>> => async (dispatch)
   const [identities, metadata, commitment] = await Promise.all([
     postMessage<IIdentityData[]>({ method: RPCAction.GET_IDENTITIES }),
     postMessage<ConnectedIdentityMetadata | undefined>({
-      method: RPCAction.READ_CONNECTED_IDENTITY_DATA,
+      method: RPCAction.GET_CONNECTED_IDENTITY_DATA,
     }),
     postMessage<string>({ method: RPCAction.GET_CONNECTED_IDENTITY_COMMITMENT }),
   ]);
