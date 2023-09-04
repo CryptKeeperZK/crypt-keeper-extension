@@ -1,1 +1,1 @@
-export * from "./ConfirmDangerModal";
+export { type IBasicModalProps, ConfirmDangerModal } from "./ConfirmDangerModal";

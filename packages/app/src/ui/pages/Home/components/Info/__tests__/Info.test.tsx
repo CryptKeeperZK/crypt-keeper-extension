@@ -7,14 +7,14 @@ import { act, render, screen } from "@testing-library/react";
 import { createModalRoot, deleteModalRoot } from "@src/config/mock/modal";
 import { IUsePermissionModalData, usePermissionModal } from "@src/ui/components/PermissionModal/usePermissionModal";
 
-import { Info, InfoProps } from "..";
+import { Info, IInfoProps } from "..";
 
 jest.mock("@src/ui/components/PermissionModal/usePermissionModal", (): unknown => ({
   usePermissionModal: jest.fn(),
 }));
 
 describe("ui/pages/Home/components/Info", () => {
-  const defaultProps: InfoProps = {
+  const defaultProps: IInfoProps = {
     refreshConnectionStatus: jest.fn().mockResolvedValue(true),
   };
 

@@ -1,8 +1,8 @@
-export type IdentityStrategy = "interrep" | "random";
+export type IdentityStrategy = "interep" | "random";
 
 export type IdentityWeb2Provider = "twitter" | "github" | "reddit";
 
-export interface CreateIdentityOptions {
+export interface ICreateIdentityOptions {
   message: string;
   account: string;
   nonce?: number;
@@ -18,11 +18,11 @@ export interface IConnectIdentityRequestArgs {
   host: string;
 }
 
-export interface NewIdentityRequest {
+export interface INewIdentityRequest {
   strategy: IdentityStrategy;
-  options: CreateIdentityOptions;
+  options: ICreateIdentityOptions;
   walletType: EWallet;
-  groups: GroupData[];
+  groups: IGroupData[];
   host?: string;
   messageSignature?: string;
 }
@@ -32,18 +32,18 @@ export enum EWallet {
   CRYPTKEEPER_WALLET,
 }
 
-export interface IdentityMetadata {
+export interface IIdentityMetadata {
   account: string;
   name: string;
   identityStrategy: IdentityStrategy;
-  groups: GroupData[];
+  groups: IGroupData[];
   web2Provider?: IdentityWeb2Provider;
   host?: string;
 }
 
-export type ConnectedIdentityMetadata = Pick<IdentityMetadata, "name" | "identityStrategy" | "web2Provider" | "host">;
+export type ConnectedIdentityMetadata = Pick<IIdentityMetadata, "name" | "identityStrategy" | "web2Provider" | "host">;
 
-export interface GroupData {
+export interface IGroupData {
   id: string;
   name: string;
   favicon?: string;
@@ -52,28 +52,28 @@ export interface GroupData {
   contract?: string;
 }
 
-export interface IdentityData {
+export interface IIdentityData {
   commitment: string;
-  metadata: IdentityMetadata;
+  metadata: IIdentityMetadata;
 }
 
-export interface SetIdentityNameArgs {
+export interface ISetIdentityNameArgs {
   identityCommitment: string;
   name: string;
 }
 
-export interface SetIdentityHostArgs {
+export interface ISetIdentityHostArgs {
   identityCommitment: string;
   host: string;
 }
 
-export interface ConnectIdentityArgs {
+export interface IConnectIdentityArgs {
   identityCommitment: string;
   host: string;
 }
 
-export interface SerializedIdentity {
-  metadata: IdentityMetadata;
+export interface ISerializedIdentity {
+  metadata: IIdentityMetadata;
   secret: string;
 }
 
@@ -81,13 +81,13 @@ export interface ICreateIdentityArgs {
   identityStrategy: IdentityStrategy;
   name: string;
   account: string;
-  groups: GroupData[];
+  groups: IGroupData[];
   messageSignature?: string;
   web2Provider?: IdentityWeb2Provider;
   host?: string;
 }
 
-export interface StrategiesMap {
+export interface IStrategiesMap {
   random: (config: ICreateIdentityArgs) => void;
-  interrep: (config: ICreateIdentityArgs) => void;
+  interep: (config: ICreateIdentityArgs) => void;
 }

@@ -1,3 +1,4 @@
+import { IIdentityData } from "@cryptkeeperzk/types";
 import { getLinkPreview } from "link-preview-js";
 import { type SyntheticEvent, useState, useCallback, useEffect, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
@@ -13,14 +14,12 @@ import {
   useUnlinkedIdentities,
 } from "@src/ui/ducks/identities";
 
-import type { IdentityData } from "@cryptkeeperzk/types";
-
 export interface IUseConnectIdentityData {
   host: string;
   faviconUrl: string;
   selectedTab: EConnectIdentityTabs;
-  linkedIdentities: IdentityData[];
-  unlinkedIdentities: IdentityData[];
+  linkedIdentities: IIdentityData[];
+  unlinkedIdentities: IIdentityData[];
   selectedIdentityCommitment?: string;
   onTabChange: (event: SyntheticEvent, value: EConnectIdentityTabs) => void;
   onSelectIdentity: (identityCommitment: string) => void;

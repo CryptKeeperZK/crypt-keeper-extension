@@ -1,16 +1,18 @@
 import {
-  Approvals,
-  InjectedMessageData,
-  InjectedProviderRequest,
-  SemaphoreFullProof,
+  IApprovals,
   ICreateIdentityRequestArgs,
   IConnectIdentityRequestArgs,
-  HostPermission,
-  RLNSNARKProof,
-  ISemaphoreProofRequiredArgs,
-  IRlnProofRequiredArgs,
   ConnectedIdentityMetadata,
+  IHostPermission,
+  IInjectedMessageData,
+  IInjectedProviderRequest,
+  ISemaphoreFullProof,
 } from "@cryptkeeperzk/types";
+import {
+  ISemaphoreProofRequiredArgs,
+  IRLNProofRequiredArgs,
+  IRLNSNARKProof,
+} from "@cryptkeeperzk/types/dist/src/proof";
 import { ZkProofService } from "@cryptkeeperzk/zk";
 
 import { RPCAction } from "../constants";
@@ -128,21 +130,21 @@ export class CryptKeeperInjectedProvider {
    * @param {string} urlOrigin - The host origin to connect to.
    * @returns {Promise<Approvals>} A Promise that resolves to an object containing approval information.
    */
-  private async tryConnect(urlOrigin: string): Promise<Approvals> {
+  private async tryConnect(urlOrigin: string): Promise<IApprovals> {
     return this.post({
       method: RPCAction.CONNECT,
       payload: { urlOrigin },
-    }) as Promise<Approvals>;
+    }) as Promise<IApprovals>;
   }
 
   /**
    * Sends a message to the extension.
    *
-   * @param {InjectedProviderRequest} message - The message to send.
+   * @param {IInjectedProviderRequest} message - The message to send.
    * @returns {Promise<unknown>} A Promise that resolves to the response from the extension.
    */
-  private async post(message: InjectedProviderRequest): Promise<unknown> {
-    // TODO: (#75) enhance by moving towards long-lived conenctions #75
+  private async post(message: IInjectedProviderRequest): Promise<unknown> {
+    // TODO: (#75) enhance by moving towards long-lived connections #75
     return new Promise((resolve, reject) => {
       const messageNonce = this.nonce;
       this.nonce += 1;
@@ -184,7 +186,7 @@ export class CryptKeeperInjectedProvider {
   /**
    * Retrieves the connected identity.
    *
-   * @returns {Promise<ConnectedIdentity>} A Promise that resolves to the connected identity.
+   * @returns {Promise<IConnectedIdentity>} A Promise that resolves to the connected identity.
    */
   async getConnectedIdentity(): Promise<ConnectedIdentityMetadata | undefined> {
     return this.post({
@@ -210,10 +212,10 @@ export class CryptKeeperInjectedProvider {
   /**
    * Handles incoming messages from the extension.
    *
-   * @param {InjectedMessageData} event - The message event.
+   * @param {IInjectedMessageData} event - The message event.
    * @returns {unknown} The result of handling the event.
    */
-  eventResponser = (event: MessageEvent<InjectedMessageData>): unknown => {
+  eventResponser = (event: MessageEvent<IInjectedMessageData>): unknown => {
     const { data } = event;
 
     if (data.target === "injected-injectedscript") {
@@ -282,10 +284,10 @@ export class CryptKeeperInjectedProvider {
    * Sets the host permissions for the specified host.
    *
    * @param {striing} host - The host for which to set the permissions.
-   * @param {HostPermission} permissions - The host permissions to set.
+   * @param {IHostPermission} permissions - The host permissions to set.
    * @returns {Promise<unknown>} A Promise that resolves to the result of setting the host permissions.
    */
-  async setHostPermissions(host: string, permissions?: HostPermission): Promise<unknown> {
+  async setHostPermissions(host: string, permissions?: IHostPermission): Promise<unknown> {
     return this.post({
       method: RPCAction.SET_HOST_PERMISSIONS,
       payload: {
@@ -325,7 +327,7 @@ export class CryptKeeperInjectedProvider {
     signal,
     merkleProofProvided,
     merkleProofArtifactsOrStorageAddress,
-  }: ISemaphoreProofRequiredArgs): Promise<SemaphoreFullProof> {
+  }: ISemaphoreProofRequiredArgs): Promise<ISemaphoreFullProof> {
     const merkleProofArtifacts =
       typeof merkleProofArtifactsOrStorageAddress === "string" ? undefined : merkleProofArtifactsOrStorageAddress;
     const merkleStorageAddress =
@@ -340,7 +342,7 @@ export class CryptKeeperInjectedProvider {
         merkleProofArtifacts,
         merkleProofProvided,
       },
-    }) as Promise<SemaphoreFullProof>;
+    }) as Promise<ISemaphoreFullProof>;
   }
 
   /**
@@ -364,7 +366,7 @@ export class CryptKeeperInjectedProvider {
     epoch,
     merkleProofProvided,
     merkleProofArtifactsOrStorageAddress,
-  }: IRlnProofRequiredArgs): Promise<RLNSNARKProof> {
+  }: IRLNProofRequiredArgs): Promise<IRLNSNARKProof> {
     const merkleProofArtifacts =
       typeof merkleProofArtifactsOrStorageAddress === "string" ? undefined : merkleProofArtifactsOrStorageAddress;
     const merkleStorageAddress =
@@ -382,7 +384,7 @@ export class CryptKeeperInjectedProvider {
         merkleProofArtifacts,
         merkleStorageAddress,
       },
-    }) as Promise<RLNSNARKProof>;
+    }) as Promise<IRLNSNARKProof>;
   }
 
   /**

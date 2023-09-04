@@ -1,6 +1,6 @@
 import type { InitializationStep } from "@src/types";
 
-export interface ExteranalWalletConnectionData {
+export interface ExternalWalletConnectionData {
   isDisconnectedPermanently: boolean;
 }
 

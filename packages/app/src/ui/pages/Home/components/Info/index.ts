@@ -1,1 +1,1 @@
-export * from "./Info";
+export { type IInfoProps, Info } from "./Info";

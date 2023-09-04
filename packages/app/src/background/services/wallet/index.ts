@@ -115,8 +115,8 @@ export default class WalletService implements IBackupable {
   };
 
   getSelectedAccount = async (): Promise<string | null> => {
-    const encryped = await this.selectedAccountStorage.get<string>();
-    return encryped && this.cryptoService.decrypt(encryped, { mode: ECryptMode.MNEMONIC });
+    const encrypted = await this.selectedAccountStorage.get<string>();
+    return encrypted && this.cryptoService.decrypt(encrypted, { mode: ECryptMode.MNEMONIC });
   };
 
   accounts = async (): Promise<string[]> => {

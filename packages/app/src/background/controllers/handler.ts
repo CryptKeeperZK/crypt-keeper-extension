@@ -1,6 +1,7 @@
+import { IRequestHandler } from "@cryptkeeperzk/types";
+
 import { getExtensionUrl, getUrlOrigin } from "@src/util/browser";
 
-import type { RequestHandler } from "@cryptkeeperzk/types";
 import type { Runtime } from "webextension-polyfill";
 
 // TODO: eslint fix any
@@ -31,7 +32,7 @@ export default class Handler {
   };
 
   handle = async (
-    { method, payload, meta }: RequestHandler,
+    { method, payload, meta }: IRequestHandler,
     { sender, bypass = false }: IHandleOptions,
   ): Promise<unknown> => {
     const handler = this.handlers.get(method);

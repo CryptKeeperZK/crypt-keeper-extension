@@ -1,20 +1,20 @@
 import { Identity } from "@cryptkeeperzk/semaphore-identity";
 
-import type { SerializedIdentity, IdentityMetadata } from "@cryptkeeperzk/types";
+import type { ISerializedIdentity, IIdentityMetadata } from "@cryptkeeperzk/types";
 
 export class ZkIdentitySemaphore {
   zkIdentity: Identity;
 
-  metadata: IdentityMetadata;
+  metadata: IIdentityMetadata;
 
-  constructor(zkIdentity: Identity, metadata: IdentityMetadata) {
+  constructor(zkIdentity: Identity, metadata: IIdentityMetadata) {
     this.zkIdentity = zkIdentity;
     this.metadata = metadata;
   }
 
   genIdentityCommitment = (): bigint => this.zkIdentity.getCommitment();
 
-  updateMetadata = (metadata: Partial<IdentityMetadata>): IdentityMetadata => {
+  updateMetadata = (metadata: Partial<IIdentityMetadata>): IIdentityMetadata => {
     this.metadata = { ...this.metadata, ...metadata };
 
     return this.metadata;
@@ -27,7 +27,7 @@ export class ZkIdentitySemaphore {
     });
 
   static genFromSerialized = (serialized: string): ZkIdentitySemaphore => {
-    const data = JSON.parse(serialized) as SerializedIdentity;
+    const data = JSON.parse(serialized) as ISerializedIdentity;
 
     if (!data.metadata) {
       throw new Error("Metadata missing");

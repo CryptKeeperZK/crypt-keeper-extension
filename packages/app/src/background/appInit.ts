@@ -1,7 +1,7 @@
 /* global self */
 // @src Metamask https://github.com/MetaMask/metamask-extension/blob/develop/app/scripts/app-init.js
 
-// TODO: importing scripts better using importScritps() check MM
+// TODO: importing scripts better using importScripts() check MM
 import log from "loglevel";
 import browser from "webextension-polyfill";
 

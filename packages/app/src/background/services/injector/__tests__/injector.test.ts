@@ -4,11 +4,11 @@
 
 import { RPCAction } from "@cryptkeeperzk/providers";
 import { generateProof } from "@cryptkeeperzk/semaphore-proof";
+import { PendingRequestType, IRLNProofRequest, ISemaphoreProofRequest, IZkMetadata } from "@cryptkeeperzk/types";
 import browser from "webextension-polyfill";
 
 import { getBrowserPlatform } from "@src/background/shared/utils";
 import { BrowserPlatform } from "@src/constants";
-import { PendingRequestType, IRlnProofRequest, ISemaphoreProofRequest, IZkMetadata } from "@src/types";
 import pushMessage from "@src/util/pushMessage";
 
 import InjectorService from "..";
@@ -245,7 +245,7 @@ describe("background/services/injector", () => {
       jest.clearAllMocks();
     });
 
-    const defaultProofRequest: IRlnProofRequest = {
+    const defaultProofRequest: IRLNProofRequest = {
       identitySerialized: "identitySerialized",
       rlnIdentifier: "rlnIdentifier",
       message: "message",

@@ -1,1 +1,1 @@
-export * from "./MnemonicInput";
+export { type IMnemonicInputProps, MnemonicInput } from "./MnemonicInput";

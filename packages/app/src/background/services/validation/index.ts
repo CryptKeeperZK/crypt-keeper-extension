@@ -1,9 +1,9 @@
-import { ZkInputs } from "@cryptkeeperzk/types";
+import { IZkInputs } from "@cryptkeeperzk/types";
 
 import { ArtifactsProofValidator } from "./artifact";
 import { MerkleProofValidator } from "./merkle";
 
-export const validateZkInputs = (payload: Required<ZkInputs>): Required<ZkInputs> => {
+export const validateZkInputs = (payload: Required<IZkInputs>): Required<IZkInputs> => {
   const { merkleProofArtifacts, merkleProofProvided, merkleStorageAddress } = payload;
 
   if (merkleProofProvided) {

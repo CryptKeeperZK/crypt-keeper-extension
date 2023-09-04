@@ -4,18 +4,18 @@ import { ReactNode } from "react";
 
 import { ConfirmDangerModal } from "@src/ui/components/ConfirmDangerModal";
 
-import "./menuable.scss";
+import "./menu.scss";
 import { MenuItem } from "./MenuItem";
-import { useMenuable, ItemProps } from "./useMenuable";
+import { useMenu, ItemProps } from "./useMenu";
 
-export interface MenuableProps {
+export interface IMenuProps {
   items: ItemProps[];
   children: ReactNode;
   className: string;
   menuClassName?: string;
 }
 
-export const Menuable = ({ items, children, className, menuClassName = "" }: MenuableProps): JSX.Element => {
+export const Menu = ({ items, children, className, menuClassName = "" }: IMenuProps): JSX.Element => {
   const {
     menuRef,
     isShowing,
@@ -26,7 +26,7 @@ export const Menuable = ({ items, children, className, menuClassName = "" }: Men
     onDangerAction,
     onDangerModalShow,
     onSetDangerItem,
-  } = useMenuable({
+  } = useMenu({
     items,
   });
 

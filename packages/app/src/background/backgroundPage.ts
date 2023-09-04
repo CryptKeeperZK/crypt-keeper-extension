@@ -1,4 +1,4 @@
-import { RequestHandler } from "@cryptkeeperzk/types";
+import { IRequestHandler } from "@cryptkeeperzk/types";
 import log from "loglevel";
 import browser, { type Runtime } from "webextension-polyfill";
 
@@ -34,7 +34,7 @@ try {
 
   app.initialize();
 
-  browser.runtime.onMessage.addListener(async (request: RequestHandler, sender: Runtime.MessageSender) => {
+  browser.runtime.onMessage.addListener(async (request: IRequestHandler, sender: Runtime.MessageSender) => {
     log.debug("Background: request: ", request);
 
     if (browserPlatform !== BrowserPlatform.Firefox && request.source === "offscreen") {

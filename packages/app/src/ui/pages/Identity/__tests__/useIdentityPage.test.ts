@@ -2,6 +2,7 @@
  * @jest-environment jsdom
  */
 
+import { IIdentityData } from "@cryptkeeperzk/types";
 import { act, renderHook, waitFor } from "@testing-library/react";
 import { useNavigate } from "react-router-dom";
 
@@ -17,8 +18,6 @@ import {
 } from "@src/ui/ducks/identities";
 import { useUrlParam } from "@src/ui/hooks/url";
 import { redirectToNewTab } from "@src/util/browser";
-
-import type { IdentityData } from "@cryptkeeperzk/types";
 
 import { IUseIdentityPageData, useIdentityPage } from "../useIdentityPage";
 
@@ -43,12 +42,12 @@ jest.mock("@src/ui/ducks/identities", (): unknown => ({
 }));
 
 describe("ui/pages/Identity/useIdentityPage", () => {
-  const defaultIdentity: IdentityData = {
+  const defaultIdentity: IIdentityData = {
     commitment: "commitment",
     metadata: {
       account: ZERO_ADDRESS,
       name: "Account #1",
-      identityStrategy: "interrep",
+      identityStrategy: "interep",
       groups: [],
       web2Provider: "twitter",
       host: "http://localhost:3000",

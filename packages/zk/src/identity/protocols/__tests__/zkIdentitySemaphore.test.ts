@@ -1,46 +1,46 @@
 import { Identity } from "@cryptkeeperzk/semaphore-identity";
 
-import type { IdentityMetadata } from "@cryptkeeperzk/types";
+import type { IIdentityMetadata } from "@cryptkeeperzk/types";
 
 import { ZkIdentitySemaphore } from "..";
 
 describe("protocols/ZkIdentitySemaphore", () => {
   const defaultIdentity = new Identity("1234");
 
-  const defaultIdentityMetadata: IdentityMetadata = {
+  const defaultIdentityMetadata: IIdentityMetadata = {
     account: "account",
     name: "Identity #1",
-    identityStrategy: "interrep",
+    identityStrategy: "interep",
     web2Provider: "twitter",
     groups: [],
     host: "http://localhost:3000",
   };
 
   test("should decorate identity properly", () => {
-    const zkIdentityDecorater = new ZkIdentitySemaphore(defaultIdentity, defaultIdentityMetadata);
+    const zkIdentityDecorator = new ZkIdentitySemaphore(defaultIdentity, defaultIdentityMetadata);
 
-    expect(zkIdentityDecorater.zkIdentity).toStrictEqual(defaultIdentity);
-    expect(zkIdentityDecorater.metadata).toStrictEqual(defaultIdentityMetadata);
+    expect(zkIdentityDecorator.zkIdentity).toStrictEqual(defaultIdentity);
+    expect(zkIdentityDecorator.metadata).toStrictEqual(defaultIdentityMetadata);
   });
 
   test("should return identity commitment properly", () => {
-    const zkIdentityDecorater = new ZkIdentitySemaphore(defaultIdentity, defaultIdentityMetadata);
+    const zkIdentityDecorator = new ZkIdentitySemaphore(defaultIdentity, defaultIdentityMetadata);
 
-    expect(zkIdentityDecorater.genIdentityCommitment()).toBeDefined();
+    expect(zkIdentityDecorator.genIdentityCommitment()).toBeDefined();
   });
 
   test("should set metadata name properly", () => {
-    const zkIdentityDecorater = new ZkIdentitySemaphore(defaultIdentity, defaultIdentityMetadata);
+    const zkIdentityDecorator = new ZkIdentitySemaphore(defaultIdentity, defaultIdentityMetadata);
 
-    expect(zkIdentityDecorater.updateMetadata({ name: "new name" })).toStrictEqual({
+    expect(zkIdentityDecorator.updateMetadata({ name: "new name" })).toStrictEqual({
       ...defaultIdentityMetadata,
       name: "new name",
     });
   });
 
   test("should serialize and deserialize properly", () => {
-    const zkIdentityDecorater = new ZkIdentitySemaphore(defaultIdentity, defaultIdentityMetadata);
-    const serialized = zkIdentityDecorater.serialize();
+    const zkIdentityDecorator = new ZkIdentitySemaphore(defaultIdentity, defaultIdentityMetadata);
+    const serialized = zkIdentityDecorator.serialize();
     const deserialized = ZkIdentitySemaphore.genFromSerialized(serialized);
 
     expect(deserialized.metadata).toStrictEqual(defaultIdentityMetadata);

@@ -6,7 +6,7 @@ import { getEnabledFeatures } from "@src/config/features";
 
 import "./tabListStyles.scss";
 
-export interface TabListProps {
+export interface ITabListProps {
   children: ReactNode;
 }
 
@@ -16,7 +16,7 @@ enum HomeTabs {
   VERIFIABLE_CREDENTIALS = 2,
 }
 
-export const TabList = ({ children }: TabListProps): JSX.Element => {
+export const TabList = ({ children }: ITabListProps): JSX.Element => {
   const features = getEnabledFeatures();
   const [selectedTab, setSelectedTab] = useState(HomeTabs.IDENTITIES);
 

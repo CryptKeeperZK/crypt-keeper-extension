@@ -1,11 +1,14 @@
-export * from "@cryptkeeperzk/types";
-export * from "./history";
-export * from "./forms";
-export * from "./utility";
-export * from "./backup";
-export * from "./misc";
-export * from "./wallet";
-export * from "./hooks";
-export * from "./config";
-export * from "./lock";
-export * from "./verifiableCredentials";
+export { BackupableServices, type IUploadArgs } from "./backup";
+export { type Chain } from "./config";
+export { type SelectOption, type PasswordFormFields } from "./forms";
+export { OperationType, type Operation, type HistorySettings } from "./history";
+export { ConnectorNames, type IUseWalletData } from "./hooks";
+export { type ISecretArgs, type ICheckPasswordArgs } from "./lock";
+export { InitializationStep } from "./misc";
+export { type DeferredPromise } from "./utility";
+export {
+  type IVerifiableCredentialMetadata,
+  type ICryptkeeperVerifiableCredential,
+  type IRenameVerifiableCredentialArgs,
+} from "./verifiableCredentials";
+export { type ISignMessageArgs, type ICheckMnemonicArgs } from "./wallet";

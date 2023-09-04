@@ -1,2 +1,2 @@
-export * from "./useEthWallet";
-export * from "./useCryptKeeper";
+export { useCryptKeeperWallet } from "./useCryptKeeper";
+export { useEthWallet } from "./useEthWallet";

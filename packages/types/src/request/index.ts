@@ -15,7 +15,7 @@ export enum RequestResolutionStatus {
  * @template P - The type of the payload.
  * @template M - The type of the metadata.
  */
-export interface RequestHandler<P = unknown, M = unknown> {
+export interface IRequestHandler<P = unknown, M = unknown> {
   method: string;
   payload?: P;
   error?: Error;
@@ -30,7 +30,7 @@ export enum PendingRequestType {
   CONNECT,
 }
 
-export interface PendingRequest<P = unknown> {
+export interface IPendingRequest<P = unknown> {
   id: string;
   windowId?: number;
   type: PendingRequestType;

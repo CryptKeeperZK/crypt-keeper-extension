@@ -44,7 +44,7 @@ jest.mock("@src/config/features", (): unknown => ({
   ...jest.requireActual("@src/config/features"),
   getEnabledFeatures: jest
     .fn()
-    .mockReturnValue({ INTERREP_IDENTITY: true, USER_MNEMONIC: true, VERIFIABLE_CREDENTIALS: true }),
+    .mockReturnValue({ INTEREP_IDENTITY: true, USER_MNEMONIC: true, VERIFIABLE_CREDENTIALS: true }),
 }));
 
 jest.mock("@src/config/env", (): unknown => ({

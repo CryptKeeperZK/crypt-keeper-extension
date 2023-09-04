@@ -109,7 +109,7 @@
       allWorkers[event.data.id].postMessage(event.data.message, event.data.transfer);
     },
   };
-  const messageRecieved = function (event) {
+  const messageReceived = function (event) {
     if (event.data._subworker) {
       cmds[event.data.cmd](event);
     }
@@ -131,7 +131,7 @@
     }
 
     const newWorker = new oldWorker(path);
-    newWorker.addEventListener("message", messageRecieved);
+    newWorker.addEventListener("message", messageReceived);
 
     return newWorker;
   };

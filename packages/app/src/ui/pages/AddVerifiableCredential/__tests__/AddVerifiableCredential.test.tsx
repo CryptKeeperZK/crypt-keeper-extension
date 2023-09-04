@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 
-import { VerifiableCredential } from "@cryptkeeperzk/types";
+import { IVerifiableCredential } from "@cryptkeeperzk/types";
 import { render, waitFor } from "@testing-library/react";
 
 import { createModalRoot, deleteModalRoot } from "@src/config/mock/modal";
@@ -16,7 +16,7 @@ jest.mock("../useAddVerifiableCredential", (): unknown => ({
 }));
 
 describe("ui/pages/AddVerifiableCredential", () => {
-  const verifiableCredential: VerifiableCredential = {
+  const verifiableCredential: IVerifiableCredential = {
     context: ["https://www.w3.org/2018/credentials/v1"],
     id: "http://example.edu/credentials/3732",
     type: ["VerifiableCredential"],

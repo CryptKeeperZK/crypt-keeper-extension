@@ -1,7 +1,7 @@
 import CryptoService, { ECryptMode } from "@src/background/services/crypto";
 import SimpleStorage from "@src/background/services/storage";
 
-import type { HostPermission } from "@cryptkeeperzk/types";
+import type { IHostPermission } from "@cryptkeeperzk/types";
 import type { BackupData, IBackupable } from "@src/background/services/backup";
 
 const APPROVALS_DB_KEY = "@APPROVED@";
@@ -9,7 +9,7 @@ const APPROVALS_DB_KEY = "@APPROVED@";
 export default class ApprovalService implements IBackupable {
   private static INSTANCE: ApprovalService;
 
-  private allowedHosts: Map<string, HostPermission>;
+  private allowedHosts: Map<string, IHostPermission>;
 
   private approvals: SimpleStorage;
 
@@ -41,25 +41,25 @@ export default class ApprovalService implements IBackupable {
 
     if (encryped) {
       const decrypted = this.cryptoService.decrypt(encryped, { mode: ECryptMode.MNEMONIC });
-      this.allowedHosts = new Map(JSON.parse(decrypted) as Iterable<[string, HostPermission]>);
+      this.allowedHosts = new Map(JSON.parse(decrypted) as Iterable<[string, IHostPermission]>);
     }
 
     return true;
   };
 
-  getPermission = (host: string): HostPermission => ({
+  getPermission = (host: string): IHostPermission => ({
     host,
     canSkipApprove: Boolean(this.allowedHosts.get(host)?.canSkipApprove),
   });
 
-  setPermission = async ({ host, canSkipApprove }: HostPermission): Promise<HostPermission> => {
+  setPermission = async ({ host, canSkipApprove }: IHostPermission): Promise<IHostPermission> => {
     this.allowedHosts.set(host, { host, canSkipApprove });
     await this.saveApprovals();
 
     return { host, canSkipApprove };
   };
 
-  add = async ({ host, canSkipApprove }: HostPermission): Promise<void> => {
+  add = async ({ host, canSkipApprove }: IHostPermission): Promise<void> => {
     if (this.allowedHosts.get(host)) {
       return;
     }
@@ -133,7 +133,7 @@ export default class ApprovalService implements IBackupable {
     const backup = this.cryptoService.decrypt(encryptedBackup, { secret: backupPassword });
     await this.unlock();
 
-    const backupAllowedHosts = new Map(JSON.parse(backup) as Iterable<[string, HostPermission]>);
+    const backupAllowedHosts = new Map(JSON.parse(backup) as Iterable<[string, IHostPermission]>);
     this.allowedHosts = new Map([...this.allowedHosts, ...backupAllowedHosts]);
 
     await this.saveApprovals();

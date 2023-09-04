@@ -1,3 +1,4 @@
+import { IIdentityData } from "@cryptkeeperzk/types";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
@@ -10,14 +11,12 @@ import { useAppDispatch } from "@src/ui/ducks/hooks";
 import { createIdentityRequest, deleteIdentity, setIdentityName } from "@src/ui/ducks/identities";
 import { isExtensionPopupOpen } from "@src/util/browser";
 
-import type { IdentityData } from "@cryptkeeperzk/types";
-
 import { IdentityItem } from "./Item";
 
-export interface IdentityListProps {
+export interface IIdentityListProps {
   isShowAddNew: boolean;
   isShowMenu: boolean;
-  identities: IdentityData[];
+  identities: IIdentityData[];
   className?: string;
   selectedCommitment?: string;
   onSelect?: (identityCommitment: string) => void;
@@ -30,7 +29,7 @@ export const IdentityList = ({
   className = "",
   selectedCommitment = undefined,
   onSelect = undefined,
-}: IdentityListProps): JSX.Element => {
+}: IIdentityListProps): JSX.Element => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
 

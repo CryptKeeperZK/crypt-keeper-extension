@@ -1,6 +1,6 @@
-export type { MerkleProof } from "@zk-kit/incremental-merkle-tree";
+export type { MerkleProof as IMerkleProof } from "@zk-kit/incremental-merkle-tree";
 
-export interface MerkleProofArtifacts {
+export interface IMerkleProofArtifacts {
   leaves: string[];
   depth: number;
   leavesPerNode: number;

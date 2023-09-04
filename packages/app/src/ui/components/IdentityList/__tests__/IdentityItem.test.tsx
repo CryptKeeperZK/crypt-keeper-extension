@@ -24,7 +24,7 @@ describe("ui/components/IdentityList/Item", () => {
     metadata: {
       account: ZERO_ADDRESS,
       name: "Account #0",
-      identityStrategy: "interrep",
+      identityStrategy: "interep",
       web2Provider: "twitter",
       groups: [],
       host: "http://localhost:3000",
@@ -39,7 +39,7 @@ describe("ui/components/IdentityList/Item", () => {
   beforeEach(() => {
     (useNavigate as jest.Mock).mockReturnValue(mockNavigate);
 
-    (getEnabledFeatures as jest.Mock).mockReturnValue({ INTERREP_IDENTITY: true });
+    (getEnabledFeatures as jest.Mock).mockReturnValue({ INTEREP_IDENTITY: true });
   });
 
   afterEach(() => {
@@ -56,8 +56,8 @@ describe("ui/components/IdentityList/Item", () => {
     expect(provider).toBeInTheDocument();
   });
 
-  test("should render identity properly with disabled interrep identity", async () => {
-    (getEnabledFeatures as jest.Mock).mockReturnValue({ INTERREP_IDENTITY: false });
+  test("should render identity properly with disabled interep identity", async () => {
+    (getEnabledFeatures as jest.Mock).mockReturnValue({ INTEREP_IDENTITY: false });
 
     render(
       <IdentityItem
@@ -74,7 +74,7 @@ describe("ui/components/IdentityList/Item", () => {
     expect(name).toBeInTheDocument();
   });
 
-  test("should render random identity properly with enabled interrep identity", async () => {
+  test("should render random identity properly with enabled interep identity", async () => {
     render(
       <IdentityItem
         {...defaultProps}
@@ -127,8 +127,8 @@ describe("ui/components/IdentityList/Item", () => {
 
     expect(dangerModal).toBeInTheDocument();
 
-    const dangerModalreject = await screen.findByTestId("danger-modal-reject");
-    await act(async () => Promise.resolve(dangerModalreject.click()));
+    const dangerModalReject = await screen.findByTestId("danger-modal-reject");
+    await act(async () => Promise.resolve(dangerModalReject.click()));
 
     expect(defaultProps.onDeleteIdentity).toBeCalledTimes(0);
     expect(dangerModal).not.toBeInTheDocument();

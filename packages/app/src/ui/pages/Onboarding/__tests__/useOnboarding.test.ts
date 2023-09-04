@@ -118,7 +118,7 @@ describe("ui/pages/Onboarding/useOnboarding", () => {
     expect(result.current.isShowPassword).toStrictEqual(false);
   });
 
-  test("should go to onboardin backup page properly", () => {
+  test("should go to onboarding backup page properly", () => {
     const { result } = renderHook(() => useOnboarding());
 
     act(() => result.current.onGoToOnboardingBackup());

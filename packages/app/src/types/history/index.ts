@@ -1,4 +1,4 @@
-import type { IdentityData } from "@cryptkeeperzk/types";
+import type { IIdentityData } from "@cryptkeeperzk/types";
 
 export enum OperationType {
   CREATE_IDENTITY = "CREATE_IDENTITY",
@@ -17,7 +17,7 @@ export enum OperationType {
 export interface Operation {
   id: string;
   type: OperationType;
-  identity?: IdentityData;
+  identity?: IIdentityData;
   createdAt: string;
 }
 

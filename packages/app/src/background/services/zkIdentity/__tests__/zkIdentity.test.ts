@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/unbound-method */
+import { EWallet, ConnectedIdentityMetadata, IdentityStrategy, ICreateIdentityOptions } from "@cryptkeeperzk/types";
 import { createNewIdentity } from "@cryptkeeperzk/zk";
 import { bigintToHex } from "bigint-conversion";
 import pick from "lodash/pick";
@@ -8,7 +9,6 @@ import SimpleStorage from "@src/background/services/storage";
 import ZkIdentityService from "@src/background/services/zkIdentity";
 import { ZERO_ADDRESS } from "@src/config/const";
 import { getEnabledFeatures } from "@src/config/features";
-import { CreateIdentityOptions, EWallet, ConnectedIdentityMetadata, IdentityStrategy } from "@src/types";
 import { setConnectedIdentity, setIdentities } from "@src/ui/ducks/identities";
 import pushMessage from "@src/util/pushMessage";
 
@@ -20,7 +20,7 @@ const mockDefaultIdentity = {
     account: ZERO_ADDRESS,
     groups: [],
     name: "Account",
-    identityStrategy: "interrep" as const,
+    identityStrategy: "interep" as const,
     host: "http://localhost:3000",
   },
 };
@@ -94,7 +94,7 @@ describe("background/services/zkIdentity", () => {
 
     (browser.tabs.sendMessage as jest.Mock).mockRejectedValueOnce(false).mockResolvedValue(true);
 
-    (getEnabledFeatures as jest.Mock).mockReturnValue({ INTERREP_IDENTITY: true });
+    (getEnabledFeatures as jest.Mock).mockReturnValue({ INTEREP_IDENTITY: true });
 
     (SimpleStorage as jest.Mock).mock.instances.forEach((instance: MockStorage) => {
       instance.get.mockReturnValue(mockSerializedDefaultIdentities);
@@ -394,8 +394,8 @@ describe("background/services/zkIdentity", () => {
       expect(identities).toHaveLength(mockDefaultIdentities.length);
     });
 
-    test("should get identities properly with disabled interrep identities", async () => {
-      (getEnabledFeatures as jest.Mock).mockReturnValue({ INTERREP_IDENTITY: false });
+    test("should get identities properly with disabled interep identities", async () => {
+      (getEnabledFeatures as jest.Mock).mockReturnValue({ INTEREP_IDENTITY: false });
 
       const identities = await zkIdentityService.getIdentities();
 
@@ -403,7 +403,7 @@ describe("background/services/zkIdentity", () => {
     });
 
     test("should get number of identities properly", async () => {
-      const result = await zkIdentityService.getNumOfIdentites();
+      const result = await zkIdentityService.getNumOfIdentities();
 
       expect(result).toBe(mockDefaultIdentities.length);
     });
@@ -445,7 +445,7 @@ describe("background/services/zkIdentity", () => {
     test("should create a new identity with ethereum wallet properly", async () => {
       const identityMessageSignature = "0x000";
       const identityStrategy: IdentityStrategy = "random";
-      const identityOptions: CreateIdentityOptions = {
+      const identityOptions: ICreateIdentityOptions = {
         nonce: 0,
         account: ZERO_ADDRESS,
         name: "Name",
@@ -464,9 +464,9 @@ describe("background/services/zkIdentity", () => {
       expect(result).toBeDefined();
     });
 
-    test("should create a new identity with cryptkeeper properly", async () => {
-      const identityStrategy: IdentityStrategy = "interrep";
-      const identityOptions: CreateIdentityOptions = {
+    test("should create a new identity with Cryptkeeper properly", async () => {
+      const identityStrategy: IdentityStrategy = "interep";
+      const identityOptions: ICreateIdentityOptions = {
         nonce: 0,
         account: ZERO_ADDRESS,
         name: "Name",
@@ -485,8 +485,8 @@ describe("background/services/zkIdentity", () => {
     });
 
     test("should not create a new identity if there is no signature", async () => {
-      const identityStrategy: IdentityStrategy = "interrep";
-      const identityOptions: CreateIdentityOptions = {
+      const identityStrategy: IdentityStrategy = "interep";
+      const identityOptions: ICreateIdentityOptions = {
         nonce: 0,
         account: ZERO_ADDRESS,
         name: "Name",
@@ -506,8 +506,8 @@ describe("background/services/zkIdentity", () => {
 
     test("should not create a new identity if there is the same identity in the store", async () => {
       const identityMessageSignature = "0x000";
-      const identityStrategy: IdentityStrategy = "interrep";
-      const identityOptions: CreateIdentityOptions = {
+      const identityStrategy: IdentityStrategy = "interep";
+      const identityOptions: ICreateIdentityOptions = {
         nonce: 0,
         web2Provider: "twitter",
         account: ZERO_ADDRESS,

@@ -1,3 +1,4 @@
+import { IIdentityMetadata } from "@cryptkeeperzk/types";
 import { useCallback, useEffect, useState } from "react";
 import { UseFormRegister, useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
@@ -14,8 +15,6 @@ import {
 import { useUrlParam } from "@src/ui/hooks/url";
 import { redirectToNewTab } from "@src/util/browser";
 
-import type { IdentityMetadata } from "@cryptkeeperzk/types";
-
 export interface IUseIdentityPageData {
   isLoading: boolean;
   isConnectedIdentity: boolean;
@@ -23,7 +22,7 @@ export interface IUseIdentityPageData {
   isUpdating: boolean;
   errors: Partial<{ root: string; name: string }>;
   commitment?: string;
-  metadata?: IdentityMetadata;
+  metadata?: IIdentityMetadata;
   register: UseFormRegister<FormFields>;
   onGoBack: () => void;
   onConfirmDeleteIdentity: () => void;

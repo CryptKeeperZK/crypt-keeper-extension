@@ -1,1 +1,1 @@
-export * from "./ZkIdentitySemaphore";
+export { ZkIdentitySemaphore } from "./ZkIdentitySemaphore";

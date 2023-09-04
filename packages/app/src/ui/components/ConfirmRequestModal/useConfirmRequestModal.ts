@@ -1,4 +1,4 @@
-import { PendingRequest, RequestResolutionAction, RequestResolutionStatus } from "@cryptkeeperzk/types";
+import { IPendingRequest, IRequestResolutionAction, RequestResolutionStatus } from "@cryptkeeperzk/types";
 import { useCallback, useState } from "react";
 
 import { useAppDispatch } from "@src/ui/ducks/hooks";
@@ -7,7 +7,7 @@ import { fetchPendingRequests, finalizeRequest, usePendingRequests } from "@src/
 export interface IUseConfirmRequestModalData {
   error: string;
   loading: boolean;
-  pendingRequests: PendingRequest[];
+  pendingRequests: IPendingRequest[];
   accept: (data?: unknown) => void;
   reject: (err?: Error) => void;
 }
@@ -20,7 +20,7 @@ export const useConfirmRequestModal = (): IUseConfirmRequestModalData => {
   const [pendingRequest] = pendingRequests;
 
   const finalize = useCallback(
-    (req: RequestResolutionAction) => {
+    (req: IRequestResolutionAction) => {
       setLoading(true);
       dispatch(finalizeRequest(req))
         .then(() => dispatch(fetchPendingRequests()))

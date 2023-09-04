@@ -2,7 +2,7 @@ import { InitializationStep } from "@src/types";
 
 import SimpleStorage from "../storage";
 
-import { InitializationData, ExteranalWalletConnectionData } from "./types";
+import { InitializationData, ExternalWalletConnectionData } from "./types";
 
 const WALLET_STORAGE_KEY = "@@WALLET@@";
 const INITIALIZATION_STORAGE_KEY = "@@INITIALIZED@@";
@@ -34,9 +34,9 @@ export default class MiscStorageService {
 
   setInitialization = async (payload: InitializationData): Promise<void> => this.initializationStorage.set(payload);
 
-  setExternalWalletConnection = async (payload: ExteranalWalletConnectionData): Promise<void> =>
+  setExternalWalletConnection = async (payload: ExternalWalletConnectionData): Promise<void> =>
     this.externalWalletStorage.set(payload);
 
-  getExternalWalletConnection = async (): Promise<ExteranalWalletConnectionData | null> =>
+  getExternalWalletConnection = async (): Promise<ExternalWalletConnectionData | null> =>
     this.externalWalletStorage.get();
 }

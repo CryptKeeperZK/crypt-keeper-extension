@@ -68,9 +68,7 @@ export default class HistoryService {
       .then((serialized) => JSON.parse(serialized) as Operation[]);
 
     this.operations = serializedOperations
-      .filter(({ identity }) =>
-        !features.INTERREP_IDENTITY ? identity?.metadata.identityStrategy !== "interrep" : true,
-      )
+      .filter(({ identity }) => (!features.INTEREP_IDENTITY ? identity?.metadata.identityStrategy !== "interep" : true))
       .sort((a, b) => +new Date(b.createdAt) - +new Date(a.createdAt));
 
     return { operations: this.operations, settings: this.settings };

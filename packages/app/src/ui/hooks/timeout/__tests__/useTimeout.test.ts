@@ -15,7 +15,7 @@ describe("ui/hooks/timeout", () => {
     jest.useRealTimers();
   });
 
-  test("should return intial data", async () => {
+  test("should return initial data", async () => {
     const { result } = renderHook(() => useTimeout());
 
     await waitFor(() => result.current.isActive === false);

@@ -5,11 +5,11 @@ import { PermissionModal } from "@src/ui/components/PermissionModal";
 
 import "./infoStyles.scss";
 
-export interface InfoProps {
+export interface IInfoProps {
   refreshConnectionStatus: () => Promise<boolean>;
 }
 
-export const Info = ({ refreshConnectionStatus }: InfoProps): JSX.Element => {
+export const Info = ({ refreshConnectionStatus }: IInfoProps): JSX.Element => {
   const [isConnected, setIsConnected] = useState(false);
   const [isModalShow, setIsModalShow] = useState(false);
 

@@ -1,1 +1,1 @@
-export * from "./PermissionModal";
+export { type IPermissionModalProps, PermissionModal } from "./PermissionModal";

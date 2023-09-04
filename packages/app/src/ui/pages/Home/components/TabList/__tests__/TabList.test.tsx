@@ -6,10 +6,10 @@ import { act, render, screen } from "@testing-library/react";
 
 import { getEnabledFeatures } from "@src/config/features";
 
-import { TabList, TabListProps } from "..";
+import { TabList, ITabListProps } from "..";
 
 describe("ui/pages/Home/components/TabList", () => {
-  const defaultProps: TabListProps = {
+  const defaultProps: ITabListProps = {
     children: [<div key={0}>Identities content</div>, <div key={1}>Activity content</div>],
   };
 

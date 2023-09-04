@@ -1,1 +1,1 @@
-export * from "./AccountMenu";
+export { type IAccountMenuProps, AccountMenu } from "./AccountMenu";

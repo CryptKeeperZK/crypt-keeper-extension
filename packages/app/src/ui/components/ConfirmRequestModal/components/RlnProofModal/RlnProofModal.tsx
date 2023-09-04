@@ -1,4 +1,4 @@
-import { IRlnProofRequest, PendingRequest } from "@cryptkeeperzk/types";
+import { IRLNProofRequest, IPendingRequest } from "@cryptkeeperzk/types";
 
 import { ButtonType, Button } from "@src/ui/components/Button";
 import { FullModal, FullModalContent, FullModalFooter, FullModalHeader } from "@src/ui/components/FullModal";
@@ -13,7 +13,7 @@ export interface RlnProofModalProps {
   len: number;
   loading: boolean;
   error: string;
-  pendingRequest: PendingRequest<Omit<IRlnProofRequest, "identitySerialized">>;
+  pendingRequest: IPendingRequest<Omit<IRLNProofRequest, "identitySerialized">>;
   accept: () => void;
   reject: () => void;
 }

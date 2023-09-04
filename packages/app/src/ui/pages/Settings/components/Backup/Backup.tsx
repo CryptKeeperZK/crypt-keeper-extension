@@ -55,7 +55,7 @@ const Backup = ({
         <Typography variant="h6">Clear identities</Typography>
 
         <Typography color="text.secondary" variant="body2">
-          This resets the identity storage and erases data from the identities tab. This is not revertable operation.
+          This resets the identity storage and erases data from the identities tab. This is not revertible operation.
         </Typography>
 
         <FormGroup sx={{ mt: 2 }}>
@@ -75,7 +75,7 @@ const Backup = ({
           <Typography variant="h6">Delete storage data</Typography>
 
           <Typography color="text.secondary" variant="body2">
-            This erases the whole storage data. This is not revertable operation.
+            This erases the whole storage data. This is not revertible operation.
           </Typography>
 
           <FormGroup sx={{ mt: 2 }}>

@@ -1,6 +1,6 @@
 import { ZkIdentitySemaphore } from "@src/identity";
 
-import type { IRlnGenerateArgs } from "@cryptkeeperzk/types";
+import type { IRLNGenerateArgs } from "@cryptkeeperzk/types";
 
 import { ZkProofService } from "..";
 import { RLNProofService } from "../protocols";
@@ -14,7 +14,7 @@ jest.mock("@src/identity", (): unknown => ({
 jest.mock("../protocols");
 
 describe("RLN proof", () => {
-  const defaultGenerateArgs: IRlnGenerateArgs = {
+  const defaultGenerateArgs: IRLNGenerateArgs = {
     identity: "identity",
     payload: {
       circuitFilePath: "circuitFilePath",

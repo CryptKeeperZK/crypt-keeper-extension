@@ -3,7 +3,7 @@ import { forwardRef, InputHTMLAttributes, Ref } from "react";
 
 import "./input.scss";
 
-export interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
+export interface IInputProps extends InputHTMLAttributes<HTMLInputElement> {
   label: string;
   endLabelIcon?: React.ReactNode;
   endAdornment?: React.ReactNode;
@@ -21,7 +21,7 @@ const InputUI = (
     endAdornment = undefined,
     inputRef = undefined,
     ...inputProps
-  }: InputProps,
+  }: IInputProps,
   ref: Ref<HTMLInputElement>,
 ): JSX.Element => (
   <div className={classNames("input-group", className)}>
@@ -53,4 +53,4 @@ const InputUI = (
   </div>
 );
 
-export const Input = forwardRef<HTMLInputElement, InputProps>(InputUI);
+export const Input = forwardRef<HTMLInputElement, IInputProps>(InputUI);

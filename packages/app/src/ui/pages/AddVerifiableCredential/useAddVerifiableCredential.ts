@@ -5,7 +5,7 @@ import {
   hashVerifiableCredential,
   serializeVerifiableCredential,
 } from "@src/background/services/credentials/utils";
-import { CryptkeeperVerifiableCredential } from "@src/types";
+import { ICryptkeeperVerifiableCredential } from "@src/types";
 import { closePopup } from "@src/ui/ducks/app";
 import { useAppDispatch } from "@src/ui/ducks/hooks";
 import { addVerifiableCredential, rejectVerifiableCredentialRequest } from "@src/ui/ducks/verifiableCredentials";
@@ -13,7 +13,7 @@ import { addVerifiableCredential, rejectVerifiableCredentialRequest } from "@src
 export const defaultVerifiableCredentialName = "Verifiable Credential";
 
 export interface IUseAddVerifiableCredentialData {
-  cryptkeeperVerifiableCredential?: CryptkeeperVerifiableCredential;
+  cryptkeeperVerifiableCredential?: ICryptkeeperVerifiableCredential;
   error?: string;
   onCloseModal: () => void;
   onRenameVerifiableCredential: (newVerifiableCredentialName: string) => void;
@@ -23,7 +23,7 @@ export interface IUseAddVerifiableCredentialData {
 
 export const useAddVerifiableCredential = (): IUseAddVerifiableCredentialData => {
   const [cryptkeeperVerifiableCredential, setCryptkeeperVerifiableCredential] =
-    useState<CryptkeeperVerifiableCredential>();
+    useState<ICryptkeeperVerifiableCredential>();
   const [error, setError] = useState<string>();
 
   useEffect(() => {

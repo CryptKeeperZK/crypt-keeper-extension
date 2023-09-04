@@ -1,9 +1,9 @@
-import { PendingRequest, PendingRequestType, ZKProofPayload } from "@cryptkeeperzk/types";
+import { IPendingRequest, PendingRequestType, IZKProofPayload } from "@cryptkeeperzk/types";
 import { getLinkPreview } from "link-preview-js";
 import { useCallback, useEffect, useState } from "react";
 
 export interface IUseSemaphoreProofModalArgs {
-  pendingRequest: PendingRequest<ZKProofPayload>;
+  pendingRequest: IPendingRequest<IZKProofPayload>;
   accept: () => void;
   reject: () => void;
 }
@@ -12,7 +12,7 @@ export interface IUseSemaphoreProofModalData {
   urlOrigin: string;
   faviconUrl: string;
   operation: string;
-  payload?: ZKProofPayload;
+  payload?: IZKProofPayload;
   onAccept: () => void;
   onReject: () => void;
   onOpenCircuitFile: () => void;

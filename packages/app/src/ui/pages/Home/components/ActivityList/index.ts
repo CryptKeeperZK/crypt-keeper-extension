@@ -1,1 +1,1 @@
-export * from "./ActivityList";
+export { ActivityList } from "./ActivityList";

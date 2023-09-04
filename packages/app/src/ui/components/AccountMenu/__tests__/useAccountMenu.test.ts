@@ -2,6 +2,7 @@
  * @jest-environment jsdom
  */
 
+import { EWallet } from "@cryptkeeperzk/types";
 import { act, renderHook, waitFor } from "@testing-library/react";
 import { MouseEvent as ReactMouseEvent } from "react";
 import { useNavigate } from "react-router-dom";
@@ -9,7 +10,6 @@ import { useNavigate } from "react-router-dom";
 import { ZERO_ADDRESS } from "@src/config/const";
 import { defaultWalletHookData } from "@src/config/mock/wallet";
 import { Paths } from "@src/constants";
-import { EWallet } from "@src/types";
 import { selectAccount } from "@src/ui/ducks/app";
 import { useAppDispatch } from "@src/ui/ducks/hooks";
 import { getExtensionUrl, redirectToNewTab } from "@src/util/browser";

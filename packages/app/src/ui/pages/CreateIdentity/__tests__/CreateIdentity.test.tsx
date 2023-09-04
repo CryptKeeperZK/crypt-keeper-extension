@@ -2,6 +2,7 @@
  * @jest-environment jsdom
  */
 
+import { EWallet } from "@cryptkeeperzk/types";
 import { act, fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { useNavigate } from "react-router-dom";
 import selectEvent from "react-select-event";
@@ -11,7 +12,6 @@ import { getEnabledFeatures } from "@src/config/features";
 import { createModalRoot, deleteModalRoot } from "@src/config/mock/modal";
 import { defaultWalletHookData } from "@src/config/mock/wallet";
 import { IDENTITY_TYPES, Paths, WEB2_PROVIDER_OPTIONS } from "@src/constants";
-import { EWallet } from "@src/types";
 import { closePopup } from "@src/ui/ducks/app";
 import { useAppDispatch } from "@src/ui/ducks/hooks";
 import { createIdentity } from "@src/ui/ducks/identities";
@@ -76,7 +76,7 @@ describe("ui/pages/CreateIdentity", () => {
 
     (createIdentity as jest.Mock).mockResolvedValue(true);
 
-    (getEnabledFeatures as jest.Mock).mockReturnValue({ INTERREP_IDENTITY: true });
+    (getEnabledFeatures as jest.Mock).mockReturnValue({ INTEREP_IDENTITY: true });
 
     createModalRoot();
   });
@@ -167,8 +167,8 @@ describe("ui/pages/CreateIdentity", () => {
     });
   });
 
-  test("should create random identity with disabled interrep identity feature properly", async () => {
-    (getEnabledFeatures as jest.Mock).mockReturnValue({ INTERREP_IDENTITY: false });
+  test("should create random identity with disabled interep identity feature properly", async () => {
+    (getEnabledFeatures as jest.Mock).mockReturnValue({ INTEREP_IDENTITY: false });
 
     const { container } = render(<CreateIdentity />);
 
@@ -192,7 +192,7 @@ describe("ui/pages/CreateIdentity", () => {
     });
   });
 
-  test("should render properly with interrep provider", async () => {
+  test("should render properly with interep provider", async () => {
     const { container } = render(<CreateIdentity />);
 
     await waitFor(() => container.firstChild !== null);
@@ -208,7 +208,7 @@ describe("ui/pages/CreateIdentity", () => {
     expect(identityType).toBeInTheDocument();
   });
 
-  test("should create interrep github identity properly", async () => {
+  test("should create interep github identity properly", async () => {
     const { container } = render(<CreateIdentity />);
 
     await waitFor(() => container.firstChild !== null);
@@ -229,7 +229,7 @@ describe("ui/pages/CreateIdentity", () => {
     expect(closePopup).toBeCalledTimes(1);
     expect(createIdentity).toBeCalledTimes(1);
     expect(createIdentity).toBeCalledWith({
-      strategy: "interrep",
+      strategy: "interep",
       messageSignature: mockSignedMessage,
       walletType: EWallet.ETH_WALLET,
       groups: [],

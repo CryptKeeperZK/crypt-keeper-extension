@@ -1,3 +1,10 @@
-export { SemaphoreProofService } from "./SemaphoreProof";
 export { RLNProofService } from "./RLNProof";
-export * from "./utils";
+export { SemaphoreProofService } from "./SemaphoreProof";
+export {
+  type IGenerateMerkleProofArgs,
+  type IGetMerkleProof,
+  deserializeMerkleProof,
+  generateMerkleProof,
+  getMerkleProof,
+  getRlnVerificationKeyJson,
+} from "./utils";

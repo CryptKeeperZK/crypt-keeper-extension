@@ -6,7 +6,7 @@ import { act, render, screen } from "@testing-library/react";
 
 import { createModalRoot, deleteModalRoot } from "@src/config/mock/modal";
 
-import { PermissionModal, ConnectionModalProps } from "..";
+import { PermissionModal, IPermissionModalProps } from "..";
 import { IUsePermissionModalData, usePermissionModal } from "../usePermissionModal";
 
 jest.mock("../usePermissionModal", (): unknown => ({
@@ -14,7 +14,7 @@ jest.mock("../usePermissionModal", (): unknown => ({
 }));
 
 describe("ui/components/ConnectionModal/ConnectionModal", () => {
-  const defaultProps: ConnectionModalProps = {
+  const defaultProps: IPermissionModalProps = {
     refreshConnectionStatus: jest.fn(),
     onClose: jest.fn(),
   };

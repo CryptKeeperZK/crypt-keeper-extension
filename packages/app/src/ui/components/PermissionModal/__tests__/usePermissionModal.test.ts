@@ -9,7 +9,7 @@ import { useAppDispatch } from "@src/ui/ducks/hooks";
 import { fetchHostPermissions, removeHost, setHostPermissions, useHostPermission } from "@src/ui/ducks/permissions";
 import { getLastActiveTabUrl } from "@src/util/browser";
 
-import { IUseConnectionModalArgs, IUsePermissionModalData, usePermissionModal } from "../usePermissionModal";
+import { IUsePermissionModalArgs, IUsePermissionModalData, usePermissionModal } from "../usePermissionModal";
 
 jest.mock("@src/ui/ducks/hooks", (): unknown => ({
   useAppDispatch: jest.fn(),
@@ -25,7 +25,7 @@ jest.mock("@src/ui/ducks/permissions", (): unknown => ({
 describe("ui/components/ConnectionModal/useConnectionModal", () => {
   const mockDispatch = jest.fn(() => Promise.resolve());
 
-  const defaultArgs: IUseConnectionModalArgs = {
+  const defaultArgs: IUsePermissionModalArgs = {
     refreshConnectionStatus: jest.fn(),
     onClose: jest.fn(),
   };

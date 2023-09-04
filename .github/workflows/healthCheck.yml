@@ -1,4 +1,4 @@
-name: Health check
+name: E2E Health check
 on:
   workflow_dispatch:
 
@@ -7,7 +7,7 @@ on:
 
 env:
   CRYPTKEEPER_DEBUG: false
-  INTERREP_IDENTITY: true
+  INTEREP_IDENTITY: true
   USER_MNEMONIC: true
   E2E: true
   METAMASK_EXTENSION_ID: ""

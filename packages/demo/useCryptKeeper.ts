@@ -8,11 +8,11 @@ import { useState, useEffect, useCallback } from "react";
 import { toast } from "react-toastify";
 
 import type {
-  SemaphoreFullProof,
-  MerkleProofArtifacts,
-  RLNSNARKProof,
+  ISemaphoreFullProof,
+  IMerkleProofArtifacts,
+  IRLNSNARKProof,
   ConnectedIdentityMetadata,
-  VerifiableCredential,
+  IVerifiableCredential,
 } from "@cryptkeeperzk/types";
 
 const SERVER_URL = "http://localhost:8090";
@@ -30,7 +30,7 @@ const genMockIdentityCommitments = (): string[] => {
   return identityCommitments;
 };
 
-const genMockVerifiableCredential = (): VerifiableCredential => ({
+const genMockVerifiableCredential = (): IVerifiableCredential => ({
   context: ["https://www.w3.org/2018/credentials/v1"],
   id: "http://example.edu/credentials/1872",
   type: ["VerifiableCredential", "UniversityDegreeCredential"],
@@ -56,7 +56,7 @@ interface IUseCryptKeeperData {
   isLocked: boolean;
   connectedIdentityMetadata?: ConnectedIdentityMetadata;
   client?: CryptKeeperInjectedProvider;
-  proof?: SemaphoreFullProof | RLNSNARKProof;
+  proof?: ISemaphoreFullProof | IRLNSNARKProof;
   connect: () => void;
   createIdentity: () => unknown;
   connectIdentity: () => Promise<void>;
@@ -69,7 +69,7 @@ interface IUseCryptKeeperData {
 export const useCryptKeeper = (): IUseCryptKeeperData => {
   const [client, setClient] = useState<CryptKeeperInjectedProvider>();
   const [isLocked, setIsLocked] = useState(true);
-  const [proof, setProof] = useState<SemaphoreFullProof | RLNSNARKProof>();
+  const [proof, setProof] = useState<ISemaphoreFullProof | IRLNSNARKProof>();
   const [connectedIdentityMetadata, setConnectedIdentityMetadata] = useState<ConnectedIdentityMetadata>();
   const mockIdentityCommitments: string[] = genMockIdentityCommitments();
 
@@ -87,7 +87,7 @@ export const useCryptKeeper = (): IUseCryptKeeperData => {
   const genSemaphoreProof = async (proofType: MerkleProofType = MerkleProofType.STORAGE_ADDRESS) => {
     const externalNullifier = encodeBytes32String("voting-1");
     const signal = encodeBytes32String("hello-world");
-    let merkleProofArtifactsOrStorageAddress: string | MerkleProofArtifacts = `${merkleStorageAddress}/Semaphore`;
+    let merkleProofArtifactsOrStorageAddress: string | IMerkleProofArtifacts = `${merkleStorageAddress}/Semaphore`;
 
     if (proofType === MerkleProofType.ARTIFACTS) {
       merkleProofArtifactsOrStorageAddress = {
@@ -125,7 +125,7 @@ export const useCryptKeeper = (): IUseCryptKeeperData => {
     const messageLimit = 1;
     const messageId = 0;
     const epoch = Date.now().toString();
-    let merkleProofArtifactsOrStorageAddress: string | MerkleProofArtifacts = `${merkleStorageAddress}/RLN`;
+    let merkleProofArtifactsOrStorageAddress: string | IMerkleProofArtifacts = `${merkleStorageAddress}/RLN`;
 
     if (proofType === MerkleProofType.ARTIFACTS) {
       merkleProofArtifactsOrStorageAddress = {

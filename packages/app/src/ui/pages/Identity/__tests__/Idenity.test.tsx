@@ -36,7 +36,7 @@ describe("ui/pages/Identity", () => {
     metadata: {
       account: ZERO_ADDRESS,
       name: "Account #1",
-      identityStrategy: "interrep",
+      identityStrategy: "interep",
       groups: [{ id: "1", name: "Group #1", description: "Description #1" }],
       web2Provider: "twitter",
       host: "http://localhost:3000",

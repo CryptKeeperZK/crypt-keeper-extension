@@ -5,7 +5,7 @@ import { Icon } from "@src/ui/components/Icon";
 
 import "./fullModal.scss";
 
-export interface FullModalHeaderProps {
+export interface IFullModalHeaderProps {
   children: ReactNode;
   className?: string;
   onClose?: () => void;
@@ -15,7 +15,7 @@ export const FullModalHeader = ({
   children,
   className = "",
   onClose = undefined,
-}: FullModalHeaderProps): JSX.Element => (
+}: IFullModalHeaderProps): JSX.Element => (
   <div className={classNames("full-modal__header", className)}>
     <div className="text-xl flex-grow flex-shrink full-modal__header__content">{children}</div>
 

@@ -3,11 +3,11 @@ import { ReactNode } from "react";
 
 import "./fullModal.scss";
 
-export interface FullModalContentProps {
+export interface IFullModalContentProps {
   className?: string;
   children: ReactNode;
 }
 
-export const FullModalContent = ({ className = "", children }: FullModalContentProps): JSX.Element => (
+export const FullModalContent = ({ className = "", children }: IFullModalContentProps): JSX.Element => (
   <div className={classNames("full-modal__content", className)}>{children}</div>
 );

@@ -1,14 +1,14 @@
 import { useEffect, useState } from "react";
 
 import { deserializeCryptkeeperVerifiableCredential } from "@src/background/services/credentials/utils";
-import { CryptkeeperVerifiableCredential } from "@src/types";
+import { ICryptkeeperVerifiableCredential } from "@src/types";
 import { useVerifiableCredentials } from "@src/ui/ducks/verifiableCredentials";
 
-export const useCryptkeeperVerifiableCredentials = (): CryptkeeperVerifiableCredential[] => {
+export const useCryptkeeperVerifiableCredentials = (): ICryptkeeperVerifiableCredential[] => {
   const serializedVerifiableCredentials = useVerifiableCredentials();
 
   const [cryptkeeperVerifiableCredentials, setCryptkeeperVerifiableCredentials] = useState<
-    CryptkeeperVerifiableCredential[]
+    ICryptkeeperVerifiableCredential[]
   >([]);
 
   useEffect(() => {

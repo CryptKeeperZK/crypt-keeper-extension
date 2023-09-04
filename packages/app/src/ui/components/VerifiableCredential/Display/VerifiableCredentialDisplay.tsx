@@ -5,12 +5,12 @@ import IconButton from "@mui/material/IconButton";
 import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
 
-import { CryptkeeperVerifiableCredential } from "@src/types";
+import { ICryptkeeperVerifiableCredential } from "@src/types";
 
 import { useVerifiableCredentialDisplay } from "./useVerifiableCredentialDisplay";
 
 export interface VerifiableCredentialDisplayProps {
-  cryptkeeperVerifiableCredential: CryptkeeperVerifiableCredential;
+  cryptkeeperVerifiableCredential: ICryptkeeperVerifiableCredential;
   onRenameVerifiableCredential: (name: string) => void;
 }
 

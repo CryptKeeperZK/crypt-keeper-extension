@@ -1,4 +1,4 @@
-import { PendingRequest } from "@cryptkeeperzk/types";
+import { IPendingRequest } from "@cryptkeeperzk/types";
 import { getLinkPreview } from "link-preview-js";
 import { ChangeEvent, useCallback, useEffect, useState } from "react";
 
@@ -6,7 +6,7 @@ import { useAppDispatch } from "@src/ui/ducks/hooks";
 import { fetchHostPermissions, setHostPermissions, useHostPermission } from "@src/ui/ducks/permissions";
 
 export interface IUseConnectionApprovalModalArgs {
-  pendingRequest: PendingRequest<{ origin: string }>;
+  pendingRequest: IPendingRequest<{ origin: string }>;
   accept: () => void;
   reject: () => void;
 }

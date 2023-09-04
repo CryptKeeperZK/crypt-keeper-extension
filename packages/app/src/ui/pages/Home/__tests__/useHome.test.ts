@@ -2,11 +2,11 @@
  * @jest-environment jsdom
  */
 
+import { IIdentityData } from "@cryptkeeperzk/types";
 import { act, renderHook } from "@testing-library/react";
 import { useRef } from "react";
 
 import { defaultWalletHookData } from "@src/config/mock/wallet";
-import { IdentityData } from "@src/types";
 import { useAppDispatch } from "@src/ui/ducks/hooks";
 import { useIdentities, fetchIdentities, fetchHistory, useConnectedIdentity } from "@src/ui/ducks/identities";
 import { checkHostApproval } from "@src/ui/ducks/permissions";
@@ -46,13 +46,13 @@ jest.mock("@src/util/browser", (): unknown => ({
 describe("ui/pages/Home/useHome", () => {
   const mockDispatch = jest.fn();
 
-  const defaultIdentities: IdentityData[] = [
+  const defaultIdentities: IIdentityData[] = [
     {
       commitment: "1",
       metadata: {
         account: defaultWalletHookData.address!,
         name: "Account #1",
-        identityStrategy: "interrep",
+        identityStrategy: "interep",
         web2Provider: "twitter",
         groups: [],
         host: "http://localhost:3000",

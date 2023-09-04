@@ -1,7 +1,7 @@
 import {
-  PendingRequest,
+  IPendingRequest,
   PendingRequestType,
-  RequestResolutionAction,
+  IRequestResolutionAction,
   RequestResolutionStatus,
 } from "@cryptkeeperzk/types";
 import { EventEmitter2 } from "eventemitter2";
@@ -18,7 +18,7 @@ export default class RequestManager {
 
   private browserService: BrowserUtils;
 
-  private pendingRequests: PendingRequest[];
+  private pendingRequests: IPendingRequest[];
 
   private nonce: number;
 
@@ -41,7 +41,7 @@ export default class RequestManager {
 
   getNonce = (): number => this.nonce;
 
-  getRequests = (): PendingRequest[] => this.pendingRequests;
+  getRequests = (): IPendingRequest[] => this.pendingRequests;
 
   newRequest = async (type: PendingRequestType, payload?: unknown): Promise<unknown> => {
     const popup = await this.browserService.openPopup();
@@ -57,7 +57,7 @@ export default class RequestManager {
 
       this.browserService.addRemoveWindowListener(onPopupClose);
 
-      this.eventEmitter.once(`${id}:finalized`, (action: RequestResolutionAction) => {
+      this.eventEmitter.once(`${id}:finalized`, (action: IRequestResolutionAction) => {
         this.browserService.removeRemoveWindowListener(onPopupClose);
         switch (action.status) {
           case RequestResolutionStatus.ACCEPT:
@@ -67,13 +67,13 @@ export default class RequestManager {
             reject(new Error("user rejected."));
             return;
           default:
-            reject(new Error(`action: ${action.status as string} not supproted`));
+            reject(new Error(`action: ${action.status as string} not supported`));
         }
       });
     });
   };
 
-  finalizeRequest = async (action: RequestResolutionAction<unknown>): Promise<boolean> => {
+  finalizeRequest = async (action: IRequestResolutionAction<unknown>): Promise<boolean> => {
     const { id } = action;
 
     // TODO add some mutex lock just in case something strange occurs
