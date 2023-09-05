@@ -51,13 +51,16 @@ jobs:
           pnpm install --frozen-lockfile --prefer-offline
           pnpm install -g web-ext web-ext-submit
 
+      - name: Get version
+        run: |-
+          echo "EXTENSION_VERSION=$(node -e "console.log('${{ github.ref_name }}'.split('-')[1])")" >> $GITHUB_ENV
+
       - name: Build firefox artifact
         env:
           TARGET: "firefox"
           MANIFEST_VERSION: 2
         run: |-
           pnpm run build
-          echo "EXTENSION_VERSION=$(node -e "console.log('${{ github.ref_name }}'.split('-')[1])")" >> $GITHUB_ENV
           zip -r cryptkeeper-firefox-extension-v${{ env.EXTENSION_VERSION }}.zip ./packages/app/dist
 
       - name: Sign build
