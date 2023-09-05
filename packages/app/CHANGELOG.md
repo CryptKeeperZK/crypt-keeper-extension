@@ -2,6 +2,21 @@
 
 This file was generated using [@jscutlery/semver](https://github.com/jscutlery/semver).
 
+## [0.2.4](https://github.com/CryptKeeperZK/crypt-keeper-extension/compare/@cryptkeeperzk/app-0.2.3...@cryptkeeperzk/app-0.2.4) (2023-09-05)
+
+### Dependency Updates
+
+* `@cryptkeeperzk/providers` updated to version `0.2.4`
+* `@cryptkeeperzk/types` updated to version `0.2.1`
+* `@cryptkeeperzk/zk` updated to version `0.2.1`
+* `@cryptkeeperzk/eslint-config-react` updated to version `0.1.3`
+
+### Bug Fixes
+
+* name typos, and named exports ([#673](https://github.com/CryptKeeperZK/crypt-keeper-extension/issues/673)) ([d0db453](https://github.com/CryptKeeperZK/crypt-keeper-extension/commit/d0db4535349e173f012b9f97025827c7240d4384))
+* optimize firefox build and manifest ([#796](https://github.com/CryptKeeperZK/crypt-keeper-extension/issues/796)) ([d2bda92](https://github.com/CryptKeeperZK/crypt-keeper-extension/commit/d2bda927621de06f8ec95cbbcc216fb1a73d154c))
+* release pipeline ([#827](https://github.com/CryptKeeperZK/crypt-keeper-extension/issues/827)) ([a807656](https://github.com/CryptKeeperZK/crypt-keeper-extension/commit/a807656225317a410ce74a92243b634fcea84015))
+
 ## [0.2.3](https://github.com/CryptKeeperZK/crypt-keeper-extension/compare/@cryptkeeperzk/app-0.2.2...@cryptkeeperzk/app-0.2.3) (2023-08-29)
 
 ### Dependency Updates
