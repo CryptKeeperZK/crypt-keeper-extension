@@ -12,7 +12,7 @@ describe("offscreen/index.html", () => {
     document.documentElement.innerHTML = offscreenHtml.toString();
   });
 
-  test("should be able to load offscreen html page probably", () => {
+  test("should load offscreen html page probably", () => {
     expect(document.title).toBe("CryptKeeper Offscreen");
     expect(document.querySelector("main")).toBeDefined();
     expect(document.querySelector('script[src="js/offscreen.js"]')).toBeDefined();

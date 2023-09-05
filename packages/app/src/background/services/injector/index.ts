@@ -1,14 +1,13 @@
 import { RPCAction } from "@cryptkeeperzk/providers";
-import { generateProof } from "@cryptkeeperzk/semaphore-proof";
 import {
   PendingRequestType,
-  IRLNProofRequest,
-  ISemaphoreFullProof,
-  ISemaphoreProofRequest,
-  IZkMetadata,
+  type IRLNProofRequest,
+  type ISemaphoreFullProof,
+  type ISemaphoreProofRequest,
+  type IZkMetadata,
 } from "@cryptkeeperzk/types";
-import { getMerkleProof } from "@cryptkeeperzk/zk";
-import { omit } from "lodash";
+import { ZkProofService } from "@cryptkeeperzk/zk";
+import omit from "lodash/omit";
 import browser from "webextension-polyfill";
 
 import BrowserUtils from "@src/background/controllers/browserUtils";
@@ -36,12 +35,15 @@ export default class InjectorService {
 
   private browserService: BrowserUtils;
 
+  private zkProofService: ZkProofService;
+
   private constructor() {
     this.requestManager = RequestManager.getInstance();
     this.lockerService = LockerService.getInstance();
     this.zkIdentityService = ZkIdentityService.getInstance();
     this.approvalService = ApprovalService.getInstance();
     this.browserService = BrowserUtils.getInstance();
+    this.zkProofService = new ZkProofService();
   }
 
   static getInstance(): InjectorService {
@@ -143,26 +145,19 @@ export default class InjectorService {
     }
 
     try {
+      if (!semaphoreRequest.circuitFilePath || !semaphoreRequest.zkeyFilePath) {
+        throw new Error("Injected service: Must set circuitFilePath and zkeyFilePath");
+      }
+
       // TODO: This is a temporary solution ONLY FOR FIREFOX for generating SemaphoreProofs from the background on MV2
       if (browserPlatform === BrowserPlatform.Firefox) {
-        const identityCommitment = identity.genIdentityCommitment();
-
-        const merkleProof = await getMerkleProof({
-          identityCommitment,
-          merkleProofArtifacts,
-        });
-
-        if (!merkleProof) {
-          throw new Error("No merkle proof error");
-        }
-
-        if (!semaphoreRequest.circuitFilePath || !semaphoreRequest.zkeyFilePath) {
-          throw new Error("Injected service: Must set circuitFilePath and zkeyFilePath");
-        }
-
-        const fullProof = await generateProof(identity.zkIdentity, merkleProof, externalNullifier, signal, {
-          wasmFilePath: semaphoreRequest.circuitFilePath,
+        const fullProof = await this.zkProofService.generateSemaphoreProof(identity, {
+          externalNullifier,
+          signal,
+          circuitFilePath: semaphoreRequest.circuitFilePath,
           zkeyFilePath: semaphoreRequest.zkeyFilePath,
+          merkleStorageAddress: semaphoreRequest.merkleStorageAddress,
+          merkleProofArtifacts: semaphoreRequest.merkleProofArtifacts,
         });
 
         return fullProof;
@@ -255,9 +250,15 @@ export default class InjectorService {
     }
 
     try {
-      // TODO: support RLN in Firefox
+      if (!rlnProofRequest.circuitFilePath || !rlnProofRequest.zkeyFilePath) {
+        throw new Error("Injected service: Must set circuitFilePath and zkeyFilePath");
+      }
+
+      // TODO: This is a temporary solution ONLY FOR FIREFOX for generating RLN proofs from the background on MV2
       if (browserPlatform === BrowserPlatform.Firefox) {
-        throw new Error("RLN proofs are not supported with Firefox");
+        const rlnFullProof = await this.zkProofService.generateRLNProof(identity, rlnProofRequest);
+
+        return rlnFullProof;
       }
 
       await createChromeOffscreen();

@@ -102,7 +102,7 @@ describe("ui/pages/Onboarding", () => {
     expect(error).toBeInTheDocument();
   });
 
-  test("should be able to show/hide password", async () => {
+  test("should show/hide password", async () => {
     const { container } = render(<Onboarding />);
 
     await waitFor(() => container.firstChild !== null);

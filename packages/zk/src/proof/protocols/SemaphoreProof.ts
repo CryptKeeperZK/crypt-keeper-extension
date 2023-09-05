@@ -35,7 +35,7 @@ export class SemaphoreProofService implements IZkProof<ISemaphoreProofRequest, I
       }));
 
     if (!merkleProof) {
-      throw new Error("Error in generating Merkle Proof");
+      throw new Error("No merkle proof error");
     }
 
     // TODO: do we need to leave `SnarkArtifacts` param as undefined?

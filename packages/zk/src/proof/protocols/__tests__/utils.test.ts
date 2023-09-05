@@ -89,7 +89,7 @@ describe("background/services/protocols/utils", () => {
     expect(result).toStrictEqual({ data: {} });
   });
 
-  test("should be able to convert string to bigint", () => {
+  test("should convert string to bigint", () => {
     const string = "1234";
     const bigint = str2BigInt(string);
 
@@ -97,7 +97,7 @@ describe("background/services/protocols/utils", () => {
     expect(typeof bigint).toStrictEqual("bigint");
   });
 
-  test("should be able to hash a string using Poseidon1 hash function", () => {
+  test("should hash a string using poseidon1 hash function", () => {
     const message = "1234";
     const bigintMessage = str2BigInt(message);
     const expectedMessageHash = poseidon1([bigintMessage]);
@@ -108,7 +108,7 @@ describe("background/services/protocols/utils", () => {
     expect(expectedMessageHash).toStrictEqual(actualMessageHash);
   });
 
-  test("should be able to calculate the rate commitment of hash", () => {
+  test("should calculate the rate commitment of hash", () => {
     const identityCommitment = 1n;
     const userMessageLimit = 1;
     const expectedCommitmentHash = poseidon2([identityCommitment, userMessageLimit]);

@@ -410,7 +410,7 @@ describe("background/services/zkIdentity", () => {
   });
 
   describe("create", () => {
-    test("should be able to request a create identity modal", async () => {
+    test("should request a create identity modal properly", async () => {
       await zkIdentityService.createIdentityRequest({ host: "http://localhost:3000" });
 
       expect(browser.tabs.query).toBeCalledWith({ lastFocusedWindow: true });
@@ -426,7 +426,7 @@ describe("background/services/zkIdentity", () => {
       expect(browser.windows.create).toBeCalledWith(defaultOptions);
     });
 
-    test("should be able to request a connect identity modal", async () => {
+    test("should request a connect identity modal properly", async () => {
       await zkIdentityService.connectIdentityRequest({ host: "http://localhost:3000" });
 
       expect(browser.tabs.query).toBeCalledWith({ lastFocusedWindow: true });

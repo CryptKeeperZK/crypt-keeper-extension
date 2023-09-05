@@ -82,7 +82,7 @@ describe("ui/pages/ResetPassword", () => {
     expect(error).toBeInTheDocument();
   });
 
-  test("should be able to show/hide password", async () => {
+  test("should show/hide password", async () => {
     const { container } = render(<ResetPassword />);
 
     await waitFor(() => container.firstChild !== null);

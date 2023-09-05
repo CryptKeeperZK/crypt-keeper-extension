@@ -79,7 +79,7 @@ describe("ui/pages/Login", () => {
     expect(error).toBeInTheDocument();
   });
 
-  test("should be able to show/hide password", async () => {
+  test("should show/hide password", async () => {
     const { container } = render(
       <Suspense>
         <MemoryRouter>
