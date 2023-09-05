@@ -72,7 +72,7 @@ describe("ui/pages/Onboarding/useOnboarding", () => {
     );
 
     await act(async () => Promise.resolve(result.current.onSubmit()));
-    await waitFor(() => result.current.isLoading !== true);
+    await waitFor(() => !result.current.isLoading);
 
     expect(result.current.isLoading).toBe(false);
     expect(mockDispatch).toBeCalledTimes(1);
@@ -102,7 +102,7 @@ describe("ui/pages/Onboarding/useOnboarding", () => {
     );
 
     await act(async () => Promise.resolve(result.current.onSubmit()));
-    await waitFor(() => result.current.errors.root !== "" && result.current.isLoading !== true);
+    await waitFor(() => result.current.errors.root !== "" && !result.current.isLoading);
 
     expect(result.current.isLoading).toBe(false);
     expect(result.current.errors.root).toBe(error.message);
@@ -111,17 +111,23 @@ describe("ui/pages/Onboarding/useOnboarding", () => {
   test("should change password visibility properly", () => {
     const { result } = renderHook(() => useOnboarding());
 
-    act(() => result.current.onShowPassword());
+    act(() => {
+      result.current.onShowPassword();
+    });
     expect(result.current.isShowPassword).toStrictEqual(true);
 
-    act(() => result.current.onShowPassword());
+    act(() => {
+      result.current.onShowPassword();
+    });
     expect(result.current.isShowPassword).toStrictEqual(false);
   });
 
   test("should go to onboarding backup page properly", () => {
     const { result } = renderHook(() => useOnboarding());
 
-    act(() => result.current.onGoToOnboardingBackup());
+    act(() => {
+      result.current.onGoToOnboardingBackup();
+    });
 
     expect(mockDispatch).toBeCalledTimes(1);
     expect(createOnboardingBackupRequest).toBeCalledTimes(1);

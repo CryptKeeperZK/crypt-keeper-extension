@@ -42,7 +42,7 @@ describe("ui/components/ConfirmRequestModal/components/ConnectionApprovalModal/u
   const defaultPermission = { canSkipApprove: true };
 
   const waitForData = async (current: IUseConnectionApprovalModalData) => {
-    await waitFor(() => current.checked === true);
+    await waitFor(() => current.checked);
     await waitFor(() => current.faviconUrl !== "");
     await waitFor(() => current.host !== "");
   };
@@ -80,7 +80,9 @@ describe("ui/components/ConfirmRequestModal/components/ConnectionApprovalModal/u
     const { result } = renderHook(() => useConnectionApprovalModal(defaultArgs));
     await waitForData(result.current);
 
-    act(() => result.current.onAccept());
+    act(() => {
+      result.current.onAccept();
+    });
 
     expect(defaultArgs.accept).toBeCalledTimes(1);
   });
@@ -89,7 +91,9 @@ describe("ui/components/ConfirmRequestModal/components/ConnectionApprovalModal/u
     const { result } = renderHook(() => useConnectionApprovalModal(defaultArgs));
     await waitForData(result.current);
 
-    act(() => result.current.onReject());
+    act(() => {
+      result.current.onReject();
+    });
 
     expect(defaultArgs.reject).toBeCalledTimes(1);
   });
@@ -99,8 +103,10 @@ describe("ui/components/ConfirmRequestModal/components/ConnectionApprovalModal/u
     const { result } = renderHook(() => useConnectionApprovalModal(defaultArgs));
     await waitForData(result.current);
 
-    act(() => result.current.onSetApproval({ target: { checked: false } } as ChangeEvent<HTMLInputElement>));
-    await waitFor(() => result.current.checked === false);
+    act(() => {
+      result.current.onSetApproval({ target: { checked: false } } as ChangeEvent<HTMLInputElement>);
+    });
+    await waitFor(() => !result.current.checked);
 
     expect(fetchHostPermissions).toBeCalledTimes(1);
     expect(fetchHostPermissions).toBeCalledWith(defaultArgs.pendingRequest.payload?.origin);

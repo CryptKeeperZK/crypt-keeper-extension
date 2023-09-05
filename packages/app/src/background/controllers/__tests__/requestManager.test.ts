@@ -12,7 +12,9 @@ const mockRemoveListeners: ((window?: number) => void)[] = [];
 const mockDefaultBrowserUtils = {
   openPopup: jest.fn(() => Promise.resolve(mockDefaultWindow)),
   closePopup: jest.fn().mockImplementation((windowId?: number) => {
-    mockRemoveListeners.forEach((listener) => listener(windowId));
+    mockRemoveListeners.forEach((listener) => {
+      listener(windowId);
+    });
   }),
   addRemoveWindowListener: jest.fn().mockImplementation((listener: (windowId?: number) => void) => {
     mockRemoveListeners.push(listener);

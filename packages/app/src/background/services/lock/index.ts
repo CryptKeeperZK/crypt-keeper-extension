@@ -22,7 +22,7 @@ interface LockStatus {
 }
 
 export default class LockerService implements IBackupable {
-  private static INSTANCE: LockerService;
+  private static INSTANCE?: LockerService;
 
   private isUnlocked: boolean;
 
@@ -118,7 +118,9 @@ export default class LockerService implements IBackupable {
     }
 
     return new Promise((resolve) => {
-      this.unlockCB = () => resolve(undefined);
+      this.unlockCB = () => {
+        resolve(undefined);
+      };
     });
   };
 

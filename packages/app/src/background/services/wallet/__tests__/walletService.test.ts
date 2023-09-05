@@ -46,8 +46,8 @@ const mockCryptoResponses: Record<string, string> = {
 jest.mock("@src/background/services/crypto", (): unknown => ({
   ...jest.requireActual("@src/background/services/crypto"),
   getInstance: jest.fn(() => ({
-    encrypt: jest.fn((arg: string) => mockCryptoResponses[arg] ?? mockSerializedAccounts),
-    decrypt: jest.fn((arg: string) => mockCryptoResponses[arg] ?? mockSerializedAccounts),
+    encrypt: jest.fn((arg: string) => mockCryptoResponses[arg] || mockSerializedAccounts),
+    decrypt: jest.fn((arg: string) => mockCryptoResponses[arg] || mockSerializedAccounts),
     generateEncryptedHmac: jest.fn(() => mockBackup),
     getAuthenticBackup: jest.fn((encrypted: string | Record<string, string>) =>
       typeof encrypted === "string" ? encrypted : mockBackup,

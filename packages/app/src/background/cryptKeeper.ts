@@ -20,8 +20,13 @@ import { validateZkInputs } from "./services/validation";
 import WalletService from "./services/wallet";
 import ZkIdentityService from "./services/zkIdentity";
 
+const defaultMap = Object.values(RPCAction).reduce(
+  (acc, method) => ({ ...acc, [method]: false }),
+  {},
+) as unknown as Record<RPCAction, boolean>;
+
 const RPC_METHOD_ACCESS: Record<RPCAction, boolean> = {
-  ...Object.values(RPCAction).reduce((acc, method) => ({ ...acc, [method]: false }), {} as Record<RPCAction, boolean>),
+  ...defaultMap,
   [RPCAction.CLOSE_POPUP]: true,
   [RPCAction.CONNECT]: true,
   [RPCAction.APPROVE_HOST]: true,
@@ -86,7 +91,7 @@ export default class CryptKeeperController {
   handle = (request: IRequestHandler, sender: Runtime.MessageSender): Promise<unknown> =>
     this.handler.handle(request, { sender, bypass: RPC_METHOD_ACCESS[request.method as RPCAction] });
 
-  initialize = (): CryptKeeperController => {
+  initialize = (): this => {
     // common
     this.handler.add(
       RPCAction.UNLOCK,

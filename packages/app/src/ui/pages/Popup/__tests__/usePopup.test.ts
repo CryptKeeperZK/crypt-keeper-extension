@@ -47,14 +47,16 @@ describe("ui/pages/Popup/usePopup", () => {
     isMnemonicGenerated: false,
   };
 
-  const mockDispatch = jest.fn();
+  const mockDispatch = jest.fn(() => Promise.resolve());
 
   const mockNavigate = jest.fn();
 
   const waitForData = async (current: IUsePopupData) => {
-    await waitFor(() => current.isLoading === true);
-    await waitFor(() => expect(mockDispatch).toBeCalledTimes(2));
-    await waitFor(() => current.isLoading === false);
+    await waitFor(() => current.isLoading);
+    await waitFor(() => {
+      expect(mockDispatch).toBeCalledTimes(current.isUnlocked && current.isMnemonicGenerated ? 3 : 2);
+    });
+    await waitFor(() => !current.isLoading);
   };
 
   const oldHref = window.location.href;
@@ -93,6 +95,8 @@ describe("ui/pages/Popup/usePopup", () => {
     await waitForData(result.current);
 
     expect(result.current.isLoading).toBe(false);
+    expect(result.current.isUnlocked).toBe(false);
+    expect(result.current.isMnemonicGenerated).toBe(false);
   });
 
   test("should get data and connect on first load", async () => {
@@ -111,9 +115,11 @@ describe("ui/pages/Popup/usePopup", () => {
 
     const { result } = renderHook(() => usePopup());
 
-    await waitFor(() => result.current.isLoading === true);
-    await waitFor(() => expect(mockDispatch).toBeCalledTimes(3));
-    await waitFor(() => result.current.isLoading === false);
+    await waitFor(() => result.current.isLoading);
+    await waitFor(() => {
+      expect(mockDispatch).toBeCalledTimes(3);
+    });
+    await waitFor(() => !result.current.isLoading);
 
     expect(result.current.isLoading).toBe(false);
     expect(mockDispatch).toBeCalledTimes(3);
@@ -127,9 +133,11 @@ describe("ui/pages/Popup/usePopup", () => {
 
     const { result } = renderHook(() => usePopup());
 
-    await waitFor(() => result.current.isLoading === true);
-    await waitFor(() => expect(mockDispatch).toBeCalledTimes(3));
-    await waitFor(() => result.current.isLoading === false);
+    await waitFor(() => result.current.isLoading);
+    await waitFor(() => {
+      expect(mockDispatch).toBeCalledTimes(3);
+    });
+    await waitFor(() => !result.current.isLoading);
 
     expect(result.current.isLoading).toBe(false);
     expect(mockDispatch).toBeCalledTimes(3);
@@ -140,10 +148,13 @@ describe("ui/pages/Popup/usePopup", () => {
 
   test("should handle load data error", async () => {
     const err = new Error("error");
-    mockDispatch.mockRejectedValue(err);
+    (useAppDispatch as jest.Mock).mockReturnValue(jest.fn(() => Promise.reject(err)));
 
     const { result } = renderHook(() => usePopup());
-    await waitForData(result.current);
+    await waitFor(() => {
+      expect(mockDispatch).toBeCalledTimes(0);
+      expect(result.current.isLoading).toBe(false);
+    });
 
     // eslint-disable-next-line @typescript-eslint/unbound-method
     expect(log.error).toBeCalledTimes(1);
@@ -160,6 +171,8 @@ describe("ui/pages/Popup/usePopup", () => {
     const { result } = renderHook(() => usePopup());
     await waitForData(result.current);
 
+    expect(result.current.isUnlocked).toBe(true);
+    expect(result.current.isMnemonicGenerated).toBe(true);
     expect(mockNavigate).toBeCalledTimes(1);
     expect(mockNavigate).toBeCalledWith(`${Paths.CREATE_IDENTITY}?host=${encodeURIComponent("http://localhost:3000")}`);
   });
@@ -219,6 +232,8 @@ describe("ui/pages/Popup/usePopup", () => {
     const { result } = renderHook(() => usePopup());
     await waitForData(result.current);
 
+    expect(result.current.isUnlocked).toBe(true);
+    expect(result.current.isMnemonicGenerated).toBe(true);
     expect(mockNavigate).toBeCalledTimes(1);
     expect(mockNavigate).toBeCalledWith(Paths.REQUESTS);
   });

@@ -5,13 +5,15 @@ import { Connector } from "@web3-react/types";
 
 import postMessage from "@src/util/postMessage";
 
+type CancelActivation = () => void;
+
 export class CryptkeeperConnector extends Connector {
   private eagerConnection?: Promise<void>;
 
   customProvider?: CryptKeeperInjectedProvider;
 
   async activate(): Promise<void> {
-    let cancelActivation: () => void;
+    let cancelActivation: CancelActivation | undefined;
 
     if (!this.customProvider?.isCryptKeeper) {
       cancelActivation = this.actions.startActivation();

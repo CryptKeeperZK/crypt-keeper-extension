@@ -14,7 +14,7 @@ import { ICryptkeeperVerifiableCredential, IVerifiableCredentialMetadata } from 
 
 let claimValueSchema: yup.Schema<ClaimValue>;
 
-const claimValueMapSchema = yup.lazy((value: Record<string, unknown>) => {
+const claimValueMapSchema = yup.lazy((value: Record<string, unknown> | null | undefined) => {
   if (typeof value !== "object" || value === null) {
     return yup
       .mixed()

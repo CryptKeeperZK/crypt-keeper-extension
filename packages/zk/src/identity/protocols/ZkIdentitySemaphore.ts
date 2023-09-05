@@ -27,7 +27,7 @@ export class ZkIdentitySemaphore {
     });
 
   static genFromSerialized = (serialized: string): ZkIdentitySemaphore => {
-    const data = JSON.parse(serialized) as ISerializedIdentity;
+    const data = JSON.parse(serialized) as Partial<ISerializedIdentity>;
 
     if (!data.metadata) {
       throw new Error("Metadata missing");

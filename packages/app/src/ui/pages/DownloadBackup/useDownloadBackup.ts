@@ -47,8 +47,12 @@ export const useDownloadBackup = (): IUseDownloadBackupData => {
     (data: DownloadBackupFields) => {
       dispatch(downloadBackup(data.password))
         .then((content: string) => downloadFile(content, `ck-backup-${formatDate(new Date())}.json`))
-        .then(() => onGoBack())
-        .catch((error: Error) => setError("password", { type: "submit", message: error.message }));
+        .then(() => {
+          onGoBack();
+        })
+        .catch((error: Error) => {
+          setError("password", { type: "submit", message: error.message });
+        });
     },
     [dispatch, onGoBack, setError],
   );

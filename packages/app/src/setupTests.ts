@@ -73,7 +73,9 @@ jest.mock("webextension-polyfill", (): unknown => {
         create: jest.fn(),
         update: jest.fn(),
         remove: jest.fn().mockImplementation((windowId: number) => {
-          windowRemoveListeners.forEach((listener) => listener(windowId));
+          windowRemoveListeners.forEach((listener) => {
+            listener(windowId);
+          });
         }),
         onRemoved: {
           addListener: jest.fn().mockImplementation((fun: (windowId: number) => void) => {
@@ -102,10 +104,14 @@ jest.mock("webextension-polyfill", (): unknown => {
         sync: {
           get: jest.fn(),
           set: jest.fn().mockImplementation(() => {
-            storageListeners.forEach((listener) => listener(defaultChanges, namespace));
+            storageListeners.forEach((listener) => {
+              listener(defaultChanges, namespace);
+            });
           }),
           remove: jest.fn().mockImplementation(() => {
-            storageListeners.forEach((listener) => listener(defaultChanges, namespace));
+            storageListeners.forEach((listener) => {
+              listener(defaultChanges, namespace);
+            });
           }),
           clear: jest.fn(),
         },

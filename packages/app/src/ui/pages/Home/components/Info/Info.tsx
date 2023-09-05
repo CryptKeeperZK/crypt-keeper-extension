@@ -16,8 +16,12 @@ export const Info = ({ refreshConnectionStatus }: IInfoProps): JSX.Element => {
   const onRefreshConnectionStatus = useCallback(
     async () =>
       refreshConnectionStatus()
-        .then((isHostApproved: boolean) => setIsConnected(isHostApproved))
-        .catch(() => setIsConnected(false)),
+        .then((isHostApproved: boolean) => {
+          setIsConnected(isHostApproved);
+        })
+        .catch(() => {
+          setIsConnected(false);
+        }),
     [refreshConnectionStatus, setIsConnected],
   );
 

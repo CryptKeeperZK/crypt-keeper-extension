@@ -51,7 +51,9 @@ describe("ui/components/VerifiableCredential/Item/useVerifiableCredentialItem", 
   test("should toggle renaming properly", () => {
     const { result } = renderHook(() => useVerifiableCredentialItem(useVerifiableCredentialItemArgs));
 
-    act(() => result.current.onToggleRenaming());
+    act(() => {
+      result.current.onToggleRenaming();
+    });
 
     expect(result.current.isRenaming).toBe(true);
   });

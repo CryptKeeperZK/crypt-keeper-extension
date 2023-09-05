@@ -15,9 +15,13 @@ export const useTimeout = (timeout = DEFAULT_TIMEOUT_MS): IUseTimeoutData => {
       return undefined;
     }
 
-    const timeoutId = setTimeout(() => setActive(false), timeout);
+    const timeoutId = setTimeout(() => {
+      setActive(false);
+    }, timeout);
 
-    return () => clearTimeout(timeoutId);
+    return () => {
+      clearTimeout(timeoutId);
+    };
   }, [isActive, setActive]);
 
   return {

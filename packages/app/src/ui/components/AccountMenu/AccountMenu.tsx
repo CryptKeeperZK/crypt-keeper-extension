@@ -60,7 +60,13 @@ export const AccountMenu = ({ ethWallet, cryptKeeperWallet }: IAccountMenuProps)
             key={`${account.type}-${account.address}`}
             data-testid={`${account.type}-${account.address}`}
             sx={{ display: "flex", alignItems: "center", width: 200 }}
-            onClick={account.type === EWallet.CRYPTKEEPER_WALLET ? () => onSelectAccount(account.address) : undefined}
+            onClick={
+              account.type === EWallet.CRYPTKEEPER_WALLET
+                ? () => {
+                    onSelectAccount(account.address);
+                  }
+                : undefined
+            }
           >
             <Jazzicon diameter={16} seed={jsNumberForAddress(account.address)} />
 

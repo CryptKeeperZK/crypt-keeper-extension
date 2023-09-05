@@ -67,7 +67,9 @@ describe("ui/components/ConfirmRequestModal/components/ConnectionApprovalModal",
     render(<ConnectionApprovalModal {...defaultProps} />);
 
     const button = await screen.findByText("Approve");
-    act(() => button.click());
+    act(() => {
+      button.click();
+    });
 
     expect(defaultHookData.onAccept).toBeCalledTimes(1);
   });
@@ -76,7 +78,9 @@ describe("ui/components/ConfirmRequestModal/components/ConnectionApprovalModal",
     render(<ConnectionApprovalModal {...defaultProps} />);
 
     const button = await screen.findByText("Reject");
-    act(() => button.click());
+    act(() => {
+      button.click();
+    });
 
     expect(defaultHookData.onReject).toBeCalledTimes(1);
   });
@@ -85,7 +89,9 @@ describe("ui/components/ConfirmRequestModal/components/ConnectionApprovalModal",
     render(<ConnectionApprovalModal {...defaultProps} />);
 
     const label = await screen.findByLabelText("Allow host to create proof without approvals");
-    act(() => label.click());
+    act(() => {
+      label.click();
+    });
 
     expect(defaultHookData.onSetApproval).toBeCalledTimes(1);
   });

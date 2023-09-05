@@ -36,7 +36,7 @@ describe("config/rpc", () => {
     const rpcUrls = getRpcUrls();
 
     chainIds.forEach((chainId) => {
-      if (rpcUrls[chainId]) {
+      if (rpcUrls[chainId] as string[] | undefined) {
         expect(rpcUrls[chainId]).not.toHaveLength(0);
       } else {
         expect(chains[chainId].rpc).toHaveLength(0);

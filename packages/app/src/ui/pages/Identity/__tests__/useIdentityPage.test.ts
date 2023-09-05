@@ -74,8 +74,10 @@ describe("ui/pages/Identity/useIdentityPage", () => {
   });
 
   const waitForData = async (data: IUseIdentityPageData): Promise<void> => {
-    await waitFor(() => data.isLoading === false);
-    await waitFor(() => expect(fetchIdentities).toBeCalledTimes(1));
+    await waitFor(() => !data.isLoading);
+    await waitFor(() => {
+      expect(fetchIdentities).toBeCalledTimes(1);
+    });
   };
 
   test("should return initial data", async () => {

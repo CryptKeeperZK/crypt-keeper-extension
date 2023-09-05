@@ -147,7 +147,12 @@ const App = () => {
         <h2>Rate-Limiting Nullifier</h2>
 
         <div>
-          <button type="button" onClick={() => genRLNProof(MerkleProofType.STORAGE_ADDRESS)}>
+          <button
+            type="button"
+            onClick={() => {
+              genRLNProof(MerkleProofType.STORAGE_ADDRESS);
+            }}
+          >
             Generate proof from Merkle proof storage address
           </button>
 
@@ -155,7 +160,12 @@ const App = () => {
 
           <br />
 
-          <button type="button" onClick={() => genRLNProof(MerkleProofType.ARTIFACTS)}>
+          <button
+            type="button"
+            onClick={() => {
+              genRLNProof(MerkleProofType.ARTIFACTS);
+            }}
+          >
             Generate proof from Merkle proof artifacts
           </button>
         </div>

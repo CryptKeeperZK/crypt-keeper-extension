@@ -18,7 +18,7 @@ export const useCryptKeeperWallet = (): IUseWalletData => {
   }, [cryptKeeper]);
 
   const onConnectEagerly = useCallback(async () => {
-    await cryptKeeper.connectEagerly?.();
+    await cryptKeeper.connectEagerly();
   }, [cryptKeeper]);
 
   const onDisconnect = useCallback(async () => {

@@ -70,7 +70,9 @@ export const useSettings = (): IUseSettingsData => {
   }, [dispatch, settings?.isEnabled]);
 
   const onDeleteAllHistory = useCallback(() => {
-    dispatch(clearHistory()).then(() => onConfirmModalShow());
+    dispatch(clearHistory()).then(() => {
+      onConfirmModalShow();
+    });
   }, [dispatch, onConfirmModalShow]);
 
   const onGoBack = useCallback(() => {
@@ -94,12 +96,16 @@ export const useSettings = (): IUseSettingsData => {
   }, [navigate]);
 
   const onDeleteAllIdentities = useCallback(() => {
-    dispatch(deleteAllIdentities()).then(() => onConfirmModalShow());
+    dispatch(deleteAllIdentities()).then(() => {
+      onConfirmModalShow();
+    });
   }, [dispatch, onConfirmModalShow]);
 
   const onDeleteStorage = useCallback(() => {
     dispatch(deleteStorage())
-      .then(() => onConfirmModalShow())
+      .then(() => {
+        onConfirmModalShow();
+      })
       .then(() => dispatch(lock()));
   }, [dispatch]);
 
@@ -109,7 +115,9 @@ export const useSettings = (): IUseSettingsData => {
 
   useEffect(() => {
     setIsLoading(true);
-    dispatch(fetchHistory()).finally(() => setIsLoading(false));
+    dispatch(fetchHistory()).finally(() => {
+      setIsLoading(false);
+    });
   }, [dispatch, setIsLoading]);
 
   return {

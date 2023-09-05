@@ -51,8 +51,12 @@ export const useOnboarding = (): IUseOnboardingData => {
   const onSubmit = useCallback(
     (data: PasswordFormFields) => {
       dispatch(setupPassword(data.password))
-        .then(() => navigate(Paths.GENERATE_MNEMONIC))
-        .catch((err: Error) => setError("root", { type: "submit", message: err.message }));
+        .then(() => {
+          navigate(Paths.GENERATE_MNEMONIC);
+        })
+        .catch((err: Error) => {
+          setError("root", { type: "submit", message: err.message });
+        });
     },
     [dispatch, navigate, setError],
   );
@@ -62,7 +66,9 @@ export const useOnboarding = (): IUseOnboardingData => {
   }, [setIsShowPassword]);
 
   const onGoToOnboardingBackup = useCallback(() => {
-    dispatch(createOnboardingBackupRequest()).then(() => navigate(Paths.ONBOARDING_BACKUP));
+    dispatch(createOnboardingBackupRequest()).then(() => {
+      navigate(Paths.ONBOARDING_BACKUP);
+    });
   }, [dispatch, navigate]);
 
   const password = watch("password");

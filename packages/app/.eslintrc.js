@@ -31,5 +31,11 @@ module.exports = {
         ],
       },
     },
+    {
+      files: ["**/*.test.ts", "**/*.test.tsx"],
+      rules: {
+        "@typescript-eslint/no-confusing-void-expression": "off",
+      },
+    },
   ],
 };

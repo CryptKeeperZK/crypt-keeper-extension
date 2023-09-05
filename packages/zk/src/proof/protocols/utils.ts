@@ -60,10 +60,11 @@ export async function getMerkleProof({
   identityCommitment,
   merkleStorageAddress,
   merkleProofArtifacts,
-}: IGetMerkleProof): Promise<IMerkleProof> {
+}: IGetMerkleProof): Promise<IMerkleProof | undefined> {
   if (merkleStorageAddress) {
     return getRemoteMerkleProof(merkleStorageAddress, bigintToHex(identityCommitment));
   }
+
   if (merkleProofArtifacts) {
     return generateMerkleProof({
       treeDepth: merkleProofArtifacts.depth,
@@ -71,6 +72,7 @@ export async function getMerkleProof({
       members: [identityCommitment],
     });
   }
+
   throw new Error("ZK: Cannot get MerkleProof");
 }
 
@@ -80,9 +82,11 @@ export async function getRlnVerificationKeyJson(rlnVerificationKeyPath: string):
 
 export function str2BigInt(str: string): bigint {
   let num = "";
+
   for (let i = 0; i < str.length; i += 1) {
     num += str.charCodeAt(i).toString();
   }
+
   return BigInt(num);
 }
 

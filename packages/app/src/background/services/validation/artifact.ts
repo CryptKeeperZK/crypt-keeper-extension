@@ -13,9 +13,9 @@ export class ArtifactsProofValidator {
     this.proof = proof;
   }
 
-  validateProof = (): ArtifactsProofValidator => this.validateDepth().validateLeaves().validateLeavesPerNode();
+  validateProof = (): this => this.validateDepth().validateLeaves().validateLeavesPerNode();
 
-  validateDepth = (): ArtifactsProofValidator => {
+  validateDepth = (): this => {
     if (!this.proof.depth) {
       throw new Error(ArtifactsProofValidatorErrors.INVALID_DEPTH);
     }
@@ -23,7 +23,7 @@ export class ArtifactsProofValidator {
     return this;
   };
 
-  validateLeaves = (): ArtifactsProofValidator => {
+  validateLeaves = (): this => {
     if (!this.proof.leaves.length) {
       throw new Error(ArtifactsProofValidatorErrors.INVALID_LEAVES);
     }
@@ -31,7 +31,7 @@ export class ArtifactsProofValidator {
     return this;
   };
 
-  validateLeavesPerNode = (): ArtifactsProofValidator => {
+  validateLeavesPerNode = (): this => {
     if (!this.proof.leavesPerNode) {
       throw new Error(ArtifactsProofValidatorErrors.INVALID_LEAVES_PER_NODE);
     }

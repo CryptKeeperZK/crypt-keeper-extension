@@ -12,7 +12,7 @@ import pushMessage from "@src/util/pushMessage";
 import BrowserUtils from "./browserUtils";
 
 export default class RequestManager {
-  private static INSTANCE: RequestManager;
+  private static INSTANCE?: RequestManager;
 
   private eventEmitter: EventEmitter2;
 
@@ -73,7 +73,7 @@ export default class RequestManager {
     });
   };
 
-  finalizeRequest = async (action: IRequestResolutionAction<unknown>): Promise<boolean> => {
+  finalizeRequest = async (action: IRequestResolutionAction): Promise<boolean> => {
     const { id } = action;
 
     // TODO add some mutex lock just in case something strange occurs

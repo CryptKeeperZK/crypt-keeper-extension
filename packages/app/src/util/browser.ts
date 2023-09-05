@@ -1,9 +1,9 @@
 import browser from "webextension-polyfill";
 
 export const getLastActiveTabUrl = async (): Promise<URL | undefined> => {
-  const [tab] = await browser.tabs.query({ active: true, lastFocusedWindow: true });
+  const tabs = await browser.tabs.query({ active: true, lastFocusedWindow: true });
 
-  return tab?.url ? new URL(tab.url) : undefined;
+  return tabs[0]?.url ? new URL(tabs[0].url) : undefined;
 };
 
 export const redirectToNewTab = async (url: string): Promise<void> => {

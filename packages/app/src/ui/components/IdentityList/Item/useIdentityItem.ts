@@ -66,8 +66,12 @@ export const useIdentityItem = ({
   const onUpdateName = useCallback(
     (data: IdentityFormFields) => {
       onUpdate(commitment, data.name)
-        .then(() => setIsRenaming(false))
-        .catch((err: Error) => setError("root", { message: err.message }));
+        .then(() => {
+          setIsRenaming(false);
+        })
+        .catch((err: Error) => {
+          setError("root", { message: err.message });
+        });
     },
     [commitment, onUpdate],
   );

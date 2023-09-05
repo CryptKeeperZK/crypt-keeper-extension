@@ -13,7 +13,7 @@ const HISTORY_KEY = "@@HISTORY@@";
 const HISTORY_SETTINGS_KEY = "@@HISTORY-SETTINGS@@";
 
 export default class HistoryService {
-  private static INSTANCE: HistoryService;
+  private static INSTANCE?: HistoryService;
 
   private historyStore: SimpleStorage;
 

@@ -9,6 +9,7 @@ import type { IInjectedMessageData, IReduxAction, ConnectedIdentityMetadata } fr
 
 function injectScript() {
   const url = browser.runtime.getURL("js/injected.js");
+  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
   const container = document.head || document.documentElement;
   const scriptTag = document.createElement("script");
   scriptTag.src = url;
@@ -19,7 +20,7 @@ function injectScript() {
   window.addEventListener("message", (event: MessageEvent<IInjectedMessageData>) => {
     const { data } = event;
 
-    if (data && data.target === "injected-contentscript") {
+    if (data.target === "injected-contentscript") {
       browser.runtime.sendMessage(data.message).then((res: unknown) => {
         window.postMessage(
           {

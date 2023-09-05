@@ -5,6 +5,7 @@
 import { RPCAction } from "@cryptkeeperzk/providers";
 import { generateProof } from "@cryptkeeperzk/semaphore-proof";
 import { PendingRequestType, IRLNProofRequest, ISemaphoreProofRequest, IZkMetadata } from "@cryptkeeperzk/types";
+import { getMerkleProof } from "@cryptkeeperzk/zk";
 import browser from "webextension-polyfill";
 
 import { getBrowserPlatform } from "@src/background/shared/utils";
@@ -83,8 +84,13 @@ jest.mock("@src/background/shared/utils", (): unknown => ({
 }));
 
 describe("background/services/injector", () => {
+  const defaultMetadata = { urlOrigin: mockDefaultHost };
+
   beforeEach(() => {
     (pushMessage as jest.Mock).mockClear();
+
+    (getMerkleProof as jest.Mock).mockResolvedValue({});
+
     mockGetConnectedIdentity.mockResolvedValue({ serialize: () => mockSerializedIdentity });
   });
 
@@ -96,7 +102,7 @@ describe("background/services/injector", () => {
     test("should connect properly", async () => {
       const service = InjectorService.getInstance();
 
-      const result = await service.connect({ urlOrigin: mockDefaultHost });
+      const result = await service.connect(defaultMetadata);
 
       expect(result).toStrictEqual({
         canSkipApprove: true,
@@ -174,7 +180,7 @@ describe("background/services/injector", () => {
       (pushMessage as jest.Mock).mockReturnValueOnce(emptyFullProof);
       const service = InjectorService.getInstance();
 
-      const result = await service.generateSemaphoreProof(defaultProofRequest, { urlOrigin: mockDefaultHost });
+      const result = await service.generateSemaphoreProof(defaultProofRequest, defaultMetadata);
 
       expect(result).toStrictEqual(emptyFullProof);
       expect(pushMessage).toBeCalledTimes(1);
@@ -184,6 +190,27 @@ describe("background/services/injector", () => {
         meta: mockDefaultHost,
         source: "offscreen",
       });
+    });
+
+    test("should throw error if there is no origin url in metadata", async () => {
+      const service = InjectorService.getInstance();
+
+      await expect(service.generateSemaphoreProof(defaultProofRequest, {})).rejects.toThrowError("Origin is not set");
+    });
+
+    test("should throw error if there is no ready proof", async () => {
+      (getMerkleProof as jest.Mock).mockResolvedValue(undefined);
+      mockGetConnectedIdentity.mockResolvedValue({
+        serialize: () => mockSerializedIdentity,
+        genIdentityCommitment: () => "mockIdentityCommitment",
+      });
+      (generateProof as jest.Mock).mockReturnValueOnce(emptyFullProof);
+      (getBrowserPlatform as jest.Mock).mockReturnValueOnce(BrowserPlatform.Firefox);
+      const service = InjectorService.getInstance();
+
+      await expect(service.generateSemaphoreProof(defaultProofRequest, defaultMetadata)).rejects.toThrowError(
+        "Error in generateSemaphoreProof(): No merkle proof error",
+      );
     });
 
     test("should throw error if there is no connected identity", async () => {
@@ -215,7 +242,7 @@ describe("background/services/injector", () => {
       (getBrowserPlatform as jest.Mock).mockReturnValueOnce(BrowserPlatform.Firefox);
       const service = InjectorService.getInstance();
 
-      const result = await service.generateSemaphoreProof(defaultProofRequest, { urlOrigin: mockDefaultHost });
+      const result = await service.generateSemaphoreProof(defaultProofRequest, defaultMetadata);
       expect(result).toStrictEqual(emptyFullProof);
       expect(pushMessage).toBeCalledTimes(0);
     });
@@ -230,7 +257,7 @@ describe("background/services/injector", () => {
 
       const service = InjectorService.getInstance();
 
-      await expect(service.generateSemaphoreProof(defaultProofRequest, { urlOrigin: mockDefaultHost })).rejects.toThrow(
+      await expect(service.generateSemaphoreProof(defaultProofRequest, defaultMetadata)).rejects.toThrow(
         "Error in generateSemaphoreProof(): Injected service: Must set circuitFilePath and zkeyFilePath",
       );
     });
@@ -279,7 +306,7 @@ describe("background/services/injector", () => {
 
       const service = InjectorService.getInstance();
 
-      const result = await service.generateRlnProof(defaultProofRequest, { urlOrigin: mockDefaultHost });
+      const result = await service.generateRlnProof(defaultProofRequest, defaultMetadata);
       expect(result).toStrictEqual(emptyFullProof);
       expect(pushMessage).toBeCalledTimes(1);
       expect(pushMessage).toBeCalledWith({
@@ -290,12 +317,18 @@ describe("background/services/injector", () => {
       });
     });
 
+    test("should throw error if there is no origin url in metadata", async () => {
+      const service = InjectorService.getInstance();
+
+      await expect(service.generateRlnProof(defaultProofRequest, {})).rejects.toThrowError("Origin is not set");
+    });
+
     test("should throw error if there is no connected identity", async () => {
       mockGetConnectedIdentity.mockResolvedValue(undefined);
 
       const service = InjectorService.getInstance();
 
-      await expect(service.generateRlnProof(defaultProofRequest, { urlOrigin: mockDefaultHost })).rejects.toThrow(
+      await expect(service.generateRlnProof(defaultProofRequest, defaultMetadata)).rejects.toThrow(
         "connected identity not found",
       );
       expect(pushMessage).toBeCalledTimes(0);
@@ -318,7 +351,7 @@ describe("background/services/injector", () => {
 
       const service = InjectorService.getInstance();
 
-      await expect(service.generateRlnProof(defaultProofRequest, { urlOrigin: mockDefaultHost })).rejects.toThrow(
+      await expect(service.generateRlnProof(defaultProofRequest, defaultMetadata)).rejects.toThrow(
         "RLN proofs are not supported with Firefox",
       );
       expect(pushMessage).toBeCalledTimes(0);

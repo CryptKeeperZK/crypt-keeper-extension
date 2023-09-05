@@ -14,10 +14,9 @@ export class MerkleProofValidator {
     this.proof = proof;
   }
 
-  validateProof = (): MerkleProofValidator =>
-    this.validateRoot().validateSiblings().validatePathIndices().validateLeaf();
+  validateProof = (): this => this.validateRoot().validateSiblings().validatePathIndices().validateLeaf();
 
-  validateRoot = (): MerkleProofValidator => {
+  validateRoot = (): this => {
     if (!this.proof.root) {
       throw new Error(MerkleProofValidatorErrors.INVALID_ROOT);
     }
@@ -25,7 +24,7 @@ export class MerkleProofValidator {
     return this;
   };
 
-  validateSiblings = (): MerkleProofValidator => {
+  validateSiblings = (): this => {
     if (!this.proof.siblings.length) {
       throw new Error(MerkleProofValidatorErrors.INVALID_SIBLINGS);
     }
@@ -33,7 +32,7 @@ export class MerkleProofValidator {
     return this;
   };
 
-  validatePathIndices = (): MerkleProofValidator => {
+  validatePathIndices = (): this => {
     if (!this.proof.pathIndices.length) {
       throw new Error(MerkleProofValidatorErrors.INVALID_PATH_INDICES);
     }
@@ -41,7 +40,7 @@ export class MerkleProofValidator {
     return this;
   };
 
-  validateLeaf = (): MerkleProofValidator => {
+  validateLeaf = (): this => {
     if (!this.proof.leaf) {
       throw new Error(MerkleProofValidatorErrors.INVALID_LEAF);
     }

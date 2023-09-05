@@ -59,7 +59,7 @@ describe("ui/pages/ResetPassword/useResetPassword", () => {
 
     const { result } = renderHook(() => useResetPassword());
 
-    await waitFor(() => result.current.isLoading !== true);
+    await waitFor(() => !result.current.isLoading);
 
     expect(result.current.isLoading).toBe(false);
     expect(mockNavigate).toBeCalledTimes(1);
@@ -78,7 +78,7 @@ describe("ui/pages/ResetPassword/useResetPassword", () => {
     );
 
     await act(async () => Promise.resolve(result.current.onSubmit()));
-    await waitFor(() => result.current.isLoading !== true);
+    await waitFor(() => !result.current.isLoading);
 
     expect(result.current.isLoading).toBe(false);
     expect(mockDispatch).toBeCalledTimes(1);
@@ -102,7 +102,7 @@ describe("ui/pages/ResetPassword/useResetPassword", () => {
     );
 
     await act(async () => Promise.resolve(result.current.onSubmit()));
-    await waitFor(() => result.current.isLoading !== true);
+    await waitFor(() => !result.current.isLoading);
 
     expect(result.current.isLoading).toBe(false);
     expect(result.current.errors.root).toBe("error");
@@ -111,11 +111,15 @@ describe("ui/pages/ResetPassword/useResetPassword", () => {
   test("should show and hide password properly", () => {
     const { result } = renderHook(() => useResetPassword());
 
-    act(() => result.current.onShowPassword());
+    act(() => {
+      result.current.onShowPassword();
+    });
 
     expect(result.current.isShowPassword).toStrictEqual(true);
 
-    act(() => result.current.onShowPassword());
+    act(() => {
+      result.current.onShowPassword();
+    });
     expect(result.current.isShowPassword).toStrictEqual(false);
   });
 

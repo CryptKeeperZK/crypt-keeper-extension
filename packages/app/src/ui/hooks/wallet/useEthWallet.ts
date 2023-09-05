@@ -46,7 +46,9 @@ export const useEthWallet = (connectorName = ConnectorNames.METAMASK): IUseWalle
     provider
       .getBalance(address)
       .then((wei) => new BigNumber(formatUnits(wei.toString(), decimals)))
-      .then((value) => setBalance(value));
+      .then((value) => {
+        setBalance(value);
+      });
   }, [address, chainId, provider, decimals, setBalance]);
 
   const onConnect = useCallback(async () => {
@@ -56,7 +58,7 @@ export const useEthWallet = (connectorName = ConnectorNames.METAMASK): IUseWalle
 
   const onConnectEagerly = useCallback(async () => {
     if (isDisconnectedPermanently === false) {
-      await connector?.connectEagerly?.();
+      await connector?.connectEagerly();
     }
   }, [connector, isDisconnectedPermanently]);
 

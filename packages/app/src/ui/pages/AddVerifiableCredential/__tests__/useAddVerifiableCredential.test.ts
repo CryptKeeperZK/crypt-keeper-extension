@@ -93,7 +93,9 @@ describe("ui/pages/AddVerifiableCredential/useAddVerifiableCredential", () => {
       expect(result.current.cryptkeeperVerifiableCredential).toStrictEqual(expectedCryptkeeperVerifiableCredential);
     });
 
-    act(() => result.current.onCloseModal());
+    act(() => {
+      result.current.onCloseModal();
+    });
 
     expect(closePopup).toBeCalledTimes(1);
     expect(mockDispatch).toBeCalledTimes(1);
@@ -108,7 +110,9 @@ describe("ui/pages/AddVerifiableCredential/useAddVerifiableCredential", () => {
       expect(result.current.cryptkeeperVerifiableCredential).toStrictEqual(expectedCryptkeeperVerifiableCredential);
     });
 
-    act(() => result.current.onRenameVerifiableCredential(newName));
+    act(() => {
+      result.current.onRenameVerifiableCredential(newName);
+    });
 
     expect(result.current.cryptkeeperVerifiableCredential!.metadata.name).toBe(newName);
   });
