@@ -75,7 +75,7 @@ jobs:
 
       - name: Upload artifact to chrome store
         run: |-
-          chrome-webstore-upload upload --source cryptkeeper-chrome-extension-v${{ env.EXTENSION_VERSION }}.zip --extension-id ${{ vars.CHROME_EXTENSION_ID }} --client-id ${{ secrets.CI_GOOGLE_CLIENT_ID }} --client-secret ${{ secrets.CI_GOOGLE_CLIENT_SECRET }} --refresh-token ${{ secrets.CI_GOOGLE_REFRESH_TOKEN }}
+          chrome-webstore-upload upload --source cryptkeeper-chrome-extension-v${{ env.EXTENSION_VERSION }}.zip --extension-id ${{ vars.CHROME_EXTENSION_ID }} --client-id ${{ secrets.CI_GOOGLE_CLIENT_ID }} --client-secret ${{ secrets.CI_GOOGLE_CLIENT_SECRET }} --refresh-token ${{ secrets.CI_GOOGLE_REFRESH_TOKEN }} --auto-publish
 
       - name: Upload build
         run: |-
