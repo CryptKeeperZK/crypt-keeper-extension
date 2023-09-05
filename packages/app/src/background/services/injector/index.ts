@@ -8,7 +8,7 @@ import {
   IZkMetadata,
 } from "@cryptkeeperzk/types";
 import { getMerkleProof } from "@cryptkeeperzk/zk";
-import { omit } from "lodash";
+import omit from "lodash/omit";
 import browser from "webextension-polyfill";
 
 import BrowserUtils from "@src/background/controllers/browserUtils";

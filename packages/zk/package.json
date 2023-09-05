@@ -34,7 +34,7 @@
     "githook:prepush": "pnpm run test:coverage"
   },
   "dependencies": {
-    "@cryptkeeperzk/rlnjs": "^3.1.10",
+    "@cryptkeeperzk/rlnjs": "^3.2.1",
     "@cryptkeeperzk/semaphore-group": "^3.10.3",
     "@cryptkeeperzk/semaphore-identity": "^3.10.3",
     "@cryptkeeperzk/semaphore-proof": "^3.10.3",
