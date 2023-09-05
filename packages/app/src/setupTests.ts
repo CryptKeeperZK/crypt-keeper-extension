@@ -12,8 +12,8 @@ library.add(faTwitter, faGithub, faReddit, faLink);
 
 jest.mock("loglevel", () => ({
   info: jest.fn(),
-  debug: jest.fn(),
   log: jest.fn(),
+  debug: jest.fn(),
   warn: jest.fn(),
   error: jest.fn(),
 }));
