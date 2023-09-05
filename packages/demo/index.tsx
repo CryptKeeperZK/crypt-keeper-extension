@@ -210,7 +210,7 @@ const App = () => {
 
       <hr />
 
-      {process.env.VERIFIABLE_CREDENTIALS && (
+      {process.env.VERIFIABLE_CREDENTIALS === "true" && (
         <div>
           <h2>Verifiable Credentials</h2>
 
