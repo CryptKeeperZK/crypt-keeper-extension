@@ -163,6 +163,31 @@ describe("background/services/protocols", () => {
 
       await expect(promise).rejects.toThrowError("error");
     });
+
+    test("should throw error if there is no merkle proof", async () => {
+      (getMerkleProof as jest.Mock).mockResolvedValue(undefined);
+
+      const rlnProofRequest: IRLNProofRequest = {
+        identitySerialized: "identitySerialized",
+        circuitFilePath: "circuitFilePath",
+        verificationKey: "verificationKey",
+        zkeyFilePath: "zkeyFilePath",
+        rlnIdentifier: "1",
+        message: "message",
+        messageId: 1,
+        messageLimit: 0,
+        epoch: "1",
+      };
+
+      const rln = new RLNProofService();
+
+      const promise = rln.genProof(identityDecorator, {
+        ...rlnProofRequest,
+        merkleStorageAddress: "http://localhost:3000/merkle",
+      });
+
+      await expect(promise).rejects.toThrowError("No merkle proof error");
+    });
   });
 
   describe("semaphore", () => {

@@ -67,7 +67,7 @@ describe("ui/pages/RevealIdentityCommitment/useRevealIdentityCommitment", () => 
   });
 
   const waitForData = async (data: IUseRevealIdentityCommitmentData): Promise<void> => {
-    await waitFor(() => data.isLoading === false);
+    await waitFor(() => !data.isLoading);
     await waitFor(() => expect(fetchIdentities).toBeCalledTimes(1));
   };
 

@@ -78,7 +78,7 @@ export default class ZkIdentityService implements IBackupable {
     return identity ? bigintToHex(identity.genIdentityCommitment()) : "";
   };
 
-  getConnectedIdentityData = async (_: unknown, meta: IZkMetadata): Promise<ConnectedIdentityMetadata | undefined> => {
+  getConnectedIdentityData = async (_: unknown, meta?: IZkMetadata): Promise<ConnectedIdentityMetadata | undefined> => {
     const identity = await this.getConnectedIdentity();
 
     if (!identity) {

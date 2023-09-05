@@ -29,8 +29,12 @@ export const useRevealIdentityCommitment = (): IUseRevealIdentityCommitmentData 
   useEffect(() => {
     setLoading(true);
     dispatch(fetchIdentities())
-      .catch((err: Error) => setError(err.message))
-      .finally(() => setLoading(false));
+      .catch((err: Error) => {
+        setError(err.message);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
   }, [dispatch, setLoading, setError]);
 
   const onGoBack = useCallback(() => {
@@ -45,8 +49,12 @@ export const useRevealIdentityCommitment = (): IUseRevealIdentityCommitmentData 
   const onReveal = useCallback(() => {
     dispatch(revealConnectedIdentityCommitment())
       .then(() => dispatch(closePopup()))
-      .then(() => navigate(Paths.HOME))
-      .catch((err: Error) => setError(err.message));
+      .then(() => {
+        navigate(Paths.HOME);
+      })
+      .catch((err: Error) => {
+        setError(err.message);
+      });
   }, [dispatch, navigate, setError]);
 
   return {
