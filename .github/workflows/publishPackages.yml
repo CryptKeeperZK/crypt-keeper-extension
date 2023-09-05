@@ -49,9 +49,10 @@ jobs:
 
       - run: pnpm install --frozen-lockfile --prefer-offline
 
-      - name: Get versions
+      - name: Get providers version
+        if: startsWith(github.ref_name, '@cryptkeeperzk/providers-') == true
         run: |-
-          echo "PROVIDERS_VERSION=$(node -e "console.log(require('./packages/providers/package.json').version)")" >> $GITHUB_ENV
+          echo "PROVIDERS_VERSION=$(node -e "console.log('${{ github.ref_name }}'.split('-')[1])")" >> $GITHUB_ENV
 
       - run: |-
           pnpm run build
