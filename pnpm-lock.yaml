@@ -99,8 +99,8 @@ importers:
         specifier: workspace:^
         version: link:../providers
       '@cryptkeeperzk/rlnjs':
-        specifier: ^3.1.10
-        version: 3.1.10
+        specifier: ^3.2.1
+        version: 3.2.1
       '@cryptkeeperzk/semaphore-proof':
         specifier: ^3.10.3
         version: 3.10.3(@cryptkeeperzk/semaphore-group@3.10.3)(@cryptkeeperzk/semaphore-identity@3.10.3)
@@ -700,8 +700,8 @@ importers:
   packages/types:
     dependencies:
       '@cryptkeeperzk/rlnjs':
-        specifier: ^3.1.10
-        version: 3.1.10
+        specifier: ^3.2.1
+        version: 3.2.1
       '@cryptkeeperzk/semaphore-proof':
         specifier: ^3.10.3
         version: 3.10.3(@cryptkeeperzk/semaphore-group@3.10.3)(@cryptkeeperzk/semaphore-identity@3.10.3)
@@ -728,8 +728,8 @@ importers:
   packages/zk:
     dependencies:
       '@cryptkeeperzk/rlnjs':
-        specifier: ^3.1.10
-        version: 3.1.10
+        specifier: ^3.2.1
+        version: 3.2.1
       '@cryptkeeperzk/semaphore-group':
         specifier: ^3.10.3
         version: 3.10.3
@@ -2276,8 +2276,8 @@ packages:
       web-worker: 1.2.0
     dev: false
 
-  /@cryptkeeperzk/rlnjs@3.1.10:
-    resolution: {integrity: sha512-Av98zRo9MulqePxS/V7RvI32mbRr9HBiRVcWFq0fqC8w0mMzhAgiL4ohJ3bvnl2W7AgSySg2MpEchsTFOAc0bw==}
+  /@cryptkeeperzk/rlnjs@3.2.1:
+    resolution: {integrity: sha512-KB6Z1CLyDZb40egsRtpT1FSpli/4lemRhTdkomJfyoLNXF9s+PBOKj+gEjeNSks5RWzNrF6mbn4A2XO2BtSRrw==}
     dependencies:
       '@cryptkeeperzk/ffjavascript': 0.2.59
       '@cryptkeeperzk/snarkjs': 0.7.2
@@ -2288,11 +2288,12 @@ packages:
       '@semaphore-protocol/group': 3.10.1
       '@semaphore-protocol/identity': 3.10.1
       '@zk-kit/incremental-merkle-tree': 0.4.3
-      base64-js: 1.5.1
+      axios: 1.5.0
       ethers: 6.7.1
       poseidon-lite: 0.0.2
     transitivePeerDependencies:
       - bufferutil
+      - debug
       - utf-8-validate
     dev: false
 
@@ -6576,6 +6577,16 @@ packages:
       proxy-from-env: 1.1.0
     transitivePeerDependencies:
       - debug
+
+  /axios@1.5.0:
+    resolution: {integrity: sha512-D4DdjDo5CY50Qms0qGQTTw6Q44jl7zRwY7bthds06pUGfChBCTcQs+N743eFWGEd6pRTMd6A+I87aWyFV5wiZQ==}
+    dependencies:
+      follow-redirects: 1.15.2(debug@4.3.4)
+      form-data: 4.0.0
+      proxy-from-env: 1.1.0
+    transitivePeerDependencies:
+      - debug
+    dev: false
 
   /axobject-query@3.2.1:
     resolution: {integrity: sha512-jsyHu61e6N4Vbz/v18DHwWYKK0bSWLqn47eeDSKPB7m8tqMHF9YJ+mhIk2lVteyZrY8tnSj/jHOv4YiTCuCJgg==}
