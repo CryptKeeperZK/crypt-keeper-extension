@@ -19,7 +19,7 @@
       "options": {
         "preset": "conventional",
         "trackDeps": true,
-        "push": false,
+        "push": true,
         "noVerify": true,
         "postTargets": ["@cryptkeeperzk/providers:github"]
       }
