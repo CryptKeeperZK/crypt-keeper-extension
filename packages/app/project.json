@@ -45,7 +45,10 @@
     "push-changes": {
       "executor": "nx:run-commands",
       "options": {
-        "commands": [{ "command": "git push --follow-tags --no-verify", "forwardAllArgs": false }],
+        "commands": [
+          { "command": "git push --no-verify", "forwardAllArgs": false },
+          { "command": "git push --follow-tags --no-verify", "forwardAllArgs": false }
+        ],
         "parallel": false
       }
     },
