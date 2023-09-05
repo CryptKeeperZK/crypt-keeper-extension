@@ -3,7 +3,6 @@
  */
 
 import { RPCAction } from "@cryptkeeperzk/providers";
-import { generateProof } from "@cryptkeeperzk/semaphore-proof";
 import { PendingRequestType, IRLNProofRequest, ISemaphoreProofRequest, IZkMetadata } from "@cryptkeeperzk/types";
 import { getMerkleProof } from "@cryptkeeperzk/zk";
 import browser from "webextension-polyfill";
@@ -17,6 +16,8 @@ import InjectorService from "..";
 const mockDefaultHost = "http://localhost:3000";
 const mockSerializedIdentity = "identity";
 const mockGetConnectedIdentity = jest.fn();
+const mockGenerateSemaphoreProof = jest.fn();
+const mockGenerateRLNProof = jest.fn();
 
 Object.defineProperty(global, "chrome", {
   value: {
@@ -31,11 +32,11 @@ Object.defineProperty(global, "chrome", {
   },
 });
 
-jest.mock("@cryptkeeperzk/semaphore-proof", (): unknown => ({
-  generateProof: jest.fn(),
-}));
-
 jest.mock("@cryptkeeperzk/zk", (): unknown => ({
+  ZkProofService: jest.fn(() => ({
+    generateSemaphoreProof: mockGenerateSemaphoreProof,
+    generateRLNProof: mockGenerateRLNProof,
+  })),
   getMerkleProof: jest.fn(),
 }));
 
@@ -198,21 +199,6 @@ describe("background/services/injector", () => {
       await expect(service.generateSemaphoreProof(defaultProofRequest, {})).rejects.toThrowError("Origin is not set");
     });
 
-    test("should throw error if there is no ready proof", async () => {
-      (getMerkleProof as jest.Mock).mockResolvedValue(undefined);
-      mockGetConnectedIdentity.mockResolvedValue({
-        serialize: () => mockSerializedIdentity,
-        genIdentityCommitment: () => "mockIdentityCommitment",
-      });
-      (generateProof as jest.Mock).mockReturnValueOnce(emptyFullProof);
-      (getBrowserPlatform as jest.Mock).mockReturnValueOnce(BrowserPlatform.Firefox);
-      const service = InjectorService.getInstance();
-
-      await expect(service.generateSemaphoreProof(defaultProofRequest, defaultMetadata)).rejects.toThrowError(
-        "Error in generateSemaphoreProof(): No merkle proof error",
-      );
-    });
-
     test("should throw error if there is no connected identity", async () => {
       mockGetConnectedIdentity.mockResolvedValue(undefined);
 
@@ -238,7 +224,7 @@ describe("background/services/injector", () => {
         serialize: () => mockSerializedIdentity,
         genIdentityCommitment: () => "mockIdentityCommitment",
       });
-      (generateProof as jest.Mock).mockReturnValueOnce(emptyFullProof);
+      mockGenerateSemaphoreProof.mockReturnValueOnce(emptyFullProof);
       (getBrowserPlatform as jest.Mock).mockReturnValueOnce(BrowserPlatform.Firefox);
       const service = InjectorService.getInstance();
 
@@ -252,7 +238,6 @@ describe("background/services/injector", () => {
         serialize: () => mockSerializedIdentity,
         genIdentityCommitment: () => "mockIdentityCommitment",
       });
-      (getBrowserPlatform as jest.Mock).mockReturnValueOnce(BrowserPlatform.Firefox);
       (browser.runtime.getURL as jest.Mock).mockReturnValue(undefined);
 
       const service = InjectorService.getInstance();
@@ -345,16 +330,44 @@ describe("background/services/injector", () => {
       expect(pushMessage).toBeCalledTimes(0);
     });
 
-    test("should not be able to generate proof on Firefox platforms", async () => {
+    test("should generate proof for firefox platform properly", async () => {
       (pushMessage as jest.Mock).mockReturnValueOnce(JSON.stringify(emptyFullProof));
       (getBrowserPlatform as jest.Mock).mockReturnValueOnce(BrowserPlatform.Firefox);
+      mockGenerateRLNProof.mockResolvedValue(emptyFullProof);
+
+      const service = InjectorService.getInstance();
+
+      const result = await service.generateRlnProof(defaultProofRequest, defaultMetadata);
+
+      expect(result).toStrictEqual(emptyFullProof);
+      expect(pushMessage).toBeCalledTimes(0);
+    });
+
+    test("should throw error if generate proof is failed", async () => {
+      const error = new Error("error");
+      (pushMessage as jest.Mock).mockReturnValueOnce(JSON.stringify(emptyFullProof));
+      (getBrowserPlatform as jest.Mock).mockReturnValueOnce(BrowserPlatform.Firefox);
+      mockGenerateRLNProof.mockRejectedValue(error);
+
+      const service = InjectorService.getInstance();
+
+      await expect(service.generateRlnProof(defaultProofRequest, defaultMetadata)).rejects.toThrowError(
+        `Error in generateRlnProof(): ${error.message}`,
+      );
+    });
+
+    test("should throw error there is no circuit and zkey files", async () => {
+      mockGetConnectedIdentity.mockResolvedValue({
+        serialize: () => mockSerializedIdentity,
+        genIdentityCommitment: () => "mockIdentityCommitment",
+      });
+      (browser.runtime.getURL as jest.Mock).mockReturnValue(undefined);
 
       const service = InjectorService.getInstance();
 
       await expect(service.generateRlnProof(defaultProofRequest, defaultMetadata)).rejects.toThrow(
-        "RLN proofs are not supported with Firefox",
+        "Error in generateRlnProof(): Injected service: Must set circuitFilePath and zkeyFilePath",
       );
-      expect(pushMessage).toBeCalledTimes(0);
     });
   });
 });

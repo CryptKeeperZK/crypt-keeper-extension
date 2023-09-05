@@ -52,7 +52,7 @@ describe("offscreen/offscreenController", () => {
     jest.clearAllMocks();
   });
 
-  test("should be able to generate a semaphore proof", async () => {
+  test("should generate a semaphore proof properly", async () => {
     (getMerkleProof as jest.Mock).mockReturnValue(defaultMerkleProof);
     mockSemaphoreGenerateProof.mockResolvedValueOnce(emptyFullProof);
 
