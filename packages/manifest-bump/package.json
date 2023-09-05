@@ -1,6 +1,6 @@
 {
   "name": "@cryptkeeperzk/manifest-bump",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "CryptKeeper executor for manifest version bump",
   "private": true,
   "repository": {
