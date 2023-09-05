@@ -2,6 +2,8 @@
 
 This file was generated using [@jscutlery/semver](https://github.com/jscutlery/semver).
 
+## [0.0.3](https://github.com/CryptKeeperZK/crypt-keeper-extension/compare/@cryptkeeperzk/manifest-bump-0.0.2...@cryptkeeperzk/manifest-bump-0.0.3) (2023-09-05)
+
 ## [0.0.2](https://github.com/CryptKeeperZK/crypt-keeper-extension/compare/@cryptkeeperzk/manifest-bump-0.0.1...@cryptkeeperzk/manifest-bump-0.0.2) (2023-09-05)
 
 ### Dependency Updates

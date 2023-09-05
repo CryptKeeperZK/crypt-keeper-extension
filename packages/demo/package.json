@@ -1,7 +1,7 @@
 {
   "name": "@cryptkeeperzk/demo",
   "private": true,
-  "version": "0.1.9",
+  "version": "0.1.10",
   "scripts": {
     "start": "parcel serve --no-cache index.html",
     "build": "parcel build index.html",
