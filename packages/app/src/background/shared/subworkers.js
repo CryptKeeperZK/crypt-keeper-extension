@@ -1,7 +1,12 @@
 // eslint-disable
+import { getBrowserPlatform } from "@src/background/shared/utils";
+import { BrowserPlatform } from "@src/constants";
+
 // A workaround for resolving `Worker is not defined` error with MV3 on Chromium based platforms.
 (async function () {
-  if (!global.chrome) {
+  const browserPlatform = getBrowserPlatform();
+
+  if (!global.chrome || browserPlatform === BrowserPlatform.Firefox) {
     return;
   }
 
