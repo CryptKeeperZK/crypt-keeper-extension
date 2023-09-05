@@ -1,0 +1,69 @@
+name: Firefox web-ext lint
+
+on:
+  push:
+    branches: [main]
+
+  pull_request:
+    branches: [main]
+
+env:
+  CRYPTKEEPER_DEBUG: false
+  INTEREP_IDENTITY: false
+  USER_MNEMONIC: false
+  E2E: false
+  METAMASK_EXTENSION_ID: "webextension@metamask.io"
+  METAMASK_VERSION: "10.28.1"
+  INFURA_API_KEY: ${{ secrets.INFURA_API_KEY }}
+  ALCHEMY_API_KEY: ${{ secrets.ALCHEMY_API_KEY }}
+  FREIGHT_TRUST_NETWORK: ${{ secrets.FREIGHT_TRUST_NETWORK }}
+  PULSECHAIN_API_KEY: ${{ secrets.PULSECHAIN_API_KEY }}
+  TARGET: "firefox"
+  DEMO_URL: ${{ vars.DEMO_URL }}
+  MANIFEST_VERSION: 2
+  VERIFIABLE_CREDENTIALS: false
+  WEBPACK_ANALYZER: false
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        node-version: [18]
+
+    runs-on: ubuntu-22.04
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v2
+        with:
+          version: latest
+
+      - uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: "pnpm"
+
+      - name: Cache node modules
+        uses: actions/cache@v3
+        continue-on-error: true
+        with:
+          path: |
+            ~/.pnpm-store
+            node_modules
+          key: ${{ runner.os }}-node-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+
+      - run: pnpm install --frozen-lockfile --prefer-offline
+
+      - run: pnpm install -g web-ext
+
+      - run: pnpm run build
+
+      - run: web-ext lint
+        working-directory: ./packages/app/dist

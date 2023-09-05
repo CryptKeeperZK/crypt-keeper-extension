@@ -11,7 +11,7 @@ import {
 } from "@cryptkeeperzk/types";
 import { ZkIdentitySemaphore, createNewIdentity } from "@cryptkeeperzk/zk";
 import { bigintToHex } from "bigint-conversion";
-import { pick } from "lodash";
+import pick from "lodash/pick";
 import browser from "webextension-polyfill";
 
 import BrowserUtils from "@src/background/controllers/browserUtils";

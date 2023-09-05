@@ -2,7 +2,8 @@ import { Group, BigNumberish } from "@cryptkeeperzk/semaphore-group";
 import { bigintToHex, hexToBigint } from "bigint-conversion";
 // TODO: I think we should have a service for providing Cryptography pure related functions
 // Maybe we need to rename CryptoService to another name, and having a CryptoService that only has these pure functions.
-import { poseidon1, poseidon2 } from "poseidon-lite";
+import { poseidon1 } from "poseidon-lite/poseidon1";
+import { poseidon2 } from "poseidon-lite/poseidon2";
 
 import type { IMerkleProofArtifacts, IMerkleProof, IRLNVerificationKey } from "@cryptkeeperzk/types";
 
