@@ -10,14 +10,12 @@
         "push": false,
         "skipCommit": true,
         "noVerify": true,
-        "postTargets": ["@cryptkeeperzk/app:bump", "@cryptkeeperzk/app:commit-changes", "@cryptkeeperzk/app:github"]
-      }
-    },
-    "github": {
-      "executor": "@jscutlery/semver:github",
-      "options": {
-        "tag": "${tag}",
-        "notes": "${notes}"
+        "postTargets": [
+          "@cryptkeeperzk/app:bump",
+          "@cryptkeeperzk/app:commit-changes",
+          "@cryptkeeperzk/app:push-changes",
+          "@cryptkeeperzk/app:github"
+        ]
       }
     },
     "bump": {
@@ -42,6 +40,20 @@
           }
         ],
         "parallel": false
+      }
+    },
+    "push-changes": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [{ "command": "git push --follow-tags --no-verify", "forwardAllArgs": false }],
+        "parallel": false
+      }
+    },
+    "github": {
+      "executor": "@jscutlery/semver:github",
+      "options": {
+        "tag": "${tag}",
+        "notes": "${notes}"
       }
     }
   }
