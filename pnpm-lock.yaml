@@ -22,7 +22,7 @@ importers:
         version: 3.1.0(@nx/devkit@16.8.0)
       '@nx/js':
         specifier: ^16.8.0
-        version: 16.8.0(@swc/core@1.3.82)(@types/node@20.5.9)(nx@16.7.4)(typescript@5.2.2)
+        version: 16.8.0(@swc/core@1.3.82)(@types/node@20.5.9)(nx@16.8.0)(typescript@5.2.2)
       '@swc/core':
         specifier: ^1.3.82
         version: 1.3.82
@@ -63,8 +63,8 @@ importers:
         specifier: ^3.0.1
         version: 3.0.1
       nx:
-        specifier: 16.7.4
-        version: 16.7.4(@swc/core@1.3.82)
+        specifier: 16.8.0
+        version: 16.8.0(@swc/core@1.3.82)
       nx-cloud:
         specifier: latest
         version: 16.3.0
@@ -3321,7 +3321,7 @@ packages:
     peerDependencies:
       '@nx/devkit': ^16.0.0
     dependencies:
-      '@nx/devkit': 16.8.0(nx@16.7.4)
+      '@nx/devkit': 16.8.0(nx@16.8.0)
       chalk: 4.1.2
       conventional-changelog: 4.0.0
       conventional-recommended-bump: 7.0.1
@@ -3758,6 +3758,7 @@ packages:
       '@nx/devkit': 16.8.0(nx@16.7.4)
     transitivePeerDependencies:
       - nx
+    dev: false
 
   /@nrwl/devkit@16.8.0(nx@16.8.0):
     resolution: {integrity: sha512-zpSNUCj9RZAAcCIHcjeVQT8FPutnaCe0empvm0yxWPbmIXjN/4Lw1f4V5K42MNDSa4Z8Hvj1tTL3+8JXSV9JxA==}
@@ -3767,10 +3768,10 @@ packages:
       - nx
     dev: true
 
-  /@nrwl/js@16.8.0(@swc/core@1.3.82)(@types/node@20.5.9)(nx@16.7.4)(typescript@5.2.2):
+  /@nrwl/js@16.8.0(@swc/core@1.3.82)(@types/node@20.5.9)(nx@16.8.0)(typescript@5.2.2):
     resolution: {integrity: sha512-dJBFfa+RrNv9KCsZECXJ1Pv3Yu9X5uJfoONCV0eaatXzmlEWeosIpKU73QcW+f5rKQrLqd4//2qpd9EK/siyRw==}
     dependencies:
-      '@nx/js': 16.8.0(@swc/core@1.3.82)(@types/node@20.5.9)(nx@16.7.4)(typescript@5.2.2)
+      '@nx/js': 16.8.0(@swc/core@1.3.82)(@types/node@20.5.9)(nx@16.8.0)(typescript@5.2.2)
     transitivePeerDependencies:
       - '@babel/traverse'
       - '@swc-node/register'
@@ -3802,6 +3803,7 @@ packages:
       - '@swc-node/register'
       - '@swc/core'
       - debug
+    dev: false
 
   /@nrwl/tao@16.8.0(@swc/core@1.3.82):
     resolution: {integrity: sha512-b8SteybQrq34SBnrkdpsShD6hyjmq2WNi6WY2fLxkWg4IvBtG1U3KC8SdHhmbBqLA8PpBt8bV7paH8IgsiajtA==}
@@ -3838,6 +3840,7 @@ packages:
       semver: 7.5.3
       tmp: 0.2.1
       tslib: 2.6.2
+    dev: false
 
   /@nx/devkit@16.8.0(nx@16.8.0):
     resolution: {integrity: sha512-vFeWR6dQSmiVWOccIj9vpnB0nRzOY+VWucDDbQ4TKWQKzKfpnFDMsGxImff1AHFI0h4pvJOimDrY5+hktRrYew==}
@@ -3854,7 +3857,7 @@ packages:
       tslib: 2.6.2
     dev: true
 
-  /@nx/js@16.8.0(@swc/core@1.3.82)(@types/node@20.5.9)(nx@16.7.4)(typescript@5.2.2):
+  /@nx/js@16.8.0(@swc/core@1.3.82)(@types/node@20.5.9)(nx@16.8.0)(typescript@5.2.2):
     resolution: {integrity: sha512-PFBlS8gd0lwS8DX92wEVVZfDaDFq+lKj7VPLMCLK1jEnKeKWmuDL2sZVFTlD3KzqXQxfOi5vQZu25z0FH0KI8A==}
     peerDependencies:
       verdaccio: ^5.0.4
@@ -3869,8 +3872,8 @@ packages:
       '@babel/preset-env': 7.22.10(@babel/core@7.22.10)
       '@babel/preset-typescript': 7.22.5(@babel/core@7.22.10)
       '@babel/runtime': 7.22.10
-      '@nrwl/js': 16.8.0(@swc/core@1.3.82)(@types/node@20.5.9)(nx@16.7.4)(typescript@5.2.2)
-      '@nx/devkit': 16.8.0(nx@16.7.4)
+      '@nrwl/js': 16.8.0(@swc/core@1.3.82)(@types/node@20.5.9)(nx@16.8.0)(typescript@5.2.2)
+      '@nx/devkit': 16.8.0(nx@16.8.0)
       '@nx/workspace': 16.8.0(@swc/core@1.3.82)
       '@phenomnomnominal/tsquery': 5.0.1(typescript@5.2.2)
       babel-plugin-const-enum: 1.2.0(@babel/core@7.22.10)
@@ -3906,6 +3909,7 @@ packages:
     cpu: [arm64]
     os: [darwin]
     requiresBuild: true
+    dev: false
     optional: true
 
   /@nx/nx-darwin-arm64@16.8.0:
@@ -3923,6 +3927,7 @@ packages:
     cpu: [x64]
     os: [darwin]
     requiresBuild: true
+    dev: false
     optional: true
 
   /@nx/nx-darwin-x64@16.8.0:
@@ -3940,6 +3945,7 @@ packages:
     cpu: [x64]
     os: [freebsd]
     requiresBuild: true
+    dev: false
     optional: true
 
   /@nx/nx-freebsd-x64@16.8.0:
@@ -3957,6 +3963,7 @@ packages:
     cpu: [arm]
     os: [linux]
     requiresBuild: true
+    dev: false
     optional: true
 
   /@nx/nx-linux-arm-gnueabihf@16.8.0:
@@ -3974,6 +3981,7 @@ packages:
     cpu: [arm64]
     os: [linux]
     requiresBuild: true
+    dev: false
     optional: true
 
   /@nx/nx-linux-arm64-gnu@16.8.0:
@@ -3991,6 +3999,7 @@ packages:
     cpu: [arm64]
     os: [linux]
     requiresBuild: true
+    dev: false
     optional: true
 
   /@nx/nx-linux-arm64-musl@16.8.0:
@@ -4008,6 +4017,7 @@ packages:
     cpu: [x64]
     os: [linux]
     requiresBuild: true
+    dev: false
     optional: true
 
   /@nx/nx-linux-x64-gnu@16.8.0:
@@ -4025,6 +4035,7 @@ packages:
     cpu: [x64]
     os: [linux]
     requiresBuild: true
+    dev: false
     optional: true
 
   /@nx/nx-linux-x64-musl@16.8.0:
@@ -4042,6 +4053,7 @@ packages:
     cpu: [arm64]
     os: [win32]
     requiresBuild: true
+    dev: false
     optional: true
 
   /@nx/nx-win32-arm64-msvc@16.8.0:
@@ -4059,6 +4071,7 @@ packages:
     cpu: [x64]
     os: [win32]
     requiresBuild: true
+    dev: false
     optional: true
 
   /@nx/nx-win32-x64-msvc@16.8.0:
@@ -6764,6 +6777,7 @@ packages:
       proxy-from-env: 1.1.0
     transitivePeerDependencies:
       - debug
+    dev: true
 
   /axios@1.5.0:
     resolution: {integrity: sha512-D4DdjDo5CY50Qms0qGQTTw6Q44jl7zRwY7bthds06pUGfChBCTcQs+N743eFWGEd6pRTMd6A+I87aWyFV5wiZQ==}
@@ -13975,7 +13989,7 @@ packages:
       '@yarnpkg/lockfile': 1.1.0
       '@yarnpkg/parsers': 3.0.0-rc.46
       '@zkochan/js-yaml': 0.0.6
-      axios: 1.4.0(debug@4.3.4)
+      axios: 1.5.0
       chalk: 4.1.2
       cli-cursor: 3.1.0
       cli-spinners: 2.6.1
@@ -14018,6 +14032,7 @@ packages:
       '@nx/nx-win32-x64-msvc': 16.7.4
     transitivePeerDependencies:
       - debug
+    dev: false
 
   /nx@16.8.0(@swc/core@1.3.82):
     resolution: {integrity: sha512-n32nk+y0h5iBuyxBvZJ4YJlFzs/ovT1q9mEXBkXWYgZp74t8nFu5qkLD/ndIOvw/9bvyw4/894vzb6uNDp8jBQ==}
