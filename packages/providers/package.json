@@ -41,7 +41,7 @@
     "@cryptkeeperzk/semaphore-identity": "^3.10.3",
     "@cryptkeeperzk/semaphore-proof": "^3.10.3",
     "@zk-kit/incremental-merkle-tree": "^1.1.0",
-    "bigint-conversion": "^2.4.1",
+    "bigint-conversion": "^2.4.2",
     "lodash": "^4.17.21",
     "nanoevents": "^8.0.0"
   },

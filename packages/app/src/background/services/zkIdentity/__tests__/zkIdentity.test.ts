@@ -88,7 +88,7 @@ describe("background/services/zkIdentity", () => {
 
   const defaultNewIdentity = {
     serialize: () => JSON.stringify({ secret: "1234", metadata: { identityStrategy: "random" } }),
-    genIdentityCommitment: () => "commitment",
+    genIdentityCommitment: () => "15206603389158210388485662342360617949291660595274505642693885456541816400292",
     metadata: { host: "http://localhost:3000" } as ConnectedIdentityMetadata,
   };
 
