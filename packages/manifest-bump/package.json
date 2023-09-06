@@ -38,7 +38,7 @@
     "githook:prepush": "pnpm run test:coverage"
   },
   "dependencies": {
-    "@nx/devkit": "16.7.4",
+    "@nx/devkit": "16.8.0",
     "tslib": "^2.6.2"
   },
   "devDependencies": {
