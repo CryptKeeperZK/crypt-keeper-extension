@@ -3,6 +3,7 @@ export enum Paths {
   HOME = "/home",
   IDENTITY = "/identity/:id",
   CREATE_IDENTITY = "/create-identity",
+  REVEAL_IDENTITY_COMMITMENT = "/reveal-identity-commitment",
   LOGIN = "/login",
   ONBOARDING = "/onboarding",
   ONBOARDING_BACKUP = "/onboarding-backup",

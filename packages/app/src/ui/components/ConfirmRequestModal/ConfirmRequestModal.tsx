@@ -1,7 +1,6 @@
 import { IRLNProofRequest, IPendingRequest, PendingRequestType, IZKProofPayload } from "@cryptkeeperzk/types";
 
-import { SemaphoreProofModal, ConnectionApprovalModal, DefaultApprovalModal } from "./components";
-import { RlnProofModal } from "./components/RlnProofModal";
+import { SemaphoreProofModal, ConnectionApprovalModal, DefaultApprovalModal, RlnProofModal } from "./components";
 import "./confirmModal.scss";
 import { useConfirmRequestModal } from "./useConfirmRequestModal";
 

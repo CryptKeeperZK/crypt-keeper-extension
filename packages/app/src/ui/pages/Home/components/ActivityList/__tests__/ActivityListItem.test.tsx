@@ -2,12 +2,17 @@
  * @jest-environment jsdom
  */
 
-import { act, render, screen } from "@testing-library/react";
+import { act, fireEvent, render, screen } from "@testing-library/react";
 
 import { ZERO_ADDRESS } from "@src/config/const";
 import { Operation, OperationType } from "@src/types";
+import { redirectToNewTab } from "@src/util/browser";
 
 import { ActivityItem, IActivityItemProps } from "../Item";
+
+jest.mock("@src/util/browser", (): unknown => ({
+  redirectToNewTab: jest.fn(),
+}));
 
 describe("ui/pages/Home/components/ActivityList/Item", () => {
   const defaultProps: IActivityItemProps = {
@@ -76,5 +81,15 @@ describe("ui/pages/Home/components/ActivityList/Item", () => {
 
     expect(defaultProps.onDelete).toBeCalledTimes(1);
     expect(defaultProps.onDelete).toBeCalledWith("1");
+  });
+
+  test("should go to connected host properly", async () => {
+    render(<ActivityItem {...defaultProps} />);
+
+    const host = await screen.findByTestId("host");
+    await act(() => fireEvent.click(host));
+
+    expect(redirectToNewTab).toBeCalledTimes(1);
+    expect(redirectToNewTab).toBeCalledWith(defaultProps.operation.identity?.metadata.host);
   });
 });

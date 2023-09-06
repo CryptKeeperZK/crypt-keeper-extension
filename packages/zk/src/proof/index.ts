@@ -6,6 +6,9 @@ export {
   generateMerkleProof,
   getMerkleProof,
   getRlnVerificationKeyJson,
+  getMessageHash,
+  getRateCommitmentHash,
+  str2BigInt,
   SemaphoreProofService,
   RLNProofService,
 } from "./protocols";

@@ -4,6 +4,8 @@ export enum RPCAction {
   GET_STATUS = "rpc/getStatus",
   CONNECT = "rpc/connect",
   CONNECT_IDENTITY_REQUEST = "rpc/connectIdentityRequest",
+  REVEAL_CONNECTED_IDENTITY_COMMITMENT_REQUEST = "rpc/identity/revealConnectedIdentityCommitmentRequest",
+  REVEAL_CONNECTED_IDENTITY_COMMITMENT = "rpc/identity/revealConnectedIdentityCommitment",
   SETUP_PASSWORD = "rpc/lock/setupPassword",
   RESET_PASSWORD = "rpc/lock/resetPassword",
   CHECK_PASSWORD = "rpc/lock/checkPassword",

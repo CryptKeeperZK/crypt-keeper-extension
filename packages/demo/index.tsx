@@ -1,9 +1,14 @@
+import dotenv from "dotenv";
 import { useEffect } from "react";
 import { createRoot } from "react-dom/client";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
+import path from "path";
+
 import { MerkleProofType, useCryptKeeper } from "./useCryptKeeper";
+
+dotenv.config({ path: path.resolve(__dirname, "../..", ".env"), override: true });
 
 interface INotConnectedProps {
   onClick: () => void;
@@ -41,12 +46,14 @@ const App = () => {
     isLocked,
     connectedIdentityMetadata,
     proof,
+    connectedCommitment,
     connect,
     createIdentity,
     connectIdentity,
     genSemaphoreProof,
     genRLNProof,
     addVerifiableCredentialRequest,
+    onRevealConnectedIdentityCommitment,
   } = useCryptKeeper();
 
   useEffect(() => {
@@ -67,6 +74,14 @@ const App = () => {
 
       <div>
         <h2>Connected identity:</h2>
+
+        {connectedCommitment && (
+          <div>
+            <strong>Commitment:</strong>
+
+            <p data-testid="commitment">{connectedCommitment}</p>
+          </div>
+        )}
 
         <div>
           <strong>Name:</strong>
@@ -110,6 +125,18 @@ const App = () => {
 
         <button data-testid="connect-identity" type="button" onClick={connectIdentity}>
           Connect identity
+        </button>
+      </div>
+
+      <div>
+        <h2>Reveal connected identity Commitment</h2>
+
+        <button
+          data-testid="reveal-connected-identity-commitment"
+          type="button"
+          onClick={onRevealConnectedIdentityCommitment}
+        >
+          Reveal
         </button>
       </div>
 
@@ -183,13 +210,15 @@ const App = () => {
 
       <hr />
 
-      <div>
-        <h2>Verifiable Credentials</h2>
+      {process.env.VERIFIABLE_CREDENTIALS === "true" && (
+        <div>
+          <h2>Verifiable Credentials</h2>
 
-        <button data-testid="add-verifiable-credential" type="button" onClick={addVerifiableCredentialRequest}>
-          Add a Verifiable Credential
-        </button>
-      </div>
+          <button data-testid="add-verifiable-credential" type="button" onClick={addVerifiableCredentialRequest}>
+            Add a Verifiable Credential
+          </button>
+        </div>
+      )}
 
       <ToastContainer newestOnTop />
     </div>

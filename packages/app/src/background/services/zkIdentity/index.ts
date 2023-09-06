@@ -1,3 +1,4 @@
+import { EventName } from "@cryptkeeperzk/providers";
 import {
   IIdentityMetadata,
   ISetIdentityNameArgs,
@@ -8,6 +9,7 @@ import {
   IConnectIdentityArgs,
   ICreateIdentityRequestArgs,
   IConnectIdentityRequestArgs,
+  IZkMetadata,
 } from "@cryptkeeperzk/types";
 import { ZkIdentitySemaphore, createNewIdentity } from "@cryptkeeperzk/zk";
 import { bigintToHex } from "bigint-conversion";
@@ -76,10 +78,14 @@ export default class ZkIdentityService implements IBackupable {
     return identity ? bigintToHex(identity.genIdentityCommitment()) : "";
   };
 
-  getConnectedIdentityData = async (): Promise<ConnectedIdentityMetadata | undefined> => {
+  getConnectedIdentityData = async (_: unknown, meta?: IZkMetadata): Promise<ConnectedIdentityMetadata | undefined> => {
     const identity = await this.getConnectedIdentity();
 
     if (!identity) {
+      return undefined;
+    }
+
+    if (meta?.urlOrigin && identity.metadata.host !== meta.urlOrigin) {
       return undefined;
     }
 
@@ -282,6 +288,34 @@ export default class ZkIdentityService implements IBackupable {
 
   connectIdentityRequest = async ({ host }: IConnectIdentityRequestArgs): Promise<void> => {
     await this.browserController.openPopup({ params: { redirect: Paths.CONNECT_IDENTITY, host } });
+  };
+
+  revealConnectedIdentityCommitmentRequest = async (): Promise<void> => {
+    await this.browserController.openPopup({ params: { redirect: Paths.REVEAL_IDENTITY_COMMITMENT } });
+  };
+
+  revealConnectedIdentityCommitment = async (): Promise<void> => {
+    const connectedIdentity = await this.getConnectedIdentity();
+
+    if (!connectedIdentity) {
+      throw new Error("No connected identity found");
+    }
+
+    const tabs = await browser.tabs.query({});
+    const hostTabs = tabs.filter(({ url }) => (url ? new URL(url).origin === connectedIdentity.metadata.host : false));
+    const commitment = bigintToHex(connectedIdentity.genIdentityCommitment());
+
+    await Promise.all(
+      hostTabs.map((tab) =>
+        browser.tabs
+          .sendMessage(tab.id!, { type: EventName.REVEAL_COMMITMENT, payload: { commitment } })
+          .catch(() => undefined),
+      ),
+    );
+
+    await this.historyService.trackOperation(OperationType.REVEAL_IDENTITY_COMMITMENT, {
+      identity: { commitment, metadata: connectedIdentity.metadata },
+    });
   };
 
   createIdentity = async ({

@@ -38,6 +38,7 @@ const RPC_METHOD_ACCESS: Record<RPCAction, boolean> = {
   [RPCAction.GENERATE_SEMAPHORE_PROOF]: true,
   [RPCAction.GENERATE_RLN_PROOF]: true,
   [RPCAction.ADD_VERIFIABLE_CREDENTIAL_REQUEST]: true,
+  [RPCAction.REVEAL_CONNECTED_IDENTITY_COMMITMENT_REQUEST]: true,
 };
 
 Object.freeze(RPC_METHOD_ACCESS);
@@ -137,6 +138,16 @@ export default class CryptKeeperController {
       RPCAction.CONNECT_IDENTITY_REQUEST,
       this.lockService.ensure,
       this.zkIdentityService.connectIdentityRequest,
+    );
+    this.handler.add(
+      RPCAction.REVEAL_CONNECTED_IDENTITY_COMMITMENT_REQUEST,
+      this.lockService.ensure,
+      this.zkIdentityService.revealConnectedIdentityCommitmentRequest,
+    );
+    this.handler.add(
+      RPCAction.REVEAL_CONNECTED_IDENTITY_COMMITMENT,
+      this.lockService.ensure,
+      this.zkIdentityService.revealConnectedIdentityCommitment,
     );
     this.handler.add(RPCAction.SET_IDENTITY_NAME, this.lockService.ensure, this.zkIdentityService.setIdentityName);
     this.handler.add(RPCAction.SET_IDENTITY_HOST, this.lockService.ensure, this.zkIdentityService.setIdentityHost);

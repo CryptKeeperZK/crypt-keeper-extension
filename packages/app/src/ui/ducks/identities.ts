@@ -130,7 +130,9 @@ export const deleteAllIdentities = () => async (): Promise<boolean> =>
 export const fetchIdentities = (): TypedThunk<Promise<void>> => async (dispatch) => {
   const [identities, metadata, commitment] = await Promise.all([
     postMessage<IIdentityData[]>({ method: RPCAction.GET_IDENTITIES }),
-    postMessage<ConnectedIdentityMetadata | undefined>({ method: RPCAction.GET_CONNECTED_IDENTITY_DATA }),
+    postMessage<ConnectedIdentityMetadata | undefined>({
+      method: RPCAction.GET_CONNECTED_IDENTITY_DATA,
+    }),
     postMessage<string>({ method: RPCAction.GET_CONNECTED_IDENTITY_COMMITMENT }),
   ]);
 
@@ -165,6 +167,10 @@ export const enableHistory =
     await postMessage<HistorySettings>({ method: RPCAction.ENABLE_OPERATION_HISTORY, payload: isEnabled });
     dispatch(setSettings({ isEnabled }));
   };
+
+export const revealConnectedIdentityCommitment = (): TypedThunk<Promise<void>> => async () => {
+  await postMessage({ method: RPCAction.REVEAL_CONNECTED_IDENTITY_COMMITMENT });
+};
 
 export const useIdentities = (): IIdentityData[] => useAppSelector((state) => state.identities.identities, deepEqual);
 

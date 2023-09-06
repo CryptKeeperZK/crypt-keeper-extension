@@ -1,22 +1,34 @@
 import { Identity } from "@cryptkeeperzk/semaphore-identity";
+import { generateProof } from "@cryptkeeperzk/semaphore-proof";
 import { IIdentityMetadata, IRLNProofRequest, ISemaphoreProofRequest } from "@cryptkeeperzk/types";
 import { MerkleProof } from "@zk-kit/incremental-merkle-tree";
 
 import { ZkIdentitySemaphore } from "@src/identity";
 
-import { mockRlnGenerateProof, mockSemaphoreGenerateProof, emptyFullProof } from "../mocks";
-import { RLNProofService } from "../RLNProof";
-import { SemaphoreProofService } from "../SemaphoreProof";
+import type { RLNFullProof, Proof, RLNPublicSignals } from "@cryptkeeperzk/rlnjs";
+
+import { RLNProofService, SemaphoreProofService } from "..";
 import { getMerkleProof } from "../utils";
+
+export const mockEmptyFullProof: RLNFullProof = {
+  snarkProof: {
+    proof: {} as Proof,
+    publicSignals: {} as RLNPublicSignals,
+  },
+  epoch: BigInt("0"),
+  rlnIdentifier: BigInt("1"),
+};
+
+const mockRlnGenerateProof = jest.fn(() => Promise.resolve(mockEmptyFullProof));
 
 jest.mock("@cryptkeeperzk/rlnjs", (): unknown => ({
   RLNProver: jest.fn(() => ({
-    generateProof: mockRlnGenerateProof, // Mock the generateProof function to resolve with emptyFullProof
+    generateProof: mockRlnGenerateProof,
   })),
 }));
 
 jest.mock("@cryptkeeperzk/semaphore-proof", (): unknown => ({
-  generateProof: mockSemaphoreGenerateProof,
+  generateProof: jest.fn(),
 }));
 
 jest.mock("../utils", (): unknown => ({
@@ -69,7 +81,7 @@ describe("background/services/protocols", () => {
 
     test("should generate rln proof properly with remote merkle proof", async () => {
       const rln = new RLNProofService();
-      mockRlnGenerateProof.mockResolvedValue(emptyFullProof);
+      mockRlnGenerateProof.mockResolvedValue(mockEmptyFullProof);
 
       await rln.genProof(identityDecorator, { ...proofRequest, merkleStorageAddress: "http://localhost:3000/merkle" });
 
@@ -78,7 +90,7 @@ describe("background/services/protocols", () => {
 
     test("should generate rln proof properly with remote merkle proof but with string epoch", async () => {
       const rln = new RLNProofService();
-      mockRlnGenerateProof.mockResolvedValue(emptyFullProof);
+      mockRlnGenerateProof.mockResolvedValue(mockEmptyFullProof);
 
       const proofRequestString: IRLNProofRequest = {
         identitySerialized: "identitySerialized",
@@ -151,6 +163,31 @@ describe("background/services/protocols", () => {
 
       await expect(promise).rejects.toThrowError("error");
     });
+
+    test("should throw error if there is no merkle proof", async () => {
+      (getMerkleProof as jest.Mock).mockResolvedValue(undefined);
+
+      const rlnProofRequest: IRLNProofRequest = {
+        identitySerialized: "identitySerialized",
+        circuitFilePath: "circuitFilePath",
+        verificationKey: "verificationKey",
+        zkeyFilePath: "zkeyFilePath",
+        rlnIdentifier: "1",
+        message: "message",
+        messageId: 1,
+        messageLimit: 0,
+        epoch: "1",
+      };
+
+      const rln = new RLNProofService();
+
+      const promise = rln.genProof(identityDecorator, {
+        ...rlnProofRequest,
+        merkleStorageAddress: "http://localhost:3000/merkle",
+      });
+
+      await expect(promise).rejects.toThrowError("No merkle proof error");
+    });
   });
 
   describe("semaphore", () => {
@@ -171,8 +208,8 @@ describe("background/services/protocols", () => {
         merkleStorageAddress: "http://localhost:3000/merkle",
       });
 
-      expect(mockSemaphoreGenerateProof).toBeCalledTimes(1);
-      expect(mockSemaphoreGenerateProof).toBeCalledWith(
+      expect(generateProof).toBeCalledTimes(1);
+      expect(generateProof).toBeCalledWith(
         identityDecorator.zkIdentity,
         defaultMerkleProof,
         proofRequest.externalNullifier,
@@ -207,6 +244,19 @@ describe("background/services/protocols", () => {
       });
 
       await expect(promise).rejects.toThrowError("error");
+    });
+
+    test("should throw error if there is no merkle proof", async () => {
+      (getMerkleProof as jest.Mock).mockResolvedValue(undefined);
+
+      const semaphore = new SemaphoreProofService();
+
+      const promise = semaphore.genProof(identityDecorator, {
+        ...proofRequest,
+        merkleStorageAddress: "http://localhost:3000/merkle",
+      });
+
+      await expect(promise).rejects.toThrowError("No merkle proof error");
     });
   });
 });

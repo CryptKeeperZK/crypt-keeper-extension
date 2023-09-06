@@ -1,6 +1,6 @@
 /* eslint-disable no-console */
 import { cryptkeeperConnect, type CryptKeeperInjectedProvider } from "@cryptkeeperzk/providers";
-import { EventName } from "@cryptkeeperzk/providers/dist/src/event/types";
+import { EventName } from "@cryptkeeperzk/providers";
 import { Identity } from "@cryptkeeperzk/semaphore-identity";
 import { bigintToHex } from "bigint-conversion";
 import { encodeBytes32String } from "ethers";
@@ -57,6 +57,7 @@ interface IUseCryptKeeperData {
   connectedIdentityMetadata?: ConnectedIdentityMetadata;
   client?: CryptKeeperInjectedProvider;
   proof?: ISemaphoreFullProof | IRLNSNARKProof;
+  connectedCommitment?: string;
   connect: () => void;
   createIdentity: () => unknown;
   connectIdentity: () => Promise<void>;
@@ -64,12 +65,14 @@ interface IUseCryptKeeperData {
   genSemaphoreProof: (proofType: MerkleProofType) => void;
   genRLNProof: (proofType: MerkleProofType) => void;
   addVerifiableCredentialRequest: () => Promise<void>;
+  onRevealConnectedIdentityCommitment: () => Promise<void>;
 }
 
 export const useCryptKeeper = (): IUseCryptKeeperData => {
   const [client, setClient] = useState<CryptKeeperInjectedProvider>();
   const [isLocked, setIsLocked] = useState(true);
   const [proof, setProof] = useState<ISemaphoreFullProof | IRLNSNARKProof>();
+  const [connectedCommitment, setConnectedIdentityCommitment] = useState<string>();
   const [connectedIdentityMetadata, setConnectedIdentityMetadata] = useState<ConnectedIdentityMetadata>();
   const mockIdentityCommitments: string[] = genMockIdentityCommitments();
 
@@ -173,7 +176,7 @@ export const useCryptKeeper = (): IUseCryptKeeperData => {
 
     setConnectedIdentityMetadata(payload as unknown as ConnectedIdentityMetadata);
 
-    toast(`Getting Identity Commitment successfully!`, { type: "success" });
+    toast(`Getting Identity data successfully!`, { type: "success" });
   }, [client, setConnectedIdentityMetadata]);
 
   const createIdentity = useCallback(() => {
@@ -182,6 +185,10 @@ export const useCryptKeeper = (): IUseCryptKeeperData => {
 
   const connectIdentity = useCallback(async () => {
     await client?.connectIdentity({ host: window.location.origin });
+  }, [client]);
+
+  const onRevealConnectedIdentityCommitment = useCallback(async () => {
+    await client?.revealConnectedIdentityRequest();
   }, [client]);
 
   const onIdentityChanged = useCallback(
@@ -213,6 +220,13 @@ export const useCryptKeeper = (): IUseCryptKeeperData => {
     toast(`Rejected request to add a Verifiable Credential.`, { type: "error" });
   }, []);
 
+  const onRevealCommitment = useCallback(
+    (data: unknown) => {
+      setConnectedIdentityCommitment((data as { commitment: string }).commitment);
+    },
+    [setConnectedIdentityCommitment],
+  );
+
   useEffect(() => {
     if (!client) {
       return undefined;
@@ -223,19 +237,29 @@ export const useCryptKeeper = (): IUseCryptKeeperData => {
     client.on(EventName.LOGOUT, onLogout);
     client.on(EventName.ADD_VERIFIABLE_CREDENTIAL, onAddVerifiableCredential);
     client.on(EventName.REJECT_VERIFIABLE_CREDENTIAL, onRejectVerifiableCredential);
+    client.on(EventName.REVEAL_COMMITMENT, onRevealCommitment);
 
     getConnectedIdentity();
 
     return () => {
       client.cleanListeners();
     };
-  }, [client, onLogout, onIdentityChanged, onLogin, onAddVerifiableCredential, onRejectVerifiableCredential]);
+  }, [
+    client,
+    onLogout,
+    onIdentityChanged,
+    onLogin,
+    onAddVerifiableCredential,
+    onRejectVerifiableCredential,
+    onRevealCommitment,
+  ]);
 
   return {
     client,
     isLocked,
     connectedIdentityMetadata,
     proof,
+    connectedCommitment,
     connect,
     createIdentity,
     connectIdentity,
@@ -243,5 +267,6 @@ export const useCryptKeeper = (): IUseCryptKeeperData => {
     genSemaphoreProof,
     genRLNProof,
     addVerifiableCredentialRequest,
+    onRevealConnectedIdentityCommitment,
   };
 };

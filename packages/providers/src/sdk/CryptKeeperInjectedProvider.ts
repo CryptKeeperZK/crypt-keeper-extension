@@ -7,13 +7,10 @@ import {
   IInjectedMessageData,
   IInjectedProviderRequest,
   ISemaphoreFullProof,
-} from "@cryptkeeperzk/types";
-import {
   ISemaphoreProofRequiredArgs,
   IRLNProofRequiredArgs,
   IRLNSNARKProof,
-} from "@cryptkeeperzk/types/dist/src/proof";
-import { ZkProofService } from "@cryptkeeperzk/zk";
+} from "@cryptkeeperzk/types";
 
 import { RPCAction } from "../constants";
 import { EventEmitter, EventHandler, EventName } from "../event";
@@ -22,6 +19,15 @@ import { EventEmitter, EventHandler, EventName } from "../event";
  * Stores promises associated with message nonces.
  */
 const promises = new Map<string, Handlers>();
+
+const EVENTS = [
+  EventName.IDENTITY_CHANGED,
+  EventName.LOGIN,
+  EventName.LOGOUT,
+  EventName.ADD_VERIFIABLE_CREDENTIAL,
+  EventName.REJECT_VERIFIABLE_CREDENTIAL,
+  EventName.REVEAL_COMMITMENT,
+];
 
 interface Handlers {
   resolve: (res?: unknown) => void;
@@ -46,11 +52,6 @@ export class CryptKeeperInjectedProvider {
   private nonce: number;
 
   /**
-   * ZkProofService instance for generating zero-knowledge proofs.
-   */
-  private zkProofService: ZkProofService;
-
-  /**
    * EventEmitter for handling events.
    */
   private emitter: EventEmitter;
@@ -62,7 +63,6 @@ export class CryptKeeperInjectedProvider {
    */
   constructor() {
     this.nonce = 0;
-    this.zkProofService = ZkProofService.getInstance();
     this.emitter = new EventEmitter();
   }
 
@@ -219,33 +219,9 @@ export class CryptKeeperInjectedProvider {
     const { data } = event;
 
     if (data.target === "injected-injectedscript") {
-      if (data.nonce === (EventName.IDENTITY_CHANGED as string)) {
+      if (EVENTS.includes(data.nonce as EventName)) {
         const [, res] = data.payload;
-        this.emit(EventName.IDENTITY_CHANGED, res);
-        return;
-      }
-
-      if (data.nonce === (EventName.LOGOUT as string)) {
-        const [, res] = data.payload;
-        this.emit(EventName.LOGOUT, res);
-        return;
-      }
-
-      if (data.nonce === (EventName.LOGIN as string)) {
-        const [, res] = data.payload;
-        this.emit(EventName.LOGIN, res);
-        return;
-      }
-
-      if (data.nonce === (EventName.ADD_VERIFIABLE_CREDENTIAL as string)) {
-        const [, res] = data.payload;
-        this.emit(EventName.ADD_VERIFIABLE_CREDENTIAL, res);
-        return;
-      }
-
-      if (data.nonce === (EventName.REJECT_VERIFIABLE_CREDENTIAL as string)) {
-        const [, res] = data.payload;
-        this.emit(EventName.REJECT_VERIFIABLE_CREDENTIAL, res);
+        this.emit(data.nonce as EventName, res);
         return;
       }
 
@@ -283,7 +259,7 @@ export class CryptKeeperInjectedProvider {
   /**
    * Sets the host permissions for the specified host.
    *
-   * @param {striing} host - The host for which to set the permissions.
+   * @param {string} host - The host for which to set the permissions.
    * @param {IHostPermission} permissions - The host permissions to set.
    * @returns {Promise<unknown>} A Promise that resolves to the result of setting the host permissions.
    */
@@ -397,6 +373,17 @@ export class CryptKeeperInjectedProvider {
     await this.post({
       method: RPCAction.ADD_VERIFIABLE_CREDENTIAL_REQUEST,
       payload: serializedVerifiableCredential,
+    });
+  }
+
+  /**
+   * Requests user to reveal a connected identity commitment.
+   *
+   * @returns {Promise<void>}
+   */
+  async revealConnectedIdentityRequest(): Promise<void> {
+    await this.post({
+      method: RPCAction.REVEAL_CONNECTED_IDENTITY_COMMITMENT_REQUEST,
     });
   }
 }

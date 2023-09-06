@@ -1,4 +1,4 @@
-import { EventName } from "@cryptkeeperzk/providers/dist/src/event/types";
+import { EventName } from "@cryptkeeperzk/providers";
 import log from "loglevel";
 import browser from "webextension-polyfill";
 
@@ -58,18 +58,11 @@ function injectScript() {
         );
         return;
       }
-      default:
-        log.warn("unknown action in content script");
-    }
-  });
-
-  browser.runtime.onMessage.addListener((request: { action: string }) => {
-    switch (request.action) {
       case EventName.ADD_VERIFIABLE_CREDENTIAL: {
         window.postMessage(
           {
             target: "injected-injectedscript",
-            payload: [null, (request as { action: string; verifiableCredentialHash: string }).verifiableCredentialHash],
+            payload: [null, (action.payload as { verifiableCredentialHash: string }).verifiableCredentialHash],
             nonce: EventName.ADD_VERIFIABLE_CREDENTIAL,
           },
           "*",
@@ -87,7 +80,19 @@ function injectScript() {
         );
         break;
       }
+      case EventName.REVEAL_COMMITMENT: {
+        window.postMessage(
+          {
+            target: "injected-injectedscript",
+            payload: [null, action.payload as { commitment: string }],
+            nonce: EventName.REVEAL_COMMITMENT,
+          },
+          "*",
+        );
+        break;
+      }
       default:
+        log.warn("unknown action in content script");
     }
   });
 }

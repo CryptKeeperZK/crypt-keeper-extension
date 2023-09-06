@@ -10,7 +10,7 @@ import {
   getRateCommitmentHash,
   getRlnVerificationKeyJson,
   str2BigInt,
-} from "../utils";
+} from "../..";
 
 describe("background/services/protocols/utils", () => {
   const defaultMerkleProof: MerkleProof = {
@@ -76,6 +76,16 @@ describe("background/services/protocols/utils", () => {
     });
 
     expect(result).toBeDefined();
+  });
+
+  test("should throw error if there is no enough params for getting merkle proof", async () => {
+    const identity = new Identity();
+
+    await expect(
+      getMerkleProof({
+        identityCommitment: identity.getCommitment(),
+      }),
+    ).rejects.toThrowError("ZK: Cannot get MerkleProof");
   });
 
   test("should get merkle proof from remote host properly", async () => {
