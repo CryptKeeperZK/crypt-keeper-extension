@@ -60,6 +60,7 @@ jobs:
           TARGET: "firefox"
           MANIFEST_VERSION: 2
         run: |-
+          pnpm exec nx run @cryptkeeperzk/app:bump --tag=${{ github.ref_name }}
           pnpm run build
           zip -r cryptkeeper-firefox-extension-v${{ env.EXTENSION_VERSION }}.zip ./packages/app/dist
 
