@@ -180,7 +180,7 @@ export async function deserializeVerifiableCredential(
  * @param verifiablePresentation An object representing a VerifiablePresentation.
  * @returns A string representing a VerifiablePresentation.
  */
-export function serializeVerifiablePresentation(verifiablePresentation: VerifiablePresentation): string {
+export function serializeVerifiablePresentation(verifiablePresentation: IVerifiablePresentation): string {
   if (!verifiablePresentation.verifiableCredential) {
     return stringify(verifiablePresentation);
   }

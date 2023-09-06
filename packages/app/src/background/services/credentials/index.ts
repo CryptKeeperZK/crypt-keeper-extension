@@ -1,4 +1,6 @@
 import { EventName } from "@cryptkeeperzk/providers";
+import { RejectRequests } from "@cryptkeeperzk/providers/dist/src/event";
+import { IVerifiablePresentation, IVerifiablePresentationRequest } from "@cryptkeeperzk/types";
 import browser from "webextension-polyfill";
 
 import BrowserUtils from "@src/background/controllers/browserUtils";
@@ -8,7 +10,6 @@ import NotificationService from "@src/background/services/notification";
 import SimpleStorage from "@src/background/services/storage";
 import { Paths } from "@src/constants";
 import { OperationType, IRenameVerifiableCredentialArgs, ICryptkeeperVerifiableCredential } from "@src/types";
-import { IVerifiablePresentation, IVerifiablePresentationRequest } from "@cryptkeeperzk/types";
 import { IAddVerifiableCredentialArgs } from "@src/types/verifiableCredentials";
 
 import type { BackupData, IBackupable } from "@src/background/services/backup";
@@ -212,7 +213,7 @@ export default class VerifiableCredentialsService implements IBackupable {
     });
   };
 
-  generateVerifiablePresentation = async (verifiablePresentation: VerifiablePresentation): Promise<void> => {
+  generateVerifiablePresentation = async (verifiablePresentation: IVerifiablePresentation): Promise<void> => {
     await this.historyService.trackOperation(OperationType.GENERATE_VERIFIABLE_PRESENTATION, {});
     await this.notificationService.create({
       options: {
