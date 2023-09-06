@@ -2,13 +2,13 @@ import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 
-import { CryptkeeperVerifiableCredential } from "@src/types";
+import { ICryptkeeperVerifiableCredential } from "@src/types";
 import { FullModal, FullModalHeader, FullModalContent, FullModalFooter } from "@src/ui/components/FullModal";
 import { VerifiableCredentialItem } from "@src/ui/components/VerifiableCredential/Item";
 
 export interface ISelectVerifiableCredentialProps {
   verifiablePresentationRequest?: string;
-  cryptkeeperVerifiableCredentials: CryptkeeperVerifiableCredential[];
+  cryptkeeperVerifiableCredentials: ICryptkeeperVerifiableCredential[];
   selectedVerifiableCredentialHashes: string[];
   error?: string;
   onCloseModal: () => void;

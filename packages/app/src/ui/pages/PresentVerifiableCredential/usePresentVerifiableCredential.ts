@@ -1,10 +1,11 @@
+import { IVerifiablePresentation } from "@cryptkeeperzk/types";
 import { useCallback, useEffect, useState } from "react";
 
 import {
   generateVerifiablePresentationFromVerifiableCredentials,
   serializeVerifiablePresentation,
 } from "@src/background/services/credentials/utils";
-import { CryptkeeperVerifiableCredential, VerifiablePresentation } from "@src/types";
+import { ICryptkeeperVerifiableCredential } from "@src/types";
 import { closePopup } from "@src/ui/ducks/app";
 import { useAppDispatch } from "@src/ui/ducks/hooks";
 import {
@@ -22,9 +23,9 @@ export interface IUsePresentVerifiableCredentialData {
   isWalletConnected: boolean;
   isWalletInstalled: boolean;
   verifiablePresentationRequest?: string;
-  cryptkeeperVerifiableCredentials: CryptkeeperVerifiableCredential[];
+  cryptkeeperVerifiableCredentials: ICryptkeeperVerifiableCredential[];
   selectedVerifiableCredentialHashes: string[];
-  verifiablePresentation?: VerifiablePresentation;
+  verifiablePresentation?: IVerifiablePresentation;
   error?: string;
   onCloseModal: () => void;
   onRejectRequest: () => void;
@@ -39,7 +40,7 @@ export const usePresentVerifiableCredential = (): IUsePresentVerifiableCredentia
   const [verifiablePresentationRequest, setVerifiablePresentationRequest] = useState<string>();
   const cryptkeeperVerifiableCredentials = useCryptkeeperVerifiableCredentials();
   const [selectedVerifiableCredentialHashes, setSelectedVerifiableCredentialHashes] = useState<string[]>([]);
-  const [verifiablePresentation, setVerifiablePresentation] = useState<VerifiablePresentation>();
+  const [verifiablePresentation, setVerifiablePresentation] = useState<IVerifiablePresentation>();
   const [error, setError] = useState<string>();
 
   const ethWallet = useEthWallet();
@@ -106,7 +107,9 @@ export const usePresentVerifiableCredential = (): IUsePresentVerifiableCredentia
   }, [setVerifiablePresentation]);
 
   const onConnectWallet = useCallback(async () => {
-    await ethWallet.onConnect().catch(() => setError("Wallet connection error"));
+    await ethWallet.onConnect().catch(() => {
+      setError("Wallet connection error");
+    });
   }, [setError, ethWallet.onConnect]);
 
   const onSubmitVerifiablePresentation = useCallback(

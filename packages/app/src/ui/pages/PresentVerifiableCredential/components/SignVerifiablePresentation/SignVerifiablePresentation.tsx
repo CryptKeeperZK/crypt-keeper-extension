@@ -2,14 +2,14 @@ import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 
-import { CryptkeeperVerifiableCredential } from "@src/types";
+import { ICryptkeeperVerifiableCredential } from "@src/types";
 import { FullModal, FullModalHeader, FullModalContent, FullModalFooter } from "@src/ui/components/FullModal";
 import { VerifiableCredentialItem } from "@src/ui/components/VerifiableCredential/Item";
 
 export interface ISignVerifiablePresentationProps {
   isWalletConnected: boolean;
   isWalletInstalled: boolean;
-  cryptkeeperVerifiableCredentials: CryptkeeperVerifiableCredential[];
+  cryptkeeperVerifiableCredentials: ICryptkeeperVerifiableCredential[];
   selectedVerifiableCredentialHashes: string[];
   onCloseModal: () => void;
   onReturnToSelection: () => void;
@@ -62,7 +62,13 @@ const SignVerifiablePresentation = ({
               sx={{ textTransform: "none", flex: 1, mr: 1 }}
               type="submit"
               variant="outlined"
-              onClick={isWalletConnected ? () => onSubmitVerifiablePresentation(true) : onConnectWallet}
+              onClick={
+                isWalletConnected
+                  ? () => {
+                      onSubmitVerifiablePresentation(true);
+                    }
+                  : onConnectWallet
+              }
             >
               {isWalletInstalled ? ethWalletTitle : "Install MetaMask"}
             </Button>
@@ -73,7 +79,9 @@ const SignVerifiablePresentation = ({
               sx={{ textTransform: "none", flex: 1, ml: 1 }}
               type="submit"
               variant="contained"
-              onClick={() => onSubmitVerifiablePresentation(false)}
+              onClick={() => {
+                onSubmitVerifiablePresentation(false);
+              }}
             >
               Proceed Without Signing
             </Button>
