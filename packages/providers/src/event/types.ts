@@ -16,6 +16,7 @@ export type EventHandler = (data: unknown) => void;
  * @property {string} IDENTITY_CHANGED - "identityChanged"
  * @property {string} LOGOUT - "logout"
  * @property {string} ADD_VERIFIABLE_CREDENTIAL - "addVerifiableCredential"
+ * @property {string} GENERATE_VERIFIABLE_PRESENTATION - "generateVerifiablePresentation"
  * @property {string} REVEAL_COMMITMENT - "revealCommitment"
  * @property {string} JOIN_GROUP - "joinGroup"
  * @property {string} GROUP_MERKLE_PROOF - "groupMerkleProof"
@@ -26,9 +27,7 @@ export enum EventName {
   IDENTITY_CHANGED = "identityChanged",
   LOGOUT = "logout",
   ADD_VERIFIABLE_CREDENTIAL = "addVerifiableCredential",
-  REJECT_VERIFIABLE_CREDENTIAL = "rejectVerifiableCredential",
   GENERATE_VERIFIABLE_PRESENTATION = "generateVerifiablePresentation",
-  REJECT_VERIFIABLE_PRESENTATION_REQUEST = "rejectVerifiablePresentationRequest",
   REVEAL_COMMITMENT = "revealCommitment",
   JOIN_GROUP = "joinGroup",
   GROUP_MERKLE_PROOF = "groupMerkleProof",
@@ -42,3 +41,20 @@ export enum EventName {
  * @typedef {Record<EventName, EventHandler>} Events
  */
 export type Events = Record<EventName, EventHandler>;
+
+/**
+ * Enumeration representing possible rejected requests.
+ *
+ * @enum {string}
+ * @readonly
+ * @property {string} ADD_VERIFIABLE_CREDENTIAL - "addVerifiableCredential"
+ * @property {string} REVEAL_COMMITMENT - "revealCommitment"
+ * @property {string} JOIN_GROUP - "joinGroup"
+ * @property {string} VERIFIABLE_PRESENTATION_REQUEST - "verifiablePresentationRequest"
+ */
+export enum RejectRequests {
+  ADD_VERIFIABLE_CREDENTIAL = "addVerifiableCredential",
+  JOIN_GROUP = "joinGroup",
+  REVEAL_COMMITMENT = "revealCommitment",
+  VERIFIABLE_PRESENTATION_REQUEST = "verifiablePresentationRequest",
+}

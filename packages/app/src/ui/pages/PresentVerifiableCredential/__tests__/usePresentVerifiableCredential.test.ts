@@ -7,8 +7,14 @@ import { act, renderHook, waitFor } from "@testing-library/react";
 import { defaultWalletHookData } from "@src/config/mock/wallet";
 import { closePopup } from "@src/ui/ducks/app";
 import { useAppDispatch } from "@src/ui/ducks/hooks";
+import {
+  generateVerifiablePresentation,
+  rejectVerifiablePresentationRequest,
+} from "@src/ui/ducks/verifiableCredentials";
 import { useCryptkeeperVerifiableCredentials } from "@src/ui/hooks/verifiableCredentials";
 import { useEthWallet } from "@src/ui/hooks/wallet";
+
+import type { BrowserProvider } from "ethers";
 
 import { usePresentVerifiableCredential } from "../usePresentVerifiableCredential";
 
@@ -75,6 +81,7 @@ jest.mock("@src/ui/ducks/verifiableCredentials", (): unknown => ({
   fetchVerifiableCredentials: jest.fn(),
   useVerifiableCredentials: jest.fn(),
   generateVerifiablePresentation: jest.fn(),
+  rejectVerifiablePresentationRequest: jest.fn(),
 }));
 
 jest.mock("@src/ui/hooks/wallet", (): unknown => ({
@@ -87,6 +94,12 @@ describe("ui/pages/PresentVerifiableCredential/usePresentVerifiableCredential", 
 
   const exampleRequest = "exampleRequest";
 
+  const mockProvider = {
+    getSigner: () => ({
+      signMessage: jest.fn(),
+    }),
+  } as unknown as BrowserProvider;
+
   const savedWindow = window;
 
   beforeEach(() => {
@@ -94,7 +107,7 @@ describe("ui/pages/PresentVerifiableCredential/usePresentVerifiableCredential", 
 
     (useCryptkeeperVerifiableCredentials as jest.Mock).mockReturnValue(mockCryptkeeperVerifiableCredentials);
 
-    (useEthWallet as jest.Mock).mockReturnValue({ ...defaultWalletHookData, isActive: true });
+    (useEthWallet as jest.Mock).mockReturnValue({ ...defaultWalletHookData, provider: mockProvider, isActive: true });
 
     // eslint-disable-next-line no-global-assign
     window = Object.create(window) as Window & typeof globalThis;
@@ -124,12 +137,180 @@ describe("ui/pages/PresentVerifiableCredential/usePresentVerifiableCredential", 
     });
   });
 
-  test("should close the modal properly", () => {
+  test("should close the modal properly", async () => {
     const { result } = renderHook(() => usePresentVerifiableCredential());
+
+    await waitFor(() => {
+      expect(result.current.verifiablePresentationRequest).toStrictEqual(exampleRequest);
+    });
 
     act(() => result.current.onCloseModal());
 
     expect(closePopup).toBeCalledTimes(1);
     expect(mockDispatch).toBeCalledTimes(2);
+  });
+
+  test("should reject a verifiable presentation request", async () => {
+    const { result } = renderHook(() => usePresentVerifiableCredential());
+
+    await waitFor(() => {
+      expect(result.current.verifiablePresentationRequest).toStrictEqual(exampleRequest);
+    });
+
+    await act(async () => Promise.resolve(result.current.onRejectRequest()));
+
+    expect(rejectVerifiablePresentationRequest).toBeCalledTimes(1);
+    expect(closePopup).toBeCalledTimes(1);
+    expect(mockDispatch).toBeCalledTimes(3);
+  });
+
+  test("should toggle selecting a verifiable credential", async () => {
+    const hash = "0x123";
+
+    const { result } = renderHook(() => usePresentVerifiableCredential());
+
+    await waitFor(() => {
+      expect(result.current.verifiablePresentationRequest).toStrictEqual(exampleRequest);
+    });
+
+    act(() => result.current.onToggleSelection(hash));
+
+    expect(result.current.selectedVerifiableCredentialHashes).toStrictEqual([hash]);
+
+    act(() => result.current.onToggleSelection(hash));
+
+    expect(result.current.selectedVerifiableCredentialHashes).toStrictEqual([]);
+  });
+
+  test("should confirm selection of verifiable credentials", async () => {
+    const hash = "0x123";
+
+    const { result } = renderHook(() => usePresentVerifiableCredential());
+
+    await waitFor(() => {
+      expect(result.current.verifiablePresentationRequest).toStrictEqual(exampleRequest);
+    });
+
+    act(() => result.current.onConfirmSelection());
+
+    expect(result.current.error).toBe("Please select at least one credential.");
+
+    act(() => result.current.onToggleSelection(hash));
+    act(() => result.current.onConfirmSelection());
+
+    expect(result.current.verifiablePresentation?.verifiableCredential?.length).toBe(1);
+  });
+
+  test("should return to selection of verifiable credentials", async () => {
+    const hash = "0x123";
+
+    const { result } = renderHook(() => usePresentVerifiableCredential());
+
+    await waitFor(() => {
+      expect(result.current.verifiablePresentationRequest).toStrictEqual(exampleRequest);
+    });
+
+    act(() => result.current.onToggleSelection(hash));
+    act(() => result.current.onConfirmSelection());
+    act(() => result.current.onReturnToSelection());
+
+    expect(result.current.verifiablePresentation).toBe(undefined);
+  });
+
+  test("should connect eth wallet properly", async () => {
+    const { result } = renderHook(() => usePresentVerifiableCredential());
+
+    await waitFor(() => {
+      expect(result.current.verifiablePresentationRequest).toStrictEqual(exampleRequest);
+    });
+
+    await act(async () => Promise.resolve(result.current.onConnectWallet()));
+
+    expect(defaultWalletHookData.onConnect).toBeCalledTimes(1);
+  });
+
+  test("should handle error when trying to connect with eth wallet", async () => {
+    (useEthWallet as jest.Mock).mockReturnValue({
+      ...defaultWalletHookData,
+      onConnect: jest.fn(() => Promise.reject()),
+    });
+
+    const { result } = renderHook(() => usePresentVerifiableCredential());
+
+    await waitFor(() => {
+      expect(result.current.verifiablePresentationRequest).toStrictEqual(exampleRequest);
+    });
+
+    await act(async () => Promise.resolve(result.current.onConnectWallet()));
+
+    expect(result.current.error).toBe("Wallet connection error");
+  });
+
+  test("should submit verifiable presentation without signature properly", async () => {
+    const hash = "0x123";
+
+    const { result } = renderHook(() => usePresentVerifiableCredential());
+
+    await waitFor(() => {
+      expect(result.current.verifiablePresentationRequest).toStrictEqual(exampleRequest);
+    });
+
+    act(() => result.current.onToggleSelection(hash));
+    act(() => result.current.onConfirmSelection());
+    await act(async () => Promise.resolve(result.current.onSubmitVerifiablePresentation(false)));
+
+    expect(generateVerifiablePresentation).toBeCalledTimes(1);
+    expect(closePopup).toBeCalledTimes(1);
+    expect(mockDispatch).toBeCalledTimes(3);
+  });
+
+  test("should submit verifiable presentation with signature properly", async () => {
+    const hash = "0x123";
+
+    const { result } = renderHook(() => usePresentVerifiableCredential());
+
+    await waitFor(() => {
+      expect(result.current.verifiablePresentationRequest).toStrictEqual(exampleRequest);
+    });
+
+    act(() => result.current.onToggleSelection(hash));
+    act(() => result.current.onConfirmSelection());
+    await act(async () => Promise.resolve(result.current.onSubmitVerifiablePresentation(true)));
+
+    expect(generateVerifiablePresentation).toBeCalledTimes(1);
+    expect(closePopup).toBeCalledTimes(1);
+    expect(mockDispatch).toBeCalledTimes(3);
+  });
+
+  test("should fail to submit an empty verifiable presentation", async () => {
+    const { result } = renderHook(() => usePresentVerifiableCredential());
+
+    await waitFor(() => {
+      expect(result.current.verifiablePresentationRequest).toStrictEqual(exampleRequest);
+    });
+
+    await act(async () => Promise.resolve(result.current.onSubmitVerifiablePresentation(false)));
+
+    expect(generateVerifiablePresentation).toBeCalledTimes(0);
+    expect(result.current.error).toBe("Failed to generate Verifiable Presentation.");
+  });
+
+  test("should fail to sign a verifiable presentation with an Ethereum connection error", async () => {
+    const hash = "0x123";
+
+    (useEthWallet as jest.Mock).mockReturnValue({ ...defaultWalletHookData, address: undefined });
+
+    const { result } = renderHook(() => usePresentVerifiableCredential());
+
+    await waitFor(() => {
+      expect(result.current.verifiablePresentationRequest).toStrictEqual(exampleRequest);
+    });
+
+    act(() => result.current.onToggleSelection(hash));
+    act(() => result.current.onConfirmSelection());
+    await act(async () => Promise.resolve(result.current.onSubmitVerifiablePresentation(true)));
+
+    expect(generateVerifiablePresentation).toBeCalledTimes(0);
+    expect(result.current.error).toBe("Could not connect to Ethereum account.");
   });
 });

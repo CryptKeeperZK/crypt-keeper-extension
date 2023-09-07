@@ -145,17 +145,6 @@ function injectScript() {
         );
         break;
       }
-      case EventName.REJECT_VERIFIABLE_PRESENTATION_REQUEST: {
-        window.postMessage(
-          {
-            target: "injected-injectedscript",
-            payload: [null],
-            nonce: EventName.REJECT_VERIFIABLE_PRESENTATION_REQUEST,
-          },
-          "*",
-        );
-        break;
-      }
       default:
         log.warn("unknown action in content script");
     }

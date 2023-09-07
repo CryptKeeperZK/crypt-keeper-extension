@@ -12,10 +12,20 @@ export const VerifiableCredentialList = (): JSX.Element => {
   return (
     <Box
       sx={{
+        overflowX: "hidden",
+        overflowY: "auto",
         top: 56,
         bottom: 56,
         position: "absolute",
         width: "100%",
+        scrollbarWidth: "none",
+        display: "flex",
+        alignItems: "center",
+        flexDirection: "column",
+
+        "&::-webkit-scrollbar": {
+          display: "none",
+        },
       }}
     >
       {cryptkeeperVerifiableCredentials.map(({ verifiableCredential, metadata }) => (

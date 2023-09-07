@@ -287,9 +287,7 @@ export const useCryptKeeper = (): IUseCryptKeeperData => {
     client.on(EventName.IDENTITY_CHANGED, onIdentityChanged);
     client.on(EventName.LOGOUT, onLogout);
     client.on(EventName.ADD_VERIFIABLE_CREDENTIAL, onAddVerifiableCredential);
-    client.on(EventName.REJECT_VERIFIABLE_CREDENTIAL, onReject);
     client.on(EventName.GENERATE_VERIFIABLE_PRESENTATION, onGenerateVerifiablePresentation);
-    client.on(EventName.REJECT_VERIFIABLE_PRESENTATION_REQUEST, onRejectVerifiablePresentationRequest);
     client.on(EventName.USER_REJECT, onReject);
     client.on(EventName.REVEAL_COMMITMENT, onRevealCommitment);
 

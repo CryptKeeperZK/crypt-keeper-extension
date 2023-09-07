@@ -228,8 +228,8 @@ export default class VerifiableCredentialsService implements IBackupable {
       tabs.map((tab) =>
         browser.tabs
           .sendMessage(tab.id!, {
-            action: EventName.GENERATE_VERIFIABLE_PRESENTATION,
-            verifiablePresentation,
+            type: EventName.GENERATE_VERIFIABLE_PRESENTATION,
+            payload: { verifiablePresentation },
           })
           .catch(() => undefined),
       ),
@@ -251,7 +251,8 @@ export default class VerifiableCredentialsService implements IBackupable {
       tabs.map((tab) =>
         browser.tabs
           .sendMessage(tab.id!, {
-            action: EventName.REJECT_VERIFIABLE_PRESENTATION_REQUEST,
+            type: EventName.USER_REJECT,
+            payload: { type: RejectRequests.VERIFIABLE_PRESENTATION_REQUEST },
           })
           .catch(() => undefined),
       ),

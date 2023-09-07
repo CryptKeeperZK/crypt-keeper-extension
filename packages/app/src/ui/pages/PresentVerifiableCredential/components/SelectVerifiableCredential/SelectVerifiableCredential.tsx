@@ -58,6 +58,7 @@ const SelectVerifiableCredential = ({
       <FullModalFooter>
         <Box sx={{ alignItems: "center", display: "flex", justifyContent: "space-between", width: "100%" }}>
           <Button
+            data-testid="reject-verifiable-presentation-request"
             name="reject"
             sx={{ textTransform: "none" }}
             type="button"
@@ -68,6 +69,7 @@ const SelectVerifiableCredential = ({
           </Button>
 
           <Button
+            data-testid="confirm-verifiable-presentation-request"
             name="confirm"
             sx={{ textTransform: "none" }}
             type="button"
