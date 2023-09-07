@@ -27,6 +27,8 @@ const EVENTS = [
   EventName.LOGOUT,
   EventName.ADD_VERIFIABLE_CREDENTIAL,
   EventName.REJECT_VERIFIABLE_CREDENTIAL,
+  EventName.GENERATE_VERIFIABLE_PRESENTATION,
+  EventName.REJECT_VERIFIABLE_PRESENTATION_REQUEST,
   EventName.REVEAL_COMMITMENT,
 ];
 
@@ -223,18 +225,6 @@ export class CryptKeeperInjectedProvider {
       if (EVENTS.includes(data.nonce as EventName)) {
         const [, res] = data.payload;
         this.emit(data.nonce as EventName, res);
-        return;
-      }
-
-      if (data.nonce === (EventName.GENERATE_VERIFIABLE_PRESENTATION as string)) {
-        const [, res] = data.payload;
-        this.emit(EventName.GENERATE_VERIFIABLE_PRESENTATION, res);
-        return;
-      }
-
-      if (data.nonce === (EventName.REJECT_VERIFIABLE_PRESENTATION_REQUEST as string)) {
-        const [, res] = data.payload;
-        this.emit(EventName.REJECT_VERIFIABLE_PRESENTATION_REQUEST, res);
         return;
       }
 

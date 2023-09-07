@@ -57,14 +57,18 @@ export const VerifiableCredentialItem = ({
     <Box
       key={metadata.hash}
       sx={{
-        p: 3,
+        p: 2,
         display: "flex",
-        flexDirection: "row",
-        flexWrap: "nowrap",
         alignItems: "center",
+        flexWrap: "nowrap",
+        borderBottom: "1px solid",
+        borderColor: "text.800",
+        cursor: "pointer",
+        height: 100,
+        width: "100%",
 
-        "&::-webkit-scrollbar": {
-          display: "none",
+        "&:hover": {
+          backgroundColor: "text.900",
         },
       }}
     >
@@ -101,10 +105,10 @@ export const VerifiableCredentialItem = ({
             component="form"
             sx={{
               display: "flex",
-              flexDirection: "row",
               alignItems: "center",
-              fontSize: "large",
-              fontWeight: "semibold",
+              fontWeight: "bold",
+              fontSize: "1.125rem",
+              lineHeight: "1.75rem",
             }}
             onSubmit={onSubmit}
           >
@@ -128,16 +132,22 @@ export const VerifiableCredentialItem = ({
             </IconButton>
           </Box>
         ) : (
-          <Typography fontSize="1.125rem" fontWeight="bold" lineHeight="1.75rem">
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              fontWeight: "bold",
+              fontSize: "1.125rem",
+              lineHeight: "1.75rem",
+            }}
+          >
             {name}
-          </Typography>
+          </Box>
         )}
 
-        <Typography color="text.secondary" fontSize="1.0rem">
-          Credential hash: {ellipsify(metadata.hash)}
-        </Typography>
+        <Typography color="text.primary">Credential hash: {ellipsify(metadata.hash)}</Typography>
 
-        <Typography color="text.secondary" fontSize="1.0rem">
+        <Typography color="text.secondary" variant="body2">
           Issuer: {ellipsify(issuer)}
         </Typography>
       </Box>

@@ -35,7 +35,7 @@ const SignVerifiablePresentation = ({
 
   return (
     <Box sx={{ width: "100%", overflowX: "hidden", overflowY: "auto" }}>
-      <FullModal data-testid="present-verifiable-credential-page" onClose={onCloseModal}>
+      <FullModal data-testid="sign-verifiable-credential-page" onClose={onCloseModal}>
         <FullModalHeader onClose={onReturnToSelection}>Sign Verifiable Presentation</FullModalHeader>
 
         <FullModalContent>
@@ -56,6 +56,7 @@ const SignVerifiablePresentation = ({
         <FullModalFooter>
           <Box sx={{ alignItems: "center", display: "flex", justifyContent: "space-between", width: "100%" }}>
             <Button
+              data-testid="sign-verifiable-presentation-metamask"
               disabled={!isWalletInstalled}
               name="metamask"
               size="small"
@@ -74,6 +75,7 @@ const SignVerifiablePresentation = ({
             </Button>
 
             <Button
+              data-testid="submit-verifiable-presentation-without-signing"
               name="cryptkeeper"
               size="small"
               sx={{ textTransform: "none", flex: 1, ml: 1 }}

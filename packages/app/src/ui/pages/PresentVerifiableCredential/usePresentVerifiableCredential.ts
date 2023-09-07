@@ -88,7 +88,7 @@ export const usePresentVerifiableCredential = (): IUsePresentVerifiableCredentia
 
   const onConfirmVerifiableCredentialSelection = useCallback(() => {
     if (selectedVerifiableCredentialHashes.length === 0) {
-      setError("Please select at least one credential");
+      setError("Please select at least one credential.");
       return;
     }
 

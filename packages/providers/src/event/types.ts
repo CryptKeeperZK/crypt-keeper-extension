@@ -17,6 +17,8 @@ export type EventHandler = (data: unknown) => void;
  * @property {string} LOGOUT - "logout"
  * @property {string} ADD_VERIFIABLE_CREDENTIAL - "addVerifiableCredential"
  * @property {string} REJECT_VERIFIABLE_CREDENTIAL - "rejectVerifiableCredential"
+ * @property {string} GENERATE_VERIFIABLE_PRESENTATION - "generateVerifiablePresentation"
+ * @property {string} REJECT_VERIFIABLE_PRESENTATION_REQUEST - "rejectVerifiablePresentationRequest"
  */
 export enum EventName {
   LOGIN = "login",
