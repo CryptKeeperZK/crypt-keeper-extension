@@ -11,7 +11,7 @@ describe("util/pushMessage", () => {
   });
 
   afterEach(() => {
-    jest.resetAllMocks();
+    jest.clearAllMocks();
   });
 
   test("should post message properly", async () => {

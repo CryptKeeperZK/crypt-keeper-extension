@@ -51,7 +51,7 @@ describe("ui/components/AccountMenu/useAccountMenu", () => {
   });
 
   afterEach(() => {
-    jest.resetAllMocks();
+    jest.clearAllMocks();
   });
 
   test("should return initial data", () => {

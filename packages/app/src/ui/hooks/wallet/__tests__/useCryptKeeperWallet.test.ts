@@ -59,7 +59,7 @@ describe("ui/hooks/useCryptKeeperWallet", () => {
   });
 
   afterEach(() => {
-    jest.resetAllMocks();
+    jest.clearAllMocks();
   });
 
   test("should return connected wallet data", () => {

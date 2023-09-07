@@ -18,7 +18,7 @@ describe("ui/components/Dropdown", () => {
   };
 
   afterEach(() => {
-    jest.resetAllMocks();
+    jest.clearAllMocks();
   });
 
   test("should render properly", async () => {

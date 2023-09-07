@@ -48,7 +48,7 @@ describe("ui/components/VerifiableCredential/Item", () => {
   });
 
   afterEach(() => {
-    jest.resetAllMocks();
+    jest.clearAllMocks();
   });
 
   test("should render properly", async () => {

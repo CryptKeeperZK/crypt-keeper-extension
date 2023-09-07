@@ -70,7 +70,7 @@ describe("ui/hooks/useEthWallet", () => {
   });
 
   afterEach(() => {
-    jest.resetAllMocks();
+    jest.clearAllMocks();
   });
 
   test("should return empty connected data", () => {

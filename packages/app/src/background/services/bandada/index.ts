@@ -1,0 +1,1 @@
+export { BandadaService } from "./BandadaService";

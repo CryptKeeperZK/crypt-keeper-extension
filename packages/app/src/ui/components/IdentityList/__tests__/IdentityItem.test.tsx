@@ -43,7 +43,7 @@ describe("ui/components/IdentityList/Item", () => {
   });
 
   afterEach(() => {
-    jest.resetAllMocks();
+    jest.clearAllMocks();
   });
 
   test("should render properly", async () => {

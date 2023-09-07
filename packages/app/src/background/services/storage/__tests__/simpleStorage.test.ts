@@ -5,7 +5,7 @@ import SimpleStorage from "..";
 
 describe("background/services/simpleStorage", () => {
   afterEach(() => {
-    jest.resetAllMocks();
+    jest.clearAllMocks();
   });
 
   test("should set data properly", async () => {
