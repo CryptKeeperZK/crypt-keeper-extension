@@ -33,11 +33,13 @@
       "executor": "nx:run-commands",
       "options": {
         "commands": [
+          { "command": "git tag -d ${tag}", "forwardAllArgs": false },
           { "command": "git add .", "forwardAllArgs": false },
           {
             "command": "git commit -m 'chore(@cryptkeeperzk/app): release version ${version}' --no-verify",
             "forwardAllArgs": false
-          }
+          },
+          { "command": "git tag ${tag}", "forwardAllArgs": false }
         ],
         "parallel": false
       }
@@ -47,7 +49,7 @@
       "options": {
         "commands": [
           { "command": "git push --no-verify", "forwardAllArgs": false },
-          { "command": "git push --follow-tags --no-verify", "forwardAllArgs": false }
+          { "command": "git push origin ${tag} --no-verify", "forwardAllArgs": false }
         ],
         "parallel": false
       }

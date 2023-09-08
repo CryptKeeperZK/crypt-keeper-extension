@@ -42,7 +42,6 @@
         "preset": "conventional",
         "trackDeps": true,
         "push": true,
-        "skipCommit": true,
         "noVerify": true
       }
     }
