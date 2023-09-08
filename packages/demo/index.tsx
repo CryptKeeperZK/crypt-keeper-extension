@@ -128,17 +128,19 @@ const App = () => {
         </button>
       </div>
 
-      <div>
-        <h2>Reveal connected identity Commitment</h2>
+      {process.env.REVEAL_IDENTITY === "true" && (
+        <div>
+          <h2>Reveal connected identity Commitment</h2>
 
-        <button
-          data-testid="reveal-connected-identity-commitment"
-          type="button"
-          onClick={onRevealConnectedIdentityCommitment}
-        >
-          Reveal
-        </button>
-      </div>
+          <button
+            data-testid="reveal-connected-identity-commitment"
+            type="button"
+            onClick={onRevealConnectedIdentityCommitment}
+          >
+            Reveal
+          </button>
+        </div>
+      )}
 
       <hr />
 
