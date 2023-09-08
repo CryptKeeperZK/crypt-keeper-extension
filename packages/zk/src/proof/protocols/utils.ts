@@ -30,8 +30,11 @@ async function getRemoteMerkleProof(
       identityCommitment: identityCommitmentHex,
     }),
   })
-    .then((res) => res.json())
-    .then((response: { data: { merkleProof: IMerkleProof } }) => deserializeMerkleProof(response.data.merkleProof));
+    .then((response) => response.json())
+    .then((response: { data: { merkleProof: IMerkleProof } }) => deserializeMerkleProof(response.data.merkleProof))
+    .catch((e) => {
+      throw new Error(`Error in fetching Mock Merkle Proof ${e}`);
+    });
 }
 
 export function deserializeMerkleProof(merkleProof: IMerkleProof): IMerkleProof {
