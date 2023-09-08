@@ -1,57 +1,59 @@
-export { type IApprovals } from "./approval";
-export { type IInjectedMessageData, type IInjectedProviderRequest } from "./contentScript";
-export {
-  type IRequestResolutionAction,
-  type IMessageAction,
-  type IReduxAction,
-  type ICreateIdentityUiArgs,
-  type IHostPermission,
+export type { IApprovals } from "./approval";
+export type { IInjectedMessageData, IInjectedProviderRequest } from "./contentScript";
+export type {
+  IRequestResolutionAction,
+  IMessageAction,
+  IReduxAction,
+  ICreateIdentityUiArgs,
+  IHostPermission,
 } from "./duck";
-export {
-  type IdentityStrategy,
-  type IdentityWeb2Provider,
-  type ICreateIdentityOptions,
-  type ICreateIdentityRequestArgs,
-  type IConnectIdentityRequestArgs,
-  type ICreateIdentityArgs,
-  type INewIdentityRequest,
-  type IIdentityMetadata,
-  type IGroupData,
-  type IIdentityData,
-  type ISetIdentityNameArgs,
-  type ISetIdentityHostArgs,
-  type IConnectIdentityArgs,
-  type ISerializedIdentity,
-  type IStrategiesMap,
-  type ConnectedIdentityMetadata,
-  EWallet,
+export type {
+  IdentityStrategy,
+  IdentityWeb2Provider,
+  ICreateIdentityOptions,
+  ICreateIdentityRequestArgs,
+  IConnectIdentityRequestArgs,
+  ICreateIdentityArgs,
+  INewIdentityRequest,
+  IIdentityMetadata,
+  IGroupData,
+  IIdentityData,
+  ISetIdentityNameArgs,
+  ISetIdentityHostArgs,
+  IConnectIdentityArgs,
+  ISerializedIdentity,
+  IStrategiesMap,
+  ConnectedIdentityMetadata,
 } from "./identity";
-export {
-  type IMerkleProof,
-  type IMerkleProofArtifacts,
-  type IRLNFullProof,
-  type IRLNSNARKProof,
-  type IRLNProverInputs,
-  type IRLNVerificationKey,
-  type IRLNProofRequest,
-  type IRLNGenerateArgs,
-  type ISemaphoreFullProof,
-  type ISemaphoreProofRequest,
-  type ISemaphoreGenerateArgs,
-  type IZkInputs,
-  type IZKProofPayload,
-  type IZkMetadata,
-  type IRLNProofRequiredArgs,
-  type ISemaphoreProofRequiredArgs,
-  ZkProofType,
+export { EWallet } from "./identity";
+export type {
+  IMerkleProof,
+  IMerkleProofArtifacts,
+  IRLNFullProof,
+  IRLNSNARKProof,
+  IRLNProverInputs,
+  IRLNVerificationKey,
+  IRLNProofRequest,
+  IRLNGenerateArgs,
+  ISemaphoreFullProof,
+  ISemaphoreProofRequest,
+  ISemaphoreGenerateArgs,
+  IZkInputs,
+  IZKProofPayload,
+  IZkMetadata,
+  IRLNProofRequiredArgs,
+  ISemaphoreProofRequiredArgs,
 } from "./proof";
-export { type IRequestHandler, type IPendingRequest, RequestResolutionStatus, PendingRequestType } from "./request";
-export {
-  type IVerifiableCredential,
-  type IVerifiablePresentation,
-  type ICredentialIssuer,
-  type ICredentialSubject,
-  type ICredentialStatus,
-  type ICredentialProof,
-  type ClaimValue,
+export { ZkProofType } from "./proof";
+export type { IRequestHandler, IPendingRequest } from "./request";
+export { RequestResolutionStatus, PendingRequestType } from "./request";
+export type {
+  IVerifiableCredential,
+  IVerifiablePresentation,
+  ICredentialIssuer,
+  ICredentialSubject,
+  ICredentialStatus,
+  ICredentialProof,
+  ClaimValue,
 } from "./verifiableCredentials";
+export type { IAddBandadaGroupMemberArgs, IGenerateBandadaMerkleProofArgs } from "./group";

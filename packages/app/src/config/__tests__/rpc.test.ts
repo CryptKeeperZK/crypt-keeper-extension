@@ -16,7 +16,7 @@ describe("config/rpc", () => {
   });
 
   afterEach(() => {
-    jest.resetAllMocks();
+    jest.clearAllMocks();
   });
 
   test("should return rpc urls", () => {

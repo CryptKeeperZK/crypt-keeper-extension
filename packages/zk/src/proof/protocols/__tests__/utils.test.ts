@@ -28,7 +28,7 @@ describe("background/services/protocols/utils", () => {
   };
 
   afterEach(() => {
-    jest.resetAllMocks();
+    jest.clearAllMocks();
   });
 
   test("should deserialize merkle proof properly", () => {

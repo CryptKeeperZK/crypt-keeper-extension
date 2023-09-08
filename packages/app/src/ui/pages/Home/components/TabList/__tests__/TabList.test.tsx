@@ -18,7 +18,7 @@ describe("ui/pages/Home/components/TabList", () => {
   });
 
   afterEach(() => {
-    jest.resetAllMocks();
+    jest.clearAllMocks();
   });
 
   test("should render properly", async () => {
