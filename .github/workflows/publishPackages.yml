@@ -24,6 +24,7 @@ env:
   MANIFEST_VERSION: 3
   VERIFIABLE_CREDENTIALS: false
   WEBPACK_ANALYZER: false
+  REVEAL_IDENTITY: false
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
