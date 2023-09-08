@@ -19,7 +19,7 @@ importers:
         version: link:packages/manifest-bump
       '@jscutlery/semver':
         specifier: ^3.1.0
-        version: 3.1.0(@nx/devkit@16.8.0)
+        version: 3.1.0(@nx/devkit@16.8.1)
       '@nx/js':
         specifier: ^16.8.0
         version: 16.8.0(@swc/core@1.3.82)(@types/node@20.5.9)(nx@16.8.1)(typescript@5.2.2)
@@ -559,8 +559,8 @@ importers:
   packages/manifest-bump:
     dependencies:
       '@nx/devkit':
-        specifier: 16.8.0
-        version: 16.8.0(nx@16.8.0)
+        specifier: 16.8.1
+        version: 16.8.1(nx@16.8.1)
       tslib:
         specifier: ^2.6.2
         version: 2.6.2
@@ -3315,13 +3315,13 @@ packages:
       '@jridgewell/sourcemap-codec': 1.4.15
     dev: true
 
-  /@jscutlery/semver@3.1.0(@nx/devkit@16.8.0):
+  /@jscutlery/semver@3.1.0(@nx/devkit@16.8.1):
     resolution: {integrity: sha512-x/v+6HN0/UpQW8L3sIlvRodBY/pGJ3AjtNpKmMkR4RmnTuuRo+OMAiIS4/EJ2pzXhmn9YqNm8rYzIIqiWt62IA==}
     engines: {node: '>=12.0.0'}
     peerDependencies:
       '@nx/devkit': ^16.0.0
     dependencies:
-      '@nx/devkit': 16.8.0(nx@16.8.1)
+      '@nx/devkit': 16.8.1(nx@16.8.1)
       chalk: 4.1.2
       conventional-changelog: 4.0.0
       conventional-recommended-bump: 7.0.1
@@ -3758,6 +3758,7 @@ packages:
       '@nx/devkit': 16.8.0(nx@16.8.0)
     transitivePeerDependencies:
       - nx
+    dev: true
 
   /@nrwl/devkit@16.8.0(nx@16.8.1):
     resolution: {integrity: sha512-zpSNUCj9RZAAcCIHcjeVQT8FPutnaCe0empvm0yxWPbmIXjN/4Lw1f4V5K42MNDSa4Z8Hvj1tTL3+8JXSV9JxA==}
@@ -3766,6 +3767,13 @@ packages:
     transitivePeerDependencies:
       - nx
     dev: true
+
+  /@nrwl/devkit@16.8.1(nx@16.8.1):
+    resolution: {integrity: sha512-Y7yYDh62Hi4q99Q4+ipIQ3K9iLuAld3WcwjLv6vtl6Livu+TU3eqbraBEno7DQL8JuIuwgBT4lX7Bp3w3N9RDg==}
+    dependencies:
+      '@nx/devkit': 16.8.1(nx@16.8.1)
+    transitivePeerDependencies:
+      - nx
 
   /@nrwl/js@16.8.0(@swc/core@1.3.82)(@types/node@20.5.9)(nx@16.8.1)(typescript@5.2.2):
     resolution: {integrity: sha512-dJBFfa+RrNv9KCsZECXJ1Pv3Yu9X5uJfoONCV0eaatXzmlEWeosIpKU73QcW+f5rKQrLqd4//2qpd9EK/siyRw==}
@@ -3802,6 +3810,7 @@ packages:
       - '@swc-node/register'
       - '@swc/core'
       - debug
+    dev: true
 
   /@nrwl/tao@16.8.1(@swc/core@1.3.82):
     resolution: {integrity: sha512-hgGFLyEgONSofxnJsXN9NlUx4J8/YSLUkfZKdR8Qa97+JGZT8FEuk7NLFJOWdYYqROoCzXLHK0d+twFFNPS5BQ==}
@@ -3813,7 +3822,6 @@ packages:
       - '@swc-node/register'
       - '@swc/core'
       - debug
-    dev: true
 
   /@nrwl/workspace@16.8.0(@swc/core@1.3.82):
     resolution: {integrity: sha512-mWrbkLsqBWrlvQLxw2vqBst/hO8iyYhdCHUyWHjHTDSe0VZmH++qUPLgru0H3VzHUn0zEENW2UrdsZWh/vz6qQ==}
@@ -3838,6 +3846,7 @@ packages:
       semver: 7.5.3
       tmp: 0.2.1
       tslib: 2.6.2
+    dev: true
 
   /@nx/devkit@16.8.0(nx@16.8.1):
     resolution: {integrity: sha512-vFeWR6dQSmiVWOccIj9vpnB0nRzOY+VWucDDbQ4TKWQKzKfpnFDMsGxImff1AHFI0h4pvJOimDrY5+hktRrYew==}
@@ -3853,6 +3862,20 @@ packages:
       tmp: 0.2.1
       tslib: 2.6.2
     dev: true
+
+  /@nx/devkit@16.8.1(nx@16.8.1):
+    resolution: {integrity: sha512-I+Cg+lXk0wRz6KC9FZbWFuJWQTXAt5O3bNl9ksISmzqmEyuy72Cv+/MBHvF7o54Sq80DNw+RKWB1re5HFOsqCA==}
+    peerDependencies:
+      nx: '>= 15 <= 17'
+    dependencies:
+      '@nrwl/devkit': 16.8.1(nx@16.8.1)
+      ejs: 3.1.9
+      enquirer: 2.3.6
+      ignore: 5.2.4
+      nx: 16.8.1(@swc/core@1.3.82)
+      semver: 7.5.3
+      tmp: 0.2.1
+      tslib: 2.6.2
 
   /@nx/js@16.8.0(@swc/core@1.3.82)(@types/node@20.5.9)(nx@16.8.1)(typescript@5.2.2):
     resolution: {integrity: sha512-PFBlS8gd0lwS8DX92wEVVZfDaDFq+lKj7VPLMCLK1jEnKeKWmuDL2sZVFTlD3KzqXQxfOi5vQZu25z0FH0KI8A==}
@@ -3906,6 +3929,7 @@ packages:
     cpu: [arm64]
     os: [darwin]
     requiresBuild: true
+    dev: true
     optional: true
 
   /@nx/nx-darwin-arm64@16.8.1:
@@ -3914,7 +3938,6 @@ packages:
     cpu: [arm64]
     os: [darwin]
     requiresBuild: true
-    dev: true
     optional: true
 
   /@nx/nx-darwin-x64@16.8.0:
@@ -3923,6 +3946,7 @@ packages:
     cpu: [x64]
     os: [darwin]
     requiresBuild: true
+    dev: true
     optional: true
 
   /@nx/nx-darwin-x64@16.8.1:
@@ -3931,7 +3955,6 @@ packages:
     cpu: [x64]
     os: [darwin]
     requiresBuild: true
-    dev: true
     optional: true
 
   /@nx/nx-freebsd-x64@16.8.0:
@@ -3940,6 +3963,7 @@ packages:
     cpu: [x64]
     os: [freebsd]
     requiresBuild: true
+    dev: true
     optional: true
 
   /@nx/nx-freebsd-x64@16.8.1:
@@ -3948,7 +3972,6 @@ packages:
     cpu: [x64]
     os: [freebsd]
     requiresBuild: true
-    dev: true
     optional: true
 
   /@nx/nx-linux-arm-gnueabihf@16.8.0:
@@ -3957,6 +3980,7 @@ packages:
     cpu: [arm]
     os: [linux]
     requiresBuild: true
+    dev: true
     optional: true
 
   /@nx/nx-linux-arm-gnueabihf@16.8.1:
@@ -3965,7 +3989,6 @@ packages:
     cpu: [arm]
     os: [linux]
     requiresBuild: true
-    dev: true
     optional: true
 
   /@nx/nx-linux-arm64-gnu@16.8.0:
@@ -3974,6 +3997,7 @@ packages:
     cpu: [arm64]
     os: [linux]
     requiresBuild: true
+    dev: true
     optional: true
 
   /@nx/nx-linux-arm64-gnu@16.8.1:
@@ -3982,7 +4006,6 @@ packages:
     cpu: [arm64]
     os: [linux]
     requiresBuild: true
-    dev: true
     optional: true
 
   /@nx/nx-linux-arm64-musl@16.8.0:
@@ -3991,6 +4014,7 @@ packages:
     cpu: [arm64]
     os: [linux]
     requiresBuild: true
+    dev: true
     optional: true
 
   /@nx/nx-linux-arm64-musl@16.8.1:
@@ -3999,7 +4023,6 @@ packages:
     cpu: [arm64]
     os: [linux]
     requiresBuild: true
-    dev: true
     optional: true
 
   /@nx/nx-linux-x64-gnu@16.8.0:
@@ -4008,6 +4031,7 @@ packages:
     cpu: [x64]
     os: [linux]
     requiresBuild: true
+    dev: true
     optional: true
 
   /@nx/nx-linux-x64-gnu@16.8.1:
@@ -4016,7 +4040,6 @@ packages:
     cpu: [x64]
     os: [linux]
     requiresBuild: true
-    dev: true
     optional: true
 
   /@nx/nx-linux-x64-musl@16.8.0:
@@ -4025,6 +4048,7 @@ packages:
     cpu: [x64]
     os: [linux]
     requiresBuild: true
+    dev: true
     optional: true
 
   /@nx/nx-linux-x64-musl@16.8.1:
@@ -4033,7 +4057,6 @@ packages:
     cpu: [x64]
     os: [linux]
     requiresBuild: true
-    dev: true
     optional: true
 
   /@nx/nx-win32-arm64-msvc@16.8.0:
@@ -4042,6 +4065,7 @@ packages:
     cpu: [arm64]
     os: [win32]
     requiresBuild: true
+    dev: true
     optional: true
 
   /@nx/nx-win32-arm64-msvc@16.8.1:
@@ -4050,7 +4074,6 @@ packages:
     cpu: [arm64]
     os: [win32]
     requiresBuild: true
-    dev: true
     optional: true
 
   /@nx/nx-win32-x64-msvc@16.8.0:
@@ -4059,6 +4082,7 @@ packages:
     cpu: [x64]
     os: [win32]
     requiresBuild: true
+    dev: true
     optional: true
 
   /@nx/nx-win32-x64-msvc@16.8.1:
@@ -4067,7 +4091,6 @@ packages:
     cpu: [x64]
     os: [win32]
     requiresBuild: true
-    dev: true
     optional: true
 
   /@nx/workspace@16.8.0(@swc/core@1.3.82):
@@ -14016,6 +14039,7 @@ packages:
       '@nx/nx-win32-x64-msvc': 16.8.0
     transitivePeerDependencies:
       - debug
+    dev: true
 
   /nx@16.8.1(@swc/core@1.3.82):
     resolution: {integrity: sha512-K5KrwNdPz0eEe6SY5wrnhZcigjfIJkttPrIJRXNBQTE50NGcOfz1TjMXPdTWBxBCCua5PAealO3OrE8jpv+QnQ==}
@@ -14080,7 +14104,6 @@ packages:
       '@nx/nx-win32-x64-msvc': 16.8.1
     transitivePeerDependencies:
       - debug
-    dev: true
 
   /nyc@15.1.0:
     resolution: {integrity: sha512-jMW04n9SxKdKi1ZMGhvUTHBN0EICCRkHemEoE5jm6mTYcqcdas0ATzgUgejlQUHMvpnOZqGB5Xxsv9KxJW1j8A==}
