@@ -15,7 +15,7 @@ import type {
   IVerifiableCredential,
 } from "@cryptkeeperzk/types";
 
-const SERVER_URL = "http://localhost:8090";
+const SERVER_URL = process.env.MERKLE_MOCK_SERVER;
 
 const merkleStorageAddress = `${SERVER_URL}/merkleProof`;
 
