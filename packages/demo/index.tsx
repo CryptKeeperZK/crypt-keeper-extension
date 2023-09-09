@@ -56,6 +56,9 @@ const App = () => {
     onRevealConnectedIdentityCommitment,
   } = useCryptKeeper();
 
+  const params = new URLSearchParams(window.location.search);
+  const canShowReveal = process.env.REVEAL_IDENTITY === "true" || params.get("REVEAL_IDENTITY") === "true";
+
   useEffect(() => {
     connect();
   }, [connect]);
@@ -128,7 +131,7 @@ const App = () => {
         </button>
       </div>
 
-      {process.env.REVEAL_IDENTITY === "true" && (
+      {canShowReveal && (
         <div>
           <h2>Reveal connected identity Commitment</h2>
 
