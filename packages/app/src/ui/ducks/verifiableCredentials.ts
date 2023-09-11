@@ -1,12 +1,12 @@
 /* eslint-disable no-param-reassign */
 import { RPCAction } from "@cryptkeeperzk/providers";
-import type { IVerifiablePresentation } from "@cryptkeeperzk/types";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 import { serializeCryptkeeperVerifiableCredential } from "@src/background/services/credentials/utils";
 import { ICryptkeeperVerifiableCredential, IRenameVerifiableCredentialArgs } from "@src/types";
 import postMessage from "@src/util/postMessage";
 
+import type { IVerifiablePresentation } from "@cryptkeeperzk/types";
 import type { TypedThunk } from "@src/ui/store/configureAppStore";
 
 import { useAppSelector } from "./hooks";

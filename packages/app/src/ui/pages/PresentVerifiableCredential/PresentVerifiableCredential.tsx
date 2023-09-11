@@ -45,8 +45,8 @@ const PresentVerifiableCredential = (): JSX.Element => {
       onCloseModal={onCloseModal}
       onConnectWallet={onConnectWallet}
       onReturnToSelection={onReturnToSelection}
-      onSubmitWithSignature={onSubmitWithSignature}
       onSubmitWithoutSignature={onSubmitWithoutSignature}
+      onSubmitWithSignature={onSubmitWithSignature}
     />
   );
 };

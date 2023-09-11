@@ -1,6 +1,5 @@
 import { EventName } from "@cryptkeeperzk/providers";
 import { RejectRequests } from "@cryptkeeperzk/providers/dist/src/event";
-import type { IVerifiablePresentation, IVerifiablePresentationRequest } from "@cryptkeeperzk/types";
 import browser from "webextension-polyfill";
 
 import BrowserUtils from "@src/background/controllers/browserUtils";
@@ -9,9 +8,10 @@ import HistoryService from "@src/background/services/history";
 import NotificationService from "@src/background/services/notification";
 import SimpleStorage from "@src/background/services/storage";
 import { Paths } from "@src/constants";
+
 import { OperationType, IRenameVerifiableCredentialArgs, ICryptkeeperVerifiableCredential } from "@src/types";
 import { IAddVerifiableCredentialArgs } from "@src/types/verifiableCredentials";
-
+import type { IVerifiablePresentation, IVerifiablePresentationRequest } from "@cryptkeeperzk/types";
 import type { BackupData, IBackupable } from "@src/background/services/backup";
 
 import {
@@ -206,7 +206,7 @@ export default class VerifiableCredentialsService implements IBackupable {
     await this.browserController.openPopup({
       params: {
         redirect: Paths.GENERATE_VERIFIABLE_PRESENTATION_REQUEST,
-        request: request,
+        request,
       },
     });
   };

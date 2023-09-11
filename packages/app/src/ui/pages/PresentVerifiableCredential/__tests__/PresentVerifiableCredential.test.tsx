@@ -2,10 +2,11 @@
  * @jest-environment jsdom
  */
 
-import type { IVerifiablePresentation } from "@cryptkeeperzk/types";
 import { render, waitFor } from "@testing-library/react";
 
 import { createModalRoot, deleteModalRoot } from "@src/config/mock/modal";
+
+import type { IVerifiablePresentation } from "@cryptkeeperzk/types";
 
 import PresentVerifiableCredential from "../PresentVerifiableCredential";
 import { IUsePresentVerifiableCredentialData, usePresentVerifiableCredential } from "../usePresentVerifiableCredential";

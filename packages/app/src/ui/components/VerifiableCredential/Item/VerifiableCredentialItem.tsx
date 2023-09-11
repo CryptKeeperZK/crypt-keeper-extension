@@ -79,8 +79,8 @@ export const VerifiableCredentialItem = ({
         (selected ? (
           <IconButton
             data-testid={`verifiable-credential-selected-${metadata.hash}`}
-            sx={{ ml: -2 }}
             size="medium"
+            sx={{ ml: -2 }}
             onClick={onToggleSelect}
           >
             <CheckCircleIcon color="primary" fontSize="inherit" />
@@ -88,8 +88,8 @@ export const VerifiableCredentialItem = ({
         ) : (
           <IconButton
             data-testid={`verifiable-credential-unselected-${metadata.hash}`}
-            sx={{ ml: -2 }}
             size="medium"
+            sx={{ ml: -2 }}
             onClick={onToggleSelect}
           >
             <CheckCircleOutlineIcon color="disabled" fontSize="inherit" />
