@@ -1,5 +1,5 @@
-import SelectVerifiableCredential from "./components/SelectVerifiableCredential";
-import SignVerifiablePresentation from "./components/SignVerifiablePresentation";
+import VerifiableCredentialSelector from "./components/VerifiableCredentialSelector";
+import VerifiablePresentationSigner from "./components/VerifiablePresentationSigner";
 import { usePresentVerifiableCredential } from "./usePresentVerifiableCredential";
 
 const PresentVerifiableCredential = (): JSX.Element => {
@@ -17,12 +17,13 @@ const PresentVerifiableCredential = (): JSX.Element => {
     onConfirmSelection,
     onReturnToSelection,
     onConnectWallet,
-    onSubmitVerifiablePresentation,
+    onSubmitWithSignature,
+    onSubmitWithoutSignature,
   } = usePresentVerifiableCredential();
 
   if (!verifiablePresentation) {
     return (
-      <SelectVerifiableCredential
+      <VerifiableCredentialSelector
         cryptkeeperVerifiableCredentials={cryptkeeperVerifiableCredentials}
         error={error}
         selectedVerifiableCredentialHashes={selectedVerifiableCredentialHashes}
@@ -34,8 +35,9 @@ const PresentVerifiableCredential = (): JSX.Element => {
       />
     );
   }
+
   return (
-    <SignVerifiablePresentation
+    <VerifiablePresentationSigner
       cryptkeeperVerifiableCredentials={cryptkeeperVerifiableCredentials}
       isWalletConnected={isWalletConnected}
       isWalletInstalled={isWalletInstalled}
@@ -43,7 +45,8 @@ const PresentVerifiableCredential = (): JSX.Element => {
       onCloseModal={onCloseModal}
       onConnectWallet={onConnectWallet}
       onReturnToSelection={onReturnToSelection}
-      onSubmitVerifiablePresentation={onSubmitVerifiablePresentation}
+      onSubmitWithSignature={onSubmitWithSignature}
+      onSubmitWithoutSignature={onSubmitWithoutSignature}
     />
   );
 };

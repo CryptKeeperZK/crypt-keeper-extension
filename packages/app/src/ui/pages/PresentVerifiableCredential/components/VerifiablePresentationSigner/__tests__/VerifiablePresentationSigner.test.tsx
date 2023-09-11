@@ -6,10 +6,10 @@ import { waitFor, fireEvent, render } from "@testing-library/react";
 
 import { createModalRoot, deleteModalRoot } from "@src/config/mock/modal";
 
-import SignVerifiablePresentation, { ISignVerifiablePresentationProps } from "../SignVerifiablePresentation";
+import VerifiablePresentationSigner, { IVerifiablePresentationSignerProps } from "../VerifiablePresentationSigner";
 
-describe("ui/pages/PresentVerifiableCredential/components/SignVerifiablePresentation", () => {
-  const defaultProps: ISignVerifiablePresentationProps = {
+describe("ui/pages/PresentVerifiableCredential/components/VerifiablePresentationSigner", () => {
+  const defaultProps: IVerifiablePresentationSignerProps = {
     isWalletConnected: true,
     isWalletInstalled: true,
     cryptkeeperVerifiableCredentials: [
@@ -58,7 +58,8 @@ describe("ui/pages/PresentVerifiableCredential/components/SignVerifiablePresenta
     onCloseModal: jest.fn(),
     onReturnToSelection: jest.fn(),
     onConnectWallet: jest.fn(),
-    onSubmitVerifiablePresentation: jest.fn(),
+    onSubmitWithSignature: jest.fn(),
+    onSubmitWithoutSignature: jest.fn(),
   };
 
   beforeEach(() => {
@@ -72,7 +73,7 @@ describe("ui/pages/PresentVerifiableCredential/components/SignVerifiablePresenta
   });
 
   test("should render properly", async () => {
-    const { container, findByTestId } = render(<SignVerifiablePresentation {...defaultProps} />);
+    const { container, findByTestId } = render(<VerifiablePresentationSigner {...defaultProps} />);
 
     await waitFor(() => container.firstChild !== null);
 
@@ -82,30 +83,30 @@ describe("ui/pages/PresentVerifiableCredential/components/SignVerifiablePresenta
   });
 
   test("should submit without signing correctly", async () => {
-    const { container, findByTestId } = render(<SignVerifiablePresentation {...defaultProps} />);
+    const { container, findByTestId } = render(<VerifiablePresentationSigner {...defaultProps} />);
 
     await waitFor(() => container.firstChild !== null);
 
     const button = await findByTestId("submit-verifiable-presentation-without-signing");
     fireEvent.click(button);
 
-    expect(defaultProps.onSubmitVerifiablePresentation).toBeCalledTimes(1);
+    expect(defaultProps.onSubmitWithoutSignature).toBeCalledTimes(1);
   });
 
   test("should submit with signing correctly", async () => {
-    const { container, findByTestId } = render(<SignVerifiablePresentation {...defaultProps} />);
+    const { container, findByTestId } = render(<VerifiablePresentationSigner {...defaultProps} />);
 
     await waitFor(() => container.firstChild !== null);
 
     const button = await findByTestId("sign-verifiable-presentation-metamask");
     fireEvent.click(button);
 
-    expect(defaultProps.onSubmitVerifiablePresentation).toBeCalledTimes(1);
+    expect(defaultProps.onSubmitWithSignature).toBeCalledTimes(1);
   });
 
   test("should connect to metamask correctly", async () => {
     const { container, findByTestId } = render(
-      <SignVerifiablePresentation {...defaultProps} isWalletConnected={false} />,
+      <VerifiablePresentationSigner {...defaultProps} isWalletConnected={false} />,
     );
 
     await waitFor(() => container.firstChild !== null);
@@ -118,7 +119,7 @@ describe("ui/pages/PresentVerifiableCredential/components/SignVerifiablePresenta
 
   test("should display install metamask message", async () => {
     const { container, findByText } = render(
-      <SignVerifiablePresentation {...defaultProps} isWalletInstalled={false} />,
+      <VerifiablePresentationSigner {...defaultProps} isWalletInstalled={false} />,
     );
 
     await waitFor(() => container.firstChild !== null);

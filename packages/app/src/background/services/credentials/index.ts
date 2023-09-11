@@ -1,5 +1,5 @@
 import { EventName } from "@cryptkeeperzk/providers";
-import { IVerifiablePresentation, IVerifiablePresentationRequest } from "@cryptkeeperzk/types";
+import type { IVerifiablePresentation, IVerifiablePresentationRequest } from "@cryptkeeperzk/types";
 import browser from "webextension-polyfill";
 
 import BrowserUtils from "@src/background/controllers/browserUtils";
@@ -200,13 +200,11 @@ export default class VerifiableCredentialsService implements IBackupable {
     });
   };
 
-  generateVerifiablePresentationRequest = async (
-    verifiablePresentationRequest: IVerifiablePresentationRequest,
-  ): Promise<void> => {
+  generateVerifiablePresentationRequest = async ({ request }: IVerifiablePresentationRequest): Promise<void> => {
     await this.browserController.openPopup({
       params: {
         redirect: Paths.GENERATE_VERIFIABLE_PRESENTATION_REQUEST,
-        request: verifiablePresentationRequest.request,
+        request: request,
       },
     });
   };

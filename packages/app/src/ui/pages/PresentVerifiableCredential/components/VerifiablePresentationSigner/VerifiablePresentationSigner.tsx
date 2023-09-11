@@ -6,7 +6,7 @@ import { ICryptkeeperVerifiableCredential } from "@src/types";
 import { FullModal, FullModalHeader, FullModalContent, FullModalFooter } from "@src/ui/components/FullModal";
 import { VerifiableCredentialItem } from "@src/ui/components/VerifiableCredential/Item";
 
-export interface ISignVerifiablePresentationProps {
+export interface IVerifiablePresentationSignerProps {
   isWalletConnected: boolean;
   isWalletInstalled: boolean;
   cryptkeeperVerifiableCredentials: ICryptkeeperVerifiableCredential[];
@@ -14,10 +14,11 @@ export interface ISignVerifiablePresentationProps {
   onCloseModal: () => void;
   onReturnToSelection: () => void;
   onConnectWallet: () => Promise<void>;
-  onSubmitVerifiablePresentation: (needsSignature: boolean) => void;
+  onSubmitWithSignature: () => void;
+  onSubmitWithoutSignature: () => void;
 }
 
-const SignVerifiablePresentation = ({
+const VerifiablePresentationSigner = ({
   isWalletConnected,
   isWalletInstalled,
   cryptkeeperVerifiableCredentials,
@@ -25,8 +26,9 @@ const SignVerifiablePresentation = ({
   onCloseModal,
   onReturnToSelection,
   onConnectWallet,
-  onSubmitVerifiablePresentation,
-}: ISignVerifiablePresentationProps): JSX.Element => {
+  onSubmitWithSignature,
+  onSubmitWithoutSignature,
+}: IVerifiablePresentationSignerProps): JSX.Element => {
   const selectedVerifableCredentials = cryptkeeperVerifiableCredentials.filter(({ metadata }) =>
     selectedVerifiableCredentialHashes.includes(metadata.hash),
   );
@@ -63,13 +65,7 @@ const SignVerifiablePresentation = ({
               sx={{ textTransform: "none", flex: 1, mr: 1 }}
               type="submit"
               variant="outlined"
-              onClick={
-                isWalletConnected
-                  ? () => {
-                      onSubmitVerifiablePresentation(true);
-                    }
-                  : onConnectWallet
-              }
+              onClick={isWalletConnected ? onSubmitWithSignature : onConnectWallet}
             >
               {isWalletInstalled ? ethWalletTitle : "Install MetaMask"}
             </Button>
@@ -81,9 +77,7 @@ const SignVerifiablePresentation = ({
               sx={{ textTransform: "none", flex: 1, ml: 1 }}
               type="submit"
               variant="contained"
-              onClick={() => {
-                onSubmitVerifiablePresentation(false);
-              }}
+              onClick={onSubmitWithoutSignature}
             >
               Proceed Without Signing
             </Button>
@@ -94,4 +88,4 @@ const SignVerifiablePresentation = ({
   );
 };
 
-export default SignVerifiablePresentation;
+export default VerifiablePresentationSigner;

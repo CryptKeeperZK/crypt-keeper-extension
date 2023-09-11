@@ -49,9 +49,9 @@ export const VerifiableCredentialItem = ({
       ? verifiableCredential.issuer
       : verifiableCredential.issuer.id || "unknown";
 
-  const enableSelector = selected !== undefined;
+  const isSelectorEnabled = selected !== undefined;
 
-  const enableMenu = onRenameVerifiableCredential !== undefined && onDeleteVerifiableCredential !== undefined;
+  const isMenuEnabled = onRenameVerifiableCredential !== undefined && onDeleteVerifiableCredential !== undefined;
 
   return (
     <Box
@@ -67,17 +67,20 @@ export const VerifiableCredentialItem = ({
         height: 100,
         width: "100%",
 
+        "&::-webkit-scrollbar": {
+          display: "none",
+        },
         "&:hover": {
           backgroundColor: "text.900",
         },
       }}
     >
-      {enableSelector &&
+      {isSelectorEnabled &&
         (selected ? (
           <IconButton
             data-testid={`verifiable-credential-selected-${metadata.hash}`}
+            sx={{ ml: -2 }}
             size="medium"
-            sx={{ mr: 2 }}
             onClick={onToggleSelect}
           >
             <CheckCircleIcon color="primary" fontSize="inherit" />
@@ -85,8 +88,8 @@ export const VerifiableCredentialItem = ({
         ) : (
           <IconButton
             data-testid={`verifiable-credential-unselected-${metadata.hash}`}
+            sx={{ ml: -2 }}
             size="medium"
-            sx={{ mr: 2 }}
             onClick={onToggleSelect}
           >
             <CheckCircleOutlineIcon color="disabled" fontSize="inherit" />
@@ -152,7 +155,7 @@ export const VerifiableCredentialItem = ({
         </Typography>
       </Box>
 
-      {enableMenu && (
+      {isMenuEnabled && (
         <Menu className="flex user-menu" items={menuItems}>
           <MoreHorizIcon color="secondary" fontSize="inherit" />
         </Menu>

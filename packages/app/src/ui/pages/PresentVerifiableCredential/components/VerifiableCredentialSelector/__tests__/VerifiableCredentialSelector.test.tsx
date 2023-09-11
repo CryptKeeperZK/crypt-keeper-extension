@@ -6,10 +6,10 @@ import { waitFor, fireEvent, render } from "@testing-library/react";
 
 import { createModalRoot, deleteModalRoot } from "@src/config/mock/modal";
 
-import SelectVerifiableCredential, { ISelectVerifiableCredentialProps } from "../SelectVerifiableCredential";
+import VerifiableCredentialSelector, { IVerifiableCredentialSelectorProps } from "../VerifiableCredentialSelector";
 
-describe("ui/pages/PresentVerifiableCredential/components/SelectVerifiableCredential", () => {
-  const defaultProps: ISelectVerifiableCredentialProps = {
+describe("ui/pages/PresentVerifiableCredential/components/VerifiableCredentialSelector", () => {
+  const defaultProps: IVerifiableCredentialSelectorProps = {
     verifiablePresentationRequest: "example presentation request",
     cryptkeeperVerifiableCredentials: [
       {
@@ -72,7 +72,7 @@ describe("ui/pages/PresentVerifiableCredential/components/SelectVerifiableCreden
   });
 
   test("should render properly", async () => {
-    const { container, findByTestId, findByText } = render(<SelectVerifiableCredential {...defaultProps} />);
+    const { container, findByTestId, findByText } = render(<VerifiableCredentialSelector {...defaultProps} />);
 
     await waitFor(() => container.firstChild !== null);
 
@@ -87,7 +87,7 @@ describe("ui/pages/PresentVerifiableCredential/components/SelectVerifiableCreden
 
   test("should render an error properly", async () => {
     const newError = "My Error";
-    const { container, findByText } = render(<SelectVerifiableCredential {...defaultProps} error={newError} />);
+    const { container, findByText } = render(<VerifiableCredentialSelector {...defaultProps} error={newError} />);
 
     await waitFor(() => container.firstChild !== null);
 
@@ -97,7 +97,7 @@ describe("ui/pages/PresentVerifiableCredential/components/SelectVerifiableCreden
   });
 
   test("should reject a verifiable presentation request correctly", async () => {
-    const { container, findByTestId } = render(<SelectVerifiableCredential {...defaultProps} />);
+    const { container, findByTestId } = render(<VerifiableCredentialSelector {...defaultProps} />);
 
     await waitFor(() => container.firstChild !== null);
 
@@ -108,7 +108,7 @@ describe("ui/pages/PresentVerifiableCredential/components/SelectVerifiableCreden
   });
 
   test("should confirm a credential selection correctly", async () => {
-    const { container, findByTestId } = render(<SelectVerifiableCredential {...defaultProps} />);
+    const { container, findByTestId } = render(<VerifiableCredentialSelector {...defaultProps} />);
 
     await waitFor(() => container.firstChild !== null);
 

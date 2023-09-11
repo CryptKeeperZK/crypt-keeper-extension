@@ -257,7 +257,7 @@ describe("ui/pages/PresentVerifiableCredential/usePresentVerifiableCredential", 
 
     act(() => result.current.onToggleSelection(hash));
     act(() => result.current.onConfirmSelection());
-    await act(async () => Promise.resolve(result.current.onSubmitVerifiablePresentation(false)));
+    await act(async () => Promise.resolve(result.current.onSubmitWithoutSignature()));
 
     expect(generateVerifiablePresentation).toBeCalledTimes(1);
     expect(closePopup).toBeCalledTimes(1);
@@ -275,7 +275,7 @@ describe("ui/pages/PresentVerifiableCredential/usePresentVerifiableCredential", 
 
     act(() => result.current.onToggleSelection(hash));
     act(() => result.current.onConfirmSelection());
-    await act(async () => Promise.resolve(result.current.onSubmitVerifiablePresentation(true)));
+    await act(async () => Promise.resolve(result.current.onSubmitWithSignature()));
 
     expect(generateVerifiablePresentation).toBeCalledTimes(1);
     expect(closePopup).toBeCalledTimes(1);
@@ -289,7 +289,7 @@ describe("ui/pages/PresentVerifiableCredential/usePresentVerifiableCredential", 
       expect(result.current.verifiablePresentationRequest).toStrictEqual(exampleRequest);
     });
 
-    await act(async () => Promise.resolve(result.current.onSubmitVerifiablePresentation(false)));
+    await act(async () => Promise.resolve(result.current.onSubmitWithoutSignature()));
 
     expect(generateVerifiablePresentation).toBeCalledTimes(0);
     expect(result.current.error).toBe("Failed to generate Verifiable Presentation.");
@@ -308,7 +308,7 @@ describe("ui/pages/PresentVerifiableCredential/usePresentVerifiableCredential", 
 
     act(() => result.current.onToggleSelection(hash));
     act(() => result.current.onConfirmSelection());
-    await act(async () => Promise.resolve(result.current.onSubmitVerifiablePresentation(true)));
+    await act(async () => Promise.resolve(result.current.onSubmitWithSignature()));
 
     expect(generateVerifiablePresentation).toBeCalledTimes(0);
     expect(result.current.error).toBe("Could not connect to Ethereum account.");

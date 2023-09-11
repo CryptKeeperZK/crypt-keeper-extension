@@ -33,7 +33,8 @@ export interface IUsePresentVerifiableCredentialData {
   onConfirmSelection: () => void;
   onReturnToSelection: () => void;
   onConnectWallet: () => Promise<void>;
-  onSubmitVerifiablePresentation: (needsSignature: boolean) => Promise<void>;
+  onSubmitWithSignature: () => Promise<void>;
+  onSubmitWithoutSignature: () => Promise<void>;
 }
 
 export const usePresentVerifiableCredential = (): IUsePresentVerifiableCredentialData => {
@@ -47,19 +48,16 @@ export const usePresentVerifiableCredential = (): IUsePresentVerifiableCredentia
   const dispatch = useAppDispatch();
 
   useEffect(() => {
-    function getPresentationRequest() {
-      const { searchParams } = new URL(window.location.href.replace("#", ""));
-      const request = searchParams.get("request");
+    const { searchParams } = new URL(window.location.href.replace("#", ""));
+    const request = searchParams.get("request");
 
-      if (!request) {
-        return;
-      }
-
-      dispatch(fetchVerifiableCredentials());
-
-      setVerifiablePresentationRequest(request);
+    if (!request) {
+      return;
     }
-    getPresentationRequest();
+
+    dispatch(fetchVerifiableCredentials());
+
+    setVerifiablePresentationRequest(request);
   }, [setVerifiablePresentationRequest, fetchVerifiableCredentials, dispatch]);
 
   const onCloseModal = useCallback(() => {
@@ -112,50 +110,52 @@ export const usePresentVerifiableCredential = (): IUsePresentVerifiableCredentia
     });
   }, [setError, ethWallet.onConnect]);
 
-  const onSubmitVerifiablePresentation = useCallback(
-    async (needsSignature: boolean) => {
-      if (!verifiablePresentation) {
-        setError("Failed to generate Verifiable Presentation.");
-        return;
-      }
+  const onSubmitVerifiablePresentationWithSignature = useCallback(async () => {
+    if (!verifiablePresentation) {
+      setError("Failed to generate Verifiable Presentation.");
+      return;
+    }
 
-      if (!needsSignature) {
-        await dispatch(generateVerifiablePresentation(verifiablePresentation));
-        onCloseModal();
-        return;
-      }
+    const address = ethWallet.address?.toLowerCase();
+    const signer = await ethWallet.provider?.getSigner();
 
-      const address = ethWallet.address?.toLowerCase();
-      const signer = await ethWallet.provider?.getSigner();
-      if (!address || !signer) {
-        setError("Could not connect to Ethereum account.");
-        return;
-      }
+    if (!address || !signer) {
+      setError("Could not connect to Ethereum account.");
+      return;
+    }
 
-      try {
-        const serializedVerifiablePresentation = serializeVerifiablePresentation(verifiablePresentation);
-        const signature = await signer.signMessage(serializedVerifiablePresentation);
-        const signedVerifiablePresentation = {
-          ...verifiablePresentation,
-          proof: [
-            {
-              type: [ETHEREUM_SIGNATURE_SPECIFICATION_TYPE],
-              proofPurpose: VERIFIABLE_CREDENTIAL_PROOF_PURPOSE,
-              verificationMethod: address,
-              created: new Date(),
-              proofValue: signature,
-            },
-          ],
-        };
+    try {
+      const serializedVerifiablePresentation = serializeVerifiablePresentation(verifiablePresentation);
+      const signature = await signer.signMessage(serializedVerifiablePresentation);
+      const signedVerifiablePresentation = {
+        ...verifiablePresentation,
+        proof: [
+          {
+            type: [ETHEREUM_SIGNATURE_SPECIFICATION_TYPE],
+            proofPurpose: VERIFIABLE_CREDENTIAL_PROOF_PURPOSE,
+            verificationMethod: address,
+            created: new Date(),
+            proofValue: signature,
+          },
+        ],
+      };
 
-        await dispatch(generateVerifiablePresentation(signedVerifiablePresentation));
-        onCloseModal();
-      } catch (e) {
-        setError("Failed to sign Verifiable Presentation.");
-      }
-    },
-    [verifiablePresentation, setError, dispatch, onCloseModal, generateVerifiablePresentation, ethWallet],
-  );
+      await dispatch(generateVerifiablePresentation(signedVerifiablePresentation));
+      onCloseModal();
+    } catch (e) {
+      setError("Failed to sign Verifiable Presentation.");
+    }
+  }, [verifiablePresentation, setError, dispatch, onCloseModal, generateVerifiablePresentation, ethWallet]);
+
+  const onSubmitVerifiablePresentationWithoutSignature = useCallback(async () => {
+    if (!verifiablePresentation) {
+      setError("Failed to generate Verifiable Presentation.");
+      return;
+    }
+
+    await dispatch(generateVerifiablePresentation(verifiablePresentation));
+    onCloseModal();
+  }, [verifiablePresentation, setError, dispatch, onCloseModal, generateVerifiablePresentation]);
 
   return {
     isWalletInstalled: ethWallet.isInjectedWallet,
@@ -171,6 +171,7 @@ export const usePresentVerifiableCredential = (): IUsePresentVerifiableCredentia
     onConfirmSelection: onConfirmVerifiableCredentialSelection,
     onReturnToSelection: onReturnToVerifiableCredentialSelection,
     onConnectWallet,
-    onSubmitVerifiablePresentation,
+    onSubmitWithSignature: onSubmitVerifiablePresentationWithSignature,
+    onSubmitWithoutSignature: onSubmitVerifiablePresentationWithoutSignature,
   };
 };

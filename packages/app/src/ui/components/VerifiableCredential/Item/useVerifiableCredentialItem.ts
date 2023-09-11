@@ -1,7 +1,7 @@
 import { useCallback, useState, FormEvent as ReactFormEvent } from "react";
 import { UseFormRegister, useForm } from "react-hook-form";
 
-import { IVerifiableCredentialMetadata } from "@src/types";
+import type { IVerifiableCredentialMetadata } from "@src/types";
 
 export interface RenameVerifiableCredentialItemData {
   name: string;

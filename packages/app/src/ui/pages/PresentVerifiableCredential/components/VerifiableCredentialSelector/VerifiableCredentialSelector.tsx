@@ -6,7 +6,7 @@ import { ICryptkeeperVerifiableCredential } from "@src/types";
 import { FullModal, FullModalHeader, FullModalContent, FullModalFooter } from "@src/ui/components/FullModal";
 import { VerifiableCredentialItem } from "@src/ui/components/VerifiableCredential/Item";
 
-export interface ISelectVerifiableCredentialProps {
+export interface IVerifiableCredentialSelectorProps {
   verifiablePresentationRequest?: string;
   cryptkeeperVerifiableCredentials: ICryptkeeperVerifiableCredential[];
   selectedVerifiableCredentialHashes: string[];
@@ -17,7 +17,7 @@ export interface ISelectVerifiableCredentialProps {
   onConfirmSelection: () => void;
 }
 
-const SelectVerifiableCredential = ({
+const VerifiableCredentialSelector = ({
   verifiablePresentationRequest = undefined,
   cryptkeeperVerifiableCredentials,
   selectedVerifiableCredentialHashes,
@@ -26,7 +26,7 @@ const SelectVerifiableCredential = ({
   onRejectVerifiablePresentationRequest,
   onToggleSelectVerifiableCredential,
   onConfirmSelection,
-}: ISelectVerifiableCredentialProps): JSX.Element => (
+}: IVerifiableCredentialSelectorProps): JSX.Element => (
   <Box sx={{ width: "100%", overflowX: "hidden", overflowY: "auto" }}>
     <FullModal data-testid="select-verifiable-credential-page" onClose={onCloseModal}>
       <FullModalHeader onClose={onCloseModal}>Request for Verifiable Credentials</FullModalHeader>
@@ -60,8 +60,9 @@ const SelectVerifiableCredential = ({
           <Button
             data-testid="reject-verifiable-presentation-request"
             name="reject"
-            sx={{ textTransform: "none" }}
-            type="button"
+            size="small"
+            sx={{ textTransform: "none", flex: 1, mr: 1 }}
+            type="submit"
             variant="outlined"
             onClick={onRejectVerifiablePresentationRequest}
           >
@@ -71,8 +72,9 @@ const SelectVerifiableCredential = ({
           <Button
             data-testid="confirm-verifiable-presentation-request"
             name="confirm"
-            sx={{ textTransform: "none" }}
-            type="button"
+            size="small"
+            sx={{ textTransform: "none", flex: 1, ml: 1 }}
+            type="submit"
             variant="contained"
             onClick={onConfirmSelection}
           >
@@ -84,4 +86,4 @@ const SelectVerifiableCredential = ({
   </Box>
 );
 
-export default SelectVerifiableCredential;
+export default VerifiableCredentialSelector;
