@@ -1,9 +1,9 @@
-export {
-  type IVerifiableCredential,
-  type ICredentialIssuer,
-  type ICredentialSubject,
-  type ICredentialStatus,
-  type ICredentialProof,
-  type ClaimValue,
+export type {
+  IVerifiableCredential,
+  ICredentialIssuer,
+  ICredentialSubject,
+  ICredentialStatus,
+  ICredentialProof,
+  ClaimValue,
 } from "./verifiableCredentials";
-export { type IVerifiablePresentation, type IVerifiablePresentationRequest } from "./verifiablePresentations";
+export type { IVerifiablePresentation, IVerifiablePresentationRequest } from "./verifiablePresentations";

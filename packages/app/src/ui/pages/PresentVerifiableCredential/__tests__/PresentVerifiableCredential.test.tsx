@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 
-import { IVerifiablePresentation } from "@cryptkeeperzk/types";
+import type { IVerifiablePresentation } from "@cryptkeeperzk/types";
 import { render, waitFor } from "@testing-library/react";
 
 import { createModalRoot, deleteModalRoot } from "@src/config/mock/modal";
@@ -94,7 +94,8 @@ describe("ui/pages/PresentVerifiableCredential", () => {
     onConfirmSelection: jest.fn(),
     onReturnToSelection: jest.fn(),
     onConnectWallet: jest.fn(),
-    onSubmitVerifiablePresentation: jest.fn(),
+    onSubmitWithSignature: jest.fn(),
+    onSubmitWithoutSignature: jest.fn(),
   };
 
   const verifiablePresentationHookData = {

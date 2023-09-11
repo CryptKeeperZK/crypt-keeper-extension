@@ -47,15 +47,15 @@ export type {
 export { ZkProofType } from "./proof";
 export type { IRequestHandler, IPendingRequest, IRejectedRequest } from "./request";
 export { RequestResolutionStatus, PendingRequestType } from "./request";
-export {
-  type IVerifiableCredential,
-  type ICredentialIssuer,
-  type ICredentialSubject,
-  type ICredentialStatus,
-  type ICredentialProof,
-  type ClaimValue,
-  type IVerifiablePresentation,
-  type IVerifiablePresentationRequest,
+export type {
+  IVerifiableCredential,
+  ICredentialIssuer,
+  ICredentialSubject,
+  ICredentialStatus,
+  ICredentialProof,
+  ClaimValue,
+  IVerifiablePresentation,
+  IVerifiablePresentationRequest,
 } from "./verifiableCredentials";
 export type {
   IJoinGroupMemberArgs,
