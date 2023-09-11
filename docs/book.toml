@@ -1,0 +1,9 @@
+[book]
+authors = ["AtHeartEngineer", "0xIsk", "0xmad"]
+language = "en"
+multilingual = false
+src = "src"
+title = "CryptKeeper Documentation"
+
+[build]
+create-missing = true
