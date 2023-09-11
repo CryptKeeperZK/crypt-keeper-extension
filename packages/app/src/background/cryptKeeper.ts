@@ -12,6 +12,7 @@ import ApprovalService from "./services/approval";
 import BackupService from "./services/backup";
 import VerifiableCredentialsService from "./services/credentials";
 import { validateSerializedVerifiableCredential } from "./services/credentials/utils";
+import { GroupService } from "./services/group";
 import HistoryService from "./services/history";
 import InjectorService from "./services/injector";
 import LockerService from "./services/lock";
@@ -39,6 +40,8 @@ const RPC_METHOD_ACCESS: Record<RPCAction, boolean> = {
   [RPCAction.GENERATE_RLN_PROOF]: true,
   [RPCAction.ADD_VERIFIABLE_CREDENTIAL_REQUEST]: true,
   [RPCAction.REVEAL_CONNECTED_IDENTITY_COMMITMENT_REQUEST]: true,
+  [RPCAction.JOIN_GROUP_REQUEST]: true,
+  [RPCAction.GENERATE_GROUP_MEMBERSHIP_PROOF_REQUEST]: true,
 };
 
 Object.freeze(RPC_METHOD_ACCESS);
@@ -68,6 +71,8 @@ export default class CryptKeeperController {
 
   private verifiableCredentialsService: VerifiableCredentialsService;
 
+  private groupService: GroupService;
+
   constructor() {
     this.handler = new Handler();
     this.requestManager = RequestManager.getInstance();
@@ -81,6 +86,7 @@ export default class CryptKeeperController {
     this.walletService = WalletService.getInstance();
     this.verifiableCredentialsService = VerifiableCredentialsService.getInstance();
     this.verifiableCredentialsService = VerifiableCredentialsService.getInstance();
+    this.groupService = GroupService.getInstance();
     this.backupService = BackupService.getInstance()
       .add(BackupableServices.LOCK, this.lockService)
       .add(BackupableServices.WALLET, this.walletService)
@@ -162,6 +168,14 @@ export default class CryptKeeperController {
       RPCAction.DELETE_ALL_IDENTITIES,
       this.lockService.ensure,
       this.zkIdentityService.deleteAllIdentities,
+    );
+
+    // Groups
+    this.handler.add(RPCAction.JOIN_GROUP, this.lockService.ensure, this.groupService.joinGroup);
+    this.handler.add(
+      RPCAction.GENERATE_GROUP_MEMBERSHIP_PROOF,
+      this.lockService.ensure,
+      this.groupService.generateGroupMembershipProof,
     );
 
     // History

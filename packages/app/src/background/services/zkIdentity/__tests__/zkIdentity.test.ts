@@ -2,7 +2,6 @@
 import { EventName } from "@cryptkeeperzk/providers";
 import { EWallet, ConnectedIdentityMetadata, IdentityStrategy, ICreateIdentityOptions } from "@cryptkeeperzk/types";
 import { createNewIdentity } from "@cryptkeeperzk/zk";
-import { bigintToHex } from "bigint-conversion";
 import pick from "lodash/pick";
 import browser from "webextension-polyfill";
 
@@ -10,11 +9,10 @@ import SimpleStorage from "@src/background/services/storage";
 import ZkIdentityService from "@src/background/services/zkIdentity";
 import { ZERO_ADDRESS } from "@src/config/const";
 import { getEnabledFeatures } from "@src/config/features";
+import { mockDefaultIdentityCommitment } from "@src/config/mock/zk";
 import { setConnectedIdentity, setIdentities } from "@src/ui/ducks/identities";
 import pushMessage from "@src/util/pushMessage";
 
-const mockDefaultIdentityCommitment =
-  bigintToHex(15206603389158210388485662342360617949291660595274505642693885456541816400294n);
 const mockDefaultIdentity = {
   secret: "1234",
   metadata: {

@@ -56,4 +56,9 @@ export type {
   ICredentialProof,
   ClaimValue,
 } from "./verifiableCredentials";
-export type { IAddBandadaGroupMemberArgs, IGenerateBandadaMerkleProofArgs } from "./group";
+export type {
+  IJoinGroupMemberArgs,
+  IAddBandadaGroupMemberArgs,
+  IGenerateGroupMerkleProofArgs,
+  IGenerateBandadaMerkleProofArgs,
+} from "./group";

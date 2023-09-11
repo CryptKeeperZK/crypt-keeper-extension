@@ -10,6 +10,8 @@ import {
   ISemaphoreProofRequiredArgs,
   IRLNProofRequiredArgs,
   IRLNSNARKProof,
+  IJoinGroupMemberArgs,
+  IGenerateGroupMerkleProofArgs,
 } from "@cryptkeeperzk/types";
 
 import { RPCAction } from "../constants";
@@ -384,6 +386,30 @@ export class CryptKeeperInjectedProvider {
   async revealConnectedIdentityRequest(): Promise<void> {
     await this.post({
       method: RPCAction.REVEAL_CONNECTED_IDENTITY_COMMITMENT_REQUEST,
+    });
+  }
+
+  /**
+   * Requests user to join a group with current connected identity.
+   *
+   * @returns {Promise<void>}
+   */
+  async joinGroup(payload: IJoinGroupMemberArgs): Promise<void> {
+    await this.post({
+      method: RPCAction.JOIN_GROUP_REQUEST,
+      payload,
+    });
+  }
+
+  /**
+   * Requests user to generate a group membership proof with current connected identity.
+   *
+   * @returns {Promise<void>}
+   */
+  async generateGroupMembershipProof(payload: IGenerateGroupMerkleProofArgs): Promise<void> {
+    await this.post({
+      method: RPCAction.GENERATE_GROUP_MEMBERSHIP_PROOF_REQUEST,
+      payload,
     });
   }
 }
