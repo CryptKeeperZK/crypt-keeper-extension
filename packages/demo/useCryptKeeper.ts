@@ -198,14 +198,14 @@ export const useCryptKeeper = (): IUseCryptKeeperData => {
       const mockVerifiableCredential = genMockVerifiableCredential(credentialType);
       const verifiableCredentialJson = JSON.stringify(mockVerifiableCredential);
 
-      await client?.addVerifiableCredentialRequest(verifiableCredentialJson);
+      await client?.DEV_addVerifiableCredentialRequest(verifiableCredentialJson);
     },
     [client],
   );
 
   const generateVerifiablePresentationRequest = useCallback(async () => {
     const verifiablePresentationRequest = genMockVerifiablePresentationRequest();
-    await client?.generateVerifiablePresentationRequest(verifiablePresentationRequest);
+    await client?.DEV_generateVerifiablePresentationRequest(verifiablePresentationRequest);
   }, [client]);
 
   const getConnectedIdentity = useCallback(async () => {

@@ -370,25 +370,24 @@ export class CryptKeeperInjectedProvider {
   }
 
   /**
-   * Requests user to add a verifiable credential.
+   * Requests user to reveal a connected identity commitment.
    *
-   * @param {string} serializedVerifiableCredential - The json string representation of the verifiable credential to add.
-   * @returns {void}
+   * @returns {Promise<void>}
    */
-  async addVerifiableCredentialRequest(serializedVerifiableCredential: string): Promise<void> {
+  async revealConnectedIdentityRequest(): Promise<void> {
     await this.post({
-      method: RPCAction.ADD_VERIFIABLE_CREDENTIAL_REQUEST,
-      payload: serializedVerifiableCredential,
+      method: RPCAction.REVEAL_CONNECTED_IDENTITY_COMMITMENT_REQUEST,
     });
   }
 
   /**
    * Requests user to provide a verifiable presentation.
+   * NOTE: THIS FUNCTION IS UNDER DEVELOPMENT AND NOT READY FOR PRODUCTION USE
    *
    * @param {IVerifiablePresentationRequest} verifiablePresentationRequest - The information provided to the user when requesting a verifiable presentation.
    * @returns {void}
    */
-  async generateVerifiablePresentationRequest(
+  async DEV_generateVerifiablePresentationRequest(
     verifiablePresentationRequest: IVerifiablePresentationRequest,
   ): Promise<void> {
     await this.post({
@@ -399,12 +398,15 @@ export class CryptKeeperInjectedProvider {
 
   /**
    * Requests user to reveal a connected identity commitment.
+   * NOTE: THIS FUNCTION IS UNDER DEVELOPMENT AND NOT READY FOR PRODUCTION USE
    *
-   * @returns {Promise<void>}
+   * @param {string} serializedVerifiableCredential - The json string representation of the verifiable credential to add.
+   * @returns {void}
    */
-  async revealConnectedIdentityRequest(): Promise<void> {
+  async DEV_addVerifiableCredentialRequest(serializedVerifiableCredential: string): Promise<void> {
     await this.post({
-      method: RPCAction.REVEAL_CONNECTED_IDENTITY_COMMITMENT_REQUEST,
+      method: RPCAction.ADD_VERIFIABLE_CREDENTIAL_REQUEST,
+      payload: serializedVerifiableCredential,
     });
   }
 
