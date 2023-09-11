@@ -367,19 +367,6 @@ export class CryptKeeperInjectedProvider {
   }
 
   /**
-   * Requests user to add a verifiable credential.
-   *
-   * @param {string} serializedVerifiableCredential - The json string representation of the verifiable credential to add.
-   * @returns {void}
-   */
-  async addVerifiableCredentialRequest(serializedVerifiableCredential: string): Promise<void> {
-    await this.post({
-      method: RPCAction.ADD_VERIFIABLE_CREDENTIAL_REQUEST,
-      payload: serializedVerifiableCredential,
-    });
-  }
-
-  /**
    * Requests user to reveal a connected identity commitment.
    *
    * @returns {Promise<void>}
@@ -391,12 +378,27 @@ export class CryptKeeperInjectedProvider {
   }
 
   /**
+   * Requests user to add a verifiable credential.
+   * NOTE: THIS FUNCTION IS UNDER DEVELOPMENT AND NOT READY FOR PRODUCTION USE
+   *
+   * @param {string} serializedVerifiableCredential - The json string representation of the verifiable credential to add.
+   * @returns {void}
+   */
+  async DEV_addVerifiableCredentialRequest(serializedVerifiableCredential: string): Promise<void> {
+    await this.post({
+      method: RPCAction.ADD_VERIFIABLE_CREDENTIAL_REQUEST,
+      payload: serializedVerifiableCredential,
+    });
+  }
+
+  /**
    * Requests user to provide a verifiable presentation.
+   * NOTE: THIS FUNCTION IS UNDER DEVELOPMENT AND NOT READY FOR PRODUCTION USE
    *
    * @param {IVerifiablePresentationRequest} verifiablePresentationRequest - The information provided to the user when requesting a verifiable presentation.
    * @returns {void}
    */
-  async generateVerifiablePresentationRequest(
+  async DEV_generateVerifiablePresentationRequest(
     verifiablePresentationRequest: IVerifiablePresentationRequest,
   ): Promise<void> {
     await this.post({
