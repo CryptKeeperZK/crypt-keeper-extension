@@ -61,4 +61,6 @@ export type {
   IAddBandadaGroupMemberArgs,
   IGenerateGroupMerkleProofArgs,
   IGenerateBandadaMerkleProofArgs,
+  ICheckGroupMembershipArgs,
+  ICheckBandadaGroupMembershipArgs,
 } from "./group";

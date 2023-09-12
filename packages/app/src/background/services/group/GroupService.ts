@@ -9,6 +9,7 @@ import ZkIdentityService from "@src/background/services/zkIdentity";
 import { OperationType } from "@src/types";
 
 import type {
+  ICheckGroupMembershipArgs,
   IGenerateGroupMerkleProofArgs,
   IIdentityData,
   IJoinGroupMemberArgs,
@@ -79,6 +80,16 @@ export class GroupService {
     }
 
     return this.bandadaSevice.generateMerkleProof({ groupId, identity });
+  };
+
+  checkGroupMembership = async ({ groupId }: ICheckGroupMembershipArgs): Promise<boolean> => {
+    const identity = await this.getConnectedIdentity();
+
+    if (!identity) {
+      throw new Error("No connected identity found");
+    }
+
+    return this.bandadaSevice.checkGroupMembership({ groupId, identity });
   };
 
   private getConnectedIdentity = async (): Promise<IIdentityData | undefined> => {

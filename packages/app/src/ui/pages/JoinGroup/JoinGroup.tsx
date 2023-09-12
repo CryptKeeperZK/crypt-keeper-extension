@@ -11,6 +11,7 @@ import { useJoinGroup } from "./useJoinGroup";
 const JoinGroup = (): JSX.Element => {
   const {
     isLoading,
+    isJoined,
     isSubmitting,
     error,
     faviconUrl,
@@ -24,7 +25,7 @@ const JoinGroup = (): JSX.Element => {
     onJoin,
   } = useJoinGroup();
 
-  const isShowContent = Boolean(connectedIdentity && groupId);
+  const isShowContent = !isJoined && Boolean(connectedIdentity && groupId);
   const isShowInviteInfo = Boolean(apiKey || inviteCode);
 
   if (isLoading) {
@@ -84,6 +85,30 @@ const JoinGroup = (): JSX.Element => {
         )}
 
         <Box>
+          {isJoined && (
+            <Typography
+              component="div"
+              data-testid="joined-text"
+              fontWeight="bold"
+              sx={{ textAlign: "center", mb: 3 }}
+              variant="h6"
+            >
+              <Typography fontWeight="bold" sx={{ display: "inline" }} variant="h6">
+                You have already joined this
+              </Typography>
+
+              <Typography
+                component="strong"
+                fontWeight="bold"
+                sx={{ color: "primary.main", cursor: "pointer", textDecoration: "underline", mx: 1 }}
+                variant="h6"
+                onClick={onGoToGroup}
+              >
+                Group
+              </Typography>
+            </Typography>
+          )}
+
           {isShowContent && (
             <Box>
               <Typography component="div" fontWeight="bold" sx={{ textAlign: "center", mb: 3 }} variant="h6">
@@ -141,7 +166,7 @@ const JoinGroup = (): JSX.Element => {
 
         <Button
           data-testid="reveal-identity-commitment"
-          disabled={!connectedIdentity || isSubmitting}
+          disabled={!connectedIdentity || isSubmitting || isJoined}
           sx={{ ml: 1, width: "100%" }}
           variant="contained"
           onClick={onJoin}

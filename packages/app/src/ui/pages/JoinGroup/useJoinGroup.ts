@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 
 import { Paths } from "@src/constants";
 import { closePopup } from "@src/ui/ducks/app";
-import { joinGroup } from "@src/ui/ducks/groups";
+import { checkGroupMembership, joinGroup } from "@src/ui/ducks/groups";
 import { useAppDispatch } from "@src/ui/ducks/hooks";
 import { fetchIdentities, useConnectedIdentity } from "@src/ui/ducks/identities";
 import { useSearchParam, useUrlParam } from "@src/ui/hooks/url";
@@ -15,6 +15,7 @@ import type { IIdentityData } from "@cryptkeeperzk/types";
 
 export interface IUseJoinGroupData {
   isLoading: boolean;
+  isJoined: boolean;
   isSubmitting: boolean;
   error: string;
   faviconUrl: string;
@@ -30,6 +31,7 @@ export interface IUseJoinGroupData {
 
 export const useJoinGroup = (): IUseJoinGroupData => {
   const [isLoading, setLoading] = useState(false);
+  const [isJoined, setJoined] = useState(false);
   const [isSubmitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
   const [faviconUrl, setFaviconUrl] = useState("");
@@ -45,14 +47,17 @@ export const useJoinGroup = (): IUseJoinGroupData => {
 
   useEffect(() => {
     setLoading(true);
-    dispatch(fetchIdentities())
+    Promise.all([dispatch(fetchIdentities()), dispatch(checkGroupMembership({ groupId: groupId! }))])
+      .then(([, isJoinedToGroup]) => {
+        setJoined(isJoinedToGroup);
+      })
       .catch((err: Error) => {
         setError(err.message);
       })
       .finally(() => {
         setLoading(false);
       });
-  }, [dispatch, setLoading, setError]);
+  }, [groupId, dispatch, setLoading, setError]);
 
   useEffect(() => {
     if (!connectedIdentity?.metadata.host) {
@@ -99,6 +104,7 @@ export const useJoinGroup = (): IUseJoinGroupData => {
   return {
     isLoading,
     isSubmitting,
+    isJoined,
     error,
     faviconUrl,
     connectedIdentity,

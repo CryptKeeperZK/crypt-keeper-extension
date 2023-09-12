@@ -177,6 +177,7 @@ export default class CryptKeeperController {
       this.lockService.ensure,
       this.groupService.generateGroupMembershipProof,
     );
+    this.handler.add(RPCAction.CHECK_GROUP_MEMBERSHIP, this.lockService.ensure, this.groupService.checkGroupMembership);
 
     // History
     this.handler.add(RPCAction.GET_IDENTITY_HISTORY, this.lockService.ensure, this.historyService.getOperations);

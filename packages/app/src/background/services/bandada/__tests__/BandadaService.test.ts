@@ -1,6 +1,11 @@
 import { mockDefaultIdentity } from "@src/config/mock/zk";
 
-import type { IMerkleProof, IGenerateBandadaMerkleProofArgs, IAddBandadaGroupMemberArgs } from "@cryptkeeperzk/types";
+import type {
+  IMerkleProof,
+  IGenerateBandadaMerkleProofArgs,
+  IAddBandadaGroupMemberArgs,
+  ICheckBandadaGroupMembershipArgs,
+} from "@cryptkeeperzk/types";
 
 import { BandadaService } from "..";
 
@@ -13,6 +18,11 @@ describe("background/services/bandada/BandadaService", () => {
   const defaultAddMemberArgs: IAddBandadaGroupMemberArgs = {
     groupId: "90694543209366256629502773954857",
     apiKey: "key",
+    identity: mockDefaultIdentity,
+  };
+
+  const defaultCheckMembershipArgs: ICheckBandadaGroupMembershipArgs = {
+    groupId: "90694543209366256629502773954857",
     identity: mockDefaultIdentity,
   };
 
@@ -117,5 +127,31 @@ describe("background/services/bandada/BandadaService", () => {
 
     await expect(service.generateMerkleProof(defaultGenerateProofArgs)).rejects.toThrowError("Error");
     expect(fetchSpy).toBeCalledTimes(1);
+  });
+
+  test("should check membership properly", async () => {
+    const fetchSpy = jest.spyOn(global, "fetch").mockResolvedValue({
+      ok: true,
+      json: () => Promise.resolve("true"),
+    } as Response);
+    const service = BandadaService.getInstance();
+
+    const result = await service.checkGroupMembership(defaultCheckMembershipArgs);
+
+    expect(fetchSpy).toBeCalledTimes(1);
+    expect(result).toBe(true);
+  });
+
+  test("should check membership properly if user is not a member", async () => {
+    const fetchSpy = jest.spyOn(global, "fetch").mockResolvedValue({
+      ok: true,
+      json: () => Promise.resolve("false"),
+    } as Response);
+    const service = BandadaService.getInstance();
+
+    const result = await service.checkGroupMembership(defaultCheckMembershipArgs);
+
+    expect(fetchSpy).toBeCalledTimes(1);
+    expect(result).toBe(false);
   });
 });

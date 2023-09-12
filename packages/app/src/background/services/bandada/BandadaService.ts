@@ -2,7 +2,12 @@ import { hexToBigint } from "bigint-conversion";
 
 import { getBandadaApiUrl } from "@src/config/env";
 
-import type { IMerkleProof, IGenerateBandadaMerkleProofArgs, IAddBandadaGroupMemberArgs } from "@cryptkeeperzk/types";
+import type {
+  IMerkleProof,
+  IGenerateBandadaMerkleProofArgs,
+  IAddBandadaGroupMemberArgs,
+  ICheckBandadaGroupMembershipArgs,
+} from "@cryptkeeperzk/types";
 
 const API_URL = getBandadaApiUrl();
 
@@ -47,6 +52,15 @@ export class BandadaService {
     const result = (await response.json()) as { message: string | string[] };
 
     throw new Error(result.message.toString());
+  }
+
+  async checkGroupMembership({ identity, groupId }: ICheckBandadaGroupMembershipArgs): Promise<boolean> {
+    const response = await fetch(`${API_URL}/groups/${groupId}/members/${hexToBigint(identity.commitment)}`, {
+      method: "GET",
+      headers: DEFAULT_HEADERS,
+    }).then((res) => res.json() as Promise<string>);
+
+    return JSON.parse(response) as boolean;
   }
 
   async generateMerkleProof({ groupId, identity }: IGenerateBandadaMerkleProofArgs): Promise<IMerkleProof> {

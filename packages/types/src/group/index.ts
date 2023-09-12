@@ -17,3 +17,11 @@ export interface IJoinGroupMemberArgs {
 export interface IAddBandadaGroupMemberArgs extends IJoinGroupMemberArgs {
   identity: IIdentityData;
 }
+
+export interface ICheckGroupMembershipArgs {
+  groupId: string;
+}
+
+export interface ICheckBandadaGroupMembershipArgs extends ICheckGroupMembershipArgs {
+  identity: IIdentityData;
+}

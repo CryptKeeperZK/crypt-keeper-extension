@@ -17,6 +17,7 @@ jest.mock("../useJoinGroup", (): unknown => ({
 describe("ui/pages/JoinGroup", () => {
   const defaultHookData: IUseJoinGroupData = {
     isLoading: false,
+    isJoined: false,
     isSubmitting: false,
     error: "",
     faviconUrl: "favicon",
@@ -117,5 +118,21 @@ describe("ui/pages/JoinGroup", () => {
 
     expect(emptyIdentity).toBeInTheDocument();
     expect(emptyGroup).toBeInTheDocument();
+  });
+
+  test("should render joined state properly", async () => {
+    (useJoinGroup as jest.Mock).mockReturnValue({ ...defaultHookData, isJoined: true });
+
+    const { container, findByTestId } = render(
+      <Suspense>
+        <JoinGroup />
+      </Suspense>,
+    );
+
+    await waitFor(() => container.firstChild !== null);
+
+    const text = await findByTestId("joined-text");
+
+    expect(text).toBeInTheDocument();
   });
 });

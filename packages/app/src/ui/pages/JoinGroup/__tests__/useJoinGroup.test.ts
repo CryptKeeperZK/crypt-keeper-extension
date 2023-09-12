@@ -10,7 +10,7 @@ import { ZERO_ADDRESS } from "@src/config/const";
 import { getBandadaUrl } from "@src/config/env";
 import { Paths } from "@src/constants";
 import { closePopup } from "@src/ui/ducks/app";
-import { joinGroup } from "@src/ui/ducks/groups";
+import { checkGroupMembership, joinGroup } from "@src/ui/ducks/groups";
 import { useAppDispatch } from "@src/ui/ducks/hooks";
 import { fetchIdentities, useConnectedIdentity } from "@src/ui/ducks/identities";
 import { useSearchParam, useUrlParam } from "@src/ui/hooks/url";
@@ -43,6 +43,7 @@ jest.mock("@src/ui/ducks/app", (): unknown => ({
 
 jest.mock("@src/ui/ducks/groups", (): unknown => ({
   joinGroup: jest.fn(),
+  checkGroupMembership: jest.fn(),
 }));
 
 jest.mock("@src/ui/ducks/hooks", (): unknown => ({
@@ -70,7 +71,7 @@ describe("ui/pages/JoinGroup/useJoinGroup", () => {
   const defaultFaviconsData = { favicons: [`${defaultIdentity.metadata.host}/favicon.ico`] };
 
   const mockNavigate = jest.fn();
-  const mockDispatch = jest.fn(() => Promise.resolve());
+  const mockDispatch = jest.fn(() => Promise.resolve(false));
 
   beforeEach(() => {
     (getLinkPreview as jest.Mock).mockResolvedValue(defaultFaviconsData);
@@ -100,6 +101,8 @@ describe("ui/pages/JoinGroup/useJoinGroup", () => {
     await waitForData(result.current);
 
     expect(result.current.isLoading).toBe(false);
+    expect(result.current.isJoined).toBe(false);
+    expect(result.current.isSubmitting).toBe(false);
     expect(result.current.error).toBe("");
     expect(result.current.apiKey).toBe("apiKey");
     expect(result.current.inviteCode).toBe("inviteCode");
@@ -116,8 +119,9 @@ describe("ui/pages/JoinGroup/useJoinGroup", () => {
 
     expect(mockNavigate).toBeCalledTimes(1);
     expect(mockNavigate).toBeCalledWith(Paths.HOME);
-    expect(mockDispatch).toBeCalledTimes(2);
+    expect(mockDispatch).toBeCalledTimes(3);
     expect(fetchIdentities).toBeCalledTimes(1);
+    expect(checkGroupMembership).toBeCalledTimes(1);
     expect(closePopup).toBeCalledTimes(1);
   });
 
@@ -171,8 +175,9 @@ describe("ui/pages/JoinGroup/useJoinGroup", () => {
     await act(() => Promise.resolve(result.current.onJoin()));
     await waitFor(() => !result.current.isSubmitting);
 
-    expect(mockDispatch).toBeCalledTimes(3);
+    expect(mockDispatch).toBeCalledTimes(4);
     expect(fetchIdentities).toBeCalledTimes(1);
+    expect(checkGroupMembership).toBeCalledTimes(1);
     expect(joinGroup).toBeCalledTimes(1);
     expect(closePopup).toBeCalledTimes(1);
     expect(mockNavigate).toBeCalledTimes(1);

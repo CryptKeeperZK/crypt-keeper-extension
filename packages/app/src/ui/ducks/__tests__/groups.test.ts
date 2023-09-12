@@ -7,7 +7,7 @@ import { RPCAction } from "@cryptkeeperzk/providers";
 import { store } from "@src/ui/store/configureAppStore";
 import postMessage from "@src/util/postMessage";
 
-import { joinGroup } from "../groups";
+import { checkGroupMembership, joinGroup } from "../groups";
 
 jest.mock("@src/util/postMessage");
 
@@ -24,6 +24,17 @@ describe("ui/ducks/groups", () => {
 
     expect(postMessage).toBeCalledTimes(1);
     expect(postMessage).toBeCalledWith({ method: RPCAction.JOIN_GROUP, payload: args });
+    expect(result).toBe(true);
+  });
+
+  test("should check group membership properly", async () => {
+    const args = { groupId: "groupId", apiKey: "apiKey", inviteCode: "inviteCode" };
+    (postMessage as jest.Mock).mockResolvedValue(true);
+
+    const result = await Promise.resolve(store.dispatch(checkGroupMembership(args)));
+
+    expect(postMessage).toBeCalledTimes(1);
+    expect(postMessage).toBeCalledWith({ method: RPCAction.CHECK_GROUP_MEMBERSHIP, payload: args });
     expect(result).toBe(true);
   });
 });
