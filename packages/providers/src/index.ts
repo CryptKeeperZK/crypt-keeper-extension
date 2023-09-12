@@ -1,3 +1,3 @@
-export { CryptKeeperInjectedProvider, initializeCryptKeeperProvider, cryptkeeperConnect } from "./sdk";
+export { CryptKeeperInjectedProvider, initializeCryptKeeperProvider, initializeCryptKeeper } from "./sdk";
 export { RPCAction } from "./constants";
 export { EventName } from "./event";

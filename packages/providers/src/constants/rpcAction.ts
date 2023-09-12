@@ -2,7 +2,7 @@ export enum RPCAction {
   UNLOCK = "rpc/unlock",
   LOCK = "rpc/lock",
   GET_STATUS = "rpc/getStatus",
-  CONNECT = "rpc/connect",
+  APPROVE_CONNECTION = "rpc/approve-connect",
   CONNECT_IDENTITY_REQUEST = "rpc/connectIdentityRequest",
   REVEAL_CONNECTED_IDENTITY_COMMITMENT_REQUEST = "rpc/identity/revealConnectedIdentityCommitmentRequest",
   REVEAL_CONNECTED_IDENTITY_COMMITMENT = "rpc/identity/revealConnectedIdentityCommitment",

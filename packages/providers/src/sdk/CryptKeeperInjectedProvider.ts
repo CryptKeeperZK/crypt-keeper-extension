@@ -1,15 +1,14 @@
 import {
-  IApprovals,
-  ICreateIdentityRequestArgs,
+  IConnectionApprovalData,
   IConnectIdentityRequestArgs,
   ConnectedIdentityMetadata,
-  IHostPermission,
   IInjectedMessageData,
   IInjectedProviderRequest,
   ISemaphoreFullProof,
   ISemaphoreProofRequiredArgs,
   IRLNProofRequiredArgs,
   IRLNSNARKProof,
+  ICreateIdentityRequestArgs,
 } from "@cryptkeeperzk/types";
 
 import { RPCAction } from "../constants";
@@ -56,14 +55,21 @@ export class CryptKeeperInjectedProvider {
    */
   private emitter: EventEmitter;
 
+
+  /**
+   * EventEmitter for handling events.
+   */
+  private connectedOrigin?: string;
+
   /**
    * Creates an instance of CryptKeeperInjectedProvider.
    *
    * @constructor
    */
-  constructor() {
+  constructor(connectedOrigin?: string) {
     this.nonce = 0;
     this.emitter = new EventEmitter();
+    this.connectedOrigin = connectedOrigin
   }
 
   /**
@@ -102,26 +108,30 @@ export class CryptKeeperInjectedProvider {
    *
    * @returns {Promise<CryptKeeperInjectedProvider | undefined>} A Promise that resolves to the connected CryptKeeperInjectedProvider instance, or undefined if the CryptKeeper extension is not installed.
    */
-  async connect(): Promise<CryptKeeperInjectedProvider | undefined> {
-    if (!window.isCryptkeeperInjected) {
+  async connect(): Promise<ConnectedIdentityMetadata | undefined> {
+    if (!this.connectedOrigin) {
       return undefined;
     }
+    console.log("CONNECT 1", this.connectedOrigin);
 
-    const { isApproved, canSkipApprove } = await this.tryConnect(window.location.origin);
+    const { isApproved, canSkipApprove } = await this.approveConnection(this.connectedOrigin);
 
     if (isApproved) {
-      await this.addHost(window.location.origin, canSkipApprove);
+      console.log("CONNECT 2", this.connectedOrigin);
+
+      await this.addHost(this.connectedOrigin, canSkipApprove);
     }
 
-    await this.post({ method: RPCAction.CLOSE_POPUP });
+    // console.log("CONNECT 3");
+    // await this.post({ method: RPCAction.CLOSE_POPUP });
+    // console.log("CONNECT 4");
 
+    await this.connectIdentity({ host: this.connectedOrigin });
+
+    console.log("CONNECT 5");
     const connectedIdentity = await this.getConnectedIdentity();
 
-    if (!connectedIdentity) {
-      await this.connectIdentity({ host: window.location.origin });
-    }
-
-    return this;
+    return connectedIdentity;
   }
 
   /**
@@ -130,11 +140,11 @@ export class CryptKeeperInjectedProvider {
    * @param {string} urlOrigin - The host origin to connect to.
    * @returns {Promise<Approvals>} A Promise that resolves to an object containing approval information.
    */
-  private async tryConnect(urlOrigin: string): Promise<IApprovals> {
+  private async approveConnection(urlOrigin: string): Promise<IConnectionApprovalData> {
     return this.post({
-      method: RPCAction.CONNECT,
+      method: RPCAction.APPROVE_CONNECTION,
       payload: { urlOrigin },
-    }) as Promise<IApprovals>;
+    }) as Promise<IConnectionApprovalData>;
   }
 
   /**
@@ -197,12 +207,27 @@ export class CryptKeeperInjectedProvider {
   /**
    * Connects to an existing identity for the specified host.
    *
-   * @param {IConnectIdentityRequestArgs} host - The host for which to connect to an identity.
+   * @param {IConnectIdentityRequestArgs} urlOrigin - The host for which to connect to an identity.
    * @returns {Promise<void>} A Promise that resolves when the connection is complete.
    */
-  async connectIdentity({ host }: IConnectIdentityRequestArgs): Promise<void> {
+  private async connectIdentity({ host }: IConnectIdentityRequestArgs): Promise<void> {
     await this.post({
       method: RPCAction.CONNECT_IDENTITY_REQUEST,
+      payload: {
+        host,
+      },
+    });
+  }
+
+  /**
+   * Creates an identity for the specified host.
+   *
+   * @param {ICreateIdentityRequestArgs} host - The host for which to create an identity.
+   * @returns {Promise<void>} A Promise that resolves when the identity creation is complete.
+   */
+  async createIdentity({ host }: ICreateIdentityRequestArgs): Promise<void> {
+    await this.post({
+      method: RPCAction.CREATE_IDENTITY_REQUEST,
       payload: {
         host,
       },
@@ -242,51 +267,6 @@ export class CryptKeeperInjectedProvider {
       promises.delete(data.nonce.toString());
     }
   };
-
-  /**
-   * Retrieves the host permissions for the specified host.
-   *
-   * @param {string} host - The host for which to retrieve the permissions.
-   * @returns {Promise<unknown>} A Promise that resolves to the host permissions.
-   */
-  async getHostPermissions(host: string): Promise<unknown> {
-    return this.post({
-      method: RPCAction.GET_HOST_PERMISSIONS,
-      payload: host,
-    });
-  }
-
-  /**
-   * Sets the host permissions for the specified host.
-   *
-   * @param {string} host - The host for which to set the permissions.
-   * @param {IHostPermission} permissions - The host permissions to set.
-   * @returns {Promise<unknown>} A Promise that resolves to the result of setting the host permissions.
-   */
-  async setHostPermissions(host: string, permissions?: IHostPermission): Promise<unknown> {
-    return this.post({
-      method: RPCAction.SET_HOST_PERMISSIONS,
-      payload: {
-        host,
-        ...permissions,
-      },
-    });
-  }
-
-  /**
-   * Creates an identity for the specified host.
-   *
-   * @param {ICreateIdentityRequestArgs} host - The host for which to create an identity.
-   * @returns {Promise<void>} A Promise that resolves when the identity creation is complete.
-   */
-  async createIdentity({ host }: ICreateIdentityRequestArgs): Promise<void> {
-    await this.post({
-      method: RPCAction.CREATE_IDENTITY_REQUEST,
-      payload: {
-        host,
-      },
-    });
-  }
 
   /**
    * Generates a semaphore proof.

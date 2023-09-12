@@ -103,7 +103,7 @@ describe("background/services/injector", () => {
     test("should connect properly", async () => {
       const service = InjectorService.getInstance();
 
-      const result = await service.connect(defaultMetadata);
+      const result = await service.approveConnection(defaultMetadata);
 
       expect(result).toStrictEqual({
         canSkipApprove: true,
@@ -114,13 +114,13 @@ describe("background/services/injector", () => {
     test("should throw error if there is no host", async () => {
       const service = InjectorService.getInstance();
 
-      await expect(service.connect({ urlOrigin: "" })).rejects.toThrow("Origin is not set");
+      await expect(service.approveConnection({ urlOrigin: "" })).rejects.toThrow("Origin is not set");
     });
 
     test("should connect with approval request properly", async () => {
       const service = InjectorService.getInstance();
 
-      const result = await service.connect({ urlOrigin: "new-host" });
+      const result = await service.approveConnection({ urlOrigin: "new-host" });
 
       expect(result).toStrictEqual({
         isApproved: true,
@@ -131,7 +131,7 @@ describe("background/services/injector", () => {
     test("should reject connect request properly", async () => {
       const service = InjectorService.getInstance();
 
-      const result = await service.connect({ urlOrigin: "reject" });
+      const result = await service.approveConnection({ urlOrigin: "reject" });
 
       expect(result).toStrictEqual({
         isApproved: false,

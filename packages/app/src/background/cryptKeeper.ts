@@ -28,7 +28,7 @@ const defaultMap = Object.values(RPCAction).reduce(
 const RPC_METHOD_ACCESS: Record<RPCAction, boolean> = {
   ...defaultMap,
   [RPCAction.CLOSE_POPUP]: true,
-  [RPCAction.CONNECT]: true,
+  [RPCAction.APPROVE_CONNECTION]: true,
   [RPCAction.APPROVE_HOST]: true,
   [RPCAction.GET_CONNECTED_IDENTITY_DATA]: true,
   [RPCAction.CONNECT_IDENTITY_REQUEST]: true,
@@ -229,7 +229,7 @@ export default class CryptKeeperController {
     );
 
     // Injector
-    this.handler.add(RPCAction.CONNECT, this.injectorService.connect);
+    this.handler.add(RPCAction.APPROVE_CONNECTION, this.injectorService.approveConnection);
     this.handler.add(
       RPCAction.GENERATE_SEMAPHORE_PROOF,
       this.lockService.ensure,

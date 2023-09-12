@@ -1,10 +1,12 @@
 import { RPCAction } from "@cryptkeeperzk/providers";
 import {
   PendingRequestType,
-  type IRLNProofRequest,
-  type ISemaphoreFullProof,
-  type ISemaphoreProofRequest,
-  type IZkMetadata,
+  IRLNProofRequest,
+  ISemaphoreFullProof,
+  ISemaphoreProofRequest,
+  IZkMetadata,
+  IConnectionApprovalData,
+  IRLNSNARKProof
 } from "@cryptkeeperzk/types";
 import { ZkProofService } from "@cryptkeeperzk/zk";
 import omit from "lodash/omit";
@@ -18,9 +20,6 @@ import ZkIdentityService from "@src/background/services/zkIdentity";
 import { closeChromeOffscreen, createChromeOffscreen, getBrowserPlatform } from "@src/background/shared/utils";
 import { BrowserPlatform } from "@src/constants";
 import pushMessage from "@src/util/pushMessage";
-
-import type { IConnectData } from "./types";
-import type { RLNSNARKProof } from "@cryptkeeperzk/rlnjs";
 
 export default class InjectorService {
   private static INSTANCE?: InjectorService;
@@ -54,7 +53,7 @@ export default class InjectorService {
     return InjectorService.INSTANCE;
   }
 
-  connect = async ({ urlOrigin }: IZkMetadata): Promise<IConnectData> => {
+  approveConnection = async ({ urlOrigin }: IZkMetadata): Promise<IConnectionApprovalData> => {
     if (!urlOrigin) {
       throw new Error("Origin is not set");
     }
@@ -194,7 +193,7 @@ export default class InjectorService {
       messageId,
     }: IRLNProofRequest,
     { urlOrigin }: IZkMetadata,
-  ): Promise<RLNSNARKProof> => {
+  ): Promise<IRLNSNARKProof> => {
     if (!urlOrigin) {
       throw new Error("Origin is not set");
     }
@@ -270,7 +269,7 @@ export default class InjectorService {
         source: "offscreen",
       });
 
-      return JSON.parse(rlnFullProof as string) as RLNSNARKProof;
+      return JSON.parse(rlnFullProof as string) as IRLNSNARKProof;
     } catch (error) {
       throw new Error(`Error in generateRlnProof(): ${(error as Error).message}`);
     } finally {

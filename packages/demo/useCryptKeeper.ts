@@ -1,5 +1,5 @@
 /* eslint-disable no-console */
-import { cryptkeeperConnect, type CryptKeeperInjectedProvider } from "@cryptkeeperzk/providers";
+import { initializeCryptKeeper, type CryptKeeperInjectedProvider } from "@cryptkeeperzk/providers";
 import { EventName } from "@cryptkeeperzk/providers";
 import { Identity } from "@cryptkeeperzk/semaphore-identity";
 import { bigintToHex } from "bigint-conversion";
@@ -77,15 +77,15 @@ export const useCryptKeeper = (): IUseCryptKeeperData => {
   const mockIdentityCommitments: string[] = genMockIdentityCommitments();
 
   const connect = useCallback(async () => {
-    const injectedClient = await cryptkeeperConnect();
+    const connectedIdentityMetadata = await client?.connect();
 
-    if (injectedClient) {
+    if (connectedIdentityMetadata) {
       setIsLocked(false);
-      setClient(injectedClient);
+      setConnectedIdentityMetadata(connectedIdentityMetadata);
     } else {
-      toast(`CryptKeeper is not installed in the browser`, { type: "error" });
+      toast(`CryptKeeper refused the connection`, { type: "error" });
     }
-  }, [setIsLocked, setClient]);
+  }, [client, setClient, setIsLocked, setConnectedIdentityMetadata]);
 
   const genSemaphoreProof = async (proofType: MerkleProofType = MerkleProofType.STORAGE_ADDRESS) => {
     const externalNullifier = encodeBytes32String("voting-1");
@@ -179,12 +179,12 @@ export const useCryptKeeper = (): IUseCryptKeeperData => {
     toast(`Getting Identity data successfully!`, { type: "success" });
   }, [client, setConnectedIdentityMetadata]);
 
-  const createIdentity = useCallback(() => {
-    client?.createIdentity({ host: window.location.origin });
+  const createIdentity = useCallback(async () => {
+    await client?.createIdentity({ host: window.location.origin });
   }, [client]);
 
   const connectIdentity = useCallback(async () => {
-    await client?.connectIdentity({ host: window.location.origin });
+    //    await client?.connectIdentity({ host: window.location.origin });
   }, [client]);
 
   const onRevealConnectedIdentityCommitment = useCallback(async () => {
@@ -227,6 +227,19 @@ export const useCryptKeeper = (): IUseCryptKeeperData => {
     [setConnectedIdentityCommitment],
   );
 
+  // Initialize Injected CryptKeeper Provider Client
+  useEffect(() => {
+    const cryptkeeperInjectedProvider = initializeCryptKeeper();
+
+    if (cryptkeeperInjectedProvider) {
+      setIsLocked(false);
+      setClient(cryptkeeperInjectedProvider);
+    } else {
+      toast(`CryptKeeper is not installed in the browser`, { type: "error" });
+    }
+  }, []);
+
+  // Listen to Injected CryptKeeper Provider Client Events
   useEffect(() => {
     if (!client) {
       return undefined;
@@ -238,8 +251,6 @@ export const useCryptKeeper = (): IUseCryptKeeperData => {
     client.on(EventName.ADD_VERIFIABLE_CREDENTIAL, onAddVerifiableCredential);
     client.on(EventName.REJECT_VERIFIABLE_CREDENTIAL, onRejectVerifiableCredential);
     client.on(EventName.REVEAL_COMMITMENT, onRevealCommitment);
-
-    getConnectedIdentity();
 
     return () => {
       client.cleanListeners();

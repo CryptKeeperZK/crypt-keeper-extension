@@ -26,20 +26,6 @@ const NotConnected = ({ onClick }: INotConnectedProps) => (
   </div>
 );
 
-interface NoConnectedIdentityCommitmentProps {
-  onConnectIdentity: () => void;
-}
-
-const NoConnectedIdentityCommitment = ({ onConnectIdentity }: NoConnectedIdentityCommitmentProps) => (
-  <div>
-    <p style={{ marginRight: 8 }}>Please set a connected identity in the Crypt-Keeper plugin to continue.</p>
-
-    <button data-testid="connect-identity" type="button" onClick={onConnectIdentity}>
-      Connect identity
-    </button>
-  </div>
-);
-
 const App = () => {
   const {
     client,
@@ -59,16 +45,8 @@ const App = () => {
   const params = new URLSearchParams(window.location.search);
   const canShowReveal = process.env.REVEAL_IDENTITY === "true" || params.get("REVEAL_IDENTITY") === "true";
 
-  useEffect(() => {
-    connect();
-  }, [connect]);
-
-  if (!client || isLocked) {
-    return <NotConnected onClick={connect} />;
-  }
-
-  if (!connectedIdentityMetadata) {
-    return <NoConnectedIdentityCommitment onConnectIdentity={connectIdentity} />;
+  if (!client || isLocked || !connectedIdentityMetadata) {
+    return <NotConnected onClick={connect} />
   }
 
   return (
