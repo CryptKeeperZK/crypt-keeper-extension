@@ -1,11 +1,13 @@
+/* eslint-disable @typescript-eslint/unbound-method */
 import browser from "webextension-polyfill";
 
 import BrowserUtils from "../browserUtils";
 
 describe("background/controllers/browserUtils", () => {
   const defaultTabs = [
-    { id: 1, active: true, highlighted: true },
-    { id: 2, active: true, highlighted: false },
+    { id: 1, active: true, highlighted: true, url: "http://localhost:3000" },
+    { id: 2, active: true, highlighted: false, url: "http://localhost:3000" },
+    { id: 3, active: true, highlighted: false },
   ];
 
   const defaultPopupTab = { id: 3, active: true, highlighted: true };
@@ -50,9 +52,7 @@ describe("background/controllers/browserUtils", () => {
     browserUtils.addRemoveWindowListener(callback);
     browserUtils.removeRemoveWindowListener(callback);
 
-    // eslint-disable-next-line @typescript-eslint/unbound-method
     expect(browser.windows.onRemoved.addListener).toBeCalledTimes(2);
-    // eslint-disable-next-line @typescript-eslint/unbound-method
     expect(browser.windows.onRemoved.removeListener).toBeCalledTimes(1);
   });
 
@@ -61,7 +61,14 @@ describe("background/controllers/browserUtils", () => {
 
     await browserUtils.clearStorage();
 
-    // eslint-disable-next-line @typescript-eslint/unbound-method
     expect(browser.storage.sync.clear).toBeCalledTimes(1);
+  });
+
+  test("should push event properly", async () => {
+    const browserUtils = BrowserUtils.getInstance();
+
+    await browserUtils.pushEvent({ type: "type" }, "http://localhost:3000");
+
+    expect(browser.tabs.sendMessage).toBeCalledTimes(2);
   });
 });

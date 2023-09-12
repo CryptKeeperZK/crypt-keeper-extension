@@ -1,5 +1,7 @@
+import { EventName } from "@cryptkeeperzk/providers";
 import browser from "webextension-polyfill";
 
+import BrowserUtils from "@src/background/controllers/browserUtils";
 import { BandadaService } from "@src/background/services/bandada";
 import HistoryService from "@src/background/services/history";
 import NotificationService from "@src/background/services/notification";
@@ -24,11 +26,14 @@ export class GroupService {
 
   private notificationService: NotificationService;
 
+  private browserController: BrowserUtils;
+
   private constructor() {
     this.bandadaSevice = BandadaService.getInstance();
     this.zkIdentityService = ZkIdentityService.getInstance();
     this.historyService = HistoryService.getInstance();
     this.notificationService = NotificationService.getInstance();
+    this.browserController = BrowserUtils.getInstance();
   }
 
   static getInstance(): GroupService {
@@ -57,6 +62,11 @@ export class GroupService {
         type: "basic",
       },
     });
+
+    await this.browserController.pushEvent(
+      { type: EventName.JOIN_GROUP, payload: { groupId } },
+      identity.metadata.host!,
+    );
 
     return result;
   };

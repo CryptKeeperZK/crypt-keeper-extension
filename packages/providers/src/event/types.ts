@@ -25,6 +25,7 @@ export enum EventName {
   ADD_VERIFIABLE_CREDENTIAL = "addVerifiableCredential",
   REJECT_VERIFIABLE_CREDENTIAL = "rejectVerifiableCredential",
   REVEAL_COMMITMENT = "revealCommitment",
+  JOIN_GROUP = "joinGroup",
 }
 
 /**

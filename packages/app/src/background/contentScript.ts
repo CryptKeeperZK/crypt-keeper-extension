@@ -91,6 +91,17 @@ function injectScript() {
         );
         break;
       }
+      case EventName.JOIN_GROUP: {
+        window.postMessage(
+          {
+            target: "injected-injectedscript",
+            payload: [null, action.payload as { groupId: string }],
+            nonce: EventName.JOIN_GROUP,
+          },
+          "*",
+        );
+        break;
+      }
       default:
         log.warn("unknown action in content script");
     }

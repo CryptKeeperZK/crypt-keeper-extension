@@ -29,6 +29,7 @@ const EVENTS = [
   EventName.ADD_VERIFIABLE_CREDENTIAL,
   EventName.REJECT_VERIFIABLE_CREDENTIAL,
   EventName.REVEAL_COMMITMENT,
+  EventName.JOIN_GROUP,
 ];
 
 interface Handlers {

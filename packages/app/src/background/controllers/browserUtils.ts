@@ -1,5 +1,7 @@
 import browser, { Windows } from "webextension-polyfill";
 
+import type { IReduxAction } from "@cryptkeeperzk/types";
+
 interface CreateWindowArgs {
   type: "popup";
   focused: boolean;
@@ -84,6 +86,14 @@ export default class BrowserUtils {
 
   removeRemoveWindowListener = (callback: (windowId: number) => void): void => {
     browser.windows.onRemoved.removeListener(callback);
+  };
+
+  pushEvent = async (action: IReduxAction, host: string): Promise<void> => {
+    const tabs = await browser.tabs
+      .query({})
+      .then((browserTabs) => browserTabs.filter(({ url }) => (url ? new URL(url).origin === host : false)));
+
+    await Promise.all(tabs.map((tab) => browser.tabs.sendMessage(tab.id!, action).catch(() => undefined)));
   };
 
   private createTab = async (options: CreateTabArgs) => browser.tabs.create(options);
