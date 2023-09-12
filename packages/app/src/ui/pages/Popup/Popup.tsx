@@ -9,6 +9,7 @@ import DownloadBackup from "@src/ui/pages/DownloadBackup";
 import GenerateMnemonic from "@src/ui/pages/GenerateMnemonic";
 import Home from "@src/ui/pages/Home";
 import Identity from "@src/ui/pages/Identity";
+import JoinGroup from "@src/ui/pages/JoinGroup";
 import Login from "@src/ui/pages/Login";
 import Onboarding from "@src/ui/pages/Onboarding";
 import OnboardingBackup from "@src/ui/pages/OnboardingBackup";
@@ -41,6 +42,7 @@ const routeConfig: RouteObject[] = [
   { path: Paths.RECOVER, element: <Recover /> },
   { path: Paths.RESET_PASSWORD, element: <ResetPassword /> },
   { path: Paths.ADD_VERIFIABLE_CREDENTIAL, element: <AddVerifiableCredential /> },
+  { path: Paths.JOIN_GROUP, element: <JoinGroup /> },
   {
     path: "*",
     element: <Navigate to={Paths.HOME} />,
