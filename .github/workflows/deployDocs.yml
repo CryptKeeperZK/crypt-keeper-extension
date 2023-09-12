@@ -48,6 +48,9 @@ jobs:
       - name: Build with mdBook
         run: mdbook build
 
+      - name: List Working Directory Contents
+        run: ls -R
+
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v2
         with:
