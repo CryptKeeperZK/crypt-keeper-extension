@@ -1,6 +1,6 @@
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { faTwitter, faGithub, faReddit } from "@fortawesome/free-brands-svg-icons";
-import { faLink } from "@fortawesome/free-solid-svg-icons";
+import { faLink, faUsersRays } from "@fortawesome/free-solid-svg-icons";
 import { ThemeProvider } from "@mui/material/styles";
 import { AnyAction } from "@reduxjs/toolkit";
 import { Web3ReactProvider } from "@web3-react/core";
@@ -41,7 +41,7 @@ browser.tabs.query({ active: true, currentWindow: true }).then(() => {
 
   const root = ReactDOM.createRoot(document.getElementById("popup")!);
 
-  library.add(faTwitter, faGithub, faReddit, faLink);
+  library.add(faTwitter, faGithub, faReddit, faLink, faUsersRays);
 
   root.render(
     <Provider store={store}>

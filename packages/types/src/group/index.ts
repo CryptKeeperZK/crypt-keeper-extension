@@ -1,9 +1,11 @@
+import type { IIdentityData } from "../identity";
+
 export interface IGenerateGroupMerkleProofArgs {
   groupId: string;
 }
 
 export interface IGenerateBandadaMerkleProofArgs extends IGenerateGroupMerkleProofArgs {
-  commitment: string;
+  identity: IIdentityData;
 }
 
 export interface IJoinGroupMemberArgs {
@@ -13,5 +15,5 @@ export interface IJoinGroupMemberArgs {
 }
 
 export interface IAddBandadaGroupMemberArgs extends IJoinGroupMemberArgs {
-  commitment: string;
+  identity: IIdentityData;
 }

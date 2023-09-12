@@ -87,7 +87,7 @@ export default class HistoryService {
     return this.settings;
   };
 
-  trackOperation = async (type: OperationType, { identity }: OperationOptions): Promise<void> => {
+  trackOperation = async (type: OperationType, { identity, group }: OperationOptions): Promise<void> => {
     if (!this.settings?.isEnabled) {
       return;
     }
@@ -96,6 +96,7 @@ export default class HistoryService {
       id: nanoid(),
       type,
       identity,
+      group,
       createdAt: new Date().toISOString(),
     });
 

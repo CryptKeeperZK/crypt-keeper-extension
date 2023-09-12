@@ -10,6 +10,7 @@ import { Menu } from "@src/ui/components/Menu";
 import { ellipsify } from "@src/util/account";
 import { redirectToNewTab } from "@src/util/browser";
 import { formatDate } from "@src/util/date";
+import { getBandadaGroupUrl } from "@src/util/groups";
 
 import "./activityListItemStyles.scss";
 
@@ -33,6 +34,7 @@ const OPERATIONS: Record<OperationType, string> = {
   [OperationType.DELETE_ALL_VERIFIABLE_CREDENTIALS]: "All verifiable credentials deleted",
   [OperationType.REJECT_VERIFIABLE_CREDENTIAL_REQUEST]: "Verifiable credential request rejected",
   [OperationType.REVEAL_IDENTITY_COMMITMENT]: "Identity revealed",
+  [OperationType.JOIN_GROUP]: "Joined group",
 };
 
 const web2ProvidersIcons: IconWeb2Providers = {
@@ -51,6 +53,10 @@ export const ActivityItem = ({ operation, onDelete }: IActivityItemProps): JSX.E
   const onGoToHost = useCallback(() => {
     redirectToNewTab(metadata!.host!);
   }, [metadata?.host]);
+
+  const onGoToGroup = useCallback(() => {
+    redirectToNewTab(getBandadaGroupUrl(operation.group!.id!));
+  }, [operation.group?.id]);
 
   return (
     <div className="p-4 activity-row" data-testid={`activity-operation-${operation.id}`}>
@@ -72,6 +78,19 @@ export const ActivityItem = ({ operation, onDelete }: IActivityItemProps): JSX.E
             <span className="text-xs py-1 px-2 ml-2 rounded-full bg-gray-500 text-gray-800">
               <Tooltip title={metadata.host}>
                 <FontAwesomeIcon data-testid="host" icon="link" style={{ cursor: "pointer" }} onClick={onGoToHost} />
+              </Tooltip>
+            </span>
+          )}
+
+          {operation.group?.id && (
+            <span className="text-xs py-1 px-2 ml-2 rounded-full bg-gray-500 text-gray-800">
+              <Tooltip title={`Group: ${getBandadaGroupUrl(operation.group.id)}`}>
+                <FontAwesomeIcon
+                  data-testid="group"
+                  icon="users-rays"
+                  style={{ cursor: "pointer" }}
+                  onClick={onGoToGroup}
+                />
               </Tooltip>
             </span>
           )}

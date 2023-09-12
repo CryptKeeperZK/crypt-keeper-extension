@@ -4,9 +4,10 @@
 
 import { act, fireEvent, render, screen } from "@testing-library/react";
 
-import { ZERO_ADDRESS } from "@src/config/const";
+import { mockDefaultGroup, mockDefaultIdentity } from "@src/config/mock/zk";
 import { Operation, OperationType } from "@src/types";
 import { redirectToNewTab } from "@src/util/browser";
+import { getBandadaGroupUrl } from "@src/util/groups";
 
 import { ActivityItem, IActivityItemProps } from "../Item";
 
@@ -18,18 +19,9 @@ describe("ui/pages/Home/components/ActivityList/Item", () => {
   const defaultProps: IActivityItemProps = {
     operation: {
       id: "1",
-      type: OperationType.CREATE_IDENTITY,
-      identity: {
-        commitment: "1",
-        metadata: {
-          account: ZERO_ADDRESS,
-          name: "Account #1",
-          identityStrategy: "interep",
-          web2Provider: "twitter",
-          groups: [],
-          host: "http://localhost:3000",
-        },
-      },
+      type: OperationType.JOIN_GROUP,
+      identity: mockDefaultIdentity,
+      group: mockDefaultGroup,
       createdAt: new Date().toISOString(),
     },
     onDelete: jest.fn(),
@@ -91,5 +83,15 @@ describe("ui/pages/Home/components/ActivityList/Item", () => {
 
     expect(redirectToNewTab).toBeCalledTimes(1);
     expect(redirectToNewTab).toBeCalledWith(defaultProps.operation.identity?.metadata.host);
+  });
+
+  test("should go to group properly", async () => {
+    render(<ActivityItem {...defaultProps} />);
+
+    const group = await screen.findByTestId("group");
+    await act(() => fireEvent.click(group));
+
+    expect(redirectToNewTab).toBeCalledTimes(1);
+    expect(redirectToNewTab).toBeCalledWith(getBandadaGroupUrl(defaultProps.operation.group!.id!));
   });
 });

@@ -4,7 +4,7 @@
 
 import { act, renderHook, waitFor } from "@testing-library/react";
 
-import { ZERO_ADDRESS } from "@src/config/const";
+import { mockDefaultIdentity } from "@src/config/mock/zk";
 import { HistorySettings, Operation, OperationType } from "@src/types";
 import { useAppDispatch } from "@src/ui/ducks/hooks";
 import {
@@ -34,32 +34,13 @@ describe("ui/pages/Home/components/ActivityList/useActivityList", () => {
     {
       id: "1",
       type: OperationType.CREATE_IDENTITY,
-      identity: {
-        commitment: "1",
-        metadata: {
-          account: ZERO_ADDRESS,
-          name: "Account #1",
-          identityStrategy: "interep",
-          web2Provider: "twitter",
-          groups: [],
-          host: "http://localhost:3000",
-        },
-      },
+      identity: mockDefaultIdentity,
       createdAt: new Date().toISOString(),
     },
     {
       id: "2",
       type: OperationType.DELETE_IDENTITY,
-      identity: {
-        commitment: "1",
-        metadata: {
-          account: ZERO_ADDRESS,
-          name: "Account #2",
-          identityStrategy: "random",
-          groups: [],
-          host: "http://localhost:3000",
-        },
-      },
+      identity: mockDefaultIdentity,
       createdAt: new Date().toISOString(),
     },
   ];

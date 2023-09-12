@@ -1,4 +1,4 @@
-import type { IIdentityData } from "@cryptkeeperzk/types";
+import type { IGroupData, IIdentityData } from "@cryptkeeperzk/types";
 
 export enum OperationType {
   CREATE_IDENTITY = "CREATE_IDENTITY",
@@ -13,12 +13,14 @@ export enum OperationType {
   DELETE_ALL_VERIFIABLE_CREDENTIALS = "DELETE_ALL_VERIFIABLE_CREDENTIALS",
   REJECT_VERIFIABLE_CREDENTIAL_REQUEST = "REJECT_VERIFIABLE_CREDENTIAL_REQUEST",
   REVEAL_IDENTITY_COMMITMENT = "REVEAL_IDENTITY_COMMITMENT",
+  JOIN_GROUP = "JOIN_GROUP",
 }
 
 export interface Operation {
   id: string;
   type: OperationType;
   identity?: IIdentityData;
+  group?: Partial<IGroupData>;
   createdAt: string;
 }
 

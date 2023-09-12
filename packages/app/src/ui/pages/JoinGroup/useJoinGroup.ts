@@ -2,7 +2,6 @@ import { getLinkPreview } from "link-preview-js";
 import { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-import { getBandadaUrl } from "@src/config/env";
 import { Paths } from "@src/constants";
 import { closePopup } from "@src/ui/ducks/app";
 import { joinGroup } from "@src/ui/ducks/groups";
@@ -10,6 +9,7 @@ import { useAppDispatch } from "@src/ui/ducks/hooks";
 import { fetchIdentities, useConnectedIdentity } from "@src/ui/ducks/identities";
 import { useSearchParam, useUrlParam } from "@src/ui/hooks/url";
 import { redirectToNewTab } from "@src/util/browser";
+import { getBandadaGroupUrl } from "@src/util/groups";
 
 import type { IIdentityData } from "@cryptkeeperzk/types";
 
@@ -27,8 +27,6 @@ export interface IUseJoinGroupData {
   onGoToGroup: () => void;
   onJoin: () => void;
 }
-
-const BANDADA_URL = getBandadaUrl();
 
 export const useJoinGroup = (): IUseJoinGroupData => {
   const [isLoading, setLoading] = useState(false);
@@ -80,7 +78,7 @@ export const useJoinGroup = (): IUseJoinGroupData => {
   }, [connectedIdentity?.metadata.host]);
 
   const onGoToGroup = useCallback(() => {
-    redirectToNewTab(`${BANDADA_URL}/groups/off-chain/${groupId}`);
+    redirectToNewTab(getBandadaGroupUrl(groupId!));
   }, [groupId]);
 
   const onJoin = useCallback(() => {

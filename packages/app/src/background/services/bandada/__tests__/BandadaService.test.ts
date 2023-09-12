@@ -1,3 +1,5 @@
+import { mockDefaultIdentity } from "@src/config/mock/zk";
+
 import type { IMerkleProof, IGenerateBandadaMerkleProofArgs, IAddBandadaGroupMemberArgs } from "@cryptkeeperzk/types";
 
 import { BandadaService } from "..";
@@ -5,13 +7,13 @@ import { BandadaService } from "..";
 describe("background/services/bandada/BandadaService", () => {
   const defaultGenerateProofArgs: IGenerateBandadaMerkleProofArgs = {
     groupId: "90694543209366256629502773954857",
-    commitment: "1234",
+    identity: mockDefaultIdentity,
   };
 
   const defaultAddMemberArgs: IAddBandadaGroupMemberArgs = {
     groupId: "90694543209366256629502773954857",
-    commitment: "1234",
     apiKey: "key",
+    identity: mockDefaultIdentity,
   };
 
   const defaultMerkleProof: IMerkleProof = {

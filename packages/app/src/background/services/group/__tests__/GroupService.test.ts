@@ -1,10 +1,11 @@
-import { defaultMerkleProof, mockDefaultIdentityCommitment } from "@src/config/mock/zk";
+import { defaultMerkleProof, mockDefaultIdentity, mockDefaultIdentityCommitment } from "@src/config/mock/zk";
 
-import type { IGenerateGroupMerkleProofArgs, IJoinGroupMemberArgs } from "@cryptkeeperzk/types";
+import type { IGenerateGroupMerkleProofArgs, IIdentityData, IJoinGroupMemberArgs } from "@cryptkeeperzk/types";
 
 import { GroupService } from "..";
 
 const mockGetConnectedIdentityCommitment = jest.fn(() => Promise.resolve(mockDefaultIdentityCommitment));
+const mockGetConnectedIdentity = jest.fn(() => Promise.resolve(mockDefaultIdentity));
 
 jest.mock("@src/background/services/bandada", (): unknown => ({
   BandadaService: {
@@ -18,12 +19,28 @@ jest.mock("@src/background/services/bandada", (): unknown => ({
 jest.mock("@src/background/services/zkIdentity", (): unknown => ({
   getInstance: jest.fn(() => ({
     getConnectedIdentityCommitment: mockGetConnectedIdentityCommitment,
+    getConnectedIdentity: mockGetConnectedIdentity,
+  })),
+}));
+
+jest.mock("@src/background/services/history", (): unknown => ({
+  getInstance: jest.fn(() => ({
+    loadSettings: jest.fn(),
+    trackOperation: jest.fn(),
+  })),
+}));
+
+jest.mock("@src/background/services/notification", (): unknown => ({
+  getInstance: jest.fn(() => ({
+    create: jest.fn(),
   })),
 }));
 
 describe("background/services/group/GroupService", () => {
   beforeEach(() => {
     mockGetConnectedIdentityCommitment.mockResolvedValue(mockDefaultIdentityCommitment);
+
+    mockGetConnectedIdentity.mockResolvedValue(mockDefaultIdentity);
   });
 
   afterEach(() => {
@@ -67,6 +84,7 @@ describe("background/services/group/GroupService", () => {
 
     test("should throw error if there is no connected identity", async () => {
       mockGetConnectedIdentityCommitment.mockResolvedValue("");
+      mockGetConnectedIdentity.mockResolvedValue(undefined as unknown as IIdentityData);
       const service = GroupService.getInstance();
 
       await expect(service.generateGroupMembershipProof(defaultArgs)).rejects.toThrowError(
