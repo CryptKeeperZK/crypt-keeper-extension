@@ -1,3 +1,4 @@
+import { RejectRequests } from "@cryptkeeperzk/providers";
 import { getLinkPreview } from "link-preview-js";
 import { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -7,6 +8,7 @@ import { closePopup } from "@src/ui/ducks/app";
 import { checkGroupMembership, joinGroup } from "@src/ui/ducks/groups";
 import { useAppDispatch } from "@src/ui/ducks/hooks";
 import { fetchIdentities, useConnectedIdentity } from "@src/ui/ducks/identities";
+import { rejectUserRequest } from "@src/ui/ducks/requests";
 import { useSearchParam, useUrlParam } from "@src/ui/hooks/url";
 import { redirectToNewTab } from "@src/util/browser";
 import { getBandadaGroupUrl } from "@src/util/groups";
@@ -74,9 +76,14 @@ export const useJoinGroup = (): IUseJoinGroupData => {
   }, [connectedIdentity?.metadata.host, setFaviconUrl]);
 
   const onGoBack = useCallback(() => {
-    dispatch(closePopup());
-    navigate(Paths.HOME);
-  }, [dispatch, navigate]);
+    dispatch(
+      rejectUserRequest({ type: RejectRequests.JOIN_GROUP, payload: { groupId } }, connectedIdentity?.metadata.host),
+    )
+      .then(() => dispatch(closePopup()))
+      .then(() => {
+        navigate(Paths.HOME);
+      });
+  }, [groupId, connectedIdentity?.metadata.host, dispatch, navigate]);
 
   const onGoToHost = useCallback(() => {
     redirectToNewTab(connectedIdentity!.metadata.host!);

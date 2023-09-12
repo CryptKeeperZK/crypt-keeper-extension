@@ -48,10 +48,6 @@ export class GroupService {
   joinGroup = async ({ groupId, apiKey, inviteCode }: IJoinGroupMemberArgs): Promise<boolean> => {
     const identity = await this.getConnectedIdentity();
 
-    if (!identity) {
-      throw new Error("No connected identity found");
-    }
-
     const result = await this.bandadaSevice.addMember({ groupId, apiKey, inviteCode, identity });
 
     await this.historyService.trackOperation(OperationType.JOIN_GROUP, { identity, group: { id: groupId } });
@@ -66,7 +62,7 @@ export class GroupService {
 
     await this.browserController.pushEvent(
       { type: EventName.JOIN_GROUP, payload: { groupId } },
-      identity.metadata.host!,
+      { urlOrigin: identity.metadata.host! },
     );
 
     return result;
@@ -75,31 +71,23 @@ export class GroupService {
   generateGroupMembershipProof = async ({ groupId }: IGenerateGroupMerkleProofArgs): Promise<IMerkleProof> => {
     const identity = await this.getConnectedIdentity();
 
-    if (!identity) {
-      throw new Error("No connected identity found");
-    }
-
     return this.bandadaSevice.generateMerkleProof({ groupId, identity });
   };
 
   checkGroupMembership = async ({ groupId }: ICheckGroupMembershipArgs): Promise<boolean> => {
     const identity = await this.getConnectedIdentity();
 
-    if (!identity) {
-      throw new Error("No connected identity found");
-    }
-
     return this.bandadaSevice.checkGroupMembership({ groupId, identity });
   };
 
-  private getConnectedIdentity = async (): Promise<IIdentityData | undefined> => {
+  private getConnectedIdentity = async (): Promise<IIdentityData> => {
     const [commitment, identity] = await Promise.all([
       this.zkIdentityService.getConnectedIdentityCommitment(),
       this.zkIdentityService.getConnectedIdentity(),
     ]);
 
     if (!commitment || !identity) {
-      return undefined;
+      throw new Error("No connected identity found");
     }
 
     return {

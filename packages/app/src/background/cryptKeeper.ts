@@ -282,6 +282,7 @@ export default class CryptKeeperController {
     // Browser
     this.handler.add(RPCAction.CLOSE_POPUP, this.browserService.closePopup);
     this.handler.add(RPCAction.CLEAR_STORAGE, this.lockService.ensure, this.browserService.clearStorage);
+    this.handler.add(RPCAction.PUSH_EVENT, this.lockService.ensure, this.browserService.pushEvent);
 
     return this;
   };

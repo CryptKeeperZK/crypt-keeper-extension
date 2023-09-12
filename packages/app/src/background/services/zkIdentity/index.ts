@@ -305,7 +305,7 @@ export default class ZkIdentityService implements IBackupable {
 
     await this.browserController.pushEvent(
       { type: EventName.REVEAL_COMMITMENT, payload: { commitment } },
-      connectedIdentity.metadata.host!,
+      { urlOrigin: connectedIdentity.metadata.host! },
     );
 
     await this.historyService.trackOperation(OperationType.REVEAL_IDENTITY_COMMITMENT, {

@@ -27,9 +27,9 @@ const EVENTS = [
   EventName.LOGIN,
   EventName.LOGOUT,
   EventName.ADD_VERIFIABLE_CREDENTIAL,
-  EventName.REJECT_VERIFIABLE_CREDENTIAL,
   EventName.REVEAL_COMMITMENT,
   EventName.JOIN_GROUP,
+  EventName.USER_REJECT,
 ];
 
 interface Handlers {

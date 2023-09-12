@@ -67,7 +67,7 @@ describe("background/controllers/browserUtils", () => {
   test("should push event properly", async () => {
     const browserUtils = BrowserUtils.getInstance();
 
-    await browserUtils.pushEvent({ type: "type" }, "http://localhost:3000");
+    await browserUtils.pushEvent({ type: "type" }, { urlOrigin: "http://localhost:3000" });
 
     expect(browser.tabs.sendMessage).toBeCalledTimes(2);
   });

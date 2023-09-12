@@ -13,6 +13,7 @@ import { closePopup } from "@src/ui/ducks/app";
 import { checkGroupMembership, joinGroup } from "@src/ui/ducks/groups";
 import { useAppDispatch } from "@src/ui/ducks/hooks";
 import { fetchIdentities, useConnectedIdentity } from "@src/ui/ducks/identities";
+import { rejectUserRequest } from "@src/ui/ducks/requests";
 import { useSearchParam, useUrlParam } from "@src/ui/hooks/url";
 import { redirectToNewTab } from "@src/util/browser";
 
@@ -44,6 +45,10 @@ jest.mock("@src/ui/ducks/app", (): unknown => ({
 jest.mock("@src/ui/ducks/groups", (): unknown => ({
   joinGroup: jest.fn(),
   checkGroupMembership: jest.fn(),
+}));
+
+jest.mock("@src/ui/ducks/requests", (): unknown => ({
+  rejectUserRequest: jest.fn(),
 }));
 
 jest.mock("@src/ui/ducks/hooks", (): unknown => ({
@@ -119,9 +124,10 @@ describe("ui/pages/JoinGroup/useJoinGroup", () => {
 
     expect(mockNavigate).toBeCalledTimes(1);
     expect(mockNavigate).toBeCalledWith(Paths.HOME);
-    expect(mockDispatch).toBeCalledTimes(3);
+    expect(mockDispatch).toBeCalledTimes(4);
     expect(fetchIdentities).toBeCalledTimes(1);
     expect(checkGroupMembership).toBeCalledTimes(1);
+    expect(rejectUserRequest).toBeCalledTimes(1);
     expect(closePopup).toBeCalledTimes(1);
   });
 

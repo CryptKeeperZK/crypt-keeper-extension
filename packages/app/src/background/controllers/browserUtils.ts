@@ -1,6 +1,6 @@
 import browser, { Windows } from "webextension-polyfill";
 
-import type { IReduxAction } from "@cryptkeeperzk/types";
+import type { IReduxAction, IZkMetadata } from "@cryptkeeperzk/types";
 
 interface CreateWindowArgs {
   type: "popup";
@@ -88,10 +88,12 @@ export default class BrowserUtils {
     browser.windows.onRemoved.removeListener(callback);
   };
 
-  pushEvent = async (action: IReduxAction, host: string): Promise<void> => {
+  pushEvent = async (action: IReduxAction, meta?: IZkMetadata): Promise<void> => {
     const tabs = await browser.tabs
       .query({})
-      .then((browserTabs) => browserTabs.filter(({ url }) => (url ? new URL(url).origin === host : false)));
+      .then((browserTabs) =>
+        browserTabs.filter(({ url }) => (url && meta?.urlOrigin ? new URL(url).origin === meta.urlOrigin : false)),
+      );
 
     await Promise.all(tabs.map((tab) => browser.tabs.sendMessage(tab.id!, action).catch(() => undefined)));
   };

@@ -1,6 +1,6 @@
 /* eslint-disable no-param-reassign */
-import { RPCAction } from "@cryptkeeperzk/providers";
-import { IPendingRequest, IRequestResolutionAction } from "@cryptkeeperzk/types";
+import { EventName, RPCAction } from "@cryptkeeperzk/providers";
+import { IPendingRequest, IRejectedRequest, IRequestResolutionAction } from "@cryptkeeperzk/types";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import deepEqual from "fast-deep-equal";
 
@@ -41,6 +41,15 @@ export const finalizeRequest =
     postMessage({
       method: RPCAction.FINALIZE_REQUEST,
       payload: request,
+    });
+
+export const rejectUserRequest =
+  (payload: IRejectedRequest, urlOrigin?: string): TypedThunk<Promise<void>> =>
+  async () =>
+    postMessage({
+      method: RPCAction.PUSH_EVENT,
+      payload: { type: EventName.USER_REJECT, payload },
+      meta: { urlOrigin },
     });
 
 export const usePendingRequests = (): IPendingRequest[] =>

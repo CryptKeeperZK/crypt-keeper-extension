@@ -10,6 +10,7 @@ import { Paths } from "@src/constants";
 import { closePopup } from "@src/ui/ducks/app";
 import { useAppDispatch } from "@src/ui/ducks/hooks";
 import { fetchIdentities, revealConnectedIdentityCommitment, useConnectedIdentity } from "@src/ui/ducks/identities";
+import { rejectUserRequest } from "@src/ui/ducks/requests";
 import { redirectToNewTab } from "@src/util/browser";
 
 import type { IIdentityData } from "@cryptkeeperzk/types";
@@ -36,6 +37,10 @@ jest.mock("@src/ui/ducks/identities", (): unknown => ({
   fetchIdentities: jest.fn(),
   revealConnectedIdentityCommitment: jest.fn(),
   useConnectedIdentity: jest.fn(),
+}));
+
+jest.mock("@src/ui/ducks/requests", (): unknown => ({
+  rejectUserRequest: jest.fn(),
 }));
 
 describe("ui/pages/RevealIdentityCommitment/useRevealIdentityCommitment", () => {
@@ -88,8 +93,9 @@ describe("ui/pages/RevealIdentityCommitment/useRevealIdentityCommitment", () => 
 
     expect(mockNavigate).toBeCalledTimes(1);
     expect(mockNavigate).toBeCalledWith(Paths.HOME);
-    expect(mockDispatch).toBeCalledTimes(2);
+    expect(mockDispatch).toBeCalledTimes(3);
     expect(fetchIdentities).toBeCalledTimes(1);
+    expect(rejectUserRequest).toBeCalledTimes(1);
     expect(closePopup).toBeCalledTimes(1);
   });
 

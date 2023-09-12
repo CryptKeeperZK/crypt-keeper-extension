@@ -68,6 +68,7 @@ export enum RPCAction {
   GENERATE_RLN_PROOF = "rpc/proofs/generate-rln-proof",
   GENERATE_RLN_PROOF_OFFSCREEN = "rpc/proofs/generate-rln-proof-offscreen",
   RLN_PROOF_RESULT = "rpc/proofs/rln-proof-result",
+  PUSH_EVENT = "rpc/browser/tabs/pushEvent",
   // DEV RPCS
   CLEAR_APPROVED_HOSTS = "rpc/hosts/clear",
   CLEAR_STORAGE = "rpc/browser/clear",

@@ -216,8 +216,8 @@ export const useCryptKeeper = (): IUseCryptKeeperData => {
     toast(`Added a Verifiable Credential! ${verifiableCredentialHash as string}`, { type: "success" });
   }, []);
 
-  const onRejectVerifiableCredential = useCallback(() => {
-    toast(`Rejected request to add a Verifiable Credential.`, { type: "error" });
+  const onReject = useCallback(() => {
+    toast(`User rejected request`, { type: "error" });
   }, []);
 
   const onRevealCommitment = useCallback(
@@ -236,7 +236,7 @@ export const useCryptKeeper = (): IUseCryptKeeperData => {
     client.on(EventName.IDENTITY_CHANGED, onIdentityChanged);
     client.on(EventName.LOGOUT, onLogout);
     client.on(EventName.ADD_VERIFIABLE_CREDENTIAL, onAddVerifiableCredential);
-    client.on(EventName.REJECT_VERIFIABLE_CREDENTIAL, onRejectVerifiableCredential);
+    client.on(EventName.USER_REJECT, onReject);
     client.on(EventName.REVEAL_COMMITMENT, onRevealCommitment);
 
     getConnectedIdentity();
@@ -244,15 +244,7 @@ export const useCryptKeeper = (): IUseCryptKeeperData => {
     return () => {
       client.cleanListeners();
     };
-  }, [
-    client,
-    onLogout,
-    onIdentityChanged,
-    onLogin,
-    onAddVerifiableCredential,
-    onRejectVerifiableCredential,
-    onRevealCommitment,
-  ]);
+  }, [client, onLogout, onIdentityChanged, onLogin, onAddVerifiableCredential, onReject, onRevealCommitment]);
 
   return {
     client,
