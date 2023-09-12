@@ -38,7 +38,7 @@ jobs:
           persist-credentials: false
           
       - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v3
+        uses: aws-actions/configure-aws-credentials@v4
         with:
           role-to-assume: arn:aws:iam::490752553772:role/crypt-keeper-extension-ecs-deploy-slc
           role-duration-seconds: 1800
