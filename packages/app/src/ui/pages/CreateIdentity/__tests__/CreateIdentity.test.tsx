@@ -4,6 +4,7 @@
 
 import { EWallet } from "@cryptkeeperzk/types";
 import { act, fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { Suspense } from "react";
 import { useNavigate } from "react-router-dom";
 import selectEvent from "react-select-event";
 
@@ -84,7 +85,11 @@ describe("ui/pages/CreateIdentity", () => {
   });
 
   test("should render properly with random", async () => {
-    const { container } = render(<CreateIdentity />);
+    const { container } = render(
+      <Suspense>
+        <CreateIdentity />
+      </Suspense>,
+    );
 
     await waitFor(() => container.firstChild !== null);
 
@@ -103,7 +108,11 @@ describe("ui/pages/CreateIdentity", () => {
   test("should render properly without metamask installed", async () => {
     (useEthWallet as jest.Mock).mockReturnValue({ ...defaultWalletHookData, isInjectedWallet: false });
 
-    const { container } = render(<CreateIdentity />);
+    const { container } = render(
+      <Suspense>
+        <CreateIdentity />
+      </Suspense>,
+    );
 
     await waitFor(() => container.firstChild !== null);
 
@@ -122,7 +131,11 @@ describe("ui/pages/CreateIdentity", () => {
   test("should connect properly to eth wallet", async () => {
     (useEthWallet as jest.Mock).mockReturnValue({ ...defaultWalletHookData, isActive: false });
 
-    const { container } = render(<CreateIdentity />);
+    const { container } = render(
+      <Suspense>
+        <CreateIdentity />
+      </Suspense>,
+    );
 
     await waitFor(() => container.firstChild !== null);
 
@@ -137,7 +150,11 @@ describe("ui/pages/CreateIdentity", () => {
   });
 
   test("should create random identity properly", async () => {
-    const { container } = render(<CreateIdentity />);
+    const { container } = render(
+      <Suspense>
+        <CreateIdentity />
+      </Suspense>,
+    );
 
     await waitFor(() => container.firstChild !== null);
 
@@ -165,7 +182,11 @@ describe("ui/pages/CreateIdentity", () => {
   test("should create random identity with disabled interep identity feature properly", async () => {
     (getEnabledFeatures as jest.Mock).mockReturnValue({ INTEREP_IDENTITY: false });
 
-    const { container } = render(<CreateIdentity />);
+    const { container } = render(
+      <Suspense>
+        <CreateIdentity />
+      </Suspense>,
+    );
 
     await waitFor(() => container.firstChild !== null);
 
@@ -188,7 +209,11 @@ describe("ui/pages/CreateIdentity", () => {
   });
 
   test("should render properly with interep provider", async () => {
-    const { container } = render(<CreateIdentity />);
+    const { container } = render(
+      <Suspense>
+        <CreateIdentity />
+      </Suspense>,
+    );
 
     await waitFor(() => container.firstChild !== null);
 
@@ -204,7 +229,11 @@ describe("ui/pages/CreateIdentity", () => {
   });
 
   test("should create interep github identity properly", async () => {
-    const { container } = render(<CreateIdentity />);
+    const { container } = render(
+      <Suspense>
+        <CreateIdentity />
+      </Suspense>,
+    );
 
     await waitFor(() => container.firstChild !== null);
 
@@ -240,7 +269,11 @@ describe("ui/pages/CreateIdentity", () => {
   test("should handle error properly", async () => {
     const err = new Error("Error");
     (signWithSigner as jest.Mock).mockRejectedValue(err);
-    const { container } = render(<CreateIdentity />);
+    const { container } = render(
+      <Suspense>
+        <CreateIdentity />
+      </Suspense>,
+    );
 
     await waitFor(() => container.firstChild !== null);
 
