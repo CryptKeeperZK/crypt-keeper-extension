@@ -36,3 +36,8 @@ export interface IPendingRequest<P = unknown> {
   type: PendingRequestType;
   payload?: P;
 }
+
+export interface IRejectedRequest<P = unknown> {
+  type: string;
+  payload?: P;
+}

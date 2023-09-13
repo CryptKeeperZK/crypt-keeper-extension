@@ -10,6 +10,10 @@ export function getBandadaApiUrl(): string {
   return process.env.BANDADA_API_URL!;
 }
 
+export function getBandadaUrl(): string {
+  return process.env.BANDADA_URL!;
+}
+
 export type Providers = "infura" | "alchemy" | "freightTrustNetwork" | "pulseChain";
 
 export function getApiKeys(): Record<Providers, string | undefined> {

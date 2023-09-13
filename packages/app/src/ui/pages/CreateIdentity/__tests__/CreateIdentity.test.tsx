@@ -9,7 +9,6 @@ import selectEvent from "react-select-event";
 
 import { ZERO_ADDRESS } from "@src/config/const";
 import { getEnabledFeatures } from "@src/config/features";
-import { createModalRoot, deleteModalRoot } from "@src/config/mock/modal";
 import { defaultWalletHookData } from "@src/config/mock/wallet";
 import { IDENTITY_TYPES, Paths, WEB2_PROVIDER_OPTIONS } from "@src/constants";
 import { closePopup } from "@src/ui/ducks/app";
@@ -77,15 +76,11 @@ describe("ui/pages/CreateIdentity", () => {
     (createIdentity as jest.Mock).mockResolvedValue(true);
 
     (getEnabledFeatures as jest.Mock).mockReturnValue({ INTEREP_IDENTITY: true });
-
-    createModalRoot();
   });
 
   afterEach(() => {
     jest.clearAllMocks();
     window.location.href = oldHref;
-
-    deleteModalRoot();
   });
 
   test("should render properly with random", async () => {

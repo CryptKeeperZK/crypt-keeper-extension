@@ -7,17 +7,23 @@ import { Suspense } from "react";
 
 import { ZERO_ADDRESS } from "@src/config/const";
 
-import RevealIdentityCommitment from "..";
-import { IUseRevealIdentityCommitmentData, useRevealIdentityCommitment } from "../useRevealIdentityCommitment";
+import JoinGroup from "..";
+import { IUseJoinGroupData, useJoinGroup } from "../useJoinGroup";
 
-jest.mock("../useRevealIdentityCommitment", (): unknown => ({
-  useRevealIdentityCommitment: jest.fn(),
+jest.mock("../useJoinGroup", (): unknown => ({
+  useJoinGroup: jest.fn(),
 }));
 
-describe("ui/pages/RevealIdentityCommitment", () => {
-  const defaultHookData: IUseRevealIdentityCommitmentData = {
+describe("ui/pages/JoinGroup", () => {
+  const defaultHookData: IUseJoinGroupData = {
     isLoading: false,
+    isJoined: false,
+    isSubmitting: false,
     error: "",
+    faviconUrl: "favicon",
+    groupId: "groupId",
+    apiKey: "apiKey",
+    inviteCode: "inviteCode",
     connectedIdentity: {
       commitment: "commitment",
       metadata: {
@@ -31,11 +37,12 @@ describe("ui/pages/RevealIdentityCommitment", () => {
     },
     onGoBack: jest.fn(),
     onGoToHost: jest.fn(),
-    onReveal: jest.fn(),
+    onGoToGroup: jest.fn(),
+    onJoin: jest.fn(),
   };
 
   beforeEach(() => {
-    (useRevealIdentityCommitment as jest.Mock).mockReturnValue(defaultHookData);
+    (useJoinGroup as jest.Mock).mockReturnValue(defaultHookData);
   });
 
   afterEach(() => {
@@ -45,23 +52,23 @@ describe("ui/pages/RevealIdentityCommitment", () => {
   test("should render properly", async () => {
     const { container, findByTestId } = render(
       <Suspense>
-        <RevealIdentityCommitment />
+        <JoinGroup />
       </Suspense>,
     );
 
     await waitFor(() => container.firstChild !== null);
 
-    const page = await findByTestId("reveal-identity-commitment-page");
+    const page = await findByTestId("join-group-page");
 
     expect(page).toBeInTheDocument();
   });
 
   test("should render loading state properly", async () => {
-    (useRevealIdentityCommitment as jest.Mock).mockReturnValue({ ...defaultHookData, isLoading: true });
+    (useJoinGroup as jest.Mock).mockReturnValue({ ...defaultHookData, isLoading: true });
 
     const { container, findByText } = render(
       <Suspense>
-        <RevealIdentityCommitment />
+        <JoinGroup />
       </Suspense>,
     );
 
@@ -73,11 +80,11 @@ describe("ui/pages/RevealIdentityCommitment", () => {
   });
 
   test("should render error state properly", async () => {
-    (useRevealIdentityCommitment as jest.Mock).mockReturnValue({ ...defaultHookData, error: "Error" });
+    (useJoinGroup as jest.Mock).mockReturnValue({ ...defaultHookData, error: "Error" });
 
     const { container, findByText } = render(
       <Suspense>
-        <RevealIdentityCommitment />
+        <JoinGroup />
       </Suspense>,
     );
 
@@ -89,18 +96,43 @@ describe("ui/pages/RevealIdentityCommitment", () => {
   });
 
   test("should render empty state properly", async () => {
-    (useRevealIdentityCommitment as jest.Mock).mockReturnValue({ ...defaultHookData, connectedIdentity: undefined });
+    (useJoinGroup as jest.Mock).mockReturnValue({
+      ...defaultHookData,
+      connectedIdentity: undefined,
+      groupId: undefined,
+      inviteCode: undefined,
+      apiKey: undefined,
+      faviconUrl: "",
+    });
 
     const { container, findByText } = render(
       <Suspense>
-        <RevealIdentityCommitment />
+        <JoinGroup />
       </Suspense>,
     );
 
     await waitFor(() => container.firstChild !== null);
 
-    const emptyContent = await findByText("No connected identity found");
+    const emptyIdentity = await findByText("No connected identity found");
+    const emptyGroup = await findByText("No group found");
 
-    expect(emptyContent).toBeInTheDocument();
+    expect(emptyIdentity).toBeInTheDocument();
+    expect(emptyGroup).toBeInTheDocument();
+  });
+
+  test("should render joined state properly", async () => {
+    (useJoinGroup as jest.Mock).mockReturnValue({ ...defaultHookData, isJoined: true });
+
+    const { container, findByTestId } = render(
+      <Suspense>
+        <JoinGroup />
+      </Suspense>,
+    );
+
+    await waitFor(() => container.firstChild !== null);
+
+    const text = await findByTestId("joined-text");
+
+    expect(text).toBeInTheDocument();
   });
 });

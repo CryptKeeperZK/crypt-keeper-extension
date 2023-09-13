@@ -301,16 +301,11 @@ export default class ZkIdentityService implements IBackupable {
       throw new Error("No connected identity found");
     }
 
-    const tabs = await browser.tabs.query({});
-    const hostTabs = tabs.filter(({ url }) => (url ? new URL(url).origin === connectedIdentity.metadata.host : false));
     const commitment = bigintToHex(connectedIdentity.genIdentityCommitment());
 
-    await Promise.all(
-      hostTabs.map((tab) =>
-        browser.tabs
-          .sendMessage(tab.id!, { type: EventName.REVEAL_COMMITMENT, payload: { commitment } })
-          .catch(() => undefined),
-      ),
+    await this.browserController.pushEvent(
+      { type: EventName.REVEAL_COMMITMENT, payload: { commitment } },
+      { urlOrigin: connectedIdentity.metadata.host! },
     );
 
     await this.historyService.trackOperation(OperationType.REVEAL_IDENTITY_COMMITMENT, {

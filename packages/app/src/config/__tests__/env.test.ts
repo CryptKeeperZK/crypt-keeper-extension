@@ -1,4 +1,4 @@
-import { getApiKeys, getBandadaApiUrl, isDebugMode, isE2E } from "../env";
+import { getApiKeys, getBandadaApiUrl, getBandadaUrl, isDebugMode, isE2E } from "../env";
 
 jest.unmock("@src/config/env");
 
@@ -10,6 +10,7 @@ describe("config/env", () => {
     process.env.PULSECHAIN_API_KEY = "pulseChain";
     process.env.CRYPTKEEPER_DEBUG = "false";
     process.env.BANDADA_API_URL = "https://api.bandada.pse.dev";
+    process.env.BANDADA_URL = "https://bandada.pse.dev";
   });
 
   afterAll(() => {
@@ -19,6 +20,7 @@ describe("config/env", () => {
     delete process.env.PULSECHAIN_API_KEY;
     delete process.env.CRYPTKEEPER_DEBUG;
     delete process.env.BANDADA_API_URL;
+    delete process.env.BANDADA_URL;
   });
 
   test("should return env api config", () => {
@@ -42,5 +44,9 @@ describe("config/env", () => {
 
   test("should return bandada api url", () => {
     expect(getBandadaApiUrl()).toBeDefined();
+  });
+
+  test("should return bandada url", () => {
+    expect(getBandadaUrl()).toBeDefined();
   });
 });

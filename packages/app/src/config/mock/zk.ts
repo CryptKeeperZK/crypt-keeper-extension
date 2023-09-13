@@ -1,6 +1,6 @@
-import { bigintToHex } from "bigint-conversion";
+import type { IGroupData, IIdentityData, IMerkleProof } from "@cryptkeeperzk/types";
 
-import type { IMerkleProof } from "@cryptkeeperzk/types";
+import { ZERO_ADDRESS } from "../const";
 
 export const defaultMerkleProof: IMerkleProof = {
   root: "11390644220109896790698822461687897006579295248439520803064795506754669709244",
@@ -26,5 +26,21 @@ export const defaultMerkleProof: IMerkleProof = {
   ],
 };
 
-export const mockDefaultIdentityCommitment =
-  bigintToHex(15206603389158210388485662342360617949291660595274505642693885456541816400294n);
+export const mockDefaultIdentityCommitment = "219ea1ec38a6fffb63e2a591fec619fe9dc850d345f6d4d8823a4f72a6f729a6";
+
+export const mockDefaultIdentity: IIdentityData = {
+  commitment: mockDefaultIdentityCommitment,
+  metadata: {
+    account: ZERO_ADDRESS,
+    name: "Account #1",
+    identityStrategy: "interep",
+    web2Provider: "twitter",
+    groups: [],
+    host: "http://localhost:3000",
+  },
+};
+
+export const mockDefaultGroup: IGroupData = {
+  id: "90694543209366256629502773954857",
+  name: "Group #1",
+};

@@ -45,7 +45,7 @@ export type {
   ISemaphoreProofRequiredArgs,
 } from "./proof";
 export { ZkProofType } from "./proof";
-export type { IRequestHandler, IPendingRequest } from "./request";
+export type { IRequestHandler, IPendingRequest, IRejectedRequest } from "./request";
 export { RequestResolutionStatus, PendingRequestType } from "./request";
 export type {
   IVerifiableCredential,
@@ -61,4 +61,6 @@ export type {
   IAddBandadaGroupMemberArgs,
   IGenerateGroupMerkleProofArgs,
   IGenerateBandadaMerkleProofArgs,
+  ICheckGroupMembershipArgs,
+  ICheckBandadaGroupMembershipArgs,
 } from "./group";

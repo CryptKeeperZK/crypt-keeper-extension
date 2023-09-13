@@ -1,6 +1,6 @@
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { faTwitter, faGithub, faReddit } from "@fortawesome/free-brands-svg-icons";
-import { faLink } from "@fortawesome/free-solid-svg-icons";
+import { faLink, faUsersRays } from "@fortawesome/free-solid-svg-icons";
 import "@testing-library/jest-dom";
 import "isomorphic-fetch";
 
@@ -8,7 +8,7 @@ import type { ReactElement } from "react";
 
 jest.retryTimes(1, { logErrorsBeforeRetry: true });
 
-library.add(faTwitter, faGithub, faReddit, faLink);
+library.add(faTwitter, faGithub, faReddit, faLink, faUsersRays);
 
 jest.mock("loglevel", () => ({
   info: jest.fn(),
@@ -128,6 +128,8 @@ jest.mock("webextension-polyfill", (): unknown => {
 jest.mock("@cryptkeeperzk/providers", (): unknown => ({
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
   EventName: jest.requireActual("@cryptkeeperzk/providers/dist/src/event/types"),
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+  RejectRequests: jest.requireActual("@cryptkeeperzk/providers/dist/src/event/types"),
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
   RPCAction: jest.requireActual("@cryptkeeperzk/providers/dist/src/constants/rpcAction"),
   initializeCryptKeeperProvider: jest.fn(),

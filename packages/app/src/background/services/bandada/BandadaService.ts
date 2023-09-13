@@ -1,6 +1,13 @@
+import { hexToBigint } from "bigint-conversion";
+
 import { getBandadaApiUrl } from "@src/config/env";
 
-import type { IMerkleProof, IGenerateBandadaMerkleProofArgs, IAddBandadaGroupMemberArgs } from "@cryptkeeperzk/types";
+import type {
+  IMerkleProof,
+  IGenerateBandadaMerkleProofArgs,
+  IAddBandadaGroupMemberArgs,
+  ICheckBandadaGroupMembershipArgs,
+} from "@cryptkeeperzk/types";
 
 const API_URL = getBandadaApiUrl();
 
@@ -23,7 +30,7 @@ export class BandadaService {
     return BandadaService.INSTANCE;
   };
 
-  async addMember({ groupId, commitment, apiKey, inviteCode }: IAddBandadaGroupMemberArgs): Promise<boolean> {
+  async addMember({ groupId, identity, apiKey, inviteCode }: IAddBandadaGroupMemberArgs): Promise<boolean> {
     if (!apiKey && !inviteCode) {
       throw new Error("Provide api key or invide code");
     }
@@ -32,7 +39,7 @@ export class BandadaService {
       throw new Error("Don't provide both api key and invide code");
     }
 
-    const response = await fetch(`${API_URL}/groups/${groupId}/members/${commitment}`, {
+    const response = await fetch(`${API_URL}/groups/${groupId}/members/${hexToBigint(identity.commitment)}`, {
       method: "POST",
       headers: apiKey ? { ...DEFAULT_HEADERS, "x-api-key": apiKey } : DEFAULT_HEADERS,
       body: inviteCode ? JSON.stringify({ inviteCode }) : undefined,
@@ -47,8 +54,17 @@ export class BandadaService {
     throw new Error(result.message.toString());
   }
 
-  async generateMerkleProof({ groupId, commitment }: IGenerateBandadaMerkleProofArgs): Promise<IMerkleProof> {
-    const response = await fetch(`${API_URL}/groups/${groupId}/members/${commitment}/proof`, {
+  async checkGroupMembership({ identity, groupId }: ICheckBandadaGroupMembershipArgs): Promise<boolean> {
+    const response = await fetch(`${API_URL}/groups/${groupId}/members/${hexToBigint(identity.commitment)}`, {
+      method: "GET",
+      headers: DEFAULT_HEADERS,
+    }).then((res) => res.json() as Promise<string>);
+
+    return JSON.parse(response) as boolean;
+  }
+
+  async generateMerkleProof({ groupId, identity }: IGenerateBandadaMerkleProofArgs): Promise<IMerkleProof> {
+    const response = await fetch(`${API_URL}/groups/${groupId}/members/${hexToBigint(identity.commitment)}/proof`, {
       method: "GET",
       headers: DEFAULT_HEADERS,
     });

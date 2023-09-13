@@ -1,7 +1,20 @@
-import { BandadaService } from "@src/background/services/bandada";
-import ZkIdentityService from "@src/background/services/zkIdentity";
+import { EventName } from "@cryptkeeperzk/providers";
+import browser from "webextension-polyfill";
 
-import type { IGenerateGroupMerkleProofArgs, IJoinGroupMemberArgs, IMerkleProof } from "@cryptkeeperzk/types";
+import BrowserUtils from "@src/background/controllers/browserUtils";
+import { BandadaService } from "@src/background/services/bandada";
+import HistoryService from "@src/background/services/history";
+import NotificationService from "@src/background/services/notification";
+import ZkIdentityService from "@src/background/services/zkIdentity";
+import { OperationType } from "@src/types";
+
+import type {
+  ICheckGroupMembershipArgs,
+  IGenerateGroupMerkleProofArgs,
+  IIdentityData,
+  IJoinGroupMemberArgs,
+  IMerkleProof,
+} from "@cryptkeeperzk/types";
 
 export class GroupService {
   private static INSTANCE?: GroupService;
@@ -10,9 +23,18 @@ export class GroupService {
 
   private zkIdentityService: ZkIdentityService;
 
+  private historyService: HistoryService;
+
+  private notificationService: NotificationService;
+
+  private browserController: BrowserUtils;
+
   private constructor() {
     this.bandadaSevice = BandadaService.getInstance();
     this.zkIdentityService = ZkIdentityService.getInstance();
+    this.historyService = HistoryService.getInstance();
+    this.notificationService = NotificationService.getInstance();
+    this.browserController = BrowserUtils.getInstance();
   }
 
   static getInstance(): GroupService {
@@ -24,22 +46,53 @@ export class GroupService {
   }
 
   joinGroup = async ({ groupId, apiKey, inviteCode }: IJoinGroupMemberArgs): Promise<boolean> => {
-    const commitment = await this.zkIdentityService.getConnectedIdentityCommitment();
+    const identity = await this.getConnectedIdentity();
 
-    if (!commitment) {
-      throw new Error("No connected identity found");
-    }
+    const result = await this.bandadaSevice.addMember({ groupId, apiKey, inviteCode, identity });
 
-    return this.bandadaSevice.addMember({ groupId, apiKey, inviteCode, commitment });
+    await this.historyService.trackOperation(OperationType.JOIN_GROUP, { identity, group: { id: groupId } });
+    await this.notificationService.create({
+      options: {
+        title: "Joined group",
+        message: "You've been successfully joined the group",
+        iconUrl: browser.runtime.getURL("/icons/logo.png"),
+        type: "basic",
+      },
+    });
+
+    await this.browserController.pushEvent(
+      { type: EventName.JOIN_GROUP, payload: { groupId } },
+      { urlOrigin: identity.metadata.host! },
+    );
+
+    return result;
   };
 
-  generateGroupMembershipProof = async ({ groupId }: IGenerateGroupMerkleProofArgs): Promise<IMerkleProof> => {
-    const commitment = await this.zkIdentityService.getConnectedIdentityCommitment();
+  generateGroupMerkleProof = async ({ groupId }: IGenerateGroupMerkleProofArgs): Promise<IMerkleProof> => {
+    const identity = await this.getConnectedIdentity();
 
-    if (!commitment) {
+    return this.bandadaSevice.generateMerkleProof({ groupId, identity });
+  };
+
+  checkGroupMembership = async ({ groupId }: ICheckGroupMembershipArgs): Promise<boolean> => {
+    const identity = await this.getConnectedIdentity();
+
+    return this.bandadaSevice.checkGroupMembership({ groupId, identity });
+  };
+
+  private getConnectedIdentity = async (): Promise<IIdentityData> => {
+    const [commitment, identity] = await Promise.all([
+      this.zkIdentityService.getConnectedIdentityCommitment(),
+      this.zkIdentityService.getConnectedIdentity(),
+    ]);
+
+    if (!commitment || !identity) {
       throw new Error("No connected identity found");
     }
 
-    return this.bandadaSevice.generateMerkleProof({ groupId, commitment });
+    return {
+      commitment,
+      metadata: identity.metadata,
+    };
   };
 }

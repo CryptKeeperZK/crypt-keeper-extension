@@ -1,4 +1,5 @@
 import { EventName } from "@cryptkeeperzk/providers";
+import { RejectRequests } from "@cryptkeeperzk/providers/dist/src/event";
 import browser from "webextension-polyfill";
 
 import BrowserUtils from "@src/background/controllers/browserUtils";
@@ -59,21 +60,22 @@ export default class VerifiableCredentialsService implements IBackupable {
   };
 
   rejectVerifiableCredentialRequest = async (): Promise<void> => {
-    await this.historyService.trackOperation(OperationType.REJECT_VERIFIABLE_CREDENTIAL_REQUEST, {});
     await this.notificationService.create({
       options: {
-        title: "Request to add Verifiable Credential rejected",
-        message: `Rejected a request to add 1 Verifiable Credential.`,
+        title: "Request rejected",
+        message: `Rejected a request to add Verifiable Credential.`,
         iconUrl: browser.runtime.getURL("/icons/logo.png"),
         type: "basic",
       },
     });
+
     const tabs = await browser.tabs.query({ active: true });
     await Promise.all(
       tabs.map((tab) =>
         browser.tabs
           .sendMessage(tab.id!, {
-            type: EventName.REJECT_VERIFIABLE_CREDENTIAL,
+            type: EventName.USER_REJECT,
+            payload: { type: RejectRequests.ADD_VERIFIABLE_CREDENTIAL },
           })
           .catch(() => undefined),
       ),

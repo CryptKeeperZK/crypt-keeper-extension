@@ -5,7 +5,12 @@ import browser from "webextension-polyfill";
 import { setStatus } from "@src/ui/ducks/app";
 import { setConnectedIdentity } from "@src/ui/ducks/identities";
 
-import type { IInjectedMessageData, IReduxAction, ConnectedIdentityMetadata } from "@cryptkeeperzk/types";
+import type {
+  IInjectedMessageData,
+  IReduxAction,
+  ConnectedIdentityMetadata,
+  IRejectedRequest,
+} from "@cryptkeeperzk/types";
 
 function injectScript() {
   const url = browser.runtime.getURL("js/injected.js");
@@ -69,23 +74,34 @@ function injectScript() {
         );
         break;
       }
-      case EventName.REJECT_VERIFIABLE_CREDENTIAL: {
-        window.postMessage(
-          {
-            target: "injected-injectedscript",
-            payload: [null],
-            nonce: EventName.REJECT_VERIFIABLE_CREDENTIAL,
-          },
-          "*",
-        );
-        break;
-      }
       case EventName.REVEAL_COMMITMENT: {
         window.postMessage(
           {
             target: "injected-injectedscript",
             payload: [null, action.payload as { commitment: string }],
             nonce: EventName.REVEAL_COMMITMENT,
+          },
+          "*",
+        );
+        break;
+      }
+      case EventName.JOIN_GROUP: {
+        window.postMessage(
+          {
+            target: "injected-injectedscript",
+            payload: [null, action.payload as { groupId: string }],
+            nonce: EventName.JOIN_GROUP,
+          },
+          "*",
+        );
+        break;
+      }
+      case EventName.USER_REJECT: {
+        window.postMessage(
+          {
+            target: "injected-injectedscript",
+            payload: [null, action.payload as IRejectedRequest],
+            nonce: EventName.USER_REJECT,
           },
           "*",
         );

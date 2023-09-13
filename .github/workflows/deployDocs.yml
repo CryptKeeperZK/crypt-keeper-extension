@@ -4,7 +4,7 @@ on:
     branches: [main]
     paths:
       - "docs/**"
-  
+
   workflow_dispatch:
     inputs:
       build:
@@ -13,8 +13,8 @@ on:
         default: "enable"
         type: choice
         options:
-        - enable
-        - disable
+          - enable
+          - disable
 
 permissions:
   contents: read
@@ -26,20 +26,20 @@ concurrency:
   cancel-in-progress: true
 
 defaults:
- run:
-  working-directory: ./docs
+  run:
+    working-directory: ./docs
 
 jobs:
   build:
     runs-on: ubuntu-22.04
-    
+
     steps:
       - uses: actions/checkout@v4
 
       - name: Setup mdBook
         uses: peaceiris/actions-mdbook@v1
         with:
-          mdbook-version: 'latest'
+          mdbook-version: "latest"
 
       - name: Setup Pages
         id: pages
@@ -57,7 +57,7 @@ jobs:
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
-      
+
     runs-on: ubuntu-22.04
     needs: build
     steps:

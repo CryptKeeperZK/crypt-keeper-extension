@@ -1,5 +1,5 @@
-import { ZERO_ADDRESS } from "@src/config/const";
 import { getEnabledFeatures } from "@src/config/features";
+import { mockDefaultGroup, mockDefaultIdentity } from "@src/config/mock/zk";
 import { Operation, OperationType } from "@src/types";
 
 import HistoryService from "..";
@@ -9,46 +9,26 @@ const mockDefaultOperations: Operation[] = [
   {
     id: "1",
     type: OperationType.CREATE_IDENTITY,
-    identity: {
-      commitment: "1234",
-      metadata: {
-        identityStrategy: "random",
-        account: ZERO_ADDRESS,
-        name: "Account #1",
-        groups: [],
-        host: "http://localhost:3000",
-      },
-    },
+    identity: mockDefaultIdentity,
     createdAt: new Date().toISOString(),
   },
   {
     id: "2",
     type: OperationType.CREATE_IDENTITY,
-    identity: {
-      commitment: "1234",
-      metadata: {
-        identityStrategy: "interep",
-        account: ZERO_ADDRESS,
-        name: "Account #2",
-        groups: [],
-        host: "http://localhost:3000",
-      },
-    },
+    identity: mockDefaultIdentity,
     createdAt: new Date().toISOString(),
   },
   {
     id: "3",
     type: OperationType.DELETE_IDENTITY,
-    identity: {
-      commitment: "1234",
-      metadata: {
-        identityStrategy: "interep",
-        account: ZERO_ADDRESS,
-        name: "Account #3",
-        groups: [],
-        host: "http://localhost:3000",
-      },
-    },
+    identity: mockDefaultIdentity,
+    createdAt: new Date().toISOString(),
+  },
+  {
+    id: "4",
+    type: OperationType.JOIN_GROUP,
+    identity: { ...mockDefaultIdentity, metadata: { ...mockDefaultIdentity.metadata, identityStrategy: "random" } },
+    group: mockDefaultGroup,
     createdAt: new Date().toISOString(),
   },
 ];
@@ -100,7 +80,7 @@ describe("background/services/history", () => {
 
     const { operations, settings } = await service.loadOperations();
 
-    expect(operations).toHaveLength(3);
+    expect(operations).toHaveLength(4);
     expect(settings).toStrictEqual(mockDefaultSettings);
     expect(service.getOperations()).toStrictEqual(operations);
   });
@@ -112,7 +92,7 @@ describe("background/services/history", () => {
 
     const { operations, settings } = await service.loadOperations();
 
-    expect(operations).toHaveLength(3);
+    expect(operations).toHaveLength(4);
     expect(settings).toStrictEqual(mockDefaultSettings);
     expect(service.getOperations()).toStrictEqual(operations);
     expect(service.getSettings()).toStrictEqual(mockDefaultSettings);
@@ -138,9 +118,9 @@ describe("background/services/history", () => {
 
     const { operations, settings } = await service.loadOperations();
 
-    expect(operations).toHaveLength(3);
+    expect(operations).toHaveLength(4);
     expect(settings).toStrictEqual({ isEnabled: false });
-    expect(service.getOperations()).toHaveLength(3);
+    expect(service.getOperations()).toHaveLength(4);
   });
 
   test("should load history operations properly if the store is empty", async () => {
@@ -183,7 +163,7 @@ describe("background/services/history", () => {
     });
     const cachedOperations = service.getOperations();
 
-    expect(cachedOperations).toHaveLength(4);
+    expect(cachedOperations).toHaveLength(5);
   });
 
   test("should not track operation if history is disabled", async () => {
@@ -197,7 +177,7 @@ describe("background/services/history", () => {
     });
     const cachedOperations = service.getOperations();
 
-    expect(cachedOperations).toHaveLength(3);
+    expect(cachedOperations).toHaveLength(4);
   });
 
   test("should remove operation properly", async () => {
@@ -209,7 +189,7 @@ describe("background/services/history", () => {
     await service.removeOperation(mockDefaultOperations[0].id);
     const cachedOperations = service.getOperations();
 
-    expect(cachedOperations).toHaveLength(2);
+    expect(cachedOperations).toHaveLength(3);
   });
 
   test("should enable/disable history properly", async () => {

@@ -1,3 +1,4 @@
+import { RejectRequests } from "@cryptkeeperzk/providers";
 import { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -5,6 +6,7 @@ import { Paths } from "@src/constants";
 import { closePopup } from "@src/ui/ducks/app";
 import { useAppDispatch } from "@src/ui/ducks/hooks";
 import { fetchIdentities, revealConnectedIdentityCommitment, useConnectedIdentity } from "@src/ui/ducks/identities";
+import { rejectUserRequest } from "@src/ui/ducks/requests";
 import { redirectToNewTab } from "@src/util/browser";
 
 import type { IIdentityData } from "@cryptkeeperzk/types";
@@ -38,9 +40,12 @@ export const useRevealIdentityCommitment = (): IUseRevealIdentityCommitmentData 
   }, [dispatch, setLoading, setError]);
 
   const onGoBack = useCallback(() => {
-    dispatch(closePopup());
-    navigate(Paths.HOME);
-  }, [dispatch, navigate]);
+    dispatch(rejectUserRequest({ type: RejectRequests.REVEAL_COMMITMENT }, connectedIdentity?.metadata.host))
+      .then(() => dispatch(closePopup()))
+      .then(() => {
+        navigate(Paths.HOME);
+      });
+  }, [connectedIdentity?.metadata.host, dispatch, navigate]);
 
   const onGoToHost = useCallback(() => {
     redirectToNewTab(connectedIdentity!.metadata.host!);

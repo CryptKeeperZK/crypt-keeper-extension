@@ -17,4 +17,5 @@ export enum Paths {
   RECOVER = "/recover",
   RESET_PASSWORD = "/reset-password",
   ADD_VERIFIABLE_CREDENTIAL = "/add-verifiable-credential",
+  JOIN_GROUP = "/groups/:id/join",
 }

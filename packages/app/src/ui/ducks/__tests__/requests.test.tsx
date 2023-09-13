@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 
-import { RPCAction } from "@cryptkeeperzk/providers";
+import { EventName, RPCAction } from "@cryptkeeperzk/providers";
 import { IPendingRequest, PendingRequestType, RequestResolutionStatus } from "@cryptkeeperzk/types";
 import { renderHook } from "@testing-library/react";
 import { Provider } from "react-redux";
@@ -10,7 +10,13 @@ import { Provider } from "react-redux";
 import { store } from "@src/ui/store/configureAppStore";
 import postMessage from "@src/util/postMessage";
 
-import { fetchPendingRequests, finalizeRequest, setPendingRequests, usePendingRequests } from "../requests";
+import {
+  fetchPendingRequests,
+  finalizeRequest,
+  rejectUserRequest,
+  setPendingRequests,
+  usePendingRequests,
+} from "../requests";
 
 jest.unmock("@src/ui/ducks/hooks");
 
@@ -50,6 +56,24 @@ describe("ui/ducks/requests", () => {
       payload: {
         id: "1",
         status: RequestResolutionStatus.ACCEPT,
+      },
+    });
+  });
+
+  test("should reject user request properly", async () => {
+    await Promise.resolve(store.dispatch(rejectUserRequest({ type: "request" }, "urlOrigin")));
+
+    expect(postMessage).toBeCalledTimes(1);
+    expect(postMessage).toBeCalledWith({
+      method: RPCAction.PUSH_EVENT,
+      payload: {
+        type: EventName.USER_REJECT,
+        payload: {
+          type: "request",
+        },
+      },
+      meta: {
+        urlOrigin: "urlOrigin",
       },
     });
   });

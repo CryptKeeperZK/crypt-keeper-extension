@@ -27,8 +27,9 @@ const EVENTS = [
   EventName.LOGIN,
   EventName.LOGOUT,
   EventName.ADD_VERIFIABLE_CREDENTIAL,
-  EventName.REJECT_VERIFIABLE_CREDENTIAL,
   EventName.REVEAL_COMMITMENT,
+  EventName.JOIN_GROUP,
+  EventName.USER_REJECT,
 ];
 
 interface Handlers {
@@ -402,13 +403,13 @@ export class CryptKeeperInjectedProvider {
   }
 
   /**
-   * Requests user to generate a group membership proof with current connected identity.
+   * Requests user to generate a group Merkle proof with current connected identity.
    *
    * @returns {Promise<void>}
    */
-  async generateGroupMembershipProof(payload: IGenerateGroupMerkleProofArgs): Promise<void> {
+  async generateGroupMerkleProof(payload: IGenerateGroupMerkleProofArgs): Promise<void> {
     await this.post({
-      method: RPCAction.GENERATE_GROUP_MEMBERSHIP_PROOF_REQUEST,
+      method: RPCAction.GENERATE_GROUP_MERKLE_PROOF_REQUEST,
       payload,
     });
   }
