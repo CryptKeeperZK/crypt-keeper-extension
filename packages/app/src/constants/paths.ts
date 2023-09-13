@@ -18,4 +18,5 @@ export enum Paths {
   RESET_PASSWORD = "/reset-password",
   ADD_VERIFIABLE_CREDENTIAL = "/add-verifiable-credential",
   JOIN_GROUP = "/groups/:id/join",
+  GROUP_MERKLE_PROOF = "/groups/:id/merkle-proof",
 }

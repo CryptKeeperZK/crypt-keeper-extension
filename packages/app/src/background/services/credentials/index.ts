@@ -1,5 +1,4 @@
 import { EventName } from "@cryptkeeperzk/providers";
-import { RejectRequests } from "@cryptkeeperzk/providers/dist/src/event";
 import browser from "webextension-polyfill";
 
 import BrowserUtils from "@src/background/controllers/browserUtils";
@@ -75,7 +74,7 @@ export default class VerifiableCredentialsService implements IBackupable {
         browser.tabs
           .sendMessage(tab.id!, {
             type: EventName.USER_REJECT,
-            payload: { type: RejectRequests.ADD_VERIFIABLE_CREDENTIAL },
+            payload: { type: EventName.ADD_VERIFIABLE_CREDENTIAL },
           })
           .catch(() => undefined),
       ),

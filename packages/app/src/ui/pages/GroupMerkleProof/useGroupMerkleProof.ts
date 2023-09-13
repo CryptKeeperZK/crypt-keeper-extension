@@ -5,33 +5,31 @@ import { useNavigate } from "react-router-dom";
 
 import { Paths } from "@src/constants";
 import { closePopup } from "@src/ui/ducks/app";
-import { checkGroupMembership, joinGroup } from "@src/ui/ducks/groups";
+import { checkGroupMembership, generateGroupMerkleProof } from "@src/ui/ducks/groups";
 import { useAppDispatch } from "@src/ui/ducks/hooks";
 import { fetchIdentities, useConnectedIdentity } from "@src/ui/ducks/identities";
 import { rejectUserRequest } from "@src/ui/ducks/requests";
-import { useSearchParam, useUrlParam } from "@src/ui/hooks/url";
+import { useUrlParam } from "@src/ui/hooks/url";
 import { redirectToNewTab } from "@src/util/browser";
 import { getBandadaGroupUrl } from "@src/util/groups";
 
 import type { IIdentityData } from "@cryptkeeperzk/types";
 
-export interface IUseJoinGroupData {
+export interface IUseGroupMerkleProofData {
   isLoading: boolean;
-  isJoined: boolean;
   isSubmitting: boolean;
+  isJoined: boolean;
   error: string;
   faviconUrl: string;
   groupId?: string;
-  apiKey?: string;
-  inviteCode?: string;
   connectedIdentity?: IIdentityData;
   onGoBack: () => void;
   onGoToHost: () => void;
   onGoToGroup: () => void;
-  onJoin: () => void;
+  onGenerateMerkleProof: () => void;
 }
 
-export const useJoinGroup = (): IUseJoinGroupData => {
+export const useGroupMerkleProof = (): IUseGroupMerkleProofData => {
   const [isLoading, setLoading] = useState(false);
   const [isJoined, setJoined] = useState(false);
   const [isSubmitting, setSubmitting] = useState(false);
@@ -42,8 +40,6 @@ export const useJoinGroup = (): IUseJoinGroupData => {
   const navigate = useNavigate();
 
   const groupId = useUrlParam("id");
-  const apiKey = useSearchParam("apiKey");
-  const inviteCode = useSearchParam("inviteCode");
 
   const connectedIdentity = useConnectedIdentity();
 
@@ -76,7 +72,9 @@ export const useJoinGroup = (): IUseJoinGroupData => {
   }, [connectedIdentity?.metadata.host, setFaviconUrl]);
 
   const onGoBack = useCallback(() => {
-    dispatch(rejectUserRequest({ type: EventName.JOIN_GROUP, payload: { groupId } }, connectedIdentity?.metadata.host))
+    dispatch(
+      rejectUserRequest({ type: EventName.GROUP_MERKLE_PROOF, payload: { groupId } }, connectedIdentity?.metadata.host),
+    )
       .then(() => dispatch(closePopup()))
       .then(() => {
         navigate(Paths.HOME);
@@ -91,9 +89,9 @@ export const useJoinGroup = (): IUseJoinGroupData => {
     redirectToNewTab(getBandadaGroupUrl(groupId!));
   }, [groupId]);
 
-  const onJoin = useCallback(() => {
+  const onGenerateMerkleProof = useCallback(() => {
     setSubmitting(true);
-    dispatch(joinGroup({ groupId: groupId!, apiKey, inviteCode }))
+    dispatch(generateGroupMerkleProof({ groupId: groupId! }))
       .then(() => dispatch(closePopup()))
       .then(() => {
         navigate(Paths.HOME);
@@ -104,7 +102,7 @@ export const useJoinGroup = (): IUseJoinGroupData => {
       .finally(() => {
         setSubmitting(false);
       });
-  }, [groupId, apiKey, inviteCode, dispatch, navigate, setError, setSubmitting]);
+  }, [groupId, dispatch, navigate, setError, setSubmitting]);
 
   return {
     isLoading,
@@ -114,11 +112,9 @@ export const useJoinGroup = (): IUseJoinGroupData => {
     faviconUrl,
     connectedIdentity,
     groupId,
-    apiKey,
-    inviteCode,
     onGoBack,
     onGoToHost,
     onGoToGroup,
-    onJoin,
+    onGenerateMerkleProof,
   };
 };

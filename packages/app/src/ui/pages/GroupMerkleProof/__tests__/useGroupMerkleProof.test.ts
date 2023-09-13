@@ -10,7 +10,7 @@ import { ZERO_ADDRESS } from "@src/config/const";
 import { getBandadaUrl } from "@src/config/env";
 import { Paths } from "@src/constants";
 import { closePopup } from "@src/ui/ducks/app";
-import { checkGroupMembership, joinGroup } from "@src/ui/ducks/groups";
+import { checkGroupMembership, generateGroupMerkleProof } from "@src/ui/ducks/groups";
 import { useAppDispatch } from "@src/ui/ducks/hooks";
 import { fetchIdentities, useConnectedIdentity } from "@src/ui/ducks/identities";
 import { rejectUserRequest } from "@src/ui/ducks/requests";
@@ -19,7 +19,7 @@ import { redirectToNewTab } from "@src/util/browser";
 
 import type { IIdentityData } from "@cryptkeeperzk/types";
 
-import { IUseJoinGroupData, useJoinGroup } from "../useJoinGroup";
+import { IUseGroupMerkleProofData, useGroupMerkleProof } from "../useGroupMerkleProof";
 
 jest.mock("react-router-dom", (): unknown => ({
   useNavigate: jest.fn(),
@@ -43,7 +43,7 @@ jest.mock("@src/ui/ducks/app", (): unknown => ({
 }));
 
 jest.mock("@src/ui/ducks/groups", (): unknown => ({
-  joinGroup: jest.fn(),
+  generateGroupMerkleProof: jest.fn(),
   checkGroupMembership: jest.fn(),
 }));
 
@@ -60,7 +60,7 @@ jest.mock("@src/ui/ducks/identities", (): unknown => ({
   useConnectedIdentity: jest.fn(),
 }));
 
-describe("ui/pages/JoinGroup/useJoinGroup", () => {
+describe("ui/pages/GroupMerkleProof/useGroupMerkleProof", () => {
   const defaultIdentity: IIdentityData = {
     commitment: "commitment",
     metadata: {
@@ -96,28 +96,25 @@ describe("ui/pages/JoinGroup/useJoinGroup", () => {
     jest.clearAllMocks();
   });
 
-  const waitForData = async (data: IUseJoinGroupData): Promise<void> => {
+  const waitForData = async (data: IUseGroupMerkleProofData): Promise<void> => {
     await waitFor(() => !data.isLoading);
     await waitFor(() => expect(fetchIdentities).toBeCalledTimes(1));
   };
 
   test("should return initial data", async () => {
-    const { result } = renderHook(() => useJoinGroup());
+    const { result } = renderHook(() => useGroupMerkleProof());
     await waitForData(result.current);
 
     expect(result.current.isLoading).toBe(false);
-    expect(result.current.isJoined).toBe(false);
     expect(result.current.isSubmitting).toBe(false);
     expect(result.current.error).toBe("");
-    expect(result.current.apiKey).toBe("apiKey");
-    expect(result.current.inviteCode).toBe("inviteCode");
     expect(result.current.faviconUrl).toBe(defaultFaviconsData.favicons[0]);
     expect(result.current.groupId).toBe("groupId");
     expect(result.current.connectedIdentity).toStrictEqual(defaultIdentity);
   });
 
   test("should go back properly", async () => {
-    const { result } = renderHook(() => useJoinGroup());
+    const { result } = renderHook(() => useGroupMerkleProof());
     await waitForData(result.current);
 
     await act(() => Promise.resolve(result.current.onGoBack()));
@@ -136,7 +133,7 @@ describe("ui/pages/JoinGroup/useJoinGroup", () => {
     (useAppDispatch as jest.Mock).mockReturnValue(jest.fn(() => Promise.reject(error)));
     (getLinkPreview as jest.Mock).mockRejectedValue(error);
 
-    const { result } = renderHook(() => useJoinGroup());
+    const { result } = renderHook(() => useGroupMerkleProof());
     await waitForData(result.current);
 
     expect(result.current.isLoading).toBe(false);
@@ -147,7 +144,7 @@ describe("ui/pages/JoinGroup/useJoinGroup", () => {
   test("should handle empty connected identity properly", async () => {
     (useConnectedIdentity as jest.Mock).mockReturnValue(undefined);
 
-    const { result } = renderHook(() => useJoinGroup());
+    const { result } = renderHook(() => useGroupMerkleProof());
     await waitForData(result.current);
 
     expect(result.current.isLoading).toBe(false);
@@ -155,7 +152,7 @@ describe("ui/pages/JoinGroup/useJoinGroup", () => {
   });
 
   test("should go to host properly", async () => {
-    const { result } = renderHook(() => useJoinGroup());
+    const { result } = renderHook(() => useGroupMerkleProof());
     await waitForData(result.current);
 
     await act(() => Promise.resolve(result.current.onGoToHost()));
@@ -165,7 +162,7 @@ describe("ui/pages/JoinGroup/useJoinGroup", () => {
   });
 
   test("should go to group properly", async () => {
-    const { result } = renderHook(() => useJoinGroup());
+    const { result } = renderHook(() => useGroupMerkleProof());
     await waitForData(result.current);
 
     await act(() => Promise.resolve(result.current.onGoToGroup()));
@@ -174,31 +171,31 @@ describe("ui/pages/JoinGroup/useJoinGroup", () => {
     expect(redirectToNewTab).toBeCalledWith(`${getBandadaUrl()}/groups/off-chain/groupId`);
   });
 
-  test("should join group properly", async () => {
-    const { result } = renderHook(() => useJoinGroup());
+  test("should generate group merkle proof properly", async () => {
+    const { result } = renderHook(() => useGroupMerkleProof());
     await waitForData(result.current);
 
-    await act(() => Promise.resolve(result.current.onJoin()));
+    await act(() => Promise.resolve(result.current.onGenerateMerkleProof()));
     await waitFor(() => !result.current.isSubmitting);
 
     expect(mockDispatch).toBeCalledTimes(4);
     expect(fetchIdentities).toBeCalledTimes(1);
     expect(checkGroupMembership).toBeCalledTimes(1);
-    expect(joinGroup).toBeCalledTimes(1);
+    expect(generateGroupMerkleProof).toBeCalledTimes(1);
     expect(closePopup).toBeCalledTimes(1);
     expect(mockNavigate).toBeCalledTimes(1);
     expect(mockNavigate).toBeCalledWith(Paths.HOME);
   });
 
-  test("should handle join group error properly", async () => {
+  test("should handle generate group merkle proof error properly", async () => {
     const error = new Error("error");
     (useAppDispatch as jest.Mock)
       .mockReturnValueOnce(mockDispatch)
       .mockReturnValue(jest.fn(() => Promise.reject(error)));
 
-    const { result } = renderHook(() => useJoinGroup());
+    const { result } = renderHook(() => useGroupMerkleProof());
 
-    await act(() => Promise.resolve(result.current.onJoin()));
+    await act(() => Promise.resolve(result.current.onGenerateMerkleProof()));
 
     expect(result.current.error).toBe(error.message);
   });

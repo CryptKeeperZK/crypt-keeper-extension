@@ -71,7 +71,23 @@ export class GroupService {
   generateGroupMerkleProof = async ({ groupId }: IGenerateGroupMerkleProofArgs): Promise<IMerkleProof> => {
     const identity = await this.getConnectedIdentity();
 
-    return this.bandadaSevice.generateMerkleProof({ groupId, identity });
+    const merkleProof = await this.bandadaSevice.generateMerkleProof({ groupId, identity });
+
+    await this.notificationService.create({
+      options: {
+        title: "Generated Group Merkle Proof",
+        message: "You've been successfully generated Group Merkle Proof",
+        iconUrl: browser.runtime.getURL("/icons/logo.png"),
+        type: "basic",
+      },
+    });
+
+    await this.browserController.pushEvent(
+      { type: EventName.GROUP_MERKLE_PROOF, payload: { merkleProof } },
+      { urlOrigin: identity.metadata.host! },
+    );
+
+    return merkleProof;
   };
 
   checkGroupMembership = async ({ groupId }: ICheckGroupMembershipArgs): Promise<boolean> => {
