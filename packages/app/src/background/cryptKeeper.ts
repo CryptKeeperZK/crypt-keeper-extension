@@ -41,7 +41,7 @@ const RPC_METHOD_ACCESS: Record<RPCAction, boolean> = {
   [RPCAction.ADD_VERIFIABLE_CREDENTIAL_REQUEST]: true,
   [RPCAction.REVEAL_CONNECTED_IDENTITY_COMMITMENT_REQUEST]: true,
   [RPCAction.JOIN_GROUP_REQUEST]: true,
-  [RPCAction.GENERATE_GROUP_MEMBERSHIP_PROOF_REQUEST]: true,
+  [RPCAction.GENERATE_GROUP_MERKLE_PROOF]: true,
 };
 
 Object.freeze(RPC_METHOD_ACCESS);
@@ -173,9 +173,9 @@ export default class CryptKeeperController {
     // Groups
     this.handler.add(RPCAction.JOIN_GROUP, this.lockService.ensure, this.groupService.joinGroup);
     this.handler.add(
-      RPCAction.GENERATE_GROUP_MEMBERSHIP_PROOF,
+      RPCAction.GENERATE_GROUP_MERKLE_PROOF,
       this.lockService.ensure,
-      this.groupService.generateGroupMembershipProof,
+      this.groupService.generateGroupMerkleProof,
     );
     this.handler.add(RPCAction.CHECK_GROUP_MEMBERSHIP, this.lockService.ensure, this.groupService.checkGroupMembership);
 

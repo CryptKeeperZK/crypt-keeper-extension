@@ -83,7 +83,7 @@ describe("background/services/group/GroupService", () => {
     test("should generate proof properly ", async () => {
       const service = GroupService.getInstance();
 
-      const result = await service.generateGroupMembershipProof(defaultArgs);
+      const result = await service.generateGroupMerkleProof(defaultArgs);
 
       expect(result).toStrictEqual(defaultMerkleProof);
     });
@@ -93,9 +93,7 @@ describe("background/services/group/GroupService", () => {
       mockGetConnectedIdentity.mockResolvedValue(undefined as unknown as IIdentityData);
       const service = GroupService.getInstance();
 
-      await expect(service.generateGroupMembershipProof(defaultArgs)).rejects.toThrowError(
-        "No connected identity found",
-      );
+      await expect(service.generateGroupMerkleProof(defaultArgs)).rejects.toThrowError("No connected identity found");
     });
   });
 

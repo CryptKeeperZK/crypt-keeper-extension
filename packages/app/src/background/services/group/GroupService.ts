@@ -68,7 +68,7 @@ export class GroupService {
     return result;
   };
 
-  generateGroupMembershipProof = async ({ groupId }: IGenerateGroupMerkleProofArgs): Promise<IMerkleProof> => {
+  generateGroupMerkleProof = async ({ groupId }: IGenerateGroupMerkleProofArgs): Promise<IMerkleProof> => {
     const identity = await this.getConnectedIdentity();
 
     return this.bandadaSevice.generateMerkleProof({ groupId, identity });
