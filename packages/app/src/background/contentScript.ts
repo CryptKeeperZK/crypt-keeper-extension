@@ -65,17 +65,6 @@ function injectScript() {
         );
         return;
       }
-      case EventName.REVEAL_COMMITMENT: {
-        window.postMessage(
-          {
-            target: "injected-injectedscript",
-            payload: [null, action.payload as { commitment: string }],
-            nonce: EventName.REVEAL_COMMITMENT,
-          },
-          "*",
-        );
-        break;
-      }
       case EventName.ADD_VERIFIABLE_CREDENTIAL: {
         window.postMessage(
           {

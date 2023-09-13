@@ -43,7 +43,10 @@ const PresentVerifiableCredential = (): JSX.Element => {
   ];
 
   return (
-    <Box data-testid="select-verifiable-credential-page" sx={{ height: "100%" }}>
+    <Box
+      data-testid="select-verifiable-credential-page"
+      sx={{ display: "flex", flexDirection: "column", height: "100%" }}
+    >
       <FullModalHeader onClose={onCloseModal}>Request for Verifiable Credentials</FullModalHeader>
 
       <FullModalContent>
@@ -71,7 +74,7 @@ const PresentVerifiableCredential = (): JSX.Element => {
       )}
 
       <Box sx={{ p: "1rem", mt: "1rem", display: "flex", alignItems: "center" }}>
-        <Typography sx={{ mr: 1 }}>Choose Verifiable Credential signer</Typography>
+        <Typography sx={{ mr: 1, textAlign: "center" }}>Choose Verifiable Credential signer</Typography>
 
         <Tooltip
           followCursor

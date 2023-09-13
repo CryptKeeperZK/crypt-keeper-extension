@@ -274,10 +274,6 @@ export const useCryptKeeper = (): IUseCryptKeeperData => {
     toast(`Generated a Verifiable Presentation from ${credentialCount} credentials!`, { type: "success" });
   }, []);
 
-  const onRejectVerifiablePresentationRequest = useCallback(() => {
-    toast(`Rejected request to generate a Verifiable Presentation.`, { type: "error" });
-  }, []);
-
   useEffect(() => {
     if (!client) {
       return undefined;
