@@ -6,9 +6,10 @@ export { ConnectorNames, type IUseWalletData } from "./hooks";
 export { type ISecretArgs, type ICheckPasswordArgs } from "./lock";
 export { InitializationStep } from "./misc";
 export { type DeferredPromise } from "./utility";
-export {
-  type IVerifiableCredentialMetadata,
-  type ICryptkeeperVerifiableCredential,
-  type IRenameVerifiableCredentialArgs,
+export type {
+  IVerifiableCredentialMetadata,
+  ICryptkeeperVerifiableCredential,
+  IRenameVerifiableCredentialArgs,
+  IGenerateVerifiablePresentationWithCryptkeeperArgs,
 } from "./verifiableCredentials";
 export { type ISignMessageArgs, type ICheckMnemonicArgs } from "./wallet";

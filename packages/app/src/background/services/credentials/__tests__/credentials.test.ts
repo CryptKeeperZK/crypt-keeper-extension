@@ -1,4 +1,6 @@
-import { IVerifiableCredential } from "@cryptkeeperzk/types";
+/* eslint-disable @typescript-eslint/unbound-method */
+import { EventName } from "@cryptkeeperzk/providers";
+import browser from "webextension-polyfill";
 
 import VerifiableCredentialsService from "@src/background/services/credentials";
 import {
@@ -7,7 +9,14 @@ import {
   serializeVerifiableCredential,
 } from "@src/background/services/credentials/utils";
 import SimpleStorage from "@src/background/services/storage";
-import { ICryptkeeperVerifiableCredential } from "@src/types";
+import pushMessage from "@src/util/pushMessage";
+
+import type {
+  IVerifiablePresentation,
+  IVerifiableCredential,
+  IVerifiablePresentationRequest,
+} from "@cryptkeeperzk/types";
+import type { ICryptkeeperVerifiableCredential } from "@src/types";
 
 jest.mock("@src/background/services/crypto", (): unknown => ({
   ...jest.requireActual("@src/background/services/crypto"),
@@ -18,6 +27,15 @@ jest.mock("@src/background/services/crypto", (): unknown => ({
     getAuthenticBackup: jest.fn((encrypted: string | Record<string, string>) => encrypted),
   })),
 }));
+
+const exampleSignature = "ck-signature";
+jest.mock("@src/background/services/wallet", (): unknown => ({
+  getInstance: jest.fn(() => ({
+    signMessage: jest.fn(() => Promise.resolve(exampleSignature)),
+  })),
+}));
+
+jest.mock("@src/util/pushMessage");
 
 jest.mock("@src/background/services/storage");
 
@@ -86,9 +104,28 @@ describe("background/services/credentials", () => {
   credentialsMap.set(exampleCredentialHashTwo, exampleCryptkeeperCredentialStringTwo);
   const credentialsStorageString = JSON.stringify(Array.from(credentialsMap));
 
+  const exampleVerifiablePresentationRequest: IVerifiablePresentationRequest = {
+    request: "example request",
+  };
+  const exampleVerifiablePresentation: IVerifiablePresentation = {
+    context: ["https://www.w3.org/2018/credentials/v1"],
+    type: ["VerifiablePresentation"],
+    verifiableCredential: [exampleCredential],
+  };
+
+  const defaultTabs = [{ id: 1 }];
+
+  const defaultPopupTab = { id: 1, active: true, highlighted: true };
+
   const verifiableCredentialsService = VerifiableCredentialsService.getInstance();
 
   beforeEach(() => {
+    (browser.tabs.create as jest.Mock).mockResolvedValue(defaultPopupTab);
+
+    (browser.tabs.query as jest.Mock).mockResolvedValue(defaultTabs);
+
+    (browser.tabs.sendMessage as jest.Mock).mockRejectedValueOnce(false).mockResolvedValue(true);
+
     (SimpleStorage as jest.Mock).mock.instances.forEach((instance: MockStorage) => {
       instance.get.mockReturnValue(credentialsStorageString);
       instance.set.mockReturnValue(undefined);
@@ -101,6 +138,95 @@ describe("background/services/credentials", () => {
       instance.get.mockClear();
       instance.set.mockClear();
       instance.clear.mockClear();
+    });
+
+    (pushMessage as jest.Mock).mockClear();
+
+    (browser.tabs.sendMessage as jest.Mock).mockClear();
+  });
+
+  describe("add and reject verifiable credential requests", () => {
+    test("should successfully create an add verifiable credential request", async () => {
+      await verifiableCredentialsService.addVerifiableCredentialRequest(exampleCredentialString);
+
+      expect(browser.tabs.query).toBeCalledWith({ lastFocusedWindow: true });
+
+      const defaultOptions = {
+        tabId: defaultPopupTab.id,
+        type: "popup",
+        focused: true,
+        width: 385,
+        height: 610,
+      };
+
+      expect(browser.windows.create).toBeCalledWith(defaultOptions);
+    });
+
+    test("should successfully reject a verifiable credential request", async () => {
+      await verifiableCredentialsService.rejectVerifiableCredentialRequest();
+
+      expect(browser.tabs.query).toBeCalledWith({ lastFocusedWindow: true });
+      expect(browser.tabs.sendMessage).toBeCalledWith(defaultTabs[0].id, {
+        type: EventName.REJECT_VERIFIABLE_CREDENTIAL,
+      });
+    });
+  });
+
+  describe("generate verifiable presentations", () => {
+    test("should successfully create a generate verifiable presentation request", async () => {
+      await verifiableCredentialsService.generateVerifiablePresentationRequest(exampleVerifiablePresentationRequest);
+
+      expect(browser.tabs.query).toBeCalledWith({ lastFocusedWindow: true });
+
+      const defaultOptions = {
+        tabId: defaultPopupTab.id,
+        type: "popup",
+        focused: true,
+        width: 385,
+        height: 610,
+      };
+
+      expect(browser.windows.create).toBeCalledWith(defaultOptions);
+    });
+
+    test("should successfully generate a verifiable presentation", async () => {
+      await verifiableCredentialsService.generateVerifiablePresentation(exampleVerifiablePresentation);
+
+      expect(browser.tabs.query).toBeCalledWith({ lastFocusedWindow: true });
+      expect(browser.tabs.sendMessage).toBeCalledWith(defaultTabs[0].id, {
+        type: EventName.GENERATE_VERIFIABLE_PRESENTATION,
+        payload: { verifiablePresentation: exampleVerifiablePresentation },
+      });
+    });
+
+    test("should successfully generate a verifiable presentation with cryptkeeper", async () => {
+      const exampleAddress = "0x123";
+      const ETHEREUM_SIGNATURE_SPECIFICATION_TYPE = "EthereumEip712Signature2021";
+      const VERIFIABLE_CREDENTIAL_PROOF_PURPOSE = "assertionMethod";
+
+      await verifiableCredentialsService.generateVerifiablePresentationWithCryptkeeper({
+        verifiablePresentation: exampleVerifiablePresentation,
+        address: exampleAddress,
+      });
+
+      const signedVerifiablePresentation = {
+        ...exampleVerifiablePresentation,
+        proof: [
+          {
+            type: [ETHEREUM_SIGNATURE_SPECIFICATION_TYPE],
+            proofPurpose: VERIFIABLE_CREDENTIAL_PROOF_PURPOSE,
+            verificationMethod: exampleAddress,
+            created: new Date(),
+            proofValue: exampleSignature,
+          },
+        ],
+      };
+
+      expect(browser.tabs.query).toBeCalledWith({ lastFocusedWindow: true });
+      expect(browser.tabs.sendMessage).toBeCalledWith(defaultTabs[0].id, {
+        type: EventName.GENERATE_VERIFIABLE_PRESENTATION,
+        payload: { verifiablePresentation: signedVerifiablePresentation },
+      });
     });
   });
 
