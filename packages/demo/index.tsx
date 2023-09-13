@@ -52,9 +52,11 @@ const App = () => {
     connectIdentity,
     genSemaphoreProof,
     genRLNProof,
-    onRevealConnectedIdentityCommitment,
     addVerifiableCredentialRequest,
     generateVerifiablePresentationRequest,
+    revealConnectedIdentityCommitment,
+    joinGroup,
+    generareGroupMerkleProof,
   } = useCryptKeeper();
 
   const params = new URLSearchParams(window.location.search);
@@ -139,7 +141,7 @@ const App = () => {
           <button
             data-testid="reveal-connected-identity-commitment"
             type="button"
-            onClick={onRevealConnectedIdentityCommitment}
+            onClick={revealConnectedIdentityCommitment}
           >
             Reveal
           </button>
@@ -200,6 +202,26 @@ const App = () => {
             }}
           >
             Generate proof from Merkle proof artifacts
+          </button>
+        </div>
+      </div>
+
+      <hr />
+
+      <div>
+        <h2>Generate bandada group proof</h2>
+
+        <div>
+          <button type="button" onClick={generareGroupMerkleProof}>
+            Generate Group Merkle Proof
+          </button>
+        </div>
+
+        <br />
+
+        <div>
+          <button type="button" onClick={joinGroup}>
+            Join test group
           </button>
         </div>
       </div>

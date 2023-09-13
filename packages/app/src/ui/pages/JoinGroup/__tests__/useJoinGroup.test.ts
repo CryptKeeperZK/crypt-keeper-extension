@@ -14,7 +14,7 @@ import { checkGroupMembership, joinGroup } from "@src/ui/ducks/groups";
 import { useAppDispatch } from "@src/ui/ducks/hooks";
 import { fetchIdentities, useConnectedIdentity } from "@src/ui/ducks/identities";
 import { rejectUserRequest } from "@src/ui/ducks/requests";
-import { useSearchParam, useUrlParam } from "@src/ui/hooks/url";
+import { useSearchParam } from "@src/ui/hooks/url";
 import { redirectToNewTab } from "@src/util/browser";
 
 import type { IIdentityData } from "@cryptkeeperzk/types";
@@ -86,8 +86,6 @@ describe("ui/pages/JoinGroup/useJoinGroup", () => {
     (useNavigate as jest.Mock).mockReturnValue(mockNavigate);
 
     (useAppDispatch as jest.Mock).mockReturnValue(mockDispatch);
-
-    (useUrlParam as jest.Mock).mockReturnValue("groupId");
 
     (useSearchParam as jest.Mock).mockImplementation((arg: string) => arg);
   });

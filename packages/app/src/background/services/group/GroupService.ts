@@ -6,6 +6,7 @@ import { BandadaService } from "@src/background/services/bandada";
 import HistoryService from "@src/background/services/history";
 import NotificationService from "@src/background/services/notification";
 import ZkIdentityService from "@src/background/services/zkIdentity";
+import { Paths } from "@src/constants";
 import { OperationType } from "@src/types";
 
 import type {
@@ -45,6 +46,17 @@ export class GroupService {
     return GroupService.INSTANCE;
   }
 
+  joinGroupRequest = async ({ groupId, apiKey, inviteCode }: IJoinGroupMemberArgs): Promise<void> => {
+    await this.browserController.openPopup({
+      params: {
+        redirect: Paths.JOIN_GROUP,
+        groupId,
+        apiKey: apiKey ?? "",
+        inviteCode: inviteCode ?? "",
+      },
+    });
+  };
+
   joinGroup = async ({ groupId, apiKey, inviteCode }: IJoinGroupMemberArgs): Promise<boolean> => {
     const identity = await this.getConnectedIdentity();
 
@@ -66,6 +78,15 @@ export class GroupService {
     );
 
     return result;
+  };
+
+  generateGroupMerkleProofRequest = async ({ groupId }: IGenerateGroupMerkleProofArgs): Promise<void> => {
+    await this.browserController.openPopup({
+      params: {
+        redirect: Paths.GROUP_MERKLE_PROOF,
+        groupId,
+      },
+    });
   };
 
   generateGroupMerkleProof = async ({ groupId }: IGenerateGroupMerkleProofArgs): Promise<IMerkleProof> => {

@@ -9,7 +9,7 @@ import { checkGroupMembership, generateGroupMerkleProof } from "@src/ui/ducks/gr
 import { useAppDispatch } from "@src/ui/ducks/hooks";
 import { fetchIdentities, useConnectedIdentity } from "@src/ui/ducks/identities";
 import { rejectUserRequest } from "@src/ui/ducks/requests";
-import { useUrlParam } from "@src/ui/hooks/url";
+import { useSearchParam } from "@src/ui/hooks/url";
 import { redirectToNewTab } from "@src/util/browser";
 import { getBandadaGroupUrl } from "@src/util/groups";
 
@@ -39,7 +39,7 @@ export const useGroupMerkleProof = (): IUseGroupMerkleProofData => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
-  const groupId = useUrlParam("id");
+  const groupId = useSearchParam("groupId");
 
   const connectedIdentity = useConnectedIdentity();
 
