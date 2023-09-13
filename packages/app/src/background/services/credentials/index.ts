@@ -4,7 +4,7 @@ import browser from "webextension-polyfill";
 import BrowserUtils from "@src/background/controllers/browserUtils";
 import CryptoService, { ECryptMode } from "@src/background/services/crypto";
 import HistoryService from "@src/background/services/history";
-import NotificationService from "@src/background/services/notification";
+import NotificationService, { CreateNotificationArgs, ICreateNotificationOptions } from "@src/background/services/notification";
 import SimpleStorage from "@src/background/services/storage";
 import WalletService from "@src/background/services/wallet";
 import { Paths } from "@src/constants";
@@ -29,6 +29,15 @@ import {
 const VERIFIABLE_CREDENTIALS_KEY = "@@VERIFIABLE-CREDENTIALS@@";
 const ETHEREUM_SIGNATURE_SPECIFICATION_TYPE = "EthereumEip712Signature2021";
 const VERIFIABLE_CREDENTIAL_PROOF_PURPOSE = "assertionMethod";
+
+interface IVCAnnounce {
+  notificationTitle: ICreateNotificationOptions["title"];
+  notificationMessage: ICreateNotificationOptions["message"];
+  notificationType: ICreateNotificationOptions["type"];
+  historyOperationType: OperationType;
+  responseType?: EventName;
+  responsePayload?: unknown;
+}
 
 export default class VerifiableCredentialsService implements IBackupable {
   private static INSTANCE?: VerifiableCredentialsService;
@@ -70,25 +79,7 @@ export default class VerifiableCredentialsService implements IBackupable {
   };
 
   rejectVerifiableCredentialRequest = async (): Promise<void> => {
-    await this.historyService.trackOperation(OperationType.REJECT_VERIFIABLE_CREDENTIAL_REQUEST, {});
-    await this.notificationService.create({
-      options: {
-        title: "Request to add Verifiable Credential rejected",
-        message: `Rejected a request to add 1 Verifiable Credential.`,
-        iconUrl: browser.runtime.getURL("/icons/logo.png"),
-        type: "basic",
-      },
-    });
-    const tabs = await browser.tabs.query({ active: true });
-    await Promise.all(
-      tabs.map((tab) =>
-        browser.tabs
-          .sendMessage(tab.id!, {
-            type: EventName.REJECT_VERIFIABLE_CREDENTIAL,
-          })
-          .catch(() => undefined),
-      ),
-    );
+
   };
 
   addVerifiableCredential = async (addVerifiableCredentialArgs: IAddVerifiableCredentialArgs): Promise<void> => {
@@ -219,38 +210,36 @@ export default class VerifiableCredentialsService implements IBackupable {
     });
   };
 
-  generateVerifiablePresentation = async (verifiablePresentation: IVerifiablePresentation): Promise<void> => {
-    await this.historyService.trackOperation(OperationType.GENERATE_VERIFIABLE_PRESENTATION, {});
-    await this.notificationService.create({
-      options: {
-        title: "Verifiable Presentation generated.",
-        message: `Generated 1 Verifiable Presentation.`,
-        iconUrl: browser.runtime.getURL("/icons/logo.png"),
-        type: "basic",
-      },
+  // Announce directly without Signing or with External Wallet signed
+  announceVP = async (verifiablePresentation: IVerifiablePresentation): Promise<void> => {
+    await this.announce({
+      notificationTitle: "Verifiable Presentation generated.",
+      notificationMessage: "Generated 1 Verifiable Presentation.",
+      notificationType: "basic",
+      historyOperationType: OperationType.GENERATE_VERIFIABLE_PRESENTATION,
+      responseType: EventName.GENERATE_VERIFIABLE_PRESENTATION,
+      responsePayload: { verifiablePresentation }
     });
-    const tabs = await browser.tabs.query({ active: true });
-    await Promise.all(
-      tabs.map((tab) =>
-        browser.tabs
-          .sendMessage(tab.id!, {
-            type: EventName.GENERATE_VERIFIABLE_PRESENTATION,
-            payload: { verifiablePresentation },
-          })
-          .catch(() => undefined),
-      ),
-    );
   };
 
-  generateVerifiablePresentationWithCryptkeeper = async ({
+  signAndAnnounceVP = async ({
     verifiablePresentation,
     address,
   }: IGenerateVerifiablePresentationWithCryptkeeperArgs): Promise<void> => {
+    const signedVerifiablePresentation = await this.signVP({verifiablePresentation, address});
+    await this.announceVP(signedVerifiablePresentation);
+  };
+
+  private signVP = async ({
+    verifiablePresentation,
+    address,
+  }: IGenerateVerifiablePresentationWithCryptkeeperArgs): Promise<IVerifiablePresentation> => {
     const serializedVerifiablePresentation = serializeVerifiablePresentation(verifiablePresentation);
     const signature = await this.walletService.signMessage({
       message: serializedVerifiablePresentation,
       address,
     });
+
     const signedVerifiablePresentation = {
       ...verifiablePresentation,
       proof: [
@@ -264,49 +253,54 @@ export default class VerifiableCredentialsService implements IBackupable {
       ],
     };
 
-    await this.historyService.trackOperation(OperationType.GENERATE_VERIFIABLE_PRESENTATION, {});
-    await this.notificationService.create({
-      options: {
-        title: "Verifiable Presentation generated.",
-        message: `Generated 1 Verifiable Presentation.`,
-        iconUrl: browser.runtime.getURL("/icons/logo.png"),
-        type: "basic",
-      },
-    });
-    const tabs = await browser.tabs.query({ active: true });
-    await Promise.all(
-      tabs.map((tab) =>
-        browser.tabs
-          .sendMessage(tab.id!, {
-            type: EventName.GENERATE_VERIFIABLE_PRESENTATION,
-            payload: { verifiablePresentation: signedVerifiablePresentation },
-          })
-          .catch(() => undefined),
-      ),
-    );
-  };
+    return signedVerifiablePresentation;
+  }
 
   rejectVerifiablePresentationRequest = async (): Promise<void> => {
-    await this.historyService.trackOperation(OperationType.REJECT_VERIFIABLE_PRESENTATION_REQUEST, {});
+    await this.announce({
+      notificationTitle: "Request to generate Verifiable Presentation rejected",
+      notificationMessage: "Rejected a request to generate 1 Verifiable Presentation.",
+      notificationType: "basic",
+      historyOperationType: OperationType.REJECT_VERIFIABLE_PRESENTATION_REQUEST,
+      responseType: EventName.REJECT_VERIFIABLE_PRESENTATION_REQUEST
+    });
+  };
+
+  private announce = async ({
+    notificationTitle,
+    notificationMessage,
+    notificationType,
+    historyOperationType,
+    responseType,
+    responsePayload
+  }: IVCAnnounce) => {
+    if (historyOperationType) {
+      await this.historyService.trackOperation(historyOperationType, {});
+    }
+
     await this.notificationService.create({
       options: {
-        title: "Request to generate Verifiable Presentation rejected",
-        message: `Rejected a request to generate 1 Verifiable Presentation.`,
+        title: notificationTitle,
+        message: notificationMessage,
         iconUrl: browser.runtime.getURL("/icons/logo.png"),
-        type: "basic",
+        type: notificationType,
       },
     });
-    const tabs = await browser.tabs.query({ active: true });
-    await Promise.all(
-      tabs.map((tab) =>
-        browser.tabs
-          .sendMessage(tab.id!, {
-            type: EventName.REJECT_VERIFIABLE_PRESENTATION_REQUEST,
-          })
-          .catch(() => undefined),
-      ),
-    );
-  };
+
+    if (responseType) {
+      const tabs = await browser.tabs.query({ active: true });
+      await Promise.all(
+        tabs.map((tab) =>
+          browser.tabs
+            .sendMessage(tab.id!, {
+              type: responseType,
+              payload: responsePayload
+            })
+            .catch((e) => { throw new Error(`VC: error in sending announce response ${e}`) }),
+        ),
+      );
+    }
+  }
 
   private insertCryptkeeperVerifiableCredentialIntoStore = async (
     cryptkeeperVerifiableCredential: ICryptkeeperVerifiableCredential,

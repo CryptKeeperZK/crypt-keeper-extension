@@ -1,13 +1,15 @@
 import browser from "webextension-polyfill";
 
+export interface ICreateNotificationOptions {
+  title: string;
+  message: string;
+  type: "basic" | "image" | "list" | "progress";
+  iconUrl?: string;
+}
+
 export interface CreateNotificationArgs {
   id?: string;
-  options: {
-    title: string;
-    message: string;
-    type: "basic" | "image" | "list" | "progress";
-    iconUrl?: string;
-  };
+  options: ICreateNotificationOptions;
 }
 
 export default class NotificationService {
