@@ -9,14 +9,14 @@ import NotificationService from "@src/background/services/notification";
 import SimpleStorage from "@src/background/services/storage";
 import WalletService from "@src/background/services/wallet";
 import { Paths } from "@src/constants";
+import { OperationType, IRenameVerifiableCredentialArgs, ICryptkeeperVerifiableCredential } from "@src/types";
 
-import type { OperationType, IRenameVerifiableCredentialArgs, ICryptkeeperVerifiableCredential } from "@src/types";
+import type { IVerifiablePresentation, IVerifiablePresentationRequest } from "@cryptkeeperzk/types";
+import type { BackupData, IBackupable } from "@src/background/services/backup";
 import type {
   IAddVerifiableCredentialArgs,
   IGenerateVerifiablePresentationWithCryptkeeperArgs,
 } from "@src/types/verifiableCredentials";
-import type { IVerifiablePresentation, IVerifiablePresentationRequest } from "@cryptkeeperzk/types";
-import type { BackupData, IBackupable } from "@src/background/services/backup";
 
 import {
   generateInitialMetadataForVerifiableCredential,
