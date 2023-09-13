@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/unbound-method */
-import { EventName, RejectRequests } from "@cryptkeeperzk/providers";
+import { EventName } from "@cryptkeeperzk/providers";
+import { RejectRequests } from "@cryptkeeperzk/providers/dist/src/event";
 import browser from "webextension-polyfill";
 
 import VerifiableCredentialsService from "@src/background/services/credentials";
