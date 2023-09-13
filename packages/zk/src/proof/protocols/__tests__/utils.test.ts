@@ -67,6 +67,23 @@ describe("background/services/protocols/utils", () => {
     expect(result).toStrictEqual(defaultMerkleProof);
   });
 
+  test("should throw error if can't get merkle proof from remote host", async () => {
+    const error = new Error("error");
+    const fetchSpy = jest.spyOn(global, "fetch").mockResolvedValue({
+      json: () => Promise.reject(error),
+    } as Response);
+
+    const identity = new Identity();
+
+    await expect(
+      getMerkleProof({
+        identityCommitment: identity.getCommitment(),
+        merkleStorageAddress: "http://localhost:3000/merkle",
+      }),
+    ).rejects.toThrowError(`Error in fetching Mock Merkle Proof ${error.message}`);
+    expect(fetchSpy).toBeCalledTimes(1);
+  });
+
   test("should get merkle proof from artifact properly", async () => {
     const identity = new Identity();
 
@@ -88,7 +105,7 @@ describe("background/services/protocols/utils", () => {
     ).rejects.toThrowError("ZK: Cannot get MerkleProof");
   });
 
-  test("should get merkle proof from remote host properly", async () => {
+  test("should get rln verification key proof from remote host properly", async () => {
     const fetchSpy = jest.spyOn(global, "fetch").mockResolvedValue({
       json: () => Promise.resolve({ data: {} }),
     } as Response);

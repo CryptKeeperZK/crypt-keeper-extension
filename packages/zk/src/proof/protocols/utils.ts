@@ -32,8 +32,8 @@ async function getRemoteMerkleProof(
   })
     .then((response) => response.json())
     .then((response: { data: { merkleProof: IMerkleProof } }) => deserializeMerkleProof(response.data.merkleProof))
-    .catch((e) => {
-      throw new Error(`Error in fetching Mock Merkle Proof ${e}`);
+    .catch((error: Error) => {
+      throw new Error(`Error in fetching Mock Merkle Proof ${error.message}`);
     });
 }
 
