@@ -249,6 +249,11 @@ export default class CryptKeeperController {
       this.verifiableCredentialsService.generateVerifiablePresentation,
     );
     this.handler.add(
+      RPCAction.GENERATE_VERIFIABLE_PRESENTATION_WITH_CRYPTKEEPER,
+      this.lockService.ensure,
+      this.verifiableCredentialsService.generateVerifiablePresentationWithCryptkeeper,
+    );
+    this.handler.add(
       RPCAction.GENERATE_VERIFIABLE_PRESENTATION_REQUEST,
       this.lockService.ensure,
       this.verifiableCredentialsService.generateVerifiablePresentationRequest,

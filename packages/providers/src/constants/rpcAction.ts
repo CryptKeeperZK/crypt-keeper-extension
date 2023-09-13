@@ -66,6 +66,7 @@ export enum RPCAction {
   DELETE_VERIFIABLE_CREDENTIAL = "rpc/credentials/deleteVerifiableCredential",
   DELETE_ALL_VERIFIABLE_CREDENTIALS = "rpc/credentials/deleteAllVerifiableCredentials",
   GENERATE_VERIFIABLE_PRESENTATION = "rpc/credentials/generateVerifiablePresentation",
+  GENERATE_VERIFIABLE_PRESENTATION_WITH_CRYPTKEEPER = "rpc/credentials/generateVerifiablePresentationWithCryptkeeper",
   GENERATE_VERIFIABLE_PRESENTATION_REQUEST = "rpc/credentials/generateVerifiablePresentationRequest",
   REJECT_VERIFIABLE_PRESENTATION_REQUEST = "rpc/credentials/rejectVerifiablePresentationRequest",
   GENERATE_RLN_PROOF = "rpc/proofs/generate-rln-proof",
