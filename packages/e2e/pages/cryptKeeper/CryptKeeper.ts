@@ -4,6 +4,7 @@ import BasePage from "../BasePage";
 
 import Activity from "./Activity";
 import ConnectIdentity from "./ConnectIdentity";
+import Groups from "./Groups";
 import Identities from "./Identities";
 import Recover from "./Recover";
 import Settings from "./Settings";
@@ -27,6 +28,8 @@ export default class CryptKeeper extends BasePage {
   recover = new Recover(this.page);
 
   settings = new Settings(this.page);
+
+  groups = new Groups(this.page);
 
   async openPopup(extensionId: string): Promise<void> {
     await this.page.goto(`chrome-extension://${extensionId}/popup.html`);
