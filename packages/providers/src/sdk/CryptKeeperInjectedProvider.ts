@@ -27,8 +27,8 @@ const EVENTS = [
   EventName.IDENTITY_CHANGED,
   EventName.LOGIN,
   EventName.LOGOUT,
-  EventName.ADD_VERIFIABLE_CREDENTIAL,
-  EventName.GENERATE_VERIFIABLE_PRESENTATION,
+  EventName.NEW_VERIFIABLE_CREDENTIAL,
+  EventName.NEW_VERIFIABLE_PRESENTATION,
   EventName.REVEAL_COMMITMENT,
   EventName.JOIN_GROUP,
   EventName.GROUP_MERKLE_PROOF,
@@ -387,11 +387,11 @@ export class CryptKeeperInjectedProvider {
    * @param {IVerifiablePresentationRequest} verifiablePresentationRequest - The information provided to the user when requesting a verifiable presentation.
    * @returns {void}
    */
-  async DEV_generateVerifiablePresentationRequest(
+  async DEV_newVerifiablePresentationRequest(
     verifiablePresentationRequest: IVerifiablePresentationRequest,
   ): Promise<void> {
     await this.post({
-      method: RPCAction.GENERATE_VERIFIABLE_PRESENTATION_REQUEST,
+      method: RPCAction.HANDLE_VERIFIABLE_PRESENTATION_REQUEST,
       payload: verifiablePresentationRequest,
     });
   }
@@ -403,9 +403,9 @@ export class CryptKeeperInjectedProvider {
    * @param {string} serializedVerifiableCredential - The json string representation of the verifiable credential to add.
    * @returns {void}
    */
-  async DEV_addVerifiableCredentialRequest(serializedVerifiableCredential: string): Promise<void> {
+  async DEV_newVerifiableCredentialRequest(serializedVerifiableCredential: string): Promise<void> {
     await this.post({
-      method: RPCAction.ADD_VERIFIABLE_CREDENTIAL_REQUEST,
+      method: RPCAction.HANDLE_VERIFIABLE_CREDENTIAL_REQUEST,
       payload: serializedVerifiableCredential,
     });
   }

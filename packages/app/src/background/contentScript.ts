@@ -65,12 +65,26 @@ function injectScript() {
         );
         return;
       }
-      case EventName.ADD_VERIFIABLE_CREDENTIAL: {
+      case EventName.NEW_VERIFIABLE_CREDENTIAL: {
         window.postMessage(
           {
             target: "injected-injectedscript",
             payload: [null, (action.payload as { verifiableCredentialHash: string }).verifiableCredentialHash],
-            nonce: EventName.ADD_VERIFIABLE_CREDENTIAL,
+            nonce: EventName.NEW_VERIFIABLE_CREDENTIAL,
+          },
+          "*",
+        );
+        break;
+      }
+      case EventName.NEW_VERIFIABLE_PRESENTATION: {
+        window.postMessage(
+          {
+            target: "injected-injectedscript",
+            payload: [
+              null,
+              (action.payload as { verifiablePresentation: IVerifiablePresentation }).verifiablePresentation,
+            ],
+            nonce: EventName.NEW_VERIFIABLE_PRESENTATION,
           },
           "*",
         );
@@ -115,20 +129,6 @@ function injectScript() {
             target: "injected-injectedscript",
             payload: [null, action.payload as IRejectedRequest],
             nonce: EventName.USER_REJECT,
-          },
-          "*",
-        );
-        break;
-      }
-      case EventName.GENERATE_VERIFIABLE_PRESENTATION: {
-        window.postMessage(
-          {
-            target: "injected-injectedscript",
-            payload: [
-              null,
-              (action.payload as { verifiablePresentation: IVerifiablePresentation }).verifiablePresentation,
-            ],
-            nonce: EventName.GENERATE_VERIFIABLE_PRESENTATION,
           },
           "*",
         );

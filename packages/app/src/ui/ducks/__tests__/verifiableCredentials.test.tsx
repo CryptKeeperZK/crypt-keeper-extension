@@ -153,7 +153,7 @@ describe("ui/ducks/verifiableCredentials", () => {
 
     expect(postMessage).toBeCalledTimes(1);
     expect(postMessage).toBeCalledWith({
-      method: RPCAction.GENERATE_VERIFIABLE_PRESENTATION,
+      method: RPCAction.ANNOUNCE_VERIFIABLE_PRESENTATION,
       payload: mockVerifiablePresentation,
     });
   });
@@ -171,7 +171,7 @@ describe("ui/ducks/verifiableCredentials", () => {
 
     expect(postMessage).toBeCalledTimes(1);
     expect(postMessage).toBeCalledWith({
-      method: RPCAction.GENERATE_VERIFIABLE_PRESENTATION_WITH_CRYPTKEEPER,
+      method: RPCAction.SIGN_AND_ANNOUNCE_VERIFIABLE_PRESENTATION,
       payload: { verifiablePresentation: mockVerifiablePresentation, address: mockAddress },
     });
   });

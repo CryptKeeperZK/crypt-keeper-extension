@@ -9,7 +9,7 @@ export { type DeferredPromise } from "./utility";
 export type {
   IVerifiableCredentialMetadata,
   ICryptkeeperVerifiableCredential,
-  IRenameVerifiableCredentialArgs,
-  IGenerateVerifiablePresentationWithCryptkeeperArgs,
+  IRenameVCArgs,
+  ISignVPArgs,
 } from "./verifiableCredentials";
 export { type ISignMessageArgs, type ICheckMnemonicArgs } from "./wallet";

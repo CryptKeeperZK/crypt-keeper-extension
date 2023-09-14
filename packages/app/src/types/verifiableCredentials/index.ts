@@ -10,17 +10,17 @@ export interface ICryptkeeperVerifiableCredential {
   metadata: IVerifiableCredentialMetadata;
 }
 
-export interface IAddVerifiableCredentialArgs {
+export interface IAddVCArgs {
   serializedVerifiableCredential: string;
   verifiableCredentialName: string;
 }
 
-export interface IRenameVerifiableCredentialArgs {
+export interface IRenameVCArgs {
   verifiableCredentialHash: string;
   newVerifiableCredentialName: string;
 }
 
-export interface IGenerateVerifiablePresentationWithCryptkeeperArgs {
+export interface ISignVPArgs {
   verifiablePresentation: IVerifiablePresentation;
   address: string;
 }

@@ -6,11 +6,7 @@ import { serializeCryptkeeperVC } from "@src/background/services/credentials/uti
 import postMessage from "@src/util/postMessage";
 
 import type { IVerifiablePresentation } from "@cryptkeeperzk/types";
-import type {
-  ICryptkeeperVerifiableCredential,
-  IGenerateVerifiablePresentationWithCryptkeeperArgs,
-  IRenameVerifiableCredentialArgs,
-} from "@src/types";
+import type { ICryptkeeperVerifiableCredential, ISignVPArgs, IRenameVCArgs } from "@src/types";
 import type { TypedThunk } from "@src/ui/store/configureAppStore";
 
 import { useAppSelector } from "./hooks";
@@ -52,7 +48,7 @@ export const rejectVerifiableCredentialRequest = () => async (): Promise<void> =
 };
 
 export const renameVerifiableCredential =
-  (renameVerifiableCredentialArgs: IRenameVerifiableCredentialArgs) => async (): Promise<void> => {
+  (renameVerifiableCredentialArgs: IRenameVCArgs) => async (): Promise<void> => {
     await postMessage({
       method: RPCAction.RENAME_VERIFIABLE_CREDENTIAL,
       payload: renameVerifiableCredentialArgs,
@@ -69,16 +65,15 @@ export const deleteVerifiableCredential = (verifiableCredentialHash: string) => 
 export const generateVerifiablePresentation =
   (verifiablePresentation: IVerifiablePresentation) => async (): Promise<void> => {
     await postMessage({
-      method: RPCAction.GENERATE_VERIFIABLE_PRESENTATION,
+      method: RPCAction.ANNOUNCE_VERIFIABLE_PRESENTATION,
       payload: verifiablePresentation,
     });
   };
 
 export const generateVerifiablePresentationWithCryptkeeper =
-  (generateVerifiablePresentationArgs: IGenerateVerifiablePresentationWithCryptkeeperArgs) =>
-  async (): Promise<void> => {
+  (generateVerifiablePresentationArgs: ISignVPArgs) => async (): Promise<void> => {
     await postMessage({
-      method: RPCAction.GENERATE_VERIFIABLE_PRESENTATION_WITH_CRYPTKEEPER,
+      method: RPCAction.SIGN_AND_ANNOUNCE_VERIFIABLE_PRESENTATION,
       payload: generateVerifiablePresentationArgs,
     });
   };

@@ -15,9 +15,10 @@ export type EventHandler = (data: unknown) => void;
  * @property {string} LOGIN - "login"
  * @property {string} IDENTITY_CHANGED - "identityChanged"
  * @property {string} LOGOUT - "logout"
- * @property {string} ADD_VERIFIABLE_CREDENTIAL - "addVerifiableCredential"
+ * @property {string} VERIFIABLE_CREDENTIAL_REQUEST - "verifiableCredentialRequest"
+ * @property {string} NEW_VERIFIABLE_CREDENTIAL - "newVerifiableCredential"
  * @property {string} VERIFIABLE_PRESENTATION_REQUEST - "verifiablePresentationRequest"
- * @property {string} GENERATE_VERIFIABLE_PRESENTATION - "generateVerifiablePresentation"
+ * @property {string} NEW_VERIFIABLE_PRESENTATION - "newVerifiablePresentation"
  * @property {string} REVEAL_COMMITMENT - "revealCommitment"
  * @property {string} JOIN_GROUP - "joinGroup"
  * @property {string} GROUP_MERKLE_PROOF - "groupMerkleProof"
@@ -27,9 +28,10 @@ export enum EventName {
   LOGIN = "login",
   IDENTITY_CHANGED = "identityChanged",
   LOGOUT = "logout",
-  ADD_VERIFIABLE_CREDENTIAL = "addVerifiableCredential",
+  VERIFIABLE_CREDENTIAL_REQUEST = "verifiableCredentialRequest",
+  NEW_VERIFIABLE_CREDENTIAL = "newVerifiableCredential",
   VERIFIABLE_PRESENTATION_REQUEST = "verifiablePresentationRequest",
-  GENERATE_VERIFIABLE_PRESENTATION = "generateVerifiablePresentation",
+  NEW_VERIFIABLE_PRESENTATION = "newVerifiablePresentation",
   REVEAL_COMMITMENT = "revealCommitment",
   JOIN_GROUP = "joinGroup",
   GROUP_MERKLE_PROOF = "groupMerkleProof",

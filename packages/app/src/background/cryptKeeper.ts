@@ -38,8 +38,8 @@ const RPC_METHOD_ACCESS: Record<RPCAction, boolean> = {
   [RPCAction.CREATE_IDENTITY_REQUEST]: true,
   [RPCAction.GENERATE_SEMAPHORE_PROOF]: true,
   [RPCAction.GENERATE_RLN_PROOF]: true,
-  [RPCAction.ADD_VERIFIABLE_CREDENTIAL_REQUEST]: true,
-  [RPCAction.GENERATE_VERIFIABLE_PRESENTATION_REQUEST]: true,
+  [RPCAction.HANDLE_VERIFIABLE_CREDENTIAL_REQUEST]: true,
+  [RPCAction.HANDLE_VERIFIABLE_PRESENTATION_REQUEST]: true,
   [RPCAction.REVEAL_CONNECTED_IDENTITY_COMMITMENT_REQUEST]: true,
   [RPCAction.JOIN_GROUP_REQUEST]: true,
   [RPCAction.GENERATE_GROUP_MERKLE_PROOF_REQUEST]: true,
@@ -219,10 +219,10 @@ export default class CryptKeeperController {
       this.verifiableCredentialsService.addVC,
     );
     this.handler.add(
-      RPCAction.ADD_VERIFIABLE_CREDENTIAL_REQUEST,
+      RPCAction.HANDLE_VERIFIABLE_CREDENTIAL_REQUEST,
       this.lockService.ensure,
       validateSerializedVC,
-      this.verifiableCredentialsService.addVCRequest,
+      this.verifiableCredentialsService.handleVCRequest,
     );
     this.handler.add(
       RPCAction.REJECT_VERIFIABLE_CREDENTIAL_REQUEST,
@@ -250,17 +250,17 @@ export default class CryptKeeperController {
       this.verifiableCredentialsService.deleteAllVC,
     );
     this.handler.add(
-      RPCAction.GENERATE_VERIFIABLE_PRESENTATION,
+      RPCAction.ANNOUNCE_VERIFIABLE_PRESENTATION,
       this.lockService.ensure,
       this.verifiableCredentialsService.announceVP,
     );
     this.handler.add(
-      RPCAction.GENERATE_VERIFIABLE_PRESENTATION_WITH_CRYPTKEEPER,
+      RPCAction.SIGN_AND_ANNOUNCE_VERIFIABLE_PRESENTATION,
       this.lockService.ensure,
       this.verifiableCredentialsService.signAndAnnounceVP,
     );
     this.handler.add(
-      RPCAction.GENERATE_VERIFIABLE_PRESENTATION_REQUEST,
+      RPCAction.HANDLE_VERIFIABLE_PRESENTATION_REQUEST,
       this.lockService.ensure,
       this.verifiableCredentialsService.handleVPRequest,
     );

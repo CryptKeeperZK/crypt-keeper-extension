@@ -200,19 +200,19 @@ export const useCryptKeeper = (): IUseCryptKeeperData => {
       });
   };
 
-  const addVerifiableCredentialRequest = useCallback(
+  const newVerifiableCredentialRequest = useCallback(
     async (credentialType: string) => {
       const mockVerifiableCredential = genMockVerifiableCredential(credentialType);
       const verifiableCredentialJson = JSON.stringify(mockVerifiableCredential);
 
-      await client?.DEV_addVerifiableCredentialRequest(verifiableCredentialJson);
+      await client?.DEV_newVerifiableCredentialRequest(verifiableCredentialJson);
     },
     [client],
   );
 
-  const generateVerifiablePresentationRequest = useCallback(async () => {
+  const newVerifiablePresentationRequest = useCallback(async () => {
     const verifiablePresentationRequest = genMockVerifiablePresentationRequest();
-    await client?.DEV_generateVerifiablePresentationRequest(verifiablePresentationRequest);
+    await client?.DEV_newVerifiablePresentationRequest(verifiablePresentationRequest);
   }, [client]);
 
   const getConnectedIdentity = useCallback(async () => {
@@ -274,10 +274,6 @@ export const useCryptKeeper = (): IUseCryptKeeperData => {
     setIsLocked(true);
   }, [setConnectedIdentityMetadata, setIsLocked]);
 
-  const onAddVerifiableCredential = useCallback((verifiableCredentialHash: unknown) => {
-    toast(`Added a Verifiable Credential! ${verifiableCredentialHash as string}`, { type: "success" });
-  }, []);
-
   const onReject = useCallback(() => {
     toast(`User rejected request`, { type: "error" });
   }, []);
@@ -289,7 +285,11 @@ export const useCryptKeeper = (): IUseCryptKeeperData => {
     [setConnectedIdentityCommitment],
   );
 
-  const onGenerateVerifiablePresentation = useCallback((verifiablePresentation: unknown) => {
+  const onNewVerifiableCredential = useCallback((verifiableCredentialHash: unknown) => {
+    toast(`Added a Verifiable Credential! ${verifiableCredentialHash as string}`, { type: "success" });
+  }, []);
+
+  const onNewVerifiablePresentation = useCallback((verifiablePresentation: unknown) => {
     const credentialList = (verifiablePresentation as IVerifiablePresentation).verifiableCredential;
     const credentialCount = credentialList ? credentialList.length : 0;
     toast(`Generated a Verifiable Presentation from ${credentialCount} credentials!`, { type: "success" });
@@ -317,8 +317,8 @@ export const useCryptKeeper = (): IUseCryptKeeperData => {
     client.on(EventName.LOGIN, onLogin);
     client.on(EventName.IDENTITY_CHANGED, onIdentityChanged);
     client.on(EventName.LOGOUT, onLogout);
-    client.on(EventName.ADD_VERIFIABLE_CREDENTIAL, onAddVerifiableCredential);
-    client.on(EventName.GENERATE_VERIFIABLE_PRESENTATION, onGenerateVerifiablePresentation);
+    client.on(EventName.NEW_VERIFIABLE_CREDENTIAL, onNewVerifiableCredential);
+    client.on(EventName.NEW_VERIFIABLE_PRESENTATION, onNewVerifiablePresentation);
     client.on(EventName.USER_REJECT, onReject);
     client.on(EventName.REVEAL_COMMITMENT, onRevealCommitment);
     client.on(EventName.JOIN_GROUP, onJoinGroup);
@@ -334,11 +334,12 @@ export const useCryptKeeper = (): IUseCryptKeeperData => {
     onLogout,
     onIdentityChanged,
     onLogin,
-    onAddVerifiableCredential,
     onReject,
     onRevealCommitment,
     onGroupMerkleProof,
     onJoinGroup,
+    onNewVerifiableCredential,
+    onNewVerifiablePresentation,
   ]);
 
   return {
@@ -353,10 +354,10 @@ export const useCryptKeeper = (): IUseCryptKeeperData => {
     getConnectedIdentity,
     genSemaphoreProof,
     genRLNProof,
-    addVerifiableCredentialRequest,
-    generateVerifiablePresentationRequest,
     revealConnectedIdentityCommitment,
     joinGroup,
     generareGroupMerkleProof,
+    newVerifiableCredentialRequest,
+    newVerifiablePresentationRequest,
   };
 };

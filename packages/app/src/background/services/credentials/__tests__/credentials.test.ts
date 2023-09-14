@@ -139,7 +139,7 @@ describe("background/services/credentials", () => {
 
   describe("add and reject verifiable credential requests", () => {
     test("should successfully create an add verifiable credential request", async () => {
-      await verifiableCredentialsService.addVCRequest(exampleCredentialString);
+      await verifiableCredentialsService.handleVCRequest(exampleCredentialString);
 
       expect(browser.tabs.query).toBeCalledWith({ lastFocusedWindow: true });
 
@@ -160,7 +160,7 @@ describe("background/services/credentials", () => {
       expect(browser.tabs.query).toBeCalledWith({ lastFocusedWindow: true });
       expect(browser.tabs.sendMessage).toBeCalledWith(defaultTabs[0].id, {
         type: EventName.USER_REJECT,
-        payload: { type: EventName.ADD_VERIFIABLE_CREDENTIAL },
+        payload: { type: EventName.VERIFIABLE_CREDENTIAL_REQUEST },
       });
     });
   });
@@ -197,7 +197,7 @@ describe("background/services/credentials", () => {
 
       expect(browser.tabs.query).toBeCalledWith({ lastFocusedWindow: true });
       expect(browser.tabs.sendMessage).toBeCalledWith(defaultTabs[0].id, {
-        type: EventName.GENERATE_VERIFIABLE_PRESENTATION,
+        type: EventName.NEW_VERIFIABLE_PRESENTATION,
         payload: { verifiablePresentation: exampleVerifiablePresentation },
       });
     });
@@ -227,7 +227,7 @@ describe("background/services/credentials", () => {
 
       expect(browser.tabs.query).toBeCalledWith({ lastFocusedWindow: true });
       expect(browser.tabs.sendMessage).toBeCalledWith(defaultTabs[0].id, {
-        type: EventName.GENERATE_VERIFIABLE_PRESENTATION,
+        type: EventName.NEW_VERIFIABLE_PRESENTATION,
         payload: { verifiablePresentation: signedVerifiablePresentation },
       });
     });
