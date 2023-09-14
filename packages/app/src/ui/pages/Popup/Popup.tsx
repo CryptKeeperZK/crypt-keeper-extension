@@ -7,6 +7,7 @@ import ConnectIdentity from "@src/ui/pages/ConnectIdentity";
 import CreateIdentity from "@src/ui/pages/CreateIdentity";
 import DownloadBackup from "@src/ui/pages/DownloadBackup";
 import GenerateMnemonic from "@src/ui/pages/GenerateMnemonic";
+import GroupMerkleProof from "@src/ui/pages/GroupMerkleProof";
 import Home from "@src/ui/pages/Home";
 import Identity from "@src/ui/pages/Identity";
 import JoinGroup from "@src/ui/pages/JoinGroup";
@@ -43,6 +44,7 @@ const routeConfig: RouteObject[] = [
   { path: Paths.RESET_PASSWORD, element: <ResetPassword /> },
   { path: Paths.ADD_VERIFIABLE_CREDENTIAL, element: <AddVerifiableCredential /> },
   { path: Paths.JOIN_GROUP, element: <JoinGroup /> },
+  { path: Paths.GROUP_MERKLE_PROOF, element: <GroupMerkleProof /> },
   {
     path: "*",
     element: <Navigate to={Paths.HOME} />,

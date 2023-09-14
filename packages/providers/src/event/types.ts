@@ -18,6 +18,7 @@ export type EventHandler = (data: unknown) => void;
  * @property {string} ADD_VERIFIABLE_CREDENTIAL - "addVerifiableCredential"
  * @property {string} REVEAL_COMMITMENT - "revealCommitment"
  * @property {string} JOIN_GROUP - "joinGroup"
+ * @property {string} GROUP_MERKLE_PROOF - "groupMerkleProof"
  * @property {string} USER_REJECT - "userReject"
  */
 export enum EventName {
@@ -27,6 +28,7 @@ export enum EventName {
   ADD_VERIFIABLE_CREDENTIAL = "addVerifiableCredential",
   REVEAL_COMMITMENT = "revealCommitment",
   JOIN_GROUP = "joinGroup",
+  GROUP_MERKLE_PROOF = "groupMerkleProof",
   USER_REJECT = "userReject",
 }
 
@@ -37,18 +39,3 @@ export enum EventName {
  * @typedef {Record<EventName, EventHandler>} Events
  */
 export type Events = Record<EventName, EventHandler>;
-
-/**
- * Enumeration representing possible rejected requests.
- *
- * @enum {string}
- * @readonly
- * @property {string} ADD_VERIFIABLE_CREDENTIAL - "addVerifiableCredential"
- * @property {string} REVEAL_COMMITMENT - "revealCommitment"
- * @property {string} JOIN_GROUP - "joinGroup"
- */
-export enum RejectRequests {
-  ADD_VERIFIABLE_CREDENTIAL = "addVerifiableCredential",
-  JOIN_GROUP = "joinGroup",
-  REVEAL_COMMITMENT = "revealCommitment",
-}

@@ -29,6 +29,7 @@ const EVENTS = [
   EventName.ADD_VERIFIABLE_CREDENTIAL,
   EventName.REVEAL_COMMITMENT,
   EventName.JOIN_GROUP,
+  EventName.GROUP_MERKLE_PROOF,
   EventName.USER_REJECT,
 ];
 

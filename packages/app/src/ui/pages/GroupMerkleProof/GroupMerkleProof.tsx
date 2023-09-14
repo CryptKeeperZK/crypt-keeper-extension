@@ -6,27 +6,24 @@ import logoSVG from "@src/static/icons/logo.svg";
 import { FullModalContent, FullModalFooter, FullModalHeader } from "@src/ui/components/FullModal";
 import { Icon } from "@src/ui/components/Icon";
 
-import { useJoinGroup } from "./useJoinGroup";
+import { useGroupMerkleProof } from "./useGroupMerkleProof";
 
-const JoinGroup = (): JSX.Element => {
+const GroupMerkleProof = (): JSX.Element => {
   const {
     isLoading,
-    isJoined,
     isSubmitting,
+    isJoined,
     error,
     faviconUrl,
-    apiKey,
-    inviteCode,
     connectedIdentity,
     groupId,
     onGoBack,
     onGoToHost,
     onGoToGroup,
-    onJoin,
-  } = useJoinGroup();
+    onGenerateMerkleProof,
+  } = useGroupMerkleProof();
 
-  const isShowContent = !isJoined && Boolean(connectedIdentity && groupId);
-  const isShowInviteInfo = Boolean(apiKey || inviteCode);
+  const isShowContent = isJoined && Boolean(connectedIdentity && groupId);
 
   if (isLoading) {
     return (
@@ -46,8 +43,8 @@ const JoinGroup = (): JSX.Element => {
   }
 
   return (
-    <Box data-testid="join-group-page" sx={{ display: "flex", flexDirection: "column", height: "100%" }}>
-      <FullModalHeader onClose={onGoBack}>Join group</FullModalHeader>
+    <Box data-testid="group-merkle-proof-page" sx={{ display: "flex", flexDirection: "column", height: "100%" }}>
+      <FullModalHeader onClose={onGoBack}>Group Merkle Proof</FullModalHeader>
 
       <FullModalContent>
         <Box sx={{ mx: "auto", my: 3 }}>
@@ -85,16 +82,16 @@ const JoinGroup = (): JSX.Element => {
         )}
 
         <Box>
-          {isJoined && (
+          {!isJoined && (
             <Typography
               component="div"
-              data-testid="joined-text"
+              data-testid="not-joined-text"
               fontWeight="bold"
               sx={{ textAlign: "center", mb: 3 }}
               variant="h6"
             >
               <Typography fontWeight="bold" sx={{ display: "inline" }} variant="h6">
-                You have already joined this
+                You are not a
               </Typography>
 
               <Typography
@@ -105,6 +102,10 @@ const JoinGroup = (): JSX.Element => {
                 onClick={onGoToGroup}
               >
                 Group
+              </Typography>
+
+              <Typography fontWeight="bold" sx={{ display: "inline" }} variant="h6">
+                member
               </Typography>
             </Typography>
           )}
@@ -123,7 +124,7 @@ const JoinGroup = (): JSX.Element => {
                 </Typography>
 
                 <Typography fontWeight="bold" sx={{ display: "inline" }} variant="h6">
-                  requests to join
+                  requests to prove your
                 </Typography>
 
                 <Typography
@@ -137,17 +138,9 @@ const JoinGroup = (): JSX.Element => {
                 </Typography>
 
                 <Typography fontWeight="bold" sx={{ display: "inline" }} variant="h6">
-                  using your connected identity
+                  membership
                 </Typography>
               </Typography>
-
-              {isShowInviteInfo && (
-                <Box sx={{ my: 2 }}>
-                  {apiKey && <Typography>API key: {apiKey}</Typography>}
-
-                  {inviteCode && <Typography>Invite code: {inviteCode}</Typography>}
-                </Box>
-              )}
             </Box>
           )}
         </Box>
@@ -165,11 +158,11 @@ const JoinGroup = (): JSX.Element => {
         </Button>
 
         <Button
-          data-testid="join-group"
-          disabled={!connectedIdentity || isSubmitting || isJoined}
+          data-testid="generate-merkle-proof"
+          disabled={!connectedIdentity || isSubmitting || !isJoined}
           sx={{ ml: 1, width: "100%" }}
           variant="contained"
-          onClick={onJoin}
+          onClick={onGenerateMerkleProof}
         >
           Accept
         </Button>
@@ -178,4 +171,4 @@ const JoinGroup = (): JSX.Element => {
   );
 };
 
-export default JoinGroup;
+export default GroupMerkleProof;

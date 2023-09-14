@@ -1,4 +1,4 @@
-import { RejectRequests } from "@cryptkeeperzk/providers";
+import { EventName } from "@cryptkeeperzk/providers";
 import { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -40,7 +40,7 @@ export const useRevealIdentityCommitment = (): IUseRevealIdentityCommitmentData 
   }, [dispatch, setLoading, setError]);
 
   const onGoBack = useCallback(() => {
-    dispatch(rejectUserRequest({ type: RejectRequests.REVEAL_COMMITMENT }, connectedIdentity?.metadata.host))
+    dispatch(rejectUserRequest({ type: EventName.REVEAL_COMMITMENT }, connectedIdentity?.metadata.host))
       .then(() => dispatch(closePopup()))
       .then(() => {
         navigate(Paths.HOME);

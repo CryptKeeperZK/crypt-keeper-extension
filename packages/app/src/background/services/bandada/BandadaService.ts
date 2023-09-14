@@ -58,9 +58,16 @@ export class BandadaService {
     const response = await fetch(`${API_URL}/groups/${groupId}/members/${hexToBigint(identity.commitment)}`, {
       method: "GET",
       headers: DEFAULT_HEADERS,
-    }).then((res) => res.json() as Promise<string>);
+    });
 
-    return JSON.parse(response) as boolean;
+    if (!response.ok) {
+      const result = (await response.json()) as { message: string };
+      throw new Error(result.message.toString());
+    }
+
+    const result = (await response.json()) as string;
+
+    return JSON.parse(result) as boolean;
   }
 
   async generateMerkleProof({ groupId, identity }: IGenerateBandadaMerkleProofArgs): Promise<IMerkleProof> {

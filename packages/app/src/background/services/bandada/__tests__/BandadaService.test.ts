@@ -154,4 +154,15 @@ describe("background/services/bandada/BandadaService", () => {
     expect(fetchSpy).toBeCalledTimes(1);
     expect(result).toBe(false);
   });
+
+  test("should throw error if can't check membership in group", async () => {
+    const fetchSpy = jest.spyOn(global, "fetch").mockResolvedValue({
+      ok: false,
+      json: () => Promise.resolve({ message: "Error" }),
+    } as Response);
+    const service = BandadaService.getInstance();
+
+    await expect(service.checkGroupMembership(defaultCheckMembershipArgs)).rejects.toThrowError("Error");
+    expect(fetchSpy).toBeCalledTimes(1);
+  });
 });

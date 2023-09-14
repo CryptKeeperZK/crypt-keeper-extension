@@ -10,6 +10,7 @@ import type {
   IReduxAction,
   ConnectedIdentityMetadata,
   IRejectedRequest,
+  IMerkleProof,
 } from "@cryptkeeperzk/types";
 
 function injectScript() {
@@ -91,6 +92,17 @@ function injectScript() {
             target: "injected-injectedscript",
             payload: [null, action.payload as { groupId: string }],
             nonce: EventName.JOIN_GROUP,
+          },
+          "*",
+        );
+        break;
+      }
+      case EventName.GROUP_MERKLE_PROOF: {
+        window.postMessage(
+          {
+            target: "injected-injectedscript",
+            payload: [null, action.payload as { merkleProof: IMerkleProof }],
+            nonce: EventName.GROUP_MERKLE_PROOF,
           },
           "*",
         );
