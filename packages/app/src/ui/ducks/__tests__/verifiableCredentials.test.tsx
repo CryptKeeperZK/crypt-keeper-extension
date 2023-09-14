@@ -6,7 +6,7 @@ import { RPCAction } from "@cryptkeeperzk/providers";
 import { renderHook } from "@testing-library/react";
 import { Provider } from "react-redux";
 
-import { serializeCryptkeeperVerifiableCredential } from "@src/background/services/credentials/utils";
+import { serializeCryptkeeperVC } from "@src/background/services/credentials/utils";
 import { store } from "@src/ui/store/configureAppStore";
 import postMessage from "@src/util/postMessage";
 
@@ -77,8 +77,8 @@ describe("ui/ducks/verifiableCredentials", () => {
   };
 
   const mockSerializedVerifiableCredentials = [
-    serializeCryptkeeperVerifiableCredential(mockCryptkeeperVerifiableCredentials[0]),
-    serializeCryptkeeperVerifiableCredential(mockCryptkeeperVerifiableCredentials[1]),
+    serializeCryptkeeperVC(mockCryptkeeperVerifiableCredentials[0]),
+    serializeCryptkeeperVC(mockCryptkeeperVerifiableCredentials[1]),
   ];
 
   afterEach(() => {

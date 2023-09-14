@@ -2,7 +2,7 @@
 import { RPCAction } from "@cryptkeeperzk/providers";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
-import { serializeCryptkeeperVerifiableCredential } from "@src/background/services/credentials/utils";
+import { serializeCryptkeeperVC } from "@src/background/services/credentials/utils";
 import postMessage from "@src/util/postMessage";
 
 import type { IVerifiablePresentation } from "@cryptkeeperzk/types";
@@ -95,7 +95,7 @@ export const fetchVerifiableCredentials = (): TypedThunk => async (dispatch) => 
   });
 
   const serializedVerifiableCredentials = cryptkeeperVerifiableCredentials.map((cryptkeeperVerifiableCredential) =>
-    serializeCryptkeeperVerifiableCredential(cryptkeeperVerifiableCredential),
+    serializeCryptkeeperVC(cryptkeeperVerifiableCredential),
   );
 
   dispatch(setVerifiableCredentials(serializedVerifiableCredentials));

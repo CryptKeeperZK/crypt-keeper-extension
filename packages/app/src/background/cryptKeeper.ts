@@ -11,7 +11,7 @@ import RequestManager from "./controllers/requestManager";
 import ApprovalService from "./services/approval";
 import BackupService from "./services/backup";
 import VerifiableCredentialsService from "./services/credentials";
-import { validateSerializedVerifiableCredential } from "./services/credentials/utils";
+import { validateSerializedVC } from "./services/credentials/utils";
 import { GroupService } from "./services/group";
 import HistoryService from "./services/history";
 import InjectorService from "./services/injector";
@@ -216,58 +216,58 @@ export default class CryptKeeperController {
     this.handler.add(
       RPCAction.ADD_VERIFIABLE_CREDENTIAL,
       this.lockService.ensure,
-      this.verifiableCredentialsService.addVerifiableCredential,
+      this.verifiableCredentialsService.addVC,
     );
     this.handler.add(
       RPCAction.ADD_VERIFIABLE_CREDENTIAL_REQUEST,
       this.lockService.ensure,
-      validateSerializedVerifiableCredential,
-      this.verifiableCredentialsService.addVerifiableCredentialRequest,
+      validateSerializedVC,
+      this.verifiableCredentialsService.addVCRequest,
     );
     this.handler.add(
       RPCAction.REJECT_VERIFIABLE_CREDENTIAL_REQUEST,
       this.lockService.ensure,
-      this.verifiableCredentialsService.rejectVerifiableCredentialRequest,
+      this.verifiableCredentialsService.rejectVCRequest,
     );
     this.handler.add(
       RPCAction.RENAME_VERIFIABLE_CREDENTIAL,
       this.lockService.ensure,
-      this.verifiableCredentialsService.renameVerifiableCredential,
+      this.verifiableCredentialsService.renameVC,
     );
     this.handler.add(
       RPCAction.GET_ALL_VERIFIABLE_CREDENTIALS,
       this.lockService.ensure,
-      this.verifiableCredentialsService.getAllVerifiableCredentials,
+      this.verifiableCredentialsService.getAllVC,
     );
     this.handler.add(
       RPCAction.DELETE_VERIFIABLE_CREDENTIAL,
       this.lockService.ensure,
-      this.verifiableCredentialsService.deleteVerifiableCredential,
+      this.verifiableCredentialsService.deleteVC,
     );
     this.handler.add(
       RPCAction.DELETE_ALL_VERIFIABLE_CREDENTIALS,
       this.lockService.ensure,
-      this.verifiableCredentialsService.deleteAllVerifiableCredentials,
+      this.verifiableCredentialsService.deleteAllVC,
     );
     this.handler.add(
       RPCAction.GENERATE_VERIFIABLE_PRESENTATION,
       this.lockService.ensure,
-      this.verifiableCredentialsService.generateVerifiablePresentation,
+      this.verifiableCredentialsService.announceVP,
     );
     this.handler.add(
       RPCAction.GENERATE_VERIFIABLE_PRESENTATION_WITH_CRYPTKEEPER,
       this.lockService.ensure,
-      this.verifiableCredentialsService.generateVerifiablePresentationWithCryptkeeper,
+      this.verifiableCredentialsService.signAndAnnounceVP,
     );
     this.handler.add(
       RPCAction.GENERATE_VERIFIABLE_PRESENTATION_REQUEST,
       this.lockService.ensure,
-      this.verifiableCredentialsService.generateVerifiablePresentationRequest,
+      this.verifiableCredentialsService.handleVPRequest,
     );
     this.handler.add(
       RPCAction.REJECT_VERIFIABLE_PRESENTATION_REQUEST,
       this.lockService.ensure,
-      this.verifiableCredentialsService.rejectVerifiablePresentationRequest,
+      this.verifiableCredentialsService.rejectVPRequest,
     );
 
     // Injector

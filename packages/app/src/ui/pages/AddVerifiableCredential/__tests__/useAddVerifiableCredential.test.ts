@@ -4,7 +4,7 @@
 
 import { act, renderHook, waitFor } from "@testing-library/react";
 
-import { hashVerifiableCredential, serializeVerifiableCredential } from "@src/background/services/credentials/utils";
+import { hashVC, serializeVC } from "@src/background/services/credentials/utils";
 import { closePopup } from "@src/ui/ducks/app";
 import { useAppDispatch } from "@src/ui/ducks/hooks";
 import { addVerifiableCredential, rejectVerifiableCredentialRequest } from "@src/ui/ducks/verifiableCredentials";
@@ -45,12 +45,12 @@ describe("ui/pages/AddVerifiableCredential/useAddVerifiableCredential", () => {
       },
     },
   };
-  const mockSerializedVerifiableCredential = serializeVerifiableCredential(mockVerifiableCredential);
+  const mockSerializedVerifiableCredential = serializeVC(mockVerifiableCredential);
 
   const expectedCryptkeeperVerifiableCredential = {
     verifiableCredential: mockVerifiableCredential,
     metadata: {
-      hash: hashVerifiableCredential(mockVerifiableCredential),
+      hash: hashVC(mockVerifiableCredential),
       name: defaultVerifiableCredentialName,
     },
   };

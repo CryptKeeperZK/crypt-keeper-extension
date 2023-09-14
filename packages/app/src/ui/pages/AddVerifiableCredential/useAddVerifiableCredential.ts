@@ -1,10 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 
-import {
-  deserializeVerifiableCredential,
-  hashVerifiableCredential,
-  serializeVerifiableCredential,
-} from "@src/background/services/credentials/utils";
+import { deserializeVC, hashVC, serializeVC } from "@src/background/services/credentials/utils";
 import { ICryptkeeperVerifiableCredential } from "@src/types";
 import { closePopup } from "@src/ui/ducks/app";
 import { useAppDispatch } from "@src/ui/ducks/hooks";
@@ -35,11 +31,11 @@ export const useAddVerifiableCredential = (): IUseAddVerifiableCredentialData =>
         return;
       }
 
-      const deserializedVerifiableCredential = await deserializeVerifiableCredential(serializedVerifiableCredential);
+      const deserializedVerifiableCredential = await deserializeVC(serializedVerifiableCredential);
       setCryptkeeperVerifiableCredential({
         verifiableCredential: deserializedVerifiableCredential,
         metadata: {
-          hash: hashVerifiableCredential(deserializedVerifiableCredential),
+          hash: hashVC(deserializedVerifiableCredential),
           name: defaultVerifiableCredentialName,
         },
       });
@@ -75,9 +71,7 @@ export const useAddVerifiableCredential = (): IUseAddVerifiableCredentialData =>
       return;
     }
 
-    const serializedVerifiableCredential = serializeVerifiableCredential(
-      cryptkeeperVerifiableCredential.verifiableCredential,
-    );
+    const serializedVerifiableCredential = serializeVC(cryptkeeperVerifiableCredential.verifiableCredential);
 
     try {
       await dispatch(

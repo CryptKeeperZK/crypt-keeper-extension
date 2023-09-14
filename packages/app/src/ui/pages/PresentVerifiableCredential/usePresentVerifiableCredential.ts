@@ -1,10 +1,7 @@
 import * as React from "react";
 import { useCallback, useEffect, useState } from "react";
 
-import {
-  generateVerifiablePresentationFromVerifiableCredentials,
-  serializeVerifiablePresentation,
-} from "@src/background/services/credentials/utils";
+import { generateVPFromVC, serializeVP } from "@src/background/services/credentials/utils";
 import { closePopup } from "@src/ui/ducks/app";
 import { useAppDispatch } from "@src/ui/ducks/hooks";
 import {
@@ -109,7 +106,7 @@ export const usePresentVerifiableCredential = (): IUsePresentVerifiableCredentia
       )
       .map((cryptkeeperVerifiableCredential) => cryptkeeperVerifiableCredential.verifiableCredential);
 
-    return generateVerifiablePresentationFromVerifiableCredentials(verifiableCredentials);
+    return generateVPFromVC(verifiableCredentials);
   }
 
   const onToggleMenu = () => {
@@ -145,7 +142,7 @@ export const usePresentVerifiableCredential = (): IUsePresentVerifiableCredentia
     }
 
     try {
-      const serializedVerifiablePresentation = serializeVerifiablePresentation(verifiablePresentation);
+      const serializedVerifiablePresentation = serializeVP(verifiablePresentation);
       const signature = await signer.signMessage(serializedVerifiablePresentation);
       const signedVerifiablePresentation = {
         ...verifiablePresentation,

@@ -1,10 +1,10 @@
-import { EventName } from "@cryptkeeperzk/providers";
+import { EventName } from "@cryptkeeperzk/providers/dist/src/event";
 import browser from "webextension-polyfill";
 
 import BrowserUtils from "@src/background/controllers/browserUtils";
 import CryptoService, { ECryptMode } from "@src/background/services/crypto";
 import HistoryService from "@src/background/services/history";
-import NotificationService from "@src/background/services/notification";
+import NotificationService, { ICreateNotificationOptions } from "@src/background/services/notification";
 import SimpleStorage from "@src/background/services/storage";
 import WalletService from "@src/background/services/wallet";
 import { Paths } from "@src/constants";
@@ -18,17 +18,26 @@ import type {
 } from "@src/types/verifiableCredentials";
 
 import {
-  generateInitialMetadataForVerifiableCredential,
-  serializeCryptkeeperVerifiableCredential,
-  deserializeVerifiableCredential,
-  deserializeCryptkeeperVerifiableCredential,
-  validateSerializedVerifiableCredential,
-  serializeVerifiablePresentation,
+  generateInitialMetadataForVC,
+  serializeCryptkeeperVC,
+  deserializeVC,
+  deserializeCryptkeeperVC,
+  validateSerializedVC,
+  serializeVP,
 } from "./utils";
 
 const VERIFIABLE_CREDENTIALS_KEY = "@@VERIFIABLE-CREDENTIALS@@";
 const ETHEREUM_SIGNATURE_SPECIFICATION_TYPE = "EthereumEip712Signature2021";
 const VERIFIABLE_CREDENTIAL_PROOF_PURPOSE = "assertionMethod";
+
+interface IAnnounceVCArgs {
+  notificationTitle: ICreateNotificationOptions["title"];
+  notificationMessage: ICreateNotificationOptions["message"];
+  notificationType: ICreateNotificationOptions["type"];
+  historyOperationType?: OperationType;
+  responseType?: EventName;
+  responsePayload?: unknown;
+}
 
 export default class VerifiableCredentialsService implements IBackupable {
   private static INSTANCE?: VerifiableCredentialsService;
@@ -62,156 +71,128 @@ export default class VerifiableCredentialsService implements IBackupable {
     return VerifiableCredentialsService.INSTANCE;
   }
 
-  addVerifiableCredentialRequest = async (serializedVerifiableCredential: string): Promise<void> => {
-    await validateSerializedVerifiableCredential(serializedVerifiableCredential);
+  addVCRequest = async (serializedVerifiableCredential: string): Promise<void> => {
+    await validateSerializedVC(serializedVerifiableCredential);
     await this.browserController.openPopup({
       params: { redirect: Paths.ADD_VERIFIABLE_CREDENTIAL, serializedVerifiableCredential },
     });
   };
 
-  rejectVerifiableCredentialRequest = async (): Promise<void> => {
-    await this.notificationService.create({
-      options: {
-        title: "Request rejected",
-        message: `Rejected a request to add Verifiable Credential.`,
-        iconUrl: browser.runtime.getURL("/icons/logo.png"),
-        type: "basic",
-      },
+  rejectVCRequest = async (): Promise<void> => {
+    await this.announce({
+      notificationTitle: "Request rejected",
+      notificationMessage: `Rejected a request to add Verifiable Credential.`,
+      notificationType: "basic",
+      historyOperationType: OperationType.REJECT_VERIFIABLE_CREDENTIAL_REQUEST,
+      responseType: EventName.USER_REJECT,
+      responsePayload: { type: EventName.ADD_VERIFIABLE_CREDENTIAL },
     });
-
-    const tabs = await browser.tabs.query({ active: true });
-    await Promise.all(
-      tabs.map((tab) =>
-        browser.tabs
-          .sendMessage(tab.id!, {
-            type: EventName.USER_REJECT,
-            payload: { type: EventName.ADD_VERIFIABLE_CREDENTIAL },
-          })
-          .catch(() => undefined),
-      ),
-    );
   };
 
-  addVerifiableCredential = async (addVerifiableCredentialArgs: IAddVerifiableCredentialArgs): Promise<void> => {
-    const { serializedVerifiableCredential, verifiableCredentialName } = addVerifiableCredentialArgs;
+  addVC = async (addVCArgs: IAddVerifiableCredentialArgs): Promise<void> => {
+    const { serializedVerifiableCredential, verifiableCredentialName } = addVCArgs;
     if (!serializedVerifiableCredential) {
       throw new Error("Serialized Verifiable Credential is required.");
     }
 
     try {
-      const verifiableCredential = await deserializeVerifiableCredential(serializedVerifiableCredential);
-      const metadata = generateInitialMetadataForVerifiableCredential(verifiableCredential, verifiableCredentialName);
+      const verifiableCredential = await deserializeVC(serializedVerifiableCredential);
+      const metadata = generateInitialMetadataForVC(verifiableCredential, verifiableCredentialName);
       const cryptkeeperVerifiableCredential: ICryptkeeperVerifiableCredential = {
         verifiableCredential,
         metadata,
       };
 
-      await this.insertCryptkeeperVerifiableCredentialIntoStore(cryptkeeperVerifiableCredential);
+      await this.insertCryptkeeperVCIntoStore(cryptkeeperVerifiableCredential);
     } catch (error) {
-      await this.notificationService.create({
-        options: {
-          title: "Failed to add Verifiable Credential.",
-          message: `The Verifiable Credential you are trying to add is invalid.`,
-          iconUrl: browser.runtime.getURL("/icons/logo.png"),
-          type: "basic",
-        },
+      await this.announce({
+        notificationTitle: "Failed to add Verifiable Credential.",
+        notificationMessage: `The Verifiable Credential you are trying to add is invalid.`,
+        notificationType: "basic",
       });
-
       throw error;
     }
   };
 
-  renameVerifiableCredential = async (
-    renameVerifiableCredentialArgs: IRenameVerifiableCredentialArgs,
-  ): Promise<void> => {
-    const { verifiableCredentialHash, newVerifiableCredentialName } = renameVerifiableCredentialArgs;
+  renameVC = async (renameVCArgs: IRenameVerifiableCredentialArgs): Promise<void> => {
+    const { verifiableCredentialHash, newVerifiableCredentialName } = renameVCArgs;
     if (!verifiableCredentialHash || !newVerifiableCredentialName) {
       throw new Error("Verifiable Credential hash and name are required.");
     }
 
-    const cryptkeeperVerifiableCredentials = await this.getCryptkeeperVerifiableCredentialsFromStore();
+    const cryptkeeperVerifiableCredentials = await this.getCryptkeeperVCFromStore();
 
     if (!cryptkeeperVerifiableCredentials.has(verifiableCredentialHash)) {
       throw new Error("Verifiable Credential does not exist.");
     }
 
     const serializedCryptkeeperVerifiableCredential = cryptkeeperVerifiableCredentials.get(verifiableCredentialHash)!;
-    const cryptkeeperVerifiableCredential = await deserializeCryptkeeperVerifiableCredential(
-      serializedCryptkeeperVerifiableCredential,
-    );
+    const cryptkeeperVerifiableCredential = await deserializeCryptkeeperVC(serializedCryptkeeperVerifiableCredential);
 
     cryptkeeperVerifiableCredential.metadata.name = newVerifiableCredentialName;
     cryptkeeperVerifiableCredentials.set(
       verifiableCredentialHash,
-      serializeCryptkeeperVerifiableCredential(cryptkeeperVerifiableCredential),
+      serializeCryptkeeperVC(cryptkeeperVerifiableCredential),
     );
-    await this.writeCryptkeeperVerifiableCredentials(cryptkeeperVerifiableCredentials);
-    await this.historyService.trackOperation(OperationType.RENAME_VERIFIABLE_CREDENTIAL, {});
-    await this.notificationService.create({
-      options: {
-        title: "Verifiable Credential renamed.",
-        message: `Renamed 1 Verifiable Credential.`,
-        iconUrl: browser.runtime.getURL("/icons/logo.png"),
-        type: "basic",
-      },
+    await this.writeCryptkeeperVC(cryptkeeperVerifiableCredentials);
+    await this.announce({
+      notificationTitle: "Verifiable Credential renamed.",
+      notificationMessage: `Renamed 1 Verifiable Credential.`,
+      notificationType: "basic",
+      historyOperationType: OperationType.RENAME_VERIFIABLE_CREDENTIAL,
     });
   };
 
-  getAllVerifiableCredentials = async (): Promise<ICryptkeeperVerifiableCredential[]> => {
-    const cryptkeeperVerifiableCredentials = await this.getCryptkeeperVerifiableCredentialsFromStore();
+  getAllVC = async (): Promise<ICryptkeeperVerifiableCredential[]> => {
+    const cryptkeeperVerifiableCredentials = await this.getCryptkeeperVCFromStore();
     const cryptkeeperVerifiableCredentialsArray = Array.from(cryptkeeperVerifiableCredentials.values());
 
     return Promise.all(
       cryptkeeperVerifiableCredentialsArray.map(async (cryptkeeperVerifiableCredential) =>
-        deserializeCryptkeeperVerifiableCredential(cryptkeeperVerifiableCredential),
+        deserializeCryptkeeperVC(cryptkeeperVerifiableCredential),
       ),
     );
   };
 
-  deleteVerifiableCredential = async (verifiableCredentialHash: string): Promise<void> => {
+  deleteVC = async (verifiableCredentialHash: string): Promise<void> => {
     if (!verifiableCredentialHash) {
       throw new Error("Verifiable Credential hash is required.");
     }
 
-    const cryptkeeperVerifiableCredentials = await this.getCryptkeeperVerifiableCredentialsFromStore();
+    const cryptkeeperVerifiableCredentials = await this.getCryptkeeperVCFromStore();
 
     if (!cryptkeeperVerifiableCredentials.has(verifiableCredentialHash)) {
       throw new Error("Verifiable Credential does not exist.");
     }
 
     cryptkeeperVerifiableCredentials.delete(verifiableCredentialHash);
-    await this.writeCryptkeeperVerifiableCredentials(cryptkeeperVerifiableCredentials);
-    await this.historyService.trackOperation(OperationType.DELETE_VERIFIABLE_CREDENTIAL, {});
-    await this.notificationService.create({
-      options: {
-        title: "Verifiable Credential deleted.",
-        message: `Deleted 1 Verifiable Credential.`,
-        iconUrl: browser.runtime.getURL("/icons/logo.png"),
-        type: "basic",
-      },
+    await this.writeCryptkeeperVC(cryptkeeperVerifiableCredentials);
+
+    await this.announce({
+      notificationTitle: "Verifiable Credential deleted.",
+      notificationMessage: `Deleted 1 Verifiable Credential.`,
+      notificationType: "basic",
+      historyOperationType: OperationType.DELETE_VERIFIABLE_CREDENTIAL,
     });
   };
 
-  deleteAllVerifiableCredentials = async (): Promise<void> => {
-    const cryptkeeperVerifiableCredentials = await this.getCryptkeeperVerifiableCredentialsFromStore();
+  deleteAllVC = async (): Promise<void> => {
+    const cryptkeeperVerifiableCredentials = await this.getCryptkeeperVCFromStore();
 
     if (cryptkeeperVerifiableCredentials.size === 0) {
       throw new Error("No Verifiable Credentials to delete.");
     }
 
     await this.verifiableCredentialsStore.clear();
-    await this.historyService.trackOperation(OperationType.DELETE_ALL_VERIFIABLE_CREDENTIALS, {});
-    await this.notificationService.create({
-      options: {
-        title: "All Verifiable Credentials deleted.",
-        message: `Deleted ${cryptkeeperVerifiableCredentials.size} Verifiable Credential(s).`,
-        iconUrl: browser.runtime.getURL("/icons/logo.png"),
-        type: "basic",
-      },
+    await this.announce({
+      notificationTitle: "All Verifiable Credentials deleted.",
+      notificationMessage: `Deleted ${cryptkeeperVerifiableCredentials.size} Verifiable Credential(s).`,
+      notificationType: "basic",
+      historyOperationType: OperationType.DELETE_ALL_VERIFIABLE_CREDENTIALS,
     });
   };
 
-  generateVerifiablePresentationRequest = async ({ request }: IVerifiablePresentationRequest): Promise<void> => {
+  handleVPRequest = async ({ request }: IVerifiablePresentationRequest): Promise<void> => {
     await this.browserController.openPopup({
       params: {
         redirect: Paths.GENERATE_VERIFIABLE_PRESENTATION_REQUEST,
@@ -220,34 +201,22 @@ export default class VerifiableCredentialsService implements IBackupable {
     });
   };
 
-  generateVerifiablePresentation = async (verifiablePresentation: IVerifiablePresentation): Promise<void> => {
-    await this.historyService.trackOperation(OperationType.GENERATE_VERIFIABLE_PRESENTATION, {});
-    await this.notificationService.create({
-      options: {
-        title: "Verifiable Presentation generated.",
-        message: `Generated 1 Verifiable Presentation.`,
-        iconUrl: browser.runtime.getURL("/icons/logo.png"),
-        type: "basic",
-      },
+  announceVP = async (verifiablePresentation: IVerifiablePresentation): Promise<void> => {
+    await this.announce({
+      notificationTitle: "Verifiable Presentation generated.",
+      notificationMessage: `Generated 1 Verifiable Presentation.`,
+      notificationType: "basic",
+      historyOperationType: OperationType.GENERATE_VERIFIABLE_PRESENTATION,
+      responseType: EventName.GENERATE_VERIFIABLE_PRESENTATION,
+      responsePayload: { verifiablePresentation },
     });
-    const tabs = await browser.tabs.query({ active: true });
-    await Promise.all(
-      tabs.map((tab) =>
-        browser.tabs
-          .sendMessage(tab.id!, {
-            type: EventName.GENERATE_VERIFIABLE_PRESENTATION,
-            payload: { verifiablePresentation },
-          })
-          .catch(() => undefined),
-      ),
-    );
   };
 
-  generateVerifiablePresentationWithCryptkeeper = async ({
+  signAndAnnounceVP = async ({
     verifiablePresentation,
     address,
   }: IGenerateVerifiablePresentationWithCryptkeeperArgs): Promise<void> => {
-    const serializedVerifiablePresentation = serializeVerifiablePresentation(verifiablePresentation);
+    const serializedVerifiablePresentation = serializeVP(verifiablePresentation);
     const signature = await this.walletService.signMessage({
       message: serializedVerifiablePresentation,
       address,
@@ -265,66 +234,39 @@ export default class VerifiableCredentialsService implements IBackupable {
       ],
     };
 
-    await this.historyService.trackOperation(OperationType.GENERATE_VERIFIABLE_PRESENTATION, {});
-    await this.notificationService.create({
-      options: {
-        title: "Verifiable Presentation generated.",
-        message: `Generated 1 Verifiable Presentation.`,
-        iconUrl: browser.runtime.getURL("/icons/logo.png"),
-        type: "basic",
-      },
+    await this.announce({
+      notificationTitle: "Verifiable Presentation generated.",
+      notificationMessage: `Generated 1 Verifiable Presentation.`,
+      notificationType: "basic",
+      historyOperationType: OperationType.GENERATE_VERIFIABLE_PRESENTATION,
+      responseType: EventName.GENERATE_VERIFIABLE_PRESENTATION,
+      responsePayload: { verifiablePresentation: signedVerifiablePresentation },
     });
-    const tabs = await browser.tabs.query({ active: true });
-    await Promise.all(
-      tabs.map((tab) =>
-        browser.tabs
-          .sendMessage(tab.id!, {
-            type: EventName.GENERATE_VERIFIABLE_PRESENTATION,
-            payload: { verifiablePresentation: signedVerifiablePresentation },
-          })
-          .catch(() => undefined),
-      ),
-    );
   };
 
-  rejectVerifiablePresentationRequest = async (): Promise<void> => {
-    await this.historyService.trackOperation(OperationType.REJECT_VERIFIABLE_PRESENTATION_REQUEST, {});
-    await this.notificationService.create({
-      options: {
-        title: "Request to generate Verifiable Presentation rejected",
-        message: `Rejected a request to generate 1 Verifiable Presentation.`,
-        iconUrl: browser.runtime.getURL("/icons/logo.png"),
-        type: "basic",
-      },
+  rejectVPRequest = async (): Promise<void> => {
+    await this.announce({
+      notificationTitle: "Request to generate Verifiable Presentation rejected",
+      notificationMessage: `Rejected a request to generate Verifiable Presentation.`,
+      notificationType: "basic",
+      historyOperationType: OperationType.REJECT_VERIFIABLE_PRESENTATION_REQUEST,
+      responseType: EventName.USER_REJECT,
+      responsePayload: { type: EventName.VERIFIABLE_PRESENTATION_REQUEST },
     });
-    const tabs = await browser.tabs.query({ active: true });
-    await Promise.all(
-      tabs.map((tab) =>
-        browser.tabs
-          .sendMessage(tab.id!, {
-            type: EventName.USER_REJECT,
-            payload: { type: EventName.VERIFIABLE_PRESENTATION_REQUEST },
-          })
-          .catch(() => undefined),
-      ),
-    );
   };
 
-  private insertCryptkeeperVerifiableCredentialIntoStore = async (
+  private insertCryptkeeperVCIntoStore = async (
     cryptkeeperVerifiableCredential: ICryptkeeperVerifiableCredential,
   ): Promise<void> => {
     const verifiableCredentialHash = cryptkeeperVerifiableCredential.metadata.hash;
 
-    const cryptkeeperVerifiableCredentials = await this.getCryptkeeperVerifiableCredentialsFromStore();
+    const cryptkeeperVerifiableCredentials = await this.getCryptkeeperVCFromStore();
 
     if (cryptkeeperVerifiableCredentials.has(verifiableCredentialHash)) {
-      await this.notificationService.create({
-        options: {
-          title: "Failed to add Verifiable Credential.",
-          message: `The Verifiable Credential you are trying to add already exists in your wallet.`,
-          iconUrl: browser.runtime.getURL("/icons/logo.png"),
-          type: "basic",
-        },
+      await this.announce({
+        notificationTitle: "Failed to add Verifiable Credential.",
+        notificationMessage: `The Verifiable Credential you are trying to add already exists in your wallet.`,
+        notificationType: "basic",
       });
 
       throw new Error("Verifiable Credential already exists.");
@@ -332,33 +274,21 @@ export default class VerifiableCredentialsService implements IBackupable {
 
     cryptkeeperVerifiableCredentials.set(
       verifiableCredentialHash,
-      serializeCryptkeeperVerifiableCredential(cryptkeeperVerifiableCredential),
+      serializeCryptkeeperVC(cryptkeeperVerifiableCredential),
     );
-    await this.writeCryptkeeperVerifiableCredentials(cryptkeeperVerifiableCredentials);
+    await this.writeCryptkeeperVC(cryptkeeperVerifiableCredentials);
 
-    await this.historyService.trackOperation(OperationType.ADD_VERIFIABLE_CREDENTIAL, {});
-    await this.notificationService.create({
-      options: {
-        title: "Verifiable Credential added.",
-        message: `Added 1 Verifiable Credential.`,
-        iconUrl: browser.runtime.getURL("/icons/logo.png"),
-        type: "basic",
-      },
+    await this.announce({
+      notificationTitle: "Verifiable Credential added.",
+      notificationMessage: `Added 1 Verifiable Credential.`,
+      notificationType: "basic",
+      historyOperationType: OperationType.ADD_VERIFIABLE_CREDENTIAL,
+      responseType: EventName.ADD_VERIFIABLE_CREDENTIAL,
+      responsePayload: { verifiableCredentialHash },
     });
-    const tabs = await browser.tabs.query({ active: true });
-    await Promise.all(
-      tabs.map((tab) =>
-        browser.tabs
-          .sendMessage(tab.id!, {
-            type: EventName.ADD_VERIFIABLE_CREDENTIAL,
-            payload: { verifiableCredentialHash },
-          })
-          .catch(() => undefined),
-      ),
-    );
   };
 
-  private getCryptkeeperVerifiableCredentialsFromStore = async (): Promise<Map<string, string>> => {
+  private getCryptkeeperVCFromStore = async (): Promise<Map<string, string>> => {
     const ciphertext = await this.verifiableCredentialsStore.get<string>();
 
     if (!ciphertext) {
@@ -371,13 +301,48 @@ export default class VerifiableCredentialsService implements IBackupable {
     return allCredentials;
   };
 
-  private writeCryptkeeperVerifiableCredentials = async (
-    cryptkeeperVerifiableCredentials: Map<string, string>,
-  ): Promise<void> => {
+  private writeCryptkeeperVC = async (cryptkeeperVerifiableCredentials: Map<string, string>): Promise<void> => {
     const serializedCredentials = JSON.stringify(Array.from(cryptkeeperVerifiableCredentials));
     const ciphertext = this.cryptoService.encrypt(serializedCredentials, { mode: ECryptMode.MNEMONIC });
 
     await this.verifiableCredentialsStore.set(ciphertext);
+  };
+
+  private announce = async ({
+    notificationTitle,
+    notificationMessage,
+    notificationType,
+    historyOperationType,
+    responseType,
+    responsePayload,
+  }: IAnnounceVCArgs) => {
+    if (historyOperationType) {
+      await this.historyService.trackOperation(historyOperationType, {});
+    }
+
+    await this.notificationService.create({
+      options: {
+        title: notificationTitle,
+        message: notificationMessage,
+        iconUrl: browser.runtime.getURL("/icons/logo.png"),
+        type: notificationType,
+      },
+    });
+
+    if (responseType) {
+      const tabs = await browser.tabs.query({ active: true });
+      await Promise.all(
+        tabs.map((tab) =>
+          browser.tabs
+            .sendMessage(tab.id!, {
+              type: responseType,
+              payload: responsePayload,
+            })
+            .catch(() => undefined),
+        ),
+      );
+      // this.browserController.pushEvent({ type: responseType, payload: responsePayload });
+    }
   };
 
   downloadStorage = (): Promise<string | null> => this.verifiableCredentialsStore.get<string>();
@@ -420,9 +385,9 @@ export default class VerifiableCredentialsService implements IBackupable {
     const backup = this.cryptoService.decrypt(encryptedBackup, { secret: backupPassword });
 
     const backupCredentials = new Map(JSON.parse(backup) as [string, string][]);
-    const cryptkeeperVerifiableCredentials = await this.getCryptkeeperVerifiableCredentialsFromStore();
+    const cryptkeeperVerifiableCredentials = await this.getCryptkeeperVCFromStore();
     const mergedCredentials = new Map([...cryptkeeperVerifiableCredentials, ...backupCredentials]);
 
-    await this.writeCryptkeeperVerifiableCredentials(mergedCredentials);
+    await this.writeCryptkeeperVC(mergedCredentials);
   };
 }

@@ -1,12 +1,12 @@
 /* eslint-disable @typescript-eslint/unbound-method */
-import { EventName } from "@cryptkeeperzk/providers";
+import { EventName } from "@cryptkeeperzk/providers/dist/src/event";
 import browser from "webextension-polyfill";
 
 import VerifiableCredentialsService from "@src/background/services/credentials";
 import {
-  generateInitialMetadataForVerifiableCredential,
-  serializeCryptkeeperVerifiableCredential,
-  serializeVerifiableCredential,
+  generateInitialMetadataForVC,
+  serializeCryptkeeperVC,
+  serializeVC,
 } from "@src/background/services/credentials/utils";
 import SimpleStorage from "@src/background/services/storage";
 import pushMessage from "@src/util/pushMessage";
@@ -60,17 +60,14 @@ describe("background/services/credentials", () => {
       },
     },
   };
-  const exampleCredentialString = serializeVerifiableCredential(exampleCredential);
-  const exampleCredentialMetadata = generateInitialMetadataForVerifiableCredential(
-    exampleCredential,
-    defaultCredentialName,
-  );
+  const exampleCredentialString = serializeVC(exampleCredential);
+  const exampleCredentialMetadata = generateInitialMetadataForVC(exampleCredential, defaultCredentialName);
   const exampleCredentialHash = exampleCredentialMetadata.hash;
   const exampleCryptkeeperCredential: ICryptkeeperVerifiableCredential = {
     verifiableCredential: exampleCredential,
     metadata: exampleCredentialMetadata,
   };
-  const exampleCryptkeeperCredentialString = serializeCryptkeeperVerifiableCredential(exampleCryptkeeperCredential);
+  const exampleCryptkeeperCredentialString = serializeCryptkeeperVC(exampleCryptkeeperCredential);
 
   const exampleCredentialTwo: IVerifiableCredential = {
     context: ["https://www.w3.org/2018/credentials/v1"],
@@ -85,19 +82,14 @@ describe("background/services/credentials", () => {
       },
     },
   };
-  const exampleCredentialStringTwo = serializeVerifiableCredential(exampleCredentialTwo);
-  const exampleCredentialMetadataTwo = generateInitialMetadataForVerifiableCredential(
-    exampleCredentialTwo,
-    defaultCredentialName,
-  );
+  const exampleCredentialStringTwo = serializeVC(exampleCredentialTwo);
+  const exampleCredentialMetadataTwo = generateInitialMetadataForVC(exampleCredentialTwo, defaultCredentialName);
   const exampleCredentialHashTwo = exampleCredentialMetadataTwo.hash;
   const exampleCryptkeeperCredentialTwo: ICryptkeeperVerifiableCredential = {
     verifiableCredential: exampleCredentialTwo,
     metadata: exampleCredentialMetadataTwo,
   };
-  const exampleCryptkeeperCredentialStringTwo = serializeCryptkeeperVerifiableCredential(
-    exampleCryptkeeperCredentialTwo,
-  );
+  const exampleCryptkeeperCredentialStringTwo = serializeCryptkeeperVC(exampleCryptkeeperCredentialTwo);
 
   const credentialsMap = new Map<string, string>();
   credentialsMap.set(exampleCredentialHash, exampleCryptkeeperCredentialString);
@@ -147,7 +139,7 @@ describe("background/services/credentials", () => {
 
   describe("add and reject verifiable credential requests", () => {
     test("should successfully create an add verifiable credential request", async () => {
-      await verifiableCredentialsService.addVerifiableCredentialRequest(exampleCredentialString);
+      await verifiableCredentialsService.addVCRequest(exampleCredentialString);
 
       expect(browser.tabs.query).toBeCalledWith({ lastFocusedWindow: true });
 
@@ -163,7 +155,7 @@ describe("background/services/credentials", () => {
     });
 
     test("should successfully reject a verifiable credential request", async () => {
-      await verifiableCredentialsService.rejectVerifiableCredentialRequest();
+      await verifiableCredentialsService.rejectVCRequest();
 
       expect(browser.tabs.query).toBeCalledWith({ lastFocusedWindow: true });
       expect(browser.tabs.sendMessage).toBeCalledWith(defaultTabs[0].id, {
@@ -175,7 +167,7 @@ describe("background/services/credentials", () => {
 
   describe("generate verifiable presentations", () => {
     test("should successfully create a generate verifiable presentation request", async () => {
-      await verifiableCredentialsService.generateVerifiablePresentationRequest(exampleVerifiablePresentationRequest);
+      await verifiableCredentialsService.handleVPRequest(exampleVerifiablePresentationRequest);
 
       expect(browser.tabs.query).toBeCalledWith({ lastFocusedWindow: true });
 
@@ -191,7 +183,7 @@ describe("background/services/credentials", () => {
     });
 
     test("should successfully reject a verifiable presentation request", async () => {
-      await verifiableCredentialsService.rejectVerifiablePresentationRequest();
+      await verifiableCredentialsService.rejectVPRequest();
 
       expect(browser.tabs.query).toBeCalledWith({ lastFocusedWindow: true });
       expect(browser.tabs.sendMessage).toBeCalledWith(defaultTabs[0].id, {
@@ -201,7 +193,7 @@ describe("background/services/credentials", () => {
     });
 
     test("should successfully generate a verifiable presentation", async () => {
-      await verifiableCredentialsService.generateVerifiablePresentation(exampleVerifiablePresentation);
+      await verifiableCredentialsService.announceVP(exampleVerifiablePresentation);
 
       expect(browser.tabs.query).toBeCalledWith({ lastFocusedWindow: true });
       expect(browser.tabs.sendMessage).toBeCalledWith(defaultTabs[0].id, {
@@ -215,7 +207,7 @@ describe("background/services/credentials", () => {
       const ETHEREUM_SIGNATURE_SPECIFICATION_TYPE = "EthereumEip712Signature2021";
       const VERIFIABLE_CREDENTIAL_PROOF_PURPOSE = "assertionMethod";
 
-      await verifiableCredentialsService.generateVerifiablePresentationWithCryptkeeper({
+      await verifiableCredentialsService.signAndAnnounceVP({
         verifiablePresentation: exampleVerifiablePresentation,
         address: exampleAddress,
       });
@@ -247,7 +239,7 @@ describe("background/services/credentials", () => {
       credentialsStorage.get.mockReturnValue(undefined);
       credentialsStorage.set.mockReturnValue(undefined);
 
-      const result = verifiableCredentialsService.addVerifiableCredential({
+      const result = verifiableCredentialsService.addVC({
         serializedVerifiableCredential: exampleCredentialString,
         verifiableCredentialName: defaultCredentialName,
       });
@@ -259,17 +251,17 @@ describe("background/services/credentials", () => {
       const [credentialsStorage] = (SimpleStorage as jest.Mock).mock.instances as [MockStorage];
       credentialsStorage.get.mockReturnValue(undefined);
 
-      await verifiableCredentialsService.addVerifiableCredential({
+      await verifiableCredentialsService.addVC({
         serializedVerifiableCredential: exampleCredentialString,
         verifiableCredentialName: defaultCredentialName,
       });
-      await verifiableCredentialsService.addVerifiableCredential({
+      await verifiableCredentialsService.addVC({
         serializedVerifiableCredential: exampleCredentialStringTwo,
         verifiableCredentialName: defaultCredentialName,
       });
 
       credentialsStorage.get.mockReturnValue(credentialsStorageString);
-      const verifiableCredentials = await verifiableCredentialsService.getAllVerifiableCredentials();
+      const verifiableCredentials = await verifiableCredentialsService.getAllVC();
 
       expect(verifiableCredentials.length).toBe(2);
       expect(verifiableCredentials[0].verifiableCredential).toEqual(exampleCredential);
@@ -282,7 +274,7 @@ describe("background/services/credentials", () => {
       credentialsStorage.set.mockReturnValue(undefined);
 
       await expect(
-        verifiableCredentialsService.addVerifiableCredential({
+        verifiableCredentialsService.addVC({
           serializedVerifiableCredential: exampleCredentialString,
           verifiableCredentialName: defaultCredentialName,
         }),
@@ -291,7 +283,7 @@ describe("background/services/credentials", () => {
 
     test("should not add a verifiable credential with an invalid format", async () => {
       await expect(
-        verifiableCredentialsService.addVerifiableCredential({
+        verifiableCredentialsService.addVC({
           serializedVerifiableCredential: "invalid credential",
           verifiableCredentialName: "test name",
         }),
@@ -305,7 +297,7 @@ describe("background/services/credentials", () => {
       credentialsStorage.get.mockReturnValue(credentialsStorageString);
       credentialsStorage.set.mockReturnValue(undefined);
 
-      await verifiableCredentialsService.deleteVerifiableCredential(exampleCredentialHash);
+      await verifiableCredentialsService.deleteVC(exampleCredentialHash);
 
       expect(credentialsStorage.set).toBeCalledTimes(1);
       expect(credentialsStorage.set).toBeCalledWith(JSON.stringify([[...credentialsMap.entries()][1]]));
@@ -316,7 +308,7 @@ describe("background/services/credentials", () => {
       credentialsStorage.get.mockReturnValue(credentialsStorageString);
       credentialsStorage.set.mockReturnValue(undefined);
 
-      await expect(verifiableCredentialsService.deleteVerifiableCredential("example hash")).rejects.toThrow(
+      await expect(verifiableCredentialsService.deleteVC("example hash")).rejects.toThrow(
         "Verifiable Credential does not exist.",
       );
       expect(credentialsStorage.set).toBeCalledTimes(0);
@@ -327,7 +319,7 @@ describe("background/services/credentials", () => {
       credentialsStorage.get.mockReturnValue(credentialsStorageString);
       credentialsStorage.set.mockReturnValue(undefined);
 
-      await verifiableCredentialsService.deleteAllVerifiableCredentials();
+      await verifiableCredentialsService.deleteAllVC();
 
       expect(credentialsStorage.clear).toBeCalledTimes(1);
     });
@@ -337,9 +329,7 @@ describe("background/services/credentials", () => {
       credentialsStorage.get.mockReturnValue(undefined);
       credentialsStorage.set.mockReturnValue(undefined);
 
-      await expect(verifiableCredentialsService.deleteAllVerifiableCredentials()).rejects.toThrow(
-        "No Verifiable Credentials to delete.",
-      );
+      await expect(verifiableCredentialsService.deleteAllVC()).rejects.toThrow("No Verifiable Credentials to delete.");
       expect(credentialsStorage.clear).toBeCalledTimes(0);
     });
   });
