@@ -60,14 +60,13 @@ export class BandadaService {
       headers: DEFAULT_HEADERS,
     });
 
+    const result = (await response.json()) as unknown;
+
     if (!response.ok) {
-      const result = (await response.json()) as { message: string };
-      throw new Error(result.message.toString());
+      throw new Error((result as { message: string }).message.toString());
     }
 
-    const result = (await response.json()) as string;
-
-    return JSON.parse(result) as boolean;
+    return JSON.parse(result as string) as boolean;
   }
 
   async generateMerkleProof({ groupId, identity }: IGenerateBandadaMerkleProofArgs): Promise<IMerkleProof> {
