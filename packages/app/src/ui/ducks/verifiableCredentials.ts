@@ -3,9 +3,14 @@ import { RPCAction } from "@cryptkeeperzk/providers";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 import { serializeCryptkeeperVerifiableCredential } from "@src/background/services/credentials/utils";
-import { ICryptkeeperVerifiableCredential, IRenameVerifiableCredentialArgs } from "@src/types";
 import postMessage from "@src/util/postMessage";
 
+import type { IVerifiablePresentation } from "@cryptkeeperzk/types";
+import type {
+  ICryptkeeperVerifiableCredential,
+  IGenerateVerifiablePresentationWithCryptkeeperArgs,
+  IRenameVerifiableCredentialArgs,
+} from "@src/types";
 import type { TypedThunk } from "@src/ui/store/configureAppStore";
 
 import { useAppSelector } from "./hooks";
@@ -58,6 +63,29 @@ export const deleteVerifiableCredential = (verifiableCredentialHash: string) => 
   await postMessage({
     method: RPCAction.DELETE_VERIFIABLE_CREDENTIAL,
     payload: verifiableCredentialHash,
+  });
+};
+
+export const generateVerifiablePresentation =
+  (verifiablePresentation: IVerifiablePresentation) => async (): Promise<void> => {
+    await postMessage({
+      method: RPCAction.GENERATE_VERIFIABLE_PRESENTATION,
+      payload: verifiablePresentation,
+    });
+  };
+
+export const generateVerifiablePresentationWithCryptkeeper =
+  (generateVerifiablePresentationArgs: IGenerateVerifiablePresentationWithCryptkeeperArgs) =>
+  async (): Promise<void> => {
+    await postMessage({
+      method: RPCAction.GENERATE_VERIFIABLE_PRESENTATION_WITH_CRYPTKEEPER,
+      payload: generateVerifiablePresentationArgs,
+    });
+  };
+
+export const rejectVerifiablePresentationRequest = () => async (): Promise<void> => {
+  await postMessage({
+    method: RPCAction.REJECT_VERIFIABLE_PRESENTATION_REQUEST,
   });
 };
 

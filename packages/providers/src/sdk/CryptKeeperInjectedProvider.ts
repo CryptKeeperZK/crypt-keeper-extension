@@ -12,6 +12,7 @@ import {
   IRLNSNARKProof,
   IJoinGroupMemberArgs,
   IGenerateGroupMerkleProofArgs,
+  IVerifiablePresentationRequest,
 } from "@cryptkeeperzk/types";
 
 import { RPCAction } from "../constants";
@@ -27,6 +28,7 @@ const EVENTS = [
   EventName.LOGIN,
   EventName.LOGOUT,
   EventName.ADD_VERIFIABLE_CREDENTIAL,
+  EventName.GENERATE_VERIFIABLE_PRESENTATION,
   EventName.REVEAL_COMMITMENT,
   EventName.JOIN_GROUP,
   EventName.GROUP_MERKLE_PROOF,
@@ -368,19 +370,6 @@ export class CryptKeeperInjectedProvider {
   }
 
   /**
-   * Requests user to add a verifiable credential.
-   *
-   * @param {string} serializedVerifiableCredential - The json string representation of the verifiable credential to add.
-   * @returns {void}
-   */
-  async addVerifiableCredentialRequest(serializedVerifiableCredential: string): Promise<void> {
-    await this.post({
-      method: RPCAction.ADD_VERIFIABLE_CREDENTIAL_REQUEST,
-      payload: serializedVerifiableCredential,
-    });
-  }
-
-  /**
    * Requests user to reveal a connected identity commitment.
    *
    * @returns {Promise<void>}
@@ -388,6 +377,36 @@ export class CryptKeeperInjectedProvider {
   async revealConnectedIdentityRequest(): Promise<void> {
     await this.post({
       method: RPCAction.REVEAL_CONNECTED_IDENTITY_COMMITMENT_REQUEST,
+    });
+  }
+
+  /**
+   * Requests user to provide a verifiable presentation.
+   * NOTE: THIS FUNCTION IS UNDER DEVELOPMENT AND NOT READY FOR PRODUCTION USE
+   *
+   * @param {IVerifiablePresentationRequest} verifiablePresentationRequest - The information provided to the user when requesting a verifiable presentation.
+   * @returns {void}
+   */
+  async DEV_generateVerifiablePresentationRequest(
+    verifiablePresentationRequest: IVerifiablePresentationRequest,
+  ): Promise<void> {
+    await this.post({
+      method: RPCAction.GENERATE_VERIFIABLE_PRESENTATION_REQUEST,
+      payload: verifiablePresentationRequest,
+    });
+  }
+
+  /**
+   * Requests user to reveal a connected identity commitment.
+   * NOTE: THIS FUNCTION IS UNDER DEVELOPMENT AND NOT READY FOR PRODUCTION USE
+   *
+   * @param {string} serializedVerifiableCredential - The json string representation of the verifiable credential to add.
+   * @returns {void}
+   */
+  async DEV_addVerifiableCredentialRequest(serializedVerifiableCredential: string): Promise<void> {
+    await this.post({
+      method: RPCAction.ADD_VERIFIABLE_CREDENTIAL_REQUEST,
+      payload: serializedVerifiableCredential,
     });
   }
 

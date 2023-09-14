@@ -16,6 +16,8 @@ export type EventHandler = (data: unknown) => void;
  * @property {string} IDENTITY_CHANGED - "identityChanged"
  * @property {string} LOGOUT - "logout"
  * @property {string} ADD_VERIFIABLE_CREDENTIAL - "addVerifiableCredential"
+ * @property {string} VERIFIABLE_PRESENTATION_REQUEST - "verifiablePresentationRequest"
+ * @property {string} GENERATE_VERIFIABLE_PRESENTATION - "generateVerifiablePresentation"
  * @property {string} REVEAL_COMMITMENT - "revealCommitment"
  * @property {string} JOIN_GROUP - "joinGroup"
  * @property {string} GROUP_MERKLE_PROOF - "groupMerkleProof"
@@ -26,6 +28,8 @@ export enum EventName {
   IDENTITY_CHANGED = "identityChanged",
   LOGOUT = "logout",
   ADD_VERIFIABLE_CREDENTIAL = "addVerifiableCredential",
+  VERIFIABLE_PRESENTATION_REQUEST = "verifiablePresentationRequest",
+  GENERATE_VERIFIABLE_PRESENTATION = "generateVerifiablePresentation",
   REVEAL_COMMITMENT = "revealCommitment",
   JOIN_GROUP = "joinGroup",
   GROUP_MERKLE_PROOF = "groupMerkleProof",

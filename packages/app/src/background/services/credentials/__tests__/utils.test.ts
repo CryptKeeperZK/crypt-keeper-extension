@@ -9,6 +9,7 @@ import {
   validateSerializedVerifiableCredential,
   generateInitialMetadataForVerifiableCredential,
   hashVerifiableCredential,
+  serializeVerifiablePresentation,
 } from "../utils";
 
 describe("util/serializeCryptkeeperVerifiableCredential", () => {
@@ -39,6 +40,41 @@ describe("util/serializeCryptkeeperVerifiableCredential", () => {
     expect(serializeCryptkeeperVerifiableCredential(deserializedCred)).toBe(
       serializeCryptkeeperVerifiableCredential(cryptkeeperCred),
     );
+  });
+});
+
+describe("util/serializeVerifiablePresentation", () => {
+  test("should serialize a verifiable presentation correctly", () => {
+    const rawCredential = {
+      context: ["https://www.w3.org/2018/credentials/v1"],
+      type: ["VerifiableCredential"],
+      issuer: "did:ethr:0x123",
+      issuanceDate: new Date("2010-01-01T19:23:24Z"),
+      credentialSubject: {
+        id: "did:ethr:0x123",
+        claims: {
+          name: "John Doe",
+        },
+      },
+    };
+    const verifiablePresentation = {
+      context: ["https://www.w3.org/2018/credentials/v1"],
+      type: ["VerifiablePresentation"],
+      verifiableCredential: [rawCredential],
+    };
+
+    expect(serializeVerifiablePresentation(verifiablePresentation)).toStrictEqual(
+      stringify({ ...verifiablePresentation, verifiableCredential: [serializeVerifiableCredential(rawCredential)] }),
+    );
+  });
+
+  test("should serialize a verifiable presentation with no credentials correctly", () => {
+    const verifiablePresentation = {
+      context: ["https://www.w3.org/2018/credentials/v1"],
+      type: ["VerifiablePresentation"],
+    };
+
+    expect(serializeVerifiablePresentation(verifiablePresentation)).toStrictEqual(stringify(verifiablePresentation));
   });
 });
 

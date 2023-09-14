@@ -11,6 +11,7 @@ import type {
   ConnectedIdentityMetadata,
   IRejectedRequest,
   IMerkleProof,
+  IVerifiablePresentation,
 } from "@cryptkeeperzk/types";
 
 function injectScript() {
@@ -114,6 +115,20 @@ function injectScript() {
             target: "injected-injectedscript",
             payload: [null, action.payload as IRejectedRequest],
             nonce: EventName.USER_REJECT,
+          },
+          "*",
+        );
+        break;
+      }
+      case EventName.GENERATE_VERIFIABLE_PRESENTATION: {
+        window.postMessage(
+          {
+            target: "injected-injectedscript",
+            payload: [
+              null,
+              (action.payload as { verifiablePresentation: IVerifiablePresentation }).verifiablePresentation,
+            ],
+            nonce: EventName.GENERATE_VERIFIABLE_PRESENTATION,
           },
           "*",
         );

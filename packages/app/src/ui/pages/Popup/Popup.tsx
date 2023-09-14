@@ -14,6 +14,7 @@ import JoinGroup from "@src/ui/pages/JoinGroup";
 import Login from "@src/ui/pages/Login";
 import Onboarding from "@src/ui/pages/Onboarding";
 import OnboardingBackup from "@src/ui/pages/OnboardingBackup";
+import PresentVerifiableCredential from "@src/ui/pages/PresentVerifiableCredential";
 import Recover from "@src/ui/pages/Recover";
 import ResetPassword from "@src/ui/pages/ResetPassword";
 import RevealIdentityCommitment from "@src/ui/pages/RevealIdentityCommitment";
@@ -43,6 +44,7 @@ const routeConfig: RouteObject[] = [
   { path: Paths.RECOVER, element: <Recover /> },
   { path: Paths.RESET_PASSWORD, element: <ResetPassword /> },
   { path: Paths.ADD_VERIFIABLE_CREDENTIAL, element: <AddVerifiableCredential /> },
+  { path: Paths.GENERATE_VERIFIABLE_PRESENTATION_REQUEST, element: <PresentVerifiableCredential /> },
   { path: Paths.JOIN_GROUP, element: <JoinGroup /> },
   { path: Paths.GROUP_MERKLE_PROOF, element: <GroupMerkleProof /> },
   {

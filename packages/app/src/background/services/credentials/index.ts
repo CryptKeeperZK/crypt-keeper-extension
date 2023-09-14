@@ -6,11 +6,16 @@ import CryptoService, { ECryptMode } from "@src/background/services/crypto";
 import HistoryService from "@src/background/services/history";
 import NotificationService from "@src/background/services/notification";
 import SimpleStorage from "@src/background/services/storage";
+import WalletService from "@src/background/services/wallet";
 import { Paths } from "@src/constants";
 import { OperationType, IRenameVerifiableCredentialArgs, ICryptkeeperVerifiableCredential } from "@src/types";
-import { IAddVerifiableCredentialArgs } from "@src/types/verifiableCredentials";
 
+import type { IVerifiablePresentation, IVerifiablePresentationRequest } from "@cryptkeeperzk/types";
 import type { BackupData, IBackupable } from "@src/background/services/backup";
+import type {
+  IAddVerifiableCredentialArgs,
+  IGenerateVerifiablePresentationWithCryptkeeperArgs,
+} from "@src/types/verifiableCredentials";
 
 import {
   generateInitialMetadataForVerifiableCredential,
@@ -18,9 +23,12 @@ import {
   deserializeVerifiableCredential,
   deserializeCryptkeeperVerifiableCredential,
   validateSerializedVerifiableCredential,
+  serializeVerifiablePresentation,
 } from "./utils";
 
 const VERIFIABLE_CREDENTIALS_KEY = "@@VERIFIABLE-CREDENTIALS@@";
+const ETHEREUM_SIGNATURE_SPECIFICATION_TYPE = "EthereumEip712Signature2021";
+const VERIFIABLE_CREDENTIAL_PROOF_PURPOSE = "assertionMethod";
 
 export default class VerifiableCredentialsService implements IBackupable {
   private static INSTANCE?: VerifiableCredentialsService;
@@ -28,6 +36,8 @@ export default class VerifiableCredentialsService implements IBackupable {
   private verifiableCredentialsStore: SimpleStorage;
 
   private cryptoService: CryptoService;
+
+  private walletService: WalletService;
 
   private historyService: HistoryService;
 
@@ -38,6 +48,7 @@ export default class VerifiableCredentialsService implements IBackupable {
   private constructor() {
     this.verifiableCredentialsStore = new SimpleStorage(VERIFIABLE_CREDENTIALS_KEY);
     this.cryptoService = CryptoService.getInstance();
+    this.walletService = WalletService.getInstance();
     this.historyService = HistoryService.getInstance();
     this.notificationService = NotificationService.getInstance();
     this.browserController = BrowserUtils.getInstance();
@@ -198,6 +209,105 @@ export default class VerifiableCredentialsService implements IBackupable {
         type: "basic",
       },
     });
+  };
+
+  generateVerifiablePresentationRequest = async ({ request }: IVerifiablePresentationRequest): Promise<void> => {
+    await this.browserController.openPopup({
+      params: {
+        redirect: Paths.GENERATE_VERIFIABLE_PRESENTATION_REQUEST,
+        request,
+      },
+    });
+  };
+
+  generateVerifiablePresentation = async (verifiablePresentation: IVerifiablePresentation): Promise<void> => {
+    await this.historyService.trackOperation(OperationType.GENERATE_VERIFIABLE_PRESENTATION, {});
+    await this.notificationService.create({
+      options: {
+        title: "Verifiable Presentation generated.",
+        message: `Generated 1 Verifiable Presentation.`,
+        iconUrl: browser.runtime.getURL("/icons/logo.png"),
+        type: "basic",
+      },
+    });
+    const tabs = await browser.tabs.query({ active: true });
+    await Promise.all(
+      tabs.map((tab) =>
+        browser.tabs
+          .sendMessage(tab.id!, {
+            type: EventName.GENERATE_VERIFIABLE_PRESENTATION,
+            payload: { verifiablePresentation },
+          })
+          .catch(() => undefined),
+      ),
+    );
+  };
+
+  generateVerifiablePresentationWithCryptkeeper = async ({
+    verifiablePresentation,
+    address,
+  }: IGenerateVerifiablePresentationWithCryptkeeperArgs): Promise<void> => {
+    const serializedVerifiablePresentation = serializeVerifiablePresentation(verifiablePresentation);
+    const signature = await this.walletService.signMessage({
+      message: serializedVerifiablePresentation,
+      address,
+    });
+    const signedVerifiablePresentation = {
+      ...verifiablePresentation,
+      proof: [
+        {
+          type: [ETHEREUM_SIGNATURE_SPECIFICATION_TYPE],
+          proofPurpose: VERIFIABLE_CREDENTIAL_PROOF_PURPOSE,
+          verificationMethod: address,
+          created: new Date(),
+          proofValue: signature,
+        },
+      ],
+    };
+
+    await this.historyService.trackOperation(OperationType.GENERATE_VERIFIABLE_PRESENTATION, {});
+    await this.notificationService.create({
+      options: {
+        title: "Verifiable Presentation generated.",
+        message: `Generated 1 Verifiable Presentation.`,
+        iconUrl: browser.runtime.getURL("/icons/logo.png"),
+        type: "basic",
+      },
+    });
+    const tabs = await browser.tabs.query({ active: true });
+    await Promise.all(
+      tabs.map((tab) =>
+        browser.tabs
+          .sendMessage(tab.id!, {
+            type: EventName.GENERATE_VERIFIABLE_PRESENTATION,
+            payload: { verifiablePresentation: signedVerifiablePresentation },
+          })
+          .catch(() => undefined),
+      ),
+    );
+  };
+
+  rejectVerifiablePresentationRequest = async (): Promise<void> => {
+    await this.historyService.trackOperation(OperationType.REJECT_VERIFIABLE_PRESENTATION_REQUEST, {});
+    await this.notificationService.create({
+      options: {
+        title: "Request to generate Verifiable Presentation rejected",
+        message: `Rejected a request to generate 1 Verifiable Presentation.`,
+        iconUrl: browser.runtime.getURL("/icons/logo.png"),
+        type: "basic",
+      },
+    });
+    const tabs = await browser.tabs.query({ active: true });
+    await Promise.all(
+      tabs.map((tab) =>
+        browser.tabs
+          .sendMessage(tab.id!, {
+            type: EventName.USER_REJECT,
+            payload: { type: EventName.VERIFIABLE_PRESENTATION_REQUEST },
+          })
+          .catch(() => undefined),
+      ),
+    );
   };
 
   private insertCryptkeeperVerifiableCredentialIntoStore = async (

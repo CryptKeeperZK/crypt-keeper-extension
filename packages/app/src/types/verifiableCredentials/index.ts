@@ -1,4 +1,4 @@
-import { IVerifiableCredential } from "@cryptkeeperzk/types";
+import type { IVerifiableCredential, IVerifiablePresentation } from "@cryptkeeperzk/types";
 
 export interface IVerifiableCredentialMetadata {
   name: string;
@@ -18,4 +18,9 @@ export interface IAddVerifiableCredentialArgs {
 export interface IRenameVerifiableCredentialArgs {
   verifiableCredentialHash: string;
   newVerifiableCredentialName: string;
+}
+
+export interface IGenerateVerifiablePresentationWithCryptkeeperArgs {
+  verifiablePresentation: IVerifiablePresentation;
+  address: string;
 }

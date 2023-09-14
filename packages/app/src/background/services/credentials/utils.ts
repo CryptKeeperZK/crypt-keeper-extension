@@ -5,6 +5,7 @@ import {
   ICredentialSubject,
   ICredentialStatus,
   ClaimValue,
+  IVerifiablePresentation,
 } from "@cryptkeeperzk/types";
 import { SHA256 } from "crypto-js";
 import stringify from "json-stable-stringify";
@@ -175,6 +176,26 @@ export async function deserializeVerifiableCredential(
 }
 
 /**
+ * Serializes a VerifiablePresentation object into a JSON string.
+ * @param verifiablePresentation An object representing a VerifiablePresentation.
+ * @returns A string representing a VerifiablePresentation.
+ */
+export function serializeVerifiablePresentation(verifiablePresentation: IVerifiablePresentation): string {
+  if (!verifiablePresentation.verifiableCredential) {
+    return stringify(verifiablePresentation);
+  }
+
+  const serializedVerifiableCredentials = verifiablePresentation.verifiableCredential.map((verifiableCredential) =>
+    serializeVerifiableCredential(verifiableCredential),
+  );
+
+  return stringify({
+    ...verifiablePresentation,
+    verifiableCredential: serializedVerifiableCredentials,
+  });
+}
+
+/**
  * Determines if a string represents a valid VerifiableCredential.
  * @param serializedVerifiableCredential An string representing a VerifiableCredential.
  * @returns The string if it is a valid VerifiableCredential, otherwise throws an error.
@@ -206,6 +227,16 @@ export function generateInitialMetadataForVerifiableCredential(
   return {
     name: initialVerifiableCredentialName,
     hash: hashVerifiableCredential(verifiableCredential),
+  };
+}
+
+export function generateVerifiablePresentationFromVerifiableCredentials(
+  verifiableCredentials: IVerifiableCredential[],
+): IVerifiablePresentation {
+  return {
+    context: ["https://www.w3.org/2018/credentials/v1"],
+    type: ["VerifiablePresentation"],
+    verifiableCredential: verifiableCredentials,
   };
 }
 

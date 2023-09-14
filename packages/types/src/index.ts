@@ -49,12 +49,13 @@ export type { IRequestHandler, IPendingRequest, IRejectedRequest } from "./reque
 export { RequestResolutionStatus, PendingRequestType } from "./request";
 export type {
   IVerifiableCredential,
-  IVerifiablePresentation,
   ICredentialIssuer,
   ICredentialSubject,
   ICredentialStatus,
   ICredentialProof,
   ClaimValue,
+  IVerifiablePresentation,
+  IVerifiablePresentationRequest,
 } from "./verifiableCredentials";
 export type {
   IJoinGroupMemberArgs,
