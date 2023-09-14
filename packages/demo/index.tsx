@@ -52,11 +52,11 @@ const App = () => {
     connectIdentity,
     genSemaphoreProof,
     genRLNProof,
-    addVerifiableCredentialRequest,
-    generateVerifiablePresentationRequest,
     revealConnectedIdentityCommitment,
     joinGroup,
     generareGroupMerkleProof,
+    newVerifiableCredentialRequest,
+    newVerifiablePresentationRequest,
   } = useCryptKeeper();
 
   useEffect(() => {
@@ -226,7 +226,7 @@ const App = () => {
           <button
             data-testid="add-verifiable-credential"
             type="button"
-            onClick={() => addVerifiableCredentialRequest("UniversityDegreeCredential")}
+            onClick={() => newVerifiableCredentialRequest("UniversityDegreeCredential")}
           >
             Add a University Degree Verifiable Credential
           </button>
@@ -238,7 +238,7 @@ const App = () => {
           <button
             data-testid="add-verifiable-credential"
             type="button"
-            onClick={() => addVerifiableCredentialRequest("DriversLicenseCredential")}
+            onClick={() => newVerifiableCredentialRequest("DriversLicenseCredential")}
           >
             Add a Drivers License Verifiable Credential
           </button>
@@ -247,7 +247,7 @@ const App = () => {
 
           <br />
 
-          <button data-testid="add-verifiable-credential" type="button" onClick={generateVerifiablePresentationRequest}>
+          <button data-testid="add-verifiable-credential" type="button" onClick={newVerifiablePresentationRequest}>
             Generate a Verifiable Presentation
           </button>
         </div>

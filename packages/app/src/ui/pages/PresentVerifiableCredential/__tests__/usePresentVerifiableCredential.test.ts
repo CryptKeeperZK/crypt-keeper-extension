@@ -8,8 +8,8 @@ import { defaultWalletHookData } from "@src/config/mock/wallet";
 import { closePopup } from "@src/ui/ducks/app";
 import { useAppDispatch } from "@src/ui/ducks/hooks";
 import {
-  generateVerifiablePresentation,
-  generateVerifiablePresentationWithCryptkeeper,
+  submitVerifiablePresentation,
+  signAndSubmitVerifiablePresentation,
   rejectVerifiablePresentationRequest,
 } from "@src/ui/ducks/verifiableCredentials";
 import { useCryptkeeperVerifiableCredentials } from "@src/ui/hooks/verifiableCredentials";
@@ -81,8 +81,8 @@ jest.mock("@src/ui/ducks/verifiableCredentials", (): unknown => ({
   deleteVerifiableCredential: jest.fn(),
   fetchVerifiableCredentials: jest.fn(),
   useVerifiableCredentials: jest.fn(),
-  generateVerifiablePresentation: jest.fn(),
-  generateVerifiablePresentationWithCryptkeeper: jest.fn(),
+  submitVerifiablePresentation: jest.fn(),
+  signAndSubmitVerifiablePresentation: jest.fn(),
   rejectVerifiablePresentationRequest: jest.fn(),
 }));
 
@@ -279,7 +279,7 @@ describe("ui/pages/PresentVerifiableCredential/usePresentVerifiableCredential", 
       act(() => result.current.onMenuItemClick(MenuItems.WITHOUT_SIGNATURE));
       await act(() => result.current.onSubmitVerifiablePresentation());
 
-      expect(generateVerifiablePresentation).toBeCalledTimes(1);
+      expect(submitVerifiablePresentation).toBeCalledTimes(1);
       expect(closePopup).toBeCalledTimes(1);
       expect(mockDispatch).toBeCalledTimes(3);
     });
@@ -294,7 +294,7 @@ describe("ui/pages/PresentVerifiableCredential/usePresentVerifiableCredential", 
       act(() => result.current.onMenuItemClick(MenuItems.WITHOUT_SIGNATURE));
       await act(() => result.current.onSubmitVerifiablePresentation());
 
-      expect(generateVerifiablePresentation).toBeCalledTimes(0);
+      expect(submitVerifiablePresentation).toBeCalledTimes(0);
       expect(result.current.error).toBe("Please select at least one credential.");
     });
 
@@ -311,7 +311,7 @@ describe("ui/pages/PresentVerifiableCredential/usePresentVerifiableCredential", 
       act(() => result.current.onMenuItemClick(MenuItems.CRYPTKEEPER));
       await act(() => result.current.onSubmitVerifiablePresentation());
 
-      expect(generateVerifiablePresentationWithCryptkeeper).toBeCalledTimes(1);
+      expect(signAndSubmitVerifiablePresentation).toBeCalledTimes(1);
       expect(closePopup).toBeCalledTimes(1);
       expect(mockDispatch).toBeCalledTimes(3);
     });
@@ -326,7 +326,7 @@ describe("ui/pages/PresentVerifiableCredential/usePresentVerifiableCredential", 
       act(() => result.current.onMenuItemClick(MenuItems.CRYPTKEEPER));
       await act(() => result.current.onSubmitVerifiablePresentation());
 
-      expect(generateVerifiablePresentationWithCryptkeeper).toBeCalledTimes(0);
+      expect(signAndSubmitVerifiablePresentation).toBeCalledTimes(0);
       expect(result.current.error).toBe("Please select at least one credential.");
     });
 
@@ -342,7 +342,7 @@ describe("ui/pages/PresentVerifiableCredential/usePresentVerifiableCredential", 
       act(() => result.current.onToggleSelection(hash));
       await act(() => result.current.onSubmitVerifiablePresentation());
 
-      expect(generateVerifiablePresentation).toBeCalledTimes(1);
+      expect(submitVerifiablePresentation).toBeCalledTimes(1);
       expect(closePopup).toBeCalledTimes(1);
       expect(mockDispatch).toBeCalledTimes(3);
     });
@@ -356,7 +356,7 @@ describe("ui/pages/PresentVerifiableCredential/usePresentVerifiableCredential", 
 
       await act(() => result.current.onSubmitVerifiablePresentation());
 
-      expect(generateVerifiablePresentationWithCryptkeeper).toBeCalledTimes(0);
+      expect(signAndSubmitVerifiablePresentation).toBeCalledTimes(0);
       expect(result.current.error).toBe("Please select at least one credential.");
     });
 
@@ -370,8 +370,8 @@ describe("ui/pages/PresentVerifiableCredential/usePresentVerifiableCredential", 
       act(() => result.current.onMenuItemClick(3));
       await act(() => result.current.onSubmitVerifiablePresentation());
 
-      expect(generateVerifiablePresentation).toBeCalledTimes(0);
-      expect(generateVerifiablePresentationWithCryptkeeper).toBeCalledTimes(0);
+      expect(submitVerifiablePresentation).toBeCalledTimes(0);
+      expect(signAndSubmitVerifiablePresentation).toBeCalledTimes(0);
       expect(result.current.error).toBe("Invalid menu index.");
     });
   });

@@ -101,11 +101,11 @@ interface IUseCryptKeeperData {
   getConnectedIdentity: () => void;
   genSemaphoreProof: (proofType: MerkleProofType) => void;
   genRLNProof: (proofType: MerkleProofType) => void;
-  addVerifiableCredentialRequest: (credentialType: string) => Promise<void>;
-  generateVerifiablePresentationRequest: () => Promise<void>;
   joinGroup: () => Promise<void>;
   generareGroupMerkleProof: () => Promise<void>;
   revealConnectedIdentityCommitment: () => Promise<void>;
+  newVerifiableCredentialRequest: (credentialType: string) => Promise<void>;
+  newVerifiablePresentationRequest: () => Promise<void>;
 }
 
 export const useCryptKeeper = (): IUseCryptKeeperData => {

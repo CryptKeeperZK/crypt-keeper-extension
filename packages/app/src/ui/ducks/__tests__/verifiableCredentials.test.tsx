@@ -17,8 +17,8 @@ import {
   deleteVerifiableCredential,
   useVerifiableCredentials,
   fetchVerifiableCredentials,
-  generateVerifiablePresentation,
-  generateVerifiablePresentationWithCryptkeeper,
+  submitVerifiablePresentation,
+  signAndSubmitVerifiablePresentation,
   rejectVerifiablePresentationRequest,
 } from "../verifiableCredentials";
 
@@ -148,8 +148,8 @@ describe("ui/ducks/verifiableCredentials", () => {
     });
   });
 
-  test("should generate verfifiable presentation properly", async () => {
-    await Promise.resolve(store.dispatch(generateVerifiablePresentation(mockVerifiablePresentation)));
+  test("should submit verfifiable presentation properly", async () => {
+    await Promise.resolve(store.dispatch(submitVerifiablePresentation(mockVerifiablePresentation)));
 
     expect(postMessage).toBeCalledTimes(1);
     expect(postMessage).toBeCalledWith({
@@ -162,7 +162,7 @@ describe("ui/ducks/verifiableCredentials", () => {
     const mockAddress = "0x123";
     await Promise.resolve(
       store.dispatch(
-        generateVerifiablePresentationWithCryptkeeper({
+        signAndSubmitVerifiablePresentation({
           verifiablePresentation: mockVerifiablePresentation,
           address: mockAddress,
         }),

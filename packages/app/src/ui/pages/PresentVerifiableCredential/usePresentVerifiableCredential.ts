@@ -7,8 +7,8 @@ import { useAppDispatch } from "@src/ui/ducks/hooks";
 import {
   fetchVerifiableCredentials,
   rejectVerifiablePresentationRequest,
-  generateVerifiablePresentation,
-  generateVerifiablePresentationWithCryptkeeper,
+  submitVerifiablePresentation,
+  signAndSubmitVerifiablePresentation,
 } from "@src/ui/ducks/verifiableCredentials";
 import { useCryptkeeperVerifiableCredentials } from "@src/ui/hooks/verifiableCredentials";
 import { useCryptKeeperWallet, useEthWallet } from "@src/ui/hooks/wallet";
@@ -157,7 +157,7 @@ export const usePresentVerifiableCredential = (): IUsePresentVerifiableCredentia
         ],
       };
 
-      await dispatch(generateVerifiablePresentation(signedVerifiablePresentation));
+      await dispatch(submitVerifiablePresentation(signedVerifiablePresentation));
       onCloseModal();
     } catch (e) {
       setError("Failed to sign Verifiable Presentation.");
@@ -167,7 +167,7 @@ export const usePresentVerifiableCredential = (): IUsePresentVerifiableCredentia
     setError,
     dispatch,
     onCloseModal,
-    generateVerifiablePresentation,
+    submitVerifiablePresentation,
     createVerifiablePresentationFromSelectedCredentials,
   ]);
 
@@ -185,14 +185,14 @@ export const usePresentVerifiableCredential = (): IUsePresentVerifiableCredentia
       return;
     }
 
-    await dispatch(generateVerifiablePresentationWithCryptkeeper({ verifiablePresentation, address }));
+    await dispatch(signAndSubmitVerifiablePresentation({ verifiablePresentation, address }));
     onCloseModal();
   }, [
     cryptKeeperWallet,
     setError,
     dispatch,
     onCloseModal,
-    generateVerifiablePresentationWithCryptkeeper,
+    signAndSubmitVerifiablePresentation,
     createVerifiablePresentationFromSelectedCredentials,
   ]);
 
@@ -203,13 +203,13 @@ export const usePresentVerifiableCredential = (): IUsePresentVerifiableCredentia
       return;
     }
 
-    await dispatch(generateVerifiablePresentation(verifiablePresentation));
+    await dispatch(submitVerifiablePresentation(verifiablePresentation));
     onCloseModal();
   }, [
     setError,
     dispatch,
     onCloseModal,
-    generateVerifiablePresentation,
+    submitVerifiablePresentation,
     createVerifiablePresentationFromSelectedCredentials,
   ]);
 

@@ -47,22 +47,21 @@ export const rejectVerifiableCredentialRequest = () => async (): Promise<void> =
   });
 };
 
-export const renameVerifiableCredential =
-  (renameVerifiableCredentialArgs: IRenameVCArgs) => async (): Promise<void> => {
-    await postMessage({
-      method: RPCAction.RENAME_VERIFIABLE_CREDENTIAL,
-      payload: renameVerifiableCredentialArgs,
-    });
-  };
-
-export const deleteVerifiableCredential = (verifiableCredentialHash: string) => async (): Promise<void> => {
+export const renameVerifiableCredential = (renameVCArgs: IRenameVCArgs) => async (): Promise<void> => {
   await postMessage({
-    method: RPCAction.DELETE_VERIFIABLE_CREDENTIAL,
-    payload: verifiableCredentialHash,
+    method: RPCAction.RENAME_VERIFIABLE_CREDENTIAL,
+    payload: renameVCArgs,
   });
 };
 
-export const generateVerifiablePresentation =
+export const deleteVerifiableCredential = (vcHash: string) => async (): Promise<void> => {
+  await postMessage({
+    method: RPCAction.DELETE_VERIFIABLE_CREDENTIAL,
+    payload: vcHash,
+  });
+};
+
+export const submitVerifiablePresentation =
   (verifiablePresentation: IVerifiablePresentation) => async (): Promise<void> => {
     await postMessage({
       method: RPCAction.ANNOUNCE_VERIFIABLE_PRESENTATION,
@@ -70,13 +69,12 @@ export const generateVerifiablePresentation =
     });
   };
 
-export const generateVerifiablePresentationWithCryptkeeper =
-  (generateVerifiablePresentationArgs: ISignVPArgs) => async (): Promise<void> => {
-    await postMessage({
-      method: RPCAction.SIGN_AND_ANNOUNCE_VERIFIABLE_PRESENTATION,
-      payload: generateVerifiablePresentationArgs,
-    });
-  };
+export const signAndSubmitVerifiablePresentation = (signVPArgs: ISignVPArgs) => async (): Promise<void> => {
+  await postMessage({
+    method: RPCAction.SIGN_AND_ANNOUNCE_VERIFIABLE_PRESENTATION,
+    payload: signVPArgs,
+  });
+};
 
 export const rejectVerifiablePresentationRequest = () => async (): Promise<void> => {
   await postMessage({
