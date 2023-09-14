@@ -20,9 +20,9 @@ import type {
 
 const SERVER_URL = process.env.MERKLE_MOCK_SERVER;
 
-const TEST_GROUP_ID = process.env.TEST_GROUP_ID!;
-const TEST_GROUP_API_KEY = process.env.TEST_GROUP_API_KEY;
-const TEST_GROUP_INVITE_CODE = process.env.TEST_GROUP_INVITE_CODE;
+const GROUP_ID = process.env.TEST_GROUP_ID!;
+const GROUP_API_KEY = process.env.TEST_GROUP_API_KEY;
+const GROUP_INVITE_CODE = process.env.TEST_GROUP_INVITE_CODE;
 
 const merkleStorageAddress = `${SERVER_URL}/merkleProof`;
 
@@ -237,15 +237,15 @@ export const useCryptKeeper = (): IUseCryptKeeperData => {
 
   const joinGroup = useCallback(async () => {
     await client?.joinGroup({
-      groupId: TEST_GROUP_ID,
-      apiKey: TEST_GROUP_API_KEY,
-      inviteCode: TEST_GROUP_INVITE_CODE,
+      groupId: GROUP_ID,
+      apiKey: GROUP_API_KEY,
+      inviteCode: GROUP_INVITE_CODE,
     });
   }, [client]);
 
   const generareGroupMerkleProof = useCallback(async () => {
     await client?.generateGroupMerkleProof({
-      groupId: TEST_GROUP_ID,
+      groupId: GROUP_ID,
     });
   }, [client]);
 
