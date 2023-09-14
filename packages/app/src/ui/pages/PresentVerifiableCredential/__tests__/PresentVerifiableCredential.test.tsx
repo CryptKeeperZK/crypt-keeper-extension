@@ -4,7 +4,7 @@
 
 import { fireEvent, render, waitFor } from "@testing-library/react";
 
-import PresentVerifiableCredential from "../PresentVerifiableCredential";
+import PresentVerifiableCredential from "..";
 import { IUsePresentVerifiableCredentialData, usePresentVerifiableCredential } from "../usePresentVerifiableCredential";
 
 jest.mock("../usePresentVerifiableCredential", (): unknown => ({

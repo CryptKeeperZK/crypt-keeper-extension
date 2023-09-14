@@ -22,6 +22,12 @@ import type { ICryptkeeperVerifiableCredential } from "@src/types";
 const ETHEREUM_SIGNATURE_SPECIFICATION_TYPE = "EthereumEip712Signature2021";
 const VERIFIABLE_CREDENTIAL_PROOF_PURPOSE = "assertionMethod";
 
+export enum MenuItems {
+  METAMASK = 0,
+  CRYPTKEEPER = 1,
+  WITHOUT_SIGNATURE = 2,
+}
+
 export interface IUsePresentVerifiableCredentialData {
   isWalletConnected: boolean;
   isWalletInstalled: boolean;
@@ -210,19 +216,19 @@ export const usePresentVerifiableCredential = (): IUsePresentVerifiableCredentia
     createVerifiablePresentationFromSelectedCredentials,
   ]);
 
-  // eslint-disable-next-line consistent-return
   const onSubmitVerifiablePresentation = useCallback(async () => {
     switch (true) {
-      case menuSelectedIndex === 0 && !isWalletConnected:
+      case menuSelectedIndex === (MenuItems.METAMASK as number) && !isWalletConnected:
         return onConnectWallet();
-      case menuSelectedIndex === 0 && isWalletConnected:
+      case menuSelectedIndex === (MenuItems.METAMASK as number) && isWalletConnected:
         return onSubmitVerifiablePresentationWithMetamask();
-      case menuSelectedIndex === 1:
+      case menuSelectedIndex === (MenuItems.CRYPTKEEPER as number):
         return onSubmitVerifiablePresentationWithCryptkeeper();
-      case menuSelectedIndex === 2:
+      case menuSelectedIndex === (MenuItems.WITHOUT_SIGNATURE as number):
         return onSubmitVerifiablePresentationWithoutSignature();
       default:
         setError("Invalid menu index.");
+        return undefined;
     }
   }, [
     menuSelectedIndex,

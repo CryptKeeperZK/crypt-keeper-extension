@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/unbound-method */
 import { EventName } from "@cryptkeeperzk/providers";
-import { RejectRequests } from "@cryptkeeperzk/providers/dist/src/event";
 import browser from "webextension-polyfill";
 
 import VerifiableCredentialsService from "@src/background/services/credentials";
@@ -169,7 +168,7 @@ describe("background/services/credentials", () => {
       expect(browser.tabs.query).toBeCalledWith({ lastFocusedWindow: true });
       expect(browser.tabs.sendMessage).toBeCalledWith(defaultTabs[0].id, {
         type: EventName.USER_REJECT,
-        payload: { type: RejectRequests.ADD_VERIFIABLE_CREDENTIAL },
+        payload: { type: EventName.ADD_VERIFIABLE_CREDENTIAL },
       });
     });
   });
@@ -197,7 +196,7 @@ describe("background/services/credentials", () => {
       expect(browser.tabs.query).toBeCalledWith({ lastFocusedWindow: true });
       expect(browser.tabs.sendMessage).toBeCalledWith(defaultTabs[0].id, {
         type: EventName.USER_REJECT,
-        payload: { type: RejectRequests.VERIFIABLE_PRESENTATION_REQUEST },
+        payload: { type: EventName.VERIFIABLE_PRESENTATION_REQUEST },
       });
     });
 

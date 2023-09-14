@@ -17,7 +17,7 @@ import { useCryptKeeperWallet, useEthWallet } from "@src/ui/hooks/wallet";
 
 import type { BrowserProvider } from "ethers";
 
-import { usePresentVerifiableCredential } from "../usePresentVerifiableCredential";
+import { MenuItems, usePresentVerifiableCredential } from "../usePresentVerifiableCredential";
 
 const mockCryptkeeperVerifiableCredentials = [
   {
@@ -101,12 +101,6 @@ describe("ui/pages/PresentVerifiableCredential/usePresentVerifiableCredential", 
       signMessage: jest.fn(),
     }),
   } as unknown as BrowserProvider;
-
-  const menuIndexMap = {
-    Metamask: 0,
-    Cryptkeeper: 1,
-    NoSignature: 2,
-  };
 
   const oldHref = window.location.href;
 
@@ -210,7 +204,7 @@ describe("ui/pages/PresentVerifiableCredential/usePresentVerifiableCredential", 
         expect(result.current.verifiablePresentationRequest).toStrictEqual(exampleRequest);
       });
 
-      act(() => result.current.onMenuItemClick(menuIndexMap.NoSignature));
+      act(() => result.current.onMenuItemClick(MenuItems.WITHOUT_SIGNATURE));
       await act(() => result.current.onSubmitVerifiablePresentation());
 
       act(() => result.current.onToggleSelection(hash));
@@ -241,15 +235,15 @@ describe("ui/pages/PresentVerifiableCredential/usePresentVerifiableCredential", 
 
       expect(result.current.menuSelectedIndex).toBe(0);
 
-      act(() => result.current.onMenuItemClick(menuIndexMap.Cryptkeeper));
+      act(() => result.current.onMenuItemClick(MenuItems.CRYPTKEEPER));
 
       expect(result.current.menuSelectedIndex).toBe(1);
 
-      act(() => result.current.onMenuItemClick(menuIndexMap.NoSignature));
+      act(() => result.current.onMenuItemClick(MenuItems.WITHOUT_SIGNATURE));
 
       expect(result.current.menuSelectedIndex).toBe(2);
 
-      act(() => result.current.onMenuItemClick(menuIndexMap.Metamask));
+      act(() => result.current.onMenuItemClick(MenuItems.METAMASK));
 
       expect(result.current.menuSelectedIndex).toBe(0);
     });
@@ -282,7 +276,7 @@ describe("ui/pages/PresentVerifiableCredential/usePresentVerifiableCredential", 
       });
 
       act(() => result.current.onToggleSelection(hash));
-      act(() => result.current.onMenuItemClick(menuIndexMap.NoSignature));
+      act(() => result.current.onMenuItemClick(MenuItems.WITHOUT_SIGNATURE));
       await act(() => result.current.onSubmitVerifiablePresentation());
 
       expect(generateVerifiablePresentation).toBeCalledTimes(1);
@@ -297,7 +291,7 @@ describe("ui/pages/PresentVerifiableCredential/usePresentVerifiableCredential", 
         expect(result.current.verifiablePresentationRequest).toStrictEqual(exampleRequest);
       });
 
-      act(() => result.current.onMenuItemClick(menuIndexMap.NoSignature));
+      act(() => result.current.onMenuItemClick(MenuItems.WITHOUT_SIGNATURE));
       await act(() => result.current.onSubmitVerifiablePresentation());
 
       expect(generateVerifiablePresentation).toBeCalledTimes(0);
@@ -314,7 +308,7 @@ describe("ui/pages/PresentVerifiableCredential/usePresentVerifiableCredential", 
       });
 
       act(() => result.current.onToggleSelection(hash));
-      act(() => result.current.onMenuItemClick(menuIndexMap.Cryptkeeper));
+      act(() => result.current.onMenuItemClick(MenuItems.CRYPTKEEPER));
       await act(() => result.current.onSubmitVerifiablePresentation());
 
       expect(generateVerifiablePresentationWithCryptkeeper).toBeCalledTimes(1);
@@ -329,7 +323,7 @@ describe("ui/pages/PresentVerifiableCredential/usePresentVerifiableCredential", 
         expect(result.current.verifiablePresentationRequest).toStrictEqual(exampleRequest);
       });
 
-      act(() => result.current.onMenuItemClick(menuIndexMap.Cryptkeeper));
+      act(() => result.current.onMenuItemClick(MenuItems.CRYPTKEEPER));
       await act(() => result.current.onSubmitVerifiablePresentation());
 
       expect(generateVerifiablePresentationWithCryptkeeper).toBeCalledTimes(0);
@@ -545,7 +539,7 @@ describe("ui/pages/PresentVerifiableCredential/usePresentVerifiableCredential", 
       });
 
       act(() => result.current.onToggleSelection(hash));
-      act(() => result.current.onMenuItemClick(menuIndexMap.Cryptkeeper));
+      act(() => result.current.onMenuItemClick(MenuItems.CRYPTKEEPER));
       await act(() => result.current.onSubmitVerifiablePresentation());
 
       expect(result.current.error).toStrictEqual("Could not connect to Cryptkeeper account.");
