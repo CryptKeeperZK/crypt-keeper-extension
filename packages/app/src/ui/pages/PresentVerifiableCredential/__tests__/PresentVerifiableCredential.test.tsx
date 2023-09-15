@@ -59,9 +59,9 @@ describe("ui/pages/PresentVerifiableCredential", () => {
   const defaultHookData: IUsePresentVerifiableCredentialData = {
     isWalletConnected: true,
     isWalletInstalled: true,
-    verifiablePresentationRequest: "example presentation request",
-    cryptkeeperVerifiableCredentials: mockCryptkeeperVerifiableCredentials,
-    selectedVerifiableCredentialHashes: ["0x123"],
+    vpRequest: "example presentation request",
+    cryptkeeperVCs: mockCryptkeeperVerifiableCredentials,
+    selectedVCHashes: ["0x123"],
     error: undefined,
     isMenuOpen: false,
     menuSelectedIndex: 0,
@@ -71,7 +71,7 @@ describe("ui/pages/PresentVerifiableCredential", () => {
     onToggleSelection: jest.fn(),
     onToggleMenu: jest.fn(),
     onMenuItemClick: jest.fn(),
-    onSubmitVerifiablePresentation: jest.fn(),
+    onSubmitVP: jest.fn(),
   };
 
   beforeEach(() => {
@@ -87,8 +87,8 @@ describe("ui/pages/PresentVerifiableCredential", () => {
 
     await waitFor(() => container.firstChild !== null);
 
-    const credentialOne = await findByText(defaultHookData.cryptkeeperVerifiableCredentials[0].metadata.name);
-    const credentialTwo = await findByText(defaultHookData.cryptkeeperVerifiableCredentials[1].metadata.name);
+    const credentialOne = await findByText(defaultHookData.cryptkeeperVCs[0].metadata.name);
+    const credentialTwo = await findByText(defaultHookData.cryptkeeperVCs[1].metadata.name);
 
     expect(credentialOne).toBeInTheDocument();
     expect(credentialTwo).toBeInTheDocument();
@@ -161,7 +161,7 @@ describe("ui/pages/PresentVerifiableCredential", () => {
     const button = await findByTestId("sign-verifiable-presentation-button");
     fireEvent.click(button);
 
-    expect(defaultHookData.onSubmitVerifiablePresentation).toBeCalledTimes(1);
+    expect(defaultHookData.onSubmitVP).toBeCalledTimes(1);
   });
 
   test("should select menu items", async () => {

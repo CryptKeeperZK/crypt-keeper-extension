@@ -33,10 +33,16 @@ export const useVerifiableCredentialDisplay = (
 
   const [isRenaming, setIsRenaming] = useState(false);
 
+  /**
+   * Toggles the renaming state.
+   */
   const onToggleRenaming = useCallback(() => {
     setIsRenaming((value) => !value);
   }, [setIsRenaming]);
 
+  /**
+   * Triggers renaming of the Verifiable Credential.
+   */
   const onSubmit = useCallback(
     (event: ReactFormEvent<HTMLFormElement>) => {
       event.preventDefault();

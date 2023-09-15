@@ -23,7 +23,7 @@ jest.mock("@src/ui/ducks/verifiableCredentials", (): unknown => ({
 
 describe("ui/components/VerifiableCredential/Display", () => {
   const defaultProps: VerifiableCredentialDisplayProps = {
-    cryptkeeperVerifiableCredential: {
+    cryptkeeperVC: {
       verifiableCredential: {
         context: ["https://www.w3.org/2018/credentials/v1"],
         id: "http://example.edu/credentials/3732",
@@ -43,7 +43,7 @@ describe("ui/components/VerifiableCredential/Display", () => {
         name: "Credential #0",
       },
     },
-    onRenameVerifiableCredential: jest.fn(),
+    onRenameVC: jest.fn(),
   };
 
   beforeEach(() => {
@@ -57,13 +57,11 @@ describe("ui/components/VerifiableCredential/Display", () => {
   test("should render properly", async () => {
     render(<VerifiableCredentialDisplay {...defaultProps} />);
 
-    const name = await screen.findByText(defaultProps.cryptkeeperVerifiableCredential.metadata.name);
-    const type = await screen.findByText(defaultProps.cryptkeeperVerifiableCredential.verifiableCredential.type[0]);
-    const issuer = await screen.findByText(
-      defaultProps.cryptkeeperVerifiableCredential.verifiableCredential.issuer as string,
-    );
+    const name = await screen.findByText(defaultProps.cryptkeeperVC.metadata.name);
+    const type = await screen.findByText(defaultProps.cryptkeeperVC.verifiableCredential.type[0]);
+    const issuer = await screen.findByText(defaultProps.cryptkeeperVC.verifiableCredential.issuer as string);
     const issuanceDate = await screen.findByText(
-      defaultProps.cryptkeeperVerifiableCredential.verifiableCredential.issuanceDate.toString(),
+      defaultProps.cryptkeeperVC.verifiableCredential.issuanceDate.toString(),
     );
 
     expect(name).toBeInTheDocument();
@@ -73,7 +71,7 @@ describe("ui/components/VerifiableCredential/Display", () => {
   });
 
   test("should rename identity properly", async () => {
-    (defaultProps.onRenameVerifiableCredential as jest.Mock).mockResolvedValue(true);
+    (defaultProps.onRenameVC as jest.Mock).mockResolvedValue(true);
 
     render(<VerifiableCredentialDisplay {...defaultProps} />);
 
@@ -89,7 +87,7 @@ describe("ui/components/VerifiableCredential/Display", () => {
     const submitRenameIcon = await screen.findByTestId("verifiable-credential-display-submit-rename");
     fireEvent.click(submitRenameIcon);
 
-    expect(defaultProps.onRenameVerifiableCredential).toBeCalledTimes(1);
-    expect(defaultProps.onRenameVerifiableCredential).toBeCalledWith("My Favorite Credential");
+    expect(defaultProps.onRenameVC).toBeCalledTimes(1);
+    expect(defaultProps.onRenameVC).toBeCalledWith("My Favorite Credential");
   });
 });

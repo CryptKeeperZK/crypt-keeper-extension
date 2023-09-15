@@ -9,7 +9,7 @@ import { closePopup } from "@src/ui/ducks/app";
 import { useAppDispatch } from "@src/ui/ducks/hooks";
 import { addVerifiableCredential, rejectVerifiableCredentialRequest } from "@src/ui/ducks/verifiableCredentials";
 
-import { defaultVerifiableCredentialName, useAddVerifiableCredential } from "../useAddVerifiableCredential";
+import { defaultVCName, useAddVerifiableCredential } from "../useAddVerifiableCredential";
 
 jest.mock("@src/ui/ducks/hooks", (): unknown => ({
   useAppDispatch: jest.fn(),
@@ -51,7 +51,7 @@ describe("ui/pages/AddVerifiableCredential/useAddVerifiableCredential", () => {
     verifiableCredential: mockVerifiableCredential,
     metadata: {
       hash: hashVC(mockVerifiableCredential),
-      name: defaultVerifiableCredentialName,
+      name: defaultVCName,
     },
   };
 
@@ -81,7 +81,7 @@ describe("ui/pages/AddVerifiableCredential/useAddVerifiableCredential", () => {
     const { result } = renderHook(() => useAddVerifiableCredential());
 
     await waitFor(() => {
-      expect(result.current.cryptkeeperVerifiableCredential).toStrictEqual(expectedCryptkeeperVerifiableCredential);
+      expect(result.current.cryptkeeperVC).toStrictEqual(expectedCryptkeeperVerifiableCredential);
       expect(result.current.error).toBe(undefined);
     });
   });
@@ -90,7 +90,7 @@ describe("ui/pages/AddVerifiableCredential/useAddVerifiableCredential", () => {
     const { result } = renderHook(() => useAddVerifiableCredential());
 
     await waitFor(() => {
-      expect(result.current.cryptkeeperVerifiableCredential).toStrictEqual(expectedCryptkeeperVerifiableCredential);
+      expect(result.current.cryptkeeperVC).toStrictEqual(expectedCryptkeeperVerifiableCredential);
     });
 
     act(() => {
@@ -107,24 +107,24 @@ describe("ui/pages/AddVerifiableCredential/useAddVerifiableCredential", () => {
     const { result } = renderHook(() => useAddVerifiableCredential());
 
     await waitFor(() => {
-      expect(result.current.cryptkeeperVerifiableCredential).toStrictEqual(expectedCryptkeeperVerifiableCredential);
+      expect(result.current.cryptkeeperVC).toStrictEqual(expectedCryptkeeperVerifiableCredential);
     });
 
     act(() => {
-      result.current.onRenameVerifiableCredential(newName);
+      result.current.onRenameVC(newName);
     });
 
-    expect(result.current.cryptkeeperVerifiableCredential!.metadata.name).toBe(newName);
+    expect(result.current.cryptkeeperVC!.metadata.name).toBe(newName);
   });
 
   test("should approve the verifiable credential properly", async () => {
     const { result } = renderHook(() => useAddVerifiableCredential());
 
     await waitFor(() => {
-      expect(result.current.cryptkeeperVerifiableCredential).toStrictEqual(expectedCryptkeeperVerifiableCredential);
+      expect(result.current.cryptkeeperVC).toStrictEqual(expectedCryptkeeperVerifiableCredential);
     });
 
-    await act(async () => result.current.onApproveVerifiableCredential());
+    await act(async () => result.current.onApproveVC());
 
     expect(addVerifiableCredential).toBeCalledTimes(1);
   });
@@ -133,10 +133,10 @@ describe("ui/pages/AddVerifiableCredential/useAddVerifiableCredential", () => {
     const { result } = renderHook(() => useAddVerifiableCredential());
 
     await waitFor(() => {
-      expect(result.current.cryptkeeperVerifiableCredential).toStrictEqual(expectedCryptkeeperVerifiableCredential);
+      expect(result.current.cryptkeeperVC).toStrictEqual(expectedCryptkeeperVerifiableCredential);
     });
 
-    await act(async () => Promise.resolve(result.current.onRejectVerifiableCredential()));
+    await act(async () => Promise.resolve(result.current.onRejectVC()));
 
     expect(rejectVerifiableCredentialRequest).toBeCalledTimes(1);
     expect(mockDispatch).toBeCalledTimes(2);
@@ -150,10 +150,10 @@ describe("ui/pages/AddVerifiableCredential/useAddVerifiableCredential", () => {
     const { result } = renderHook(() => useAddVerifiableCredential());
 
     await waitFor(() => {
-      expect(result.current.cryptkeeperVerifiableCredential).toStrictEqual(expectedCryptkeeperVerifiableCredential);
+      expect(result.current.cryptkeeperVC).toStrictEqual(expectedCryptkeeperVerifiableCredential);
     });
 
-    await act(async () => result.current.onApproveVerifiableCredential());
+    await act(async () => result.current.onApproveVC());
 
     expect(result.current.error).toBe("Could not add verifiable credential!");
   });

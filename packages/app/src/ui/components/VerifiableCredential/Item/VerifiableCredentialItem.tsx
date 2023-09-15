@@ -18,25 +18,25 @@ export interface VerifiableCredentialItemProps {
   verifiableCredential: IVerifiableCredential;
   metadata: IVerifiableCredentialMetadata;
   selected?: boolean;
-  onRenameVerifiableCredential?: (hash: string, name: string) => Promise<void>;
-  onDeleteVerifiableCredential?: (hash: string) => Promise<void>;
-  onToggleSelectVerifiableCredential?: (hash: string) => void;
+  onRenameVC?: (hash: string, name: string) => Promise<void>;
+  onDeleteVC?: (hash: string) => Promise<void>;
+  onToggleSelectVC?: (hash: string) => void;
 }
 
 export const VerifiableCredentialItem = ({
   verifiableCredential,
   metadata,
   selected = undefined,
-  onRenameVerifiableCredential = undefined,
-  onDeleteVerifiableCredential = undefined,
-  onToggleSelectVerifiableCredential = undefined,
+  onRenameVC = undefined,
+  onDeleteVC = undefined,
+  onToggleSelectVC = undefined,
 }: VerifiableCredentialItemProps): JSX.Element => {
   const { isRenaming, name, register, onSubmit, onToggleRenaming, onDelete, onToggleSelect } =
     useVerifiableCredentialItem({
       metadata,
-      onRename: onRenameVerifiableCredential,
-      onDelete: onDeleteVerifiableCredential,
-      onSelect: onToggleSelectVerifiableCredential,
+      onRename: onRenameVC,
+      onDelete: onDeleteVC,
+      onSelect: onToggleSelectVC,
     });
 
   const menuItems = [
@@ -51,7 +51,7 @@ export const VerifiableCredentialItem = ({
 
   const isSelectorEnabled = selected !== undefined;
 
-  const isMenuEnabled = onRenameVerifiableCredential !== undefined && onDeleteVerifiableCredential !== undefined;
+  const isMenuEnabled = onRenameVC !== undefined && onDeleteVC !== undefined;
 
   return (
     <Box

@@ -41,8 +41,8 @@ describe("ui/components/VerifiableCredential/Item", () => {
       hash: "0x123",
       name: "Credential #0",
     },
-    onRenameVerifiableCredential: jest.fn(),
-    onDeleteVerifiableCredential: jest.fn(),
+    onRenameVC: jest.fn(),
+    onDeleteVC: jest.fn(),
   };
 
   beforeEach(() => {
@@ -62,7 +62,7 @@ describe("ui/components/VerifiableCredential/Item", () => {
   });
 
   test("should rename identity properly", async () => {
-    (defaultProps.onRenameVerifiableCredential as jest.Mock).mockResolvedValue(true);
+    (defaultProps.onRenameVC as jest.Mock).mockResolvedValue(true);
 
     render(<VerifiableCredentialItem {...defaultProps} />);
 
@@ -81,8 +81,8 @@ describe("ui/components/VerifiableCredential/Item", () => {
     const submitRenameIcon = await screen.findByTestId("verifiable-credential-row-submit-rename");
     await act(async () => Promise.resolve(submitRenameIcon.click()));
 
-    expect(defaultProps.onRenameVerifiableCredential).toBeCalledTimes(1);
-    expect(defaultProps.onRenameVerifiableCredential).toBeCalledWith("0x123", "My Favorite Credential");
+    expect(defaultProps.onRenameVC).toBeCalledTimes(1);
+    expect(defaultProps.onRenameVC).toBeCalledWith("0x123", "My Favorite Credential");
   });
 
   test("should accept to delete verifiable credential properly", async () => {
@@ -101,8 +101,8 @@ describe("ui/components/VerifiableCredential/Item", () => {
     const dangerModalAccept = await screen.findByTestId("danger-modal-accept");
     await act(async () => Promise.resolve(dangerModalAccept.click()));
 
-    expect(defaultProps.onDeleteVerifiableCredential).toBeCalledTimes(1);
-    expect(defaultProps.onDeleteVerifiableCredential).toBeCalledWith(defaultProps.metadata.hash);
+    expect(defaultProps.onDeleteVC).toBeCalledTimes(1);
+    expect(defaultProps.onDeleteVC).toBeCalledWith(defaultProps.metadata.hash);
     expect(dangerModal).not.toBeInTheDocument();
   });
 
@@ -122,7 +122,7 @@ describe("ui/components/VerifiableCredential/Item", () => {
     const dangerModalReject = await screen.findByTestId("danger-modal-reject");
     await act(async () => Promise.resolve(dangerModalReject.click()));
 
-    expect(defaultProps.onDeleteVerifiableCredential).toBeCalledTimes(0);
+    expect(defaultProps.onDeleteVC).toBeCalledTimes(0);
     expect(dangerModal).not.toBeInTheDocument();
   });
 });

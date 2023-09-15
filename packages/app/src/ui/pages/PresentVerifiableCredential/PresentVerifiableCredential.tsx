@@ -21,9 +21,9 @@ const PresentVerifiableCredential = (): JSX.Element => {
   const {
     isWalletConnected,
     isWalletInstalled,
-    verifiablePresentationRequest,
-    cryptkeeperVerifiableCredentials,
-    selectedVerifiableCredentialHashes,
+    vpRequest,
+    cryptkeeperVCs,
+    selectedVCHashes,
     error,
     isMenuOpen,
     menuSelectedIndex,
@@ -33,7 +33,7 @@ const PresentVerifiableCredential = (): JSX.Element => {
     onToggleSelection,
     onToggleMenu,
     onMenuItemClick,
-    onSubmitVerifiablePresentation,
+    onSubmitVP,
   } = usePresentVerifiableCredential();
 
   const menuOptions = [
@@ -54,15 +54,15 @@ const PresentVerifiableCredential = (): JSX.Element => {
           You have received a request to present Verifiable Credentials:
         </Typography>
 
-        <Typography sx={{ textAlign: "center" }}>{verifiablePresentationRequest}</Typography>
+        <Typography sx={{ textAlign: "center" }}>{vpRequest}</Typography>
 
-        {cryptkeeperVerifiableCredentials.map(({ verifiableCredential, metadata }) => (
+        {cryptkeeperVCs.map(({ verifiableCredential, metadata }) => (
           <VerifiableCredentialItem
             key={metadata.hash}
             metadata={metadata}
-            selected={selectedVerifiableCredentialHashes.includes(metadata.hash)}
+            selected={selectedVCHashes.includes(metadata.hash)}
             verifiableCredential={verifiableCredential}
-            onToggleSelectVerifiableCredential={onToggleSelection}
+            onToggleSelectVC={onToggleSelection}
           />
         ))}
       </FullModalContent>
@@ -105,7 +105,7 @@ const PresentVerifiableCredential = (): JSX.Element => {
               data-testid="sign-verifiable-presentation-button"
               size="small"
               sx={{ textTransform: "none", flex: 1, ml: 1 }}
-              onClick={onSubmitVerifiablePresentation}
+              onClick={onSubmitVP}
             >
               {menuOptions[menuSelectedIndex]}
             </Button>
@@ -143,9 +143,7 @@ const PresentVerifiableCredential = (): JSX.Element => {
                         <MenuItem
                           key={option}
                           data-testid={`sign-verifiable-presentation-menu-${index}`}
-                          disabled={
-                            selectedVerifiableCredentialHashes.length === 0 || (index === 0 && !isWalletInstalled)
-                          }
+                          disabled={selectedVCHashes.length === 0 || (index === 0 && !isWalletInstalled)}
                           selected={index === menuSelectedIndex}
                           onClick={() => {
                             onMenuItemClick(index);

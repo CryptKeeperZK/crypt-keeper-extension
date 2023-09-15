@@ -261,7 +261,7 @@ describe("background/services/credentials", () => {
       });
 
       credentialsStorage.get.mockReturnValue(credentialsStorageString);
-      const verifiableCredentials = await verifiableCredentialsService.getAllVC();
+      const verifiableCredentials = await verifiableCredentialsService.getAllVCs();
 
       expect(verifiableCredentials.length).toBe(2);
       expect(verifiableCredentials[0].verifiableCredential).toEqual(exampleCredential);
@@ -319,7 +319,7 @@ describe("background/services/credentials", () => {
       credentialsStorage.get.mockReturnValue(credentialsStorageString);
       credentialsStorage.set.mockReturnValue(undefined);
 
-      await verifiableCredentialsService.deleteAllVC();
+      await verifiableCredentialsService.deleteAllVCs();
 
       expect(credentialsStorage.clear).toBeCalledTimes(1);
     });
@@ -329,7 +329,7 @@ describe("background/services/credentials", () => {
       credentialsStorage.get.mockReturnValue(undefined);
       credentialsStorage.set.mockReturnValue(undefined);
 
-      await expect(verifiableCredentialsService.deleteAllVC()).rejects.toThrow("No Verifiable Credentials to delete.");
+      await expect(verifiableCredentialsService.deleteAllVCs()).rejects.toThrow("No Verifiable Credentials to delete.");
       expect(credentialsStorage.clear).toBeCalledTimes(0);
     });
   });

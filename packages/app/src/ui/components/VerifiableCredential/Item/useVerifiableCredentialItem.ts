@@ -24,10 +24,12 @@ export interface UseVerifiableCredentialItemArgs {
   onSelect?: (hash: string) => void;
 }
 
-export const useVerifiableCredentialItem = (
-  useVerifiableCredentialItemArgs: UseVerifiableCredentialItemArgs,
-): IUseVerifiableCredentialItemData => {
-  const { metadata, onRename, onDelete, onSelect } = useVerifiableCredentialItemArgs;
+export const useVerifiableCredentialItem = ({
+  metadata,
+  onRename,
+  onDelete,
+  onSelect,
+}: UseVerifiableCredentialItemArgs): IUseVerifiableCredentialItemData => {
   const { hash, name: initialName } = metadata;
 
   const { register, watch } = useForm<RenameVerifiableCredentialItemData>({
@@ -40,10 +42,16 @@ export const useVerifiableCredentialItem = (
 
   const [isRenaming, setIsRenaming] = useState(false);
 
+  /**
+   * Toggles the renaming state.
+   */
   const onToggleRenaming = useCallback(() => {
     setIsRenaming((value) => !value);
   }, [setIsRenaming]);
 
+  /**
+   * Triggers renaming of the Verifiable Credential.
+   */
   const onSubmit = useCallback(
     async (event: ReactFormEvent<HTMLFormElement>) => {
       event.preventDefault();
@@ -55,12 +63,18 @@ export const useVerifiableCredentialItem = (
     [onRename, name, setIsRenaming],
   );
 
-  const onDeleteVerifiableCredential = useCallback(async () => {
+  /**
+   * Triggers deletion of the Verifiable Credential.
+   */
+  const onDeleteVC = useCallback(async () => {
     if (onDelete) {
       await onDelete(hash);
     }
   }, [onDelete, hash]);
 
+  /**
+   * Triggers selection of the Verifiable Credential.
+   */
   const onToggleSelect = useCallback(() => {
     if (onSelect) {
       onSelect(hash);
@@ -73,7 +87,7 @@ export const useVerifiableCredentialItem = (
     register,
     onSubmit,
     onToggleRenaming,
-    onDelete: onDeleteVerifiableCredential,
+    onDelete: onDeleteVC,
     onToggleSelect,
   };
 };

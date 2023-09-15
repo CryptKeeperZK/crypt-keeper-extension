@@ -134,8 +134,8 @@ describe("ui/pages/PresentVerifiableCredential/usePresentVerifiableCredential", 
       const { result } = renderHook(() => usePresentVerifiableCredential());
 
       await waitFor(() => {
-        expect(result.current.verifiablePresentationRequest).toStrictEqual(exampleRequest);
-        expect(result.current.selectedVerifiableCredentialHashes).toStrictEqual([]);
+        expect(result.current.vpRequest).toStrictEqual(exampleRequest);
+        expect(result.current.selectedVCHashes).toStrictEqual([]);
         expect(result.current.error).toBe(undefined);
       });
     });
@@ -146,7 +146,7 @@ describe("ui/pages/PresentVerifiableCredential/usePresentVerifiableCredential", 
       const { result } = renderHook(() => usePresentVerifiableCredential());
 
       await waitFor(() => {
-        expect(result.current.verifiablePresentationRequest).toStrictEqual(undefined);
+        expect(result.current.vpRequest).toStrictEqual(undefined);
       });
     });
 
@@ -154,7 +154,7 @@ describe("ui/pages/PresentVerifiableCredential/usePresentVerifiableCredential", 
       const { result } = renderHook(() => usePresentVerifiableCredential());
 
       await waitFor(() => {
-        expect(result.current.verifiablePresentationRequest).toStrictEqual(exampleRequest);
+        expect(result.current.vpRequest).toStrictEqual(exampleRequest);
       });
 
       act(() => result.current.onCloseModal());
@@ -167,7 +167,7 @@ describe("ui/pages/PresentVerifiableCredential/usePresentVerifiableCredential", 
       const { result } = renderHook(() => usePresentVerifiableCredential());
 
       await waitFor(() => {
-        expect(result.current.verifiablePresentationRequest).toStrictEqual(exampleRequest);
+        expect(result.current.vpRequest).toStrictEqual(exampleRequest);
       });
 
       await act(async () => Promise.resolve(result.current.onRejectRequest()));
@@ -183,16 +183,16 @@ describe("ui/pages/PresentVerifiableCredential/usePresentVerifiableCredential", 
       const { result } = renderHook(() => usePresentVerifiableCredential());
 
       await waitFor(() => {
-        expect(result.current.verifiablePresentationRequest).toStrictEqual(exampleRequest);
+        expect(result.current.vpRequest).toStrictEqual(exampleRequest);
       });
 
       act(() => result.current.onToggleSelection(hash));
 
-      expect(result.current.selectedVerifiableCredentialHashes).toStrictEqual([hash]);
+      expect(result.current.selectedVCHashes).toStrictEqual([hash]);
 
       act(() => result.current.onToggleSelection(hash));
 
-      expect(result.current.selectedVerifiableCredentialHashes).toStrictEqual([]);
+      expect(result.current.selectedVCHashes).toStrictEqual([]);
     });
 
     test("should erase error after toggling select", async () => {
@@ -201,11 +201,11 @@ describe("ui/pages/PresentVerifiableCredential/usePresentVerifiableCredential", 
       const { result } = renderHook(() => usePresentVerifiableCredential());
 
       await waitFor(() => {
-        expect(result.current.verifiablePresentationRequest).toStrictEqual(exampleRequest);
+        expect(result.current.vpRequest).toStrictEqual(exampleRequest);
       });
 
       act(() => result.current.onMenuItemClick(MenuItems.WITHOUT_SIGNATURE));
-      await act(() => result.current.onSubmitVerifiablePresentation());
+      await act(() => result.current.onSubmitVP());
 
       act(() => result.current.onToggleSelection(hash));
 
@@ -216,7 +216,7 @@ describe("ui/pages/PresentVerifiableCredential/usePresentVerifiableCredential", 
       const { result } = renderHook(() => usePresentVerifiableCredential());
 
       await waitFor(() => {
-        expect(result.current.verifiablePresentationRequest).toStrictEqual(exampleRequest);
+        expect(result.current.vpRequest).toStrictEqual(exampleRequest);
       });
 
       expect(result.current.isMenuOpen).toBe(false);
@@ -230,7 +230,7 @@ describe("ui/pages/PresentVerifiableCredential/usePresentVerifiableCredential", 
       const { result } = renderHook(() => usePresentVerifiableCredential());
 
       await waitFor(() => {
-        expect(result.current.verifiablePresentationRequest).toStrictEqual(exampleRequest);
+        expect(result.current.vpRequest).toStrictEqual(exampleRequest);
       });
 
       expect(result.current.menuSelectedIndex).toBe(0);
@@ -252,7 +252,7 @@ describe("ui/pages/PresentVerifiableCredential/usePresentVerifiableCredential", 
       const { result } = renderHook(() => usePresentVerifiableCredential());
 
       await waitFor(() => {
-        expect(result.current.verifiablePresentationRequest).toStrictEqual(exampleRequest);
+        expect(result.current.vpRequest).toStrictEqual(exampleRequest);
       });
 
       expect(result.current.isMenuOpen).toBe(false);
@@ -272,12 +272,12 @@ describe("ui/pages/PresentVerifiableCredential/usePresentVerifiableCredential", 
       const { result } = renderHook(() => usePresentVerifiableCredential());
 
       await waitFor(() => {
-        expect(result.current.verifiablePresentationRequest).toStrictEqual(exampleRequest);
+        expect(result.current.vpRequest).toStrictEqual(exampleRequest);
       });
 
       act(() => result.current.onToggleSelection(hash));
       act(() => result.current.onMenuItemClick(MenuItems.WITHOUT_SIGNATURE));
-      await act(() => result.current.onSubmitVerifiablePresentation());
+      await act(() => result.current.onSubmitVP());
 
       expect(submitVerifiablePresentation).toBeCalledTimes(1);
       expect(closePopup).toBeCalledTimes(1);
@@ -288,11 +288,11 @@ describe("ui/pages/PresentVerifiableCredential/usePresentVerifiableCredential", 
       const { result } = renderHook(() => usePresentVerifiableCredential());
 
       await waitFor(() => {
-        expect(result.current.verifiablePresentationRequest).toStrictEqual(exampleRequest);
+        expect(result.current.vpRequest).toStrictEqual(exampleRequest);
       });
 
       act(() => result.current.onMenuItemClick(MenuItems.WITHOUT_SIGNATURE));
-      await act(() => result.current.onSubmitVerifiablePresentation());
+      await act(() => result.current.onSubmitVP());
 
       expect(submitVerifiablePresentation).toBeCalledTimes(0);
       expect(result.current.error).toBe("Please select at least one credential.");
@@ -304,12 +304,12 @@ describe("ui/pages/PresentVerifiableCredential/usePresentVerifiableCredential", 
       const { result } = renderHook(() => usePresentVerifiableCredential());
 
       await waitFor(() => {
-        expect(result.current.verifiablePresentationRequest).toStrictEqual(exampleRequest);
+        expect(result.current.vpRequest).toStrictEqual(exampleRequest);
       });
 
       act(() => result.current.onToggleSelection(hash));
       act(() => result.current.onMenuItemClick(MenuItems.CRYPTKEEPER));
-      await act(() => result.current.onSubmitVerifiablePresentation());
+      await act(() => result.current.onSubmitVP());
 
       expect(signAndSubmitVerifiablePresentation).toBeCalledTimes(1);
       expect(closePopup).toBeCalledTimes(1);
@@ -320,11 +320,11 @@ describe("ui/pages/PresentVerifiableCredential/usePresentVerifiableCredential", 
       const { result } = renderHook(() => usePresentVerifiableCredential());
 
       await waitFor(() => {
-        expect(result.current.verifiablePresentationRequest).toStrictEqual(exampleRequest);
+        expect(result.current.vpRequest).toStrictEqual(exampleRequest);
       });
 
       act(() => result.current.onMenuItemClick(MenuItems.CRYPTKEEPER));
-      await act(() => result.current.onSubmitVerifiablePresentation());
+      await act(() => result.current.onSubmitVP());
 
       expect(signAndSubmitVerifiablePresentation).toBeCalledTimes(0);
       expect(result.current.error).toBe("Please select at least one credential.");
@@ -336,11 +336,11 @@ describe("ui/pages/PresentVerifiableCredential/usePresentVerifiableCredential", 
       const { result } = renderHook(() => usePresentVerifiableCredential());
 
       await waitFor(() => {
-        expect(result.current.verifiablePresentationRequest).toStrictEqual(exampleRequest);
+        expect(result.current.vpRequest).toStrictEqual(exampleRequest);
       });
 
       act(() => result.current.onToggleSelection(hash));
-      await act(() => result.current.onSubmitVerifiablePresentation());
+      await act(() => result.current.onSubmitVP());
 
       expect(submitVerifiablePresentation).toBeCalledTimes(1);
       expect(closePopup).toBeCalledTimes(1);
@@ -351,10 +351,10 @@ describe("ui/pages/PresentVerifiableCredential/usePresentVerifiableCredential", 
       const { result } = renderHook(() => usePresentVerifiableCredential());
 
       await waitFor(() => {
-        expect(result.current.verifiablePresentationRequest).toStrictEqual(exampleRequest);
+        expect(result.current.vpRequest).toStrictEqual(exampleRequest);
       });
 
-      await act(() => result.current.onSubmitVerifiablePresentation());
+      await act(() => result.current.onSubmitVP());
 
       expect(signAndSubmitVerifiablePresentation).toBeCalledTimes(0);
       expect(result.current.error).toBe("Please select at least one credential.");
@@ -364,11 +364,11 @@ describe("ui/pages/PresentVerifiableCredential/usePresentVerifiableCredential", 
       const { result } = renderHook(() => usePresentVerifiableCredential());
 
       await waitFor(() => {
-        expect(result.current.verifiablePresentationRequest).toStrictEqual(exampleRequest);
+        expect(result.current.vpRequest).toStrictEqual(exampleRequest);
       });
 
       act(() => result.current.onMenuItemClick(3));
-      await act(() => result.current.onSubmitVerifiablePresentation());
+      await act(() => result.current.onSubmitVP());
 
       expect(submitVerifiablePresentation).toBeCalledTimes(0);
       expect(signAndSubmitVerifiablePresentation).toBeCalledTimes(0);
@@ -410,11 +410,11 @@ describe("ui/pages/PresentVerifiableCredential/usePresentVerifiableCredential", 
       const { result } = renderHook(() => usePresentVerifiableCredential());
 
       await waitFor(() => {
-        expect(result.current.verifiablePresentationRequest).toStrictEqual(exampleRequest);
+        expect(result.current.vpRequest).toStrictEqual(exampleRequest);
       });
 
       act(() => result.current.onToggleSelection(hash));
-      await act(() => result.current.onSubmitVerifiablePresentation());
+      await act(() => result.current.onSubmitVP());
 
       expect(result.current.error).toStrictEqual("Wallet connection error");
     });
@@ -451,11 +451,11 @@ describe("ui/pages/PresentVerifiableCredential/usePresentVerifiableCredential", 
       const { result } = renderHook(() => usePresentVerifiableCredential());
 
       await waitFor(() => {
-        expect(result.current.verifiablePresentationRequest).toStrictEqual(exampleRequest);
+        expect(result.current.vpRequest).toStrictEqual(exampleRequest);
       });
 
       act(() => result.current.onToggleSelection(hash));
-      await act(() => result.current.onSubmitVerifiablePresentation());
+      await act(() => result.current.onSubmitVP());
 
       expect(result.current.error).toStrictEqual("Could not connect to Ethereum account.");
     });
@@ -496,11 +496,11 @@ describe("ui/pages/PresentVerifiableCredential/usePresentVerifiableCredential", 
       const { result } = renderHook(() => usePresentVerifiableCredential());
 
       await waitFor(() => {
-        expect(result.current.verifiablePresentationRequest).toStrictEqual(exampleRequest);
+        expect(result.current.vpRequest).toStrictEqual(exampleRequest);
       });
 
       act(() => result.current.onToggleSelection(hash));
-      await act(() => result.current.onSubmitVerifiablePresentation());
+      await act(() => result.current.onSubmitVP());
 
       expect(result.current.error).toStrictEqual("Failed to sign Verifiable Presentation.");
     });
@@ -535,12 +535,12 @@ describe("ui/pages/PresentVerifiableCredential/usePresentVerifiableCredential", 
       const { result } = renderHook(() => usePresentVerifiableCredential());
 
       await waitFor(() => {
-        expect(result.current.verifiablePresentationRequest).toStrictEqual(exampleRequest);
+        expect(result.current.vpRequest).toStrictEqual(exampleRequest);
       });
 
       act(() => result.current.onToggleSelection(hash));
       act(() => result.current.onMenuItemClick(MenuItems.CRYPTKEEPER));
-      await act(() => result.current.onSubmitVerifiablePresentation());
+      await act(() => result.current.onSubmitVP());
 
       expect(result.current.error).toStrictEqual("Could not connect to Cryptkeeper account.");
     });

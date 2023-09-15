@@ -10,12 +10,9 @@ import {
 import { useCryptkeeperVerifiableCredentials } from "@src/ui/hooks/verifiableCredentials";
 
 export interface IUseVerifiableCredentialListData {
-  cryptkeeperVerifiableCredentials: ICryptkeeperVerifiableCredential[];
-  onRenameVerifiableCredential: (
-    verifiableCredentialHash: string,
-    newVerifiableCredentialName: string,
-  ) => Promise<void>;
-  onDeleteVerifiableCredential: (verifiableCredentialHash: string) => Promise<void>;
+  cryptkeeperVCs: ICryptkeeperVerifiableCredential[];
+  onRenameVC: (vcHash: string, newVCName: string) => Promise<void>;
+  onDeleteVC: (vcHash: string) => Promise<void>;
 }
 
 export const useVerifiableCredentialList = (): IUseVerifiableCredentialListData => {
@@ -25,9 +22,14 @@ export const useVerifiableCredentialList = (): IUseVerifiableCredentialListData 
     dispatch(fetchVerifiableCredentials());
   }, [dispatch, fetchVerifiableCredentials]);
 
-  const cryptkeeperVerifiableCredentials = useCryptkeeperVerifiableCredentials();
+  const cryptkeeperVCs = useCryptkeeperVerifiableCredentials();
 
-  const onRenameVerifiableCredential = useCallback(
+  /**
+   * Renames a Verifiable Credential in the wallet.
+   * @param verifiableCredentialHash - The hash of the Verifiable Credential to rename.
+   * @param newVerifiableCredentialName - The new name for the Verifiable Credential.
+   */
+  const onRenameVC = useCallback(
     async (verifiableCredentialHash: string, newVerifiableCredentialName: string) => {
       await dispatch(
         renameVerifiableCredential({
@@ -40,7 +42,11 @@ export const useVerifiableCredentialList = (): IUseVerifiableCredentialListData 
     [dispatch],
   );
 
-  const onDeleteVerifiableCredential = useCallback(
+  /**
+   * Deletes a Verifiable Credential from the wallet.
+   * @param verifiableCredentialHash - The hash of the Verifiable Credential to delete.
+   */
+  const onDeleteVC = useCallback(
     async (verifiableCredentialHash: string) => {
       await dispatch(deleteVerifiableCredential(verifiableCredentialHash));
       dispatch(fetchVerifiableCredentials());
@@ -49,8 +55,8 @@ export const useVerifiableCredentialList = (): IUseVerifiableCredentialListData 
   );
 
   return {
-    cryptkeeperVerifiableCredentials,
-    onRenameVerifiableCredential,
-    onDeleteVerifiableCredential,
+    cryptkeeperVCs,
+    onRenameVC,
+    onDeleteVC,
   };
 };

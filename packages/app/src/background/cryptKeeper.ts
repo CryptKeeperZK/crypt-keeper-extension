@@ -237,7 +237,7 @@ export default class CryptKeeperController {
     this.handler.add(
       RPCAction.GET_ALL_VERIFIABLE_CREDENTIALS,
       this.lockService.ensure,
-      this.verifiableCredentialsService.getAllVC,
+      this.verifiableCredentialsService.getAllVCs,
     );
     this.handler.add(
       RPCAction.DELETE_VERIFIABLE_CREDENTIAL,
@@ -247,7 +247,7 @@ export default class CryptKeeperController {
     this.handler.add(
       RPCAction.DELETE_ALL_VERIFIABLE_CREDENTIALS,
       this.lockService.ensure,
-      this.verifiableCredentialsService.deleteAllVC,
+      this.verifiableCredentialsService.deleteAllVCs,
     );
     this.handler.add(
       RPCAction.ANNOUNCE_VERIFIABLE_PRESENTATION,

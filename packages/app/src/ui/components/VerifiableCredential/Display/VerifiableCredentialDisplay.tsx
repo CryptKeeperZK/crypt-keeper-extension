@@ -10,21 +10,21 @@ import { ICryptkeeperVerifiableCredential } from "@src/types";
 import { useVerifiableCredentialDisplay } from "./useVerifiableCredentialDisplay";
 
 export interface VerifiableCredentialDisplayProps {
-  cryptkeeperVerifiableCredential: ICryptkeeperVerifiableCredential;
-  onRenameVerifiableCredential: (name: string) => void;
+  cryptkeeperVC: ICryptkeeperVerifiableCredential;
+  onRenameVC: (name: string) => void;
 }
 
 export const VerifiableCredentialDisplay = ({
-  cryptkeeperVerifiableCredential,
-  onRenameVerifiableCredential,
+  cryptkeeperVC,
+  onRenameVC,
 }: VerifiableCredentialDisplayProps): JSX.Element => {
-  const initialName = cryptkeeperVerifiableCredential.metadata.name;
+  const initialName = cryptkeeperVC.metadata.name;
   const { isRenaming, name, register, onSubmit, onToggleRenaming } = useVerifiableCredentialDisplay({
     initialName,
-    onRename: onRenameVerifiableCredential,
+    onRename: onRenameVC,
   });
 
-  const { verifiableCredential } = cryptkeeperVerifiableCredential;
+  const { verifiableCredential } = cryptkeeperVC;
   const issuerId =
     typeof verifiableCredential.issuer === "string" ? verifiableCredential.issuer : verifiableCredential.issuer.id;
   const expirationDate = verifiableCredential.expirationDate ? verifiableCredential.expirationDate.toString() : "N/A";
@@ -35,11 +35,16 @@ export const VerifiableCredentialDisplay = ({
         display: "flex",
         flexDirection: "column",
         alignItems: "left",
-        m: 1,
+        mt: 1,
         width: "100%",
         overflowX: "hidden",
         overflowY: "auto",
         overflowWrap: "anywhere",
+        scrollbarWidth: "none",
+
+        "&::-webkit-scrollbar": {
+          display: "none",
+        },
       }}
     >
       {isRenaming ? (

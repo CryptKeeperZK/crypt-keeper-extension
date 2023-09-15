@@ -31,6 +31,11 @@ const verifiableCredentialsSlice = createSlice({
 
 export const { setVerifiableCredentials } = verifiableCredentialsSlice.actions;
 
+/**
+ * Adds a verifiable credential to wallet.
+ * @param serializedVerifiableCredential - The serialized Verifiable Credential to add.
+ * @param verifiableCredentialName - User defined name for the Verifiable Credential.
+ */
 export const addVerifiableCredential =
   (serializedVerifiableCredential: string, verifiableCredentialName: string) => async (): Promise<void> =>
     postMessage({
@@ -41,12 +46,21 @@ export const addVerifiableCredential =
       },
     });
 
+/**
+ * Rejects a request to add a Verifiable Credential. Notifies the user about rejection.
+ */
 export const rejectVerifiableCredentialRequest = () => async (): Promise<void> => {
   await postMessage({
     method: RPCAction.REJECT_VERIFIABLE_CREDENTIAL_REQUEST,
   });
 };
 
+/**
+ * Renames a Verifiable Credential in the wallet.
+ * @param renameVCArgs - The arguments for renaming a Verifiable Credential.
+ * @param renameVCArgs.verifiableCredentialHash - The hash of the Verifiable Credential to rename.
+ * @param renameVCArgs.newVerifiableCredentialName - The new name for the Verifiable Credential.
+ */
 export const renameVerifiableCredential = (renameVCArgs: IRenameVCArgs) => async (): Promise<void> => {
   await postMessage({
     method: RPCAction.RENAME_VERIFIABLE_CREDENTIAL,
@@ -54,6 +68,10 @@ export const renameVerifiableCredential = (renameVCArgs: IRenameVCArgs) => async
   });
 };
 
+/**
+ * Deletes a Verifiable Credential from the wallet.
+ * @param vcHash - The hash of the Verifiable Credential to delete.
+ */
 export const deleteVerifiableCredential = (vcHash: string) => async (): Promise<void> => {
   await postMessage({
     method: RPCAction.DELETE_VERIFIABLE_CREDENTIAL,
@@ -61,6 +79,10 @@ export const deleteVerifiableCredential = (vcHash: string) => async (): Promise<
   });
 };
 
+/**
+ * Submits a Verifiable Presentation to the background service for event propagation.
+ * @param verifiablePresentation - The Verifiable Presentation to submit.
+ */
 export const submitVerifiablePresentation =
   (verifiablePresentation: IVerifiablePresentation) => async (): Promise<void> => {
     await postMessage({
@@ -69,6 +91,12 @@ export const submitVerifiablePresentation =
     });
   };
 
+/**
+ * Submits a Verifiable Presentation to the background service for signing and event propagation.
+ * @param signVPArgs - The arguments for signing a Verifiable Presentation.
+ * @param signVPArgs.verifiablePresentation - The Verifiable Presentation to sign.
+ * @param signVPArgs.address - The address of the key to sign the Verifiable Presentation with.
+ */
 export const signAndSubmitVerifiablePresentation = (signVPArgs: ISignVPArgs) => async (): Promise<void> => {
   await postMessage({
     method: RPCAction.SIGN_AND_ANNOUNCE_VERIFIABLE_PRESENTATION,
@@ -76,12 +104,18 @@ export const signAndSubmitVerifiablePresentation = (signVPArgs: ISignVPArgs) => 
   });
 };
 
+/**
+ * Rejects a request to sign a Verifiable Presentation. Notifies the user about rejection.
+ */
 export const rejectVerifiablePresentationRequest = () => async (): Promise<void> => {
   await postMessage({
     method: RPCAction.REJECT_VERIFIABLE_PRESENTATION_REQUEST,
   });
 };
 
+/**
+ * Fetches all Verifiable Credentials from the wallet. Serializes them and stores them in the store.
+ */
 export const fetchVerifiableCredentials = (): TypedThunk => async (dispatch) => {
   const cryptkeeperVerifiableCredentials = await postMessage<ICryptkeeperVerifiableCredential[]>({
     method: RPCAction.GET_ALL_VERIFIABLE_CREDENTIALS,
@@ -94,6 +128,9 @@ export const fetchVerifiableCredentials = (): TypedThunk => async (dispatch) => 
   dispatch(setVerifiableCredentials(serializedVerifiableCredentials));
 };
 
+/**
+ * Hook to get serialized Verifiable Credentials from the store.
+ */
 export const useVerifiableCredentials = (): string[] =>
   useAppSelector((state) => state.verifiableCredentials.serializedVerifiableCredentials);
 

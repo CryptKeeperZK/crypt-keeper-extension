@@ -28,7 +28,7 @@ jest.mock("@src/ui/ducks/verifiableCredentials", (): unknown => ({
 
 describe("ui/components/VerifiableCredential/List", () => {
   const defaultHookData: IUseVerifiableCredentialListData = {
-    cryptkeeperVerifiableCredentials: [
+    cryptkeeperVCs: [
       {
         verifiableCredential: {
           context: ["https://www.w3.org/2018/credentials/v1"],
@@ -70,8 +70,8 @@ describe("ui/components/VerifiableCredential/List", () => {
         },
       },
     ],
-    onRenameVerifiableCredential: jest.fn(),
-    onDeleteVerifiableCredential: jest.fn(),
+    onRenameVC: jest.fn(),
+    onDeleteVC: jest.fn(),
   };
 
   beforeEach(() => {
@@ -87,8 +87,8 @@ describe("ui/components/VerifiableCredential/List", () => {
   test("should render properly", async () => {
     render(<VerifiableCredentialList />);
 
-    const nameOne = await screen.findByText(defaultHookData.cryptkeeperVerifiableCredentials[0].metadata.name);
-    const nameTwo = await screen.findByText(defaultHookData.cryptkeeperVerifiableCredentials[1].metadata.name);
+    const nameOne = await screen.findByText(defaultHookData.cryptkeeperVCs[0].metadata.name);
+    const nameTwo = await screen.findByText(defaultHookData.cryptkeeperVCs[1].metadata.name);
 
     expect(nameOne).toBeInTheDocument();
     expect(nameTwo).toBeInTheDocument();
@@ -97,7 +97,7 @@ describe("ui/components/VerifiableCredential/List", () => {
   test("should render properly if there are no verifiable credentials", async () => {
     (useVerifiableCredentialList as jest.Mock).mockReturnValue({
       ...defaultHookData,
-      cryptkeeperVerifiableCredentials: [],
+      cryptkeeperVCs: [],
     });
 
     render(<VerifiableCredentialList />);

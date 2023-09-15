@@ -31,7 +31,7 @@ describe("ui/pages/AddVerifiableCredential", () => {
     },
   };
 
-  const cryptkeeperVerifiableCredential = {
+  const cryptkeeperVC = {
     verifiableCredential,
     metadata: {
       hash: "0x123",
@@ -40,12 +40,12 @@ describe("ui/pages/AddVerifiableCredential", () => {
   };
 
   const defaultHookData: IUseAddVerifiableCredentialData = {
-    cryptkeeperVerifiableCredential,
+    cryptkeeperVC,
     error: undefined,
     onCloseModal: jest.fn(),
-    onRenameVerifiableCredential: jest.fn(),
-    onApproveVerifiableCredential: jest.fn(),
-    onRejectVerifiableCredential: jest.fn(),
+    onRenameVC: jest.fn(),
+    onApproveVC: jest.fn(),
+    onRejectVC: jest.fn(),
   };
 
   beforeEach(() => {
