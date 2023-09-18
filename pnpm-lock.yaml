@@ -132,8 +132,8 @@ importers:
         specifier: ^0.3.0
         version: 0.3.0
       '@metamask/providers':
-        specifier: ^12.0.0
-        version: 12.0.0
+        specifier: ^13.0.0
+        version: 13.0.0
       '@mui/icons-material':
         specifier: ^5.14.9
         version: 5.14.9(@mui/material@5.14.9)(@types/react@18.2.21)(react@18.2.0)
@@ -3440,8 +3440,8 @@ packages:
       readable-stream: 2.3.8
     dev: false
 
-  /@metamask/providers@12.0.0:
-    resolution: {integrity: sha512-NkrSvOF8v8kDz9f2TY1AYK19hJdpYbYhbXWhjmmmXrSMYotn+o7ZV1b1Yd0fqD/HKVL0Vd2BWBUT9U0ggIDTEA==}
+  /@metamask/providers@13.0.0:
+    resolution: {integrity: sha512-X8ms16ZDZqBmy8wfa3T0fezgoocSqoy8Xb7sqmZsVDjsgQ0jMABbtKmfilWt1qscfJCqbNCTSgGLzlrnpaCN2g==}
     engines: {node: '>=16.0.0'}
     dependencies:
       '@metamask/json-rpc-engine': 7.1.1
@@ -3454,7 +3454,6 @@ packages:
       fast-deep-equal: 3.1.3
       is-stream: 2.0.1
       json-rpc-middleware-stream: 4.2.2
-      pump: 3.0.0
       webextension-polyfill: 0.10.0
     transitivePeerDependencies:
       - supports-color
