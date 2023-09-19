@@ -2,6 +2,8 @@
 
 This file was generated using [@jscutlery/semver](https://github.com/jscutlery/semver).
 
+## [0.1.4](https://github.com/CryptKeeperZK/crypt-keeper-extension/compare/@cryptkeeperzk/eslint-config-base-0.1.3...@cryptkeeperzk/eslint-config-base-0.1.4) (2023-09-19)
+
 ## [0.1.3](https://github.com/CryptKeeperZK/crypt-keeper-extension/compare/@cryptkeeperzk/eslint-config-base-0.1.2...@cryptkeeperzk/eslint-config-base-0.1.3) (2023-09-05)
 
 
