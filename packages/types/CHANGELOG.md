@@ -2,6 +2,20 @@
 
 This file was generated using [@jscutlery/semver](https://github.com/jscutlery/semver).
 
+## [0.3.0](https://github.com/CryptKeeperZK/crypt-keeper-extension/compare/@cryptkeeperzk/types-0.2.1...@cryptkeeperzk/types-0.3.0) (2023-09-19)
+
+### Dependency Updates
+
+* `@cryptkeeperzk/eslint-config-base` updated to version `0.1.4`
+
+### Features
+
+* add bandada service  ([#841](https://github.com/CryptKeeperZK/crypt-keeper-extension/issues/841)) ([e836a4c](https://github.com/CryptKeeperZK/crypt-keeper-extension/commit/e836a4c4c239d2a9070ebfaee282d2d2287e9b65))
+* add group rpc methods for background ([#855](https://github.com/CryptKeeperZK/crypt-keeper-extension/issues/855)) ([9b72e84](https://github.com/CryptKeeperZK/crypt-keeper-extension/commit/9b72e844c60587d99e312029fc27951b5e94c6a4))
+* join group ui ([#859](https://github.com/CryptKeeperZK/crypt-keeper-extension/issues/859)) ([db06152](https://github.com/CryptKeeperZK/crypt-keeper-extension/commit/db061521c01927300f9b8e15aaf4781d61cf6067))
+* request connected identity commitment  ([#798](https://github.com/CryptKeeperZK/crypt-keeper-extension/issues/798)) ([c4c3830](https://github.com/CryptKeeperZK/crypt-keeper-extension/commit/c4c3830b5268d4cf9aaf96c22c2581e52020cb12))
+* request verifiable presentation from user ([#509](https://github.com/CryptKeeperZK/crypt-keeper-extension/issues/509)) ([#765](https://github.com/CryptKeeperZK/crypt-keeper-extension/issues/765)) ([1840b37](https://github.com/CryptKeeperZK/crypt-keeper-extension/commit/1840b37fe4c70e0561fb09dc16825679aa17b027))
+
 ## [0.2.1](https://github.com/CryptKeeperZK/crypt-keeper-extension/compare/@cryptkeeperzk/types-0.2.0...@cryptkeeperzk/types-0.2.1) (2023-09-05)
 
 ### Dependency Updates
