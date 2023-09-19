@@ -2,6 +2,19 @@
 
 This file was generated using [@jscutlery/semver](https://github.com/jscutlery/semver).
 
+## [0.3.0](https://github.com/CryptKeeperZK/crypt-keeper-extension/compare/@cryptkeeperzk/zk-0.2.1...@cryptkeeperzk/zk-0.3.0) (2023-09-19)
+
+### Dependency Updates
+
+* `@cryptkeeperzk/types` updated to version `0.3.0`
+* `@cryptkeeperzk/eslint-config-base` updated to version `0.1.4`
+
+### Features
+
+* add bandada service  ([#841](https://github.com/CryptKeeperZK/crypt-keeper-extension/issues/841)) ([e836a4c](https://github.com/CryptKeeperZK/crypt-keeper-extension/commit/e836a4c4c239d2a9070ebfaee282d2d2287e9b65))
+* add group rpc methods for background ([#855](https://github.com/CryptKeeperZK/crypt-keeper-extension/issues/855)) ([9b72e84](https://github.com/CryptKeeperZK/crypt-keeper-extension/commit/9b72e844c60587d99e312029fc27951b5e94c6a4))
+* request connected identity commitment  ([#798](https://github.com/CryptKeeperZK/crypt-keeper-extension/issues/798)) ([c4c3830](https://github.com/CryptKeeperZK/crypt-keeper-extension/commit/c4c3830b5268d4cf9aaf96c22c2581e52020cb12))
+
 ## [0.2.1](https://github.com/CryptKeeperZK/crypt-keeper-extension/compare/@cryptkeeperzk/zk-0.2.0...@cryptkeeperzk/zk-0.2.1) (2023-09-05)
 
 ### Dependency Updates
