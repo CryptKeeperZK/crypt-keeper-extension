@@ -15,9 +15,14 @@ import type {
   IVerifiableCredential,
   IVerifiablePresentation,
   IVerifiablePresentationRequest,
+  IMerkleProof,
 } from "@cryptkeeperzk/types";
 
 const SERVER_URL = process.env.MERKLE_MOCK_SERVER;
+
+const GROUP_ID = process.env.TEST_GROUP_ID!;
+const GROUP_API_KEY = process.env.TEST_GROUP_API_KEY;
+const GROUP_INVITE_CODE = process.env.TEST_GROUP_INVITE_CODE;
 
 const merkleStorageAddress = `${SERVER_URL}/merkleProof`;
 
@@ -88,7 +93,7 @@ interface IUseCryptKeeperData {
   isLocked: boolean;
   connectedIdentityMetadata?: ConnectedIdentityMetadata;
   client?: CryptKeeperInjectedProvider;
-  proof?: ISemaphoreFullProof | IRLNSNARKProof;
+  proof?: ISemaphoreFullProof | IRLNSNARKProof | IMerkleProof;
   connectedCommitment?: string;
   connect: () => void;
   createIdentity: () => unknown;
@@ -96,15 +101,17 @@ interface IUseCryptKeeperData {
   getConnectedIdentity: () => void;
   genSemaphoreProof: (proofType: MerkleProofType) => void;
   genRLNProof: (proofType: MerkleProofType) => void;
-  onRevealConnectedIdentityCommitment: () => Promise<void>;
   addVerifiableCredentialRequest: (credentialType: string) => Promise<void>;
   generateVerifiablePresentationRequest: () => Promise<void>;
+  joinGroup: () => Promise<void>;
+  generareGroupMerkleProof: () => Promise<void>;
+  revealConnectedIdentityCommitment: () => Promise<void>;
 }
 
 export const useCryptKeeper = (): IUseCryptKeeperData => {
   const [client, setClient] = useState<CryptKeeperInjectedProvider>();
   const [isLocked, setIsLocked] = useState(true);
-  const [proof, setProof] = useState<ISemaphoreFullProof | IRLNSNARKProof>();
+  const [proof, setProof] = useState<ISemaphoreFullProof | IRLNSNARKProof | IMerkleProof>();
   const [connectedCommitment, setConnectedIdentityCommitment] = useState<string>();
   const [connectedIdentityMetadata, setConnectedIdentityMetadata] = useState<ConnectedIdentityMetadata>();
   const mockIdentityCommitments: string[] = genMockIdentityCommitments();
@@ -228,7 +235,21 @@ export const useCryptKeeper = (): IUseCryptKeeperData => {
     await client?.connectIdentity({ host: window.location.origin });
   }, [client]);
 
-  const onRevealConnectedIdentityCommitment = useCallback(async () => {
+  const joinGroup = useCallback(async () => {
+    await client?.joinGroup({
+      groupId: GROUP_ID,
+      apiKey: GROUP_API_KEY,
+      inviteCode: GROUP_INVITE_CODE,
+    });
+  }, [client]);
+
+  const generareGroupMerkleProof = useCallback(async () => {
+    await client?.generateGroupMerkleProof({
+      groupId: GROUP_ID,
+    });
+  }, [client]);
+
+  const revealConnectedIdentityCommitment = useCallback(async () => {
     await client?.revealConnectedIdentityRequest();
   }, [client]);
 
@@ -274,6 +295,20 @@ export const useCryptKeeper = (): IUseCryptKeeperData => {
     toast(`Generated a Verifiable Presentation from ${credentialCount} credentials!`, { type: "success" });
   }, []);
 
+  const onJoinGroup = useCallback((data: unknown) => {
+    const result = data as { groupId: string };
+    toast(`User has joined the group. ${result.groupId}`, { type: "success" });
+  }, []);
+
+  const onGroupMerkleProof = useCallback(
+    (data: unknown) => {
+      const result = data as { merkleProof: IMerkleProof };
+      setProof(result.merkleProof);
+      toast("Group Merkle Proof has been successfully generated!", { type: "success" });
+    },
+    [setProof],
+  );
+
   useEffect(() => {
     if (!client) {
       return undefined;
@@ -286,13 +321,25 @@ export const useCryptKeeper = (): IUseCryptKeeperData => {
     client.on(EventName.GENERATE_VERIFIABLE_PRESENTATION, onGenerateVerifiablePresentation);
     client.on(EventName.USER_REJECT, onReject);
     client.on(EventName.REVEAL_COMMITMENT, onRevealCommitment);
+    client.on(EventName.JOIN_GROUP, onJoinGroup);
+    client.on(EventName.GROUP_MERKLE_PROOF, onGroupMerkleProof);
 
     getConnectedIdentity();
 
     return () => {
       client.cleanListeners();
     };
-  }, [client, onLogout, onIdentityChanged, onLogin, onAddVerifiableCredential, onReject, onRevealCommitment]);
+  }, [
+    client,
+    onLogout,
+    onIdentityChanged,
+    onLogin,
+    onAddVerifiableCredential,
+    onReject,
+    onRevealCommitment,
+    onGroupMerkleProof,
+    onJoinGroup,
+  ]);
 
   return {
     client,
@@ -308,6 +355,8 @@ export const useCryptKeeper = (): IUseCryptKeeperData => {
     genRLNProof,
     addVerifiableCredentialRequest,
     generateVerifiablePresentationRequest,
-    onRevealConnectedIdentityCommitment,
+    revealConnectedIdentityCommitment,
+    joinGroup,
+    generareGroupMerkleProof,
   };
 };

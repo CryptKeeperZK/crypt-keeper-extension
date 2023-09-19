@@ -129,25 +129,23 @@ describe("background/services/zkIdentity", () => {
       identityStorage.get.mockResolvedValue(mockSerializedDefaultIdentities);
       connectedIdentityStorage.get.mockResolvedValue(mockDefaultIdentityCommitment);
 
+      const expectConnectIdentityAction = setConnectedIdentity(
+        pick(mockDefaultIdentity.metadata, ["name", "identityStrategy", "host"]),
+      );
+
+      const expectSetIdentitiesAction = setIdentities([
+        { commitment: mockDefaultIdentityCommitment, metadata: mockDefaultIdentity.metadata },
+      ]);
+
       const result = await zkIdentityService.unlock();
 
       expect(result).toBe(true);
-      expect(pushMessage).toBeCalledTimes(1);
-      expect(pushMessage).toBeCalledWith(
-        setConnectedIdentity({ ...pick(mockDefaultIdentity.metadata, ["name", "identityStrategy"]), host: undefined }),
-      );
-      expect(browser.tabs.sendMessage).toBeCalledTimes(defaultTabs.length);
-
-      for (let index = 0; index < defaultTabs.length; index += 1) {
-        expect(browser.tabs.sendMessage).toHaveBeenNthCalledWith(
-          index + 1,
-          defaultTabs[index].id,
-          setConnectedIdentity({
-            ...pick(mockDefaultIdentity.metadata, ["name", "identityStrategy"]),
-            host: undefined,
-          }),
-        );
-      }
+      expect(pushMessage).toBeCalledTimes(2);
+      expect(pushMessage).toBeCalledWith(expectConnectIdentityAction);
+      expect(pushMessage).toHaveBeenNthCalledWith(2, expectSetIdentitiesAction);
+      expect(browser.tabs.sendMessage).toBeCalledTimes(2);
+      expect(browser.tabs.sendMessage).toHaveBeenNthCalledWith(1, defaultTabs[0].id, expectConnectIdentityAction);
+      expect(browser.tabs.sendMessage).toHaveBeenNthCalledWith(2, defaultTabs[1].id, expectConnectIdentityAction);
     });
 
     test("should unlock properly with empty store", async () => {
@@ -163,6 +161,13 @@ describe("background/services/zkIdentity", () => {
 
   describe("set connected identity", () => {
     test("should set connected identity properly", async () => {
+      const expectConnectIdentityAction = setConnectedIdentity(
+        pick(mockDefaultIdentity.metadata, ["name", "identityStrategy", "host"]),
+      );
+      const expectedSetIdentitiesAction = setIdentities([
+        { commitment: mockDefaultIdentityCommitment, metadata: mockDefaultIdentity.metadata },
+      ]);
+
       const result = await zkIdentityService.connectIdentity({
         identityCommitment: mockDefaultIdentityCommitment,
         host: "http://localhost:3000",
@@ -170,23 +175,11 @@ describe("background/services/zkIdentity", () => {
 
       expect(result).toBe(true);
       expect(pushMessage).toBeCalledTimes(2);
-      expect(pushMessage).toHaveBeenNthCalledWith(
-        1,
-        setConnectedIdentity(pick(mockDefaultIdentity.metadata, ["name", "host", "identityStrategy"])),
-      );
-      expect(pushMessage).toHaveBeenNthCalledWith(
-        2,
-        setIdentities([{ commitment: mockDefaultIdentityCommitment, metadata: mockDefaultIdentity.metadata }]),
-      );
-      expect(browser.tabs.sendMessage).toBeCalledTimes(defaultTabs.length);
-
-      for (let index = 0; index < defaultTabs.length; index += 1) {
-        expect(browser.tabs.sendMessage).toHaveBeenNthCalledWith(
-          index + 1,
-          defaultTabs[index].id,
-          setConnectedIdentity(pick(mockDefaultIdentity.metadata, ["name", "host", "identityStrategy"])),
-        );
-      }
+      expect(pushMessage).toHaveBeenNthCalledWith(1, expectConnectIdentityAction);
+      expect(pushMessage).toHaveBeenNthCalledWith(2, expectedSetIdentitiesAction);
+      expect(browser.tabs.sendMessage).toBeCalledTimes(2);
+      expect(browser.tabs.sendMessage).toHaveBeenNthCalledWith(1, defaultTabs[0].id, expectConnectIdentityAction);
+      expect(browser.tabs.sendMessage).toHaveBeenNthCalledWith(2, defaultTabs[1].id, expectConnectIdentityAction);
     });
 
     test("should not set connected identity if there is no any saved identities", async () => {

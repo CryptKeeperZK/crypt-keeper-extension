@@ -204,16 +204,10 @@ export default class ZkIdentityService implements IBackupable {
     await this.connectedIdentityStore.set(ciphertext);
     const connectedMetadata = this.getConnectedIdentityMetadata(metadata);
 
-    const [tabs] = await Promise.all([
-      browser.tabs.query({ active: true }),
+    await Promise.all([
+      this.browserController.pushEvent(setConnectedIdentity(connectedMetadata), { urlOrigin: connectedMetadata?.host }),
       pushMessage(setConnectedIdentity(connectedMetadata)),
     ]);
-
-    await Promise.all(
-      tabs.map((tab) =>
-        browser.tabs.sendMessage(tab.id!, setConnectedIdentity(connectedMetadata)).catch(() => undefined),
-      ),
-    );
   };
 
   private getConnectedIdentityMetadata(metadata?: IIdentityMetadata): ConnectedIdentityMetadata | undefined {
@@ -267,6 +261,7 @@ export default class ZkIdentityService implements IBackupable {
       await this.updateConnectedIdentity({
         identities,
         identityCommitment,
+        host: identity?.metadata.host,
       });
     }
 

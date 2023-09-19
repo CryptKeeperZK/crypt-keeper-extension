@@ -1,3 +1,5 @@
+import browser from "webextension-polyfill";
+
 import { defaultMerkleProof, mockDefaultIdentity, mockDefaultIdentityCommitment } from "@src/config/mock/zk";
 
 import type {
@@ -47,6 +49,10 @@ describe("background/services/group/GroupService", () => {
     mockGetConnectedIdentityCommitment.mockResolvedValue(mockDefaultIdentityCommitment);
 
     mockGetConnectedIdentity.mockResolvedValue(mockDefaultIdentity);
+
+    (browser.tabs.create as jest.Mock).mockResolvedValue({});
+
+    (browser.tabs.query as jest.Mock).mockResolvedValue([]);
   });
 
   afterEach(() => {
@@ -58,6 +64,13 @@ describe("background/services/group/GroupService", () => {
       groupId: "90694543209366256629502773954857",
       apiKey: "api-key",
     };
+
+    test("should request group joining properly", async () => {
+      const service = GroupService.getInstance();
+
+      await expect(service.joinGroupRequest(defaultArgs)).resolves.toBeUndefined();
+      await expect(service.joinGroupRequest({ groupId: defaultArgs.groupId })).resolves.toBeUndefined();
+    });
 
     test("should join group properly", async () => {
       const service = GroupService.getInstance();
@@ -75,10 +88,16 @@ describe("background/services/group/GroupService", () => {
     });
   });
 
-  describe("generate group membership proof", () => {
+  describe("generate group merkle proof", () => {
     const defaultArgs: IGenerateGroupMerkleProofArgs = {
       groupId: "90694543209366256629502773954857",
     };
+
+    test("should request generate group merkle proof properly", async () => {
+      const service = GroupService.getInstance();
+
+      await expect(service.generateGroupMerkleProofRequest(defaultArgs)).resolves.toBeUndefined();
+    });
 
     test("should generate proof properly ", async () => {
       const service = GroupService.getInstance();

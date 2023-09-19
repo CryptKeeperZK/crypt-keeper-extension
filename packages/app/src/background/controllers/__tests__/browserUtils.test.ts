@@ -22,6 +22,10 @@ describe("background/controllers/browserUtils", () => {
     (browser.windows.create as jest.Mock).mockResolvedValue(defaultWindow);
   });
 
+  afterEach(() => {
+    jest.clearAllMocks();
+  });
+
   test("should open and close popup properly", async () => {
     const browserUtils = BrowserUtils.getInstance();
 
@@ -52,7 +56,7 @@ describe("background/controllers/browserUtils", () => {
     browserUtils.addRemoveWindowListener(callback);
     browserUtils.removeRemoveWindowListener(callback);
 
-    expect(browser.windows.onRemoved.addListener).toBeCalledTimes(2);
+    expect(browser.windows.onRemoved.addListener).toBeCalledTimes(1);
     expect(browser.windows.onRemoved.removeListener).toBeCalledTimes(1);
   });
 
