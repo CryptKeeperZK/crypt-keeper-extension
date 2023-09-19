@@ -2,6 +2,26 @@
 
 This file was generated using [@jscutlery/semver](https://github.com/jscutlery/semver).
 
+## [0.2.0](https://github.com/CryptKeeperZK/crypt-keeper-extension/compare/@cryptkeeperzk/demo-0.1.11...@cryptkeeperzk/demo-0.2.0) (2023-09-19)
+
+### Dependency Updates
+
+* `@cryptkeeperzk/providers` updated to version `0.3.0`
+* `@cryptkeeperzk/types` updated to version `0.3.0`
+* `@cryptkeeperzk/eslint-config-react` updated to version `0.1.4`
+
+### Features
+
+* group demo ([#873](https://github.com/CryptKeeperZK/crypt-keeper-extension/issues/873)) ([62e2168](https://github.com/CryptKeeperZK/crypt-keeper-extension/commit/62e2168ac63be5e3b34ce9c177e42c1c7b21162e))
+* join group ui ([#859](https://github.com/CryptKeeperZK/crypt-keeper-extension/issues/859)) ([db06152](https://github.com/CryptKeeperZK/crypt-keeper-extension/commit/db061521c01927300f9b8e15aaf4781d61cf6067))
+* request connected identity commitment  ([#798](https://github.com/CryptKeeperZK/crypt-keeper-extension/issues/798)) ([c4c3830](https://github.com/CryptKeeperZK/crypt-keeper-extension/commit/c4c3830b5268d4cf9aaf96c22c2581e52020cb12))
+* request verifiable presentation from user ([#509](https://github.com/CryptKeeperZK/crypt-keeper-extension/issues/509)) ([#765](https://github.com/CryptKeeperZK/crypt-keeper-extension/issues/765)) ([1840b37](https://github.com/CryptKeeperZK/crypt-keeper-extension/commit/1840b37fe4c70e0561fb09dc16825679aa17b027))
+
+
+### Bug Fixes
+
+* e2e tests ([#850](https://github.com/CryptKeeperZK/crypt-keeper-extension/issues/850)) ([29b211b](https://github.com/CryptKeeperZK/crypt-keeper-extension/commit/29b211bae48573f0212ce280fdcc2c4a5932394b))
+
 ## [0.1.11](https://github.com/CryptKeeperZK/crypt-keeper-extension/compare/@cryptkeeperzk/demo-0.1.10...@cryptkeeperzk/demo-0.1.11) (2023-09-05)
 
 ### Dependency Updates
