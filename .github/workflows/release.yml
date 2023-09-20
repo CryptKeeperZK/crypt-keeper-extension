@@ -47,7 +47,7 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-          token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+          token: ${{ secrets.PAT }}
 
       - uses: pnpm/action-setup@v2
         with:
@@ -68,8 +68,8 @@ jobs:
 
       - name: Setup git
         run: |
-          git config user.name "${{ github.actor }}"
-          git config user.email "${{ github.actor}}@users.noreply.github.com"
+          git config user.name "CryptkeeperZKBot"
+          git config user.email "CryptkeeperZKBot@users.noreply.github.com"
           npm config set commit-hooks false
           # TODO: support commit signing when it's supported https://github.com/jscutlery/semver/issues/489
           # git config commit.gpgsign true
