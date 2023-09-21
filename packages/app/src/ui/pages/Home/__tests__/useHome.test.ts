@@ -52,10 +52,9 @@ describe("ui/pages/Home/useHome", () => {
       metadata: {
         account: defaultWalletHookData.address!,
         name: "Account #1",
-        identityStrategy: "interep",
-        web2Provider: "twitter",
         groups: [],
         host: "http://localhost:3000",
+        isDeterministic: true,
       },
     },
     {
@@ -63,9 +62,9 @@ describe("ui/pages/Home/useHome", () => {
       metadata: {
         account: defaultWalletHookData.address!,
         name: "Account #2",
-        identityStrategy: "random",
         groups: [],
         host: "http://localhost:3000",
+        isDeterministic: true,
       },
     },
   ];

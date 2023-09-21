@@ -96,20 +96,6 @@ const App = () => {
         </div>
 
         <div>
-          <strong>Strategy:</strong>
-
-          <p data-testid="connected-strategy">{connectedIdentityMetadata.identityStrategy}</p>
-        </div>
-
-        {connectedIdentityMetadata.web2Provider && (
-          <div>
-            <strong>Web2 Provider:</strong>
-
-            <p data-testid="connected-web2-provider">{connectedIdentityMetadata.web2Provider}</p>
-          </div>
-        )}
-
-        <div>
           <strong>Host:</strong>
 
           <p data-testid="connected-host">{connectedIdentityMetadata.host}</p>

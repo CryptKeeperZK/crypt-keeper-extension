@@ -1,4 +1,3 @@
-import type { IdentityStrategy, IdentityWeb2Provider } from "@cryptkeeperzk/types";
 import type { JsonRpcSigner } from "ethers";
 
 export interface ISignIdentityMessageArgs {
@@ -19,19 +18,11 @@ export async function signWithSigner({ signer, message }: ISignIdentityMessageAr
 }
 
 export interface IGetMessageTemplateArgs {
-  identityStrategyType: IdentityStrategy;
   account: string;
-  web2Provider?: IdentityWeb2Provider;
-  nonce?: number;
+  nonce: number;
 }
 
-export function getMessageTemplate({
-  identityStrategyType,
-  nonce,
-  web2Provider,
-  account,
-}: IGetMessageTemplateArgs): string {
-  const nonceEnd = nonce !== undefined ? `with key nonce: ${nonce}` : "";
-  const type = identityStrategyType === "interep" ? (web2Provider as string) : identityStrategyType;
-  return `Sign this message with account ${account} to generate your ${type} Semaphore identity ${nonceEnd}`.trim();
+export function getMessageTemplate({ account, nonce }: IGetMessageTemplateArgs): string {
+  const nonceEnd = `with key nonce: ${nonce}`;
+  return `Sign this message with account ${account} to generate your Semaphore identity ${nonceEnd}`.trim();
 }

@@ -50,10 +50,9 @@ describe("ui/ducks/identities", () => {
       metadata: {
         account: ZERO_ADDRESS,
         name: "Account #1",
-        identityStrategy: "interep",
-        web2Provider: "twitter",
         groups: [],
         host: "http://localhost:3000",
+        isDeterministic: true,
       },
     },
     {
@@ -61,9 +60,8 @@ describe("ui/ducks/identities", () => {
       metadata: {
         account: ZERO_ADDRESS,
         name: "Account #2",
-        identityStrategy: "interep",
-        web2Provider: "twitter",
         groups: [],
+        isDeterministic: true,
       },
     },
   ];
@@ -215,11 +213,11 @@ describe("ui/ducks/identities", () => {
       store.dispatch(
         createIdentity({
           walletType: EWallet.ETH_WALLET,
-          strategy: "interep",
           messageSignature: "signature",
+          isDeterministic: true,
           groups: [],
           host: "http://localhost:3000",
-          options: { message: "message", account: ZERO_ADDRESS },
+          options: { message: "message", account: ZERO_ADDRESS, nonce: 0 },
         }),
       ),
     );
@@ -228,12 +226,12 @@ describe("ui/ducks/identities", () => {
     expect(postMessage).toBeCalledWith({
       method: RPCAction.CREATE_IDENTITY,
       payload: {
-        strategy: "interep",
         messageSignature: "signature",
         walletType: EWallet.ETH_WALLET,
+        isDeterministic: true,
         groups: [],
         host: "http://localhost:3000",
-        options: { message: "message", account: ZERO_ADDRESS },
+        options: { message: "message", account: ZERO_ADDRESS, nonce: 0 },
       },
     });
   });

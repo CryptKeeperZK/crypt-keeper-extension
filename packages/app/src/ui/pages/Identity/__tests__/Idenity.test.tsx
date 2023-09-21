@@ -5,8 +5,8 @@
 import { act, render, waitFor } from "@testing-library/react";
 import { Suspense } from "react";
 
-import { ZERO_ADDRESS } from "@src/config/const";
 import { defaultWalletHookData } from "@src/config/mock/wallet";
+import { mockDefaultIdentity } from "@src/config/mock/zk";
 import { useCryptKeeperWallet, useEthWallet } from "@src/ui/hooks/wallet";
 
 import Identity from "..";
@@ -32,14 +32,10 @@ describe("ui/pages/Identity", () => {
     isConfirmModalOpen: false,
     isUpdating: false,
     errors: {},
-    commitment: "commitment",
+    commitment: mockDefaultIdentity.commitment,
     metadata: {
-      account: ZERO_ADDRESS,
-      name: "Account #1",
-      identityStrategy: "interep",
+      ...mockDefaultIdentity.metadata,
       groups: [{ id: "1", name: "Group #1", description: "Description #1" }],
-      web2Provider: "twitter",
-      host: "http://localhost:3000",
     },
     register: jest.fn(),
     onGoBack: jest.fn(),

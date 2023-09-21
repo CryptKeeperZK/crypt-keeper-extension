@@ -6,8 +6,8 @@ import { act, renderHook, waitFor } from "@testing-library/react";
 import { getLinkPreview } from "link-preview-js";
 import { useNavigate } from "react-router-dom";
 
-import { ZERO_ADDRESS } from "@src/config/const";
 import { getBandadaUrl } from "@src/config/env";
+import { mockDefaultIdentity } from "@src/config/mock/zk";
 import { Paths } from "@src/constants";
 import { closePopup } from "@src/ui/ducks/app";
 import { checkGroupMembership, joinGroup } from "@src/ui/ducks/groups";
@@ -16,8 +16,6 @@ import { fetchIdentities, useConnectedIdentity } from "@src/ui/ducks/identities"
 import { rejectUserRequest } from "@src/ui/ducks/requests";
 import { useSearchParam } from "@src/ui/hooks/url";
 import { redirectToNewTab } from "@src/util/browser";
-
-import type { IIdentityData } from "@cryptkeeperzk/types";
 
 import { IUseJoinGroupData, useJoinGroup } from "../useJoinGroup";
 
@@ -61,19 +59,7 @@ jest.mock("@src/ui/ducks/identities", (): unknown => ({
 }));
 
 describe("ui/pages/JoinGroup/useJoinGroup", () => {
-  const defaultIdentity: IIdentityData = {
-    commitment: "commitment",
-    metadata: {
-      account: ZERO_ADDRESS,
-      name: "Account #1",
-      identityStrategy: "interep",
-      groups: [],
-      web2Provider: "twitter",
-      host: "http://localhost:3000",
-    },
-  };
-
-  const defaultFaviconsData = { favicons: [`${defaultIdentity.metadata.host}/favicon.ico`] };
+  const defaultFaviconsData = { favicons: [`${mockDefaultIdentity.metadata.host}/favicon.ico`] };
 
   const mockNavigate = jest.fn();
   const mockDispatch = jest.fn(() => Promise.resolve(false));
@@ -81,7 +67,7 @@ describe("ui/pages/JoinGroup/useJoinGroup", () => {
   beforeEach(() => {
     (getLinkPreview as jest.Mock).mockResolvedValue(defaultFaviconsData);
 
-    (useConnectedIdentity as jest.Mock).mockReturnValue(defaultIdentity);
+    (useConnectedIdentity as jest.Mock).mockReturnValue(mockDefaultIdentity);
 
     (useNavigate as jest.Mock).mockReturnValue(mockNavigate);
 
@@ -111,7 +97,7 @@ describe("ui/pages/JoinGroup/useJoinGroup", () => {
     expect(result.current.inviteCode).toBe("inviteCode");
     expect(result.current.faviconUrl).toBe(defaultFaviconsData.favicons[0]);
     expect(result.current.groupId).toBe("groupId");
-    expect(result.current.connectedIdentity).toStrictEqual(defaultIdentity);
+    expect(result.current.connectedIdentity).toStrictEqual(mockDefaultIdentity);
   });
 
   test("should go back properly", async () => {
@@ -159,7 +145,7 @@ describe("ui/pages/JoinGroup/useJoinGroup", () => {
     await act(() => Promise.resolve(result.current.onGoToHost()));
 
     expect(redirectToNewTab).toBeCalledTimes(1);
-    expect(redirectToNewTab).toBeCalledWith(defaultIdentity.metadata.host);
+    expect(redirectToNewTab).toBeCalledWith(mockDefaultIdentity.metadata.host);
   });
 
   test("should go to group properly", async () => {

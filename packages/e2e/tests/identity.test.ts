@@ -17,19 +17,19 @@ test.describe("identity", () => {
     const extension = new CryptKeeper(page);
     await extension.focus();
 
-    await extension.identities.createIdentityFromHome({ walletType: "eth" });
+    await extension.identities.createIdentityFromHome({ walletType: "eth", nonce: 0, isDeterministic: true });
     await expect(extension.getByText("Account # 0")).toBeVisible();
 
-    await extension.identities.createIdentityFromHome({ provider: "Github", nonce: 0, walletType: "eth" });
+    await extension.identities.createIdentityFromHome({ walletType: "eth", nonce: 1, isDeterministic: true });
     await expect(extension.getByText("Account # 1")).toBeVisible();
 
-    await extension.identities.createIdentityFromHome({ provider: "Reddit", nonce: 0, walletType: "ck" });
+    await extension.identities.createIdentityFromHome({ walletType: "ck", nonce: 2, isDeterministic: true });
     await expect(extension.getByText("Account # 2")).toBeVisible();
 
-    await extension.identities.createIdentityFromHome({ identityType: "Random", nonce: 0, walletType: "eth" });
+    await extension.identities.createIdentityFromHome({ walletType: "eth", nonce: 3, isDeterministic: true });
     await expect(extension.getByText("Account # 3")).toBeVisible();
 
-    await extension.identities.createIdentityFromHome({ identityType: "Random", nonce: 0, walletType: "ck" });
+    await extension.identities.createIdentityFromHome({ walletType: "ck", nonce: 0, isDeterministic: false });
     await expect(extension.getByText("Account # 4")).toBeVisible();
 
     await expect(extension.getByText(/Account/)).toHaveCount(6);
@@ -50,26 +50,26 @@ test.describe("identity", () => {
     const extension = new CryptKeeper(page);
     await extension.focus();
 
-    await extension.identities.createIdentityFromHome({ walletType: "eth" });
+    await extension.identities.createIdentityFromHome({ walletType: "eth", nonce: 0, isDeterministic: true });
     await expect(extension.getByText("Account # 0")).toBeVisible();
 
-    await extension.identities.renameIdentity(1, "My twitter identity");
+    await extension.identities.renameIdentity(1, "My identity 1");
 
-    await expect(extension.getByText("My twitter identity")).toBeVisible();
+    await expect(extension.getByText("My identity 1")).toBeVisible();
   });
 
   test("should track activity create and delete operations properly", async ({ page }) => {
     const extension = new CryptKeeper(page);
     await extension.focus();
 
-    await extension.identities.createIdentityFromHome({ walletType: "eth" });
+    await extension.identities.createIdentityFromHome({ walletType: "eth", nonce: 0, isDeterministic: true });
     await expect(extension.getByText(/Account/)).toHaveCount(2);
 
     await extension.activity.openTab();
     await expect(extension.activity.getByText("Identity created")).toHaveCount(2);
 
     await extension.identities.openTab();
-    await extension.identities.createIdentityFromHome({ walletType: "ck" });
+    await extension.identities.createIdentityFromHome({ walletType: "ck", nonce: 1, isDeterministic: true });
     await expect(extension.getByText(/Account/)).toHaveCount(3);
 
     await extension.identities.deleteIdentity(1);
@@ -79,7 +79,7 @@ test.describe("identity", () => {
     await expect(extension.activity.getByText("Identity removed")).toBeVisible();
 
     await extension.identities.openTab();
-    await extension.identities.createIdentityFromHome({ walletType: "ck", identityType: "Random" });
+    await extension.identities.createIdentityFromHome({ walletType: "ck", nonce: 2, isDeterministic: false });
     await expect(extension.getByText(/Account/)).toHaveCount(3);
 
     await extension.settings.openPage();
@@ -135,7 +135,7 @@ test.describe("identity", () => {
     await extension.settings.toggleHistoryTracking();
 
     await extension.goHome();
-    await extension.identities.createIdentityFromHome({ walletType: "eth" });
+    await extension.identities.createIdentityFromHome({ walletType: "eth", nonce: 0, isDeterministic: true });
     await expect(extension.getByText(/Account/)).toHaveCount(2);
 
     await extension.activity.openTab();
@@ -154,8 +154,8 @@ test.describe("identity", () => {
     const extension = new CryptKeeper(page);
     await extension.focus();
 
-    await extension.identities.createIdentityFromDemo({ walletType: "eth", identityType: "Random" });
-    await extension.identities.createIdentityFromDemo({ walletType: "ck", identityType: "Random" });
+    await extension.identities.createIdentityFromDemo({ walletType: "eth", nonce: 0, isDeterministic: false });
+    await extension.identities.createIdentityFromDemo({ walletType: "ck", nonce: 0, isDeterministic: false });
 
     await page.goto(`chrome-extension://${cryptKeeperExtensionId}/popup.html`);
     await expect(extension.getByText(/Account/)).toHaveCount(3);
@@ -166,8 +166,8 @@ test.describe("identity", () => {
     const extension = new CryptKeeper(page);
     await extension.focus();
 
-    await extension.identities.createIdentityFromDemo({ walletType: "eth", identityType: "Random" });
-    await extension.identities.createIdentityFromDemo({ walletType: "ck", identityType: "Random" });
+    await extension.identities.createIdentityFromDemo({ walletType: "eth", nonce: 0, isDeterministic: false });
+    await extension.identities.createIdentityFromDemo({ walletType: "ck", nonce: 0, isDeterministic: false });
 
     await page.getByTestId("connect-identity").click({ delay: 1_000 });
     await extension.selectIdentity(1);
@@ -184,7 +184,7 @@ test.describe("identity", () => {
     const extension = new CryptKeeper(page);
     await extension.focus();
 
-    await extension.identities.createIdentityFromHome({ walletType: "eth" });
+    await extension.identities.createIdentityFromHome({ walletType: "eth", nonce: 0, isDeterministic: true });
     await expect(extension.getByText("Account # 1")).toBeVisible();
 
     await extension.identities.openIdentityPage(1);

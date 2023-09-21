@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/unbound-method */
 import { EventName } from "@cryptkeeperzk/providers";
-import { EWallet, ConnectedIdentityMetadata, IdentityStrategy, ICreateIdentityOptions } from "@cryptkeeperzk/types";
+import { EWallet, ConnectedIdentityMetadata, ICreateIdentityOptions } from "@cryptkeeperzk/types";
 import { createNewIdentity } from "@cryptkeeperzk/zk";
 import pick from "lodash/pick";
 import browser from "webextension-polyfill";
@@ -8,21 +8,10 @@ import browser from "webextension-polyfill";
 import SimpleStorage from "@src/background/services/storage";
 import ZkIdentityService from "@src/background/services/zkIdentity";
 import { ZERO_ADDRESS } from "@src/config/const";
-import { getEnabledFeatures } from "@src/config/features";
-import { mockDefaultIdentityCommitment } from "@src/config/mock/zk";
+import { mockDefaultIdentity, mockDefaultIdentityCommitment } from "@src/config/mock/zk";
 import { setConnectedIdentity, setIdentities } from "@src/ui/ducks/identities";
 import pushMessage from "@src/util/pushMessage";
 
-const mockDefaultIdentity = {
-  secret: "1234",
-  metadata: {
-    account: ZERO_ADDRESS,
-    groups: [],
-    name: "Account",
-    identityStrategy: "interep" as const,
-    host: "http://localhost:3000",
-  },
-};
 const mockDefaultIdentities = [[mockDefaultIdentityCommitment, JSON.stringify(mockDefaultIdentity)]];
 const mockSerializedDefaultIdentities = JSON.stringify(mockDefaultIdentities);
 
@@ -85,7 +74,7 @@ describe("background/services/zkIdentity", () => {
   const defaultPopupTab = { id: 3, active: true, highlighted: true };
 
   const defaultNewIdentity = {
-    serialize: () => JSON.stringify({ secret: "1234", metadata: { identityStrategy: "random" } }),
+    serialize: () => JSON.stringify({ secret: "1234", metadata: mockDefaultIdentity.metadata }),
     genIdentityCommitment: () => "15206603389158210388485662342360617949291660595274505642693885456541816400292",
     metadata: { host: "http://localhost:3000" } as ConnectedIdentityMetadata,
   };
@@ -96,8 +85,6 @@ describe("background/services/zkIdentity", () => {
     (browser.tabs.query as jest.Mock).mockResolvedValue(defaultTabs);
 
     (browser.tabs.sendMessage as jest.Mock).mockRejectedValueOnce(false).mockResolvedValue(true);
-
-    (getEnabledFeatures as jest.Mock).mockReturnValue({ INTEREP_IDENTITY: true });
 
     (SimpleStorage as jest.Mock).mock.instances.forEach((instance: MockStorage) => {
       instance.get.mockReturnValue(mockSerializedDefaultIdentities);
@@ -129,9 +116,7 @@ describe("background/services/zkIdentity", () => {
       identityStorage.get.mockResolvedValue(mockSerializedDefaultIdentities);
       connectedIdentityStorage.get.mockResolvedValue(mockDefaultIdentityCommitment);
 
-      const expectConnectIdentityAction = setConnectedIdentity(
-        pick(mockDefaultIdentity.metadata, ["name", "identityStrategy", "host"]),
-      );
+      const expectConnectIdentityAction = setConnectedIdentity(pick(mockDefaultIdentity.metadata, ["name", "host"]));
 
       const expectSetIdentitiesAction = setIdentities([
         { commitment: mockDefaultIdentityCommitment, metadata: mockDefaultIdentity.metadata },
@@ -161,9 +146,7 @@ describe("background/services/zkIdentity", () => {
 
   describe("set connected identity", () => {
     test("should set connected identity properly", async () => {
-      const expectConnectIdentityAction = setConnectedIdentity(
-        pick(mockDefaultIdentity.metadata, ["name", "identityStrategy", "host"]),
-      );
+      const expectConnectIdentityAction = setConnectedIdentity(pick(mockDefaultIdentity.metadata, ["name", "host"]));
       const expectedSetIdentitiesAction = setIdentities([
         { commitment: mockDefaultIdentityCommitment, metadata: mockDefaultIdentity.metadata },
       ]);
@@ -327,7 +310,7 @@ describe("background/services/zkIdentity", () => {
         { urlOrigin: mockDefaultIdentity.metadata.host },
       );
 
-      expect(data).toStrictEqual(pick(mockDefaultIdentity.metadata, ["name", "host", "identityStrategy"]));
+      expect(data).toStrictEqual(pick(mockDefaultIdentity.metadata, ["name", "host"]));
     });
 
     test("should no get connected identity data if host is not the same properly", async () => {
@@ -484,14 +467,6 @@ describe("background/services/zkIdentity", () => {
       expect(identities).toHaveLength(mockDefaultIdentities.length);
     });
 
-    test("should get identities properly with disabled interep identities", async () => {
-      (getEnabledFeatures as jest.Mock).mockReturnValue({ INTEREP_IDENTITY: false });
-
-      const identities = await zkIdentityService.getIdentities();
-
-      expect(identities).toHaveLength(0);
-    });
-
     test("should get number of identities properly", async () => {
       const result = await zkIdentityService.getNumOfIdentities();
 
@@ -534,7 +509,6 @@ describe("background/services/zkIdentity", () => {
 
     test("should create a new identity with ethereum wallet properly", async () => {
       const identityMessageSignature = "0x000";
-      const identityStrategy: IdentityStrategy = "random";
       const identityOptions: ICreateIdentityOptions = {
         nonce: 0,
         account: ZERO_ADDRESS,
@@ -543,10 +517,10 @@ describe("background/services/zkIdentity", () => {
       };
 
       const result = await zkIdentityService.createIdentity({
-        strategy: identityStrategy,
         walletType: EWallet.ETH_WALLET,
         messageSignature: identityMessageSignature,
         options: identityOptions,
+        isDeterministic: true,
         groups: [],
         host: "http://localhost:3000",
       });
@@ -555,7 +529,6 @@ describe("background/services/zkIdentity", () => {
     });
 
     test("should create a new identity with Cryptkeeper properly", async () => {
-      const identityStrategy: IdentityStrategy = "interep";
       const identityOptions: ICreateIdentityOptions = {
         nonce: 0,
         account: ZERO_ADDRESS,
@@ -564,9 +537,9 @@ describe("background/services/zkIdentity", () => {
       };
 
       const result = await zkIdentityService.createIdentity({
-        strategy: identityStrategy,
         walletType: EWallet.CRYPTKEEPER_WALLET,
         options: identityOptions,
+        isDeterministic: true,
         groups: [],
         host: "http://localhost:3000",
       });
@@ -574,42 +547,20 @@ describe("background/services/zkIdentity", () => {
       expect(result).toBeDefined();
     });
 
-    test("should not create a new identity if there is no signature", async () => {
-      const identityStrategy: IdentityStrategy = "interep";
-      const identityOptions: ICreateIdentityOptions = {
-        nonce: 0,
-        account: ZERO_ADDRESS,
-        name: "Name",
-        message: "message",
-      };
-
-      const promise = zkIdentityService.createIdentity({
-        strategy: identityStrategy,
-        walletType: EWallet.ETH_WALLET,
-        options: identityOptions,
-        groups: [],
-        host: "http://localhost:3000",
-      });
-
-      await expect(promise).rejects.toThrowError("No signature provided");
-    });
-
     test("should not create a new identity if there is the same identity in the store", async () => {
       const identityMessageSignature = "0x000";
-      const identityStrategy: IdentityStrategy = "interep";
       const identityOptions: ICreateIdentityOptions = {
         nonce: 0,
-        web2Provider: "twitter",
         account: ZERO_ADDRESS,
         name: "Name",
         message: "message",
       };
 
       const successResult = await zkIdentityService.createIdentity({
-        strategy: identityStrategy,
         walletType: EWallet.ETH_WALLET,
         messageSignature: identityMessageSignature,
         options: identityOptions,
+        isDeterministic: true,
         groups: [],
         host: "http://localhost:3000",
       });
@@ -622,10 +573,10 @@ describe("background/services/zkIdentity", () => {
 
       await expect(
         zkIdentityService.createIdentity({
-          strategy: identityStrategy,
           walletType: EWallet.ETH_WALLET,
           messageSignature: identityMessageSignature,
           options: identityOptions,
+          isDeterministic: true,
           groups: [],
           host: "http://localhost:3000",
         }),
@@ -633,10 +584,10 @@ describe("background/services/zkIdentity", () => {
 
       await expect(
         zkIdentityService.createIdentity({
-          strategy: identityStrategy,
           walletType: EWallet.ETH_WALLET,
           messageSignature: identityMessageSignature,
-          options: { message: "message", account: ZERO_ADDRESS },
+          isDeterministic: true,
+          options: { message: "message", account: ZERO_ADDRESS, nonce: 0 },
           groups: [],
           host: "http://localhost:3000",
         }),

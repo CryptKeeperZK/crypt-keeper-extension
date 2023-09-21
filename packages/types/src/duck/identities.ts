@@ -1,9 +1,9 @@
-import type { ICreateIdentityOptions, EWallet, IGroupData, IdentityStrategy } from "../identity";
+import type { ICreateIdentityOptions, EWallet, IGroupData } from "../identity";
 
 export interface ICreateIdentityUiArgs {
-  strategy: IdentityStrategy;
   options: ICreateIdentityOptions;
   walletType: EWallet;
+  isDeterministic: boolean;
   groups: IGroupData[];
   messageSignature?: string;
   host?: string;

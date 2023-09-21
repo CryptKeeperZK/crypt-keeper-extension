@@ -6,12 +6,10 @@ import { EWallet } from "@cryptkeeperzk/types";
 import { act, fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { Suspense } from "react";
 import { useNavigate } from "react-router-dom";
-import selectEvent from "react-select-event";
 
 import { ZERO_ADDRESS } from "@src/config/const";
-import { getEnabledFeatures } from "@src/config/features";
 import { defaultWalletHookData } from "@src/config/mock/wallet";
-import { IDENTITY_TYPES, Paths, WEB2_PROVIDER_OPTIONS } from "@src/constants";
+import { Paths } from "@src/constants";
 import { closePopup } from "@src/ui/ducks/app";
 import { useAppDispatch } from "@src/ui/ducks/hooks";
 import { createIdentity } from "@src/ui/ducks/identities";
@@ -75,34 +73,11 @@ describe("ui/pages/CreateIdentity", () => {
     (getMessageTemplate as jest.Mock).mockReturnValue(mockMessage);
 
     (createIdentity as jest.Mock).mockResolvedValue(true);
-
-    (getEnabledFeatures as jest.Mock).mockReturnValue({ INTEREP_IDENTITY: true });
   });
 
   afterEach(() => {
     jest.clearAllMocks();
     window.location.href = oldHref;
-  });
-
-  test("should render properly with random", async () => {
-    const { container } = render(
-      <Suspense>
-        <CreateIdentity />
-      </Suspense>,
-    );
-
-    await waitFor(() => container.firstChild !== null);
-
-    const select = await screen.findByLabelText("Identity type");
-    await selectEvent.select(select, IDENTITY_TYPES[1].label);
-
-    const metamaskButton = await screen.findByText("Metamask");
-    const cryptkeeperButton = await screen.findByText("Cryptkeeper");
-    const identityType = await screen.findByText("Random");
-
-    expect(metamaskButton).toBeInTheDocument();
-    expect(cryptkeeperButton).toBeInTheDocument();
-    expect(identityType).toBeInTheDocument();
   });
 
   test("should render properly without metamask installed", async () => {
@@ -116,16 +91,13 @@ describe("ui/pages/CreateIdentity", () => {
 
     await waitFor(() => container.firstChild !== null);
 
-    const select = await screen.findByLabelText("Identity type");
-    await selectEvent.select(select, IDENTITY_TYPES[1].label);
-
     const metamaskButton = await screen.findByText("Install MetaMask");
     const cryptkeeperButton = await screen.findByText("Cryptkeeper");
-    const identityType = await screen.findByText("Random");
+    const nonce = await screen.findByText("Nonce");
 
     expect(metamaskButton).toBeInTheDocument();
     expect(cryptkeeperButton).toBeInTheDocument();
-    expect(identityType).toBeInTheDocument();
+    expect(nonce).toBeInTheDocument();
   });
 
   test("should connect properly to eth wallet", async () => {
@@ -139,9 +111,6 @@ describe("ui/pages/CreateIdentity", () => {
 
     await waitFor(() => container.firstChild !== null);
 
-    const select = await screen.findByLabelText("Identity type");
-    await selectEvent.select(select, IDENTITY_TYPES[1].label);
-
     const metamaskButton = await screen.findByText("Connect to Metamask");
 
     await act(async () => Promise.resolve(fireEvent.click(metamaskButton)));
@@ -149,39 +118,7 @@ describe("ui/pages/CreateIdentity", () => {
     expect(defaultWalletHookData.onConnect).toBeCalledTimes(1);
   });
 
-  test("should create random identity properly", async () => {
-    const { container } = render(
-      <Suspense>
-        <CreateIdentity />
-      </Suspense>,
-    );
-
-    await waitFor(() => container.firstChild !== null);
-
-    const select = await screen.findByLabelText("Identity type");
-    await selectEvent.select(select, IDENTITY_TYPES[1].label);
-
-    const button = await screen.findByText("Cryptkeeper");
-    await act(async () => Promise.resolve(fireEvent.click(button)));
-
-    expect(signWithSigner).toBeCalledTimes(0);
-    expect(mockDispatch).toBeCalledTimes(2);
-    expect(mockNavigate).toBeCalledTimes(1);
-    expect(mockNavigate).toBeCalledWith(Paths.HOME);
-    expect(closePopup).toBeCalledTimes(1);
-    expect(createIdentity).toBeCalledTimes(1);
-    expect(createIdentity).toBeCalledWith({
-      groups: [],
-      messageSignature: undefined,
-      options: { message: mockMessage, account: ZERO_ADDRESS },
-      strategy: "random",
-      walletType: EWallet.CRYPTKEEPER_WALLET,
-    });
-  });
-
-  test("should create random identity with disabled interep identity feature properly", async () => {
-    (getEnabledFeatures as jest.Mock).mockReturnValue({ INTEREP_IDENTITY: false });
-
+  test("should create identity with cryptkeeper wallet properly", async () => {
     const { container } = render(
       <Suspense>
         <CreateIdentity />
@@ -202,67 +139,10 @@ describe("ui/pages/CreateIdentity", () => {
     expect(createIdentity).toBeCalledWith({
       groups: [],
       messageSignature: undefined,
-      options: { message: mockMessage, account: ZERO_ADDRESS },
-      strategy: "random",
+      host: undefined,
+      isDeterministic: true,
+      options: { message: mockMessage, account: ZERO_ADDRESS, nonce: 0 },
       walletType: EWallet.CRYPTKEEPER_WALLET,
-    });
-  });
-
-  test("should render properly with interep provider", async () => {
-    const { container } = render(
-      <Suspense>
-        <CreateIdentity />
-      </Suspense>,
-    );
-
-    await waitFor(() => container.firstChild !== null);
-
-    const metamaskButton = await screen.findByText("Metamask");
-    const cryptkeeperButton = await screen.findByText("Cryptkeeper");
-    const provider = await screen.findByText("Twitter");
-    const identityType = await screen.findByText("InterRep");
-
-    expect(metamaskButton).toBeInTheDocument();
-    expect(cryptkeeperButton).toBeInTheDocument();
-    expect(provider).toBeInTheDocument();
-    expect(identityType).toBeInTheDocument();
-  });
-
-  test("should create interep github identity properly", async () => {
-    const { container } = render(
-      <Suspense>
-        <CreateIdentity />
-      </Suspense>,
-    );
-
-    await waitFor(() => container.firstChild !== null);
-
-    const select = await screen.findByLabelText("Web2 Provider");
-    await selectEvent.select(select, WEB2_PROVIDER_OPTIONS[2].label);
-
-    const nonce = await screen.findByLabelText("Nonce");
-    await act(async () => Promise.resolve(fireEvent.change(nonce, { target: { value: 1 } })));
-
-    const button = await screen.findByText("Metamask");
-    await act(async () => Promise.resolve(fireEvent.click(button)));
-
-    expect(signWithSigner).toBeCalledTimes(1);
-    expect(mockDispatch).toBeCalledTimes(2);
-    expect(mockNavigate).toBeCalledTimes(1);
-    expect(mockNavigate).toBeCalledWith(Paths.HOME);
-    expect(closePopup).toBeCalledTimes(1);
-    expect(createIdentity).toBeCalledTimes(1);
-    expect(createIdentity).toBeCalledWith({
-      strategy: "interep",
-      messageSignature: mockSignedMessage,
-      walletType: EWallet.ETH_WALLET,
-      groups: [],
-      options: {
-        account: ZERO_ADDRESS,
-        message: mockMessage,
-        nonce: "1",
-        web2Provider: "github",
-      },
     });
   });
 

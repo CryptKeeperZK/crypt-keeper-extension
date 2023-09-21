@@ -8,8 +8,6 @@ export type {
   IHostPermission,
 } from "./duck";
 export type {
-  IdentityStrategy,
-  IdentityWeb2Provider,
   ICreateIdentityOptions,
   ICreateIdentityRequestArgs,
   IConnectIdentityRequestArgs,
@@ -22,7 +20,6 @@ export type {
   ISetIdentityHostArgs,
   IConnectIdentityArgs,
   ISerializedIdentity,
-  IStrategiesMap,
   ConnectedIdentityMetadata,
 } from "./identity";
 export { EWallet } from "./identity";

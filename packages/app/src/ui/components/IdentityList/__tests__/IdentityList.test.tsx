@@ -39,10 +39,9 @@ describe("ui/components/IdentityList", () => {
       metadata: {
         account: ZERO_ADDRESS,
         name: "Account #0",
-        identityStrategy: "interep",
-        web2Provider: "twitter",
         groups: [],
         host: "http://localhost:3000",
+        isDeterministic: true,
       },
     },
     {
@@ -50,8 +49,8 @@ describe("ui/components/IdentityList", () => {
       metadata: {
         account: ZERO_ADDRESS,
         name: "Account #1",
-        identityStrategy: "random",
         groups: [],
+        isDeterministic: true,
       },
     },
   ];

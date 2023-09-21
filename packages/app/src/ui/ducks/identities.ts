@@ -80,14 +80,14 @@ export const createIdentityRequest =
   };
 
 export const createIdentity =
-  ({ walletType, strategy, messageSignature, groups, host, options }: ICreateIdentityUiArgs) =>
+  ({ walletType, messageSignature, isDeterministic, groups, host, options }: ICreateIdentityUiArgs) =>
   async (): Promise<string | undefined> =>
     postMessage({
       method: RPCAction.CREATE_IDENTITY,
       payload: {
-        strategy,
         walletType,
         messageSignature,
+        isDeterministic,
         groups,
         host,
         options,

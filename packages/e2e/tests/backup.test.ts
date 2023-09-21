@@ -38,7 +38,7 @@ test.describe("backup", () => {
     const extension = new CryptKeeper(page);
     await extension.focus();
 
-    await extension.identities.createIdentityFromHome({ walletType: "eth" });
+    await extension.identities.createIdentityFromHome({ walletType: "eth", nonce: 0, isDeterministic: true });
     await expect(extension.getByText(/Account/)).toHaveCount(2);
 
     await extension.settings.openPage();
@@ -91,7 +91,7 @@ test.describe("backup", () => {
     const extension = new CryptKeeper(page);
     await extension.focus();
 
-    await extension.identities.createIdentityFromHome({ walletType: "eth", identityType: "Random" });
+    await extension.identities.createIdentityFromHome({ walletType: "eth", nonce: 0, isDeterministic: false });
     await expect(extension.getByText(/Account/)).toHaveCount(2);
 
     await extension.settings.openPage();
@@ -101,7 +101,7 @@ test.describe("backup", () => {
 
     await extension.goHome();
 
-    await extension.identities.createIdentityFromHome({ walletType: "eth", identityType: "Random" });
+    await extension.identities.createIdentityFromHome({ walletType: "eth", nonce: 0, isDeterministic: false });
     await expect(extension.getByText(/Account/)).toHaveCount(3);
 
     await extension.settings.openPage();
@@ -119,8 +119,8 @@ test.describe("backup", () => {
     const extension = new CryptKeeper(page);
     await extension.focus();
 
-    await extension.identities.createIdentityFromHome({ walletType: "eth", identityType: "Random" });
-    await extension.identities.createIdentityFromHome({ walletType: "eth", identityType: "Random" });
+    await extension.identities.createIdentityFromHome({ walletType: "eth", nonce: 0, isDeterministic: false });
+    await extension.identities.createIdentityFromHome({ walletType: "eth", nonce: 1, isDeterministic: false });
     await expect(extension.getByText(/Account/)).toHaveCount(3);
 
     await extension.settings.openPage();
@@ -191,20 +191,18 @@ test.describe("backup", () => {
 
     await extension.identities.createIdentityFromHome({
       walletType: "eth",
-      identityType: "InterRep",
-      provider: "Twitter",
       nonce: 0,
+      isDeterministic: true,
     });
     await extension.identities.createIdentityFromHome({
       walletType: "eth",
-      identityType: "InterRep",
-      provider: "Github",
-      nonce: 0,
+      nonce: 1,
+      isDeterministic: true,
     });
     await expect(extension.getByText(/Account/)).toHaveCount(3);
 
-    await extension.identities.renameIdentity(1, "My twitter identity");
-    await extension.identities.renameIdentity(2, "My github identity");
+    await extension.identities.renameIdentity(1, "My identity 1");
+    await extension.identities.renameIdentity(2, "My identity 2");
 
     await extension.settings.openPage();
     await extension.settings.openTab("Backup");
@@ -221,15 +219,13 @@ test.describe("backup", () => {
 
     await extension.identities.createIdentityFromHome({
       walletType: "eth",
-      identityType: "InterRep",
-      provider: "Twitter",
       nonce: 0,
+      isDeterministic: true,
     });
     await extension.identities.createIdentityFromHome({
       walletType: "eth",
-      identityType: "InterRep",
-      provider: "Github",
-      nonce: 0,
+      nonce: 1,
+      isDeterministic: true,
     });
 
     await extension.settings.openPage();
@@ -240,8 +236,8 @@ test.describe("backup", () => {
     await extension.goHome();
 
     await expect(extension.getByText(/Account/)).toHaveCount(1);
-    await expect(extension.getByText("My twitter identity")).toBeVisible();
-    await expect(extension.getByText("My github identity")).toBeVisible();
+    await expect(extension.getByText("My identity 1")).toBeVisible();
+    await expect(extension.getByText("My identity 2")).toBeVisible();
   });
 
   test("should restore data if backup file is invalid", async ({ page }) => {

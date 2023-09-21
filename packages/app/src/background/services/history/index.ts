@@ -4,7 +4,6 @@ import browser from "webextension-polyfill";
 import CryptoService, { ECryptMode } from "@src/background/services/crypto";
 import NotificationService from "@src/background/services/notification";
 import SimpleStorage from "@src/background/services/storage";
-import { getEnabledFeatures } from "@src/config/features";
 import { HistorySettings, Operation, OperationType } from "@src/types";
 
 import { ILoadOperationsData, OperationFilter, OperationOptions } from "./types";
@@ -61,15 +60,12 @@ export default class HistoryService {
   loadOperations = async (): Promise<ILoadOperationsData> => {
     await this.loadSettings();
 
-    const features = getEnabledFeatures();
     const serializedOperations = await this.historyStore
       .get<string>()
       .then((raw) => (raw ? this.cryptoService.decrypt(raw, { mode: ECryptMode.MNEMONIC }) : JSON.stringify([])))
       .then((serialized) => JSON.parse(serialized) as Operation[]);
 
-    this.operations = serializedOperations
-      .filter(({ identity }) => (!features.INTEREP_IDENTITY ? identity?.metadata.identityStrategy !== "interep" : true))
-      .sort((a, b) => +new Date(b.createdAt) - +new Date(a.createdAt));
+    this.operations = serializedOperations.sort((a, b) => +new Date(b.createdAt) - +new Date(a.createdAt));
 
     return { operations: this.operations, settings: this.settings };
   };

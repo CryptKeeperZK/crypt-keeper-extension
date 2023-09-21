@@ -55,7 +55,6 @@ describe("ui/pages/ConnectIdentity/useConnectIdentity", () => {
     {
       commitment: "1234",
       metadata: {
-        identityStrategy: "random",
         account: ZERO_ADDRESS,
         name: "Account #1",
         groups: [],
@@ -68,7 +67,6 @@ describe("ui/pages/ConnectIdentity/useConnectIdentity", () => {
     {
       commitment: "4321",
       metadata: {
-        identityStrategy: "random",
         account: ZERO_ADDRESS,
         name: "Account #2",
         groups: [],

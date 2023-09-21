@@ -26,11 +26,11 @@ describe("ui/pages/ConnectIdentity", () => {
       {
         commitment: "1234",
         metadata: {
-          identityStrategy: "random",
           account: ZERO_ADDRESS,
           name: "Account #1",
           groups: [],
           host: "http://localhost:3000",
+          isDeterministic: true,
         },
       },
     ],
@@ -38,10 +38,10 @@ describe("ui/pages/ConnectIdentity", () => {
       {
         commitment: "4321",
         metadata: {
-          identityStrategy: "random",
           account: ZERO_ADDRESS,
           name: "Account #2",
           groups: [],
+          isDeterministic: true,
         },
       },
     ],

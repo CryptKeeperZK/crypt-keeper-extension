@@ -5,15 +5,17 @@
 import { render, screen } from "@testing-library/react";
 import selectEvent from "react-select-event";
 
-import { WEB2_PROVIDER_OPTIONS } from "@src/constants";
-
 import { Dropdown, IDropdownProps } from "..";
 
 describe("ui/components/Dropdown", () => {
   const defaultProps: IDropdownProps = {
     id: "web2Provider",
     label: "Web2 Provider",
-    options: WEB2_PROVIDER_OPTIONS,
+    options: [
+      { label: "Twitter", value: "twitter", icon: ["fab", "twitter"] },
+      { label: "Github", value: "github", icon: ["fab", "github"] },
+      { label: "Reddit", value: "reddit", icon: ["fab", "reddit"] },
+    ],
     onChange: jest.fn(),
   };
 
@@ -40,13 +42,13 @@ describe("ui/components/Dropdown", () => {
   });
 
   test("should select new value properly", async () => {
-    render(<Dropdown {...defaultProps} value={WEB2_PROVIDER_OPTIONS[0]} />);
+    render(<Dropdown {...defaultProps} value={defaultProps.options[0]} />);
 
     const select = await screen.findByLabelText(defaultProps.label);
-    await selectEvent.select(select, WEB2_PROVIDER_OPTIONS[1].label);
+    await selectEvent.select(select, defaultProps.options[1].label);
 
     expect(defaultProps.onChange).toBeCalledTimes(1);
-    expect(defaultProps.onChange).toBeCalledWith(WEB2_PROVIDER_OPTIONS[1], {
+    expect(defaultProps.onChange).toBeCalledWith(defaultProps.options[1], {
       action: "select-option",
     });
   });

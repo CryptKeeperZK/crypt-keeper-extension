@@ -5,16 +5,14 @@ import type { JsonRpcSigner } from "ethers";
 import { getMessageTemplate, signWithSigner } from "..";
 
 describe("ui/services/identity", () => {
-  test("should sign message properly for interep strategy", async () => {
+  test("should sign message properly", async () => {
     const mockSigner = {
-      signMessage: jest.fn().mockResolvedValue("signed-interep"),
+      signMessage: jest.fn().mockResolvedValue("signed"),
     };
 
     const message = getMessageTemplate({
-      identityStrategyType: "interep",
-      nonce: 0,
-      web2Provider: "twitter",
       account: ZERO_ADDRESS,
+      nonce: 0,
     });
     const result = await signWithSigner({
       message,
@@ -23,27 +21,9 @@ describe("ui/services/identity", () => {
 
     expect(mockSigner.signMessage).toBeCalledTimes(1);
     expect(mockSigner.signMessage).toBeCalledWith(
-      `Sign this message with account ${ZERO_ADDRESS} to generate your twitter Semaphore identity with key nonce: 0`,
+      `Sign this message with account ${ZERO_ADDRESS} to generate your Semaphore identity with key nonce: 0`,
     );
-    expect(result).toBe("signed-interep");
-  });
-
-  test("should sign message properly for random strategy", async () => {
-    const mockSigner = {
-      signMessage: jest.fn().mockResolvedValue("signed-random"),
-    };
-
-    const message = getMessageTemplate({ identityStrategyType: "random", account: ZERO_ADDRESS });
-    const result = await signWithSigner({
-      message,
-      signer: mockSigner as unknown as JsonRpcSigner,
-    });
-
-    expect(mockSigner.signMessage).toBeCalledTimes(1);
-    expect(mockSigner.signMessage).toBeCalledWith(
-      `Sign this message with account ${ZERO_ADDRESS} to generate your random Semaphore identity`,
-    );
-    expect(result).toBe("signed-random");
+    expect(result).toBe("signed");
   });
 
   test("should throw user rejected error", async () => {
@@ -51,7 +31,7 @@ describe("ui/services/identity", () => {
       signMessage: jest.fn().mockRejectedValue({ message: "user rejected signing", code: "ACTION_REJECTED" }),
     };
 
-    const message = getMessageTemplate({ identityStrategyType: "random", account: ZERO_ADDRESS });
+    const message = getMessageTemplate({ account: ZERO_ADDRESS, nonce: 0 });
     await expect(signWithSigner({ message, signer: mockSigner as unknown as JsonRpcSigner })).rejects.toThrowError(
       "User rejected signing",
     );
@@ -62,7 +42,7 @@ describe("ui/services/identity", () => {
       signMessage: jest.fn().mockRejectedValue(new Error("error")),
     };
 
-    const message = getMessageTemplate({ identityStrategyType: "random", account: ZERO_ADDRESS });
+    const message = getMessageTemplate({ account: ZERO_ADDRESS, nonce: 0 });
     await expect(signWithSigner({ message, signer: mockSigner as unknown as JsonRpcSigner })).rejects.toThrowError(
       "error",
     );

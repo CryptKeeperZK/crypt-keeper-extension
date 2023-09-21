@@ -3,33 +3,17 @@ import omit from "lodash/omit";
 import { createNewIdentity } from "../..";
 
 describe("identity/factory", () => {
-  test("should return new interep identity ", () => {
+  test("should create new identity properly ", () => {
     const defaultArgs = {
-      identityStrategy: "interep" as const,
-      name: "name",
-      account: "account",
-      messageSignature: "signature",
-      web2Provider: "github" as const,
-      groups: [],
-      host: "http://localhost:3000",
-    };
-
-    const identity = createNewIdentity("interep", defaultArgs);
-
-    expect(identity.metadata).toStrictEqual(omit(defaultArgs, ["messageSignature"]));
-  });
-
-  test("should return new random identity ", () => {
-    const defaultArgs = {
-      identityStrategy: "random" as const,
       name: "name",
       account: "account",
       messageSignature: "signature",
       groups: [],
       host: "http://localhost:3000",
+      isDeterministic: true,
     };
 
-    const identity = createNewIdentity("random", defaultArgs);
+    const identity = createNewIdentity(defaultArgs);
 
     expect(identity.metadata).toStrictEqual(omit(defaultArgs, ["messageSignature"]));
   });

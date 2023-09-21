@@ -1,6 +1,7 @@
 import { IPendingRequest, IRequestResolutionAction, RequestResolutionStatus } from "@cryptkeeperzk/types";
 import { useCallback, useState } from "react";
 
+import { closePopup } from "@src/ui/ducks/app";
 import { useAppDispatch } from "@src/ui/ducks/hooks";
 import { fetchPendingRequests, finalizeRequest, usePendingRequests } from "@src/ui/ducks/requests";
 
@@ -23,9 +24,8 @@ export const useConfirmRequestModal = (): IUseConfirmRequestModalData => {
     (req: IRequestResolutionAction) => {
       setLoading(true);
       dispatch(finalizeRequest(req))
-        .then(() => {
-          dispatch(fetchPendingRequests());
-        })
+        .then(() => dispatch(fetchPendingRequests()))
+        .then(() => dispatch(closePopup()))
         .catch((e: Error) => {
           setError(e.message);
         })
@@ -38,8 +38,13 @@ export const useConfirmRequestModal = (): IUseConfirmRequestModalData => {
 
   const reject = useCallback(
     (err?: Error) => {
+      if (!pendingRequest) {
+        dispatch(closePopup());
+        return;
+      }
+
       finalize({
-        id: pendingRequest!.id,
+        id: pendingRequest.id,
         status: RequestResolutionStatus.REJECT,
         data: err,
       });

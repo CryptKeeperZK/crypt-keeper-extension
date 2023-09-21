@@ -9,7 +9,6 @@ on:
 
 env:
   CRYPTKEEPER_DEBUG: false
-  INTEREP_IDENTITY: false
   USER_MNEMONIC: false
   E2E: false
   METAMASK_EXTENSION_ID: "nkbihfbeogaeaoehlefnkodbefgpgknn"

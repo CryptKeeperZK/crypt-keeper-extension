@@ -5,15 +5,13 @@
 import { act, renderHook, waitFor } from "@testing-library/react";
 import { useNavigate } from "react-router-dom";
 
-import { ZERO_ADDRESS } from "@src/config/const";
+import { mockDefaultIdentity } from "@src/config/mock/zk";
 import { Paths } from "@src/constants";
 import { closePopup } from "@src/ui/ducks/app";
 import { useAppDispatch } from "@src/ui/ducks/hooks";
 import { fetchIdentities, revealConnectedIdentityCommitment, useConnectedIdentity } from "@src/ui/ducks/identities";
 import { rejectUserRequest } from "@src/ui/ducks/requests";
 import { redirectToNewTab } from "@src/util/browser";
-
-import type { IIdentityData } from "@cryptkeeperzk/types";
 
 import { IUseRevealIdentityCommitmentData, useRevealIdentityCommitment } from "../useRevealIdentityCommitment";
 
@@ -44,23 +42,11 @@ jest.mock("@src/ui/ducks/requests", (): unknown => ({
 }));
 
 describe("ui/pages/RevealIdentityCommitment/useRevealIdentityCommitment", () => {
-  const defaultIdentity: IIdentityData = {
-    commitment: "commitment",
-    metadata: {
-      account: ZERO_ADDRESS,
-      name: "Account #1",
-      identityStrategy: "interep",
-      groups: [],
-      web2Provider: "twitter",
-      host: "http://localhost:3000",
-    },
-  };
-
   const mockNavigate = jest.fn();
   const mockDispatch = jest.fn(() => Promise.resolve());
 
   beforeEach(() => {
-    (useConnectedIdentity as jest.Mock).mockReturnValue(defaultIdentity);
+    (useConnectedIdentity as jest.Mock).mockReturnValue(mockDefaultIdentity);
 
     (useNavigate as jest.Mock).mockReturnValue(mockNavigate);
 
@@ -82,7 +68,7 @@ describe("ui/pages/RevealIdentityCommitment/useRevealIdentityCommitment", () => 
 
     expect(result.current.isLoading).toBe(false);
     expect(result.current.error).toBe("");
-    expect(result.current.connectedIdentity).toStrictEqual(defaultIdentity);
+    expect(result.current.connectedIdentity).toStrictEqual(mockDefaultIdentity);
   });
 
   test("should go back properly", async () => {
@@ -117,7 +103,7 @@ describe("ui/pages/RevealIdentityCommitment/useRevealIdentityCommitment", () => 
     await act(() => Promise.resolve(result.current.onGoToHost()));
 
     expect(redirectToNewTab).toBeCalledTimes(1);
-    expect(redirectToNewTab).toBeCalledWith(defaultIdentity.metadata.host);
+    expect(redirectToNewTab).toBeCalledWith(mockDefaultIdentity.metadata.host);
   });
 
   test("should reveal connected identity commitment properly", async () => {

@@ -1,11 +1,9 @@
-import { IIdentityMetadata, IdentityWeb2Provider } from "@cryptkeeperzk/types";
-import { IconName, IconPrefix } from "@fortawesome/fontawesome-common-types";
+import { IIdentityMetadata } from "@cryptkeeperzk/types";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import classNames from "classnames";
 
-import { getEnabledFeatures } from "@src/config/features";
 import { Icon } from "@src/ui/components/Icon";
 import { Input } from "@src/ui/components/Input";
 import { Menu } from "@src/ui/components/Menu";
@@ -13,14 +11,6 @@ import { ellipsify } from "@src/util/account";
 
 import "./identityListItemStyles.scss";
 import { useIdentityItem } from "./useIdentityItem";
-
-type IconWeb2Providers = Record<IdentityWeb2Provider, [IconPrefix, IconName]>;
-
-const web2ProvidersIcons: IconWeb2Providers = {
-  twitter: ["fab", "twitter"],
-  reddit: ["fab", "reddit"],
-  github: ["fab", "github"],
-};
 
 export interface IdentityItemProps {
   commitment: string;
@@ -58,10 +48,6 @@ export const IdentityItem = ({
     onUpdate: onUpdateIdentityName,
     onSelect: onSelectIdentity,
   });
-
-  const features = getEnabledFeatures();
-  const identityTitle = features.INTEREP_IDENTITY ? "random" : "";
-  const canShowIdentityType = Boolean(metadata.web2Provider || identityTitle);
 
   const menuItems = [
     { label: "View", isDangerItem: false, onClick: onGoToIdentity },
@@ -141,30 +127,6 @@ export const IdentityItem = ({
             }}
           >
             {metadata.name}
-
-            {canShowIdentityType && (
-              <Box
-                sx={{
-                  alignItems: "center",
-                  display: "flex",
-                  justifyContent: "center",
-                  ml: 1,
-                  py: 0.5,
-                  px: 1,
-                  height: 28,
-                  borderRadius: 100,
-                  backgroundColor: "text.500",
-                  color: "text.800",
-                  fontSize: "0.9rem",
-                }}
-              >
-                {metadata.web2Provider ? (
-                  <FontAwesomeIcon icon={web2ProvidersIcons[metadata.web2Provider]} title={metadata.web2Provider} />
-                ) : (
-                  identityTitle
-                )}
-              </Box>
-            )}
 
             {metadata.host && (
               <Box
