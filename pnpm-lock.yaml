@@ -228,8 +228,8 @@ importers:
         specifier: ^6.16.0
         version: 6.16.0(react-dom@18.2.0)(react@18.2.0)
       react-select:
-        specifier: ^5.7.4
-        version: 5.7.4(@types/react@18.2.22)(react-dom@18.2.0)(react@18.2.0)
+        specifier: ^5.7.5
+        version: 5.7.5(@types/react@18.2.22)(react-dom@18.2.0)(react@18.2.0)
       redux-logger:
         specifier: ^3.0.6
         version: 3.0.6
@@ -2907,12 +2907,6 @@ packages:
     resolution: {integrity: sha512-jk3WqquEJRlcyu7997NtR5PibI+y5bi+LS3hPmguVClypenMsCY3CBa3LAQnozRCtCrYWSEtAdiskpamuJRFOQ==}
     dependencies:
       '@floating-ui/utils': 0.1.2
-    dev: false
-
-  /@floating-ui/dom@1.4.1:
-    resolution: {integrity: sha512-loCXUOLzIC3jp50RFOKXZ/kQjjz26ryr/23M+FWG9jrmAv8lRf3DUfC2AiVZ3+K316GOhB08CR+Povwz8e9mDw==}
-    dependencies:
-      '@floating-ui/core': 1.4.1
     dev: false
 
   /@floating-ui/dom@1.5.2:
@@ -15067,16 +15061,16 @@ packages:
       '@testing-library/dom': 9.3.1
     dev: true
 
-  /react-select@5.7.4(@types/react@18.2.22)(react-dom@18.2.0)(react@18.2.0):
-    resolution: {integrity: sha512-NhuE56X+p9QDFh4BgeygHFIvJJszO1i1KSkg/JPcIJrbovyRtI+GuOEa4XzFCEpZRAEoEI8u/cAHK+jG/PgUzQ==}
+  /react-select@5.7.5(@types/react@18.2.22)(react-dom@18.2.0)(react@18.2.0):
+    resolution: {integrity: sha512-jgYZa2xgKP0DVn5GZk7tZwbRx7kaVz1VqU41S8z1KWmshRDhlrpKS0w80aS1RaK5bVIXpttgSou7XCjWw1ncKA==}
     peerDependencies:
       react: ^16.8.0 || ^17.0.0 || ^18.0.0
       react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0
     dependencies:
-      '@babel/runtime': 7.22.5
+      '@babel/runtime': 7.22.15
       '@emotion/cache': 11.11.0
       '@emotion/react': 11.11.1(@types/react@18.2.22)(react@18.2.0)
-      '@floating-ui/dom': 1.4.1
+      '@floating-ui/dom': 1.5.2
       '@types/react-transition-group': 4.4.6
       memoize-one: 6.0.0
       prop-types: 15.8.1
