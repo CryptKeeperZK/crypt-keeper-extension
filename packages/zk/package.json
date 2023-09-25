@@ -23,6 +23,7 @@
     "build": "tsc -p tsconfig.build.json",
     "build:e2e": "pnpm run build",
     "dev": "pnpm run build",
+    "publish:package": "pnpm publish --access=public --no-git-checks",
     "test": "jest",
     "test:coverage": "pnpm run test --coverage",
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx",

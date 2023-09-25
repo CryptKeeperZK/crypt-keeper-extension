@@ -4,6 +4,8 @@ on:
   push:
     tags:
       - "@cryptkeeperzk/providers-*"
+      - "@cryptkeeperzk/types-*"
+      - "@cryptkeeperzk/zk-*"
 
 env:
   CRYPTKEEPER_DEBUG: false
