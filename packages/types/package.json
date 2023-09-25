@@ -22,6 +22,9 @@
     "url": "https://github.com/CryptKeeperZK/crypt-keeper-extension/issues/new/choose"
   },
   "homepage": "https://github.com/CryptKeeperZK/crypt-keeper-extension",
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
     "build": "tsc -p tsconfig.json",
     "build:e2e": "pnpm run build",
