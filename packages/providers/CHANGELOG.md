@@ -2,6 +2,13 @@
 
 This file was generated using [@jscutlery/semver](https://github.com/jscutlery/semver).
 
+## [0.3.1](https://github.com/CryptKeeperZK/crypt-keeper-extension/compare/@cryptkeeperzk/providers-0.3.0...@cryptkeeperzk/providers-0.3.1) (2023-09-25)
+
+### Dependency Updates
+
+* `@cryptkeeperzk/types` updated to version `0.4.0`
+* `@cryptkeeperzk/zk` updated to version `0.4.0`
+* `@cryptkeeperzk/eslint-config-base` updated to version `0.1.5`
 ## [0.3.0](https://github.com/CryptKeeperZK/crypt-keeper-extension/compare/@cryptkeeperzk/providers-0.2.7...@cryptkeeperzk/providers-0.3.0) (2023-09-19)
 
 ### Dependency Updates
