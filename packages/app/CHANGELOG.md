@@ -2,6 +2,19 @@
 
 This file was generated using [@jscutlery/semver](https://github.com/jscutlery/semver).
 
+## [0.4.0](https://github.com/CryptKeeperZK/crypt-keeper-extension/compare/@cryptkeeperzk/app-0.3.0...@cryptkeeperzk/app-0.4.0) (2023-09-25)
+
+### Dependency Updates
+
+* `@cryptkeeperzk/providers` updated to version `0.3.1`
+* `@cryptkeeperzk/types` updated to version `0.4.0`
+* `@cryptkeeperzk/zk` updated to version `0.4.0`
+* `@cryptkeeperzk/eslint-config-react` updated to version `0.1.5`
+
+### Features
+
+* deterministic signatures ([#905](https://github.com/CryptKeeperZK/crypt-keeper-extension/issues/905)) ([d9df4cd](https://github.com/CryptKeeperZK/crypt-keeper-extension/commit/d9df4cd89cb23538dc3921b0ea16720d7abe609e))
+
 ## [0.3.0](https://github.com/CryptKeeperZK/crypt-keeper-extension/compare/@cryptkeeperzk/app-0.2.7...@cryptkeeperzk/app-0.3.0) (2023-09-19)
 
 ### Dependency Updates
