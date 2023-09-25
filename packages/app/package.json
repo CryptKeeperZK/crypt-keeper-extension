@@ -102,7 +102,7 @@
     "@metamask/providers": "^13.0.0",
     "@mui/icons-material": "^5.14.9",
     "@mui/material": "^5.14.10",
-    "@reduxjs/toolkit": "^1.9.5",
+    "@reduxjs/toolkit": "^1.9.6",
     "@types/json-stable-stringify": "^1.0.34",
     "@web3-react/core": "^8.2.2",
     "@web3-react/metamask": "^8.2.3",
