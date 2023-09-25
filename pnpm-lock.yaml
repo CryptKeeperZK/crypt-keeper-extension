@@ -280,8 +280,8 @@ importers:
         specifier: ^3.0.9
         version: 3.0.9
       '@types/webextension-polyfill':
-        specifier: ^0.10.2
-        version: 0.10.2
+        specifier: ^0.10.4
+        version: 0.10.4
       browserify:
         specifier: ^17.0.0
         version: 17.0.0
@@ -5689,8 +5689,8 @@ packages:
     resolution: {integrity: sha512-EwmlvuaxPNej9+T4v5AuBPJa2x2UOJVdjCtDHgcDqitUeOtjnJKJ+apYjVcAoBEMjKW1VVFGZLUb5+qqa09XFA==}
     dev: false
 
-  /@types/webextension-polyfill@0.10.2:
-    resolution: {integrity: sha512-L+T72DVTi/1azY6gw7PRmL49kvobLKQQWfOmHDBRSCkAvaCV4wk222J3ZODYA9Gf/UqUvtItu8FPJgWX5ktO9g==}
+  /@types/webextension-polyfill@0.10.4:
+    resolution: {integrity: sha512-pvEIqAZEbJRzaqTaWq3xlUoMWa3+euZHHz+VZHCzHWW+jOf8qLOq9wXy38U+WiPG3108SJC/wNc1X6vPC5TcjQ==}
     dev: true
 
   /@types/webpack-sources@3.2.0:
