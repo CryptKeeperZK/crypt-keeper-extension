@@ -11,7 +11,7 @@ test.describe("reveal identity commitment", () => {
     await connectWallet({ page, cryptKeeperExtensionId, context });
     await expect(page.getByText("Connected to MetaMask")).toBeVisible();
 
-    await page.goto("/?REVEAL_IDENTITY=true");
+    await page.goto("/");
   });
 
   test("should reveal connected identity commitment properly [health-check]", async ({ page }) => {
@@ -43,7 +43,7 @@ test.describe("reveal identity commitment", () => {
     cryptKeeperExtensionId,
   }) => {
     const demoApp = await context.newPage();
-    await demoApp.goto("/?REVEAL_IDENTITY=true");
+    await demoApp.goto("/");
 
     const cryptKeeper = await context.newPage();
     await cryptKeeper.bringToFront();

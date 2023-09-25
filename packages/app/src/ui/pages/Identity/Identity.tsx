@@ -6,7 +6,6 @@ import Tooltip from "@mui/material/Tooltip";
 import Typography from "@mui/material/Typography";
 import { type ReactNode, useCallback } from "react";
 
-import { IDENTITY_TYPES_TITLE_MAP, WEB2_PROVIDER_TITLE_MAP } from "@src/constants";
 import { ConfirmDangerModal } from "@src/ui/components/ConfirmDangerModal";
 import { Header } from "@src/ui/components/Header";
 import { Icon } from "@src/ui/components/Icon";
@@ -123,10 +122,6 @@ const Identity = (): JSX.Element | null => {
             )}
 
             {renderRow("Name", !isUpdating ? metadata.name : renderRenameForm())}
-
-            {renderRow("Type", IDENTITY_TYPES_TITLE_MAP[metadata.identityStrategy])}
-
-            {metadata.web2Provider && renderRow("Provider", WEB2_PROVIDER_TITLE_MAP[metadata.web2Provider])}
 
             {renderRow(
               "Owner account",

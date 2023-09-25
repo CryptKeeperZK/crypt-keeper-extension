@@ -42,10 +42,9 @@ describe("background/services/protocols", () => {
   const defaultIdentityMetadata: IIdentityMetadata = {
     account: "account",
     name: "Identity #1",
-    identityStrategy: "interep",
-    web2Provider: "twitter",
     groups: [],
     host: "http://localhost:3000",
+    isDeterministic: true,
   };
 
   const defaultMerkleProof: MerkleProof = {

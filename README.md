@@ -2,7 +2,9 @@
 <img width="128" alt="CryptKeeper logo" src="./packages/app/src/static/icons/icon-128.png">
 </p>
 <p align="center">
-<a rel="noreferrer noopener" target="blank" href="https://addons.mozilla.org/firefox/addon/cryptkeeper/"><img alt="Firefox Add-ons" src="https://img.shields.io/badge/Firefox-141e24.svg?&style=for-the-badge&logo=firefox-browser"></a>  
+<a rel="noreferrer noopener" target="blank" href="https://addons.mozilla.org/firefox/addon/cryptkeeper/"><img alt="Firefox Add-ons" src="https://img.shields.io/badge/Firefox-141e24.svg?&style=for-the-badge&logo=firefox-browser"></a>
+<a rel="noreferrer noopener" target="blank" href="https://chrome.google.com/webstore/detail/cryptkeeper/nligojmlalemmhlmkghnflkgicnmodcl"><img alt="Chrome Web Store" src="https://img.shields.io/badge/Chrome-141e24.svg?&style=for-the-badge&logo=googlechrome"></a>
+<a rel="noreferrer noopener" target="blank" href="https://www.npmjs.com/package/@cryptkeeperzk/providers"><img alt="npm" src="https://img.shields.io/badge/NPM-141e24.svg?&style=for-the-badge&logo=npm"></a>
 </p>
 
 <h1 align="center">Crypt-Keeper (Beta Version)</h1>
@@ -33,18 +35,20 @@ These injected providers allow applications to establish a connection with the C
 
 ## Features
 
-1. **Identity Secret and Identity Commitment Generation:** Generate Semaphore identity secrets and commitments securely. 
-2. **Seamless Connection with Semaphore Identity:** Connect seamlessly with your Semaphore identity when interacting with websites and online services. 
-3. **Semaphore Zero-Knowledge Proof (ZK-Proof) Generation:**  Generate Zero-Knowledge Proofs using the Semaphore library. ZK-Proofs enable you to validate the authenticity of data and assertions without revealing any sensitive information. This feature enhances privacy and security in various cryptographic applications.
-4. **Rate-Limiting Nullifier (RLN) Zero-Knowledge Proof (ZK-Proof) Generation:**  Generate Zero-Knowledge Proofs using the RLN JS library. RLN is a zk-gadget/protocol that enables spam prevention in anonymous environments.
- 
+1. **Identity Secret and Identity Commitment Generation:** Generate Semaphore identity secrets and commitments securely.
+2. **Seamless Connection with Semaphore Identity:** Connect seamlessly with your Semaphore identity when interacting with websites and online services.
+3. **Semaphore Zero-Knowledge Proof (ZK-Proof) Generation:** Generate Zero-Knowledge Proofs using the Semaphore library. ZK-Proofs enable you to validate the authenticity of data and assertions without revealing any sensitive information. This feature enhances privacy and security in various cryptographic applications.
+4. **Rate-Limiting Nullifier (RLN) Zero-Knowledge Proof (ZK-Proof) Generation:** Generate Zero-Knowledge Proofs using the RLN JS library. RLN is a zk-gadget/protocol that enables spam prevention in anonymous environments.
+
 ### Enabling Proof Generation:
+
 Proof generation in the Semaphore library can be enabled in two ways:
 
 1. **Providing Merkle Witness Directly:** You can generate a proof by directly providing the necessary Merkle witness. This allows you to use pre-computed witness data.
 2. **Using a Secure Service Address:** by providing a secure service address from which the Merkle witness should be obtained
 
 # Development
+
 To set up the development environment, follow these steps:
 
 1. `pnpm install`

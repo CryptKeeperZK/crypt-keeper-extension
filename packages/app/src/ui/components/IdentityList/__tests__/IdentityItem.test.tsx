@@ -5,8 +5,7 @@
 import { act, render, screen, fireEvent } from "@testing-library/react";
 import { useNavigate } from "react-router-dom";
 
-import { ZERO_ADDRESS } from "@src/config/const";
-import { getEnabledFeatures } from "@src/config/features";
+import { mockDefaultIdentity } from "@src/config/mock/zk";
 import { Paths } from "@src/constants";
 import { redirectToNewTab, replaceUrlParams } from "@src/util/browser";
 
@@ -21,14 +20,7 @@ describe("ui/components/IdentityList/Item", () => {
     isShowMenu: true,
     commitment: "1",
     selected: "0",
-    metadata: {
-      account: ZERO_ADDRESS,
-      name: "Account #0",
-      identityStrategy: "interep",
-      web2Provider: "twitter",
-      groups: [],
-      host: "http://localhost:3000",
-    },
+    metadata: mockDefaultIdentity.metadata,
     onDeleteIdentity: jest.fn(),
     onSelectIdentity: jest.fn(),
     onUpdateIdentityName: jest.fn(),
@@ -38,8 +30,6 @@ describe("ui/components/IdentityList/Item", () => {
 
   beforeEach(() => {
     (useNavigate as jest.Mock).mockReturnValue(mockNavigate);
-
-    (getEnabledFeatures as jest.Mock).mockReturnValue({ INTEREP_IDENTITY: true });
   });
 
   afterEach(() => {
@@ -50,47 +40,8 @@ describe("ui/components/IdentityList/Item", () => {
     render(<IdentityItem {...defaultProps} isShowMenu={false} />);
 
     const name = await screen.findByText(defaultProps.metadata.name);
-    const provider = await screen.findByText(defaultProps.metadata.web2Provider as string);
 
     expect(name).toBeInTheDocument();
-    expect(provider).toBeInTheDocument();
-  });
-
-  test("should render identity properly with disabled interep identity", async () => {
-    (getEnabledFeatures as jest.Mock).mockReturnValue({ INTEREP_IDENTITY: false });
-
-    render(
-      <IdentityItem
-        {...defaultProps}
-        metadata={{
-          ...defaultProps.metadata,
-          identityStrategy: "random",
-        }}
-      />,
-    );
-
-    const name = await screen.findByText(defaultProps.metadata.name);
-
-    expect(name).toBeInTheDocument();
-  });
-
-  test("should render random identity properly with enabled interep identity", async () => {
-    render(
-      <IdentityItem
-        {...defaultProps}
-        metadata={{
-          ...defaultProps.metadata,
-          web2Provider: undefined,
-          identityStrategy: "random",
-        }}
-      />,
-    );
-
-    const name = await screen.findByText(defaultProps.metadata.name);
-    const random = await screen.findByText("random");
-
-    expect(name).toBeInTheDocument();
-    expect(random).toBeInTheDocument();
   });
 
   test("should accept to delete identity properly", async () => {
@@ -143,13 +94,7 @@ describe("ui/components/IdentityList/Item", () => {
   });
 
   test("should select identity properly", async () => {
-    render(
-      <IdentityItem
-        {...defaultProps}
-        metadata={{ ...defaultProps.metadata, identityStrategy: "random", web2Provider: undefined }}
-        selected={undefined}
-      />,
-    );
+    render(<IdentityItem {...defaultProps} metadata={defaultProps.metadata} selected={undefined} />);
 
     const selectIcon = await screen.findByTestId(`identity-select-${defaultProps.commitment}`);
     act(() => {

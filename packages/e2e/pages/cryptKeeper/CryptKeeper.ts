@@ -98,7 +98,7 @@ export default class CryptKeeper extends BasePage {
     const cryptKeeper = await this.page.context().waitForEvent("page");
 
     await new ConnectIdentity(cryptKeeper, this.identities)
-      .createIdentity({ walletType: "ck", identityType: "Random" })
+      .createIdentity({ walletType: "ck", nonce: 0, isDeterministic: false })
       .then((page) => page.selectIdentity(index));
   }
 

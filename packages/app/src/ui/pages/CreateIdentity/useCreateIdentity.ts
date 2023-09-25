@@ -1,11 +1,9 @@
-import { EWallet, IdentityStrategy, IdentityWeb2Provider } from "@cryptkeeperzk/types";
+import { EWallet } from "@cryptkeeperzk/types";
 import { BaseSyntheticEvent, useCallback, useMemo } from "react";
 import { Control, useForm, UseFormRegister } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 
-import { getEnabledFeatures } from "@src/config/features";
-import { WEB2_PROVIDER_OPTIONS, IDENTITY_TYPES, Paths } from "@src/constants";
-import { SelectOption } from "@src/types";
+import { Paths } from "@src/constants";
 import { closePopup } from "@src/ui/ducks/app";
 import { useAppDispatch } from "@src/ui/ducks/hooks";
 import { createIdentity } from "@src/ui/ducks/identities";
@@ -14,13 +12,10 @@ import { getMessageTemplate, signWithSigner } from "@src/ui/services/identity";
 
 export interface IUseCreateIdentityData {
   isLoading: boolean;
-  isProviderAvailable: boolean;
   isWalletConnected: boolean;
   isWalletInstalled: boolean;
   errors: Partial<{
     root: string;
-    identityStrategyType: string;
-    web2Provider: string;
     nonce: string;
   }>;
   control: Control<FormFields, unknown>;
@@ -33,25 +28,21 @@ export interface IUseCreateIdentityData {
 }
 
 interface FormFields {
-  identityStrategyType: SelectOption;
-  web2Provider: SelectOption;
   nonce: number;
+  isDeterministic: boolean;
 }
 
 export const useCreateIdentity = (): IUseCreateIdentityData => {
-  const features = getEnabledFeatures();
   const {
     formState: { isSubmitting, isLoading, errors },
     control,
     setError,
-    watch,
     register,
     handleSubmit,
   } = useForm({
     defaultValues: {
-      identityStrategyType: features.INTEREP_IDENTITY ? IDENTITY_TYPES[0] : IDENTITY_TYPES[1],
-      web2Provider: WEB2_PROVIDER_OPTIONS[0],
       nonce: 0,
+      isDeterministic: true,
     },
   });
   const navigate = useNavigate();
@@ -65,41 +56,30 @@ export const useCreateIdentity = (): IUseCreateIdentityData => {
   const ethWallet = useEthWallet();
   const cryptKeeperWallet = useCryptKeeperWallet();
   const dispatch = useAppDispatch();
-  const values = watch();
 
   const createNewIdentity = useCallback(
-    async ({ identityStrategyType, web2Provider, nonce }: FormFields, walletType: EWallet) => {
+    async ({ nonce, isDeterministic }: FormFields, walletType: EWallet) => {
       try {
         const account =
           walletType === EWallet.ETH_WALLET
             ? ethWallet.address?.toLowerCase()
             : cryptKeeperWallet.address?.toLowerCase();
         const message = getMessageTemplate({
-          web2Provider: web2Provider.value as IdentityWeb2Provider,
           nonce,
-          identityStrategyType: identityStrategyType.value as IdentityStrategy,
           account: account!,
         });
 
-        const options =
-          identityStrategyType.value !== "random"
-            ? {
-                nonce,
-                web2Provider: web2Provider.value as IdentityWeb2Provider,
-                account: account!,
-                message,
-              }
-            : { message, account: account! };
+        const options = { message, account: account!, nonce };
 
         const messageSignature =
-          walletType === EWallet.ETH_WALLET
+          walletType === EWallet.ETH_WALLET && isDeterministic
             ? await signWithSigner({ signer: await ethWallet.provider?.getSigner(), message })
             : undefined;
 
         await dispatch(
           createIdentity({
-            strategy: identityStrategyType.value as IdentityStrategy,
             messageSignature,
+            isDeterministic,
             options,
             walletType,
             groups: [],
@@ -151,10 +131,7 @@ export const useCreateIdentity = (): IUseCreateIdentityData => {
     isLoading: ethWallet.isActivating || cryptKeeperWallet.isActivating || isLoading || isSubmitting,
     isWalletInstalled: ethWallet.isInjectedWallet,
     isWalletConnected: ethWallet.isActive,
-    isProviderAvailable: values.identityStrategyType.value === "interep",
     errors: {
-      web2Provider: errors.web2Provider?.message,
-      identityStrategyType: errors.identityStrategyType?.message,
       nonce: errors.nonce?.message,
       root: errors.root?.message,
     },

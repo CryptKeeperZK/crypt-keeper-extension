@@ -5,7 +5,7 @@
 import { render, waitFor } from "@testing-library/react";
 import { Suspense } from "react";
 
-import { ZERO_ADDRESS } from "@src/config/const";
+import { mockDefaultIdentity } from "@src/config/mock/zk";
 
 import RevealIdentityCommitment from "..";
 import { IUseRevealIdentityCommitmentData, useRevealIdentityCommitment } from "../useRevealIdentityCommitment";
@@ -18,17 +18,7 @@ describe("ui/pages/RevealIdentityCommitment", () => {
   const defaultHookData: IUseRevealIdentityCommitmentData = {
     isLoading: false,
     error: "",
-    connectedIdentity: {
-      commitment: "commitment",
-      metadata: {
-        account: ZERO_ADDRESS,
-        name: "Account #1",
-        identityStrategy: "interep",
-        groups: [{ id: "1", name: "Group #1", description: "Description #1" }],
-        web2Provider: "twitter",
-        host: "http://localhost:3000",
-      },
-    },
+    connectedIdentity: mockDefaultIdentity,
     onGoBack: jest.fn(),
     onGoToHost: jest.fn(),
     onReveal: jest.fn(),

@@ -59,9 +59,6 @@ const App = () => {
     generareGroupMerkleProof,
   } = useCryptKeeper();
 
-  const params = new URLSearchParams(window.location.search);
-  const canShowReveal = process.env.REVEAL_IDENTITY === "true" || params.get("REVEAL_IDENTITY") === "true";
-
   useEffect(() => {
     connect();
   }, [connect]);
@@ -96,20 +93,6 @@ const App = () => {
         </div>
 
         <div>
-          <strong>Strategy:</strong>
-
-          <p data-testid="connected-strategy">{connectedIdentityMetadata.identityStrategy}</p>
-        </div>
-
-        {connectedIdentityMetadata.web2Provider && (
-          <div>
-            <strong>Web2 Provider:</strong>
-
-            <p data-testid="connected-web2-provider">{connectedIdentityMetadata.web2Provider}</p>
-          </div>
-        )}
-
-        <div>
           <strong>Host:</strong>
 
           <p data-testid="connected-host">{connectedIdentityMetadata.host}</p>
@@ -134,19 +117,17 @@ const App = () => {
         </button>
       </div>
 
-      {canShowReveal && (
-        <div>
-          <h2>Reveal connected identity Commitment</h2>
+      <div>
+        <h2>Reveal connected identity Commitment</h2>
 
-          <button
-            data-testid="reveal-connected-identity-commitment"
-            type="button"
-            onClick={revealConnectedIdentityCommitment}
-          >
-            Reveal
-          </button>
-        </div>
-      )}
+        <button
+          data-testid="reveal-connected-identity-commitment"
+          type="button"
+          onClick={revealConnectedIdentityCommitment}
+        >
+          Reveal
+        </button>
+      </div>
 
       <hr />
 

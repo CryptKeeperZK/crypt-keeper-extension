@@ -7,9 +7,8 @@ import { act, renderHook } from "@testing-library/react";
 import { useNavigate } from "react-router-dom";
 
 import { ZERO_ADDRESS } from "@src/config/const";
-import { getEnabledFeatures } from "@src/config/features";
 import { defaultWalletHookData } from "@src/config/mock/wallet";
-import { IDENTITY_TYPES, Paths } from "@src/constants";
+import { Paths } from "@src/constants";
 import { closePopup } from "@src/ui/ducks/app";
 import { useAppDispatch } from "@src/ui/ducks/hooks";
 import { createIdentity } from "@src/ui/ducks/identities";
@@ -73,8 +72,6 @@ describe("ui/pages/CreateIdentity/useCreateIdentity", () => {
     (useCryptKeeperWallet as jest.Mock).mockReturnValue({ ...defaultWalletHookData, isActive: true });
 
     (useNavigate as jest.Mock).mockReturnValue(mockNavigate);
-
-    (getEnabledFeatures as jest.Mock).mockReturnValue({ INTEREP_IDENTITY: true });
   });
 
   afterEach(() => {
@@ -86,14 +83,11 @@ describe("ui/pages/CreateIdentity/useCreateIdentity", () => {
     const { result } = renderHook(() => useCreateIdentity());
 
     expect(result.current.isLoading).toBe(false);
-    expect(result.current.isProviderAvailable).toBe(true);
     expect(result.current.isWalletConnected).toBe(true);
     expect(result.current.isWalletInstalled).toBe(true);
     expect(result.current.control).toBeDefined();
     expect(result.current.errors).toStrictEqual({
       root: undefined,
-      web2Provider: undefined,
-      identityStrategyType: undefined,
       nonce: undefined,
     });
   });
@@ -111,31 +105,9 @@ describe("ui/pages/CreateIdentity/useCreateIdentity", () => {
     expect(createIdentity).toBeCalledWith({
       groups: [],
       messageSignature: mockSignedMessage,
-      options: { account: ZERO_ADDRESS, message: mockMessage, nonce: 0, web2Provider: "twitter" },
-      strategy: "interep",
-      walletType: EWallet.ETH_WALLET,
-    });
-    expect(mockNavigate).toBeCalledTimes(1);
-    expect(mockNavigate).toBeCalledWith(Paths.HOME);
-  });
-
-  test("should create identity with eth wallet and disabled interep identity properly", async () => {
-    (getEnabledFeatures as jest.Mock).mockReturnValue({ INTEREP_IDENTITY: false });
-
-    const { result } = renderHook(() => useCreateIdentity());
-
-    await act(async () => Promise.resolve(result.current.onCreateWithEthWallet()));
-
-    expect(result.current.isLoading).toBe(false);
-    expect(signWithSigner).toBeCalledTimes(1);
-    expect(mockDispatch).toBeCalledTimes(2);
-    expect(closePopup).toBeCalledTimes(1);
-    expect(createIdentity).toBeCalledTimes(1);
-    expect(createIdentity).toBeCalledWith({
-      groups: [],
-      messageSignature: mockSignedMessage,
-      options: { account: ZERO_ADDRESS, message: mockMessage },
-      strategy: "random",
+      host: undefined,
+      isDeterministic: true,
+      options: { account: ZERO_ADDRESS, message: mockMessage, nonce: 0 },
       walletType: EWallet.ETH_WALLET,
     });
     expect(mockNavigate).toBeCalledTimes(1);
@@ -143,7 +115,6 @@ describe("ui/pages/CreateIdentity/useCreateIdentity", () => {
   });
 
   test("should create identity properly and go back", async () => {
-    (getEnabledFeatures as jest.Mock).mockReturnValue({ INTEREP_IDENTITY: false });
     window.location.href = `${oldHref}?back=true&host=http://localhost:3000`;
 
     const { result } = renderHook(() => useCreateIdentity());
@@ -158,8 +129,8 @@ describe("ui/pages/CreateIdentity/useCreateIdentity", () => {
       groups: [],
       host: "http://localhost:3000",
       messageSignature: mockSignedMessage,
-      options: { account: ZERO_ADDRESS, message: mockMessage },
-      strategy: "random",
+      isDeterministic: true,
+      options: { account: ZERO_ADDRESS, message: mockMessage, nonce: 0 },
       walletType: EWallet.ETH_WALLET,
     });
     expect(mockNavigate).toBeCalledTimes(1);
@@ -202,8 +173,9 @@ describe("ui/pages/CreateIdentity/useCreateIdentity", () => {
     expect(createIdentity).toBeCalledWith({
       groups: [],
       messageSignature: undefined,
-      options: { account: defaultWalletHookData.address, message: mockMessage, nonce: 0, web2Provider: "twitter" },
-      strategy: "interep",
+      host: undefined,
+      isDeterministic: true,
+      options: { account: defaultWalletHookData.address, message: mockMessage, nonce: 0 },
       walletType: EWallet.CRYPTKEEPER_WALLET,
     });
     expect(mockNavigate).toBeCalledTimes(1);
@@ -237,12 +209,6 @@ describe("ui/pages/CreateIdentity/useCreateIdentity", () => {
     });
 
     const { result } = renderHook(() => useCreateIdentity());
-
-    await act(async () =>
-      Promise.resolve(
-        result.current.register("identityStrategyType").onChange({ target: { value: IDENTITY_TYPES[0] } }),
-      ),
-    );
 
     await act(async () => Promise.resolve(result.current.onCreateWithCryptkeeper()));
 

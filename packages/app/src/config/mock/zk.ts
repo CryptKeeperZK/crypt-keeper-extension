@@ -28,14 +28,14 @@ export const defaultMerkleProof: IMerkleProof = {
 
 export const mockDefaultIdentityCommitment = "219ea1ec38a6fffb63e2a591fec619fe9dc850d345f6d4d8823a4f72a6f729a6";
 
-export const mockDefaultIdentity: IIdentityData = {
+export const mockDefaultIdentity: IIdentityData & { secret?: string } = {
   commitment: mockDefaultIdentityCommitment,
+  secret: "1234",
   metadata: {
     account: ZERO_ADDRESS,
     name: "Account #1",
-    identityStrategy: "interep",
-    web2Provider: "twitter",
     groups: [],
+    isDeterministic: true,
     host: "http://localhost:3000",
   },
 };

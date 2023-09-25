@@ -1,12 +1,7 @@
-export type IdentityStrategy = "interep" | "random";
-
-export type IdentityWeb2Provider = "twitter" | "github" | "reddit";
-
 export interface ICreateIdentityOptions {
   message: string;
   account: string;
-  nonce?: number;
-  web2Provider?: IdentityWeb2Provider;
+  nonce: number;
   name?: string;
 }
 
@@ -19,10 +14,10 @@ export interface IConnectIdentityRequestArgs {
 }
 
 export interface INewIdentityRequest {
-  strategy: IdentityStrategy;
   options: ICreateIdentityOptions;
   walletType: EWallet;
   groups: IGroupData[];
+  isDeterministic: boolean;
   host?: string;
   messageSignature?: string;
 }
@@ -35,13 +30,12 @@ export enum EWallet {
 export interface IIdentityMetadata {
   account: string;
   name: string;
-  identityStrategy: IdentityStrategy;
   groups: IGroupData[];
-  web2Provider?: IdentityWeb2Provider;
+  isDeterministic: boolean;
   host?: string;
 }
 
-export type ConnectedIdentityMetadata = Pick<IIdentityMetadata, "name" | "identityStrategy" | "web2Provider" | "host">;
+export type ConnectedIdentityMetadata = Pick<IIdentityMetadata, "name" | "host">;
 
 export interface IGroupData {
   id: string;
@@ -78,16 +72,10 @@ export interface ISerializedIdentity {
 }
 
 export interface ICreateIdentityArgs {
-  identityStrategy: IdentityStrategy;
   name: string;
   account: string;
   groups: IGroupData[];
+  isDeterministic: boolean;
   messageSignature?: string;
-  web2Provider?: IdentityWeb2Provider;
   host?: string;
-}
-
-export interface IStrategiesMap {
-  random: (config: ICreateIdentityArgs) => void;
-  interep: (config: ICreateIdentityArgs) => void;
 }

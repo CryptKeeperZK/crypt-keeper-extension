@@ -4,9 +4,8 @@ import BasePage from "../BasePage";
 
 export interface ICreateIdentityArgs {
   walletType: WalletType;
-  identityType?: IdentityType;
-  provider?: ProviderType;
-  nonce?: number;
+  nonce: number;
+  isDeterministic: boolean;
 }
 
 export interface IUpdateIdentityArgs {
@@ -14,21 +13,6 @@ export interface IUpdateIdentityArgs {
 }
 
 type WalletType = "eth" | "ck";
-
-type IdentityType = "InterRep" | "Random";
-
-type ProviderType = "Twitter" | "Reddit" | "Github";
-
-const IDENTITY_OPTIONS: Record<IdentityType, number> = {
-  InterRep: 0,
-  Random: 1,
-};
-
-const PROVIDER_OPTIONS: Record<ProviderType, number> = {
-  Twitter: 0,
-  Github: 1,
-  Reddit: 2,
-};
 
 export default class Identities extends BasePage {
   async openTab(): Promise<void> {
@@ -66,24 +50,19 @@ export default class Identities extends BasePage {
     await this.createIdentity(cryptKeeper, params);
   }
 
-  async createIdentity(page: Page, { identityType, provider, nonce, walletType }: ICreateIdentityArgs): Promise<void> {
-    if (identityType) {
-      await page.locator("#identityStrategyType").click();
-      await page.locator(`[id$="-option-${IDENTITY_OPTIONS[identityType]}"]`).click();
-    }
+  async createIdentity(page: Page, { nonce, walletType, isDeterministic }: ICreateIdentityArgs): Promise<void> {
+    await page.getByLabel("Nonce", { exact: true }).fill(nonce.toString());
 
-    if (provider && identityType !== "Random") {
-      await page.locator("#web2Provider").click();
-      await page.locator(`[id$="-option-${PROVIDER_OPTIONS[provider]}"]`).click();
-    }
+    const deterministicCheckbox = page.getByLabel("Deterministic identity", { exact: true });
+    const isDeterministicEnabled = await deterministicCheckbox.isChecked();
 
-    if (nonce && identityType !== "Random") {
-      await page.getByLabel("Nonce").fill(nonce.toString());
+    if (isDeterministic !== isDeterministicEnabled) {
+      await deterministicCheckbox.click();
     }
 
     await page.getByRole("button", { name: walletType === "eth" ? "Metamask" : "Cryptkeeper" }).click();
 
-    if (walletType === "eth") {
+    if (walletType === "eth" && isDeterministic) {
       // TODO: synpress doesn't support new data-testid for metamask
       const metamask = await this.page.context().waitForEvent("page");
 

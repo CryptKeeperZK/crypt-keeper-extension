@@ -4,7 +4,6 @@ import Tooltip from "@mui/material/Tooltip";
 import Typography from "@mui/material/Typography";
 import { ReactNode, useCallback } from "react";
 
-import { IDENTITY_TYPES_TITLE_MAP, WEB2_PROVIDER_TITLE_MAP } from "@src/constants";
 import { FullModalContent, FullModalFooter, FullModalHeader } from "@src/ui/components/FullModal";
 import { ellipsify } from "@src/util/account";
 
@@ -99,11 +98,6 @@ const RevealIdentityCommitment = (): JSX.Element => {
                 )}
 
                 {renderRow("Name", connectedIdentity.metadata.name)}
-
-                {renderRow("Type", IDENTITY_TYPES_TITLE_MAP[connectedIdentity.metadata.identityStrategy])}
-
-                {connectedIdentity.metadata.web2Provider &&
-                  renderRow("Provider", WEB2_PROVIDER_TITLE_MAP[connectedIdentity.metadata.web2Provider])}
 
                 {renderRow(
                   "Owner account",

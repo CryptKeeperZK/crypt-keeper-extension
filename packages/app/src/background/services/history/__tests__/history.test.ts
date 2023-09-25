@@ -1,4 +1,3 @@
-import { getEnabledFeatures } from "@src/config/features";
 import { mockDefaultGroup, mockDefaultIdentity } from "@src/config/mock/zk";
 import { Operation, OperationType } from "@src/types";
 
@@ -27,7 +26,7 @@ const mockDefaultOperations: Operation[] = [
   {
     id: "4",
     type: OperationType.JOIN_GROUP,
-    identity: { ...mockDefaultIdentity, metadata: { ...mockDefaultIdentity.metadata, identityStrategy: "random" } },
+    identity: mockDefaultIdentity,
     group: mockDefaultGroup,
     createdAt: new Date().toISOString(),
   },
@@ -65,10 +64,6 @@ interface MockStorage {
 describe("background/services/history", () => {
   const service = HistoryService.getInstance();
 
-  beforeEach(() => {
-    (getEnabledFeatures as jest.Mock).mockReturnValue({ INTEREP_IDENTITY: true });
-  });
-
   afterEach(async () => {
     await service.clear();
   });
@@ -96,20 +91,6 @@ describe("background/services/history", () => {
     expect(settings).toStrictEqual(mockDefaultSettings);
     expect(service.getOperations()).toStrictEqual(operations);
     expect(service.getSettings()).toStrictEqual(mockDefaultSettings);
-  });
-
-  test("should load history operations without interep identities", async () => {
-    (getEnabledFeatures as jest.Mock).mockReturnValue({ INTEREP_IDENTITY: false });
-
-    const [historyStore, settingsStore] = (SimpleStorage as jest.Mock).mock.instances as [MockStorage, MockStorage];
-    historyStore.get.mockResolvedValue(mockSerializedDefaultOperations);
-    settingsStore.get.mockResolvedValueOnce(mockSerializedDefaultSettings);
-
-    const { operations, settings } = await service.loadOperations();
-
-    expect(operations).toHaveLength(1);
-    expect(settings).toStrictEqual(mockDefaultSettings);
-    expect(service.getOperations()).toStrictEqual(operations);
   });
 
   test("should load history operations if history is disabled", async () => {

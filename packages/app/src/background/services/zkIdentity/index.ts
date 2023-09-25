@@ -22,7 +22,6 @@ import HistoryService from "@src/background/services/history";
 import NotificationService from "@src/background/services/notification";
 import SimpleStorage from "@src/background/services/storage";
 import WalletService from "@src/background/services/wallet";
-import { getEnabledFeatures } from "@src/config/features";
 import { Paths } from "@src/constants";
 import { OperationType } from "@src/types";
 import { setIdentities, setConnectedIdentity } from "@src/ui/ducks/identities";
@@ -126,17 +125,10 @@ export default class ZkIdentityService implements IBackupable {
       return new Map();
     }
 
-    const features = getEnabledFeatures();
     const identitiesDecrypted = this.cryptoService.decrypt(ciphertext, { mode: ECryptMode.MNEMONIC });
     const iterableIdentities = JSON.parse(identitiesDecrypted) as Iterable<readonly [string, string]>;
 
-    return new Map(
-      features.INTEREP_IDENTITY
-        ? iterableIdentities
-        : [...iterableIdentities].filter(
-            ([, identity]) => ZkIdentitySemaphore.genFromSerialized(identity).metadata.identityStrategy !== "interep",
-          ),
-    );
+    return new Map(iterableIdentities);
   };
 
   getIdentityCommitments = async (): Promise<{ commitments: string[]; identities: Map<string, string> }> => {
@@ -215,7 +207,7 @@ export default class ZkIdentityService implements IBackupable {
       return undefined;
     }
 
-    return pick(metadata, ["name", "identityStrategy", "web2Provider", "host"]);
+    return pick(metadata, ["name", "host"]);
   }
 
   setIdentityName = async ({ identityCommitment, name }: ISetIdentityNameArgs): Promise<boolean> => {
@@ -309,36 +301,32 @@ export default class ZkIdentityService implements IBackupable {
   };
 
   createIdentity = async ({
-    strategy,
     walletType,
     messageSignature,
+    isDeterministic,
     groups,
     host,
     options,
   }: INewIdentityRequest): Promise<string | undefined> => {
-    if (walletType === EWallet.ETH_WALLET && !messageSignature) {
-      throw new Error("No signature provided");
-    }
-
     const numOfIdentities = await this.getNumOfIdentities();
 
     const config = {
       ...options,
       groups,
       host,
-      identityStrategy: strategy,
+      isDeterministic,
       name: options.name || `Account # ${numOfIdentities}`,
-      messageSignature: strategy === "interep" ? messageSignature : undefined,
+      messageSignature,
     };
 
-    if (walletType === EWallet.CRYPTKEEPER_WALLET && strategy === "interep") {
+    if (walletType === EWallet.CRYPTKEEPER_WALLET && isDeterministic) {
       config.messageSignature = await this.walletService.signMessage({
         message: options.message,
         address: options.account,
       });
     }
 
-    const identity = createNewIdentity(strategy, config);
+    const identity = createNewIdentity(config);
     const status = await this.insertIdentity(identity);
 
     if (!status) {

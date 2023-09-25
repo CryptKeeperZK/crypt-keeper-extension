@@ -5,6 +5,7 @@
 import { RequestResolutionStatus } from "@cryptkeeperzk/types";
 import { act, renderHook, waitFor } from "@testing-library/react";
 
+import { closePopup } from "@src/ui/ducks/app";
 import { useAppDispatch } from "@src/ui/ducks/hooks";
 import { fetchPendingRequests, finalizeRequest, usePendingRequests } from "@src/ui/ducks/requests";
 
@@ -14,6 +15,10 @@ jest.mock("@src/ui/ducks/requests", (): unknown => ({
   finalizeRequest: jest.fn(),
   fetchPendingRequests: jest.fn(),
   usePendingRequests: jest.fn(),
+}));
+
+jest.mock("@src/ui/ducks/app", (): unknown => ({
+  closePopup: jest.fn(),
 }));
 
 jest.mock("@src/ui/ducks/hooks", (): unknown => ({
@@ -66,6 +71,7 @@ describe("ui/components/ConfirmRequestModal/useConfirmRequestModal", () => {
       data: undefined,
     });
     expect(fetchPendingRequests).toBeCalledTimes(1);
+    expect(closePopup).toBeCalledTimes(1);
   });
 
   test("should handle accept error", async () => {
@@ -94,6 +100,20 @@ describe("ui/components/ConfirmRequestModal/useConfirmRequestModal", () => {
       data: undefined,
     });
     expect(fetchPendingRequests).toBeCalledTimes(1);
+    expect(closePopup).toBeCalledTimes(1);
+  });
+
+  test("should close popup if trying to reject empty request", async () => {
+    (usePendingRequests as jest.Mock).mockReturnValue([]);
+    const { result } = renderHook(() => useConfirmRequestModal());
+    await waitForData(result.current);
+
+    await act(async () => Promise.resolve(result.current.reject()));
+    await waitFor(() => !result.current.loading);
+
+    expect(finalizeRequest).toBeCalledTimes(0);
+    expect(fetchPendingRequests).toBeCalledTimes(0);
+    expect(closePopup).toBeCalledTimes(1);
   });
 
   test("should handle reject error", async () => {

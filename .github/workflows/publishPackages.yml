@@ -7,7 +7,6 @@ on:
 
 env:
   CRYPTKEEPER_DEBUG: false
-  INTEREP_IDENTITY: false
   USER_MNEMONIC: false
   E2E: false
   METAMASK_EXTENSION_ID: "nkbihfbeogaeaoehlefnkodbefgpgknn"
@@ -25,7 +24,6 @@ env:
   MANIFEST_VERSION: 3
   VERIFIABLE_CREDENTIALS: false
   WEBPACK_ANALYZER: false
-  REVEAL_IDENTITY: false
   TEST_GROUP_ID: ${{ secrets.TEST_GROUP_ID }}
   TEST_GROUP_API_KEY: ${{ secrets.TEST_GROUP_API_KEY }}
   TEST_GROUP_INVITE_CODE: ${{ secrets.TEST_GROUP_INVITE_CODE }}

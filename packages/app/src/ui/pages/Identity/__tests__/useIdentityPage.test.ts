@@ -2,11 +2,10 @@
  * @jest-environment jsdom
  */
 
-import { IIdentityData } from "@cryptkeeperzk/types";
 import { act, renderHook, waitFor } from "@testing-library/react";
 import { useNavigate } from "react-router-dom";
 
-import { ZERO_ADDRESS } from "@src/config/const";
+import { mockDefaultIdentity } from "@src/config/mock/zk";
 import { Paths } from "@src/constants";
 import { useAppDispatch } from "@src/ui/ducks/hooks";
 import {
@@ -42,29 +41,17 @@ jest.mock("@src/ui/ducks/identities", (): unknown => ({
 }));
 
 describe("ui/pages/Identity/useIdentityPage", () => {
-  const defaultIdentity: IIdentityData = {
-    commitment: "commitment",
-    metadata: {
-      account: ZERO_ADDRESS,
-      name: "Account #1",
-      identityStrategy: "interep",
-      groups: [],
-      web2Provider: "twitter",
-      host: "http://localhost:3000",
-    },
-  };
-
   const mockNavigate = jest.fn();
   const mockDispatch = jest.fn(() => Promise.resolve());
 
   beforeEach(() => {
-    (useConnectedIdentity as jest.Mock).mockReturnValue(defaultIdentity);
+    (useConnectedIdentity as jest.Mock).mockReturnValue(mockDefaultIdentity);
 
-    (useIdentity as jest.Mock).mockReturnValue(defaultIdentity);
+    (useIdentity as jest.Mock).mockReturnValue(mockDefaultIdentity);
 
     (useNavigate as jest.Mock).mockReturnValue(mockNavigate);
 
-    (useUrlParam as jest.Mock).mockReturnValue(defaultIdentity.commitment);
+    (useUrlParam as jest.Mock).mockReturnValue(mockDefaultIdentity.commitment);
 
     (useAppDispatch as jest.Mock).mockReturnValue(mockDispatch);
   });
@@ -88,8 +75,8 @@ describe("ui/pages/Identity/useIdentityPage", () => {
     expect(result.current.isConnectedIdentity).toBe(true);
     expect(result.current.isConfirmModalOpen).toBe(false);
     expect(result.current.errors).toStrictEqual({ root: undefined, name: undefined });
-    expect(result.current.commitment).toBe(defaultIdentity.commitment);
-    expect(result.current.metadata).toStrictEqual(defaultIdentity.metadata);
+    expect(result.current.commitment).toBe(mockDefaultIdentity.commitment);
+    expect(result.current.metadata).toStrictEqual(mockDefaultIdentity.metadata);
   });
 
   test("should go back properly", async () => {
@@ -198,6 +185,6 @@ describe("ui/pages/Identity/useIdentityPage", () => {
     await act(() => Promise.resolve(result.current.onGoToHost()));
 
     expect(redirectToNewTab).toBeCalledTimes(1);
-    expect(redirectToNewTab).toBeCalledWith(defaultIdentity.metadata.host);
+    expect(redirectToNewTab).toBeCalledWith(mockDefaultIdentity.metadata.host);
   });
 });

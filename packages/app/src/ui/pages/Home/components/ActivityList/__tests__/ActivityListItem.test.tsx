@@ -5,7 +5,7 @@
 import { act, fireEvent, render, screen } from "@testing-library/react";
 
 import { mockDefaultGroup, mockDefaultIdentity } from "@src/config/mock/zk";
-import { Operation, OperationType } from "@src/types";
+import { OperationType } from "@src/types";
 import { redirectToNewTab } from "@src/util/browser";
 import { getBandadaGroupUrl } from "@src/util/groups";
 
@@ -37,26 +37,6 @@ describe("ui/pages/Home/components/ActivityList/Item", () => {
     const activity = await screen.findByTestId("activity-operation-1");
 
     expect(activity).toBeInTheDocument();
-  });
-
-  test("should render random identity properly", async () => {
-    const operation: Operation = {
-      ...defaultProps.operation,
-      identity: {
-        ...defaultProps.operation.identity!,
-        metadata: {
-          ...defaultProps.operation.identity!.metadata,
-          web2Provider: undefined,
-          identityStrategy: "random",
-        },
-      },
-    };
-
-    render(<ActivityItem {...defaultProps} operation={operation} />);
-
-    const random = await screen.findByText("random");
-
-    expect(random).toBeInTheDocument();
   });
 
   test("should delete activity operation properly", async () => {

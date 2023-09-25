@@ -1,5 +1,3 @@
-import { IdentityWeb2Provider } from "@cryptkeeperzk/types";
-import { IconName, IconPrefix } from "@fortawesome/fontawesome-common-types";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Tooltip from "@mui/material/Tooltip";
 import { useCallback } from "react";
@@ -19,8 +17,6 @@ export interface IActivityItemProps {
   onDelete: (id: string) => void;
 }
 
-type IconWeb2Providers = Record<IdentityWeb2Provider, [IconPrefix, IconName]>;
-
 const OPERATIONS: Record<OperationType, string> = {
   [OperationType.CREATE_IDENTITY]: "Identity created",
   [OperationType.DELETE_IDENTITY]: "Identity removed",
@@ -37,12 +33,6 @@ const OPERATIONS: Record<OperationType, string> = {
   [OperationType.REJECT_VERIFIABLE_PRESENTATION_REQUEST]: "Verifiable presentation request rejected",
   [OperationType.REVEAL_IDENTITY_COMMITMENT]: "Identity revealed",
   [OperationType.JOIN_GROUP]: "Joined group",
-};
-
-const web2ProvidersIcons: IconWeb2Providers = {
-  twitter: ["fab", "twitter"],
-  reddit: ["fab", "reddit"],
-  github: ["fab", "github"],
 };
 
 export const ActivityItem = ({ operation, onDelete }: IActivityItemProps): JSX.Element => {
@@ -65,16 +55,6 @@ export const ActivityItem = ({ operation, onDelete }: IActivityItemProps): JSX.E
       <div className="flex flex-col flex-grow">
         <div className="flex flex-row items-center text-lg font-semibold">
           {OPERATIONS[operation.type]}
-
-          {metadata && (
-            <span className="text-xs py-1 px-2 ml-2 rounded-full bg-gray-500 text-gray-800">
-              {metadata.web2Provider ? (
-                <FontAwesomeIcon icon={web2ProvidersIcons[metadata.web2Provider]} title={metadata.web2Provider} />
-              ) : (
-                "random"
-              )}
-            </span>
-          )}
 
           {metadata?.host && (
             <span className="text-xs py-1 px-2 ml-2 rounded-full bg-gray-500 text-gray-800">
