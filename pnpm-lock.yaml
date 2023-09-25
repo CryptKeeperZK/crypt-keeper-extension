@@ -19,7 +19,7 @@ importers:
         version: link:packages/manifest-bump
       '@jscutlery/semver':
         specifier: ^3.1.0
-        version: 3.1.0(@nx/devkit@16.8.1)
+        version: 3.1.0(@nx/devkit@16.9.0)
       '@nx/js':
         specifier: ^16.8.1
         version: 16.8.1(@swc/core@1.3.82)(@types/node@20.6.5)(nx@16.8.1)(typescript@5.2.2)
@@ -559,8 +559,8 @@ importers:
   packages/manifest-bump:
     dependencies:
       '@nx/devkit':
-        specifier: 16.8.1
-        version: 16.8.1(nx@16.8.1)
+        specifier: 16.9.0
+        version: 16.9.0(nx@16.8.1)
       tslib:
         specifier: ^2.6.2
         version: 2.6.2
@@ -3321,13 +3321,13 @@ packages:
       '@jridgewell/sourcemap-codec': 1.4.15
     dev: true
 
-  /@jscutlery/semver@3.1.0(@nx/devkit@16.8.1):
+  /@jscutlery/semver@3.1.0(@nx/devkit@16.9.0):
     resolution: {integrity: sha512-x/v+6HN0/UpQW8L3sIlvRodBY/pGJ3AjtNpKmMkR4RmnTuuRo+OMAiIS4/EJ2pzXhmn9YqNm8rYzIIqiWt62IA==}
     engines: {node: '>=12.0.0'}
     peerDependencies:
       '@nx/devkit': ^16.0.0
     dependencies:
-      '@nx/devkit': 16.8.1(nx@16.8.1)
+      '@nx/devkit': 16.9.0(nx@16.8.1)
       chalk: 4.1.2
       conventional-changelog: 4.0.0
       conventional-recommended-bump: 7.0.1
@@ -3814,6 +3814,20 @@ packages:
 
   /@nx/devkit@16.8.1(nx@16.8.1):
     resolution: {integrity: sha512-I+Cg+lXk0wRz6KC9FZbWFuJWQTXAt5O3bNl9ksISmzqmEyuy72Cv+/MBHvF7o54Sq80DNw+RKWB1re5HFOsqCA==}
+    peerDependencies:
+      nx: '>= 15 <= 17'
+    dependencies:
+      '@nrwl/devkit': 16.8.1(nx@16.8.1)
+      ejs: 3.1.9
+      enquirer: 2.3.6
+      ignore: 5.2.4
+      nx: 16.8.1(@swc/core@1.3.82)
+      semver: 7.5.3
+      tmp: 0.2.1
+      tslib: 2.6.2
+
+  /@nx/devkit@16.9.0(nx@16.8.1):
+    resolution: {integrity: sha512-cqCLyiX9he+4XPalUysIfuDZ+b+JbnuFRwo0xIcrk86SwskVWBHGXgXthC7KoEK0ToCQXP+cEbXZqa5zZmuGbQ==}
     peerDependencies:
       nx: '>= 15 <= 17'
     dependencies:
