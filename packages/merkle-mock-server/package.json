@@ -1,6 +1,6 @@
 {
   "name": "@cryptkeeperzk/merkle-mock-server",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "CryptKeeper Extension merkle tree mock server",
   "private": true,
   "repository": {
