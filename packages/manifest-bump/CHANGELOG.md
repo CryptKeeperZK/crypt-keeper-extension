@@ -2,6 +2,11 @@
 
 This file was generated using [@jscutlery/semver](https://github.com/jscutlery/semver).
 
+## [0.1.1](https://github.com/CryptKeeperZK/crypt-keeper-extension/compare/@cryptkeeperzk/manifest-bump-0.1.0...@cryptkeeperzk/manifest-bump-0.1.1) (2023-09-25)
+
+### Dependency Updates
+
+* `@cryptkeeperzk/eslint-config-base` updated to version `0.1.5`
 ## [0.1.0](https://github.com/CryptKeeperZK/crypt-keeper-extension/compare/@cryptkeeperzk/manifest-bump-0.0.4...@cryptkeeperzk/manifest-bump-0.1.0) (2023-09-19)
 
 ### Dependency Updates
