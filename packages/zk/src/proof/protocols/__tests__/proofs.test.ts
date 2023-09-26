@@ -43,7 +43,7 @@ describe("background/services/protocols", () => {
     account: "account",
     name: "Identity #1",
     groups: [],
-    host: "http://localhost:3000",
+    urlOrigin: "http://localhost:3000",
     isDeterministic: true,
   };
 

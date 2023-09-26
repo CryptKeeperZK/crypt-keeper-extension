@@ -22,7 +22,6 @@ const mockDefaultHost = "http://localhost:3000";
 const mockSerializedIdentity = "identity";
 const mockConnectedIdentity: ConnectedIdentityMetadata = {
   name: "Account 1",
-  identityStrategy: "random",
 };
 const mockNewRequest = jest.fn((_: PendingRequestType, meta: IZkMetadata) =>
   meta.urlOrigin === "reject" ? Promise.reject() : Promise.resolve(),

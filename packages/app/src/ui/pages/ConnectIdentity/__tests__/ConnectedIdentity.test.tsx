@@ -29,7 +29,7 @@ describe("ui/pages/ConnectIdentity", () => {
           account: ZERO_ADDRESS,
           name: "Account #1",
           groups: [],
-          host: "http://localhost:3000",
+          urlOrigin: "http://localhost:3000",
           isDeterministic: true,
         },
       },

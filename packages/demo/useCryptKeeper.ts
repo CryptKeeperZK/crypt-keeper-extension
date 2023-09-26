@@ -1,6 +1,5 @@
 /* eslint-disable no-console */
-import { initializeCryptKeeper, ICryptKeeperInjectedProvider } from "@cryptkeeperzk/providers";
-import { EventName } from "@cryptkeeperzk/providers";
+import { initializeCryptKeeper, ICryptKeeperInjectedProvider, EventName } from "@cryptkeeperzk/providers";
 import { Identity } from "@cryptkeeperzk/semaphore-identity";
 import { bigintToHex } from "bigint-conversion";
 import { encodeBytes32String } from "ethers";

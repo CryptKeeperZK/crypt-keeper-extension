@@ -209,7 +209,7 @@ export default class ZkIdentityService implements IBackupable {
       return undefined;
     }
 
-    return pick(metadata, ["name", "host"]);
+    return pick(metadata, ["name", "urlOrigin"]);
   }
 
   setIdentityName = async ({ identityCommitment, name }: ISetIdentityNameArgs): Promise<boolean> => {
@@ -315,7 +315,7 @@ export default class ZkIdentityService implements IBackupable {
     const config = {
       ...options,
       groups,
-      host,
+      urlOrigin,
       isDeterministic,
       nonce: isDeterministic ? options.nonce : undefined,
       name: options.name || `Account # ${numOfIdentities}`,

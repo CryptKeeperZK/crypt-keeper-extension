@@ -40,7 +40,7 @@ describe("ui/components/IdentityList", () => {
         account: ZERO_ADDRESS,
         name: "Account #0",
         groups: [],
-        host: "http://localhost:3000",
+        urlOrigin: "http://localhost:3000",
         isDeterministic: true,
       },
     },

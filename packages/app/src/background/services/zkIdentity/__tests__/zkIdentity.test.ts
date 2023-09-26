@@ -116,7 +116,7 @@ describe("background/services/zkIdentity", () => {
       identityStorage.get.mockResolvedValue(mockSerializedDefaultIdentities);
       connectedIdentityStorage.get.mockResolvedValue(mockDefaultIdentityCommitment);
 
-      const expectConnectIdentityAction = setConnectedIdentity(pick(mockDefaultIdentity.metadata, ["name", "host"]));
+      const expectConnectIdentityAction = setConnectedIdentity(pick(mockDefaultIdentity.metadata, ["name", "urlOrigin"]));
 
       const expectSetIdentitiesAction = setIdentities([
         { commitment: mockDefaultIdentityCommitment, metadata: mockDefaultIdentity.metadata },
@@ -146,7 +146,7 @@ describe("background/services/zkIdentity", () => {
 
   describe("set connected identity", () => {
     test("should set connected identity properly", async () => {
-      const expectConnectIdentityAction = setConnectedIdentity(pick(mockDefaultIdentity.metadata, ["name", "host"]));
+      const expectConnectIdentityAction = setConnectedIdentity(pick(mockDefaultIdentity.metadata, ["name", "urlOrigin"]));
       const expectedSetIdentitiesAction = setIdentities([
         { commitment: mockDefaultIdentityCommitment, metadata: mockDefaultIdentity.metadata },
       ]);
@@ -310,7 +310,7 @@ describe("background/services/zkIdentity", () => {
         { urlOrigin: mockDefaultIdentity.metadata.urlOrigin },
       );
 
-      expect(data).toStrictEqual(pick(mockDefaultIdentity.metadata, ["name", "host"]));
+      expect(data).toStrictEqual(pick(mockDefaultIdentity.metadata, ["name", "urlOrigin"]));
     });
 
     test("should no get connected identity data if urlOrigin is not the same properly", async () => {

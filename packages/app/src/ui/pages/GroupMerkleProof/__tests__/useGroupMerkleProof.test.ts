@@ -59,7 +59,7 @@ jest.mock("@src/ui/ducks/identities", (): unknown => ({
 }));
 
 describe("ui/pages/GroupMerkleProof/useGroupMerkleProof", () => {
-  const defaultFaviconsData = { favicons: [`${mockDefaultIdentity.metadata.host}/favicon.ico`] };
+  const defaultFaviconsData = { favicons: [`${mockDefaultIdentity.metadata.urlOrigin}/favicon.ico`] };
 
   const mockNavigate = jest.fn();
   const mockDispatch = jest.fn(() => Promise.resolve(false));
@@ -142,7 +142,7 @@ describe("ui/pages/GroupMerkleProof/useGroupMerkleProof", () => {
     await act(() => Promise.resolve(result.current.onGoToHost()));
 
     expect(redirectToNewTab).toBeCalledTimes(1);
-    expect(redirectToNewTab).toBeCalledWith(mockDefaultIdentity.metadata.host);
+    expect(redirectToNewTab).toBeCalledWith(mockDefaultIdentity.metadata.urlOrigin);
   });
 
   test("should go to group properly", async () => {

@@ -159,7 +159,7 @@ describe("ui/pages/CreateIdentity", () => {
     expect(createIdentity).toBeCalledWith({
       groups: [],
       messageSignature: undefined,
-      host: undefined,
+      urlOrigin: undefined,
       isDeterministic: true,
       options: { message: mockMessage, account: ZERO_ADDRESS, nonce: 0 },
       walletType: EWallet.CRYPTKEEPER_WALLET,

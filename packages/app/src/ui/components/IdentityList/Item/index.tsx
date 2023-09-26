@@ -128,7 +128,7 @@ export const IdentityItem = ({
           >
             {metadata.name}
 
-            {metadata.host && (
+            {metadata.urlOrigin && (
               <Box
                 data-testid="urlOrigin-icon"
                 sx={{

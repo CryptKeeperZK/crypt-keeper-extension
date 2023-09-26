@@ -185,10 +185,6 @@ describe("ui/pages/Identity/useIdentityPage", () => {
     await act(() => Promise.resolve(result.current.onGoToHost()));
 
     expect(redirectToNewTab).toBeCalledTimes(1);
-<<<<<<< HEAD
-    expect(redirectToNewTab).toBeCalledWith(mockDefaultIdentity.metadata.host);
-=======
-    expect(redirectToNewTab).toBeCalledWith(defaultIdentity.metadata.urlOrigin);
->>>>>>> d635f23f (fix: enhance provider apis)
+    expect(redirectToNewTab).toBeCalledWith(mockDefaultIdentity.metadata.urlOrigin);
   });
 });

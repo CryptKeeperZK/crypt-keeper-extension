@@ -12,7 +12,7 @@ describe("protocols/ZkIdentitySemaphore", () => {
     name: "Identity #1",
     groups: [],
 <<<<<<< HEAD
-    host: "http://localhost:3000",
+    urlOrigin: "http://localhost:3000",
     isDeterministic: true,
 =======
     urlOrigin: "http://localhost:3000",

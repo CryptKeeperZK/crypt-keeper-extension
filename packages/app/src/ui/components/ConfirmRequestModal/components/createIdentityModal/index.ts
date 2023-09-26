@@ -1,1 +1,0 @@
-export { CreateIdentityModal } from "./CreateIdentityModal";

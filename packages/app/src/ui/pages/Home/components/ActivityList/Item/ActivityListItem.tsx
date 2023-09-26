@@ -56,7 +56,7 @@ export const ActivityItem = ({ operation, onDelete }: IActivityItemProps): JSX.E
         <div className="flex flex-row items-center text-lg font-semibold">
           {OPERATIONS[operation.type]}
 
-          {metadata?.host && (
+          {metadata?.urlOrigin && (
             <span className="text-xs py-1 px-2 ml-2 rounded-full bg-gray-500 text-gray-800">
               <Tooltip title={metadata.urlOrigin}>
                 <FontAwesomeIcon

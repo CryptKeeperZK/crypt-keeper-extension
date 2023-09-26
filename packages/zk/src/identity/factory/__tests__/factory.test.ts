@@ -9,7 +9,7 @@ describe("identity/factory", () => {
       account: "account",
       messageSignature: "signature",
       groups: [],
-      host: "http://localhost:3000",
+      urlOrigin: "http://localhost:3000",
       isDeterministic: true,
       nonce: 0,
     };

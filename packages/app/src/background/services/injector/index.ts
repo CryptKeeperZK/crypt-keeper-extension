@@ -59,11 +59,7 @@ export default class InjectorService extends InjectorHandler {
         }
       }
 
-      try {
-        await this.newRequest(PendingRequestType.CONNECT_IDENTITY, { urlOrigin });
-      } catch (error) {
-        throw new Error(`CryptKeeper: error in the connect request ${error as string}`);
-      }
+      await this.zkIdentityService.connectIdentityRequest({ urlOrigin: urlOrigin! });
 
       const connectedIdentity = await this.zkIdentityService.getConnectedIdentityData({}, { urlOrigin });
 
@@ -72,8 +68,6 @@ export default class InjectorService extends InjectorHandler {
       }
 
       return connectedIdentity;
-    } catch (error) {
-      throw new Error(error as string);
     } finally {
       await this.browserService.closePopup();
     }
