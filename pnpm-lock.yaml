@@ -135,8 +135,8 @@ importers:
         specifier: ^13.0.0
         version: 13.0.0
       '@mui/icons-material':
-        specifier: ^5.14.9
-        version: 5.14.9(@mui/material@5.14.11)(@types/react@18.2.23)(react@18.2.0)
+        specifier: ^5.14.11
+        version: 5.14.11(@mui/material@5.14.11)(@types/react@18.2.23)(react@18.2.0)
       '@mui/material':
         specifier: ^5.14.11
         version: 5.14.11(@emotion/react@11.11.1)(@emotion/styled@11.11.0)(@types/react@18.2.23)(react-dom@18.2.0)(react@18.2.0)
@@ -3558,8 +3558,8 @@ packages:
     resolution: {integrity: sha512-uY8FLQURhXe3f3O4dS5OSGML9KDm9+IE226cBu78jarVIzdQGPlXwGIlSI9VJR8MvZDA6C0+6XfWDhWCHruC5Q==}
     dev: false
 
-  /@mui/icons-material@5.14.9(@mui/material@5.14.11)(@types/react@18.2.23)(react@18.2.0):
-    resolution: {integrity: sha512-xTRQbDsogsJo7tY5Og8R9zbuG2q+KIPVIM6JQoKxtJlz9DPOw1u0T2fGrvwD+XAOVifQf6epNMcGCDLfJAz4Nw==}
+  /@mui/icons-material@5.14.11(@mui/material@5.14.11)(@types/react@18.2.23)(react@18.2.0):
+    resolution: {integrity: sha512-aHReLasBuS/+hhPzbZCgZ0eTcZ2QRnoC2WNK7XvdAf3l+LjC1flzjh6GWw1tZJ5NHnZ+bivdwtLFQ8XTR96JkA==}
     engines: {node: '>=12.0.0'}
     peerDependencies:
       '@mui/material': ^5.0.0
