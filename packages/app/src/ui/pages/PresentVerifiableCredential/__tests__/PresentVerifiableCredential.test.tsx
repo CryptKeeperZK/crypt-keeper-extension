@@ -63,14 +63,10 @@ describe("ui/pages/PresentVerifiableCredential", () => {
     cryptkeeperVerifiableCredentials: mockCryptkeeperVerifiableCredentials,
     selectedVerifiableCredentialHashes: ["0x123"],
     error: undefined,
-    isMenuOpen: false,
-    menuSelectedIndex: 0,
-    menuRef: { current: document.createElement("div") },
+    checkDisabledItem: jest.fn(() => false),
     onCloseModal: jest.fn(),
     onRejectRequest: jest.fn(),
     onToggleSelection: jest.fn(),
-    onToggleMenu: jest.fn(),
-    onMenuItemClick: jest.fn(),
     onSubmitVerifiablePresentation: jest.fn(),
   };
 
@@ -123,6 +119,21 @@ describe("ui/pages/PresentVerifiableCredential", () => {
     expect(metamask[0]).toBeInTheDocument();
   });
 
+  test("should display install metamask", async () => {
+    (usePresentVerifiableCredential as jest.Mock).mockReturnValueOnce({
+      ...defaultHookData,
+      isWalletInstalled: false,
+    });
+
+    const { container, findByText } = render(<PresentVerifiableCredential />);
+
+    await waitFor(() => container.firstChild !== null);
+
+    const metamask = await findByText("Install Metamask");
+
+    expect(metamask).toBeInTheDocument();
+  });
+
   test("should reject a verifiable presentation request correctly", async () => {
     const { container, findByTestId } = render(<PresentVerifiableCredential />);
 
@@ -134,21 +145,6 @@ describe("ui/pages/PresentVerifiableCredential", () => {
     expect(defaultHookData.onRejectRequest).toBeCalledTimes(1);
   });
 
-  test("should toggle menu", async () => {
-    const { container, findAllByText, findByTestId } = render(<PresentVerifiableCredential />);
-
-    await waitFor(() => container.firstChild !== null);
-
-    const metamask = await findAllByText("Sign with Metamask");
-
-    expect(metamask[0]).toBeInTheDocument();
-
-    const button = await findByTestId("sign-verifiable-presentation-selector");
-    fireEvent.click(button);
-
-    expect(defaultHookData.onToggleMenu).toBeCalledTimes(1);
-  });
-
   test("should sign with metamask", async () => {
     const { container, findAllByText, findByTestId } = render(<PresentVerifiableCredential />);
 
@@ -158,33 +154,9 @@ describe("ui/pages/PresentVerifiableCredential", () => {
 
     expect(metamask[0]).toBeInTheDocument();
 
-    const button = await findByTestId("sign-verifiable-presentation-button");
+    const button = await findByTestId("dropdown-button");
     fireEvent.click(button);
 
     expect(defaultHookData.onSubmitVerifiablePresentation).toBeCalledTimes(1);
-  });
-
-  test("should select menu items", async () => {
-    (usePresentVerifiableCredential as jest.Mock).mockReturnValueOnce({
-      ...defaultHookData,
-      isMenuOpen: true,
-      menuRef: { current: document.createElement("div") },
-    });
-
-    const { container, findByText, findByTestId } = render(<PresentVerifiableCredential />);
-
-    await waitFor(() => container.firstChild !== null);
-
-    const cryptkeeper = await findByText("Sign with Cryptkeeper");
-    const proceed = await findByText("Proceed without Signing");
-
-    expect(cryptkeeper).toBeInTheDocument();
-    expect(proceed).toBeInTheDocument();
-
-    const button = await findByTestId("sign-verifiable-presentation-menu-2");
-    fireEvent.click(button);
-
-    expect(defaultHookData.onMenuItemClick).toBeCalledTimes(1);
-    expect(defaultHookData.onMenuItemClick).toBeCalledWith(2);
   });
 });

@@ -163,6 +163,19 @@ describe("ui/pages/PresentVerifiableCredential/usePresentVerifiableCredential", 
       expect(mockDispatch).toBeCalledTimes(2);
     });
 
+    test("should check if menu item is disabled", async () => {
+      const { result } = renderHook(() => usePresentVerifiableCredential());
+
+      await waitFor(() => {
+        expect(result.current.verifiablePresentationRequest).toStrictEqual(exampleRequest);
+      });
+      act(() => result.current.onToggleSelection("0x1234"));
+
+      expect(result.current.checkDisabledItem(MenuItems.METAMASK)).toBe(false);
+      expect(result.current.checkDisabledItem(MenuItems.CRYPTKEEPER)).toBe(false);
+      expect(result.current.checkDisabledItem(MenuItems.WITHOUT_SIGNATURE)).toBe(false);
+    });
+
     test("should reject a verifiable presentation request", async () => {
       const { result } = renderHook(() => usePresentVerifiableCredential());
 
@@ -204,66 +217,11 @@ describe("ui/pages/PresentVerifiableCredential/usePresentVerifiableCredential", 
         expect(result.current.verifiablePresentationRequest).toStrictEqual(exampleRequest);
       });
 
-      act(() => result.current.onMenuItemClick(MenuItems.WITHOUT_SIGNATURE));
-      await act(() => result.current.onSubmitVerifiablePresentation());
+      await act(() => result.current.onSubmitVerifiablePresentation(MenuItems.WITHOUT_SIGNATURE));
 
       act(() => result.current.onToggleSelection(hash));
 
       expect(result.current.error).toBe(undefined);
-    });
-
-    test("should toggle the menu properly", async () => {
-      const { result } = renderHook(() => usePresentVerifiableCredential());
-
-      await waitFor(() => {
-        expect(result.current.verifiablePresentationRequest).toStrictEqual(exampleRequest);
-      });
-
-      expect(result.current.isMenuOpen).toBe(false);
-
-      act(() => result.current.onToggleMenu());
-
-      expect(result.current.isMenuOpen).toBe(true);
-    });
-
-    test("should select a menu item properly", async () => {
-      const { result } = renderHook(() => usePresentVerifiableCredential());
-
-      await waitFor(() => {
-        expect(result.current.verifiablePresentationRequest).toStrictEqual(exampleRequest);
-      });
-
-      expect(result.current.menuSelectedIndex).toBe(0);
-
-      act(() => result.current.onMenuItemClick(MenuItems.CRYPTKEEPER));
-
-      expect(result.current.menuSelectedIndex).toBe(1);
-
-      act(() => result.current.onMenuItemClick(MenuItems.WITHOUT_SIGNATURE));
-
-      expect(result.current.menuSelectedIndex).toBe(2);
-
-      act(() => result.current.onMenuItemClick(MenuItems.METAMASK));
-
-      expect(result.current.menuSelectedIndex).toBe(0);
-    });
-
-    test("should close the menu properly", async () => {
-      const { result } = renderHook(() => usePresentVerifiableCredential());
-
-      await waitFor(() => {
-        expect(result.current.verifiablePresentationRequest).toStrictEqual(exampleRequest);
-      });
-
-      expect(result.current.isMenuOpen).toBe(false);
-
-      act(() => result.current.onToggleMenu());
-
-      expect(result.current.isMenuOpen).toBe(true);
-
-      act(() => result.current.onToggleMenu());
-
-      expect(result.current.isMenuOpen).toBe(false);
     });
 
     test("should submit verifiable presentation without signature properly", async () => {
@@ -276,8 +234,7 @@ describe("ui/pages/PresentVerifiableCredential/usePresentVerifiableCredential", 
       });
 
       act(() => result.current.onToggleSelection(hash));
-      act(() => result.current.onMenuItemClick(MenuItems.WITHOUT_SIGNATURE));
-      await act(() => result.current.onSubmitVerifiablePresentation());
+      await act(() => result.current.onSubmitVerifiablePresentation(MenuItems.WITHOUT_SIGNATURE));
 
       expect(generateVerifiablePresentation).toBeCalledTimes(1);
       expect(closePopup).toBeCalledTimes(1);
@@ -291,8 +248,7 @@ describe("ui/pages/PresentVerifiableCredential/usePresentVerifiableCredential", 
         expect(result.current.verifiablePresentationRequest).toStrictEqual(exampleRequest);
       });
 
-      act(() => result.current.onMenuItemClick(MenuItems.WITHOUT_SIGNATURE));
-      await act(() => result.current.onSubmitVerifiablePresentation());
+      await act(() => result.current.onSubmitVerifiablePresentation(MenuItems.WITHOUT_SIGNATURE));
 
       expect(generateVerifiablePresentation).toBeCalledTimes(0);
       expect(result.current.error).toBe("Please select at least one credential.");
@@ -308,8 +264,7 @@ describe("ui/pages/PresentVerifiableCredential/usePresentVerifiableCredential", 
       });
 
       act(() => result.current.onToggleSelection(hash));
-      act(() => result.current.onMenuItemClick(MenuItems.CRYPTKEEPER));
-      await act(() => result.current.onSubmitVerifiablePresentation());
+      await act(() => result.current.onSubmitVerifiablePresentation(MenuItems.CRYPTKEEPER));
 
       expect(generateVerifiablePresentationWithCryptkeeper).toBeCalledTimes(1);
       expect(closePopup).toBeCalledTimes(1);
@@ -323,8 +278,7 @@ describe("ui/pages/PresentVerifiableCredential/usePresentVerifiableCredential", 
         expect(result.current.verifiablePresentationRequest).toStrictEqual(exampleRequest);
       });
 
-      act(() => result.current.onMenuItemClick(MenuItems.CRYPTKEEPER));
-      await act(() => result.current.onSubmitVerifiablePresentation());
+      await act(() => result.current.onSubmitVerifiablePresentation(MenuItems.CRYPTKEEPER));
 
       expect(generateVerifiablePresentationWithCryptkeeper).toBeCalledTimes(0);
       expect(result.current.error).toBe("Please select at least one credential.");
@@ -340,7 +294,7 @@ describe("ui/pages/PresentVerifiableCredential/usePresentVerifiableCredential", 
       });
 
       act(() => result.current.onToggleSelection(hash));
-      await act(() => result.current.onSubmitVerifiablePresentation());
+      await act(() => result.current.onSubmitVerifiablePresentation(MenuItems.METAMASK));
 
       expect(generateVerifiablePresentation).toBeCalledTimes(1);
       expect(closePopup).toBeCalledTimes(1);
@@ -354,7 +308,7 @@ describe("ui/pages/PresentVerifiableCredential/usePresentVerifiableCredential", 
         expect(result.current.verifiablePresentationRequest).toStrictEqual(exampleRequest);
       });
 
-      await act(() => result.current.onSubmitVerifiablePresentation());
+      await act(() => result.current.onSubmitVerifiablePresentation(MenuItems.METAMASK));
 
       expect(generateVerifiablePresentationWithCryptkeeper).toBeCalledTimes(0);
       expect(result.current.error).toBe("Please select at least one credential.");
@@ -367,8 +321,7 @@ describe("ui/pages/PresentVerifiableCredential/usePresentVerifiableCredential", 
         expect(result.current.verifiablePresentationRequest).toStrictEqual(exampleRequest);
       });
 
-      act(() => result.current.onMenuItemClick(3));
-      await act(() => result.current.onSubmitVerifiablePresentation());
+      await act(() => result.current.onSubmitVerifiablePresentation(3));
 
       expect(generateVerifiablePresentation).toBeCalledTimes(0);
       expect(generateVerifiablePresentationWithCryptkeeper).toBeCalledTimes(0);
@@ -414,7 +367,7 @@ describe("ui/pages/PresentVerifiableCredential/usePresentVerifiableCredential", 
       });
 
       act(() => result.current.onToggleSelection(hash));
-      await act(() => result.current.onSubmitVerifiablePresentation());
+      await act(() => result.current.onSubmitVerifiablePresentation(MenuItems.METAMASK));
 
       expect(result.current.error).toStrictEqual("Wallet connection error");
     });
@@ -455,7 +408,7 @@ describe("ui/pages/PresentVerifiableCredential/usePresentVerifiableCredential", 
       });
 
       act(() => result.current.onToggleSelection(hash));
-      await act(() => result.current.onSubmitVerifiablePresentation());
+      await act(() => result.current.onSubmitVerifiablePresentation(MenuItems.METAMASK));
 
       expect(result.current.error).toStrictEqual("Could not connect to Ethereum account.");
     });
@@ -500,7 +453,7 @@ describe("ui/pages/PresentVerifiableCredential/usePresentVerifiableCredential", 
       });
 
       act(() => result.current.onToggleSelection(hash));
-      await act(() => result.current.onSubmitVerifiablePresentation());
+      await act(() => result.current.onSubmitVerifiablePresentation(MenuItems.METAMASK));
 
       expect(result.current.error).toStrictEqual("Failed to sign Verifiable Presentation.");
     });
@@ -539,8 +492,7 @@ describe("ui/pages/PresentVerifiableCredential/usePresentVerifiableCredential", 
       });
 
       act(() => result.current.onToggleSelection(hash));
-      act(() => result.current.onMenuItemClick(MenuItems.CRYPTKEEPER));
-      await act(() => result.current.onSubmitVerifiablePresentation());
+      await act(() => result.current.onSubmitVerifiablePresentation(MenuItems.CRYPTKEEPER));
 
       expect(result.current.error).toStrictEqual("Could not connect to Cryptkeeper account.");
     });

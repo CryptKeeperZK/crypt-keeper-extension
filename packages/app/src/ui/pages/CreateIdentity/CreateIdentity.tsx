@@ -6,25 +6,26 @@ import Typography from "@mui/material/Typography";
 import { Controller } from "react-hook-form";
 
 import { Checkbox } from "@src/ui/components/Checkbox";
+import { DropdownButton } from "@src/ui/components/DropdownButton";
 import { FullModalContent, FullModalFooter, FullModalHeader } from "@src/ui/components/FullModal";
 import { Input } from "@src/ui/components/Input";
 
 import { useCreateIdentity } from "./useCreateIdentity";
 
 const CreateIdentity = (): JSX.Element => {
-  const {
-    isLoading,
-    isWalletInstalled,
-    isWalletConnected,
-    errors,
-    control,
-    onCloseModal,
-    onConnectWallet,
-    onCreateWithCryptkeeper,
-    onCreateWithEthWallet,
-  } = useCreateIdentity();
+  const { isLoading, isWalletInstalled, isWalletConnected, errors, control, onCloseModal, onSign } =
+    useCreateIdentity();
 
-  const ethWalletTitle = isWalletConnected ? "Metamask" : "Connect to Metamask";
+  const ethWalletTitle = isWalletConnected ? "Sign with Metamask" : "Connect to Metamask";
+
+  const menuOptions = [
+    { id: "ck", title: "Sign with Cryptkeeper", checkDisabledItem: () => isLoading },
+    {
+      id: "eth",
+      title: isWalletInstalled ? ethWalletTitle : "Install metamask",
+      checkDisabledItem: () => isLoading || !isWalletInstalled,
+    },
+  ];
 
   return (
     <Box data-testid="create-identity-page" sx={{ height: "100%" }}>
@@ -53,19 +54,33 @@ const CreateIdentity = (): JSX.Element => {
               control={control}
               name="isDeterministic"
               render={({ field }) => (
-                <Box sx={{ display: "flex", my: 1 }}>
-                  <Checkbox {...field} checked={field.value} id="isDeterministic" />
+                <Box sx={{ my: 1 }}>
+                  <Box sx={{ display: "flex", mb: 2 }}>
+                    <Checkbox {...field} checked={field.value} id="isDeterministic" />
 
-                  <Typography component="label" htmlFor="isDeterministic" sx={{ ml: 1 }}>
-                    Deterministic identity
-                  </Typography>
+                    <Typography
+                      component="label"
+                      data-testid="deterministic-label"
+                      htmlFor="isDeterministic"
+                      sx={{ ml: 1 }}
+                    >
+                      Deterministic identity
+                    </Typography>
 
-                  <Tooltip
-                    followCursor
-                    title="Deterministic identity option allows you to create identity and restore it later using the same nonce and wallet signature"
-                  >
-                    <InfoIcon sx={{ mt: "-2px", ml: 1 }} />
-                  </Tooltip>
+                    <Tooltip
+                      followCursor
+                      title="Deterministic identity option allows you to create identity and restore it later using the same nonce and wallet signature"
+                    >
+                      <InfoIcon sx={{ mt: "-2px", ml: 1 }} />
+                    </Tooltip>
+                  </Box>
+
+                  {!field.value && (
+                    <Typography data-testid="warning-message" sx={{ color: "warning.main" }}>
+                      Warning: You cannot recover this identity using your wallet and nonce. Make sure you know what you
+                      are doing. Otherwise, enable deterministic option.
+                    </Typography>
+                  )}
                 </Box>
               )}
             />
@@ -88,28 +103,18 @@ const CreateIdentity = (): JSX.Element => {
         <FullModalFooter>
           <Box sx={{ alignItems: "center", display: "flex", justifyContent: "space-between", width: "100%" }}>
             <Button
-              disabled={isLoading || !isWalletInstalled}
-              name="metamask"
+              data-testid="reject-create-identity"
+              name="reject"
               size="small"
-              sx={{ textTransform: "none", flex: 1, mr: 1 }}
+              sx={{ textTransform: "none", flex: 1, mr: 1, width: "30%" }}
               type="submit"
               variant="outlined"
-              onClick={isWalletConnected ? onCreateWithEthWallet : onConnectWallet}
+              onClick={onCloseModal}
             >
-              {isWalletInstalled ? ethWalletTitle : "Install MetaMask"}
+              Reject
             </Button>
 
-            <Button
-              disabled={isLoading}
-              name="cryptkeeper"
-              size="small"
-              sx={{ textTransform: "none", flex: 1, ml: 1 }}
-              type="submit"
-              variant="contained"
-              onClick={onCreateWithCryptkeeper}
-            >
-              Cryptkeeper
-            </Button>
+            <DropdownButton menuOptions={menuOptions} onClick={onSign} />
           </Box>
         </FullModalFooter>
       </Box>

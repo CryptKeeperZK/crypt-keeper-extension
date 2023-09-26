@@ -11,6 +11,7 @@ describe("identity/factory", () => {
       groups: [],
       host: "http://localhost:3000",
       isDeterministic: true,
+      nonce: 0,
     };
 
     const identity = createNewIdentity(defaultArgs);

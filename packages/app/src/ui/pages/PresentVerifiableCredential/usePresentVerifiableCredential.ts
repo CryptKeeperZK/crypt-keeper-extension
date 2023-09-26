@@ -1,4 +1,3 @@
-import * as React from "react";
 import { useCallback, useEffect, useState } from "react";
 
 import {
@@ -16,7 +15,6 @@ import {
 import { useCryptkeeperVerifiableCredentials } from "@src/ui/hooks/verifiableCredentials";
 import { useCryptKeeperWallet, useEthWallet } from "@src/ui/hooks/wallet";
 
-import type { IVerifiablePresentation } from "@cryptkeeperzk/types";
 import type { ICryptkeeperVerifiableCredential } from "@src/types";
 
 const ETHEREUM_SIGNATURE_SPECIFICATION_TYPE = "EthereumEip712Signature2021";
@@ -35,24 +33,17 @@ export interface IUsePresentVerifiableCredentialData {
   cryptkeeperVerifiableCredentials: ICryptkeeperVerifiableCredential[];
   selectedVerifiableCredentialHashes: string[];
   error?: string;
-  isMenuOpen: boolean;
-  menuSelectedIndex: number;
-  menuRef: React.RefObject<HTMLDivElement>;
+  checkDisabledItem: (index: number) => boolean;
   onCloseModal: () => void;
   onRejectRequest: () => void;
   onToggleSelection: (hash: string) => void;
-  onToggleMenu: () => void;
-  onMenuItemClick: (index: number) => void;
-  onSubmitVerifiablePresentation: () => Promise<void>;
+  onSubmitVerifiablePresentation: (index: number) => Promise<void>;
 }
 
 export const usePresentVerifiableCredential = (): IUsePresentVerifiableCredentialData => {
   const [verifiablePresentationRequest, setVerifiablePresentationRequest] = useState<string>();
   const cryptkeeperVerifiableCredentials = useCryptkeeperVerifiableCredentials();
   const [selectedVerifiableCredentialHashes, setSelectedVerifiableCredentialHashes] = useState<string[]>([]);
-  const [isMenuOpen, setIsMenuOpen] = React.useState(false);
-  const menuRef = React.useRef<HTMLDivElement>(null);
-  const [menuSelectedIndex, setMenuSelectedIndex] = React.useState(0);
   const [error, setError] = useState<string>();
 
   const ethWallet = useEthWallet();
@@ -72,6 +63,13 @@ export const usePresentVerifiableCredential = (): IUsePresentVerifiableCredentia
 
     setVerifiablePresentationRequest(request);
   }, [setVerifiablePresentationRequest, fetchVerifiableCredentials, dispatch]);
+
+  const checkDisabledItem = useCallback(
+    (index: number): boolean =>
+      selectedVerifiableCredentialHashes.length === 0 ||
+      (index === (MenuItems.METAMASK as number) && !ethWallet.isInjectedWallet),
+    [selectedVerifiableCredentialHashes.length, ethWallet.isInjectedWallet],
+  );
 
   const onCloseModal = useCallback(() => {
     dispatch(closePopup());
@@ -97,7 +95,7 @@ export const usePresentVerifiableCredential = (): IUsePresentVerifiableCredentia
     [selectedVerifiableCredentialHashes, setSelectedVerifiableCredentialHashes, error, setError],
   );
 
-  function createVerifiablePresentationFromSelectedCredentials(): IVerifiablePresentation | undefined {
+  const createVerifiablePresentationFromSelectedCredentials = useCallback(() => {
     if (selectedVerifiableCredentialHashes.length === 0) {
       setError("Please select at least one credential.");
       return undefined;
@@ -110,16 +108,7 @@ export const usePresentVerifiableCredential = (): IUsePresentVerifiableCredentia
       .map((cryptkeeperVerifiableCredential) => cryptkeeperVerifiableCredential.verifiableCredential);
 
     return generateVerifiablePresentationFromVerifiableCredentials(verifiableCredentials);
-  }
-
-  const onToggleMenu = () => {
-    setIsMenuOpen((prevOpen) => !prevOpen);
-  };
-
-  const onMenuItemClick = (index: number) => {
-    setMenuSelectedIndex(index);
-    setIsMenuOpen(false);
-  };
+  }, [cryptkeeperVerifiableCredentials, selectedVerifiableCredentialHashes, setError]);
 
   const onConnectWallet = useCallback(async () => {
     try {
@@ -147,6 +136,7 @@ export const usePresentVerifiableCredential = (): IUsePresentVerifiableCredentia
     try {
       const serializedVerifiablePresentation = serializeVerifiablePresentation(verifiablePresentation);
       const signature = await signer.signMessage(serializedVerifiablePresentation);
+      const created = new Date();
       const signedVerifiablePresentation = {
         ...verifiablePresentation,
         proof: [
@@ -154,7 +144,7 @@ export const usePresentVerifiableCredential = (): IUsePresentVerifiableCredentia
             type: [ETHEREUM_SIGNATURE_SPECIFICATION_TYPE],
             proofPurpose: VERIFIABLE_CREDENTIAL_PROOF_PURPOSE,
             verificationMethod: address,
-            created: new Date(),
+            created,
             proofValue: signature,
           },
         ],
@@ -216,28 +206,30 @@ export const usePresentVerifiableCredential = (): IUsePresentVerifiableCredentia
     createVerifiablePresentationFromSelectedCredentials,
   ]);
 
-  const onSubmitVerifiablePresentation = useCallback(async () => {
-    switch (true) {
-      case menuSelectedIndex === (MenuItems.METAMASK as number) && !isWalletConnected:
-        return onConnectWallet();
-      case menuSelectedIndex === (MenuItems.METAMASK as number) && isWalletConnected:
-        return onSubmitVerifiablePresentationWithMetamask();
-      case menuSelectedIndex === (MenuItems.CRYPTKEEPER as number):
-        return onSubmitVerifiablePresentationWithCryptkeeper();
-      case menuSelectedIndex === (MenuItems.WITHOUT_SIGNATURE as number):
-        return onSubmitVerifiablePresentationWithoutSignature();
-      default:
-        setError("Invalid menu index.");
-        return undefined;
-    }
-  }, [
-    menuSelectedIndex,
-    isWalletConnected,
-    onConnectWallet,
-    onSubmitVerifiablePresentationWithMetamask,
-    onSubmitVerifiablePresentationWithCryptkeeper,
-    onSubmitVerifiablePresentationWithoutSignature,
-  ]);
+  const onSubmitVerifiablePresentation = useCallback(
+    async (menuSelectedIndex: number) => {
+      switch (true) {
+        case menuSelectedIndex === (MenuItems.METAMASK as number) && !isWalletConnected:
+          return onConnectWallet();
+        case menuSelectedIndex === (MenuItems.METAMASK as number) && isWalletConnected:
+          return onSubmitVerifiablePresentationWithMetamask();
+        case menuSelectedIndex === (MenuItems.CRYPTKEEPER as number):
+          return onSubmitVerifiablePresentationWithCryptkeeper();
+        case menuSelectedIndex === (MenuItems.WITHOUT_SIGNATURE as number):
+          return onSubmitVerifiablePresentationWithoutSignature();
+        default:
+          setError("Invalid menu index.");
+          return undefined;
+      }
+    },
+    [
+      isWalletConnected,
+      onConnectWallet,
+      onSubmitVerifiablePresentationWithMetamask,
+      onSubmitVerifiablePresentationWithCryptkeeper,
+      onSubmitVerifiablePresentationWithoutSignature,
+    ],
+  );
 
   return {
     isWalletInstalled: ethWallet.isInjectedWallet,
@@ -246,14 +238,10 @@ export const usePresentVerifiableCredential = (): IUsePresentVerifiableCredentia
     cryptkeeperVerifiableCredentials,
     selectedVerifiableCredentialHashes,
     error,
-    isMenuOpen,
-    menuSelectedIndex,
-    menuRef,
+    checkDisabledItem,
     onCloseModal,
     onRejectRequest: onRejectVerifiablePresentationRequest,
     onToggleSelection: onToggleSelectVerifiableCredential,
-    onToggleMenu,
-    onMenuItemClick,
     onSubmitVerifiablePresentation,
   };
 };

@@ -23,4 +23,5 @@ export interface IRenameVerifiableCredentialArgs {
 export interface IGenerateVerifiablePresentationWithCryptkeeperArgs {
   verifiablePresentation: IVerifiablePresentation;
   address: string;
+  created?: Date;
 }

@@ -91,12 +91,10 @@ describe("ui/pages/CreateIdentity", () => {
 
     await waitFor(() => container.firstChild !== null);
 
-    const metamaskButton = await screen.findByText("Install MetaMask");
-    const cryptkeeperButton = await screen.findByText("Cryptkeeper");
+    const button = await screen.findByTestId("dropdown-button");
     const nonce = await screen.findByText("Nonce");
 
-    expect(metamaskButton).toBeInTheDocument();
-    expect(cryptkeeperButton).toBeInTheDocument();
+    expect(button).toBeInTheDocument();
     expect(nonce).toBeInTheDocument();
   });
 
@@ -111,11 +109,33 @@ describe("ui/pages/CreateIdentity", () => {
 
     await waitFor(() => container.firstChild !== null);
 
+    const menuButton = await screen.findByTestId("dropdown-menu-button");
+    act(() => fireEvent.click(menuButton));
+
+    const menuItem = await screen.findByTestId("dropdown-menu-item-1");
+    act(() => fireEvent.click(menuItem));
+
     const metamaskButton = await screen.findByText("Connect to Metamask");
 
     await act(async () => Promise.resolve(fireEvent.click(metamaskButton)));
 
     expect(defaultWalletHookData.onConnect).toBeCalledTimes(1);
+  });
+
+  test("should render warning message for non-deterministic identity properly", async () => {
+    const { container } = render(
+      <Suspense>
+        <CreateIdentity />
+      </Suspense>,
+    );
+
+    await waitFor(() => container.firstChild !== null);
+
+    const label = await screen.findByTestId("deterministic-label");
+    await act(async () => Promise.resolve(fireEvent.click(label)));
+
+    const message = await screen.findByTestId("warning-message");
+    expect(message).toBeInTheDocument();
   });
 
   test("should create identity with cryptkeeper wallet properly", async () => {
@@ -127,7 +147,7 @@ describe("ui/pages/CreateIdentity", () => {
 
     await waitFor(() => container.firstChild !== null);
 
-    const button = await screen.findByText("Cryptkeeper");
+    const button = await screen.findByText("Sign with Cryptkeeper");
     await act(async () => Promise.resolve(fireEvent.click(button)));
 
     expect(signWithSigner).toBeCalledTimes(0);
@@ -157,8 +177,14 @@ describe("ui/pages/CreateIdentity", () => {
 
     await waitFor(() => container.firstChild !== null);
 
-    const button = await screen.findByText("Metamask");
-    await act(async () => Promise.resolve(fireEvent.click(button)));
+    const menuButton = await screen.findByTestId("dropdown-menu-button");
+    act(() => fireEvent.click(menuButton));
+
+    const menuItem = await screen.findByTestId("dropdown-menu-item-1");
+    act(() => fireEvent.click(menuItem));
+
+    const button = await screen.findByText("Sign with Metamask");
+    act(() => fireEvent.click(button));
 
     const error = await screen.findByText(err.message);
     expect(error).toBeInTheDocument();

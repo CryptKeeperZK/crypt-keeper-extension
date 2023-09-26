@@ -4,7 +4,7 @@ import { ICreateIdentityArgs } from "@cryptkeeperzk/types";
 import { ZkIdentitySemaphore } from "../protocols";
 
 export function createNewIdentity(config: ICreateIdentityArgs): ZkIdentitySemaphore {
-  const { name, messageSignature, account, groups, host, isDeterministic } = config;
+  const { name, messageSignature, account, groups, host, isDeterministic, nonce } = config;
 
   const identity = new Identity(messageSignature);
 
@@ -13,6 +13,7 @@ export function createNewIdentity(config: ICreateIdentityArgs): ZkIdentitySemaph
     name,
     groups,
     host,
+    nonce,
     isDeterministic,
   });
 }
