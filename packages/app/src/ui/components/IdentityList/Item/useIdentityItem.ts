@@ -77,8 +77,8 @@ export const useIdentityItem = ({
   );
 
   const onGoToHost = useCallback(() => {
-    redirectToNewTab(metadata.host!);
-  }, [metadata.host]);
+    redirectToNewTab(metadata.urlOrigin!);
+  }, [metadata.urlOrigin]);
 
   const onGoToIdentity = useCallback(() => {
     navigate(replaceUrlParams(Paths.IDENTITY, { id: commitment }));

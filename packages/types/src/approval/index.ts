@@ -1,4 +1,5 @@
-export interface IApprovals {
+export interface IConnectionApprovalData {
+  checkedUrlOrigin: string;
   isApproved: boolean;
   canSkipApprove: boolean;
 }

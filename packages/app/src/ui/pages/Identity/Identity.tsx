@@ -143,10 +143,15 @@ const Identity = (): JSX.Element | null => {
               )}
 
             {renderRow(
-              "Connected host",
-              metadata.host ? (
-                <Tooltip title={metadata.host}>
-                  <FontAwesomeIcon data-testid="host" icon="link" style={{ cursor: "pointer" }} onClick={onGoToHost} />
+              "Connected urlOrigin",
+              metadata.urlOrigin ? (
+                <Tooltip title={metadata.urlOrigin}>
+                  <FontAwesomeIcon
+                    data-testid="urlOrigin"
+                    icon="link"
+                    style={{ cursor: "pointer" }}
+                    onClick={onGoToHost}
+                  />
                 </Tooltip>
               ) : (
                 "Not specified"

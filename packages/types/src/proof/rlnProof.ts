@@ -1,19 +1,15 @@
 import type { MerkleProof } from "@cryptkeeperzk/rlnjs";
 
-import { IZkMetadata, IZkCircuit, IZkInputs } from "./zkProof";
+import { IZkMetadata, IZkCircuit, IMerkleProofInputs } from "./zkProof";
 
-export type {
-  RLNFullProof as IRLNFullProof,
-  VerificationKey as IRLNVerificationKey,
-  RLNSNARKProof as IRLNSNARKProof,
-} from "@cryptkeeperzk/rlnjs";
+export type { VerificationKey as IRLNVerificationKey, RLNSNARKProof as IRLNFullProof } from "@cryptkeeperzk/rlnjs";
 
 /**
  * Represents the arguments required for generating an RLN proof.
  * This interface is intended to be used with the Cryptkeeper InjectedProvider.
  * @interface
  */
-export interface IRLNProofRequiredArgs extends Partial<IZkInputs> {
+export interface IRLNProofRequiredArgs extends Partial<IMerkleProofInputs> {
   /**
    * The RLN identifier.
    * @type {string}

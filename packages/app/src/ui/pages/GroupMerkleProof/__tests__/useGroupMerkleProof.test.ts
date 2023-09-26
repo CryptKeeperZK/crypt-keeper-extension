@@ -135,7 +135,7 @@ describe("ui/pages/GroupMerkleProof/useGroupMerkleProof", () => {
     expect(result.current.connectedIdentity).toBeUndefined();
   });
 
-  test("should go to host properly", async () => {
+  test("should go to urlOrigin properly", async () => {
     const { result } = renderHook(() => useGroupMerkleProof());
     await waitForData(result.current);
 

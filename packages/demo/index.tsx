@@ -1,5 +1,4 @@
 import dotenv from "dotenv";
-import { useEffect } from "react";
 import { createRoot } from "react-dom/client";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -12,31 +11,44 @@ dotenv.config({ path: path.resolve(__dirname, "../..", ".env"), override: true }
 
 interface INotConnectedProps {
   onClick: () => void;
+  onGetConnectedIdentity: () => void;
+  genSemaphoreProof: (proofType: MerkleProofType) => void;
 }
 
-const NotConnected = ({ onClick }: INotConnectedProps) => (
+const NotConnected = ({ onClick, onGetConnectedIdentity, genSemaphoreProof }: INotConnectedProps) => (
   <div>
+    <h2>Start the Authorization Process</h2>
+
     <p style={{ marginRight: 8 }}>Please connect to Crypt-Keeper to continue.</p>
 
     <button type="button" onClick={onClick}>
-      Connect
+      Connect Identity
     </button>
+
+    <hr />
+
+    <div>
+      <h2>Example of Unauthorized Actions</h2>
+
+      <button type="button" onClick={onGetConnectedIdentity}>
+        Get Connected Identity
+      </button>
+
+      <br />
+
+      <button
+        type="button"
+        onClick={() => {
+          genSemaphoreProof(MerkleProofType.ARTIFACTS);
+        }}
+      >
+        Generate proof from Merkle proof artifacts
+      </button>
+    </div>
+
+    <hr />
 
     <ToastContainer newestOnTop />
-  </div>
-);
-
-interface NoConnectedIdentityCommitmentProps {
-  onConnectIdentity: () => void;
-}
-
-const NoConnectedIdentityCommitment = ({ onConnectIdentity }: NoConnectedIdentityCommitmentProps) => (
-  <div>
-    <p style={{ marginRight: 8 }}>Please set a connected identity in the Crypt-Keeper plugin to continue.</p>
-
-    <button data-testid="connect-identity" type="button" onClick={onConnectIdentity}>
-      Connect identity
-    </button>
   </div>
 );
 
@@ -47,9 +59,8 @@ const App = () => {
     connectedIdentityMetadata,
     proof,
     connectedCommitment,
-    connect,
-    createIdentity,
     connectIdentity,
+    getConnectedIdentity,
     genSemaphoreProof,
     genRLNProof,
     addVerifiableCredentialRequest,
@@ -95,25 +106,17 @@ const App = () => {
         <div>
           <strong>Host:</strong>
 
-          <p data-testid="connected-host">{connectedIdentityMetadata.host}</p>
+          <p data-testid="connected-urlOrigin">{connectedIdentityMetadata.urlOrigin}</p>
         </div>
       </div>
 
       <hr />
 
       <div>
-        <h2>Create a new secret identity</h2>
+        <h2>Get Connected Identity Metadata</h2>
 
-        <button data-testid="create-new-identity" type="button" onClick={createIdentity}>
-          Create
-        </button>
-      </div>
-
-      <div>
-        <h2>Connect your identity</h2>
-
-        <button data-testid="connect-identity" type="button" onClick={connectIdentity}>
-          Connect identity
+        <button type="button" onClick={getConnectedIdentity}>
+          Get Connected Identity
         </button>
       </div>
 

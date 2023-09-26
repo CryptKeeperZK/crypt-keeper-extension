@@ -1,8 +1,7 @@
 export type { IMerkleProofArtifacts, IMerkleProof } from "./merkle";
 export type {
-  IRLNFullProof,
   IRLNVerificationKey,
-  IRLNSNARKProof,
+  IRLNFullProof,
   IRLNProofRequiredArgs,
   IRLNProofRequest,
   IRLNGenerateArgs,
@@ -14,4 +13,11 @@ export type {
   ISemaphoreGenerateArgs,
   ISemaphoreFullProof,
 } from "./semaphoreProof";
-export { ZkProofType, type IZkInputs, type IZKProofPayload, type IZkMetadata } from "./zkProof";
+export {
+  ZkProofType,
+  type IMerkleProofInputs,
+  type IZKProofPayload,
+  type IZkMetadata,
+  type MerkleProofSource,
+  type MerkleProofStorageUrl,
+} from "./zkProof";

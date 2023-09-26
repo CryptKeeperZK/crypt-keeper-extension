@@ -28,6 +28,7 @@ export enum PendingRequestType {
   RLN_PROOF,
   APPROVE,
   CONNECT,
+  CONNECT_IDENTITY,
 }
 
 export interface IPendingRequest<P = unknown> {

@@ -25,7 +25,7 @@ describe("connectors/cryptKeeper", () => {
   interface MockProvider {
     isCryptKeeper: boolean;
     accounts: () => Promise<string[]>;
-    connect: () => Promise<void>;
+    connectIdentity: () => Promise<void>;
   }
 
   const mockProvider = new EventEmitter2() as MockProvider & EventEmitter2;
@@ -33,7 +33,7 @@ describe("connectors/cryptKeeper", () => {
   beforeEach(() => {
     mockProvider.isCryptKeeper = true;
     mockProvider.accounts = jest.fn(() => Promise.resolve(mockAddresses));
-    mockProvider.connect = jest.fn(() => Promise.resolve());
+    mockProvider.connectIdentity = jest.fn(() => Promise.resolve());
 
     (initializeCryptKeeperProvider as jest.Mock).mockReturnValue(mockProvider);
   });
@@ -71,7 +71,7 @@ describe("connectors/cryptKeeper", () => {
   test("should start activation properly", async () => {
     mockProvider.isCryptKeeper = false;
     mockProvider.accounts = jest.fn(() => Promise.resolve(mockAddresses));
-    mockProvider.connect = jest.fn(() => Promise.resolve());
+    mockProvider.connectIdentity = jest.fn(() => Promise.resolve());
     (initializeCryptKeeperProvider as jest.Mock).mockReturnValue(mockProvider);
 
     const connector = new CryptkeeperConnector(mockActions);
@@ -86,7 +86,7 @@ describe("connectors/cryptKeeper", () => {
 
     const connector = new CryptkeeperConnector(mockActions);
 
-    await expect(connector.activate()).rejects.toThrow("No cryptkeeper installed");
+    await expect(connector.activate()).rejects.toThrow("No CryptKeeper extension installed");
     expect(mockActions.startActivation).toBeCalledTimes(1);
     expect(cancelActivation).toBeCalledTimes(1);
   });

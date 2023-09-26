@@ -138,7 +138,7 @@ describe("ui/pages/JoinGroup/useJoinGroup", () => {
     expect(result.current.connectedIdentity).toBeUndefined();
   });
 
-  test("should go to host properly", async () => {
+  test("should go to urlOrigin properly", async () => {
     const { result } = renderHook(() => useJoinGroup());
     await waitForData(result.current);
 

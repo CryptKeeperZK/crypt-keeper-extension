@@ -147,13 +147,13 @@ describe("ui/components/IdentityList/Item", () => {
     expect(mockNavigate).toBeCalledWith(replaceUrlParams(Paths.IDENTITY, { id: defaultProps.commitment }));
   });
 
-  test("should go to host properly", async () => {
+  test("should go to urlOrigin properly", async () => {
     render(<IdentityItem {...defaultProps} onSelectIdentity={undefined} />);
 
-    const icon = await screen.findByTestId("host-icon");
+    const icon = await screen.findByTestId("urlOrigin-icon");
     await act(() => Promise.resolve(icon.click()));
 
     expect(redirectToNewTab).toBeCalledTimes(1);
-    expect(redirectToNewTab).toBeCalledWith(defaultProps.metadata.host);
+    expect(redirectToNewTab).toBeCalledWith(defaultProps.metadata.urlOrigin);
   });
 });

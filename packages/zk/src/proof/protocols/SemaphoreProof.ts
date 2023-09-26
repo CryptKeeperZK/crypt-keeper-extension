@@ -16,7 +16,7 @@ export class SemaphoreProofService implements IZkProof<ISemaphoreProofRequest, I
       externalNullifier,
       signal,
       merkleProofArtifacts,
-      merkleStorageAddress,
+      merkleStorageUrl,
       merkleProofProvided,
     }: ISemaphoreProofRequest,
   ): Promise<ISemaphoreFullProof> {
@@ -31,7 +31,7 @@ export class SemaphoreProofService implements IZkProof<ISemaphoreProofRequest, I
       (await getMerkleProof({
         identityCommitment,
         merkleProofArtifacts,
-        merkleStorageAddress,
+        merkleStorageUrl,
       }));
 
     if (!merkleProof) {

@@ -178,13 +178,17 @@ describe("ui/pages/Identity/useIdentityPage", () => {
     expect(result.current.isUpdating).toBe(false);
   });
 
-  test("should go to host properly", async () => {
+  test("should go to urlOrigin properly", async () => {
     const { result } = renderHook(() => useIdentityPage());
     await waitForData(result.current);
 
     await act(() => Promise.resolve(result.current.onGoToHost()));
 
     expect(redirectToNewTab).toBeCalledTimes(1);
+<<<<<<< HEAD
     expect(redirectToNewTab).toBeCalledWith(mockDefaultIdentity.metadata.host);
+=======
+    expect(redirectToNewTab).toBeCalledWith(defaultIdentity.metadata.urlOrigin);
+>>>>>>> d635f23f (fix: enhance provider apis)
   });
 });

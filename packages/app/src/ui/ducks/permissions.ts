@@ -1,7 +1,7 @@
-import { RPCAction } from "@cryptkeeperzk/providers";
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 import deepEqual from "fast-deep-equal";
 
+import { RPCInternalAction } from "@src/constants";
 import postMessage from "@src/util/postMessage";
 
 import type { TypedThunk } from "../store/configureAppStore";
@@ -23,7 +23,7 @@ const permissionsSlice = createSlice({
   reducers: {
     setPermission: (state: IPermissionsState, action: PayloadAction<IHostPermission>) => {
       // eslint-disable-next-line no-param-reassign
-      state.canSkipApprovals[action.payload.host] = action.payload;
+      state.canSkipApprovals[action.payload.urlOrigin] = action.payload;
     },
 
     removeHostPermission: (state: IPermissionsState, action: PayloadAction<string>) => {
@@ -36,23 +36,23 @@ const permissionsSlice = createSlice({
 const { setPermission, removeHostPermission } = permissionsSlice.actions;
 
 export const fetchHostPermissions =
-  (host: string): TypedThunk<Promise<void>> =>
+  (urlOrigin: string): TypedThunk<Promise<void>> =>
   async (dispatch) => {
     const res = await postMessage<{ canSkipApprove: boolean }>({
-      method: RPCAction.GET_HOST_PERMISSIONS,
-      payload: host,
+      method: RPCInternalAction.GET_HOST_PERMISSIONS,
+      payload: urlOrigin,
     });
 
-    dispatch(setPermission({ host, canSkipApprove: res.canSkipApprove }));
+    dispatch(setPermission({ urlOrigin, canSkipApprove: res.canSkipApprove }));
   };
 
 export const setHostPermissions =
   (permission: IHostPermission): TypedThunk<Promise<void>> =>
   async (dispatch) => {
     await postMessage<{ canSkipApprove: boolean }>({
-      method: RPCAction.SET_HOST_PERMISSIONS,
+      method: RPCInternalAction.SET_HOST_PERMISSIONS,
       payload: {
-        host: permission.host,
+        urlOrigin: permission.urlOrigin,
         canSkipApprove: permission.canSkipApprove,
       },
     });
@@ -61,27 +61,27 @@ export const setHostPermissions =
   };
 
 export const removeHost =
-  (host: string): TypedThunk<Promise<void>> =>
+  (urlOrigin: string): TypedThunk<Promise<void>> =>
   async (dispatch) => {
     await postMessage({
-      method: RPCAction.REMOVE_HOST,
+      method: RPCInternalAction.REMOVE_HOST,
       payload: {
-        host,
+        urlOrigin,
       },
     });
 
-    dispatch(removeHostPermission(host));
+    dispatch(removeHostPermission(urlOrigin));
   };
 
 export const checkHostApproval =
-  (host: string): TypedThunk<Promise<boolean>> =>
+  (urlOrigin: string): TypedThunk<Promise<boolean>> =>
   async () =>
     postMessage({
-      method: RPCAction.IS_HOST_APPROVED,
-      payload: host,
+      method: RPCInternalAction.IS_HOST_APPROVED,
+      payload: urlOrigin,
     });
 
-export const useHostPermission = (host: string): IHostPermission | undefined =>
-  useAppSelector((state) => state.permissions.canSkipApprovals[host], deepEqual);
+export const useHostPermission = (urlOrigin: string): IHostPermission | undefined =>
+  useAppSelector((state) => state.permissions.canSkipApprovals[urlOrigin], deepEqual);
 
 export default permissionsSlice.reducer;

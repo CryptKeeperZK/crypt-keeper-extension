@@ -2,7 +2,7 @@ import { ZkIdentitySemaphore } from "@src/identity";
 
 import type {
   IRLNProofRequest,
-  IRLNSNARKProof,
+  IRLNFullProof,
   ISemaphoreFullProof,
   ISemaphoreProofRequest,
 } from "@cryptkeeperzk/types";
@@ -44,7 +44,7 @@ export class ZkProofService {
       externalNullifier,
       signal,
       merkleProofArtifacts,
-      merkleStorageAddress,
+      merkleStorageUrl,
       merkleProofProvided,
     }: ISemaphoreProofRequest,
   ): Promise<ISemaphoreFullProof> {
@@ -54,7 +54,7 @@ export class ZkProofService {
       externalNullifier,
       signal,
       merkleProofArtifacts,
-      merkleStorageAddress,
+      merkleStorageUrl,
       merkleProofProvided,
     });
   }
@@ -77,10 +77,10 @@ export class ZkProofService {
       circuitFilePath,
       zkeyFilePath,
       merkleProofArtifacts,
-      merkleStorageAddress,
+      merkleStorageUrl,
       merkleProofProvided,
     }: IRLNProofRequest,
-  ): Promise<IRLNSNARKProof> {
+  ): Promise<IRLNFullProof> {
     return this.rlnProofService.genProof(identity, {
       rlnIdentifier,
       message,
@@ -90,7 +90,7 @@ export class ZkProofService {
       circuitFilePath,
       zkeyFilePath,
       merkleProofArtifacts,
-      merkleStorageAddress,
+      merkleStorageUrl,
       merkleProofProvided,
     });
   }

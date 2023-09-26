@@ -2,11 +2,12 @@
  * @jest-environment jsdom
  */
 
-import { EventName, RPCAction } from "@cryptkeeperzk/providers";
+import { EventName } from "@cryptkeeperzk/providers";
 import { IPendingRequest, PendingRequestType, RequestResolutionStatus } from "@cryptkeeperzk/types";
 import { renderHook } from "@testing-library/react";
 import { Provider } from "react-redux";
 
+import { RPCInternalAction } from "@src/constants";
 import { store } from "@src/ui/store/configureAppStore";
 import postMessage from "@src/util/postMessage";
 
@@ -52,7 +53,7 @@ describe("ui/ducks/requests", () => {
 
     expect(postMessage).toBeCalledTimes(1);
     expect(postMessage).toBeCalledWith({
-      method: RPCAction.FINALIZE_REQUEST,
+      method: RPCInternalAction.FINALIZE_REQUEST,
       payload: {
         id: "1",
         status: RequestResolutionStatus.ACCEPT,
@@ -65,7 +66,7 @@ describe("ui/ducks/requests", () => {
 
     expect(postMessage).toBeCalledTimes(1);
     expect(postMessage).toBeCalledWith({
-      method: RPCAction.PUSH_EVENT,
+      method: RPCInternalAction.PUSH_EVENT,
       payload: {
         type: EventName.USER_REJECT,
         payload: {

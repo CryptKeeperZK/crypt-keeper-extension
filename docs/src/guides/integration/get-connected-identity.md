@@ -23,5 +23,5 @@ Retrieves the connected identity metadata.
 import { cryptkeeperConnect, type CryptKeeperInjectedProvider } from "@cryptkeeperzk/providers";
 
 const client = await cryptkeeperConnect();
-const { name, host } = await client.getConnectedIdentity();
+const { name, urlOrigin } = await client.getConnectedIdentity();
 ```

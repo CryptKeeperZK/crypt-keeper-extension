@@ -72,7 +72,7 @@ export async function connectCryptKeeper(app: Page): Promise<CryptKeeper> {
 
   const [popup] = await Promise.all([
     app.context().waitForEvent("page"),
-    app.getByText("Connect", { exact: true }).click(),
+    app.getByText("Connect Identity", { exact: true }).click(),
   ]);
 
   return new CryptKeeper(popup);

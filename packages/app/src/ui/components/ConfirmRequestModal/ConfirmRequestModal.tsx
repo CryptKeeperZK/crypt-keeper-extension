@@ -1,6 +1,7 @@
 import { IRLNProofRequest, IPendingRequest, PendingRequestType, IZKProofPayload } from "@cryptkeeperzk/types";
 
 import { SemaphoreProofModal, ConnectionApprovalModal, DefaultApprovalModal, RlnProofModal } from "./components";
+import { ConnectIdentityModal } from "./components/ConnectionModal";
 import "./confirmModal.scss";
 import { useConfirmRequestModal } from "./useConfirmRequestModal";
 
@@ -16,7 +17,18 @@ const ConfirmRequestModal = (): JSX.Element | null => {
           error={error}
           len={pendingRequests.length}
           loading={loading}
-          pendingRequest={pendingRequests[0] as IPendingRequest<{ origin: string }>}
+          pendingRequest={pendingRequests[0] as IPendingRequest<{ urlOrigin: string }>}
+          reject={reject}
+        />
+      );
+    case PendingRequestType.CONNECT_IDENTITY:
+      return (
+        <ConnectIdentityModal
+          accept={accept}
+          error={error}
+          len={pendingRequests.length}
+          loading={loading}
+          pendingRequest={pendingRequests[0] as IPendingRequest<{ urlOrigin: string }>}
           reject={reject}
         />
       );

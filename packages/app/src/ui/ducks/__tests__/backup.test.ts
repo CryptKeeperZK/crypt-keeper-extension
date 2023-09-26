@@ -1,9 +1,7 @@
 /**
  * @jest-environment jsdom
  */
-
-import { RPCAction } from "@cryptkeeperzk/providers";
-
+import { RPCInternalAction } from "@src/constants";
 import { store } from "@src/ui/store/configureAppStore";
 import postMessage from "@src/util/postMessage";
 
@@ -22,7 +20,7 @@ describe("ui/ducks/backup", () => {
     const result = await Promise.resolve(store.dispatch(downloadBackup("password")));
 
     expect(postMessage).toBeCalledTimes(1);
-    expect(postMessage).toBeCalledWith({ method: RPCAction.DOWNLOAD_BACKUP, payload: "password" });
+    expect(postMessage).toBeCalledWith({ method: RPCInternalAction.DOWNLOAD_BACKUP, payload: "password" });
     expect(result).toBe("content");
   });
 
@@ -31,7 +29,7 @@ describe("ui/ducks/backup", () => {
 
     expect(postMessage).toBeCalledTimes(1);
     expect(postMessage).toBeCalledWith({
-      method: RPCAction.REQUEST_UPLOAD_BACKUP,
+      method: RPCInternalAction.REQUEST_UPLOAD_BACKUP,
     });
   });
 
@@ -40,7 +38,7 @@ describe("ui/ducks/backup", () => {
 
     expect(postMessage).toBeCalledTimes(1);
     expect(postMessage).toBeCalledWith({
-      method: RPCAction.REQUEST_ONBOARDING_BACKUP,
+      method: RPCInternalAction.REQUEST_ONBOARDING_BACKUP,
     });
   });
 
@@ -51,7 +49,7 @@ describe("ui/ducks/backup", () => {
 
     expect(postMessage).toBeCalledTimes(1);
     expect(postMessage).toBeCalledWith({
-      method: RPCAction.UPLOAD_BACKUP,
+      method: RPCInternalAction.UPLOAD_BACKUP,
       payload: { password: "password", backupPassword: "password", content: "content" },
     });
   });

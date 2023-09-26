@@ -15,7 +15,7 @@ import {
 } from "@src/ui/ducks/identities";
 
 export interface IUseConnectIdentityData {
-  host: string;
+  urlOrigin: string;
   faviconUrl: string;
   selectedTab: EConnectIdentityTabs;
   linkedIdentities: IIdentityData[];
@@ -34,10 +34,10 @@ export enum EConnectIdentityTabs {
 
 export const useConnectIdentity = (): IUseConnectIdentityData => {
   const { searchParams } = new URL(window.location.href.replace("#", ""));
-  const host = useMemo(() => searchParams.get("host")!, [searchParams.toString()]);
+  const urlOrigin = useMemo(() => searchParams.get("urlOrigin")!, [searchParams.toString()]);
 
   const connectedIdentity = useConnectedIdentity();
-  const linkedIdentities = useLinkedIdentities(host);
+  const linkedIdentities = useLinkedIdentities(urlOrigin);
   const unlinkedIdentities = useUnlinkedIdentities();
 
   const [faviconUrl, setFaviconUrl] = useState("");
@@ -67,11 +67,11 @@ export const useConnectIdentity = (): IUseConnectIdentityData => {
   }, [dispatch, navigate]);
 
   const onConnect = useCallback(async () => {
-    await dispatch(connectIdentity({ identityCommitment: selectedIdentityCommitment!, host }));
+    await dispatch(connectIdentity({ identityCommitment: selectedIdentityCommitment!, urlOrigin }));
     await dispatch(closePopup()).then(() => {
       navigate(Paths.HOME);
     });
-  }, [selectedIdentityCommitment, host, dispatch]);
+  }, [selectedIdentityCommitment, urlOrigin, dispatch]);
 
   useEffect(() => {
     dispatch(fetchIdentities());
@@ -92,16 +92,16 @@ export const useConnectIdentity = (): IUseConnectIdentityData => {
   }, [linkedIdentities.length, unlinkedIdentities.length, setSelectedTab]);
 
   useEffect(() => {
-    getLinkPreview(host)
+    getLinkPreview(urlOrigin)
       .then((data) => {
         const [favicon] = data.favicons;
         setFaviconUrl(favicon);
       })
       .catch(() => undefined);
-  }, [host]);
+  }, [urlOrigin]);
 
   return {
-    host,
+    urlOrigin,
     faviconUrl,
     selectedTab,
     linkedIdentities,

@@ -130,7 +130,7 @@ export const IdentityItem = ({
 
             {metadata.host && (
               <Box
-                data-testid="host-icon"
+                data-testid="urlOrigin-icon"
                 sx={{
                   alignItems: "center",
                   display: "flex",
@@ -145,7 +145,7 @@ export const IdentityItem = ({
                 }}
                 onClick={onGoToHost}
               >
-                <FontAwesomeIcon icon="link" title={metadata.host} />
+                <FontAwesomeIcon icon="link" title={metadata.urlOrigin} />
               </Box>
             )}
           </Box>

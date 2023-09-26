@@ -127,7 +127,7 @@ describe("ui/pages/CreateIdentity/useCreateIdentity", () => {
     expect(createIdentity).toBeCalledTimes(1);
     expect(createIdentity).toBeCalledWith({
       groups: [],
-      host: "http://localhost:3000",
+      urlOrigin: "http://localhost:3000",
       messageSignature: mockSignedMessage,
       isDeterministic: true,
       options: { account: ZERO_ADDRESS, message: mockMessage, nonce: 0 },

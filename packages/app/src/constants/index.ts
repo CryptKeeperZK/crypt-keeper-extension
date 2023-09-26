@@ -7,3 +7,4 @@ export enum BrowserPlatform {
 }
 
 export { Paths } from "./paths";
+export { RPCInternalAction } from "./rpcInternalActions";

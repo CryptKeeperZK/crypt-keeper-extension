@@ -49,7 +49,7 @@ export const IdentityList = ({
 
   const onCreateIdentityRequest = useCallback(() => {
     if (isExtensionPopupOpen()) {
-      dispatch(createIdentityRequest({ host: "" }));
+      dispatch(createIdentityRequest({ urlOrigin: "" }));
     } else {
       navigate(Paths.CREATE_IDENTITY);
     }

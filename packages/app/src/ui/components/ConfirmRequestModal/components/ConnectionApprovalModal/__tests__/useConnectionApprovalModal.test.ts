@@ -33,7 +33,7 @@ describe("ui/components/ConfirmRequestModal/components/ConnectionApprovalModal/u
     pendingRequest: {
       id: "1",
       type: PendingRequestType.APPROVE,
-      payload: { origin: "http://localhost:3000" },
+      payload: { urlOrigin: "http://localhost:3000" },
     },
     accept: jest.fn(),
     reject: jest.fn(),
@@ -44,7 +44,7 @@ describe("ui/components/ConfirmRequestModal/components/ConnectionApprovalModal/u
   const waitForData = async (current: IUseConnectionApprovalModalData) => {
     await waitFor(() => current.checked);
     await waitFor(() => current.faviconUrl !== "");
-    await waitFor(() => current.host !== "");
+    await waitFor(() => current.urlOrigin !== "");
   };
 
   beforeEach(() => {
@@ -64,7 +64,7 @@ describe("ui/components/ConfirmRequestModal/components/ConnectionApprovalModal/u
 
     expect(result.current.checked).toBe(true);
     expect(result.current.faviconUrl).toBe("");
-    expect(result.current.host).toBe("");
+    expect(result.current.urlOrigin).toBe("");
   });
 
   test("should return initial data", async () => {
@@ -73,7 +73,7 @@ describe("ui/components/ConfirmRequestModal/components/ConnectionApprovalModal/u
 
     expect(result.current.checked).toBe(true);
     expect(result.current.faviconUrl).toBe("http://localhost:3000/favicon.ico");
-    expect(result.current.host).toBe(defaultArgs.pendingRequest.payload?.origin);
+    expect(result.current.urlOrigin).toBe(defaultArgs.pendingRequest.payload?.urlOrigin);
   });
 
   test("should accept approval properly", async () => {
@@ -109,10 +109,10 @@ describe("ui/components/ConfirmRequestModal/components/ConnectionApprovalModal/u
     await waitFor(() => !result.current.checked);
 
     expect(fetchHostPermissions).toBeCalledTimes(1);
-    expect(fetchHostPermissions).toBeCalledWith(defaultArgs.pendingRequest.payload?.origin);
+    expect(fetchHostPermissions).toBeCalledWith(defaultArgs.pendingRequest.payload?.urlOrigin);
     expect(setHostPermissions).toBeCalledTimes(1);
     expect(setHostPermissions).toBeCalledWith({
-      host: defaultArgs.pendingRequest.payload?.origin,
+      urlOrigin: defaultArgs.pendingRequest.payload?.urlOrigin,
       canSkipApprove: false,
     });
   });

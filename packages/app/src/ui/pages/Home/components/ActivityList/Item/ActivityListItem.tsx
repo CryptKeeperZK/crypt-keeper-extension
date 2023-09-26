@@ -43,8 +43,8 @@ export const ActivityItem = ({ operation, onDelete }: IActivityItemProps): JSX.E
   }, [operation.id, onDelete]);
 
   const onGoToHost = useCallback(() => {
-    redirectToNewTab(metadata!.host!);
-  }, [metadata?.host]);
+    redirectToNewTab(metadata!.urlOrigin!);
+  }, [metadata?.urlOrigin]);
 
   const onGoToGroup = useCallback(() => {
     redirectToNewTab(getBandadaGroupUrl(operation.group!.id!));
@@ -58,8 +58,13 @@ export const ActivityItem = ({ operation, onDelete }: IActivityItemProps): JSX.E
 
           {metadata?.host && (
             <span className="text-xs py-1 px-2 ml-2 rounded-full bg-gray-500 text-gray-800">
-              <Tooltip title={metadata.host}>
-                <FontAwesomeIcon data-testid="host" icon="link" style={{ cursor: "pointer" }} onClick={onGoToHost} />
+              <Tooltip title={metadata.urlOrigin}>
+                <FontAwesomeIcon
+                  data-testid="urlOrigin"
+                  icon="link"
+                  style={{ cursor: "pointer" }}
+                  onClick={onGoToHost}
+                />
               </Tooltip>
             </span>
           )}

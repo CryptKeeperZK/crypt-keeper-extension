@@ -19,7 +19,7 @@ export const PermissionModal = ({ refreshConnectionStatus, onClose }: IPermissio
   return (
     <FullModal data-testid="connection-modal" onClose={onClose}>
       <FullModalHeader onClose={onClose}>
-        {url?.protocol.includes("extension:") ? "Chrome Extension Page" : url?.host}
+        {url?.protocol.includes("extension:") ? "Chrome Extension Page" : url?.origin}
       </FullModalHeader>
 
       <FullModalContent className="flex flex-col items-center">
@@ -47,7 +47,7 @@ export const PermissionModal = ({ refreshConnectionStatus, onClose }: IPermissio
           <Checkbox checked={checked} className="mr-2 mt-2 flex-shrink-0" id="approval" onChange={onSetApproval} />
 
           <label className="text-sm mt-2" htmlFor="approval">
-            Allow host to create proof without approvals
+            Allow urlOrigin to create proof without approvals
           </label>
         </div>
       </FullModalContent>

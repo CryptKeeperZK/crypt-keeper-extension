@@ -6,11 +6,11 @@ export interface ICreateIdentityOptions {
 }
 
 export interface ICreateIdentityRequestArgs {
-  host: string;
+  urlOrigin: string;
 }
 
 export interface IConnectIdentityRequestArgs {
-  host: string;
+  urlOrigin: string;
 }
 
 export interface INewIdentityRequest {
@@ -59,12 +59,12 @@ export interface ISetIdentityNameArgs {
 
 export interface ISetIdentityHostArgs {
   identityCommitment: string;
-  host: string;
+  urlOrigin: string;
 }
 
 export interface IConnectIdentityArgs {
   identityCommitment: string;
-  host: string;
+  urlOrigin: string;
 }
 
 export interface ISerializedIdentity {

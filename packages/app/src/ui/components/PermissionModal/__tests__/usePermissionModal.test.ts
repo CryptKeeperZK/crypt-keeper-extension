@@ -82,12 +82,12 @@ describe("ui/components/ConnectionModal/useConnectionModal", () => {
     expect(fetchHostPermissions).toBeCalledWith(result.current.url?.origin);
     expect(setHostPermissions).toBeCalledTimes(1);
     expect(setHostPermissions).toBeCalledWith({
-      host: result.current.url?.origin,
+      urlOrigin: result.current.url?.origin,
       canSkipApprove: true,
     });
   });
 
-  test("should remove host properly", async () => {
+  test("should remove urlOrigin properly", async () => {
     const { result } = renderHook(() => usePermissionModal(defaultArgs));
     await waitForData(result.current);
 

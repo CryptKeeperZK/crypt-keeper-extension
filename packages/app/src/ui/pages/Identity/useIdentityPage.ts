@@ -104,8 +104,8 @@ export const useIdentityPage = (): IUseIdentityPageData => {
   }, [setUpdating]);
 
   const onGoToHost = useCallback(() => {
-    redirectToNewTab(identity!.metadata.host!);
-  }, [identity?.metadata.host]);
+    redirectToNewTab(identity!.metadata.urlOrigin!);
+  }, [identity?.metadata.urlOrigin]);
 
   const onConfirmUpdate = useCallback(
     (data: FormFields) => {

@@ -6,5 +6,5 @@ export interface ICreateIdentityUiArgs {
   isDeterministic: boolean;
   groups: IGroupData[];
   messageSignature?: string;
-  host?: string;
+  urlOrigin?: string;
 }
