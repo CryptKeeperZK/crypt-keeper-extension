@@ -2,12 +2,16 @@ import { EventName } from "@cryptkeeperzk/providers";
 import log from "loglevel";
 import browser from "webextension-polyfill";
 
+import { setStatus } from "@src/ui/ducks/app";
+import { setConnectedIdentity } from "@src/ui/ducks/identities";
+
 import type {
   IInjectedMessageData,
   IReduxAction,
   IRejectedRequest,
   IMerkleProof,
   IVerifiablePresentation,
+  ConnectedIdentityMetadata,
 } from "@cryptkeeperzk/types";
 
 function injectScript() {
@@ -43,28 +47,28 @@ function injectScript() {
       // And also the relation of them with `identity_changed`
       // This refactor enhancement left for the next PR
       //
-      // case setConnectedIdentity.type: {
-      //   window.postMessage(
-      //     {
-      //       target: "injected-injectedscript",
-      //       payload: [null, action.payload as ConnectedIdentityMetadata],
-      //       nonce: EventName.IDENTITY_CHANGED,
-      //     },
-      //     "*",
-      //   );
-      //   return;
-      // }
-      // case setStatus.type: {
-      //   window.postMessage(
-      //     {
-      //       target: "injected-injectedscript",
-      //       payload: [null],
-      //       nonce: !(action.payload as { isUnlocked: boolean }).isUnlocked ? EventName.LOGOUT : EventName.LOGIN,
-      //     },
-      //     "*",
-      //   );
-      //   return;
-      // }
+      case setConnectedIdentity.type: {
+        window.postMessage(
+          {
+            target: "injected-injectedscript",
+            payload: [null, action.payload as ConnectedIdentityMetadata],
+            nonce: EventName.IDENTITY_CHANGED,
+          },
+          "*",
+        );
+        return;
+      }
+      case setStatus.type: {
+        window.postMessage(
+          {
+            target: "injected-injectedscript",
+            payload: [null],
+            nonce: !(action.payload as { isUnlocked: boolean }).isUnlocked ? EventName.LOGOUT : EventName.LOGIN,
+          },
+          "*",
+        );
+        return;
+      }
       case EventName.ADD_VERIFIABLE_CREDENTIAL: {
         window.postMessage(
           {
