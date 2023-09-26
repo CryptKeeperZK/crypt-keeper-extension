@@ -54,7 +54,6 @@ const NotConnected = ({ onClick, onGetConnectedIdentity, genSemaphoreProof }: IN
 
 const App = () => {
   const {
-    client,
     isLocked,
     connectedIdentityMetadata,
     proof,
@@ -70,7 +69,7 @@ const App = () => {
     generareGroupMerkleProof,
   } = useCryptKeeper();
 
-  if (!client || isLocked) {
+  if (isLocked) {
     return (
       <NotConnected
         genSemaphoreProof={genSemaphoreProof}

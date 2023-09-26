@@ -122,12 +122,13 @@ export const useCryptKeeper = (): IUseCryptKeeperData => {
         type: "success",
       });
       setConnectedIdentityMetadata(fetchedConnectedIdentityMetadata);
+      setIsLocked(false);
     } catch (error) {
       toast(`${error as string}`, {
         type: "error",
       });
     }
-  }, [client, setConnectedIdentityMetadata]);
+  }, [client, setConnectedIdentityMetadata, setIsLocked]);
 
   const genSemaphoreProof = async (proofType: MerkleProofType = MerkleProofType.STORAGE_ADDRESS) => {
     const externalNullifier = encodeBytes32String("voting-1");
@@ -324,7 +325,6 @@ export const useCryptKeeper = (): IUseCryptKeeperData => {
     const cryptkeeperInjectedProvider = initializeCryptKeeper();
 
     if (cryptkeeperInjectedProvider) {
-      setIsLocked(false);
       setClient(cryptkeeperInjectedProvider);
     } else {
       toast(`CryptKeeper is not installed in the browser`, { type: "error" });
