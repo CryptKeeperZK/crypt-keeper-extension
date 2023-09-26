@@ -11,12 +11,8 @@ describe("protocols/ZkIdentitySemaphore", () => {
     account: "account",
     name: "Identity #1",
     groups: [],
-<<<<<<< HEAD
     urlOrigin: "http://localhost:3000",
     isDeterministic: true,
-=======
-    urlOrigin: "http://localhost:3000",
->>>>>>> d635f23f (fix: enhance provider apis)
   };
 
   test("should decorate identity properly", () => {

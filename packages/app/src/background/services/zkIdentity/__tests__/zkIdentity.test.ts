@@ -116,7 +116,9 @@ describe("background/services/zkIdentity", () => {
       identityStorage.get.mockResolvedValue(mockSerializedDefaultIdentities);
       connectedIdentityStorage.get.mockResolvedValue(mockDefaultIdentityCommitment);
 
-      const expectConnectIdentityAction = setConnectedIdentity(pick(mockDefaultIdentity.metadata, ["name", "urlOrigin"]));
+      const expectConnectIdentityAction = setConnectedIdentity(
+        pick(mockDefaultIdentity.metadata, ["name", "urlOrigin"]),
+      );
 
       const expectSetIdentitiesAction = setIdentities([
         { commitment: mockDefaultIdentityCommitment, metadata: mockDefaultIdentity.metadata },
@@ -146,7 +148,9 @@ describe("background/services/zkIdentity", () => {
 
   describe("set connected identity", () => {
     test("should set connected identity properly", async () => {
-      const expectConnectIdentityAction = setConnectedIdentity(pick(mockDefaultIdentity.metadata, ["name", "urlOrigin"]));
+      const expectConnectIdentityAction = setConnectedIdentity(
+        pick(mockDefaultIdentity.metadata, ["name", "urlOrigin"]),
+      );
       const expectedSetIdentitiesAction = setIdentities([
         { commitment: mockDefaultIdentityCommitment, metadata: mockDefaultIdentity.metadata },
       ]);

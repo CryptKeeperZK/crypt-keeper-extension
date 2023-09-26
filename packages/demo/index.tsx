@@ -70,16 +70,14 @@ const App = () => {
     generareGroupMerkleProof,
   } = useCryptKeeper();
 
-  useEffect(() => {
-    connect();
-  }, [connect]);
-
   if (!client || isLocked) {
-    return <NotConnected onClick={connect} />;
-  }
-
-  if (!connectedIdentityMetadata) {
-    return <NoConnectedIdentityCommitment onConnectIdentity={connectIdentity} />;
+    return (
+      <NotConnected
+        genSemaphoreProof={genSemaphoreProof}
+        onClick={connectIdentity}
+        onGetConnectedIdentity={getConnectedIdentity}
+      />
+    );
   }
 
   return (
@@ -100,13 +98,13 @@ const App = () => {
         <div>
           <strong>Name:</strong>
 
-          <p data-testid="connected-name">{connectedIdentityMetadata.name}</p>
+          <p data-testid="connected-name">{connectedIdentityMetadata?.name}</p>
         </div>
 
         <div>
           <strong>Host:</strong>
 
-          <p data-testid="connected-urlOrigin">{connectedIdentityMetadata.urlOrigin}</p>
+          <p data-testid="connected-urlOrigin">{connectedIdentityMetadata?.urlOrigin}</p>
         </div>
       </div>
 
