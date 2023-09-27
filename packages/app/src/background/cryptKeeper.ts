@@ -15,7 +15,7 @@ import VerifiableCredentialsService from "./services/credentials";
 import { validateSerializedVerifiableCredential } from "./services/credentials/utils";
 import { GroupService } from "./services/group";
 import HistoryService from "./services/history";
-import InjectorService from "./services/injector";
+import { InjectorService } from "./services/injector";
 import LockerService from "./services/lock";
 import MiscStorageService from "./services/misc";
 import WalletService from "./services/wallet";
@@ -103,7 +103,7 @@ export default class CryptKeeperController {
     );
     this.handler.add(RPCExternalAction.INJECTOR_CONNECT_IDENTITY, this.injectorService.connectIdentity);
     this.handler.add(RPCExternalAction.INJECTOR_GENERATE_SEMAPHORE_PROOF, this.injectorService.generateSemaphoreProof);
-    this.handler.add(RPCExternalAction.INJECTOR_GENERATE_RLN_PROOF, this.injectorService.generateRlnProof);
+    this.handler.add(RPCExternalAction.INJECTOR_GENERATE_RLN_PROOF, this.injectorService.generateRLNProof);
 
     // Handling RPC INTERNAL ACTIONS
     // common

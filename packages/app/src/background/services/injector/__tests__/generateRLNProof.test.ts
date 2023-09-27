@@ -11,7 +11,7 @@ import { getBrowserPlatform } from "@src/background/shared/utils";
 import { BrowserPlatform, RPCInternalAction } from "@src/constants";
 import pushMessage from "@src/util/pushMessage";
 
-import InjectorService from "..";
+import { InjectorService } from "..";
 
 const mockDefaultHost = "http://localhost:3000";
 const mockSerializedIdentity = "identity";
@@ -137,7 +137,7 @@ describe("background/services/injector", () => {
 
       const service = InjectorService.getInstance();
 
-      const result = await service.generateRlnProof(defaultProofRequest, defaultMetadata);
+      const result = await service.generateRLNProof(defaultProofRequest, defaultMetadata);
       expect(result).toStrictEqual(emptyFullProof);
       expect(pushMessage).toBeCalledTimes(1);
       expect(pushMessage).toBeCalledWith({
@@ -158,7 +158,7 @@ describe("background/services/injector", () => {
     test("should throw error if there is no origin url in metadata", async () => {
       const service = InjectorService.getInstance();
 
-      await expect(service.generateRlnProof(defaultProofRequest, {})).rejects.toThrowError("Origin is not set");
+      await expect(service.generateRLNProof(defaultProofRequest, {})).rejects.toThrowError("Origin is not set");
     });
 
     test("should throw error if there is no connected identity", async () => {
@@ -166,7 +166,7 @@ describe("background/services/injector", () => {
 
       const service = InjectorService.getInstance();
 
-      await expect(service.generateRlnProof(defaultProofRequest, defaultMetadata)).rejects.toThrow(
+      await expect(service.generateRLNProof(defaultProofRequest, defaultMetadata)).rejects.toThrow(
         "Error: CryptKeeper: connected identity is not found",
       );
       expect(pushMessage).toBeCalledTimes(0);
@@ -177,7 +177,7 @@ describe("background/services/injector", () => {
 
       const service = InjectorService.getInstance();
 
-      await expect(service.generateRlnProof(defaultProofRequest, { urlOrigin: "new-urlOrigin" })).rejects.toThrow(
+      await expect(service.generateRLNProof(defaultProofRequest, { urlOrigin: "new-urlOrigin" })).rejects.toThrow(
         "new-urlOrigin is not approved",
       );
       expect(pushMessage).toBeCalledTimes(0);
@@ -190,7 +190,7 @@ describe("background/services/injector", () => {
 
       const service = InjectorService.getInstance();
 
-      const result = await service.generateRlnProof(defaultProofRequest, defaultMetadata);
+      const result = await service.generateRLNProof(defaultProofRequest, defaultMetadata);
 
       expect(result).toStrictEqual(emptyFullProof);
       expect(pushMessage).toBeCalledTimes(0);
@@ -204,7 +204,7 @@ describe("background/services/injector", () => {
 
       const service = InjectorService.getInstance();
 
-      await expect(service.generateRlnProof(defaultProofRequest, defaultMetadata)).rejects.toThrowError(
+      await expect(service.generateRLNProof(defaultProofRequest, defaultMetadata)).rejects.toThrowError(
         `Error: CryptKeeper: Error in generating RLN proof on Firefox Error: error`,
       );
     });
@@ -218,7 +218,7 @@ describe("background/services/injector", () => {
 
       const service = InjectorService.getInstance();
 
-      await expect(service.generateRlnProof(defaultProofRequest, defaultMetadata)).rejects.toThrow(
+      await expect(service.generateRLNProof(defaultProofRequest, defaultMetadata)).rejects.toThrow(
         "Error: CryptKeeper: Must set RLN circuitFilePath and zkeyFilePath",
       );
     });

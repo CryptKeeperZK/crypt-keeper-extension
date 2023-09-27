@@ -1,39 +1,35 @@
 import {
   IConnectionApprovalData,
   IRLNProofRequest,
-  IRLNFullProof,
-  ISemaphoreFullProof,
   ISemaphoreProofRequest,
   IMerkleProofInputs,
   IZkMetadata,
   PendingRequestType,
   ConnectedIdentityMetadata,
 } from "@cryptkeeperzk/types";
-import { ZkIdentitySemaphore, ZkProofService } from "@cryptkeeperzk/zk";
+import { ZkProofService } from "@cryptkeeperzk/zk";
+import { omit } from "lodash";
+import browser from "webextension-polyfill";
 
 import BrowserUtils from "@src/background/controllers/browserUtils";
 import RequestManager from "@src/background/controllers/requestManager";
-import { closeChromeOffscreen, createChromeOffscreen, getBrowserPlatform } from "@src/background/shared/utils";
-import { BrowserPlatform, RPCInternalAction } from "@src/constants";
-import pushMessage from "@src/util/pushMessage";
-
-import ApprovalService from "../approval";
-import LockerService from "../lock";
-import { validateMerkleProofSource } from "../validation";
-import ZkIdentityService from "../zkIdentity";
+import ApprovalService from "@src/background/services/approval";
+import LockerService from "@src/background/services/lock";
+import { validateMerkleProofSource } from "@src/background/services/validation";
+import ZkIdentityService from "@src/background/services/zkIdentity";
 
 export class InjectorHandler {
-  protected lockerService: LockerService;
+  lockerService: LockerService;
 
-  protected approvalService: ApprovalService;
+  approvalService: ApprovalService;
 
-  protected zkProofService: ZkProofService;
+  zkProofService: ZkProofService;
 
-  protected requestManager: RequestManager;
+  requestManager: RequestManager;
 
-  protected browserService: BrowserUtils;
+  browserService: BrowserUtils;
 
-  protected zkIdentityService: ZkIdentityService;
+  zkIdentityService: ZkIdentityService;
 
   constructor() {
     this.approvalService = ApprovalService.getInstance();
@@ -44,7 +40,7 @@ export class InjectorHandler {
     this.zkProofService = new ZkProofService();
   }
 
-  protected connectedIdentityMetadata = async (_: unknown, meta?: IZkMetadata): Promise<ConnectedIdentityMetadata> => {
+  connectedIdentityMetadata = async (_: unknown, meta?: IZkMetadata): Promise<ConnectedIdentityMetadata> => {
     const connectedIdentityMetadata = await this.zkIdentityService.getConnectedIdentityData({}, meta);
     if (!connectedIdentityMetadata) {
       throw new Error(`CryptKeeper: identity metadata is not found`);
@@ -53,18 +49,18 @@ export class InjectorHandler {
     return connectedIdentityMetadata;
   };
 
-  protected newRequest = async (newRequestType: PendingRequestType, newRequestPayload: unknown): Promise<unknown> => {
+  newRequest = async (newRequestType: PendingRequestType, newRequestPayload: unknown): Promise<unknown> => {
     try {
       const responsePayload = await this.requestManager.newRequest(newRequestType, newRequestPayload);
       await this.browserService.closePopup();
 
       return responsePayload;
     } catch (error) {
-      throw new Error(`${error as string}`);
+      throw new Error(`${(error as Error).message}`);
     }
   };
 
-  protected requiredApproval = async ({ urlOrigin }: IZkMetadata): Promise<IConnectionApprovalData> => {
+  requiredApproval = async ({ urlOrigin }: IZkMetadata): Promise<IConnectionApprovalData> => {
     const { checkedUrlOrigin, isApproved, canSkipApprove } = this.getConnectionApprovalData({ urlOrigin });
 
     // TODO: This check should be not just `isApproved` but also `isConnected`;
@@ -73,25 +69,13 @@ export class InjectorHandler {
     if (!isApproved) {
       throw new Error(`CryptKeeper: ${urlOrigin} is not approved, please do a connect request first.`);
     }
-
-    try {
-      await this.checkLock();
-    } catch (error) {
-      throw new Error(error as string);
-    }
-
+    await this.checkLock();
     return { checkedUrlOrigin, isApproved, canSkipApprove };
   };
 
-  protected checkApproval = async ({ urlOrigin }: IZkMetadata): Promise<IConnectionApprovalData> => {
+  checkApproval = async ({ urlOrigin }: IZkMetadata): Promise<IConnectionApprovalData> => {
     const { checkedUrlOrigin, isApproved, canSkipApprove } = this.getConnectionApprovalData({ urlOrigin });
-
-    try {
-      await this.checkLock();
-    } catch (error) {
-      throw new Error(error as string);
-    }
-
+    await this.checkLock();
     return { checkedUrlOrigin, isApproved, canSkipApprove };
   };
 
@@ -114,113 +98,120 @@ export class InjectorHandler {
         await this.browserService.openPopup();
         await this.lockerService.awaitUnlock();
       } catch (error) {
-        throw new Error(`CryptKeeper: refused to unlock ${error as string}`);
+        throw new Error(`CryptKeeper: refused to unlock ${(error as Error).message}`);
       }
     }
   };
 
-  protected checkMerkleProofSource = ({
-    merkleProofSource,
-  }: Partial<IMerkleProofInputs>): Partial<IMerkleProofInputs> => validateMerkleProofSource({ merkleProofSource });
+  checkMerkleProofSource = ({ merkleProofSource }: Partial<IMerkleProofInputs>): Partial<IMerkleProofInputs> =>
+    validateMerkleProofSource({ merkleProofSource });
 
-  protected computeSemaphoreProof = async (
-    identity: ZkIdentitySemaphore,
-    semaphoreProofRequest: ISemaphoreProofRequest,
-  ): Promise<ISemaphoreFullProof> => {
-    const {
-      externalNullifier,
-      signal,
-      merkleProofArtifacts,
-      merkleStorageUrl,
-      circuitFilePath,
-      zkeyFilePath,
-      urlOrigin,
-    } = semaphoreProofRequest;
-
-    if (!circuitFilePath || !zkeyFilePath) {
-      throw new Error("CryptKeeper: Must set Semaphore circuitFilePath and zkeyFilePath");
-    }
-
-    const browserPlatform = getBrowserPlatform();
-
-    if (browserPlatform === BrowserPlatform.Firefox) {
-      try {
-        const fullProof = await this.zkProofService.generateSemaphoreProof(identity, {
-          externalNullifier,
-          signal,
-          circuitFilePath,
-          zkeyFilePath,
-          merkleStorageUrl,
-          merkleProofArtifacts,
-        });
-
-        return fullProof;
-      } catch (error) {
-        throw new Error(`CryptKeeper: Error in generating Semaphore proof on Firefox ${error as string}`);
-      }
-    }
-
+  prepareSemaphoreProof = async (
+    { externalNullifier, signal, merkleProofSource }: ISemaphoreProofRequest,
+    { urlOrigin }: IZkMetadata,
+  ): Promise<ISemaphoreProofRequest> => {
     try {
-      await createChromeOffscreen();
-    } catch (error) {
-      throw new Error(`CryptKeeper: on creating Chrome Offscreen page for Semaphore Proof ${error as string}`);
-    }
+      const { checkedUrlOrigin, canSkipApprove } = await this.requiredApproval({ urlOrigin });
 
-    try {
-      const fullProof = await pushMessage({
-        method: RPCInternalAction.GENERATE_SEMAPHORE_PROOF_OFFSCREEN,
-        payload: semaphoreProofRequest,
-        meta: urlOrigin,
-        source: "offscreen",
+      const checkedZkInputs = this.checkMerkleProofSource({
+        merkleProofSource,
       });
 
-      return fullProof as ISemaphoreFullProof;
+      const identity = await this.zkIdentityService.getConnectedIdentity();
+      const identitySerialized = identity?.serialize();
+
+      if (!identity || !identitySerialized) {
+        throw new Error("CryptKeeper: connected identity is not found");
+      }
+
+      const semaphorePath = {
+        circuitFilePath: browser.runtime.getURL("js/zkeyFiles/semaphore/semaphore.wasm"),
+        zkeyFilePath: browser.runtime.getURL("js/zkeyFiles/semaphore/semaphore.zkey"),
+        verificationKey: browser.runtime.getURL("js/zkeyFiles/semaphore/semaphore.json"),
+      };
+
+      if (!semaphorePath.circuitFilePath || !semaphorePath.zkeyFilePath) {
+        throw new Error("CryptKeeper: Must set Semaphore circuitFilePath and zkeyFilePath");
+      }
+
+      const semaphoreProofRequest: ISemaphoreProofRequest = {
+        externalNullifier,
+        signal,
+        merkleProofProvided: checkedZkInputs.merkleProofProvided,
+        merkleProofArtifacts: checkedZkInputs.merkleProofArtifacts,
+        merkleStorageUrl: checkedZkInputs.merkleStorageUrl,
+        identitySerialized,
+        circuitFilePath: semaphorePath.circuitFilePath,
+        zkeyFilePath: semaphorePath.zkeyFilePath,
+        verificationKey: semaphorePath.verificationKey,
+        urlOrigin: checkedUrlOrigin,
+      };
+
+      if (!canSkipApprove) {
+        const request = omit(semaphoreProofRequest, ["identitySerialized"]);
+
+        await this.newRequest(PendingRequestType.SEMAPHORE_PROOF, request);
+      }
+
+      return semaphoreProofRequest;
     } catch (error) {
-      throw new Error(`CryptKeeper: Error in generating Semaphore proof on Chrome ${error as string}`);
-    } finally {
-      await closeChromeOffscreen();
+      throw error;
     }
   };
 
-  protected computeRlnProof = async (
-    identity: ZkIdentitySemaphore,
-    rlnProofRequest: IRLNProofRequest,
-  ): Promise<IRLNFullProof> => {
-    if (!rlnProofRequest.circuitFilePath || !rlnProofRequest.zkeyFilePath) {
-      throw new Error("CryptKeeper: Must set RLN circuitFilePath and zkeyFilePath");
-    }
-
-    const browserPlatform = getBrowserPlatform();
-
-    if (browserPlatform === BrowserPlatform.Firefox) {
-      try {
-        const rlnFullProof = await this.zkProofService.generateRLNProof(identity, rlnProofRequest);
-
-        return rlnFullProof;
-      } catch (error) {
-        throw new Error(`CryptKeeper: Error in generating RLN proof on Firefox ${error as string}`);
-      }
-    }
-
+  prepareRLNProof = async (
+    { rlnIdentifier, message, epoch, messageLimit, messageId, merkleProofSource }: IRLNProofRequest,
+    { urlOrigin }: IZkMetadata,
+  ): Promise<IRLNProofRequest> => {
     try {
-      await createChromeOffscreen();
-    } catch (error) {
-      throw new Error(`CryptKeeper: on creating Chrome Offscreen page for RLN Proof ${error as string}`);
-    }
+      const { checkedUrlOrigin, canSkipApprove } = await this.requiredApproval({ urlOrigin });
 
-    try {
-      const rlnFullProof = await pushMessage({
-        method: RPCInternalAction.GENERATE_RLN_PROOF_OFFSCREEN,
-        payload: rlnProofRequest,
-        meta: rlnProofRequest.urlOrigin,
-        source: "offscreen",
+      const checkedZkInputs = this.checkMerkleProofSource({
+        merkleProofSource,
       });
 
-      return JSON.parse(rlnFullProof as string) as IRLNFullProof;
+      const identity = await this.zkIdentityService.getConnectedIdentity();
+      const identitySerialized = identity?.serialize();
+
+      if (!identity || !identitySerialized) {
+        throw new Error("CryptKeeper: connected identity is not found");
+      }
+
+      const rlnPath = {
+        circuitFilePath: browser.runtime.getURL("js/zkeyFiles/rln/rln.wasm"),
+        zkeyFilePath: browser.runtime.getURL("js/zkeyFiles/rln/rln.zkey"),
+        verificationKey: browser.runtime.getURL("js/zkeyFiles/rln/rln.json"),
+      };
+
+      if (!rlnPath.circuitFilePath || !rlnPath.zkeyFilePath) {
+        throw new Error("CryptKeeper: Must set RLN circuitFilePath and zkeyFilePath");
+      }
+
+      const rlnProofRequest: IRLNProofRequest = {
+        rlnIdentifier,
+        message,
+        epoch,
+        merkleProofProvided: checkedZkInputs.merkleProofProvided,
+        merkleProofArtifacts: checkedZkInputs.merkleProofArtifacts,
+        merkleStorageUrl: checkedZkInputs.merkleStorageUrl,
+        messageLimit,
+        messageId,
+        identitySerialized,
+        circuitFilePath: rlnPath.circuitFilePath,
+        zkeyFilePath: rlnPath.zkeyFilePath,
+        verificationKey: rlnPath.verificationKey,
+        urlOrigin: checkedUrlOrigin,
+      };
+
+      if (!canSkipApprove) {
+        const request = omit(rlnProofRequest, ["identitySerialized"]);
+
+        await this.newRequest(PendingRequestType.RLN_PROOF, request);
+      }
+
+      return rlnProofRequest;
     } catch (error) {
-      throw new Error(`CryptKeeper: Error in generating RLN proof on Chrome ${error as string}`);
-    } finally {
-      await closeChromeOffscreen();
+      throw error;
     }
   };
 }

@@ -16,7 +16,7 @@ import { getBrowserPlatform } from "@src/background/shared/utils";
 import { BrowserPlatform, RPCInternalAction } from "@src/constants";
 import pushMessage from "@src/util/pushMessage";
 
-import InjectorService from "..";
+import { InjectorService } from "..";
 
 const mockDefaultHost = "http://localhost:3000";
 const mockSerializedIdentity = "identity";

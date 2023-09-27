@@ -143,7 +143,7 @@ const Identity = (): JSX.Element | null => {
               )}
 
             {renderRow(
-              "Connected urlOrigin",
+              "Connected site",
               metadata.urlOrigin ? (
                 <Tooltip title={metadata.urlOrigin}>
                   <FontAwesomeIcon

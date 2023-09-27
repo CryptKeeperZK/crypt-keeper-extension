@@ -7,7 +7,7 @@ import { getMerkleProof } from "@cryptkeeperzk/zk";
 
 import pushMessage from "@src/util/pushMessage";
 
-import InjectorService from "..";
+import { InjectorService } from "..";
 
 const mockDefaultHost = "http://localhost:3000";
 const mockSerializedIdentity = "identity";

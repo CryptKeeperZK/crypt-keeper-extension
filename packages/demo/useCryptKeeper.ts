@@ -124,7 +124,7 @@ export const useCryptKeeper = (): IUseCryptKeeperData => {
       setConnectedIdentityMetadata(fetchedConnectedIdentityMetadata);
       setIsLocked(false);
     } catch (error) {
-      toast(`${error as string}`, {
+      toast(`${(error as Error).message}`, {
         type: "error",
       });
     }
@@ -236,7 +236,7 @@ export const useCryptKeeper = (): IUseCryptKeeperData => {
         },
       );
     } catch (error) {
-      toast(`${error as string}`, {
+      toast(`${(error as Error).message}`, {
         type: "error",
       });
     }
@@ -329,7 +329,7 @@ export const useCryptKeeper = (): IUseCryptKeeperData => {
     } else {
       toast(`CryptKeeper is not installed in the browser`, { type: "error" });
     }
-  }, []);
+  }, [setClient]);
 
   // Listen to Injected CryptKeeper Provider Client Events
   useEffect(() => {

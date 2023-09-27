@@ -1,5 +1,6 @@
-import { IMerkleProof, IMerkleProofArtifacts, IMerkleProofInputs } from "@cryptkeeperzk/types";
 import { MerkleProofSource, MerkleProofStorageUrl } from "@cryptkeeperzk/types/dist/src/proof/zkProof";
+
+import type { IMerkleProof, IMerkleProofArtifacts, IMerkleProofInputs } from "@cryptkeeperzk/types";
 
 import { MerkleProofValidator } from "./merkle";
 
