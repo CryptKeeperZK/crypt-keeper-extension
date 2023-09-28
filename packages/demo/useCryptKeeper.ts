@@ -95,7 +95,6 @@ interface IUseCryptKeeperData {
   proof?: ISemaphoreFullProof | IRLNFullProof | IMerkleProof;
   connectedCommitment?: string;
   connectIdentity: () => void;
-  createIdentity: () => unknown;
   getConnectedIdentity: () => void;
   genSemaphoreProof: (proofType: MerkleProofType) => void;
   genRLNProof: (proofType: MerkleProofType) => void;
@@ -242,10 +241,6 @@ export const useCryptKeeper = (): IUseCryptKeeperData => {
     }
   }, [client, setConnectedIdentityMetadata]);
 
-  const createIdentity = useCallback(async () => {
-    // await client?.createIdentity();
-  }, [client]);
-
   const joinGroup = useCallback(async () => {
     await client?.joinGroup({
       groupId: GROUP_ID,
@@ -369,7 +364,6 @@ export const useCryptKeeper = (): IUseCryptKeeperData => {
     proof,
     connectedCommitment,
     connectIdentity,
-    createIdentity,
     getConnectedIdentity,
     genSemaphoreProof,
     genRLNProof,
