@@ -10,12 +10,7 @@ import {
 } from "@cryptkeeperzk/types";
 import { identity } from "webextension-polyfill";
 
-import {
-  closeChromeOffscreen,
-  createChromeOffscreen,
-  getBrowserPlatform,
-  throwErrorProperly,
-} from "@src/background/shared/utils";
+import { closeChromeOffscreen, createChromeOffscreen, getBrowserPlatform } from "@src/background/shared/utils";
 import { BrowserPlatform, RPCInternalAction } from "@src/constants";
 import pushMessage from "@src/util/pushMessage";
 
@@ -58,21 +53,17 @@ export class InjectorService {
           canSkipApprove: hostPermissionChecks.canSkipApprove,
         });
       } catch (error) {
-        throwErrorProperly(error, "CryptKeeper: error in the approve request");
+        throw new Error(`CryptKeeper: error in the approve request, ${(error as Error).message}`);
       }
     }
 
     try {
       await this.injectorHandler.newRequest(PendingRequestType.CONNECT_IDENTITY, { urlOrigin });
     } catch (error) {
-      throw new Error(`CryptKeeper: error in the connect request ${(error as Error).message}`);
+      throw new Error(`CryptKeeper: error in the connect request, ${(error as Error).message}`);
     }
 
-    const connectedIdentity = await this.injectorHandler.zkIdentityService.getConnectedIdentityData({}, { urlOrigin });
-
-    if (!connectedIdentity) {
-      throw new Error("CryptKeeper: failed to connect with an identity");
-    }
+    const connectedIdentity = await this.injectorHandler.connectedIdentityMetadata({}, { urlOrigin });
 
     await this.injectorHandler.browserService.closePopup();
 
@@ -172,6 +163,8 @@ export class InjectorService {
       return JSON.parse(rlnFullProof as string) as IRLNFullProof;
     } catch (error) {
       throw new Error(`CryptKeeper: Error in generating RLN proof on Chrome ${(error as Error).message}`);
+    } finally {
+      await closeChromeOffscreen();
     }
   };
 }

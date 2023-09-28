@@ -17,7 +17,6 @@ import ApprovalService from "@src/background/services/approval";
 import LockerService from "@src/background/services/lock";
 import { validateMerkleProofSource } from "@src/background/services/validation";
 import ZkIdentityService from "@src/background/services/zkIdentity";
-import { throwErrorProperly } from "@src/background/shared/utils";
 
 export class InjectorHandler {
   lockerService: LockerService;
@@ -51,14 +50,10 @@ export class InjectorHandler {
   };
 
   newRequest = async (newRequestType: PendingRequestType, newRequestPayload: unknown): Promise<unknown> => {
-    try {
-      const responsePayload = await this.requestManager.newRequest(newRequestType, newRequestPayload);
-      await this.browserService.closePopup();
+    const responsePayload = await this.requestManager.newRequest(newRequestType, newRequestPayload);
+    await this.browserService.closePopup();
 
-      return responsePayload;
-    } catch (error) {
-      throw new Error(`${(error as Error).message}`);
-    }
+    return responsePayload;
   };
 
   requiredApproval = async ({ urlOrigin }: IZkMetadata): Promise<IConnectionApprovalData> => {
@@ -75,8 +70,8 @@ export class InjectorHandler {
   };
 
   checkApproval = async ({ urlOrigin }: IZkMetadata): Promise<IConnectionApprovalData> => {
-    await this.checkLockStatus();
     const { checkedUrlOrigin, isApproved, canSkipApprove } = this.getConnectionApprovalData({ urlOrigin });
+    await this.checkLockStatus();
     return { checkedUrlOrigin, isApproved, canSkipApprove };
   };
 
@@ -153,7 +148,7 @@ export class InjectorHandler {
       try {
         await this.newRequest(PendingRequestType.SEMAPHORE_PROOF, request);
       } catch (error) {
-        throwErrorProperly(error, "CryptKeeper: error in the semaphore approve request");
+        throw new Error(`CryptKeeper: error in the Semaphore approve request ${(error as Error).message}`);
       }
     }
 
@@ -209,7 +204,7 @@ export class InjectorHandler {
       try {
         await this.newRequest(PendingRequestType.RLN_PROOF, request);
       } catch (error) {
-        throwErrorProperly(error, "CryptKeeper: error in the semaphore approve request");
+        throw new Error(`CryptKeeper: error in the RLN approve request ${(error as Error).message}`);
       }
     }
 
