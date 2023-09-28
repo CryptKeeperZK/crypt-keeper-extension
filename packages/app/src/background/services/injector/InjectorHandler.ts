@@ -17,6 +17,7 @@ import ApprovalService from "@src/background/services/approval";
 import LockerService from "@src/background/services/lock";
 import { validateMerkleProofSource } from "@src/background/services/validation";
 import ZkIdentityService from "@src/background/services/zkIdentity";
+import { throwErrorProperly } from "@src/background/shared/utils";
 
 export class InjectorHandler {
   lockerService: LockerService;
@@ -67,16 +68,29 @@ export class InjectorHandler {
     // Because the idea is to force to have a connection via `connectedIdentity()`
     // which includes checking the approval part, this would be done in another PR
     if (!isApproved) {
-      throw new Error(`CryptKeeper: ${urlOrigin} is not approved, please do a connect request first.`);
+      throw new Error(`CryptKeeper: ${urlOrigin} is not approved, please call 'connectIdentity()' request first.`);
     }
-    await this.checkLock();
+    await this.checkLockStatus();
     return { checkedUrlOrigin, isApproved, canSkipApprove };
   };
 
   checkApproval = async ({ urlOrigin }: IZkMetadata): Promise<IConnectionApprovalData> => {
+    await this.checkLockStatus();
     const { checkedUrlOrigin, isApproved, canSkipApprove } = this.getConnectionApprovalData({ urlOrigin });
-    await this.checkLock();
     return { checkedUrlOrigin, isApproved, canSkipApprove };
+  };
+
+  private checkLockStatus = async () => {
+    const { isUnlocked } = await this.lockerService.getStatus();
+
+    if (!isUnlocked) {
+      try {
+        await this.browserService.openPopup();
+        await this.lockerService.awaitUnlock();
+      } catch (error) {
+        throw new Error(`CryptKeeper: refused to unlock ${(error as Error).message}`);
+      }
+    }
   };
 
   private getConnectionApprovalData = ({ urlOrigin }: IZkMetadata): IConnectionApprovalData => {
@@ -90,19 +104,6 @@ export class InjectorHandler {
     return { checkedUrlOrigin: urlOrigin, isApproved, canSkipApprove };
   };
 
-  private checkLock = async () => {
-    const { isUnlocked } = await this.lockerService.getStatus();
-
-    if (!isUnlocked) {
-      try {
-        await this.browserService.openPopup();
-        await this.lockerService.awaitUnlock();
-      } catch (error) {
-        throw new Error(`CryptKeeper: refused to unlock ${(error as Error).message}`);
-      }
-    }
-  };
-
   checkMerkleProofSource = ({ merkleProofSource }: Partial<IMerkleProofInputs>): Partial<IMerkleProofInputs> =>
     validateMerkleProofSource({ merkleProofSource });
 
@@ -110,108 +111,108 @@ export class InjectorHandler {
     { externalNullifier, signal, merkleProofSource }: ISemaphoreProofRequest,
     { urlOrigin }: IZkMetadata,
   ): Promise<ISemaphoreProofRequest> => {
-    try {
-      const { checkedUrlOrigin, canSkipApprove } = await this.requiredApproval({ urlOrigin });
+    const { checkedUrlOrigin, canSkipApprove } = await this.requiredApproval({ urlOrigin });
 
-      const checkedZkInputs = this.checkMerkleProofSource({
-        merkleProofSource,
-      });
+    const checkedZkInputs = this.checkMerkleProofSource({
+      merkleProofSource,
+    });
 
-      const identity = await this.zkIdentityService.getConnectedIdentity();
-      const identitySerialized = identity?.serialize();
+    const identity = await this.zkIdentityService.getConnectedIdentity();
+    const identitySerialized = identity?.serialize();
 
-      if (!identity || !identitySerialized) {
-        throw new Error("CryptKeeper: connected identity is not found");
-      }
-
-      const semaphorePath = {
-        circuitFilePath: browser.runtime.getURL("js/zkeyFiles/semaphore/semaphore.wasm"),
-        zkeyFilePath: browser.runtime.getURL("js/zkeyFiles/semaphore/semaphore.zkey"),
-        verificationKey: browser.runtime.getURL("js/zkeyFiles/semaphore/semaphore.json"),
-      };
-
-      if (!semaphorePath.circuitFilePath || !semaphorePath.zkeyFilePath) {
-        throw new Error("CryptKeeper: Must set Semaphore circuitFilePath and zkeyFilePath");
-      }
-
-      const semaphoreProofRequest: ISemaphoreProofRequest = {
-        externalNullifier,
-        signal,
-        merkleProofProvided: checkedZkInputs.merkleProofProvided,
-        merkleProofArtifacts: checkedZkInputs.merkleProofArtifacts,
-        merkleStorageUrl: checkedZkInputs.merkleStorageUrl,
-        identitySerialized,
-        circuitFilePath: semaphorePath.circuitFilePath,
-        zkeyFilePath: semaphorePath.zkeyFilePath,
-        verificationKey: semaphorePath.verificationKey,
-        urlOrigin: checkedUrlOrigin,
-      };
-
-      if (!canSkipApprove) {
-        const request = omit(semaphoreProofRequest, ["identitySerialized"]);
-
-        await this.newRequest(PendingRequestType.SEMAPHORE_PROOF, request);
-      }
-
-      return semaphoreProofRequest;
-    } catch (error) {
-      throw error;
+    if (!identity || !identitySerialized) {
+      throw new Error("CryptKeeper: connected identity is not found");
     }
+
+    const semaphorePath = {
+      circuitFilePath: browser.runtime.getURL("js/zkeyFiles/semaphore/semaphore.wasm"),
+      zkeyFilePath: browser.runtime.getURL("js/zkeyFiles/semaphore/semaphore.zkey"),
+      verificationKey: browser.runtime.getURL("js/zkeyFiles/semaphore/semaphore.json"),
+    };
+
+    if (!semaphorePath.circuitFilePath || !semaphorePath.zkeyFilePath) {
+      throw new Error("CryptKeeper: Must set Semaphore circuitFilePath and zkeyFilePath");
+    }
+
+    const semaphoreProofRequest: ISemaphoreProofRequest = {
+      externalNullifier,
+      signal,
+      merkleProofProvided: checkedZkInputs.merkleProofProvided,
+      merkleProofArtifacts: checkedZkInputs.merkleProofArtifacts,
+      merkleStorageUrl: checkedZkInputs.merkleStorageUrl,
+      identitySerialized,
+      circuitFilePath: semaphorePath.circuitFilePath,
+      zkeyFilePath: semaphorePath.zkeyFilePath,
+      verificationKey: semaphorePath.verificationKey,
+      urlOrigin: checkedUrlOrigin,
+    };
+
+    if (!canSkipApprove) {
+      const request = omit(semaphoreProofRequest, ["identitySerialized"]);
+
+      try {
+        await this.newRequest(PendingRequestType.SEMAPHORE_PROOF, request);
+      } catch (error) {
+        throwErrorProperly(error, "CryptKeeper: error in the semaphore approve request");
+      }
+    }
+
+    return semaphoreProofRequest;
   };
 
   prepareRLNProof = async (
     { rlnIdentifier, message, epoch, messageLimit, messageId, merkleProofSource }: IRLNProofRequest,
     { urlOrigin }: IZkMetadata,
   ): Promise<IRLNProofRequest> => {
-    try {
-      const { checkedUrlOrigin, canSkipApprove } = await this.requiredApproval({ urlOrigin });
+    const { checkedUrlOrigin, canSkipApprove } = await this.requiredApproval({ urlOrigin });
 
-      const checkedZkInputs = this.checkMerkleProofSource({
-        merkleProofSource,
-      });
+    const checkedZkInputs = this.checkMerkleProofSource({
+      merkleProofSource,
+    });
 
-      const identity = await this.zkIdentityService.getConnectedIdentity();
-      const identitySerialized = identity?.serialize();
+    const identity = await this.zkIdentityService.getConnectedIdentity();
+    const identitySerialized = identity?.serialize();
 
-      if (!identity || !identitySerialized) {
-        throw new Error("CryptKeeper: connected identity is not found");
-      }
-
-      const rlnPath = {
-        circuitFilePath: browser.runtime.getURL("js/zkeyFiles/rln/rln.wasm"),
-        zkeyFilePath: browser.runtime.getURL("js/zkeyFiles/rln/rln.zkey"),
-        verificationKey: browser.runtime.getURL("js/zkeyFiles/rln/rln.json"),
-      };
-
-      if (!rlnPath.circuitFilePath || !rlnPath.zkeyFilePath) {
-        throw new Error("CryptKeeper: Must set RLN circuitFilePath and zkeyFilePath");
-      }
-
-      const rlnProofRequest: IRLNProofRequest = {
-        rlnIdentifier,
-        message,
-        epoch,
-        merkleProofProvided: checkedZkInputs.merkleProofProvided,
-        merkleProofArtifacts: checkedZkInputs.merkleProofArtifacts,
-        merkleStorageUrl: checkedZkInputs.merkleStorageUrl,
-        messageLimit,
-        messageId,
-        identitySerialized,
-        circuitFilePath: rlnPath.circuitFilePath,
-        zkeyFilePath: rlnPath.zkeyFilePath,
-        verificationKey: rlnPath.verificationKey,
-        urlOrigin: checkedUrlOrigin,
-      };
-
-      if (!canSkipApprove) {
-        const request = omit(rlnProofRequest, ["identitySerialized"]);
-
-        await this.newRequest(PendingRequestType.RLN_PROOF, request);
-      }
-
-      return rlnProofRequest;
-    } catch (error) {
-      throw error;
+    if (!identity || !identitySerialized) {
+      throw new Error("CryptKeeper: connected identity is not found");
     }
+
+    const rlnPath = {
+      circuitFilePath: browser.runtime.getURL("js/zkeyFiles/rln/rln.wasm"),
+      zkeyFilePath: browser.runtime.getURL("js/zkeyFiles/rln/rln.zkey"),
+      verificationKey: browser.runtime.getURL("js/zkeyFiles/rln/rln.json"),
+    };
+
+    if (!rlnPath.circuitFilePath || !rlnPath.zkeyFilePath) {
+      throw new Error("CryptKeeper: Must set RLN circuitFilePath and zkeyFilePath");
+    }
+
+    const rlnProofRequest: IRLNProofRequest = {
+      rlnIdentifier,
+      message,
+      epoch,
+      merkleProofProvided: checkedZkInputs.merkleProofProvided,
+      merkleProofArtifacts: checkedZkInputs.merkleProofArtifacts,
+      merkleStorageUrl: checkedZkInputs.merkleStorageUrl,
+      messageLimit,
+      messageId,
+      identitySerialized,
+      circuitFilePath: rlnPath.circuitFilePath,
+      zkeyFilePath: rlnPath.zkeyFilePath,
+      verificationKey: rlnPath.verificationKey,
+      urlOrigin: checkedUrlOrigin,
+    };
+
+    if (!canSkipApprove) {
+      const request = omit(rlnProofRequest, ["identitySerialized"]);
+
+      try {
+        await this.newRequest(PendingRequestType.RLN_PROOF, request);
+      } catch (error) {
+        throwErrorProperly(error, "CryptKeeper: error in the semaphore approve request");
+      }
+    }
+
+    return rlnProofRequest;
   };
 }
