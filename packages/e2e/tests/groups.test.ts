@@ -17,7 +17,6 @@ test.describe("groups", () => {
     page,
     cryptKeeperExtensionId,
   }) => {
-    await page.goto("/");
     const extension = new CryptKeeper(page);
     await extension.focus();
 
