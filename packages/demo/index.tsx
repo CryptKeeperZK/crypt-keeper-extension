@@ -70,10 +70,6 @@ const App = () => {
     generareGroupMerkleProof,
   } = useCryptKeeper();
 
-  useEffect(() => {
-    connectIdentity();
-  }, [connectIdentity]);
-
   if (isLocked) {
     return (
       <NotConnected
