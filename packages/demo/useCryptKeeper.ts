@@ -95,7 +95,8 @@ interface IUseCryptKeeperData {
   proof?: ISemaphoreFullProof | IRLNFullProof | IMerkleProof;
   connectedCommitment?: string;
   connectIdentity: () => void;
-  getConnectedIdentity: () => void;
+  onLogin: () => void;
+  getConnectedIdentityMetadata: () => Promise<ConnectedIdentityMetadata | undefined> 
   genSemaphoreProof: (proofType: MerkleProofType) => void;
   genRLNProof: (proofType: MerkleProofType) => void;
   addVerifiableCredentialRequest: (credentialType: string) => Promise<void>;
@@ -230,7 +231,7 @@ export const useCryptKeeper = (): IUseCryptKeeperData => {
     await client?.DEV_generateVerifiablePresentationRequest(verifiablePresentationRequest);
   }, [client]);
 
-  const getConnectedIdentityMetadata = useCallback(async () => {
+  const getConnectedIdentityMetadata = useCallback(async (): Promise<ConnectedIdentityMetadata | undefined> => {
     try {
       const fetchedConnectedIdentityMetadata = await client?.getConnectedIdentity();
       if (fetchedConnectedIdentityMetadata) {
@@ -243,6 +244,7 @@ export const useCryptKeeper = (): IUseCryptKeeperData => {
           },
         );
       }
+      return undefined;
     } catch (error) {
       toast(`${(error as Error).message}`, {
         type: "error",
@@ -375,7 +377,8 @@ export const useCryptKeeper = (): IUseCryptKeeperData => {
     proof,
     connectedCommitment,
     connectIdentity,
-    getConnectedIdentity: onLogin,
+    onLogin,
+    getConnectedIdentityMetadata,
     genSemaphoreProof,
     genRLNProof,
     addVerifiableCredentialRequest,

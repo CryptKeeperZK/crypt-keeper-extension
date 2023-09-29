@@ -12,11 +12,10 @@ dotenv.config({ path: path.resolve(__dirname, "../..", ".env"), override: true }
 
 interface INotConnectedProps {
   onClick: () => void;
-  onGetConnectedIdentity: () => void;
   genSemaphoreProof: (proofType: MerkleProofType) => void;
 }
 
-const NotConnected = ({ onClick, onGetConnectedIdentity, genSemaphoreProof }: INotConnectedProps) => (
+const NotConnected = ({ onClick, genSemaphoreProof }: INotConnectedProps) => (
   <div>
     <h2>Start the Authorization Process</h2>
 
@@ -30,10 +29,6 @@ const NotConnected = ({ onClick, onGetConnectedIdentity, genSemaphoreProof }: IN
 
     <div>
       <h2>Example of Unauthorized Actions</h2>
-
-      <button type="button" onClick={onGetConnectedIdentity}>
-        Get Connected Identity
-      </button>
 
       <br />
 
@@ -59,8 +54,8 @@ const App = () => {
     connectedIdentityMetadata,
     proof,
     connectedCommitment,
+    getConnectedIdentityMetadata,
     connectIdentity,
-    getConnectedIdentity,
     genSemaphoreProof,
     genRLNProof,
     addVerifiableCredentialRequest,
@@ -75,7 +70,6 @@ const App = () => {
       <NotConnected
         genSemaphoreProof={genSemaphoreProof}
         onClick={connectIdentity}
-        onGetConnectedIdentity={getConnectedIdentity}
       />
     );
   }
@@ -113,7 +107,7 @@ const App = () => {
       <div>
         <h2>Get Connected Identity Metadata</h2>
 
-        <button type="button" onClick={getConnectedIdentity}>
+        <button type="button" onClick={getConnectedIdentityMetadata}>
           Get Connected Identity
         </button>
       </div>
