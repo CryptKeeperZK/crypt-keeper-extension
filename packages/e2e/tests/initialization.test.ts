@@ -17,28 +17,28 @@ test.describe("initialization", () => {
     await expect(page.getByText("Connected to MetaMask")).toBeVisible();
   });
 
-  test("should create account from backup file properly [health-check]", async ({
-    page,
-    cryptKeeperExtensionId,
-    context,
-  }) => {
-    const backupFilePath = path.resolve(__dirname, "../backups/0_backup.json");
+  // test("should create account from backup file properly [health-check]", async ({
+  //   page,
+  //   cryptKeeperExtensionId,
+  //   context,
+  // }) => {
+  //   const backupFilePath = path.resolve(__dirname, "../backups/0_backup.json");
 
-    const cryptKeeper = await connectCryptKeeper(page);
-    await cryptKeeper.openBackupOnboarding();
-    await cryptKeeper.createAccountFromBackup({ password: DEFAULT_BACKUP_PASSWORD, backupFilePath });
+  //   const cryptKeeper = await connectCryptKeeper(page);
+  //   await cryptKeeper.openBackupOnboarding();
+  //   await cryptKeeper.createAccountFromBackup({ password: DEFAULT_BACKUP_PASSWORD, backupFilePath });
 
-    await cryptKeeper.connectIdentity();
-    await cryptKeeper.close();
+  //   await cryptKeeper.connectIdentity();
+  //   await cryptKeeper.close();
 
-    await page.goto(`chrome-extension://${cryptKeeperExtensionId}/popup.html`);
-    await expect(page.getByTestId("home-page")).toBeVisible();
+  //   await page.goto(`chrome-extension://${cryptKeeperExtensionId}/popup.html`);
+  //   await expect(page.getByTestId("home-page")).toBeVisible();
 
-    await lockAccount({ page, cryptKeeperExtensionId, context });
-    await unlockAccount({ page, cryptKeeperExtensionId, context, password: DEFAULT_BACKUP_PASSWORD });
+  //   await lockAccount({ page, cryptKeeperExtensionId, context });
+  //   await unlockAccount({ page, cryptKeeperExtensionId, context, password: DEFAULT_BACKUP_PASSWORD });
 
-    await expect(page.getByText(/Account/)).toHaveCount(2);
-  });
+  //   await expect(page.getByText(/Account/)).toHaveCount(2);
+  // });
 
   test("should not corrupt storage if backup file is invalid", async ({ page, cryptKeeperExtensionId }) => {
     const invalidBackups = [

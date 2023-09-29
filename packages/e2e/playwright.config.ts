@@ -12,7 +12,7 @@ export default defineConfig({
   testDir: "./tests",
   timeout: process.env.CI ? 120_000 : 60_000,
   expect: {
-    timeout: 20_000,
+    timeout: 15_000,
   },
   maxFailures: 1,
   fullyParallel: true,
