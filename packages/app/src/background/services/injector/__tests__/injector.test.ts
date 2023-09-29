@@ -174,7 +174,7 @@ describe("background/services/injector", () => {
       expect(result).toStrictEqual(mockConnectedIdentity);
       expect(mockIsApproved).toBeCalledTimes(1);
       expect(mockCanSkip).toBeCalledTimes(1);
-      expect(mockAwaitUnlock).toBeCalledTimes(1);
+      expect(mockAwaitUnlock).toBeCalledTimes(0);
       expect(mockGetConnectedIdentityData).toBeCalledTimes(1);
     });
 
@@ -186,12 +186,12 @@ describe("background/services/injector", () => {
       );
     });
 
-    test("should throw error if urlOrigin isn't approved", async () => {
+    test("should send undefined  if urlOrigin isn't approved", async () => {
       const service = InjectorService.getInstance();
 
-      await expect(service.getConnectedIdentityMetadata({}, { urlOrigin: "new-urlOrigin" })).rejects.toThrow(
-        "CryptKeeper: new-urlOrigin is not approved, please call 'connectIdentity()' request first.",
-      );
+      const result = await service.getConnectedIdentityMetadata({}, { urlOrigin: "new-urlOrigin" });
+
+      expect(result).toStrictEqual(undefined);
     });
 
     test("should throw error if no connected identity found", async () => {
@@ -199,17 +199,6 @@ describe("background/services/injector", () => {
 
       await expect(service.getConnectedIdentityMetadata({}, { urlOrigin: "empty_connected_identity" })).rejects.toThrow(
         "CryptKeeper: identity metadata is not found",
-      );
-    });
-
-    test("should throw error if user failed/refused to unlock", async () => {
-      mockAwaitUnlock.mockImplementationOnce(
-        jest.fn((): Promise<void> => Promise.reject(new Error("User rejected request"))),
-      );
-      const service = InjectorService.getInstance();
-
-      await expect(service.getConnectedIdentityMetadata({}, { urlOrigin: mockDefaultUrlOrigin })).rejects.toThrow(
-        "CryptKeeper: refused to unlock User rejected request",
       );
     });
   });
