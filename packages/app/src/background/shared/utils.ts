@@ -2,7 +2,7 @@ import { BrowserPlatform } from "@src/constants";
 import { DeferredPromise } from "@src/types";
 
 /**
- * @src Metamask extension
+ * @src MetaMask extension
  * A deferred Promise.
  *
  * A deferred Promise is one that can be resolved or rejected independently of

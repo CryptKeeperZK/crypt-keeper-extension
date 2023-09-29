@@ -4,7 +4,7 @@ export type { FullProof as ISemaphoreFullProof } from "@cryptkeeperzk/semaphore-
 
 /**
  * Represents the arguments required for generating a Semaphore proof.
- * This interface is intended to be used with the Cryptkeeper InjectedProvider.
+ * This interface is intended to be used with the CryptKeeper InjectedProvider.
  * @interface
  */
 export interface ISemaphoreProofRequiredArgs extends Partial<IMerkleProofInputs> {

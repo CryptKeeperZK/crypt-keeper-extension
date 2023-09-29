@@ -6,7 +6,7 @@ export type { VerificationKey as IRLNVerificationKey, RLNSNARKProof as IRLNFullP
 
 /**
  * Represents the arguments required for generating an RLN proof.
- * This interface is intended to be used with the Cryptkeeper InjectedProvider.
+ * This interface is intended to be used with the CryptKeeper InjectedProvider.
  * @interface
  */
 export interface IRLNProofRequiredArgs extends Partial<IMerkleProofInputs> {

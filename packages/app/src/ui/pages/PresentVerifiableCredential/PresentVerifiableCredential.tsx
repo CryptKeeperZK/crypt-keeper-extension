@@ -80,7 +80,7 @@ const PresentVerifiableCredential = (): JSX.Element => {
 
         <Tooltip
           followCursor
-          title="Choose method of signing Verifiable Credentials. You may use your Cryptkeeper keys, connected Metamask, or send them unsigned."
+          title="Choose method of signing Verifiable Credentials. You may use your CryptKeeper keys, connected MetaMask, or send them unsigned."
         >
           <InfoIcon />
         </Tooltip>

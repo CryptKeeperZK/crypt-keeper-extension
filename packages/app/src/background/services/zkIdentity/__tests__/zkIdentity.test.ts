@@ -532,7 +532,7 @@ describe("background/services/zkIdentity", () => {
       expect(result).toBeDefined();
     });
 
-    test("should create a new identity with Cryptkeeper properly", async () => {
+    test("should create a new identity with CryptKeeper properly", async () => {
       const identityOptions: ICreateIdentityOptions = {
         nonce: 0,
         account: ZERO_ADDRESS,

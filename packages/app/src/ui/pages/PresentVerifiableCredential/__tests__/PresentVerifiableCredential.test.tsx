@@ -114,7 +114,7 @@ describe("ui/pages/PresentVerifiableCredential", () => {
 
     await waitFor(() => container.firstChild !== null);
 
-    const metamask = await findAllByText("Connect to Metamask");
+    const metamask = await findAllByText("Connect to MetaMask");
 
     expect(metamask[0]).toBeInTheDocument();
   });
@@ -150,7 +150,7 @@ describe("ui/pages/PresentVerifiableCredential", () => {
 
     await waitFor(() => container.firstChild !== null);
 
-    const metamask = await findAllByText("Sign with Metamask");
+    const metamask = await findAllByText("Sign with MetaMask");
 
     expect(metamask[0]).toBeInTheDocument();
 

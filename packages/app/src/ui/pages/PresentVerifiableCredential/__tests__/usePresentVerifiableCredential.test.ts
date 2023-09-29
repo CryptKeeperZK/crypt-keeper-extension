@@ -284,7 +284,7 @@ describe("ui/pages/PresentVerifiableCredential/usePresentVerifiableCredential", 
       expect(result.current.error).toBe("Please select at least one credential.");
     });
 
-    test("should submit verifiable presentation with Metamask signature properly", async () => {
+    test("should submit verifiable presentation with MetaMask signature properly", async () => {
       const hash = "0x123";
 
       const { result } = renderHook(() => usePresentVerifiableCredential());
@@ -494,7 +494,7 @@ describe("ui/pages/PresentVerifiableCredential/usePresentVerifiableCredential", 
       act(() => result.current.onToggleSelection(hash));
       await act(() => result.current.onSubmitVerifiablePresentation(MenuItems.CRYPTKEEPER));
 
-      expect(result.current.error).toStrictEqual("Could not connect to Cryptkeeper account.");
+      expect(result.current.error).toStrictEqual("Could not connect to CryptKeeper account.");
     });
   });
 });

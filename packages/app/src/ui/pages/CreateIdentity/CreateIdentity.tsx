@@ -93,7 +93,7 @@ const CreateIdentity = (): JSX.Element => {
 
             <Tooltip
               followCursor
-              title="Identity creation can be done with your Cryptkeeper keys or with connected Ethereum wallet."
+              title="Identity creation can be done with your CryptKeeper keys or with connected Ethereum wallet."
             >
               <InfoIcon />
             </Tooltip>
