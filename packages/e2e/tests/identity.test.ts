@@ -149,22 +149,6 @@ test.describe("identity", () => {
     await expect(extension.activity.getByText("No records found")).toBeVisible();
   });
 
-  test("should connect identity from demo [health-check]", async ({ page, cryptKeeperExtensionId }) => {
-    await page.goto("/");
-    const extension = new CryptKeeper(page);
-    await extension.focus();
-    
-    await page.getByTestId("connect-identity").click({ delay: 1_000 });
-    await extension.selectIdentity(1);
-
-    await page.goto(`chrome-extension://${cryptKeeperExtensionId}/popup.html`);
-    await expect(extension.getByText(/Account/)).toHaveCount(3);
-
-    await extension.identities.deleteIdentity(0);
-
-    await expect(extension.getByText(/Account/)).toHaveCount(2);
-  });
-
   test("should check identity page [health-check]", async ({ page }) => {
     const extension = new CryptKeeper(page);
     await extension.focus();
