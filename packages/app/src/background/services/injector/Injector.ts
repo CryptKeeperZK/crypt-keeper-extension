@@ -33,9 +33,14 @@ export class InjectorService {
     return InjectorService.INSTANCE;
   }
 
-  getConnectedIdentityMetadata = async (_: unknown, meta?: IZkMetadata): Promise<ConnectedIdentityMetadata> => {
-    await this.injectorHandler.requiredApproval({ urlOrigin: meta?.urlOrigin });
-    return this.injectorHandler.connectedIdentityMetadata({}, meta);
+  getConnectedIdentityMetadata = async (_: unknown, { urlOrigin }: IZkMetadata): Promise<ConnectedIdentityMetadata | undefined> => {
+    const { isApproved } = await this.injectorHandler.getConnectionApprovalData({ urlOrigin });
+
+    if (!isApproved) {
+      return undefined;
+    }
+
+    return this.injectorHandler.connectedIdentityMetadata({}, { urlOrigin });
   };
 
   connectIdentity = async ({ urlOrigin }: IZkMetadata): Promise<ConnectedIdentityMetadata> => {

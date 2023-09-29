@@ -75,6 +75,17 @@ export class InjectorHandler {
     return { checkedUrlOrigin, isApproved, canSkipApprove };
   };
 
+  getConnectionApprovalData = ({ urlOrigin }: IZkMetadata): IConnectionApprovalData => {
+    if (!urlOrigin) {
+      throw new Error("CryptKeeper: Origin is not set");
+    }
+
+    const isApproved = this.approvalService.isApproved(urlOrigin);
+    const canSkipApprove = this.approvalService.canSkipApprove(urlOrigin);
+
+    return { checkedUrlOrigin: urlOrigin, isApproved, canSkipApprove };
+  };
+
   private checkLockStatus = async () => {
     const { isUnlocked } = await this.lockerService.getStatus();
 
@@ -86,17 +97,6 @@ export class InjectorHandler {
         throw new Error(`CryptKeeper: refused to unlock ${(error as Error).message}`);
       }
     }
-  };
-
-  private getConnectionApprovalData = ({ urlOrigin }: IZkMetadata): IConnectionApprovalData => {
-    if (!urlOrigin) {
-      throw new Error("CryptKeeper: Origin is not set");
-    }
-
-    const isApproved = this.approvalService.isApproved(urlOrigin);
-    const canSkipApprove = this.approvalService.canSkipApprove(urlOrigin);
-
-    return { checkedUrlOrigin: urlOrigin, isApproved, canSkipApprove };
   };
 
   checkMerkleProofSource = ({ merkleProofSource }: Partial<IMerkleProofInputs>): Partial<IMerkleProofInputs> =>

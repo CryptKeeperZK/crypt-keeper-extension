@@ -101,7 +101,7 @@ interface IUseCryptKeeperData {
   addVerifiableCredentialRequest: (credentialType: string) => Promise<void>;
   generateVerifiablePresentationRequest: () => Promise<void>;
   joinGroup: () => Promise<void>;
-  generareGroupMerkleProof: () => Promise<void>;
+  generateGroupMerkleProof: () => Promise<void>;
   revealConnectedIdentityCommitment: () => Promise<void>;
 }
 
@@ -115,12 +115,14 @@ export const useCryptKeeper = (): IUseCryptKeeperData => {
 
   const connectIdentity = useCallback(async () => {
     try {
+      console.log(`2`)
       const fetchedConnectedIdentityMetadata = await client?.connectIdentity();
       // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
       toast(`Identity Connected Successfully! ${fetchedConnectedIdentityMetadata}`, {
         type: "success",
       });
       setConnectedIdentityMetadata(fetchedConnectedIdentityMetadata);
+      console.log(`3`)
       setIsLocked(false);
     } catch (error) {
       toast(`${(error as Error).message}`, {
@@ -131,7 +133,7 @@ export const useCryptKeeper = (): IUseCryptKeeperData => {
 
   useEffect(() => {
     console.log("Is locked changed", isLocked)
-  }, [setIsLocked]);
+  }, [isLocked, setIsLocked]);
 
   const genSemaphoreProof = async (proofType: MerkleProofType = MerkleProofType.STORAGE_ADDRESS) => {
     const externalNullifier = encodeBytes32String("voting-1");
@@ -228,22 +230,25 @@ export const useCryptKeeper = (): IUseCryptKeeperData => {
     await client?.DEV_generateVerifiablePresentationRequest(verifiablePresentationRequest);
   }, [client]);
 
-  const getConnectedIdentity = useCallback(async () => {
+  const getConnectedIdentityMetadata = useCallback(async () => {
     try {
       const fetchedConnectedIdentityMetadata = await client?.getConnectedIdentity();
-      setConnectedIdentityMetadata(fetchedConnectedIdentityMetadata);
-      toast(
-        `Getting Identity Metadata Successfully! ${JSON.stringify(Object.entries(fetchedConnectedIdentityMetadata!))}`,
-        {
-          type: "success",
-        },
-      );
+      if (fetchedConnectedIdentityMetadata) {
+        setConnectedIdentityMetadata(fetchedConnectedIdentityMetadata);
+        setIsLocked(false);
+        toast(
+          `Getting Identity Metadata Successfully! ${JSON.stringify(Object.entries(fetchedConnectedIdentityMetadata!))}`,
+          {
+            type: "success",
+          },
+        );
+      }
     } catch (error) {
       toast(`${(error as Error).message}`, {
         type: "error",
       });
     }
-  }, [client, setConnectedIdentityMetadata]);
+  }, [client, setConnectedIdentityMetadata, setIsLocked]);
 
   const joinGroup = useCallback(async () => {
     await client?.joinGroup({
@@ -253,7 +258,7 @@ export const useCryptKeeper = (): IUseCryptKeeperData => {
     });
   }, [client]);
 
-  const generareGroupMerkleProof = useCallback(async () => {
+  const generateGroupMerkleProof = useCallback(async () => {
     await client?.generateGroupMerkleProof({
       groupId: GROUP_ID,
     });
@@ -276,7 +281,7 @@ export const useCryptKeeper = (): IUseCryptKeeperData => {
   );
 
   const onLogout = useCallback(() => {
-    console.log(`1`)
+    console.log(`LOGOUT`)
     setConnectedIdentityMetadata(undefined);
     setIsLocked(true);
   }, [setConnectedIdentityMetadata, setIsLocked]);
@@ -316,6 +321,10 @@ export const useCryptKeeper = (): IUseCryptKeeperData => {
     [setProof],
   );
 
+  const onLogin = useCallback(() => {
+    getConnectedIdentityMetadata();
+  }, [client]);
+
   // Initialize Injected CryptKeeper Provider Client
   useEffect(() => {
     const cryptkeeperInjectedProvider = initializeCryptKeeper();
@@ -333,7 +342,7 @@ export const useCryptKeeper = (): IUseCryptKeeperData => {
       return undefined;
     }
 
-    //client.on(EventName.LOGIN, onLogin);
+    client.on(EventName.LOGIN, onLogin);
     client.on(EventName.IDENTITY_CHANGED, onIdentityChanged);
     client.on(EventName.LOGOUT, onLogout);
     client.on(EventName.ADD_VERIFIABLE_CREDENTIAL, onAddVerifiableCredential);
@@ -342,6 +351,8 @@ export const useCryptKeeper = (): IUseCryptKeeperData => {
     client.on(EventName.REVEAL_COMMITMENT, onRevealCommitment);
     client.on(EventName.JOIN_GROUP, onJoinGroup);
     client.on(EventName.GROUP_MERKLE_PROOF, onGroupMerkleProof);
+
+    getConnectedIdentityMetadata();
 
     return () => {
       client.cleanListeners();
@@ -364,13 +375,13 @@ export const useCryptKeeper = (): IUseCryptKeeperData => {
     proof,
     connectedCommitment,
     connectIdentity,
-    getConnectedIdentity,
+    getConnectedIdentity: onLogin,
     genSemaphoreProof,
     genRLNProof,
     addVerifiableCredentialRequest,
     generateVerifiablePresentationRequest,
     revealConnectedIdentityCommitment,
     joinGroup,
-    generareGroupMerkleProof,
+    generateGroupMerkleProof,
   };
 };

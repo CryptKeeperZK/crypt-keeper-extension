@@ -67,12 +67,8 @@ const App = () => {
     generateVerifiablePresentationRequest,
     revealConnectedIdentityCommitment,
     joinGroup,
-    generareGroupMerkleProof,
+    generateGroupMerkleProof,
   } = useCryptKeeper();
-
-  useEffect(() => {
-    connectIdentity();
-  }, [connectIdentity])
 
   if (isLocked) {
     return (
@@ -198,7 +194,7 @@ const App = () => {
         <h2>Generate bandada group proof</h2>
 
         <div>
-          <button type="button" onClick={generareGroupMerkleProof}>
+          <button type="button" onClick={generateGroupMerkleProof}>
             Generate Group Merkle Proof
           </button>
         </div>
