@@ -56,8 +56,9 @@ const RACE_TIMEOUT_MS = 5_000;
 
 export async function connectCryptKeeper(app: Page): Promise<CryptKeeper> {
   await app.waitForLoadState();
-  await expect(app).toHaveTitle(/Crypt-keeper Extension demo/);
-  await expect(app.getByText(/Please connect to Crypt-Keeper to continue./)).toBeVisible();
+  await expect(app).toHaveTitle(/CryptKeeper Extension demo/);
+  await expect(app.getByText(/Start the Authorization Process/)).toBeVisible();
+  await expect(app.getByText(/Please connect to CryptKeeper to continue./)).toBeVisible();
 
   const result = await Promise.race([
     app.context().waitForEvent("page"),

@@ -20,7 +20,7 @@ const NotConnected = ({ onClick, onGetConnectedIdentity, genSemaphoreProof }: IN
   <div>
     <h2>Start the Authorization Process</h2>
 
-    <p style={{ marginRight: 8 }}>Please connect to Crypt-Keeper to continue.</p>
+    <p style={{ marginRight: 8 }}>Please connect to CryptKeeper to continue.</p>
 
     <button type="button" onClick={onClick}>
       Connect Identity
