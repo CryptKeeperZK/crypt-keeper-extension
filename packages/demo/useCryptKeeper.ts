@@ -129,6 +129,10 @@ export const useCryptKeeper = (): IUseCryptKeeperData => {
     }
   }, [client, setConnectedIdentityMetadata, setIsLocked]);
 
+  useEffect(() => {
+    console.log("Is locked changed", isLocked)
+  }, [setIsLocked]);
+
   const genSemaphoreProof = async (proofType: MerkleProofType = MerkleProofType.STORAGE_ADDRESS) => {
     const externalNullifier = encodeBytes32String("voting-1");
     const signal = encodeBytes32String("hello-world");
@@ -271,11 +275,8 @@ export const useCryptKeeper = (): IUseCryptKeeperData => {
     [setConnectedIdentityMetadata],
   );
 
-  const onLogin = useCallback(() => {
-    setIsLocked(false);
-  }, [setIsLocked]);
-
   const onLogout = useCallback(() => {
+    console.log(`1`)
     setConnectedIdentityMetadata(undefined);
     setIsLocked(true);
   }, [setConnectedIdentityMetadata, setIsLocked]);
@@ -332,7 +333,7 @@ export const useCryptKeeper = (): IUseCryptKeeperData => {
       return undefined;
     }
 
-    client.on(EventName.LOGIN, onLogin);
+    //client.on(EventName.LOGIN, onLogin);
     client.on(EventName.IDENTITY_CHANGED, onIdentityChanged);
     client.on(EventName.LOGOUT, onLogout);
     client.on(EventName.ADD_VERIFIABLE_CREDENTIAL, onAddVerifiableCredential);
@@ -349,7 +350,6 @@ export const useCryptKeeper = (): IUseCryptKeeperData => {
     client,
     onLogout,
     onIdentityChanged,
-    onLogin,
     onAddVerifiableCredential,
     onReject,
     onRevealCommitment,
