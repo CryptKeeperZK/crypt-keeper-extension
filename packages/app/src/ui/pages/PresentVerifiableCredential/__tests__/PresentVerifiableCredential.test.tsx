@@ -15,7 +15,7 @@ jest.mock("../usePresentVerifiableCredential", (): unknown => ({
 describe("ui/pages/PresentVerifiableCredential", () => {
   const mockCryptkeeperVerifiableCredentials = [
     {
-      verifiableCredential: {
+      vc: {
         context: ["https://www.w3.org/2018/credentials/v1"],
         id: "http://example.edu/credentials/3732",
         type: ["VerifiableCredential"],
@@ -35,7 +35,7 @@ describe("ui/pages/PresentVerifiableCredential", () => {
       },
     },
     {
-      verifiableCredential: {
+      vc: {
         context: ["https://www.w3.org/2018/credentials/v1"],
         id: "http://example.edu/credentials/3733",
         type: ["VerifiableCredential"],
@@ -71,7 +71,7 @@ describe("ui/pages/PresentVerifiableCredential", () => {
     onToggleSelection: jest.fn(),
     onToggleMenu: jest.fn(),
     onMenuItemClick: jest.fn(),
-    onSubmitVP: jest.fn(),
+    onSubmit: jest.fn(),
   };
 
   beforeEach(() => {
@@ -161,7 +161,7 @@ describe("ui/pages/PresentVerifiableCredential", () => {
     const button = await findByTestId("sign-verifiable-presentation-button");
     fireEvent.click(button);
 
-    expect(defaultHookData.onSubmitVP).toBeCalledTimes(1);
+    expect(defaultHookData.onSubmit).toBeCalledTimes(1);
   });
 
   test("should select menu items", async () => {

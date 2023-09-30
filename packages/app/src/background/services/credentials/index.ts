@@ -1,4 +1,4 @@
-import { EventName } from "@cryptkeeperzk/providers/dist/src/event";
+import { EventName } from "@cryptkeeperzk/providers/src/event";
 import browser from "webextension-polyfill";
 
 import BrowserUtils from "@src/background/controllers/browserUtils";
@@ -70,13 +70,13 @@ export default class VerifiableCredentialsService implements IBackupable {
 
   /**
    * Handle a request to add a Verifiable Credential. Opens a popup to confirm the request.
-   * @param serializedVC - The serialized Verifiable Credential to add.
+   * @param serialized - The serialized Verifiable Credential to add.
    * @returns A promise that resolves when the popup is opened.
    */
-  handleVCRequest = async (serializedVC: string): Promise<void> => {
-    await validateSerializedVC(serializedVC);
+  handleAddVCRequest = async (serialized: string): Promise<void> => {
+    await validateSerializedVC(serialized);
     await this.browserController.openPopup({
-      params: { redirect: Paths.ADD_VERIFIABLE_CREDENTIAL, serializedVerifiableCredential: serializedVC },
+      params: { redirect: Paths.ADD_VERIFIABLE_CREDENTIAL, serializedVerifiableCredential: serialized },
     });
   };
 
@@ -97,21 +97,21 @@ export default class VerifiableCredentialsService implements IBackupable {
 
   /**
    * Adds a Verifiable Credential to the store.
-   * @param serializedVerifiableCredential - The serialized Verifiable Credential to add.
-   * @param verifiableCredentialName - User defined name for the Verifiable Credential.
+   * @param serialized - The serialized Verifiable Credential to add.
+   * @param name - User defined name for the Verifiable Credential.
    * @returns A promise that resolves when the Verifiable Credential is added.
    * @throws An error if the Verifiable Credential is invalid or already exists.
    */
-  addVC = async ({ serializedVerifiableCredential, verifiableCredentialName }: IAddVCArgs): Promise<void> => {
-    if (!serializedVerifiableCredential) {
+  addVC = async ({ serialized, name }: IAddVCArgs): Promise<void> => {
+    if (!serialized) {
       throw new Error("Serialized Verifiable Credential is required.");
     }
 
     try {
-      const verifiableCredential = await deserializeVC(serializedVerifiableCredential);
-      const metadata = generateInitialMetadataForVC(verifiableCredential, verifiableCredentialName);
+      const vc = await deserializeVC(serialized);
+      const metadata = generateInitialMetadataForVC(vc, name);
       const cryptkeeperVC: ICryptkeeperVerifiableCredential = {
-        verifiableCredential,
+        vc,
         metadata,
       };
 
@@ -128,28 +128,28 @@ export default class VerifiableCredentialsService implements IBackupable {
 
   /**
    * Renames a Verifiable Credential.
-   * @param verifiableCredentialHash - The hash of the Verifiable Credential to rename.
-   * @param newVerifiableCredentialName - The new name for the Verifiable Credential.
+   * @param hash - The hash of the Verifiable Credential to rename.
+   * @param newName - The new name for the Verifiable Credential.
    * @returns A promise that resolves when the Verifiable Credential is renamed.
    * @throws An error if the Verifiable Credential does not exist.
    * @throws An error if the Verifiable Credential hash or name is missing.
    */
-  renameVC = async ({ verifiableCredentialHash, newVerifiableCredentialName }: IRenameVCArgs): Promise<void> => {
-    if (!verifiableCredentialHash || !newVerifiableCredentialName) {
+  renameVC = async ({ hash, newName }: IRenameVCArgs): Promise<void> => {
+    if (!hash || !newName) {
       throw new Error("Verifiable Credential hash and name are required.");
     }
 
     const cryptkeeperVCs = await this.getCryptkeeperVCsFromStore();
 
-    if (!cryptkeeperVCs.has(verifiableCredentialHash)) {
+    if (!cryptkeeperVCs.has(hash)) {
       throw new Error("Verifiable Credential does not exist.");
     }
 
-    const serializedCryptkeeperVC = cryptkeeperVCs.get(verifiableCredentialHash)!;
+    const serializedCryptkeeperVC = cryptkeeperVCs.get(hash)!;
     const cryptkeeperVC = await deserializeCryptkeeperVC(serializedCryptkeeperVC);
 
-    cryptkeeperVC.metadata.name = newVerifiableCredentialName;
-    cryptkeeperVCs.set(verifiableCredentialHash, serializeCryptkeeperVC(cryptkeeperVC));
+    cryptkeeperVC.metadata.name = newName;
+    cryptkeeperVCs.set(hash, serializeCryptkeeperVC(cryptkeeperVC));
     await this.writeCryptkeeperVCs(cryptkeeperVCs);
     await this.announce({
       notificationTitle: "Verifiable Credential renamed.",
@@ -172,23 +172,23 @@ export default class VerifiableCredentialsService implements IBackupable {
 
   /**
    * Deletes a Verifiable Credential from the store.
-   * @param vcHash - The hash of the Verifiable Credential to delete.
+   * @param hash - The hash of the Verifiable Credential to delete.
    * @returns A promise that resolves when the Verifiable Credential is deleted.
    * @throws An error if the Verifiable Credential does not exist.
    * @throws An error if the Verifiable Credential hash is missing.
    */
-  deleteVC = async (vcHash: string): Promise<void> => {
-    if (!vcHash) {
+  deleteVC = async (hash: string): Promise<void> => {
+    if (!hash) {
       throw new Error("Verifiable Credential hash is required.");
     }
 
     const cryptkeeperVCs = await this.getCryptkeeperVCsFromStore();
 
-    if (!cryptkeeperVCs.has(vcHash)) {
+    if (!cryptkeeperVCs.has(hash)) {
       throw new Error("Verifiable Credential does not exist.");
     }
 
-    cryptkeeperVCs.delete(vcHash);
+    cryptkeeperVCs.delete(hash);
     await this.writeCryptkeeperVCs(cryptkeeperVCs);
 
     await this.announce({
@@ -251,34 +251,34 @@ export default class VerifiableCredentialsService implements IBackupable {
 
   /**
    * Announces a generated Verifiable Presentation.
-   * @param verifiablePresentation - The generated Verifiable Presentation.
+   * @param vp - The generated Verifiable Presentation.
    * @returns A promise that resolves when the Verifiable Presentation is announced.
    */
-  announceVP = async (verifiablePresentation: IVerifiablePresentation): Promise<void> => {
+  announceVP = async (vp: IVerifiablePresentation): Promise<void> => {
     await this.announce({
       notificationTitle: "Verifiable Presentation generated.",
       notificationMessage: `Generated 1 Verifiable Presentation.`,
       notificationType: "basic",
       historyOperationType: OperationType.NEW_VERIFIABLE_PRESENTATION,
       responseType: EventName.NEW_VERIFIABLE_PRESENTATION,
-      responsePayload: { verifiablePresentation },
+      responsePayload: { vp },
     });
   };
 
   /**
    * Signs and announces a generated Verifiable Presentation.
-   * @param verifiablePresentation - The generated Verifiable Presentation.
+   * @param vp - The generated Verifiable Presentation.
    * @param address - The address of the signer.
    * @returns A promise that resolves when the Verifiable Presentation is signed and announced.
    */
-  signAndAnnounceVP = async ({ verifiablePresentation, address }: ISignVPArgs): Promise<void> => {
-    const serializedVP = serializeVP(verifiablePresentation);
+  signAndAnnounceVP = async ({ vp, address }: ISignVPArgs): Promise<void> => {
+    const serializedVP = serializeVP(vp);
     const signature = await this.walletService.signMessage({
       message: serializedVP,
       address,
     });
     const signedVP = {
-      ...verifiablePresentation,
+      ...vp,
       proof: [
         {
           type: [ETHEREUM_SIGNATURE_SPECIFICATION_TYPE],
@@ -296,7 +296,7 @@ export default class VerifiableCredentialsService implements IBackupable {
       notificationType: "basic",
       historyOperationType: OperationType.NEW_VERIFIABLE_PRESENTATION,
       responseType: EventName.NEW_VERIFIABLE_PRESENTATION,
-      responsePayload: { verifiablePresentation: signedVP },
+      responsePayload: { vp: signedVP },
     });
   };
 
@@ -307,11 +307,11 @@ export default class VerifiableCredentialsService implements IBackupable {
    * @throws An error if the Verifiable Credential already exists.
    */
   private insertCryptkeeperVCIntoStore = async (cryptkeeperVC: ICryptkeeperVerifiableCredential): Promise<void> => {
-    const vcHash = cryptkeeperVC.metadata.hash;
+    const { hash } = cryptkeeperVC.metadata;
 
     const cryptkeeperVCs = await this.getCryptkeeperVCsFromStore();
 
-    if (cryptkeeperVCs.has(vcHash)) {
+    if (cryptkeeperVCs.has(hash)) {
       await this.announce({
         notificationTitle: "Failed to add Verifiable Credential.",
         notificationMessage: `The Verifiable Credential you are trying to add already exists in your wallet.`,
@@ -321,7 +321,7 @@ export default class VerifiableCredentialsService implements IBackupable {
       throw new Error("Verifiable Credential already exists.");
     }
 
-    cryptkeeperVCs.set(vcHash, serializeCryptkeeperVC(cryptkeeperVC));
+    cryptkeeperVCs.set(hash, serializeCryptkeeperVC(cryptkeeperVC));
     await this.writeCryptkeeperVCs(cryptkeeperVCs);
 
     await this.announce({
@@ -330,7 +330,7 @@ export default class VerifiableCredentialsService implements IBackupable {
       notificationType: "basic",
       historyOperationType: OperationType.NEW_VERIFIABLE_CREDENTIAL,
       responseType: EventName.NEW_VERIFIABLE_CREDENTIAL,
-      responsePayload: { vcHash },
+      responsePayload: { hash },
     });
   };
 
@@ -394,7 +394,7 @@ export default class VerifiableCredentialsService implements IBackupable {
     });
 
     if (responseType) {
-      const tabs = await browser.tabs.query({ active: true });
+      const tabs = await browser.tabs.query({});
       await Promise.all(
         tabs.map((tab) =>
           browser.tabs

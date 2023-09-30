@@ -12,18 +12,15 @@ export interface IUseAddVerifiableCredentialData {
   cryptkeeperVC?: ICryptkeeperVerifiableCredential;
   error?: string;
   onCloseModal: () => void;
-  onRenameVC: (newVCName: string) => void;
-  onApproveVC: () => Promise<void>;
-  onRejectVC: () => void;
+  onRename: (newVCName: string) => void;
+  onApprove: () => Promise<void>;
+  onReject: () => void;
 }
 
 export const useAddVerifiableCredential = (): IUseAddVerifiableCredentialData => {
   const [cryptkeeperVC, setCryptkeeperVC] = useState<ICryptkeeperVerifiableCredential>();
   const [error, setError] = useState<string>();
 
-  /**
-   * Fetches the serialized Verifiable Credential from the window url.
-   */
   useEffect(() => {
     async function deserialize() {
       const { searchParams } = new URL(window.location.href.replace("#", ""));
@@ -35,7 +32,7 @@ export const useAddVerifiableCredential = (): IUseAddVerifiableCredentialData =>
 
       const deserializedVC = await deserializeVC(serializedVC);
       setCryptkeeperVC({
-        verifiableCredential: deserializedVC,
+        vc: deserializedVC,
         metadata: {
           hash: hashVC(deserializedVC),
           name: defaultVCName,
@@ -47,25 +44,18 @@ export const useAddVerifiableCredential = (): IUseAddVerifiableCredentialData =>
 
   const dispatch = useAppDispatch();
 
-  /**
-   * Closes the modal.
-   */
   const onCloseModal = useCallback(() => {
     dispatch(closePopup());
   }, [dispatch]);
 
-  /**
-   * Renames the Verifiable Credential.
-   * @param newVCName - The new name for the Verifiable Credential.
-   */
-  const onRenameVC = useCallback(
+  const onRename = useCallback(
     (newVCName: string) => {
       if (!cryptkeeperVC) {
         return;
       }
 
       setCryptkeeperVC({
-        verifiableCredential: cryptkeeperVC.verifiableCredential,
+        vc: cryptkeeperVC.vc,
         metadata: {
           hash: cryptkeeperVC.metadata.hash,
           name: newVCName,
@@ -75,15 +65,12 @@ export const useAddVerifiableCredential = (): IUseAddVerifiableCredentialData =>
     [cryptkeeperVC],
   );
 
-  /**
-   * Approves adding the Verifiable Credential.
-   */
-  const onApproveVC = useCallback(async () => {
+  const onApprove = useCallback(async () => {
     if (!cryptkeeperVC) {
       return;
     }
 
-    const serializedVC = serializeVC(cryptkeeperVC.verifiableCredential);
+    const serializedVC = serializeVC(cryptkeeperVC.vc);
 
     try {
       await dispatch(addVerifiableCredential(serializedVC, cryptkeeperVC.metadata.name));
@@ -93,10 +80,7 @@ export const useAddVerifiableCredential = (): IUseAddVerifiableCredentialData =>
     }
   }, [cryptkeeperVC, onCloseModal]);
 
-  /**
-   * Rejects adding the Verifiable Credential.
-   */
-  const onRejectVC = useCallback(async () => {
+  const onReject = useCallback(async () => {
     await dispatch(rejectVerifiableCredentialRequest());
     onCloseModal();
   }, [dispatch, onCloseModal]);
@@ -105,8 +89,8 @@ export const useAddVerifiableCredential = (): IUseAddVerifiableCredentialData =>
     cryptkeeperVC,
     error,
     onCloseModal,
-    onRenameVC,
-    onApproveVC,
-    onRejectVC,
+    onRename,
+    onApprove,
+    onReject,
   };
 };

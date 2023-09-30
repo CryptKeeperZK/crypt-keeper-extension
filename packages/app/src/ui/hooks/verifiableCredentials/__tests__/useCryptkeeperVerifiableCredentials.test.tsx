@@ -16,7 +16,7 @@ jest.mock("@src/ui/ducks/verifiableCredentials", (): unknown => ({
 describe("ui/hooks/verifiableCredentials", () => {
   const mockCryptkeeperVerifiableCredentials = [
     {
-      verifiableCredential: {
+      vc: {
         context: ["https://www.w3.org/2018/credentials/v1"],
         id: "http://example.edu/credentials/3732",
         type: ["VerifiableCredential"],
@@ -36,7 +36,7 @@ describe("ui/hooks/verifiableCredentials", () => {
       },
     },
     {
-      verifiableCredential: {
+      vc: {
         context: ["https://www.w3.org/2018/credentials/v1"],
         id: "http://example.edu/credentials/3733",
         type: ["VerifiableCredential"],

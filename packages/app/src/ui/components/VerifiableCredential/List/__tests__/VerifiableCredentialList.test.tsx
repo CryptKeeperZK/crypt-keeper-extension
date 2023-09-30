@@ -30,7 +30,7 @@ describe("ui/components/VerifiableCredential/List", () => {
   const defaultHookData: IUseVerifiableCredentialListData = {
     cryptkeeperVCs: [
       {
-        verifiableCredential: {
+        vc: {
           context: ["https://www.w3.org/2018/credentials/v1"],
           id: "http://example.edu/credentials/3732",
           type: ["VerifiableCredential"],
@@ -50,7 +50,7 @@ describe("ui/components/VerifiableCredential/List", () => {
         },
       },
       {
-        verifiableCredential: {
+        vc: {
           context: ["https://www.w3.org/2018/credentials/v1"],
           id: "http://example.edu/credentials/3733",
           type: ["VerifiableCredential"],
@@ -70,8 +70,8 @@ describe("ui/components/VerifiableCredential/List", () => {
         },
       },
     ],
-    onRenameVC: jest.fn(),
-    onDeleteVC: jest.fn(),
+    onRename: jest.fn(),
+    onDelete: jest.fn(),
   };
 
   beforeEach(() => {

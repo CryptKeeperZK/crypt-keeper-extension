@@ -11,24 +11,24 @@ export interface IUseVerifiableCredentialItemData {
   isRenaming: boolean;
   name: string;
   register: UseFormRegister<RenameVerifiableCredentialItemData>;
-  onSubmit: (event: ReactFormEvent<HTMLFormElement>) => void;
+  onRename: (event: ReactFormEvent<HTMLFormElement>) => void;
   onToggleRenaming: () => void;
   onDelete: () => Promise<void>;
-  onToggleSelect: () => void;
+  onSelect: () => void;
 }
 
 export interface UseVerifiableCredentialItemArgs {
   metadata: IVerifiableCredentialMetadata;
-  onRename?: (hash: string, name: string) => Promise<void>;
-  onDelete?: (hash: string) => Promise<void>;
-  onSelect?: (hash: string) => void;
+  onRenameVC?: (hash: string, name: string) => Promise<void>;
+  onDeleteVC?: (hash: string) => Promise<void>;
+  onSelectVC?: (hash: string) => void;
 }
 
 export const useVerifiableCredentialItem = ({
   metadata,
-  onRename,
-  onDelete,
-  onSelect,
+  onRenameVC,
+  onDeleteVC,
+  onSelectVC,
 }: UseVerifiableCredentialItemArgs): IUseVerifiableCredentialItemData => {
   const { hash, name: initialName } = metadata;
 
@@ -42,52 +42,40 @@ export const useVerifiableCredentialItem = ({
 
   const [isRenaming, setIsRenaming] = useState(false);
 
-  /**
-   * Toggles the renaming state.
-   */
   const onToggleRenaming = useCallback(() => {
     setIsRenaming((value) => !value);
   }, [setIsRenaming]);
 
-  /**
-   * Triggers renaming of the Verifiable Credential.
-   */
-  const onSubmit = useCallback(
+  const onRename = useCallback(
     async (event: ReactFormEvent<HTMLFormElement>) => {
       event.preventDefault();
-      if (onRename) {
-        await onRename(hash, name);
+      if (onRenameVC) {
+        await onRenameVC(hash, name);
         setIsRenaming(false);
       }
     },
-    [onRename, name, setIsRenaming],
+    [onRenameVC, name, setIsRenaming],
   );
 
-  /**
-   * Triggers deletion of the Verifiable Credential.
-   */
-  const onDeleteVC = useCallback(async () => {
-    if (onDelete) {
-      await onDelete(hash);
+  const onDelete = useCallback(async () => {
+    if (onDeleteVC) {
+      await onDeleteVC(hash);
     }
-  }, [onDelete, hash]);
+  }, [onDeleteVC, hash]);
 
-  /**
-   * Triggers selection of the Verifiable Credential.
-   */
-  const onToggleSelect = useCallback(() => {
-    if (onSelect) {
-      onSelect(hash);
+  const onSelect = useCallback(() => {
+    if (onSelectVC) {
+      onSelectVC(hash);
     }
-  }, [onSelect, hash]);
+  }, [onSelectVC, hash]);
 
   return {
     isRenaming,
     name,
     register,
-    onSubmit,
+    onRename,
     onToggleRenaming,
-    onDelete: onDeleteVC,
-    onToggleSelect,
+    onDelete,
+    onSelect,
   };
 };

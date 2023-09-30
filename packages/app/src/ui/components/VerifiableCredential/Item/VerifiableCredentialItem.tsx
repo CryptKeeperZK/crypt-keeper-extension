@@ -20,7 +20,7 @@ export interface VerifiableCredentialItemProps {
   selected?: boolean;
   onRenameVC?: (hash: string, name: string) => Promise<void>;
   onDeleteVC?: (hash: string) => Promise<void>;
-  onToggleSelectVC?: (hash: string) => void;
+  onSelectVC?: (hash: string) => void;
 }
 
 export const VerifiableCredentialItem = ({
@@ -29,15 +29,14 @@ export const VerifiableCredentialItem = ({
   selected = undefined,
   onRenameVC = undefined,
   onDeleteVC = undefined,
-  onToggleSelectVC = undefined,
+  onSelectVC = undefined,
 }: VerifiableCredentialItemProps): JSX.Element => {
-  const { isRenaming, name, register, onSubmit, onToggleRenaming, onDelete, onToggleSelect } =
-    useVerifiableCredentialItem({
-      metadata,
-      onRename: onRenameVC,
-      onDelete: onDeleteVC,
-      onSelect: onToggleSelectVC,
-    });
+  const { isRenaming, name, register, onRename, onToggleRenaming, onDelete, onSelect } = useVerifiableCredentialItem({
+    metadata,
+    onRenameVC,
+    onDeleteVC,
+    onSelectVC,
+  });
 
   const menuItems = [
     { label: "Rename", isDangerItem: false, onClick: onToggleRenaming },
@@ -81,7 +80,7 @@ export const VerifiableCredentialItem = ({
             data-testid={`verifiable-credential-selected-${metadata.hash}`}
             size="medium"
             sx={{ ml: -2 }}
-            onClick={onToggleSelect}
+            onClick={onSelect}
           >
             <CheckCircleIcon color="primary" fontSize="inherit" />
           </IconButton>
@@ -90,7 +89,7 @@ export const VerifiableCredentialItem = ({
             data-testid={`verifiable-credential-unselected-${metadata.hash}`}
             size="medium"
             sx={{ ml: -2 }}
-            onClick={onToggleSelect}
+            onClick={onSelect}
           >
             <CheckCircleOutlineIcon color="disabled" fontSize="inherit" />
           </IconButton>
@@ -113,7 +112,7 @@ export const VerifiableCredentialItem = ({
               fontSize: "1.125rem",
               lineHeight: "1.75rem",
             }}
-            onSubmit={onSubmit}
+            onSubmit={onRename}
           >
             <TextField
               {...register("name")}

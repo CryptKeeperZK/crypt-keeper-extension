@@ -29,8 +29,8 @@ describe("ui/components/VerifiableCredential/Item/useVerifiableCredentialItem", 
       name: "My Credential",
       hash: "0x123456789",
     },
-    onRename: jest.fn(),
-    onDelete: jest.fn(),
+    onRenameVC: jest.fn(),
+    onDeleteVC: jest.fn(),
   };
 
   beforeEach(() => {
@@ -64,9 +64,9 @@ describe("ui/components/VerifiableCredential/Item/useVerifiableCredentialItem", 
     mockEvent.preventDefault = jest.fn();
 
     await act(async () => Promise.resolve(result.current.onToggleRenaming()));
-    await act(async () => Promise.resolve(result.current.onSubmit(mockEvent)));
+    await act(async () => Promise.resolve(result.current.onRename(mockEvent)));
 
-    expect(useVerifiableCredentialItemArgs.onRename).toBeCalledTimes(1);
+    expect(useVerifiableCredentialItemArgs.onRenameVC).toBeCalledTimes(1);
     expect(result.current.isRenaming).toBe(false);
   });
 
@@ -75,6 +75,6 @@ describe("ui/components/VerifiableCredential/Item/useVerifiableCredentialItem", 
 
     await act(async () => result.current.onDelete());
 
-    expect(useVerifiableCredentialItemArgs.onDelete).toBeCalledTimes(1);
+    expect(useVerifiableCredentialItemArgs.onDeleteVC).toBeCalledTimes(1);
   });
 });

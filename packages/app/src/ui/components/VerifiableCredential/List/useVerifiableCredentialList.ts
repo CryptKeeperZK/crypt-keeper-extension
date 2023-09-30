@@ -11,8 +11,8 @@ import { useCryptkeeperVerifiableCredentials } from "@src/ui/hooks/verifiableCre
 
 export interface IUseVerifiableCredentialListData {
   cryptkeeperVCs: ICryptkeeperVerifiableCredential[];
-  onRenameVC: (vcHash: string, newVCName: string) => Promise<void>;
-  onDeleteVC: (vcHash: string) => Promise<void>;
+  onRename: (vcHash: string, newVCName: string) => Promise<void>;
+  onDelete: (vcHash: string) => Promise<void>;
 }
 
 export const useVerifiableCredentialList = (): IUseVerifiableCredentialListData => {
@@ -24,17 +24,12 @@ export const useVerifiableCredentialList = (): IUseVerifiableCredentialListData 
 
   const cryptkeeperVCs = useCryptkeeperVerifiableCredentials();
 
-  /**
-   * Renames a Verifiable Credential in the wallet.
-   * @param verifiableCredentialHash - The hash of the Verifiable Credential to rename.
-   * @param newVerifiableCredentialName - The new name for the Verifiable Credential.
-   */
-  const onRenameVC = useCallback(
-    async (verifiableCredentialHash: string, newVerifiableCredentialName: string) => {
+  const onRename = useCallback(
+    async (hash: string, newName: string) => {
       await dispatch(
         renameVerifiableCredential({
-          verifiableCredentialHash,
-          newVerifiableCredentialName,
+          hash,
+          newName,
         }),
       );
       dispatch(fetchVerifiableCredentials());
@@ -42,11 +37,7 @@ export const useVerifiableCredentialList = (): IUseVerifiableCredentialListData 
     [dispatch],
   );
 
-  /**
-   * Deletes a Verifiable Credential from the wallet.
-   * @param verifiableCredentialHash - The hash of the Verifiable Credential to delete.
-   */
-  const onDeleteVC = useCallback(
+  const onDelete = useCallback(
     async (verifiableCredentialHash: string) => {
       await dispatch(deleteVerifiableCredential(verifiableCredentialHash));
       dispatch(fetchVerifiableCredentials());
@@ -56,7 +47,7 @@ export const useVerifiableCredentialList = (): IUseVerifiableCredentialListData 
 
   return {
     cryptkeeperVCs,
-    onRenameVC,
-    onDeleteVC,
+    onRename,
+    onDelete,
   };
 };

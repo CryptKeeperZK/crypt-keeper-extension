@@ -222,7 +222,7 @@ export default class CryptKeeperController {
       RPCAction.HANDLE_VERIFIABLE_CREDENTIAL_REQUEST,
       this.lockService.ensure,
       validateSerializedVC,
-      this.verifiableCredentialsService.handleVCRequest,
+      this.verifiableCredentialsService.handleAddVCRequest,
     );
     this.handler.add(
       RPCAction.REJECT_VERIFIABLE_CREDENTIAL_REQUEST,

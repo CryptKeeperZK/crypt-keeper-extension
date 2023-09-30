@@ -29,13 +29,13 @@ describe("util/serializeCryptkeeperVC", () => {
     };
     const metadata = generateInitialMetadataForVC(rawCredential, defaultCredentialName);
     const cryptkeeperCred = {
-      verifiableCredential: rawCredential,
+      vc: rawCredential,
       metadata,
     };
     const serializedCred = serializeCryptkeeperVC(cryptkeeperCred);
     const deserializedCred = await deserializeCryptkeeperVC(serializedCred);
 
-    expect(deserializedCred.verifiableCredential).toStrictEqual(rawCredential);
+    expect(deserializedCred.vc).toStrictEqual(rawCredential);
     expect(deserializedCred.metadata).toStrictEqual(metadata);
     expect(serializeCryptkeeperVC(deserializedCred)).toBe(serializeCryptkeeperVC(cryptkeeperCred));
   });

@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/unbound-method */
-import { EventName } from "@cryptkeeperzk/providers/dist/src/event";
+import { EventName } from "@cryptkeeperzk/providers/src/event";
 import browser from "webextension-polyfill";
 
 import VerifiableCredentialsService from "@src/background/services/credentials";
@@ -64,7 +64,7 @@ describe("background/services/credentials", () => {
   const exampleCredentialMetadata = generateInitialMetadataForVC(exampleCredential, defaultCredentialName);
   const exampleCredentialHash = exampleCredentialMetadata.hash;
   const exampleCryptkeeperCredential: ICryptkeeperVerifiableCredential = {
-    verifiableCredential: exampleCredential,
+    vc: exampleCredential,
     metadata: exampleCredentialMetadata,
   };
   const exampleCryptkeeperCredentialString = serializeCryptkeeperVC(exampleCryptkeeperCredential);
@@ -86,7 +86,7 @@ describe("background/services/credentials", () => {
   const exampleCredentialMetadataTwo = generateInitialMetadataForVC(exampleCredentialTwo, defaultCredentialName);
   const exampleCredentialHashTwo = exampleCredentialMetadataTwo.hash;
   const exampleCryptkeeperCredentialTwo: ICryptkeeperVerifiableCredential = {
-    verifiableCredential: exampleCredentialTwo,
+    vc: exampleCredentialTwo,
     metadata: exampleCredentialMetadataTwo,
   };
   const exampleCryptkeeperCredentialStringTwo = serializeCryptkeeperVC(exampleCryptkeeperCredentialTwo);
@@ -139,9 +139,7 @@ describe("background/services/credentials", () => {
 
   describe("add and reject verifiable credential requests", () => {
     test("should successfully create an add verifiable credential request", async () => {
-      await verifiableCredentialsService.handleVCRequest(exampleCredentialString);
-
-      expect(browser.tabs.query).toBeCalledWith({ lastFocusedWindow: true });
+      await verifiableCredentialsService.handleAddVCRequest(exampleCredentialString);
 
       const defaultOptions = {
         tabId: defaultPopupTab.id,
@@ -151,13 +149,14 @@ describe("background/services/credentials", () => {
         height: 610,
       };
 
+      expect(browser.tabs.query).toBeCalledWith({ lastFocusedWindow: true });
       expect(browser.windows.create).toBeCalledWith(defaultOptions);
     });
 
     test("should successfully reject a verifiable credential request", async () => {
       await verifiableCredentialsService.rejectVCRequest();
 
-      expect(browser.tabs.query).toBeCalledWith({ lastFocusedWindow: true });
+      expect(browser.tabs.query).toBeCalledWith({ active: true });
       expect(browser.tabs.sendMessage).toBeCalledWith(defaultTabs[0].id, {
         type: EventName.USER_REJECT,
         payload: { type: EventName.VERIFIABLE_CREDENTIAL_REQUEST },
@@ -166,10 +165,8 @@ describe("background/services/credentials", () => {
   });
 
   describe("generate verifiable presentations", () => {
-    test("should successfully create a generate verifiable presentation request", async () => {
+    test("should successfully create a verifiable presentation request", async () => {
       await verifiableCredentialsService.handleVPRequest(exampleVerifiablePresentationRequest);
-
-      expect(browser.tabs.query).toBeCalledWith({ lastFocusedWindow: true });
 
       const defaultOptions = {
         tabId: defaultPopupTab.id,
@@ -179,13 +176,14 @@ describe("background/services/credentials", () => {
         height: 610,
       };
 
+      expect(browser.tabs.query).toBeCalledWith({ lastFocusedWindow: true });
       expect(browser.windows.create).toBeCalledWith(defaultOptions);
     });
 
     test("should successfully reject a verifiable presentation request", async () => {
       await verifiableCredentialsService.rejectVPRequest();
 
-      expect(browser.tabs.query).toBeCalledWith({ lastFocusedWindow: true });
+      expect(browser.tabs.query).toBeCalledWith({ active: true });
       expect(browser.tabs.sendMessage).toBeCalledWith(defaultTabs[0].id, {
         type: EventName.USER_REJECT,
         payload: { type: EventName.VERIFIABLE_PRESENTATION_REQUEST },
@@ -195,10 +193,10 @@ describe("background/services/credentials", () => {
     test("should successfully generate a verifiable presentation", async () => {
       await verifiableCredentialsService.announceVP(exampleVerifiablePresentation);
 
-      expect(browser.tabs.query).toBeCalledWith({ lastFocusedWindow: true });
+      expect(browser.tabs.query).toBeCalledWith({ active: true });
       expect(browser.tabs.sendMessage).toBeCalledWith(defaultTabs[0].id, {
         type: EventName.NEW_VERIFIABLE_PRESENTATION,
-        payload: { verifiablePresentation: exampleVerifiablePresentation },
+        payload: { vp: exampleVerifiablePresentation },
       });
     });
 
@@ -208,7 +206,7 @@ describe("background/services/credentials", () => {
       const VERIFIABLE_CREDENTIAL_PROOF_PURPOSE = "assertionMethod";
 
       await verifiableCredentialsService.signAndAnnounceVP({
-        verifiablePresentation: exampleVerifiablePresentation,
+        vp: exampleVerifiablePresentation,
         address: exampleAddress,
       });
 
@@ -225,10 +223,10 @@ describe("background/services/credentials", () => {
         ],
       };
 
-      expect(browser.tabs.query).toBeCalledWith({ lastFocusedWindow: true });
+      expect(browser.tabs.query).toBeCalledWith({ active: true });
       expect(browser.tabs.sendMessage).toBeCalledWith(defaultTabs[0].id, {
         type: EventName.NEW_VERIFIABLE_PRESENTATION,
-        payload: { verifiablePresentation: signedVerifiablePresentation },
+        payload: { vp: signedVerifiablePresentation },
       });
     });
   });
@@ -240,8 +238,8 @@ describe("background/services/credentials", () => {
       credentialsStorage.set.mockReturnValue(undefined);
 
       const result = verifiableCredentialsService.addVC({
-        serializedVerifiableCredential: exampleCredentialString,
-        verifiableCredentialName: defaultCredentialName,
+        serialized: exampleCredentialString,
+        name: defaultCredentialName,
       });
 
       await expect(result).resolves.toBe(undefined);
@@ -252,20 +250,20 @@ describe("background/services/credentials", () => {
       credentialsStorage.get.mockReturnValue(undefined);
 
       await verifiableCredentialsService.addVC({
-        serializedVerifiableCredential: exampleCredentialString,
-        verifiableCredentialName: defaultCredentialName,
+        serialized: exampleCredentialString,
+        name: defaultCredentialName,
       });
       await verifiableCredentialsService.addVC({
-        serializedVerifiableCredential: exampleCredentialStringTwo,
-        verifiableCredentialName: defaultCredentialName,
+        serialized: exampleCredentialStringTwo,
+        name: defaultCredentialName,
       });
 
       credentialsStorage.get.mockReturnValue(credentialsStorageString);
       const verifiableCredentials = await verifiableCredentialsService.getAllVCs();
 
       expect(verifiableCredentials.length).toBe(2);
-      expect(verifiableCredentials[0].verifiableCredential).toEqual(exampleCredential);
-      expect(verifiableCredentials[1].verifiableCredential).toEqual(exampleCredentialTwo);
+      expect(verifiableCredentials[0].vc).toEqual(exampleCredential);
+      expect(verifiableCredentials[1].vc).toEqual(exampleCredentialTwo);
     });
 
     test("should not add a verifiable credential with an existing id", async () => {
@@ -275,8 +273,8 @@ describe("background/services/credentials", () => {
 
       await expect(
         verifiableCredentialsService.addVC({
-          serializedVerifiableCredential: exampleCredentialString,
-          verifiableCredentialName: defaultCredentialName,
+          serialized: exampleCredentialString,
+          name: defaultCredentialName,
         }),
       ).rejects.toThrow("Verifiable Credential already exists.");
     });
@@ -284,8 +282,8 @@ describe("background/services/credentials", () => {
     test("should not add a verifiable credential with an invalid format", async () => {
       await expect(
         verifiableCredentialsService.addVC({
-          serializedVerifiableCredential: "invalid credential",
-          verifiableCredentialName: "test name",
+          serialized: "invalid credential",
+          name: "test name",
         }),
       ).rejects.toThrow(SyntaxError);
     });

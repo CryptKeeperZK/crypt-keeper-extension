@@ -96,7 +96,7 @@ describe("ui/components/VerifiableCredential/List/useVerifiableCredentialList", 
   test("should call rename properly", async () => {
     const { result } = renderHook(() => useVerifiableCredentialList());
 
-    await act(async () => result.current.onRenameVC("name", "hash"));
+    await act(async () => result.current.onRename("name", "hash"));
 
     expect(renameVerifiableCredential).toBeCalledTimes(1);
     expect(fetchVerifiableCredentials).toBeCalledTimes(2);
@@ -105,7 +105,7 @@ describe("ui/components/VerifiableCredential/List/useVerifiableCredentialList", 
   test("should call delete properly", async () => {
     const { result } = renderHook(() => useVerifiableCredentialList());
 
-    await act(async () => result.current.onDeleteVC("hash"));
+    await act(async () => result.current.onDelete("hash"));
 
     expect(deleteVerifiableCredential).toBeCalledTimes(1);
     expect(fetchVerifiableCredentials).toBeCalledTimes(2);

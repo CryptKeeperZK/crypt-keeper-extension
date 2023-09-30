@@ -69,7 +69,7 @@ function injectScript() {
         window.postMessage(
           {
             target: "injected-injectedscript",
-            payload: [null, (action.payload as { verifiableCredentialHash: string }).verifiableCredentialHash],
+            payload: [null, (action.payload as { hash: string }).hash],
             nonce: EventName.NEW_VERIFIABLE_CREDENTIAL,
           },
           "*",

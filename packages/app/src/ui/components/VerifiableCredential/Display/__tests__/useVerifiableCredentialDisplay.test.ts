@@ -26,7 +26,7 @@ describe("ui/components/VerifiableCredential/Display/useVerifiableCredentialDisp
 
   const useVerifiableCredentialDisplayArgs: UseVerifiableCredentialDisplayArgs = {
     initialName: "My Credential",
-    onRename: jest.fn(),
+    onRenameVC: jest.fn(),
   };
 
   beforeEach(() => {
@@ -63,10 +63,10 @@ describe("ui/components/VerifiableCredential/Display/useVerifiableCredentialDisp
       result.current.onToggleRenaming();
     });
     act(() => {
-      result.current.onSubmit(mockEvent);
+      result.current.onRename(mockEvent);
     });
 
-    expect(useVerifiableCredentialDisplayArgs.onRename).toBeCalledTimes(1);
+    expect(useVerifiableCredentialDisplayArgs.onRenameVC).toBeCalledTimes(1);
     expect(result.current.isRenaming).toBe(false);
   });
 });

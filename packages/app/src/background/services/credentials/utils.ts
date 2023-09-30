@@ -117,87 +117,83 @@ const verifiableCredentialSchema: yup.Schema<IVerifiableCredential> = yup.object
  */
 export function serializeCryptkeeperVC(cryptkeeperVC: ICryptkeeperVerifiableCredential): string {
   return JSON.stringify({
-    verifiableCredential: serializeVC(cryptkeeperVC.verifiableCredential),
+    vc: serializeVC(cryptkeeperVC.vc),
     metadata: cryptkeeperVC.metadata,
   });
 }
 
 /**
  * Deserializes a CryptkeeperVerifiableCredential JSON string into a CryptkeeperVerifiableCredential object.
- * @param serializedCryptkeeperVC A JSON string representing a CryptkeeperVerifiableCredential.
+ * @param serialized A JSON string representing a CryptkeeperVerifiableCredential.
  * @returns A CryptkeeperVerifiableCredential object. Throws error if the object is not a valid CryptkeeperVerifiableCredential.
  */
-export async function deserializeCryptkeeperVC(
-  serializedCryptkeeperVC: string,
-): Promise<ICryptkeeperVerifiableCredential> {
-  if (!serializedCryptkeeperVC) {
+export async function deserializeCryptkeeperVC(serialized: string): Promise<ICryptkeeperVerifiableCredential> {
+  if (!serialized) {
     throw new Error("Serialized Cryptkeeper Verifiable Credential is not provided");
   }
 
-  const parsedCryptkeeperVC = JSON.parse(serializedCryptkeeperVC) as {
-    verifiableCredential: string;
+  const parsedCryptkeeperVC = JSON.parse(serialized) as {
+    vc: string;
     metadata: IVerifiableCredentialMetadata;
   };
 
   return {
-    verifiableCredential: await deserializeVC(parsedCryptkeeperVC.verifiableCredential),
+    vc: await deserializeVC(parsedCryptkeeperVC.vc),
     metadata: parsedCryptkeeperVC.metadata,
   };
 }
 
 /**
  * Serializes a VerifiableCredential object into a JSON string.
- * @param verifiableCredential An object representing a VerifiableCredential.
+ * @param vc An object representing a VerifiableCredential.
  * @returns A string representing a VerifiableCredential.
  */
-export function serializeVC(verifiableCredential: IVerifiableCredential): string {
-  return stringify(verifiableCredential);
+export function serializeVC(vc: IVerifiableCredential): string {
+  return stringify(vc);
 }
 
 /**
  * Attempts to parse a JSON string into a VerifiableCredential object.
- * @param serializedVC A JSON string representing a VerifiableCredential.
+ * @param serialized A JSON string representing a VerifiableCredential.
  * @returns An object representing a VerifiableCredential. Throws error if the object is not a valid VerifiableCredential.
  */
-export async function deserializeVC(serializedVC: string): Promise<IVerifiableCredential> {
-  if (!serializedVC) {
+export async function deserializeVC(serialized: string): Promise<IVerifiableCredential> {
+  if (!serialized) {
     throw new Error("Serialized Verifiable Credential is not provided");
   }
 
-  const deserializedVC = JSON.parse(serializedVC) as IVerifiableCredential;
+  const deserializedVC = JSON.parse(serialized) as IVerifiableCredential;
 
   return verifiableCredentialSchema.validate(deserializedVC);
 }
 
 /**
  * Serializes a VerifiablePresentation object into a JSON string.
- * @param verifiablePresentation An object representing a VerifiablePresentation.
+ * @param vp An object representing a VerifiablePresentation.
  * @returns A string representing a VerifiablePresentation.
  */
-export function serializeVP(verifiablePresentation: IVerifiablePresentation): string {
-  if (!verifiablePresentation.verifiableCredential) {
-    return stringify(verifiablePresentation);
+export function serializeVP(vp: IVerifiablePresentation): string {
+  if (!vp.verifiableCredential) {
+    return stringify(vp);
   }
 
-  const serializedVCs = verifiablePresentation.verifiableCredential.map((verifiableCredential) =>
-    serializeVC(verifiableCredential),
-  );
+  const serializedVCs = vp.verifiableCredential.map((verifiableCredential) => serializeVC(verifiableCredential));
 
   return stringify({
-    ...verifiablePresentation,
+    ...vp,
     verifiableCredential: serializedVCs,
   });
 }
 
 /**
  * Determines if a string represents a valid VerifiableCredential.
- * @param serializedVC An string representing a VerifiableCredential.
+ * @param serialized An string representing a VerifiableCredential.
  * @returns The string if it is a valid VerifiableCredential, otherwise throws an error.
  */
-export async function validateSerializedVC(serializedVC: string): Promise<string> {
-  await deserializeVC(serializedVC);
+export async function validateSerializedVC(serialized: string): Promise<string> {
+  await deserializeVC(serialized);
 
-  return serializedVC;
+  return serialized;
 }
 
 /**
@@ -205,35 +201,35 @@ export async function validateSerializedVC(serializedVC: string): Promise<string
  * @param verifiableCredential An object representing a VerifiableCredential.
  * @returns A string representing the hash of the VerifiableCredential.
  */
-export function hashVC(verifiableCredential: IVerifiableCredential): string {
-  return SHA256(serializeVC(verifiableCredential)).toString();
+export function hashVC(vc: IVerifiableCredential): string {
+  return SHA256(serializeVC(vc)).toString();
 }
 
 /**
  * Generates initial metadata for a VerifiableCredential.
- * @param verifiableCredential An object representing a VerifiableCredential.
+ * @param vc An object representing a VerifiableCredential.
  * @returns An object representing the initial metadata for the VerifiableCredential.
  */
 export function generateInitialMetadataForVC(
-  verifiableCredential: IVerifiableCredential,
-  initialVerifiableCredentialName: string,
+  vc: IVerifiableCredential,
+  initialName: string,
 ): IVerifiableCredentialMetadata {
   return {
-    name: initialVerifiableCredentialName,
-    hash: hashVC(verifiableCredential),
+    name: initialName,
+    hash: hashVC(vc),
   };
 }
 
 /**
  * Generates a VerifiablePresentation from a list of VerifiableCredential objects.
- * @param verifiableCredentials An array of objects representing Verifiable Credentials.
+ * @param vcs An array of objects representing Verifiable Credentials.
  * @returns An object representing a VerifiablePresentation.
  */
-export function generateVPFromVC(verifiableCredentials: IVerifiableCredential[]): IVerifiablePresentation {
+export function generateVPFromVC(vcs: IVerifiableCredential[]): IVerifiablePresentation {
   return {
     context: ["https://www.w3.org/2018/credentials/v1"],
     type: ["VerifiablePresentation"],
-    verifiableCredential: verifiableCredentials,
+    verifiableCredential: vcs,
   };
 }
 

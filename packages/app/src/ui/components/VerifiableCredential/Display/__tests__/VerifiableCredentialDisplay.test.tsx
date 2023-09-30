@@ -24,7 +24,7 @@ jest.mock("@src/ui/ducks/verifiableCredentials", (): unknown => ({
 describe("ui/components/VerifiableCredential/Display", () => {
   const defaultProps: VerifiableCredentialDisplayProps = {
     cryptkeeperVC: {
-      verifiableCredential: {
+      vc: {
         context: ["https://www.w3.org/2018/credentials/v1"],
         id: "http://example.edu/credentials/3732",
         type: ["VerifiableCredential"],
@@ -58,11 +58,9 @@ describe("ui/components/VerifiableCredential/Display", () => {
     render(<VerifiableCredentialDisplay {...defaultProps} />);
 
     const name = await screen.findByText(defaultProps.cryptkeeperVC.metadata.name);
-    const type = await screen.findByText(defaultProps.cryptkeeperVC.verifiableCredential.type[0]);
-    const issuer = await screen.findByText(defaultProps.cryptkeeperVC.verifiableCredential.issuer as string);
-    const issuanceDate = await screen.findByText(
-      defaultProps.cryptkeeperVC.verifiableCredential.issuanceDate.toString(),
-    );
+    const type = await screen.findByText(defaultProps.cryptkeeperVC.vc.type[0]);
+    const issuer = await screen.findByText(defaultProps.cryptkeeperVC.vc.issuer as string);
+    const issuanceDate = await screen.findByText(defaultProps.cryptkeeperVC.vc.issuanceDate.toString());
 
     expect(name).toBeInTheDocument();
     expect(type).toBeInTheDocument();

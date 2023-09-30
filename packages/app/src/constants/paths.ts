@@ -17,7 +17,7 @@ export enum Paths {
   RECOVER = "/recover",
   RESET_PASSWORD = "/reset-password",
   ADD_VERIFIABLE_CREDENTIAL = "/add-verifiable-credential",
-  GENERATE_VERIFIABLE_PRESENTATION_REQUEST = "/generate-verifiable-presentation-request",
+  GENERATE_VERIFIABLE_PRESENTATION = "/generate-verifiable-presentation",
   JOIN_GROUP = "/groups/join",
   GROUP_MERKLE_PROOF = "/groups/merkle-proof",
 }

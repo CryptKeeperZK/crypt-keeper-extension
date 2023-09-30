@@ -19,15 +19,14 @@ export const VerifiableCredentialDisplay = ({
   onRenameVC,
 }: VerifiableCredentialDisplayProps): JSX.Element => {
   const initialName = cryptkeeperVC.metadata.name;
-  const { isRenaming, name, register, onSubmit, onToggleRenaming } = useVerifiableCredentialDisplay({
+  const { isRenaming, name, register, onRename, onToggleRenaming } = useVerifiableCredentialDisplay({
     initialName,
-    onRename: onRenameVC,
+    onRenameVC,
   });
 
-  const { verifiableCredential } = cryptkeeperVC;
-  const issuerId =
-    typeof verifiableCredential.issuer === "string" ? verifiableCredential.issuer : verifiableCredential.issuer.id;
-  const expirationDate = verifiableCredential.expirationDate ? verifiableCredential.expirationDate.toString() : "N/A";
+  const { vc } = cryptkeeperVC;
+  const issuerId = typeof vc.issuer === "string" ? vc.issuer : vc.issuer.id;
+  const expirationDate = vc.expirationDate ? vc.expirationDate.toString() : "N/A";
 
   return (
     <Box
@@ -48,7 +47,7 @@ export const VerifiableCredentialDisplay = ({
       }}
     >
       {isRenaming ? (
-        <Box component="form" onSubmit={onSubmit}>
+        <Box component="form" onSubmit={onRename}>
           <TextField
             {...register("name")}
             autoFocus
@@ -90,7 +89,7 @@ export const VerifiableCredentialDisplay = ({
       >
         <Typography fontWeight="bold">Type:</Typography>
 
-        <Typography sx={{ ml: 2 }}>{verifiableCredential.type.join(", ")}</Typography>
+        <Typography sx={{ ml: 2 }}>{vc.type.join(", ")}</Typography>
       </Box>
 
       <Box
@@ -112,7 +111,7 @@ export const VerifiableCredentialDisplay = ({
       >
         <Typography fontWeight="bold">Issued Date:</Typography>
 
-        <Typography sx={{ ml: 2 }}>{verifiableCredential.issuanceDate.toString()}</Typography>
+        <Typography sx={{ ml: 2 }}>{vc.issuanceDate.toString()}</Typography>
       </Box>
 
       <Box
@@ -134,7 +133,7 @@ export const VerifiableCredentialDisplay = ({
       >
         <Typography fontWeight="bold">Credential Subject:</Typography>
 
-        <Typography sx={{ ml: 2 }}>{verifiableCredential.credentialSubject.id}</Typography>
+        <Typography sx={{ ml: 2 }}>{vc.credentialSubject.id}</Typography>
       </Box>
 
       <Box
@@ -145,7 +144,7 @@ export const VerifiableCredentialDisplay = ({
       >
         <Typography fontWeight="bold">Claims:</Typography>
 
-        <Typography sx={{ ml: 2 }}>{JSON.stringify(verifiableCredential.credentialSubject.claims)}</Typography>
+        <Typography sx={{ ml: 2 }}>{JSON.stringify(vc.credentialSubject.claims)}</Typography>
       </Box>
     </Box>
   );

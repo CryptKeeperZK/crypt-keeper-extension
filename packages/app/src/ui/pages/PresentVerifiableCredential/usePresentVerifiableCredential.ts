@@ -40,7 +40,7 @@ export interface IUsePresentVerifiableCredentialData {
   onToggleSelection: (hash: string) => void;
   onToggleMenu: () => void;
   onMenuItemClick: (index: number) => void;
-  onSubmitVP: () => Promise<void>;
+  onSubmit: () => Promise<void>;
 }
 
 export const usePresentVerifiableCredential = (): IUsePresentVerifiableCredentialData => {
@@ -57,9 +57,6 @@ export const usePresentVerifiableCredential = (): IUsePresentVerifiableCredentia
   const dispatch = useAppDispatch();
   const isWalletConnected = ethWallet.isActive;
 
-  /**
-   * Fetches the Verifiable Presentation request from the window url.
-   */
   useEffect(() => {
     const { searchParams } = new URL(window.location.href.replace("#", ""));
     const request = searchParams.get("request");
@@ -73,26 +70,15 @@ export const usePresentVerifiableCredential = (): IUsePresentVerifiableCredentia
     setVPRequest(request);
   }, [setVPRequest, fetchVerifiableCredentials, dispatch]);
 
-  /**
-   * Closes the modal.
-   */
   const onCloseModal = useCallback(() => {
     dispatch(closePopup());
   }, [dispatch]);
 
-  /**
-   * Rejects the Verifiable Presentation request.
-   */
   const onRejectVPRequest = useCallback(async () => {
     await dispatch(rejectVerifiablePresentationRequest());
     onCloseModal();
   }, [rejectVerifiablePresentationRequest, dispatch, onCloseModal]);
 
-  /**
-   * Toggles the selection of a Verifiable Credential.
-   * Clears existing error.
-   * @param selectedHash - The hash of the Verifiable Credential to select.
-   */
   const onToggleSelectVC = useCallback(
     (selectedHash: string) => {
       if (error) {
@@ -108,12 +94,7 @@ export const usePresentVerifiableCredential = (): IUsePresentVerifiableCredentia
     [selectedVCHashes, setSelectedVCHashes, error, setError],
   );
 
-  /**
-   * Creates a Verifiable Presentation from the selected Verifiable Credentials.
-   * Sets error if no Verifiable Credentials are selected.
-   * @returns The Verifiable Presentation.
-   */
-  function createVPFromSelectedVCs(): IVerifiablePresentation | undefined {
+  const createVPFromSelectedVCs = (): IVerifiablePresentation | undefined => {
     if (selectedVCHashes.length === 0) {
       setError("Please select at least one credential.");
       return undefined;
@@ -121,30 +102,23 @@ export const usePresentVerifiableCredential = (): IUsePresentVerifiableCredentia
 
     const verifiableCredentials = cryptkeeperVCs
       .filter((cryptkeeperVC) => selectedVCHashes.includes(cryptkeeperVC.metadata.hash))
-      .map((cryptkeeperVC) => cryptkeeperVC.verifiableCredential);
+      .map((cryptkeeperVC) => cryptkeeperVC.vc);
 
     return generateVPFromVC(verifiableCredentials);
-  }
+  };
 
-  /**
-   * Toggles the menu.
-   */
-  const onToggleMenu = () => {
+  const onToggleMenu = useCallback(() => {
     setIsMenuOpen((prevOpen) => !prevOpen);
-  };
+  }, [setIsMenuOpen]);
 
-  /**
-   * Handles a click on a menu item.
-   * @param index - The index of the clicked menu item.
-   */
-  const onMenuItemClick = (index: number) => {
-    setMenuSelectedIndex(index);
-    setIsMenuOpen(false);
-  };
+  const onMenuItemClick = useCallback(
+    (index: number) => {
+      setMenuSelectedIndex(index);
+      setIsMenuOpen(false);
+    },
+    [setMenuSelectedIndex, setIsMenuOpen],
+  );
 
-  /**
-   * Connects Metamask wallet. Sets error if connection fails.
-   */
   const onConnectWallet = useCallback(async () => {
     try {
       await ethWallet.onConnect();
@@ -153,11 +127,7 @@ export const usePresentVerifiableCredential = (): IUsePresentVerifiableCredentia
     }
   }, [setError, ethWallet.onConnect]);
 
-  /**
-   * Submits a Verifiable Presentation with Metamask.
-   * Sets error if signing fails, or if no Ethereum account is connected.
-   */
-  const onSubmitVPWithMetamask = useCallback(async () => {
+  const onSubmitWithMetamask = useCallback(async () => {
     const verifiablePresentation = createVPFromSelectedVCs();
 
     if (!verifiablePresentation) {
@@ -195,14 +165,10 @@ export const usePresentVerifiableCredential = (): IUsePresentVerifiableCredentia
     }
   }, [ethWallet, setError, dispatch, onCloseModal, submitVerifiablePresentation, createVPFromSelectedVCs]);
 
-  /**
-   * Submits a Verifiable Presentation with Cryptkeeper.
-   * Sets error if no Cryptkeeper account is connected.
-   */
-  const onSubmitVPWithCryptkeeper = useCallback(async () => {
-    const verifiablePresentation = createVPFromSelectedVCs();
+  const onSubmitWithCryptkeeper = useCallback(async () => {
+    const vp = createVPFromSelectedVCs();
 
-    if (!verifiablePresentation) {
+    if (!vp) {
       return;
     }
 
@@ -213,7 +179,7 @@ export const usePresentVerifiableCredential = (): IUsePresentVerifiableCredentia
       return;
     }
 
-    await dispatch(signAndSubmitVerifiablePresentation({ verifiablePresentation, address }));
+    await dispatch(signAndSubmitVerifiablePresentation({ vp, address }));
     onCloseModal();
   }, [
     cryptKeeperWallet,
@@ -224,10 +190,7 @@ export const usePresentVerifiableCredential = (): IUsePresentVerifiableCredentia
     createVPFromSelectedVCs,
   ]);
 
-  /**
-   * Submits a Verifiable Presentation without signing.
-   */
-  const onSubmitVPWithoutSignature = useCallback(async () => {
+  const onSubmitWithoutSignature = useCallback(async () => {
     const verifiablePresentation = createVPFromSelectedVCs();
 
     if (!verifiablePresentation) {
@@ -238,20 +201,16 @@ export const usePresentVerifiableCredential = (): IUsePresentVerifiableCredentia
     onCloseModal();
   }, [setError, dispatch, onCloseModal, submitVerifiablePresentation, createVPFromSelectedVCs]);
 
-  /**
-   * Handles submitting a Verifiable Presentation. Choose submission method based on selected menu item.
-   * Sets error if invalid menu item is selected.
-   */
-  const onSubmitVP = useCallback(async () => {
+  const onSubmit = useCallback(async () => {
     switch (true) {
       case menuSelectedIndex === (MenuItems.METAMASK as number) && !isWalletConnected:
         return onConnectWallet();
       case menuSelectedIndex === (MenuItems.METAMASK as number) && isWalletConnected:
-        return onSubmitVPWithMetamask();
+        return onSubmitWithMetamask();
       case menuSelectedIndex === (MenuItems.CRYPTKEEPER as number):
-        return onSubmitVPWithCryptkeeper();
+        return onSubmitWithCryptkeeper();
       case menuSelectedIndex === (MenuItems.WITHOUT_SIGNATURE as number):
-        return onSubmitVPWithoutSignature();
+        return onSubmitWithoutSignature();
       default:
         setError("Invalid menu index.");
         return undefined;
@@ -260,9 +219,9 @@ export const usePresentVerifiableCredential = (): IUsePresentVerifiableCredentia
     menuSelectedIndex,
     isWalletConnected,
     onConnectWallet,
-    onSubmitVPWithMetamask,
-    onSubmitVPWithCryptkeeper,
-    onSubmitVPWithoutSignature,
+    onSubmitWithMetamask,
+    onSubmitWithCryptkeeper,
+    onSubmitWithoutSignature,
   ]);
 
   return {
@@ -280,6 +239,6 @@ export const usePresentVerifiableCredential = (): IUsePresentVerifiableCredentia
     onToggleSelection: onToggleSelectVC,
     onToggleMenu,
     onMenuItemClick,
-    onSubmitVP,
+    onSubmit,
   };
 };

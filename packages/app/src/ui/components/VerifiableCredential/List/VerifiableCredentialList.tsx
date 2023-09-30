@@ -6,7 +6,7 @@ import { VerifiableCredentialItem } from "../Item";
 import { useVerifiableCredentialList } from "./useVerifiableCredentialList";
 
 export const VerifiableCredentialList = (): JSX.Element => {
-  const { cryptkeeperVCs, onRenameVC, onDeleteVC } = useVerifiableCredentialList();
+  const { cryptkeeperVCs, onRename, onDelete } = useVerifiableCredentialList();
 
   return (
     <Box
@@ -27,13 +27,13 @@ export const VerifiableCredentialList = (): JSX.Element => {
         },
       }}
     >
-      {cryptkeeperVCs.map(({ verifiableCredential, metadata }) => (
+      {cryptkeeperVCs.map(({ vc, metadata }) => (
         <VerifiableCredentialItem
           key={metadata.hash}
           metadata={metadata}
-          verifiableCredential={verifiableCredential}
-          onDeleteVC={onDeleteVC}
-          onRenameVC={onRenameVC}
+          verifiableCredential={vc}
+          onDeleteVC={onDelete}
+          onRenameVC={onRename}
         />
       ))}
 

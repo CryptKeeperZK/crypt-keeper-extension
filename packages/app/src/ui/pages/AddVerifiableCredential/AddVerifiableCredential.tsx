@@ -8,7 +8,7 @@ import { VerifiableCredentialDisplay } from "@src/ui/components/VerifiableCreden
 import { useAddVerifiableCredential } from "./useAddVerifiableCredential";
 
 const AddVerifiableCredential = (): JSX.Element => {
-  const { cryptkeeperVC, error, onCloseModal, onRenameVC, onApproveVC, onRejectVC } = useAddVerifiableCredential();
+  const { cryptkeeperVC, error, onCloseModal, onRename, onApprove, onReject } = useAddVerifiableCredential();
 
   const isError = !cryptkeeperVC;
 
@@ -32,7 +32,7 @@ const AddVerifiableCredential = (): JSX.Element => {
           <Typography>You have received a request to add a Verifiable Credential to your wallet:</Typography>
 
           {cryptkeeperVC ? (
-            <VerifiableCredentialDisplay cryptkeeperVC={cryptkeeperVC} onRenameVC={onRenameVC} />
+            <VerifiableCredentialDisplay cryptkeeperVC={cryptkeeperVC} onRenameVC={onRename} />
           ) : (
             <Typography>There was an error retrieving the Verifiable Credential.</Typography>
           )}
@@ -52,7 +52,7 @@ const AddVerifiableCredential = (): JSX.Element => {
               sx={{ textTransform: "none" }}
               type="button"
               variant="outlined"
-              onClick={onRejectVC}
+              onClick={onReject}
             >
               Reject
             </Button>
@@ -63,7 +63,7 @@ const AddVerifiableCredential = (): JSX.Element => {
               sx={{ textTransform: "none" }}
               type="button"
               variant="contained"
-              onClick={onApproveVC}
+              onClick={onApprove}
             >
               Accept
             </Button>

@@ -48,7 +48,7 @@ describe("ui/pages/AddVerifiableCredential/useAddVerifiableCredential", () => {
   const mockSerializedVerifiableCredential = serializeVC(mockVerifiableCredential);
 
   const expectedCryptkeeperVerifiableCredential = {
-    verifiableCredential: mockVerifiableCredential,
+    vc: mockVerifiableCredential,
     metadata: {
       hash: hashVC(mockVerifiableCredential),
       name: defaultVCName,
@@ -111,7 +111,7 @@ describe("ui/pages/AddVerifiableCredential/useAddVerifiableCredential", () => {
     });
 
     act(() => {
-      result.current.onRenameVC(newName);
+      result.current.onRename(newName);
     });
 
     expect(result.current.cryptkeeperVC!.metadata.name).toBe(newName);
@@ -124,7 +124,7 @@ describe("ui/pages/AddVerifiableCredential/useAddVerifiableCredential", () => {
       expect(result.current.cryptkeeperVC).toStrictEqual(expectedCryptkeeperVerifiableCredential);
     });
 
-    await act(async () => result.current.onApproveVC());
+    await act(async () => result.current.onApprove());
 
     expect(addVerifiableCredential).toBeCalledTimes(1);
   });
@@ -136,7 +136,7 @@ describe("ui/pages/AddVerifiableCredential/useAddVerifiableCredential", () => {
       expect(result.current.cryptkeeperVC).toStrictEqual(expectedCryptkeeperVerifiableCredential);
     });
 
-    await act(async () => Promise.resolve(result.current.onRejectVC()));
+    await act(async () => Promise.resolve(result.current.onReject()));
 
     expect(rejectVerifiableCredentialRequest).toBeCalledTimes(1);
     expect(mockDispatch).toBeCalledTimes(2);
@@ -153,7 +153,7 @@ describe("ui/pages/AddVerifiableCredential/useAddVerifiableCredential", () => {
       expect(result.current.cryptkeeperVC).toStrictEqual(expectedCryptkeeperVerifiableCredential);
     });
 
-    await act(async () => result.current.onApproveVC());
+    await act(async () => result.current.onApprove());
 
     expect(result.current.error).toBe("Could not add verifiable credential!");
   });

@@ -33,7 +33,7 @@ const PresentVerifiableCredential = (): JSX.Element => {
     onToggleSelection,
     onToggleMenu,
     onMenuItemClick,
-    onSubmitVP,
+    onSubmit,
   } = usePresentVerifiableCredential();
 
   const menuOptions = [
@@ -56,13 +56,13 @@ const PresentVerifiableCredential = (): JSX.Element => {
 
         <Typography sx={{ textAlign: "center" }}>{vpRequest}</Typography>
 
-        {cryptkeeperVCs.map(({ verifiableCredential, metadata }) => (
+        {cryptkeeperVCs.map(({ vc, metadata }) => (
           <VerifiableCredentialItem
             key={metadata.hash}
             metadata={metadata}
             selected={selectedVCHashes.includes(metadata.hash)}
-            verifiableCredential={verifiableCredential}
-            onToggleSelectVC={onToggleSelection}
+            verifiableCredential={vc}
+            onSelectVC={onToggleSelection}
           />
         ))}
       </FullModalContent>
@@ -105,7 +105,7 @@ const PresentVerifiableCredential = (): JSX.Element => {
               data-testid="sign-verifiable-presentation-button"
               size="small"
               sx={{ textTransform: "none", flex: 1, ml: 1 }}
-              onClick={onSubmitVP}
+              onClick={onSubmit}
             >
               {menuOptions[menuSelectedIndex]}
             </Button>

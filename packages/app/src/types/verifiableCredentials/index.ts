@@ -6,21 +6,21 @@ export interface IVerifiableCredentialMetadata {
 }
 
 export interface ICryptkeeperVerifiableCredential {
-  verifiableCredential: IVerifiableCredential;
+  vc: IVerifiableCredential;
   metadata: IVerifiableCredentialMetadata;
 }
 
 export interface IAddVCArgs {
-  serializedVerifiableCredential: string;
-  verifiableCredentialName: string;
+  serialized: string;
+  name: string;
 }
 
 export interface IRenameVCArgs {
-  verifiableCredentialHash: string;
-  newVerifiableCredentialName: string;
+  hash: string;
+  newName: string;
 }
 
 export interface ISignVPArgs {
-  verifiablePresentation: IVerifiablePresentation;
+  vp: IVerifiablePresentation;
   address: string;
 }

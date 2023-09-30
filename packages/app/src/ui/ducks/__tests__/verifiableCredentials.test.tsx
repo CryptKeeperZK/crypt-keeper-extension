@@ -55,14 +55,14 @@ describe("ui/ducks/verifiableCredentials", () => {
   };
   const mockCryptkeeperVerifiableCredentials = [
     {
-      verifiableCredential: mockVerifiableCredentialOne,
+      vc: mockVerifiableCredentialOne,
       metadata: {
         hash: "0x123",
         name: "Credential #0",
       },
     },
     {
-      verifiableCredential: mockVerifiableCredentialTwo,
+      vc: mockVerifiableCredentialTwo,
       metadata: {
         hash: "0x1234",
         name: "Credential #1",
@@ -125,7 +125,7 @@ describe("ui/ducks/verifiableCredentials", () => {
   });
 
   test("should rename verifiable credential properly", async () => {
-    const mockPayload = { verifiableCredentialHash: "hash", newVerifiableCredentialName: "name" };
+    const mockPayload = { hash: "hash", newName: "name" };
 
     await Promise.resolve(store.dispatch(renameVerifiableCredential(mockPayload)));
 
@@ -163,7 +163,7 @@ describe("ui/ducks/verifiableCredentials", () => {
     await Promise.resolve(
       store.dispatch(
         signAndSubmitVerifiablePresentation({
-          verifiablePresentation: mockVerifiablePresentation,
+          vp: mockVerifiablePresentation,
           address: mockAddress,
         }),
       ),
@@ -172,7 +172,7 @@ describe("ui/ducks/verifiableCredentials", () => {
     expect(postMessage).toBeCalledTimes(1);
     expect(postMessage).toBeCalledWith({
       method: RPCAction.SIGN_AND_ANNOUNCE_VERIFIABLE_PRESENTATION,
-      payload: { verifiablePresentation: mockVerifiablePresentation, address: mockAddress },
+      payload: { vp: mockVerifiablePresentation, address: mockAddress },
     });
   });
 
