@@ -13,7 +13,6 @@ export default class ConnectIdentity extends BasePage {
   }
 
   async createIdentity(params: ICreateIdentityArgs): Promise<ConnectIdentity> {
-    await expect(this.page.getByText("Add Identity")).toBeVisible();
     await this.page.getByTestId("create-new-identity").click();
     await this.identities.createIdentity(this.page, params);
 

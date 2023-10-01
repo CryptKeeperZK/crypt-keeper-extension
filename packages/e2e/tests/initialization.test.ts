@@ -28,6 +28,7 @@ test.describe("initialization", () => {
     await cryptKeeper.openBackupOnboarding();
     await cryptKeeper.createAccountFromBackup({ password: DEFAULT_BACKUP_PASSWORD, backupFilePath });
 
+    await page.getByText("Connect Identity", { exact: true }).click();
     await cryptKeeper.connectIdentity();
     await cryptKeeper.close();
 
