@@ -65,7 +65,7 @@ const App = () => {
     generateGroupMerkleProof,
   } = useCryptKeeper();
 
-  if (isLocked && !connectedIdentityMetadata) {
+  if (isLocked) {
     return (
       <NotConnected
         genSemaphoreProof={genSemaphoreProof}
