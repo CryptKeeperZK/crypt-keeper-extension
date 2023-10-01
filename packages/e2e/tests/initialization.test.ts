@@ -28,7 +28,11 @@ test.describe("initialization", () => {
     await cryptKeeper.openBackupOnboarding();
     await cryptKeeper.createAccountFromBackup({ password: DEFAULT_BACKUP_PASSWORD, backupFilePath });
 
-    await createAccount({ page, cryptKeeperExtensionId, context });
+    const cryptKeeper_2 = await connectCryptKeeper(page);
+
+    await cryptKeeper_2.connectIdentity();
+  
+    await cryptKeeper_2.close();
 
     await page.goto(`chrome-extension://${cryptKeeperExtensionId}/popup.html`);
     await expect(page.getByTestId("home-page")).toBeVisible();
