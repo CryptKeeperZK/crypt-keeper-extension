@@ -96,7 +96,7 @@ interface IUseCryptKeeperData {
   connectedCommitment?: string;
   connectIdentity: () => void;
   onLogin: () => void;
-  getConnectedIdentityMetadata: () => Promise<ConnectedIdentityMetadata | undefined> 
+  getConnectedIdentityMetadata: () => Promise<ConnectedIdentityMetadata | undefined>
   genSemaphoreProof: (proofType: MerkleProofType) => void;
   genRLNProof: (proofType: MerkleProofType) => void;
   addVerifiableCredentialRequest: (credentialType: string) => Promise<void>;
@@ -118,13 +118,15 @@ export const useCryptKeeper = (): IUseCryptKeeperData => {
     try {
       console.log(`2`)
       const fetchedConnectedIdentityMetadata = await client?.connectIdentity();
-      // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-      toast(`Identity Connected Successfully! ${fetchedConnectedIdentityMetadata}`, {
-        type: "success",
-      });
-      setConnectedIdentityMetadata(fetchedConnectedIdentityMetadata);
-      console.log(`3`)
-      setIsLocked(false);
+      if (fetchedConnectedIdentityMetadata && !connectedIdentityMetadata) {
+        // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+        toast(`Identity Connected Successfully! ${fetchedConnectedIdentityMetadata}`, {
+          type: "success",
+        });
+        setConnectedIdentityMetadata(fetchedConnectedIdentityMetadata);
+        console.log(`3`)
+        setIsLocked(false);
+      }
     } catch (error) {
       toast(`${(error as Error).message}`, {
         type: "error",
@@ -369,6 +371,10 @@ export const useCryptKeeper = (): IUseCryptKeeperData => {
     onGroupMerkleProof,
     onJoinGroup,
   ]);
+
+  useEffect(() => {
+    connectIdentity();
+  }, [client]);
 
   return {
     client,
