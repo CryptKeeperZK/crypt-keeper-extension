@@ -371,11 +371,7 @@ export const useCryptKeeper = (): IUseCryptKeeperData => {
     onGroupMerkleProof,
     onJoinGroup,
   ]);
-
-  useEffect(() => {
-    connectIdentity();
-  }, [client]);
-
+  
   return {
     client,
     isLocked,
