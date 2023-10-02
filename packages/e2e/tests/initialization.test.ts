@@ -17,7 +17,7 @@ test.describe("initialization", () => {
     await expect(page.getByText("Connected to MetaMask")).toBeVisible();
   });
 
-  test("should create account from backup file properly [health-check]", async ({
+  test("should create account from backup file properly [health-check-hot]", async ({
     page,
     cryptKeeperExtensionId,
     context,
@@ -28,11 +28,8 @@ test.describe("initialization", () => {
     await cryptKeeper.openBackupOnboarding();
     await cryptKeeper.createAccountFromBackup({ password: DEFAULT_BACKUP_PASSWORD, backupFilePath });
 
-    const cryptKeeper_2 = await connectCryptKeeper(page);
-
-    await cryptKeeper_2.connectIdentity();
-  
-    await cryptKeeper_2.close();
+    await cryptKeeper.connectIdentity();
+    await cryptKeeper.close();
 
     await page.goto(`chrome-extension://${cryptKeeperExtensionId}/popup.html`);
     await expect(page.getByTestId("home-page")).toBeVisible();
