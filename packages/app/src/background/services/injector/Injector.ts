@@ -33,8 +33,11 @@ export class InjectorService {
     return InjectorService.INSTANCE;
   }
 
-  getConnectedIdentityMetadata = async (_: unknown, { urlOrigin }: IZkMetadata): Promise<ConnectedIdentityMetadata | undefined> => {
-    const { isApproved } = await this.injectorHandler.getConnectionApprovalData({ urlOrigin });
+  getConnectedIdentityMetadata = async (
+    _: unknown,
+    { urlOrigin }: IZkMetadata,
+  ): Promise<ConnectedIdentityMetadata | undefined> => {
+    const { isApproved } = this.injectorHandler.getConnectionApprovalData({ urlOrigin });
 
     if (!isApproved) {
       return undefined;

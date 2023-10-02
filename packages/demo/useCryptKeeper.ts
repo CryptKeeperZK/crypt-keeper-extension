@@ -96,7 +96,7 @@ interface IUseCryptKeeperData {
   connectedCommitment?: string;
   connectIdentity: () => void;
   onLogin: () => void;
-  getConnectedIdentityMetadata: () => Promise<ConnectedIdentityMetadata | undefined>
+  getConnectedIdentityMetadata: () => void;
   genSemaphoreProof: (proofType: MerkleProofType) => void;
   genRLNProof: (proofType: MerkleProofType) => void;
   addVerifiableCredentialRequest: (credentialType: string) => Promise<void>;
@@ -116,15 +116,12 @@ export const useCryptKeeper = (): IUseCryptKeeperData => {
 
   const connectIdentity = useCallback(async () => {
     try {
-      console.log(`2`)
       const fetchedConnectedIdentityMetadata = await client?.connectIdentity();
       if (fetchedConnectedIdentityMetadata && !connectedIdentityMetadata) {
-        // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-        toast(`Identity Connected Successfully! ${fetchedConnectedIdentityMetadata}`, {
+        toast(`Identity Connected Successfully! ${JSON.stringify(Object.entries(fetchedConnectedIdentityMetadata))}`, {
           type: "success",
         });
         setConnectedIdentityMetadata(fetchedConnectedIdentityMetadata);
-        console.log(`3`)
         setIsLocked(false);
       }
     } catch (error) {
@@ -133,10 +130,6 @@ export const useCryptKeeper = (): IUseCryptKeeperData => {
       });
     }
   }, [client, setConnectedIdentityMetadata, setIsLocked]);
-
-  useEffect(() => {
-    console.log("Is locked changed", isLocked)
-  }, [isLocked, setIsLocked]);
 
   const genSemaphoreProof = async (proofType: MerkleProofType = MerkleProofType.STORAGE_ADDRESS) => {
     const externalNullifier = encodeBytes32String("voting-1");
@@ -233,20 +226,19 @@ export const useCryptKeeper = (): IUseCryptKeeperData => {
     await client?.DEV_generateVerifiablePresentationRequest(verifiablePresentationRequest);
   }, [client]);
 
-  const getConnectedIdentityMetadata = useCallback(async (): Promise<ConnectedIdentityMetadata | undefined> => {
+  const getConnectedIdentityMetadata = useCallback(async () => {
     try {
       const fetchedConnectedIdentityMetadata = await client?.getConnectedIdentity();
       if (fetchedConnectedIdentityMetadata) {
         setConnectedIdentityMetadata(fetchedConnectedIdentityMetadata);
         setIsLocked(false);
         toast(
-          `Getting Identity Metadata Successfully! ${JSON.stringify(Object.entries(fetchedConnectedIdentityMetadata!))}`,
+          `Getting Identity Metadata Successfully! ${JSON.stringify(Object.entries(fetchedConnectedIdentityMetadata))}`,
           {
             type: "success",
           },
         );
       }
-      return undefined;
     } catch (error) {
       toast(`${(error as Error).message}`, {
         type: "error",
@@ -285,7 +277,7 @@ export const useCryptKeeper = (): IUseCryptKeeperData => {
   );
 
   const onLogout = useCallback(() => {
-    console.log(`LOGOUT`)
+    console.log(`LOGOUT`);
     setConnectedIdentityMetadata(undefined);
     setIsLocked(true);
   }, [setConnectedIdentityMetadata, setIsLocked]);
@@ -371,7 +363,7 @@ export const useCryptKeeper = (): IUseCryptKeeperData => {
     onGroupMerkleProof,
     onJoinGroup,
   ]);
-  
+
   return {
     client,
     isLocked,
