@@ -125,4 +125,37 @@ describe("ui/components/VerifiableCredential/Item", () => {
     expect(defaultProps.onDeleteVC).toBeCalledTimes(0);
     expect(dangerModal).not.toBeInTheDocument();
   });
+
+  test("should render correctly if alternate issuer format is used", async () => {
+    const props: VerifiableCredentialItemProps = {
+      verifiableCredential: {
+        context: ["https://www.w3.org/2018/credentials/v1"],
+        id: "http://example.edu/credentials/3732",
+        type: ["VerifiableCredential"],
+        issuer: {
+          id: "did:example:123",
+        },
+        issuanceDate: new Date("2020-03-10T04:24:12.164Z"),
+        credentialSubject: {
+          id: "did:example:456",
+          claims: {
+            type: "BachelorDegree",
+            name: "Bachelor of Science and Arts",
+          },
+        },
+      },
+      metadata: {
+        hash: "0x123",
+        name: "Credential #0",
+      },
+      onRenameVC: jest.fn(),
+      onDeleteVC: jest.fn(),
+    };
+
+    render(<VerifiableCredentialItem {...props} />);
+
+    const name = await screen.findByText(defaultProps.metadata.name);
+
+    expect(name).toBeInTheDocument();
+  });
 });

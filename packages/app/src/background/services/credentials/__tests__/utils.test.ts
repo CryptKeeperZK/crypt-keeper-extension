@@ -39,6 +39,12 @@ describe("util/serializeCryptkeeperVC", () => {
     expect(deserializedCred.metadata).toStrictEqual(metadata);
     expect(serializeCryptkeeperVC(deserializedCred)).toBe(serializeCryptkeeperVC(cryptkeeperCred));
   });
+
+  test("should fail to deserialize an invalid serialized string", async () => {
+    await expect(deserializeCryptkeeperVC("")).rejects.toThrow(
+      "Serialized Cryptkeeper Verifiable Credential is not provided",
+    );
+  });
 });
 
 describe("util/serializeVP", () => {
@@ -96,6 +102,10 @@ describe("util/deserializeVC", () => {
     expect(deserializedCred).toStrictEqual(rawCredential);
     expect(serializeVC(deserializedCred)).toBe(credJson);
   });
+
+  test("should fail to deserialize an invalid serialized string", async () => {
+    await expect(deserializeVC("")).rejects.toThrow("Serialized Verifiable Credential is not provided");
+  });
 });
 
 describe("util/validateSerializedVC", () => {
@@ -109,6 +119,70 @@ describe("util/validateSerializedVC", () => {
         id: "did:ethr:0x123",
         claims: {
           name: "John Doe",
+        },
+      },
+    };
+    const credJson = serializeVC(rawCredential);
+    const cred = await deserializeVC(credJson);
+
+    expect(cred).not.toBeNull();
+    expect(validateSerializedVC(credJson)).not.toBeNull();
+  });
+
+  test("should correctly validate alternate issuer format", async () => {
+    const rawCredential = {
+      context: ["https://www.w3.org/2018/credentials/v1"],
+      type: ["VerifiableCredential"],
+      issuer: {
+        id: "did:ethr:0x123",
+      },
+      issuanceDate: new Date("2010-01-01T19:23:24Z"),
+      credentialSubject: {
+        id: "did:ethr:0x123",
+        claims: {
+          name: "John Doe",
+        },
+      },
+    };
+    const credJson = serializeVC(rawCredential);
+    const cred = await deserializeVC(credJson);
+
+    expect(cred).not.toBeNull();
+    expect(validateSerializedVC(credJson)).not.toBeNull();
+  });
+
+  test("should correctly validate nested map claims", async () => {
+    const rawCredential = {
+      context: ["https://www.w3.org/2018/credentials/v1"],
+      type: ["VerifiableCredential"],
+      issuer: "did:ethr:0x123",
+      issuanceDate: new Date("2010-01-01T19:23:24Z"),
+      credentialSubject: {
+        id: "did:ethr:0x123",
+        claims: {
+          mapping: {
+            a: "b",
+          },
+        },
+      },
+    };
+    const credJson = serializeVC(rawCredential);
+    const cred = await deserializeVC(credJson);
+
+    expect(cred).not.toBeNull();
+    expect(validateSerializedVC(credJson)).not.toBeNull();
+  });
+
+  test("should correctly validate nested array claims", async () => {
+    const rawCredential = {
+      context: ["https://www.w3.org/2018/credentials/v1"],
+      type: ["VerifiableCredential"],
+      issuer: "did:ethr:0x123",
+      issuanceDate: new Date("2010-01-01T19:23:24Z"),
+      credentialSubject: {
+        id: "did:ethr:0x123",
+        claims: {
+          array: ["a", "b"],
         },
       },
     };
@@ -334,7 +408,7 @@ describe("util/validateSerializedVC", () => {
     await expect(deserializeVC(credentialJson)).rejects.toThrow(yup.ValidationError);
   });
 
-  test("should return false if the claims are not of valid format", async () => {
+  test("should return false if the claims do not consist of strings", async () => {
     const rawCredential = {
       context: ["https://www.w3.org/2018/credentials/v1"],
       type: ["VerifiableCredential"],
@@ -346,6 +420,24 @@ describe("util/validateSerializedVC", () => {
           name: {
             value: 3,
           },
+        },
+      },
+    };
+    const credentialJson = stringify(rawCredential);
+
+    await expect(deserializeVC(credentialJson)).rejects.toThrow(yup.ValidationError);
+  });
+
+  test("should return false if the claims consist of improper nested arrays", async () => {
+    const rawCredential = {
+      context: ["https://www.w3.org/2018/credentials/v1"],
+      type: ["VerifiableCredential"],
+      issuer: "did:ethr:0x123",
+      issuanceDate: new Date("2010-01-01T19:23:24Z"),
+      credentialSubject: {
+        id: "did:ethr:0x123",
+        claims: {
+          name: [3, 4],
         },
       },
     };

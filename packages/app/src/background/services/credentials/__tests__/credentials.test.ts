@@ -245,6 +245,15 @@ describe("background/services/credentials", () => {
       await expect(result).resolves.toBe(undefined);
     });
 
+    test("should fail to add an empty verifiable credential", async () => {
+      await expect(
+        verifiableCredentialsService.addVC({
+          serialized: "",
+          name: defaultCredentialName,
+        }),
+      ).rejects.toThrow("Serialized Verifiable Credential is required.");
+    });
+
     test("should add and retrieve a verifiable credential", async () => {
       const [credentialsStorage] = (SimpleStorage as jest.Mock).mock.instances as [MockStorage];
       credentialsStorage.get.mockReturnValue(undefined);
@@ -289,6 +298,52 @@ describe("background/services/credentials", () => {
     });
   });
 
+  describe("rename verifiable credentials", () => {
+    const newName = "a new name";
+
+    test("should rename a verifiable credential", async () => {
+      const [credentialsStorage] = (SimpleStorage as jest.Mock).mock.instances as [MockStorage];
+      credentialsStorage.get.mockReturnValue(credentialsStorageString);
+      credentialsStorage.set.mockReturnValue(undefined);
+
+      await verifiableCredentialsService.renameVC({ hash: exampleCredentialHash, newName });
+
+      const newCredentialString = serializeCryptkeeperVC({
+        vc: exampleCryptkeeperCredential.vc,
+        metadata: { name: newName, hash: exampleCredentialHash },
+      });
+      const newCredentialsMap = new Map<string, string>();
+      newCredentialsMap.set(exampleCredentialHash, newCredentialString);
+      newCredentialsMap.set(exampleCredentialHashTwo, exampleCryptkeeperCredentialStringTwo);
+      const newCredentialsStorageString = JSON.stringify(Array.from(newCredentialsMap));
+
+      expect(credentialsStorage.set).toBeCalledTimes(1);
+      expect(credentialsStorage.set).toBeCalledWith(newCredentialsStorageString);
+    });
+
+    test("should not rename a verifiable credential if hash is not provided", async () => {
+      const [credentialsStorage] = (SimpleStorage as jest.Mock).mock.instances as [MockStorage];
+      credentialsStorage.get.mockReturnValue(credentialsStorageString);
+      credentialsStorage.set.mockReturnValue(undefined);
+
+      await expect(verifiableCredentialsService.renameVC({ hash: "", newName })).rejects.toThrow(
+        "Verifiable Credential hash and name are required.",
+      );
+      expect(credentialsStorage.set).toBeCalledTimes(0);
+    });
+
+    test("should not rename a verifiable credential if it does not exist", async () => {
+      const [credentialsStorage] = (SimpleStorage as jest.Mock).mock.instances as [MockStorage];
+      credentialsStorage.get.mockReturnValue(credentialsStorageString);
+      credentialsStorage.set.mockReturnValue(undefined);
+
+      await expect(verifiableCredentialsService.renameVC({ hash: "random hash", newName })).rejects.toThrow(
+        "Verifiable Credential does not exist.",
+      );
+      expect(credentialsStorage.set).toBeCalledTimes(0);
+    });
+  });
+
   describe("delete verifiable credentials", () => {
     test("should delete a verifiable credential", async () => {
       const [credentialsStorage] = (SimpleStorage as jest.Mock).mock.instances as [MockStorage];
@@ -308,6 +363,17 @@ describe("background/services/credentials", () => {
 
       await expect(verifiableCredentialsService.deleteVC("example hash")).rejects.toThrow(
         "Verifiable Credential does not exist.",
+      );
+      expect(credentialsStorage.set).toBeCalledTimes(0);
+    });
+
+    test("should not delete a verifiable credential if hash is not provided", async () => {
+      const [credentialsStorage] = (SimpleStorage as jest.Mock).mock.instances as [MockStorage];
+      credentialsStorage.get.mockReturnValue(credentialsStorageString);
+      credentialsStorage.set.mockReturnValue(undefined);
+
+      await expect(verifiableCredentialsService.deleteVC("")).rejects.toThrow(
+        "Verifiable Credential hash is required.",
       );
       expect(credentialsStorage.set).toBeCalledTimes(0);
     });
@@ -365,6 +431,37 @@ describe("background/services/credentials", () => {
       await verifiableCredentialsService.uploadEncryptedStorage("", "");
 
       expect(credentialsStorage.set).toBeCalledTimes(0);
+    });
+
+    test("should not upload encrypted identities if data is invalid", async () => {
+      await expect(verifiableCredentialsService.uploadEncryptedStorage({ a: "b" }, examplePassword)).rejects.toThrow(
+        "Incorrect backup format for credentials",
+      );
+    });
+
+    test("should download storage properly", async () => {
+      const [credentialsStorage] = (SimpleStorage as jest.Mock).mock.instances as [MockStorage];
+
+      await verifiableCredentialsService.downloadStorage();
+
+      expect(credentialsStorage.get).toBeCalledTimes(1);
+    });
+
+    test("should restore storage properly", () => {
+      const data = "data";
+
+      const [credentialsStorage] = (SimpleStorage as jest.Mock).mock.instances as [MockStorage];
+
+      verifiableCredentialsService.restoreStorage(data);
+
+      expect(credentialsStorage.set).toBeCalledTimes(1);
+      expect(credentialsStorage.set).toBeCalledWith(data);
+    });
+
+    test("should not restore storage if backup data is invalid", async () => {
+      await expect(verifiableCredentialsService.restoreStorage({ a: "b" })).rejects.toThrow(
+        "Incorrect restore format for credentials",
+      );
     });
   });
 });

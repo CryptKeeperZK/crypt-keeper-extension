@@ -55,106 +55,156 @@ describe("ui/pages/AddVerifiableCredential/useAddVerifiableCredential", () => {
     },
   };
 
-  const savedWindow = window;
+  const oldHref = window.location.href;
 
-  beforeEach(() => {
-    (useAppDispatch as jest.Mock).mockReturnValue(mockDispatch);
+  Object.defineProperty(window, "location", {
+    value: {
+      href: oldHref,
+    },
+    writable: true,
+  });
 
-    // eslint-disable-next-line no-global-assign
-    window = Object.create(window) as Window & typeof globalThis;
-    const url = `http://localhost:3000/verifiable-credentials?serializedVerifiableCredential=${mockSerializedVerifiableCredential}`;
-    Object.defineProperty(window, "location", {
-      value: {
-        href: url,
-      },
+  describe("basic hook functionality", () => {
+    beforeEach(() => {
+      (useAppDispatch as jest.Mock).mockReturnValue(mockDispatch);
+
+      window.location.href = `http://localhost:3000/verifiable-credentials?serializedVerifiableCredential=${mockSerializedVerifiableCredential}`;
+    });
+
+    afterEach(() => {
+      jest.clearAllMocks();
+
+      window.location.href = oldHref;
+    });
+
+    test("should return initial data", async () => {
+      const { result } = renderHook(() => useAddVerifiableCredential());
+
+      await waitFor(() => {
+        expect(result.current.cryptkeeperVC).toStrictEqual(expectedCryptkeeperVerifiableCredential);
+        expect(result.current.error).toBe(undefined);
+      });
+    });
+
+    test("should close the modal properly", async () => {
+      const { result } = renderHook(() => useAddVerifiableCredential());
+
+      await waitFor(() => {
+        expect(result.current.cryptkeeperVC).toStrictEqual(expectedCryptkeeperVerifiableCredential);
+      });
+
+      act(() => {
+        result.current.onCloseModal();
+      });
+
+      expect(closePopup).toBeCalledTimes(1);
+      expect(mockDispatch).toBeCalledTimes(1);
+    });
+
+    test("should toggle renaming properly", async () => {
+      const newName = "a new name";
+
+      const { result } = renderHook(() => useAddVerifiableCredential());
+
+      await waitFor(() => {
+        expect(result.current.cryptkeeperVC).toStrictEqual(expectedCryptkeeperVerifiableCredential);
+      });
+
+      act(() => {
+        result.current.onRename(newName);
+      });
+
+      expect(result.current.cryptkeeperVC!.metadata.name).toBe(newName);
+    });
+
+    test("should approve the verifiable credential properly", async () => {
+      const { result } = renderHook(() => useAddVerifiableCredential());
+
+      await waitFor(() => {
+        expect(result.current.cryptkeeperVC).toStrictEqual(expectedCryptkeeperVerifiableCredential);
+      });
+
+      await act(async () => result.current.onApprove());
+
+      expect(addVerifiableCredential).toBeCalledTimes(1);
+    });
+
+    test("should reject the verifiable credential properly", async () => {
+      const { result } = renderHook(() => useAddVerifiableCredential());
+
+      await waitFor(() => {
+        expect(result.current.cryptkeeperVC).toStrictEqual(expectedCryptkeeperVerifiableCredential);
+      });
+
+      await act(async () => Promise.resolve(result.current.onReject()));
+
+      expect(rejectVerifiableCredentialRequest).toBeCalledTimes(1);
+      expect(mockDispatch).toBeCalledTimes(2);
+    });
+
+    test("should handle an error properly", async () => {
+      (addVerifiableCredential as jest.Mock).mockImplementation(() => {
+        throw new Error("Could not add verifiable credential!");
+      });
+
+      const { result } = renderHook(() => useAddVerifiableCredential());
+
+      await waitFor(() => {
+        expect(result.current.cryptkeeperVC).toStrictEqual(expectedCryptkeeperVerifiableCredential);
+      });
+
+      await act(async () => result.current.onApprove());
+
+      expect(result.current.error).toBe("Could not add verifiable credential!");
     });
   });
 
-  afterEach(() => {
-    jest.clearAllMocks();
+  describe("no serialized verifiable credential", () => {
+    beforeEach(() => {
+      (useAppDispatch as jest.Mock).mockReturnValue(mockDispatch);
 
-    // eslint-disable-next-line no-global-assign
-    window = savedWindow;
-  });
-
-  test("should return initial data", async () => {
-    const { result } = renderHook(() => useAddVerifiableCredential());
-
-    await waitFor(() => {
-      expect(result.current.cryptkeeperVC).toStrictEqual(expectedCryptkeeperVerifiableCredential);
-      expect(result.current.error).toBe(undefined);
-    });
-  });
-
-  test("should close the modal properly", async () => {
-    const { result } = renderHook(() => useAddVerifiableCredential());
-
-    await waitFor(() => {
-      expect(result.current.cryptkeeperVC).toStrictEqual(expectedCryptkeeperVerifiableCredential);
+      window.location.href = `http://localhost:3000/verifiable-credentials`;
     });
 
-    act(() => {
-      result.current.onCloseModal();
+    afterEach(() => {
+      jest.clearAllMocks();
+
+      window.location.href = oldHref;
     });
 
-    expect(closePopup).toBeCalledTimes(1);
-    expect(mockDispatch).toBeCalledTimes(1);
-  });
+    test("should process no search param accordingly", async () => {
+      const { result } = renderHook(() => useAddVerifiableCredential());
 
-  test("should toggle renaming properly", async () => {
-    const newName = "a new name";
-
-    const { result } = renderHook(() => useAddVerifiableCredential());
-
-    await waitFor(() => {
-      expect(result.current.cryptkeeperVC).toStrictEqual(expectedCryptkeeperVerifiableCredential);
+      await waitFor(() => {
+        expect(result.current.cryptkeeperVC).toBe(undefined);
+        expect(result.current.error).toBe(undefined);
+      });
     });
 
-    act(() => {
-      result.current.onRename(newName);
+    test("should handle renaming with an undefined verifiable credential properly", async () => {
+      const { result } = renderHook(() => useAddVerifiableCredential());
+
+      await waitFor(() => {
+        expect(result.current.cryptkeeperVC).toBe(undefined);
+        expect(result.current.error).toBe(undefined);
+      });
+
+      act(() => result.current.onRename("new name"));
+
+      expect(result.current.cryptkeeperVC).toBe(undefined);
     });
 
-    expect(result.current.cryptkeeperVC!.metadata.name).toBe(newName);
-  });
+    test("should handle approval with an undefined verifiable credential properly", async () => {
+      const { result } = renderHook(() => useAddVerifiableCredential());
 
-  test("should approve the verifiable credential properly", async () => {
-    const { result } = renderHook(() => useAddVerifiableCredential());
+      await waitFor(() => {
+        expect(result.current.cryptkeeperVC).toBe(undefined);
+        expect(result.current.error).toBe(undefined);
+      });
 
-    await waitFor(() => {
-      expect(result.current.cryptkeeperVC).toStrictEqual(expectedCryptkeeperVerifiableCredential);
+      await act(async () => result.current.onApprove());
+
+      expect(result.current.cryptkeeperVC).toBe(undefined);
     });
-
-    await act(async () => result.current.onApprove());
-
-    expect(addVerifiableCredential).toBeCalledTimes(1);
-  });
-
-  test("should reject the verifiable credential properly", async () => {
-    const { result } = renderHook(() => useAddVerifiableCredential());
-
-    await waitFor(() => {
-      expect(result.current.cryptkeeperVC).toStrictEqual(expectedCryptkeeperVerifiableCredential);
-    });
-
-    await act(async () => Promise.resolve(result.current.onReject()));
-
-    expect(rejectVerifiableCredentialRequest).toBeCalledTimes(1);
-    expect(mockDispatch).toBeCalledTimes(2);
-  });
-
-  test("should handle an error properly", async () => {
-    (addVerifiableCredential as jest.Mock).mockImplementation(() => {
-      throw new Error("Could not add verifiable credential!");
-    });
-
-    const { result } = renderHook(() => useAddVerifiableCredential());
-
-    await waitFor(() => {
-      expect(result.current.cryptkeeperVC).toStrictEqual(expectedCryptkeeperVerifiableCredential);
-    });
-
-    await act(async () => result.current.onApprove());
-
-    expect(result.current.error).toBe("Could not add verifiable credential!");
   });
 });

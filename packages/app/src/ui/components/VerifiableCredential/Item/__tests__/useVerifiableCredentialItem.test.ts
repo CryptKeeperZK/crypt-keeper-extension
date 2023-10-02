@@ -31,6 +31,7 @@ describe("ui/components/VerifiableCredential/Item/useVerifiableCredentialItem", 
     },
     onRenameVC: jest.fn(),
     onDeleteVC: jest.fn(),
+    onSelectVC: jest.fn(),
   };
 
   beforeEach(() => {
@@ -76,5 +77,13 @@ describe("ui/components/VerifiableCredential/Item/useVerifiableCredentialItem", 
     await act(async () => result.current.onDelete());
 
     expect(useVerifiableCredentialItemArgs.onDeleteVC).toBeCalledTimes(1);
+  });
+
+  test("should handle selection properly", () => {
+    const { result } = renderHook(() => useVerifiableCredentialItem(useVerifiableCredentialItemArgs));
+
+    act(() => result.current.onSelect());
+
+    expect(useVerifiableCredentialItemArgs.onSelectVC).toBeCalledTimes(1);
   });
 });

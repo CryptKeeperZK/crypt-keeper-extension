@@ -2,6 +2,7 @@
  * @jest-environment jsdom
  */
 
+import { ICredentialIssuer } from "@cryptkeeperzk/types";
 import { fireEvent, render, screen } from "@testing-library/react";
 
 import { useAppDispatch } from "@src/ui/ducks/hooks";
@@ -30,6 +31,7 @@ describe("ui/components/VerifiableCredential/Display", () => {
         type: ["VerifiableCredential"],
         issuer: "did:example:123",
         issuanceDate: new Date("2020-03-10T04:24:12.164Z"),
+        expirationDate: new Date("2020-04-10T04:24:12.164Z"),
         credentialSubject: {
           id: "did:example:456",
           claims: {
@@ -87,5 +89,39 @@ describe("ui/components/VerifiableCredential/Display", () => {
 
     expect(defaultProps.onRenameVC).toBeCalledTimes(1);
     expect(defaultProps.onRenameVC).toBeCalledWith("My Favorite Credential");
+  });
+
+  test("should render correctly if alternate issuer format is used", async () => {
+    const props: VerifiableCredentialDisplayProps = {
+      cryptkeeperVC: {
+        vc: {
+          context: ["https://www.w3.org/2018/credentials/v1"],
+          id: "http://example.edu/credentials/3732",
+          type: ["VerifiableCredential"],
+          issuer: {
+            id: "did:example:123",
+          },
+          issuanceDate: new Date("2020-03-10T04:24:12.164Z"),
+          credentialSubject: {
+            id: "did:example:456",
+            claims: {
+              type: "BachelorDegree",
+              name: "Bachelor of Science and Arts",
+            },
+          },
+        },
+        metadata: {
+          hash: "0x123",
+          name: "Credential #0",
+        },
+      },
+      onRenameVC: jest.fn(),
+    };
+
+    render(<VerifiableCredentialDisplay {...props} />);
+
+    const issuer = await screen.findByText((props.cryptkeeperVC.vc.issuer as ICredentialIssuer).id!);
+
+    expect(issuer).toBeInTheDocument();
   });
 });
