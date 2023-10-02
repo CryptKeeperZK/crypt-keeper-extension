@@ -23,16 +23,16 @@ export interface ICryptKeeperInjectedProvider {
   /**
    * Connects to the CryptKeeper extension.
    *
-   * @returns {Promise<ConnectedIdentityMetadata>} A Promise that resolves to the connected CryptKeeperInjectedProvider instance, or undefined if the CryptKeeper extension is not installed.
+   * @returns {Promise<void>}
    */
-  connectIdentity(): Promise<ConnectedIdentityMetadata>;
+  connect(): Promise<void>;
 
   /**
    * Retrieves the connected identity.
    *
    * @returns {Promise<IConnectedIdentity>} A Promise that resolves to the connected identity.
    */
-  getConnectedIdentity(): Promise<ConnectedIdentityMetadata>;
+  getConnectedIdentity(): Promise<ConnectedIdentityMetadata | undefined>;
 
   /**
    * Generates a semaphore proof.

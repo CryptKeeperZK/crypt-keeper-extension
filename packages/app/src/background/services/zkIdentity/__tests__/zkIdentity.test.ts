@@ -9,6 +9,7 @@ import SimpleStorage from "@src/background/services/storage";
 import ZkIdentityService from "@src/background/services/zkIdentity";
 import { ZERO_ADDRESS } from "@src/config/const";
 import { mockDefaultIdentity, mockDefaultIdentityCommitment } from "@src/config/mock/zk";
+import { setStatus } from "@src/ui/ducks/app";
 import { setConnectedIdentity, setIdentities } from "@src/ui/ducks/identities";
 import pushMessage from "@src/util/pushMessage";
 
@@ -44,6 +45,18 @@ jest.mock("@src/background/services/notification", (): unknown => ({
 jest.mock("@src/background/services/wallet", (): unknown => ({
   getInstance: jest.fn(() => ({
     signMessage: jest.fn(() => Promise.resolve("ck-signature")),
+  })),
+}));
+
+const mockDefaultStatus = {
+  isUnlocked: true,
+  isInitialized: true,
+  isMnemonicGenerated: true,
+};
+
+jest.mock("@src/background/services/lock", (): unknown => ({
+  getInstance: jest.fn(() => ({
+    getStatus: jest.fn(() => Promise.resolve(mockDefaultStatus)),
   })),
 }));
 
@@ -164,9 +177,11 @@ describe("background/services/zkIdentity", () => {
       expect(pushMessage).toBeCalledTimes(2);
       expect(pushMessage).toHaveBeenNthCalledWith(1, expectConnectIdentityAction);
       expect(pushMessage).toHaveBeenNthCalledWith(2, expectedSetIdentitiesAction);
-      expect(browser.tabs.sendMessage).toBeCalledTimes(2);
+      expect(browser.tabs.sendMessage).toBeCalledTimes(4);
       expect(browser.tabs.sendMessage).toHaveBeenNthCalledWith(1, defaultTabs[0].id, expectConnectIdentityAction);
       expect(browser.tabs.sendMessage).toHaveBeenNthCalledWith(2, defaultTabs[1].id, expectConnectIdentityAction);
+      expect(browser.tabs.sendMessage).toHaveBeenNthCalledWith(3, defaultTabs[0].id, setStatus(mockDefaultStatus));
+      expect(browser.tabs.sendMessage).toHaveBeenNthCalledWith(4, defaultTabs[1].id, setStatus(mockDefaultStatus));
     });
 
     test("should not set connected identity if there is no any saved identities", async () => {

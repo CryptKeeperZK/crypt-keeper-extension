@@ -19,11 +19,13 @@ import browser from "webextension-polyfill";
 import BrowserUtils from "@src/background/controllers/browserUtils";
 import CryptoService, { ECryptMode } from "@src/background/services/crypto";
 import HistoryService from "@src/background/services/history";
+import LockerService from "@src/background/services/lock";
 import NotificationService from "@src/background/services/notification";
 import SimpleStorage from "@src/background/services/storage";
 import WalletService from "@src/background/services/wallet";
 import { Paths } from "@src/constants";
 import { OperationType } from "@src/types";
+import { setStatus } from "@src/ui/ducks/app";
 import { setIdentities, setConnectedIdentity } from "@src/ui/ducks/identities";
 import { ellipsify } from "@src/util/account";
 import pushMessage from "@src/util/pushMessage";
@@ -50,6 +52,8 @@ export default class ZkIdentityService implements IBackupable {
 
   private cryptoService: CryptoService;
 
+  private lockService: LockerService;
+
   private connectedIdentity?: ZkIdentitySemaphore;
 
   private constructor() {
@@ -61,6 +65,7 @@ export default class ZkIdentityService implements IBackupable {
     this.browserController = BrowserUtils.getInstance();
     this.walletService = WalletService.getInstance();
     this.cryptoService = CryptoService.getInstance();
+    this.lockService = LockerService.getInstance();
   }
 
   static getInstance = (): ZkIdentityService => {
@@ -162,7 +167,16 @@ export default class ZkIdentityService implements IBackupable {
   connectIdentity = async ({ urlOrigin, identityCommitment }: IConnectIdentityArgs): Promise<boolean> => {
     const identities = await this.getIdentitiesFromStore();
 
-    return this.updateConnectedIdentity({ identities, identityCommitment, urlOrigin });
+    const result = await this.updateConnectedIdentity({ identities, identityCommitment, urlOrigin });
+
+    if (result) {
+      const status = await this.lockService.getStatus();
+      await this.browserController
+        .pushEvent(setStatus(status), { urlOrigin })
+        .then(() => this.browserController.closePopup());
+    }
+
+    return result;
   };
 
   private updateConnectedIdentity = async ({

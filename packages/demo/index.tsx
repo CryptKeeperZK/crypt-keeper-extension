@@ -54,7 +54,7 @@ const App = () => {
     proof,
     connectedCommitment,
     getConnectedIdentityMetadata,
-    connectIdentity,
+    connect,
     genSemaphoreProof,
     genRLNProof,
     addVerifiableCredentialRequest,
@@ -65,7 +65,7 @@ const App = () => {
   } = useCryptKeeper();
 
   if (isLocked) {
-    return <NotConnected genSemaphoreProof={genSemaphoreProof} onClick={connectIdentity} />;
+    return <NotConnected genSemaphoreProof={genSemaphoreProof} onClick={connect} />;
   }
 
   return (

@@ -60,7 +60,7 @@ export class CryptkeeperConnector extends Connector {
 
     this.customProvider = initializeCryptKeeperProvider();
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-    this.eagerConnection = this.customProvider?.connectIdentity().then(() => {
+    this.eagerConnection = this.customProvider?.connect().then(() => {
       this.customProvider?.on(EventName.LOGIN, async () => {
         const accounts = await this.loadAccounts();
         this.actions.update({ accounts });

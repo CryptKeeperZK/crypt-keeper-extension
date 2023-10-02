@@ -4,6 +4,7 @@ import { SemaphoreProofModal, ConnectionApprovalModal, DefaultApprovalModal, Rln
 import "./confirmModal.scss";
 import { useConfirmRequestModal } from "./useConfirmRequestModal";
 
+/** DO NOT ADD NEW FUNCTIONALITY HERE */
 /** @deprecated */
 const ConfirmRequestModal = (): JSX.Element | null => {
   const { pendingRequests, loading, error, accept, reject } = useConfirmRequestModal();

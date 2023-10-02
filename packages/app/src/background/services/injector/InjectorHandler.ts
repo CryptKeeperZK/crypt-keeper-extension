@@ -42,6 +42,8 @@ export class InjectorHandler {
 
   getApprovalService = (): ApprovalService => this.approvalService;
 
+  getZkIdentityService = (): ZkIdentityService => this.zkIdentityService;
+
   getZkProofService = (): ZkProofService => this.zkProofService;
 
   connectedIdentityMetadata = async (_: unknown, meta?: IZkMetadata): Promise<ConnectedIdentityMetadata> => {
@@ -59,10 +61,6 @@ export class InjectorHandler {
     await this.browserService.closePopup();
 
     return responsePayload;
-  };
-
-  closePopup = async (): Promise<void> => {
-    await this.browserService.closePopup();
   };
 
   requiredApproval = async ({ urlOrigin }: IZkMetadata): Promise<IConnectionApprovalData> => {

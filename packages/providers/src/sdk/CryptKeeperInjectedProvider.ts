@@ -36,17 +36,17 @@ export class CryptKeeperInjectedProvider extends Handler implements ICryptKeeper
     super(connectedOrigin);
   }
 
-  async connectIdentity(): Promise<ConnectedIdentityMetadata> {
-    return this.post({
-      method: RPCExternalAction.INJECTOR_CONNECT_IDENTITY,
+  async connect(): Promise<void> {
+    await this.post({
+      method: RPCExternalAction.INJECTOR_CONNECT,
       payload: { urlOrigin: this.connectedOrigin },
-    }) as Promise<ConnectedIdentityMetadata>;
+    });
   }
 
-  async getConnectedIdentity(): Promise<ConnectedIdentityMetadata> {
+  async getConnectedIdentity(): Promise<ConnectedIdentityMetadata | undefined> {
     return this.post({
       method: RPCExternalAction.INJECTOR_GET_CONNECTED_IDENTITY_DATA,
-    }) as Promise<ConnectedIdentityMetadata>;
+    }) as Promise<ConnectedIdentityMetadata | undefined>;
   }
 
   async generateSemaphoreProof({

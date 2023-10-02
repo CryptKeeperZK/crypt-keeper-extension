@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 
 import { Paths } from "@src/constants";
 import { PasswordFormFields } from "@src/types";
-import { unlock } from "@src/ui/ducks/app";
+import { closePopup, unlock } from "@src/ui/ducks/app";
 import { useAppDispatch } from "@src/ui/ducks/hooks";
 
 export interface IUseLoginData {
@@ -39,6 +39,7 @@ export const useLogin = (): IUseLoginData => {
   const onSubmit = useCallback(
     (data: LoginFields) => {
       dispatch(unlock(data.password))
+        .then(() => dispatch(closePopup()))
         .then(() => {
           navigate(Paths.HOME);
         })

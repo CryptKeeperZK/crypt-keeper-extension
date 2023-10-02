@@ -48,6 +48,7 @@ const mockGetConnectedIdentityData = jest.fn(
     return Promise.resolve(undefined);
   },
 );
+const mockConnectIdentityRequest = jest.fn();
 const mockIsApproved = jest.fn(
   (urlOrigin) =>
     urlOrigin === mockDefaultUrlOrigin ||
@@ -112,6 +113,7 @@ jest.mock("@src/background/services/zkIdentity", (): unknown => ({
   getInstance: jest.fn(() => ({
     getConnectedIdentity: mockGetConnectedIdentity,
     getConnectedIdentityData: mockGetConnectedIdentityData,
+    connectIdentityRequest: mockConnectIdentityRequest,
   })),
 }));
 
@@ -174,34 +176,30 @@ describe("background/services/injector", () => {
     });
   });
 
-  describe("connect identity", () => {
-    test("should connect identity properly", async () => {
+  describe("connect", () => {
+    test("should connect properly", async () => {
       const service = InjectorService.getInstance();
 
-      const result = await service.connectIdentity(defaultMetadata);
-
-      expect(result).toStrictEqual(mockConnectedIdentity);
+      await expect(service.connect(defaultMetadata)).resolves.not.toThrowError();
     });
 
     test("should throw error if there is no urlOrigin", async () => {
       const service = InjectorService.getInstance();
 
-      await expect(service.connectIdentity({ urlOrigin: "" })).rejects.toThrow("CryptKeeper: Origin is not set");
+      await expect(service.connect({ urlOrigin: "" })).rejects.toThrow("CryptKeeper: Origin is not set");
     });
 
     test("should connect with approval request properly", async () => {
       const service = InjectorService.getInstance();
 
-      const result = await service.connectIdentity({ urlOrigin: "new-urlOrigin" });
-
-      expect(mockNewRequest).toHaveBeenCalledTimes(2);
-      expect(result).toStrictEqual(mockConnectedIdentity);
+      await expect(service.connect({ urlOrigin: "new-urlOrigin" })).resolves.not.toThrowError();
+      expect(mockNewRequest).toHaveBeenCalledTimes(1);
     });
 
     test("should reject connect request from the approve connection page properly", async () => {
       const service = InjectorService.getInstance();
 
-      await expect(service.connectIdentity({ urlOrigin: "reject_approve" })).rejects.toThrow(
+      await expect(service.connect({ urlOrigin: "reject_approve" })).rejects.toThrow(
         "CryptKeeper: error in the connect request, User rejected your request.",
       );
     });
@@ -209,16 +207,8 @@ describe("background/services/injector", () => {
     test("should reject connect request from the connect identity page properly", async () => {
       const service = InjectorService.getInstance();
 
-      await expect(service.connectIdentity({ urlOrigin: "reject_connect" })).rejects.toThrow(
+      await expect(service.connect({ urlOrigin: "reject_connect" })).rejects.toThrow(
         "CryptKeeper: error in the connect request, User rejected your request.",
-      );
-    });
-
-    test("should fail connect if no connected identity found", async () => {
-      const service = InjectorService.getInstance();
-
-      await expect(service.connectIdentity({ urlOrigin: "empty_connected_identity" })).rejects.toThrow(
-        "CryptKeeper: identity metadata is not found",
       );
     });
   });

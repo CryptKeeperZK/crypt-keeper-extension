@@ -28,7 +28,7 @@ const defaultMap = Object.values(RPCExternalAction).reduce(
 
 const RPC_METHOD_ACCESS: Record<RPCExternalAction, boolean> = {
   ...defaultMap,
-  [RPCExternalAction.INJECTOR_CONNECT_IDENTITY]: true,
+  [RPCExternalAction.INJECTOR_CONNECT]: true,
   [RPCExternalAction.INJECTOR_GENERATE_SEMAPHORE_PROOF]: true,
   [RPCExternalAction.INJECTOR_GENERATE_RLN_PROOF]: true,
   [RPCExternalAction.INJECTOR_GET_CONNECTED_IDENTITY_DATA]: true,
@@ -101,7 +101,7 @@ export default class CryptKeeperController {
       RPCExternalAction.INJECTOR_GET_CONNECTED_IDENTITY_DATA,
       this.injectorService.getConnectedIdentityMetadata,
     );
-    this.handler.add(RPCExternalAction.INJECTOR_CONNECT_IDENTITY, this.injectorService.connectIdentity);
+    this.handler.add(RPCExternalAction.INJECTOR_CONNECT, this.injectorService.connect);
     this.handler.add(RPCExternalAction.INJECTOR_GENERATE_SEMAPHORE_PROOF, this.injectorService.generateSemaphoreProof);
     this.handler.add(RPCExternalAction.INJECTOR_GENERATE_RLN_PROOF, this.injectorService.generateRLNProof);
 

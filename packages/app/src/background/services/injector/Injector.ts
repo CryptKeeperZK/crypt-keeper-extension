@@ -46,7 +46,7 @@ export class InjectorService {
     return this.injectorHandler.connectedIdentityMetadata({}, { urlOrigin });
   };
 
-  connectIdentity = async ({ urlOrigin }: IZkMetadata): Promise<ConnectedIdentityMetadata> => {
+  connect = async ({ urlOrigin }: IZkMetadata): Promise<void> => {
     const { checkedUrlOrigin, isApproved, canSkipApprove } = await this.injectorHandler.checkApproval({ urlOrigin });
 
     try {
@@ -63,16 +63,10 @@ export class InjectorService {
         });
       }
 
-      await this.injectorHandler.newRequest(PendingRequestType.CONNECT_IDENTITY, { urlOrigin });
+      await this.injectorHandler.getZkIdentityService().connectIdentityRequest({ urlOrigin: urlOrigin! });
     } catch (error) {
       throw new Error(`CryptKeeper: error in the connect request, ${(error as Error).message}`);
     }
-
-    const connectedIdentity = await this.injectorHandler.connectedIdentityMetadata({}, { urlOrigin });
-
-    await this.injectorHandler.closePopup();
-
-    return connectedIdentity;
   };
 
   generateSemaphoreProof = async (
