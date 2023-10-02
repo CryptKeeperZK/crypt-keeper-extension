@@ -150,8 +150,8 @@ importers:
         specifier: ^8.2.3
         version: 8.2.3(@types/react@18.2.24)(react@18.2.0)
       '@web3-react/metamask':
-        specifier: ^8.2.3
-        version: 8.2.3(@types/react@18.2.24)(react@18.2.0)
+        specifier: ^8.2.4
+        version: 8.2.4(@types/react@18.2.24)(react@18.2.0)
       '@web3-react/types':
         specifier: ^8.2.3
         version: 8.2.3(@types/react@18.2.24)(react@18.2.0)
@@ -5909,8 +5909,8 @@ packages:
       - utf-8-validate
     dev: false
 
-  /@web3-react/metamask@8.2.3(@types/react@18.2.24)(react@18.2.0):
-    resolution: {integrity: sha512-Z5F3KiTkJMZR8citCb3LPQCwzOnvGzrhgfpYiBNioNNbW0Dq80eiIbpHeXeGlSQbqwHHEZOYm9LPUEM7w8aRYg==}
+  /@web3-react/metamask@8.2.4(@types/react@18.2.24)(react@18.2.0):
+    resolution: {integrity: sha512-4yoqDgvcB0QKUGSk00/fUipA3z5rOXcQYAwE0CABPa5lbTRAIm5i8F0Gj8UW7QO0pQus4UtjX0+JxWdclB7UrA==}
     dependencies:
       '@metamask/detect-provider': 1.2.0
       '@web3-react/types': 8.2.3(@types/react@18.2.24)(react@18.2.0)

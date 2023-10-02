@@ -105,7 +105,7 @@
     "@reduxjs/toolkit": "^1.9.6",
     "@types/json-stable-stringify": "^1.0.34",
     "@web3-react/core": "^8.2.3",
-    "@web3-react/metamask": "^8.2.3",
+    "@web3-react/metamask": "^8.2.4",
     "@web3-react/types": "^8.2.3",
     "@zk-kit/incremental-merkle-tree": "^1.1.0",
     "bigint-conversion": "^2.4.2",
