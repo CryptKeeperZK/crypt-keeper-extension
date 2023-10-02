@@ -147,8 +147,8 @@ importers:
         specifier: ^1.0.34
         version: 1.0.34
       '@web3-react/core':
-        specifier: ^8.2.2
-        version: 8.2.2(@types/react@18.2.24)(react@18.2.0)
+        specifier: ^8.2.3
+        version: 8.2.3(@types/react@18.2.24)(react@18.2.0)
       '@web3-react/metamask':
         specifier: ^8.2.3
         version: 8.2.3(@types/react@18.2.24)(react@18.2.0)
@@ -5891,12 +5891,12 @@ packages:
       typescript: 5.2.2
     dev: true
 
-  /@web3-react/core@8.2.2(@types/react@18.2.24)(react@18.2.0):
-    resolution: {integrity: sha512-4AFWqOBisBBMj22/RB3+w6px66YxtK0iVIReQj1h1Rssko2ptIHjGMLyyRInN8eVemx8QaOE481odOHfFKZkUQ==}
+  /@web3-react/core@8.2.3(@types/react@18.2.24)(react@18.2.0):
+    resolution: {integrity: sha512-0ezmRKhqQpoa9ct2/3erg60zBXfC/f/liYR1mfSGKtIroRkLnPARigZSV6pI+fi8bhfGJ0RKtFWyTCCWZzdq1w==}
     peerDependencies:
       react: '>=16.8'
     dependencies:
-      '@web3-react/store': 8.2.2(@types/react@18.2.24)(react@18.2.0)
+      '@web3-react/store': 8.2.3(@types/react@18.2.24)(react@18.2.0)
       '@web3-react/types': 8.2.3(@types/react@18.2.24)(react@18.2.0)
       react: 18.2.0
       zustand: 4.4.0(@types/react@18.2.24)(react@18.2.0)
@@ -5920,8 +5920,8 @@ packages:
       - react
     dev: false
 
-  /@web3-react/store@8.2.2(@types/react@18.2.24)(react@18.2.0):
-    resolution: {integrity: sha512-ITMkLzyw8tSTTEf8NcjIdewphbCpWHwK4EmwRxPCZMMRs+apZwoj3R/YNflMBoPMC+ybWKnVVpDd6CprF1TU9A==}
+  /@web3-react/store@8.2.3(@types/react@18.2.24)(react@18.2.0):
+    resolution: {integrity: sha512-qUJQ5pDsYYDra+/+glq2BmIS43HYAiEZ22sLLVh6E75WiZKRNOOqUxBDPe33KTIn718DLt51j+wd2FT+oT/kJQ==}
     dependencies:
       '@ethersproject/address': 5.7.0
       '@web3-react/types': 8.2.3(@types/react@18.2.24)(react@18.2.0)
