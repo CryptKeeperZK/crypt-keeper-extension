@@ -153,8 +153,8 @@ importers:
         specifier: ^8.2.3
         version: 8.2.3(@types/react@18.2.24)(react@18.2.0)
       '@web3-react/types':
-        specifier: ^8.2.2
-        version: 8.2.2(@types/react@18.2.24)(react@18.2.0)
+        specifier: ^8.2.3
+        version: 8.2.3(@types/react@18.2.24)(react@18.2.0)
       '@zk-kit/incremental-merkle-tree':
         specifier: ^1.1.0
         version: 1.1.0
@@ -5897,7 +5897,7 @@ packages:
       react: '>=16.8'
     dependencies:
       '@web3-react/store': 8.2.2(@types/react@18.2.24)(react@18.2.0)
-      '@web3-react/types': 8.2.2(@types/react@18.2.24)(react@18.2.0)
+      '@web3-react/types': 8.2.3(@types/react@18.2.24)(react@18.2.0)
       react: 18.2.0
       zustand: 4.4.0(@types/react@18.2.24)(react@18.2.0)
     optionalDependencies:
@@ -5913,7 +5913,7 @@ packages:
     resolution: {integrity: sha512-Z5F3KiTkJMZR8citCb3LPQCwzOnvGzrhgfpYiBNioNNbW0Dq80eiIbpHeXeGlSQbqwHHEZOYm9LPUEM7w8aRYg==}
     dependencies:
       '@metamask/detect-provider': 1.2.0
-      '@web3-react/types': 8.2.2(@types/react@18.2.24)(react@18.2.0)
+      '@web3-react/types': 8.2.3(@types/react@18.2.24)(react@18.2.0)
     transitivePeerDependencies:
       - '@types/react'
       - immer
@@ -5924,7 +5924,7 @@ packages:
     resolution: {integrity: sha512-ITMkLzyw8tSTTEf8NcjIdewphbCpWHwK4EmwRxPCZMMRs+apZwoj3R/YNflMBoPMC+ybWKnVVpDd6CprF1TU9A==}
     dependencies:
       '@ethersproject/address': 5.7.0
-      '@web3-react/types': 8.2.2(@types/react@18.2.24)(react@18.2.0)
+      '@web3-react/types': 8.2.3(@types/react@18.2.24)(react@18.2.0)
       zustand: 4.4.0(@types/react@18.2.24)(react@18.2.0)
     transitivePeerDependencies:
       - '@types/react'
@@ -5932,8 +5932,8 @@ packages:
       - react
     dev: false
 
-  /@web3-react/types@8.2.2(@types/react@18.2.24)(react@18.2.0):
-    resolution: {integrity: sha512-PrPrJNjJhUX3lL/365llAZwY0bpUm9N52OjGMFyzCIX7IR13f7WLUk/LyQa9ALneCBu3cJUVTZANuFdqdREuvw==}
+  /@web3-react/types@8.2.3(@types/react@18.2.24)(react@18.2.0):
+    resolution: {integrity: sha512-kSG90QkN+n7IOtp10nQ44oS8J7jzfH9EmqnruwBpCGybh1FM/ohyRvUKWYZNfNE4wsjTSpKsINR0/VdDsZMHyg==}
     dependencies:
       zustand: 4.4.0(@types/react@18.2.24)(react@18.2.0)
     transitivePeerDependencies:
