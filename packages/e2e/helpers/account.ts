@@ -52,24 +52,11 @@ export async function unlockAccount({
   await cryptKeeper.unlock(password);
 }
 
-const RACE_TIMEOUT_MS = 5_000;
-
 export async function connectCryptKeeper(app: Page): Promise<CryptKeeper> {
   await app.waitForLoadState();
   await expect(app).toHaveTitle(/CryptKeeper Extension demo/);
   await expect(app.getByText(/Start the Authorization Process/)).toBeVisible();
   await expect(app.getByText(/Please connect to CryptKeeper to continue./)).toBeVisible();
-
-  const result = await Promise.race([
-    app.context().waitForEvent("page"),
-    new Promise((resolve) => {
-      setTimeout(resolve, RACE_TIMEOUT_MS);
-    }),
-  ]);
-
-  if (result) {
-    return new CryptKeeper(result as Page);
-  }
 
   const [popup] = await Promise.all([
     app.context().waitForEvent("page"),
