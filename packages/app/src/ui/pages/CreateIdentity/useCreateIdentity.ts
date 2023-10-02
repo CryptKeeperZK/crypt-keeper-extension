@@ -1,5 +1,5 @@
 import { EWallet } from "@cryptkeeperzk/types";
-import { BaseSyntheticEvent, useCallback, useMemo } from "react";
+import { useCallback, useMemo } from "react";
 import { Control, useForm, UseFormRegister } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 
@@ -22,14 +22,17 @@ export interface IUseCreateIdentityData {
   host?: string;
   onCloseModal: () => void;
   register: UseFormRegister<FormFields>;
-  onConnectWallet: () => Promise<void>;
-  onCreateWithEthWallet: (event?: BaseSyntheticEvent) => Promise<void>;
-  onCreateWithCryptkeeper: (event?: BaseSyntheticEvent) => Promise<void>;
+  onSign: (index: number) => void;
 }
 
 interface FormFields {
   nonce: number;
   isDeterministic: boolean;
+}
+
+export enum SignatureOptions {
+  CRYPTKEEPER_WALLET = 0,
+  ETH_WALLET = 1,
 }
 
 export const useCreateIdentity = (): IUseCreateIdentityData => {
@@ -117,6 +120,25 @@ export const useCreateIdentity = (): IUseCreateIdentityData => {
     });
   }, [setError, ethWallet.onConnect]);
 
+  const onSign = useCallback(
+    (index: number) => {
+      const option = index as SignatureOptions;
+
+      switch (true) {
+        case option === SignatureOptions.CRYPTKEEPER_WALLET:
+          return handleSubmit(onCreateIdentityWithCryptkeeper)();
+        case option === SignatureOptions.ETH_WALLET && !ethWallet.isActive:
+          return handleSubmit(onConnectWallet)();
+        case option === SignatureOptions.ETH_WALLET && ethWallet.isActive:
+          return handleSubmit(onCreateIdentityWithEthWallet)();
+
+        default:
+          return undefined;
+      }
+    },
+    [ethWallet.isActive, handleSubmit, onConnectWallet, onCreateIdentityWithEthWallet, onCreateIdentityWithCryptkeeper],
+  );
+
   const onCloseModal = useCallback(() => {
     if (isGoBack) {
       navigate(-1);
@@ -139,8 +161,6 @@ export const useCreateIdentity = (): IUseCreateIdentityData => {
     host,
     register,
     onCloseModal,
-    onConnectWallet: handleSubmit(onConnectWallet),
-    onCreateWithEthWallet: handleSubmit(onCreateIdentityWithEthWallet),
-    onCreateWithCryptkeeper: handleSubmit(onCreateIdentityWithCryptkeeper),
+    onSign,
   };
 };

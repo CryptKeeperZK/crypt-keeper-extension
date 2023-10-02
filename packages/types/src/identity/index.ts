@@ -33,6 +33,7 @@ export interface IIdentityMetadata {
   groups: IGroupData[];
   isDeterministic: boolean;
   host?: string;
+  nonce?: number;
 }
 
 export type ConnectedIdentityMetadata = Pick<IIdentityMetadata, "name" | "host">;
@@ -78,4 +79,5 @@ export interface ICreateIdentityArgs {
   isDeterministic: boolean;
   messageSignature?: string;
   host?: string;
+  nonce?: number;
 }

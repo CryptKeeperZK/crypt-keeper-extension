@@ -246,12 +246,14 @@ export default class VerifiableCredentialsService implements IBackupable {
   generateVerifiablePresentationWithCryptkeeper = async ({
     verifiablePresentation,
     address,
+    created = new Date(),
   }: IGenerateVerifiablePresentationWithCryptkeeperArgs): Promise<void> => {
     const serializedVerifiablePresentation = serializeVerifiablePresentation(verifiablePresentation);
     const signature = await this.walletService.signMessage({
       message: serializedVerifiablePresentation,
       address,
     });
+
     const signedVerifiablePresentation = {
       ...verifiablePresentation,
       proof: [
@@ -259,7 +261,7 @@ export default class VerifiableCredentialsService implements IBackupable {
           type: [ETHEREUM_SIGNATURE_SPECIFICATION_TYPE],
           proofPurpose: VERIFIABLE_CREDENTIAL_PROOF_PURPOSE,
           verificationMethod: address,
-          created: new Date(),
+          created,
           proofValue: signature,
         },
       ],

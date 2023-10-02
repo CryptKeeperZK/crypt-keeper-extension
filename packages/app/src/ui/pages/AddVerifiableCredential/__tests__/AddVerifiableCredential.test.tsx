@@ -75,6 +75,7 @@ describe("ui/pages/AddVerifiableCredential", () => {
 
     (useAddVerifiableCredential as jest.Mock).mockReturnValue({
       ...defaultHookData,
+      cryptkeeperVerifiableCredential: undefined,
       error,
     });
 

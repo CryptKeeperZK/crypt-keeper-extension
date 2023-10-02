@@ -7,7 +7,7 @@ import { renderHook, waitFor } from "@testing-library/react";
 import { serializeCryptkeeperVerifiableCredential } from "@src/background/services/credentials/utils";
 import { useVerifiableCredentials } from "@src/ui/ducks/verifiableCredentials";
 
-import { useCryptkeeperVerifiableCredentials } from "../useCryptkeeperVerifiableCredentials";
+import { useCryptkeeperVerifiableCredentials } from "..";
 
 jest.mock("@src/ui/ducks/verifiableCredentials", (): unknown => ({
   useVerifiableCredentials: jest.fn(),

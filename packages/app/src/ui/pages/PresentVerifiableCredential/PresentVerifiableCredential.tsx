@@ -1,17 +1,10 @@
-import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import InfoIcon from "@mui/icons-material/Info";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
-import ButtonGroup from "@mui/material/ButtonGroup";
-import ClickAwayListener from "@mui/material/ClickAwayListener";
-import Grow from "@mui/material/Grow";
-import MenuItem from "@mui/material/MenuItem";
-import MenuList from "@mui/material/MenuList";
-import Paper from "@mui/material/Paper";
-import Popper from "@mui/material/Popper";
 import Tooltip from "@mui/material/Tooltip";
 import Typography from "@mui/material/Typography";
 
+import { DropdownButton } from "@src/ui/components/DropdownButton";
 import { FullModalHeader, FullModalContent, FullModalFooter } from "@src/ui/components/FullModal";
 import { VerifiableCredentialItem } from "@src/ui/components/VerifiableCredential/Item";
 
@@ -25,21 +18,30 @@ const PresentVerifiableCredential = (): JSX.Element => {
     cryptkeeperVerifiableCredentials,
     selectedVerifiableCredentialHashes,
     error,
-    isMenuOpen,
-    menuSelectedIndex,
-    menuRef,
+    checkDisabledItem,
     onCloseModal,
     onRejectRequest,
     onToggleSelection,
-    onToggleMenu,
-    onMenuItemClick,
     onSubmitVerifiablePresentation,
   } = usePresentVerifiableCredential();
 
+  const ethTitle = isWalletConnected ? "Sign with Metamask" : "Connect to Metamask";
   const menuOptions = [
-    isWalletConnected ? "Sign with Metamask" : "Connect to Metamask",
-    "Sign with Cryptkeeper",
-    "Proceed without Signing",
+    {
+      id: "metamask",
+      title: isWalletInstalled ? ethTitle : "Install Metamask",
+      checkDisabledItem,
+    },
+    {
+      id: "cryptkeeper",
+      title: "Sign with Cryptkeeper",
+      checkDisabledItem,
+    },
+    {
+      id: "empty",
+      title: "Proceed without Signing",
+      checkDisabledItem,
+    },
   ];
 
   return (
@@ -92,7 +94,7 @@ const PresentVerifiableCredential = (): JSX.Element => {
             data-testid="reject-verifiable-presentation-request"
             name="reject"
             size="small"
-            sx={{ textTransform: "none", flex: 1, mr: 1, height: "2rem", width: "30%" }}
+            sx={{ textTransform: "none", flex: 1, mr: 1, width: "30%" }}
             type="submit"
             variant="outlined"
             onClick={onRejectRequest}
@@ -100,66 +102,7 @@ const PresentVerifiableCredential = (): JSX.Element => {
             Reject
           </Button>
 
-          <ButtonGroup ref={menuRef} sx={{ height: "2rem", width: "70%" }} variant="contained">
-            <Button
-              data-testid="sign-verifiable-presentation-button"
-              size="small"
-              sx={{ textTransform: "none", flex: 1, ml: 1 }}
-              onClick={onSubmitVerifiablePresentation}
-            >
-              {menuOptions[menuSelectedIndex]}
-            </Button>
-
-            <Button data-testid="sign-verifiable-presentation-selector" sx={{ width: ".5rem" }} onClick={onToggleMenu}>
-              <ArrowDropDownIcon />
-            </Button>
-          </ButtonGroup>
-
-          <Popper
-            disablePortal
-            transition
-            anchorEl={menuRef.current}
-            open={isMenuOpen}
-            role={undefined}
-            sx={{
-              zIndex: 1,
-            }}
-          >
-            {({ TransitionProps }) => (
-              <Grow
-                {...TransitionProps}
-                style={{
-                  transformOrigin: "center top",
-                }}
-              >
-                <Paper
-                  sx={{
-                    backgroundColor: "text.800",
-                  }}
-                >
-                  <ClickAwayListener onClickAway={onToggleMenu}>
-                    <MenuList autoFocusItem id="split-button-menu">
-                      {menuOptions.map((option, index) => (
-                        <MenuItem
-                          key={option}
-                          data-testid={`sign-verifiable-presentation-menu-${index}`}
-                          disabled={
-                            selectedVerifiableCredentialHashes.length === 0 || (index === 0 && !isWalletInstalled)
-                          }
-                          selected={index === menuSelectedIndex}
-                          onClick={() => {
-                            onMenuItemClick(index);
-                          }}
-                        >
-                          <Typography color="common.white">{option}</Typography>
-                        </MenuItem>
-                      ))}
-                    </MenuList>
-                  </ClickAwayListener>
-                </Paper>
-              </Grow>
-            )}
-          </Popper>
+          <DropdownButton menuOptions={menuOptions} onClick={onSubmitVerifiablePresentation} />
         </Box>
       </FullModalFooter>
     </Box>

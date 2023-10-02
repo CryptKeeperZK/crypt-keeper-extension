@@ -215,9 +215,11 @@ describe("background/services/credentials", () => {
       const ETHEREUM_SIGNATURE_SPECIFICATION_TYPE = "EthereumEip712Signature2021";
       const VERIFIABLE_CREDENTIAL_PROOF_PURPOSE = "assertionMethod";
 
+      const created = new Date();
       await verifiableCredentialsService.generateVerifiablePresentationWithCryptkeeper({
         verifiablePresentation: exampleVerifiablePresentation,
         address: exampleAddress,
+        created,
       });
 
       const signedVerifiablePresentation = {
@@ -227,7 +229,7 @@ describe("background/services/credentials", () => {
             type: [ETHEREUM_SIGNATURE_SPECIFICATION_TYPE],
             proofPurpose: VERIFIABLE_CREDENTIAL_PROOF_PURPOSE,
             verificationMethod: exampleAddress,
-            created: new Date(),
+            created,
             proofValue: exampleSignature,
           },
         ],

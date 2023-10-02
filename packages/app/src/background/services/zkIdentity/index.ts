@@ -315,6 +315,7 @@ export default class ZkIdentityService implements IBackupable {
       groups,
       host,
       isDeterministic,
+      nonce: isDeterministic ? options.nonce : undefined,
       name: options.name || `Account # ${numOfIdentities}`,
       messageSignature,
     };

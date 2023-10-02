@@ -15,7 +15,7 @@ import { createIdentity } from "@src/ui/ducks/identities";
 import { useCryptKeeperWallet, useEthWallet } from "@src/ui/hooks/wallet";
 import { signWithSigner, getMessageTemplate } from "@src/ui/services/identity";
 
-import { useCreateIdentity } from "../useCreateIdentity";
+import { SignatureOptions, useCreateIdentity } from "../useCreateIdentity";
 
 jest.mock("react-router-dom", () => ({
   useNavigate: jest.fn(),
@@ -95,7 +95,7 @@ describe("ui/pages/CreateIdentity/useCreateIdentity", () => {
   test("should create identity with eth wallet properly", async () => {
     const { result } = renderHook(() => useCreateIdentity());
 
-    await act(async () => Promise.resolve(result.current.onCreateWithEthWallet()));
+    await act(async () => Promise.resolve(result.current.onSign(SignatureOptions.ETH_WALLET)));
 
     expect(result.current.isLoading).toBe(false);
     expect(signWithSigner).toBeCalledTimes(1);
@@ -119,7 +119,7 @@ describe("ui/pages/CreateIdentity/useCreateIdentity", () => {
 
     const { result } = renderHook(() => useCreateIdentity());
 
-    await act(async () => Promise.resolve(result.current.onCreateWithEthWallet()));
+    await act(async () => Promise.resolve(result.current.onSign(SignatureOptions.ETH_WALLET)));
 
     expect(result.current.isLoading).toBe(false);
     expect(signWithSigner).toBeCalledTimes(1);
@@ -138,9 +138,10 @@ describe("ui/pages/CreateIdentity/useCreateIdentity", () => {
   });
 
   test("should connect eth wallet properly", async () => {
+    (useEthWallet as jest.Mock).mockReturnValue({ ...defaultWalletHookData, isActive: false });
     const { result } = renderHook(() => useCreateIdentity());
 
-    await act(async () => Promise.resolve(result.current.onConnectWallet()));
+    await act(async () => Promise.resolve(result.current.onSign(SignatureOptions.ETH_WALLET)));
 
     expect(result.current.isLoading).toBe(false);
     expect(defaultWalletHookData.onConnect).toBeCalledTimes(1);
@@ -149,12 +150,13 @@ describe("ui/pages/CreateIdentity/useCreateIdentity", () => {
   test("should handle error when trying to connect with eth wallet", async () => {
     (useEthWallet as jest.Mock).mockReturnValue({
       ...defaultWalletHookData,
+      isActive: false,
       onConnect: jest.fn(() => Promise.reject()),
     });
 
     const { result } = renderHook(() => useCreateIdentity());
 
-    await act(async () => Promise.resolve(result.current.onConnectWallet()));
+    await act(async () => Promise.resolve(result.current.onSign(SignatureOptions.ETH_WALLET)));
 
     expect(result.current.isLoading).toBe(false);
     expect(result.current.errors.root).toBe("Wallet connection error");
@@ -163,7 +165,7 @@ describe("ui/pages/CreateIdentity/useCreateIdentity", () => {
   test("should create identity with cryptkeeper properly", async () => {
     const { result } = renderHook(() => useCreateIdentity());
 
-    await act(async () => Promise.resolve(result.current.onCreateWithCryptkeeper()));
+    await act(async () => Promise.resolve(result.current.onSign(SignatureOptions.CRYPTKEEPER_WALLET)));
 
     expect(result.current.isLoading).toBe(false);
     expect(signWithSigner).toBeCalledTimes(0);
@@ -210,9 +212,18 @@ describe("ui/pages/CreateIdentity/useCreateIdentity", () => {
 
     const { result } = renderHook(() => useCreateIdentity());
 
-    await act(async () => Promise.resolve(result.current.onCreateWithCryptkeeper()));
+    await act(async () => Promise.resolve(result.current.onSign(SignatureOptions.CRYPTKEEPER_WALLET)));
 
     expect(result.current.isLoading).toBe(false);
     expect(result.current.errors.root).toBe(error.message);
+  });
+
+  test("should handle unknown signature option properly", async () => {
+    const { result } = renderHook(() => useCreateIdentity());
+
+    await act(async () => Promise.resolve(result.current.onSign(9000)));
+
+    expect(result.current.isLoading).toBe(false);
+    expect(mockDispatch).toBeCalledTimes(0);
   });
 });

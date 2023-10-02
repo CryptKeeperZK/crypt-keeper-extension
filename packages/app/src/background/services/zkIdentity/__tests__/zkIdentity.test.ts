@@ -520,7 +520,7 @@ describe("background/services/zkIdentity", () => {
         walletType: EWallet.ETH_WALLET,
         messageSignature: identityMessageSignature,
         options: identityOptions,
-        isDeterministic: true,
+        isDeterministic: false,
         groups: [],
         host: "http://localhost:3000",
       });

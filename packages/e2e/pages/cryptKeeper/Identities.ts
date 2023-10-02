@@ -60,7 +60,12 @@ export default class Identities extends BasePage {
       await deterministicCheckbox.click();
     }
 
-    await page.getByRole("button", { name: walletType === "eth" ? "Metamask" : "Cryptkeeper" }).click();
+    if (walletType === "eth") {
+      await page.getByTestId("dropdown-menu-button").click();
+      await page.getByTestId("dropdown-menu-item-1").click();
+    }
+
+    await page.getByTestId("dropdown-button").click();
 
     if (walletType === "eth" && isDeterministic) {
       // TODO: synpress doesn't support new data-testid for metamask
