@@ -83,9 +83,8 @@ describe("background/services/locker", () => {
   });
 
   describe("ensure", () => {
-    test("should return false if there is no password or it's not unlocked", async () => {
-      // TODO: I dont know yet why this test is failing even though it fails with output error of "CryptKeeper: Is locked"
-      // await expect(lockService.ensure()).rejects.toThrowError("CryptKeeper: Is locked");
+    test("should throw an error if there is no password or it's not unlocked", () => {
+      expect(() => lockService.ensure()).toThrowError("CryptKeeper: Is locked");
     });
 
     test("should return args from ensure call properly", async () => {

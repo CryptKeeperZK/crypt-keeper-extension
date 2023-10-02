@@ -50,7 +50,7 @@ export default class RequestManager {
     return new Promise((resolve, reject) => {
       const onPopupClose = (windowId: number) => {
         if (windowId === popup.id) {
-          reject(new Error("user rejected."));
+          reject(new Error("User rejected your request."));
           this.browserService.removeRemoveWindowListener(onPopupClose);
         }
       };

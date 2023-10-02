@@ -17,7 +17,7 @@ test.describe("initialization", () => {
     await expect(page.getByText("Connected to MetaMask")).toBeVisible();
   });
 
-  test("should create account from backup file properly [health-check-hot]", async ({
+  test("should create account from backup file properly [health-check]", async ({
     page,
     cryptKeeperExtensionId,
     context,

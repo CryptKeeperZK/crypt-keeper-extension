@@ -8,7 +8,7 @@
     "e2e": "playwright test",
     "e2e:ci": "cross-env CI=true pnpm run e2e",
     "e2e:debug": "pnpm run e2e -- --debug",
-    "health-check": "pnpm run e2e -g \"health-check-hot\"",
+    "health-check": "pnpm run e2e -g \"health-check\"",
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
     "lint:fix": "pnpm run lint --fix",
     "prettier": "prettier -c . --ignore-path ../../.prettierignore",

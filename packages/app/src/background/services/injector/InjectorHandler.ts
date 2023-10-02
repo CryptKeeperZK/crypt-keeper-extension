@@ -19,17 +19,17 @@ import { validateMerkleProofSource } from "@src/background/services/validation";
 import ZkIdentityService from "@src/background/services/zkIdentity";
 
 export class InjectorHandler {
-  lockerService: LockerService;
+  private readonly lockerService: LockerService;
 
-  approvalService: ApprovalService;
+  private readonly approvalService: ApprovalService;
 
-  zkProofService: ZkProofService;
+  private readonly zkProofService: ZkProofService;
 
-  requestManager: RequestManager;
+  private readonly requestManager: RequestManager;
 
-  browserService: BrowserUtils;
+  private readonly browserService: BrowserUtils;
 
-  zkIdentityService: ZkIdentityService;
+  private readonly zkIdentityService: ZkIdentityService;
 
   constructor() {
     this.approvalService = ApprovalService.getInstance();
@@ -40,8 +40,13 @@ export class InjectorHandler {
     this.zkProofService = new ZkProofService();
   }
 
+  getApprovalService = (): ApprovalService => this.approvalService;
+
+  getZkProofService = (): ZkProofService => this.zkProofService;
+
   connectedIdentityMetadata = async (_: unknown, meta?: IZkMetadata): Promise<ConnectedIdentityMetadata> => {
     const connectedIdentityMetadata = await this.zkIdentityService.getConnectedIdentityData({}, meta);
+
     if (!connectedIdentityMetadata) {
       throw new Error(`CryptKeeper: identity metadata is not found`);
     }
@@ -56,6 +61,10 @@ export class InjectorHandler {
     return responsePayload;
   };
 
+  closePopup = async (): Promise<void> => {
+    await this.browserService.closePopup();
+  };
+
   requiredApproval = async ({ urlOrigin }: IZkMetadata): Promise<IConnectionApprovalData> => {
     const { checkedUrlOrigin, isApproved, canSkipApprove } = this.getConnectionApprovalData({ urlOrigin });
 
@@ -65,7 +74,9 @@ export class InjectorHandler {
     if (!isApproved) {
       throw new Error(`CryptKeeper: ${urlOrigin} is not approved, please call 'connectIdentity()' request first.`);
     }
+
     await this.checkLockStatus();
+
     return { checkedUrlOrigin, isApproved, canSkipApprove };
   };
 
@@ -90,12 +101,8 @@ export class InjectorHandler {
     const { isUnlocked } = await this.lockerService.getStatus();
 
     if (!isUnlocked) {
-      try {
-        await this.browserService.openPopup();
-        await this.lockerService.awaitUnlock();
-      } catch (error) {
-        throw new Error(`CryptKeeper: refused to unlock ${(error as Error).message}`);
-      }
+      await this.browserService.openPopup();
+      await this.lockerService.awaitUnlock();
     }
   };
 

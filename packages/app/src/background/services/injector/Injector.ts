@@ -49,23 +49,20 @@ export class InjectorService {
   connectIdentity = async ({ urlOrigin }: IZkMetadata): Promise<ConnectedIdentityMetadata> => {
     const { checkedUrlOrigin, isApproved, canSkipApprove } = await this.injectorHandler.checkApproval({ urlOrigin });
 
-    if (isApproved) {
-      await this.injectorHandler.approvalService.add({ urlOrigin: checkedUrlOrigin, canSkipApprove });
-    } else {
-      try {
+    try {
+      if (isApproved) {
+        await this.injectorHandler.getApprovalService().add({ urlOrigin: checkedUrlOrigin, canSkipApprove });
+      } else {
         const hostPermissionChecks = (await this.injectorHandler.newRequest(PendingRequestType.APPROVE, {
           urlOrigin,
         })) as IHostPermission;
-        await this.injectorHandler.approvalService.add({
+
+        await this.injectorHandler.getApprovalService().add({
           urlOrigin: hostPermissionChecks.urlOrigin,
           canSkipApprove: hostPermissionChecks.canSkipApprove,
         });
-      } catch (error) {
-        throw new Error(`CryptKeeper: error in the approve request, ${(error as Error).message}`);
       }
-    }
 
-    try {
       await this.injectorHandler.newRequest(PendingRequestType.CONNECT_IDENTITY, { urlOrigin });
     } catch (error) {
       throw new Error(`CryptKeeper: error in the connect request, ${(error as Error).message}`);
@@ -73,7 +70,7 @@ export class InjectorService {
 
     const connectedIdentity = await this.injectorHandler.connectedIdentityMetadata({}, { urlOrigin });
 
-    await this.injectorHandler.browserService.closePopup();
+    await this.injectorHandler.closePopup();
 
     return connectedIdentity;
   };
@@ -95,10 +92,9 @@ export class InjectorService {
 
     if (browserPlatform === BrowserPlatform.Firefox) {
       try {
-        const fullProof = await this.injectorHandler.zkProofService.generateSemaphoreProof(
-          identity,
-          checkedSemaphoreProofRequest,
-        );
+        const fullProof = await this.injectorHandler
+          .getZkProofService()
+          .generateSemaphoreProof(identity, checkedSemaphoreProofRequest);
 
         return fullProof;
       } catch (error) {
@@ -108,11 +104,7 @@ export class InjectorService {
 
     try {
       await createChromeOffscreen();
-    } catch (error) {
-      throw new Error(`CryptKeeper: on creating Chrome Offscreen page for Semaphore Proof ${(error as Error).message}`);
-    }
 
-    try {
       const fullProof = await pushMessage({
         method: RPCInternalAction.GENERATE_SEMAPHORE_PROOF_OFFSCREEN,
         payload: checkedSemaphoreProofRequest,
@@ -134,19 +126,16 @@ export class InjectorService {
   ): Promise<IRLNFullProof> => {
     const checkedRLNProofRequest = await this.injectorHandler.prepareRLNProof(
       { rlnIdentifier, message, epoch, messageLimit, messageId, merkleProofSource },
-      {
-        urlOrigin,
-      },
+      { urlOrigin },
     );
 
     const browserPlatform = getBrowserPlatform();
 
     if (browserPlatform === BrowserPlatform.Firefox) {
       try {
-        const rlnFullProof = await this.injectorHandler.zkProofService.generateRLNProof(
-          identity,
-          checkedRLNProofRequest,
-        );
+        const rlnFullProof = await this.injectorHandler
+          .getZkProofService()
+          .generateRLNProof(identity, checkedRLNProofRequest);
 
         return rlnFullProof;
       } catch (error) {
@@ -156,11 +145,7 @@ export class InjectorService {
 
     try {
       await createChromeOffscreen();
-    } catch (error) {
-      throw new Error(`CryptKeeper: on creating Chrome Offscreen page for RLN Proof ${(error as Error).message}`);
-    }
 
-    try {
       const rlnFullProof = await pushMessage({
         method: RPCInternalAction.GENERATE_RLN_PROOF_OFFSCREEN,
         payload: checkedRLNProofRequest,

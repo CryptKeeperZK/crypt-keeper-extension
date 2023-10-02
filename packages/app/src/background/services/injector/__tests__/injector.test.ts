@@ -25,36 +25,17 @@ const mockConnectedIdentity: ConnectedIdentityMetadata = {
   name: "Account 1",
 };
 const mockNewRequest = jest.fn((type: PendingRequestType, { urlOrigin }: { urlOrigin: string }): Promise<unknown> => {
-  if (type === PendingRequestType.APPROVE) {
-    if (urlOrigin === "reject_approve") {
-      return Promise.reject(new Error("User rejected your request."));
-    }
-    return Promise.resolve({
-      urlOrigin,
-      canSkipApprove: false,
-    });
-  }
-  if (type === PendingRequestType.CONNECT_IDENTITY) {
-    if (urlOrigin === "reject_connect") {
-      return Promise.reject(new Error("User rejected your request."));
-    }
-    return Promise.resolve();
-  }
-  if (type === PendingRequestType.SEMAPHORE_PROOF) {
-    if (urlOrigin === "reject_semaphore_proof") {
-      return Promise.reject(new Error("User rejected your request."));
-    }
-    return Promise.resolve();
-  }
-  if (type === PendingRequestType.RLN_PROOF) {
-    if (urlOrigin === "reject_rln_proof") {
-      return Promise.reject(new Error("User rejected your request."));
-    }
-    return Promise.resolve();
+  if (urlOrigin.includes("reject")) {
+    return Promise.reject(new Error("User rejected your request."));
   }
 
-  return Promise.reject(new Error(`Unexpected request type: ${type}`));
+  if (type === PendingRequestType.APPROVE) {
+    return Promise.resolve({ urlOrigin, canSkipApprove: false });
+  }
+
+  return Promise.resolve();
 });
+
 const mockGetConnectedIdentity = jest.fn();
 const mockGenerateSemaphoreProof = jest.fn();
 const mockGenerateRLNProof = jest.fn();
@@ -63,20 +44,17 @@ const mockGetConnectedIdentityData = jest.fn(
     if (meta?.urlOrigin === mockDefaultUrlOrigin || meta?.urlOrigin === "new-urlOrigin") {
       return Promise.resolve(mockConnectedIdentity);
     }
+
     return Promise.resolve(undefined);
   },
 );
-const mockIsApproved = jest.fn((urlOrigin) => {
-  if (
+const mockIsApproved = jest.fn(
+  (urlOrigin) =>
     urlOrigin === mockDefaultUrlOrigin ||
     urlOrigin === "empty_connected_identity" ||
     urlOrigin === "reject_semaphore_proof" ||
-    urlOrigin === "reject_rln_proof"
-  ) {
-    return true;
-  }
-  return false;
-});
+    urlOrigin === "reject_rln_proof",
+);
 const mockCanSkip = jest.fn((urlOrigin) => urlOrigin === mockDefaultUrlOrigin);
 const mockAwaitUnlock = jest.fn();
 
@@ -143,13 +121,6 @@ jest.mock("@src/background/shared/utils", (): unknown => ({
   getBrowserPlatform: jest.fn(),
   closeChromeOffscreen: jest.fn(),
   createChromeOffscreen: jest.fn(),
-  throwErrorProperly: jest.fn((error: unknown, additionalMessage?: string) => {
-    if (error instanceof Error) {
-      throw new Error(`${additionalMessage}${error.message}`);
-    } else {
-      throw new Error(`Unknown error`);
-    }
-  }),
 }));
 
 describe("background/services/injector", () => {
@@ -231,7 +202,7 @@ describe("background/services/injector", () => {
       const service = InjectorService.getInstance();
 
       await expect(service.connectIdentity({ urlOrigin: "reject_approve" })).rejects.toThrow(
-        "CryptKeeper: error in the approve request, User rejected your request.",
+        "CryptKeeper: error in the connect request, User rejected your request.",
       );
     });
 
@@ -415,7 +386,7 @@ describe("background/services/injector", () => {
       const service = InjectorService.getInstance();
 
       await expect(service.generateSemaphoreProof(defaultProofRequest, defaultMetadata)).rejects.toThrowError(
-        `CryptKeeper: on creating Chrome Offscreen page for Semaphore Proof error`,
+        `CryptKeeper: Error in generating Semaphore proof on Chrome error`,
       );
 
       expect(pushMessage).toBeCalledTimes(0);
@@ -507,7 +478,7 @@ describe("background/services/injector", () => {
       const service = InjectorService.getInstance();
 
       await expect(service.generateRLNProof(defaultProofRequest, defaultMetadata)).rejects.toThrowError(
-        `CryptKeeper: on creating Chrome Offscreen page for RLN Proof error`,
+        `CryptKeeper: Error in generating RLN proof on Chrome error`,
       );
 
       expect(pushMessage).toBeCalledTimes(0);

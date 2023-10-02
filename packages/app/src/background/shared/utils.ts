@@ -85,11 +85,3 @@ export async function createChromeOffscreen(): Promise<void> {
 export async function closeChromeOffscreen(): Promise<void> {
   await chrome.offscreen.closeDocument();
 }
-
-export function throwErrorProperly(error: unknown, additionalMessage?: string): void {
-  if (error instanceof Error) {
-    throw new Error(`${additionalMessage}, ${error.message}`);
-  } else {
-    throw new Error(`Unknown error`);
-  }
-}

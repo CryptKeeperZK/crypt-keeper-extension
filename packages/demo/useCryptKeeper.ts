@@ -234,9 +234,7 @@ export const useCryptKeeper = (): IUseCryptKeeperData => {
         setIsLocked(false);
         toast(
           `Getting Identity Metadata Successfully! ${JSON.stringify(Object.entries(fetchedConnectedIdentityMetadata))}`,
-          {
-            type: "success",
-          },
+          { type: "success" },
         );
       }
     } catch (error) {
