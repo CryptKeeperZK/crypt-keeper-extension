@@ -37,8 +37,6 @@ export default class ApprovalService implements IBackupable {
   canSkipApprove = (urlOrigin: string): boolean => Boolean(this.allowedHosts.get(urlOrigin)?.canSkipApprove);
 
   unlock = async (): Promise<boolean> => {
-    console.log("Inside Approve Service unlock")
-
     const encryped = await this.approvals.get<string>();
 
     if (encryped) {

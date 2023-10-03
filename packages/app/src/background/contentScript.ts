@@ -48,7 +48,6 @@ function injectScript() {
       // This refactor enhancement left for the next PR
       //
       case setConnectedIdentity.type: {
-        console.log("Inside the content script change identity");
         window.postMessage(
           {
             target: "injected-injectedscript",

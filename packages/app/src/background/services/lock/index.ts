@@ -125,8 +125,6 @@ export default class LockerService implements IBackupable {
   };
 
   onUnlocked = (): boolean => {
-    console.log("Inside Lock Service unlock")
-
     if (this.unlockCB) {
       this.unlockCB();
       this.unlockCB = undefined;

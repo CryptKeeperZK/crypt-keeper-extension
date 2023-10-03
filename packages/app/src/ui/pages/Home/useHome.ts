@@ -33,7 +33,6 @@ export const useHome = (): IUseHomeData => {
   }, [dispatch]);
 
   useEffect(() => {
-    console.log("Inside Home page")
     dispatch(fetchIdentities());
     dispatch(fetchHistory());
   }, [dispatch]);
