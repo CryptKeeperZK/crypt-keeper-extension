@@ -58,32 +58,35 @@ export const useGroupMerkleProof = (): IUseGroupMerkleProofData => {
   }, [groupId, dispatch, setLoading, setError]);
 
   useEffect(() => {
-    if (!connectedIdentity?.metadata.host) {
+    if (!connectedIdentity?.metadata.urlOrigin) {
       return;
     }
 
-    getLinkPreview(connectedIdentity.metadata.host)
+    getLinkPreview(connectedIdentity.metadata.urlOrigin)
       .then((data) => {
         setFaviconUrl(data.favicons[0]);
       })
       .catch(() => {
         setFaviconUrl("");
       });
-  }, [connectedIdentity?.metadata.host, setFaviconUrl]);
+  }, [connectedIdentity?.metadata.urlOrigin, setFaviconUrl]);
 
   const onGoBack = useCallback(() => {
     dispatch(
-      rejectUserRequest({ type: EventName.GROUP_MERKLE_PROOF, payload: { groupId } }, connectedIdentity?.metadata.host),
+      rejectUserRequest(
+        { type: EventName.GROUP_MERKLE_PROOF, payload: { groupId } },
+        connectedIdentity?.metadata.urlOrigin,
+      ),
     )
       .then(() => dispatch(closePopup()))
       .then(() => {
         navigate(Paths.HOME);
       });
-  }, [groupId, connectedIdentity?.metadata.host, dispatch, navigate]);
+  }, [groupId, connectedIdentity?.metadata.urlOrigin, dispatch, navigate]);
 
   const onGoToHost = useCallback(() => {
-    redirectToNewTab(connectedIdentity!.metadata.host!);
-  }, [connectedIdentity?.metadata.host]);
+    redirectToNewTab(connectedIdentity!.metadata.urlOrigin!);
+  }, [connectedIdentity?.metadata.urlOrigin]);
 
   const onGoToGroup = useCallback(() => {
     redirectToNewTab(getBandadaGroupUrl(groupId!));

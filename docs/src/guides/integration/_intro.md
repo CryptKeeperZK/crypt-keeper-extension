@@ -42,11 +42,11 @@ You should be able to access the injected client’s functions and permissions o
 
 ```ts
 // Example
-const { name, host } = await client.getConnectedIdentity()
+const { name, urlOrigin } = await client.getConnectedIdentity()
 ```
 
-* `getHostPermissions`: Retrieves the permissions for the specified host.
-* `setHostPermissions`: Sets the permissions for the specified host.
+* `getHostPermissions`: Retrieves the permissions for the specified urlOrigin.
+* `setHostPermissions`: Sets the permissions for the specified urlOrigin.
 * `createIdentity`: Creates a new identity and returns the result.
 * `createDummyRequest`: Creates a dummy request and returns the result.
 * `semaphoreProof`: Sends a Semaphore proof request and returns the result.

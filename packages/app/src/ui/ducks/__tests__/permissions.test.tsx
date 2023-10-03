@@ -2,10 +2,10 @@
  * @jest-environment jsdom
  */
 
-import { RPCAction } from "@cryptkeeperzk/providers";
 import { renderHook } from "@testing-library/react";
 import { Provider } from "react-redux";
 
+import { RPCInternalAction } from "@src/constants";
 import { store } from "@src/ui/store/configureAppStore";
 import postMessage from "@src/util/postMessage";
 
@@ -29,7 +29,7 @@ describe("ui/ducks/permissions", () => {
     jest.clearAllMocks();
   });
 
-  test("should fetch host permissions properly", async () => {
+  test("should fetch urlOrigin permissions properly", async () => {
     (postMessage as jest.Mock).mockResolvedValue(defaultPermission);
 
     await Promise.resolve(store.dispatch(fetchHostPermissions(defaultHost)));
@@ -38,37 +38,41 @@ describe("ui/ducks/permissions", () => {
       wrapper: ({ children }) => <Provider store={store}>{children}</Provider>,
     });
 
-    expect(permissions.canSkipApprovals).toStrictEqual({ [defaultHost]: { host: defaultHost, ...defaultPermission } });
-    expect(result.current).toStrictEqual({ host: defaultHost, ...defaultPermission });
+    expect(permissions.canSkipApprovals).toStrictEqual({
+      [defaultHost]: { urlOrigin: defaultHost, ...defaultPermission },
+    });
+    expect(result.current).toStrictEqual({ urlOrigin: defaultHost, ...defaultPermission });
     expect(postMessage).toBeCalledTimes(1);
     expect(postMessage).toBeCalledWith({
-      method: RPCAction.GET_HOST_PERMISSIONS,
+      method: RPCInternalAction.GET_HOST_PERMISSIONS,
       payload: defaultHost,
     });
   });
 
-  test("should set host permission properly", async () => {
+  test("should set urlOrigin permission properly", async () => {
     (postMessage as jest.Mock).mockResolvedValue({ ...defaultPermission, canSkipApprove: false });
 
-    await Promise.resolve(store.dispatch(setHostPermissions({ host: defaultHost, canSkipApprove: false })));
+    await Promise.resolve(store.dispatch(setHostPermissions({ urlOrigin: defaultHost, canSkipApprove: false })));
     const { permissions } = store.getState();
     const { result } = renderHook(() => useHostPermission(defaultHost), {
       wrapper: ({ children }) => <Provider store={store}>{children}</Provider>,
     });
 
-    expect(permissions.canSkipApprovals).toStrictEqual({ [defaultHost]: { host: defaultHost, canSkipApprove: false } });
-    expect(result.current).toStrictEqual({ host: defaultHost, canSkipApprove: false });
+    expect(permissions.canSkipApprovals).toStrictEqual({
+      [defaultHost]: { urlOrigin: defaultHost, canSkipApprove: false },
+    });
+    expect(result.current).toStrictEqual({ urlOrigin: defaultHost, canSkipApprove: false });
     expect(postMessage).toBeCalledTimes(1);
     expect(postMessage).toBeCalledWith({
-      method: RPCAction.SET_HOST_PERMISSIONS,
+      method: RPCInternalAction.SET_HOST_PERMISSIONS,
       payload: {
-        host: defaultHost,
+        urlOrigin: defaultHost,
         canSkipApprove: false,
       },
     });
   });
 
-  test("should remove host properly", async () => {
+  test("should remove urlOrigin properly", async () => {
     await Promise.resolve(store.dispatch(removeHost(defaultHost)));
     const { permissions } = store.getState();
     const { result } = renderHook(() => useHostPermission(defaultHost), {
@@ -79,14 +83,14 @@ describe("ui/ducks/permissions", () => {
     expect(result.current).toBeUndefined();
     expect(postMessage).toBeCalledTimes(1);
     expect(postMessage).toBeCalledWith({
-      method: RPCAction.REMOVE_HOST,
+      method: RPCInternalAction.REMOVE_HOST,
       payload: {
-        host: defaultHost,
+        urlOrigin: defaultHost,
       },
     });
   });
 
-  test("should check host approval properly", async () => {
+  test("should check urlOrigin approval properly", async () => {
     (postMessage as jest.Mock).mockResolvedValue(true);
 
     const result = await store.dispatch(checkHostApproval(defaultHost));
@@ -94,7 +98,7 @@ describe("ui/ducks/permissions", () => {
     expect(result).toBe(true);
     expect(postMessage).toBeCalledTimes(1);
     expect(postMessage).toBeCalledWith({
-      method: RPCAction.IS_HOST_APPROVED,
+      method: RPCInternalAction.IS_HOST_APPROVED,
       payload: defaultHost,
     });
   });

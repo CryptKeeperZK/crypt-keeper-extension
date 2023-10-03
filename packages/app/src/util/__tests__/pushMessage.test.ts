@@ -1,5 +1,6 @@
-import { RPCAction } from "@cryptkeeperzk/providers";
 import browser from "webextension-polyfill";
+
+import { RPCInternalAction } from "@src/constants";
 
 import pushMessage from "../pushMessage";
 
@@ -16,7 +17,7 @@ describe("util/pushMessage", () => {
 
   test("should post message properly", async () => {
     const result = pushMessage({
-      type: RPCAction.DUMMY_REQUEST,
+      type: RPCInternalAction.DUMMY_REQUEST,
       payload: {},
       error: false,
       meta: {},
@@ -29,7 +30,7 @@ describe("util/pushMessage", () => {
     (browser.runtime.sendMessage as jest.Mock).mockRejectedValue(new Error("error"));
 
     const result = pushMessage({
-      type: RPCAction.DUMMY_REQUEST,
+      type: RPCInternalAction.DUMMY_REQUEST,
       payload: {},
       error: true,
       meta: {},

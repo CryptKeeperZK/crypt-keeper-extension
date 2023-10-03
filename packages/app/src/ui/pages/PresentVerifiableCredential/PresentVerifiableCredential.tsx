@@ -25,7 +25,7 @@ const PresentVerifiableCredential = (): JSX.Element => {
     onSubmitVerifiablePresentation,
   } = usePresentVerifiableCredential();
 
-  const ethTitle = isWalletConnected ? "Sign with Metamask" : "Connect to Metamask";
+  const ethTitle = isWalletConnected ? "Sign with MetaMask" : "Connect to MetaMask";
   const menuOptions = [
     {
       id: "metamask",
@@ -34,7 +34,7 @@ const PresentVerifiableCredential = (): JSX.Element => {
     },
     {
       id: "cryptkeeper",
-      title: "Sign with Cryptkeeper",
+      title: "Sign with CryptKeeper",
       checkDisabledItem,
     },
     {
@@ -80,7 +80,7 @@ const PresentVerifiableCredential = (): JSX.Element => {
 
         <Tooltip
           followCursor
-          title="Choose method of signing Verifiable Credentials. You may use your Cryptkeeper keys, connected Metamask, or send them unsigned."
+          title="Choose method of signing Verifiable Credentials. You may use your CryptKeeper keys, connected MetaMask, or send them unsigned."
         >
           <InfoIcon />
         </Tooltip>

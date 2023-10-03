@@ -1,8 +1,8 @@
-import { type CryptKeeperInjectedProvider, initializeCryptKeeperProvider, RPCAction } from "@cryptkeeperzk/providers";
-import { EventName } from "@cryptkeeperzk/providers";
+import { initializeCryptKeeperProvider, ICryptKeeperInjectedProvider, EventName } from "@cryptkeeperzk/providers";
 import { initializeConnector } from "@web3-react/core";
 import { Connector } from "@web3-react/types";
 
+import { RPCInternalAction } from "@src/constants";
 import postMessage from "@src/util/postMessage";
 
 type CancelActivation = () => void;
@@ -10,7 +10,7 @@ type CancelActivation = () => void;
 export class CryptkeeperConnector extends Connector {
   private eagerConnection?: Promise<void>;
 
-  customProvider?: CryptKeeperInjectedProvider;
+  customProvider?: ICryptKeeperInjectedProvider;
 
   async activate(): Promise<void> {
     let cancelActivation: CancelActivation | undefined;
@@ -22,7 +22,7 @@ export class CryptkeeperConnector extends Connector {
     return this.initialize()
       .then(async () => {
         if (!this.customProvider) {
-          throw new Error("No cryptkeeper installed");
+          throw new Error("No CryptKeeper extension installed");
         }
 
         const accounts = await this.loadAccounts();
@@ -59,6 +59,7 @@ export class CryptkeeperConnector extends Connector {
     }
 
     this.customProvider = initializeCryptKeeperProvider();
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     this.eagerConnection = this.customProvider?.connect().then(() => {
       this.customProvider?.on(EventName.LOGIN, async () => {
         const accounts = await this.loadAccounts();
@@ -75,7 +76,7 @@ export class CryptkeeperConnector extends Connector {
 
   // TODO: create web3 provider
   private async loadAccounts(): Promise<string[]> {
-    return postMessage<string[]>({ method: RPCAction.GET_ACCOUNTS });
+    return postMessage<string[]>({ method: RPCInternalAction.GET_ACCOUNTS });
   }
 }
 

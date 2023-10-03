@@ -92,7 +92,7 @@ describe("background/controllers/requestManager", () => {
     });
 
     expect(finalized).toBe(true);
-    expect(requestPromise).rejects.toStrictEqual(new Error("user rejected."));
+    expect(requestPromise).rejects.toStrictEqual(new Error("User rejected your request."));
   });
 
   test("should handle unknown request finalization type properly", async () => {
@@ -116,6 +116,6 @@ describe("background/controllers/requestManager", () => {
 
     await mockDefaultBrowserUtils.closePopup(mockDefaultWindow.id);
 
-    expect(requestPromise).rejects.toStrictEqual(new Error("user rejected."));
+    expect(requestPromise).rejects.toStrictEqual(new Error("User rejected your request."));
   });
 });

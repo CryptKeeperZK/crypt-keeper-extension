@@ -1,2 +1,3 @@
 export { CryptKeeperInjectedProvider } from "./CryptKeeperInjectedProvider";
-export { initializeCryptKeeperProvider, cryptkeeperConnect } from "./initializeInjectedProvider";
+export { initializeCryptKeeperProvider, initializeCryptKeeper } from "./initializeInjectedProvider";
+export type { ICryptKeeperInjectedProvider } from "./interface";

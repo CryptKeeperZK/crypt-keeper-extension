@@ -240,7 +240,7 @@ export default class LockerService implements IBackupable {
 
   ensure = (payload: unknown = null): unknown => {
     if (!this.isUnlocked) {
-      return false;
+      throw new Error("CryptKeeper: Is locked");
     }
 
     return payload;

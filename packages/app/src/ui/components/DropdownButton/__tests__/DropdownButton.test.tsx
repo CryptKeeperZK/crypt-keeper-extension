@@ -11,12 +11,12 @@ describe("ui/components/DropdownButton", () => {
     menuOptions: [
       {
         id: "metamask",
-        title: "Connect to Metamask",
+        title: "Connect to MetaMask",
         checkDisabledItem: () => true,
       },
       {
         id: "cryptkeeper",
-        title: "Sign with Cryptkeeper",
+        title: "Sign with CryptKeeper",
         checkDisabledItem: () => false,
       },
       {

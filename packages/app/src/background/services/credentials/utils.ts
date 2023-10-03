@@ -133,7 +133,7 @@ export async function deserializeCryptkeeperVerifiableCredential(
   serializedCryptkeeperVerifiableCredential: string,
 ): Promise<ICryptkeeperVerifiableCredential> {
   if (!serializedCryptkeeperVerifiableCredential) {
-    throw new Error("Serialized Cryptkeeper Verifiable Credential is not provided");
+    throw new Error("Serialized CryptKeeper Verifiable Credential is not provided");
   }
 
   const parsedCryptkeeperVerifiableCredential = JSON.parse(serializedCryptkeeperVerifiableCredential) as {

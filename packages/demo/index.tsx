@@ -1,5 +1,4 @@
 import dotenv from "dotenv";
-import { useEffect } from "react";
 import { createRoot } from "react-dom/client";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -12,63 +11,61 @@ dotenv.config({ path: path.resolve(__dirname, "../..", ".env"), override: true }
 
 interface INotConnectedProps {
   onClick: () => void;
+  genSemaphoreProof: (proofType: MerkleProofType) => void;
 }
 
-const NotConnected = ({ onClick }: INotConnectedProps) => (
+const NotConnected = ({ onClick, genSemaphoreProof }: INotConnectedProps) => (
   <div>
-    <p style={{ marginRight: 8 }}>Please connect to Crypt-Keeper to continue.</p>
+    <h2>Start the Authorization Process</h2>
+
+    <p style={{ marginRight: 8 }}>Please connect to CryptKeeper to continue.</p>
 
     <button type="button" onClick={onClick}>
-      Connect
+      Connect Identity
     </button>
+
+    <hr />
+
+    <div>
+      <h2>Example of Unauthorized Actions</h2>
+
+      <br />
+
+      <button
+        type="button"
+        onClick={() => {
+          genSemaphoreProof(MerkleProofType.ARTIFACTS);
+        }}
+      >
+        Generate proof from Merkle proof artifacts
+      </button>
+    </div>
+
+    <hr />
 
     <ToastContainer newestOnTop />
   </div>
 );
 
-interface NoConnectedIdentityCommitmentProps {
-  onConnectIdentity: () => void;
-}
-
-const NoConnectedIdentityCommitment = ({ onConnectIdentity }: NoConnectedIdentityCommitmentProps) => (
-  <div>
-    <p style={{ marginRight: 8 }}>Please set a connected identity in the Crypt-Keeper plugin to continue.</p>
-
-    <button data-testid="connect-identity" type="button" onClick={onConnectIdentity}>
-      Connect identity
-    </button>
-  </div>
-);
-
 const App = () => {
   const {
-    client,
     isLocked,
     connectedIdentityMetadata,
     proof,
     connectedCommitment,
+    getConnectedIdentityMetadata,
     connect,
-    createIdentity,
-    connectIdentity,
     genSemaphoreProof,
     genRLNProof,
     addVerifiableCredentialRequest,
     generateVerifiablePresentationRequest,
     revealConnectedIdentityCommitment,
     joinGroup,
-    generareGroupMerkleProof,
+    generateGroupMerkleProof,
   } = useCryptKeeper();
 
-  useEffect(() => {
-    connect();
-  }, [connect]);
-
-  if (!client || isLocked) {
-    return <NotConnected onClick={connect} />;
-  }
-
-  if (!connectedIdentityMetadata) {
-    return <NoConnectedIdentityCommitment onConnectIdentity={connectIdentity} />;
+  if (isLocked) {
+    return <NotConnected genSemaphoreProof={genSemaphoreProof} onClick={connect} />;
   }
 
   return (
@@ -89,31 +86,23 @@ const App = () => {
         <div>
           <strong>Name:</strong>
 
-          <p data-testid="connected-name">{connectedIdentityMetadata.name}</p>
+          <p data-testid="connected-name">{connectedIdentityMetadata?.name}</p>
         </div>
 
         <div>
           <strong>Host:</strong>
 
-          <p data-testid="connected-host">{connectedIdentityMetadata.host}</p>
+          <p data-testid="connected-urlOrigin">{connectedIdentityMetadata?.urlOrigin}</p>
         </div>
       </div>
 
       <hr />
 
       <div>
-        <h2>Create a new secret identity</h2>
+        <h2>Get Connected Identity Metadata</h2>
 
-        <button data-testid="create-new-identity" type="button" onClick={createIdentity}>
-          Create
-        </button>
-      </div>
-
-      <div>
-        <h2>Connect your identity</h2>
-
-        <button data-testid="connect-identity" type="button" onClick={connectIdentity}>
-          Connect identity
+        <button type="button" onClick={getConnectedIdentityMetadata}>
+          Get Connected Identity
         </button>
       </div>
 
@@ -193,7 +182,7 @@ const App = () => {
         <h2>Generate bandada group proof</h2>
 
         <div>
-          <button type="button" onClick={generareGroupMerkleProof}>
+          <button type="button" onClick={generateGroupMerkleProof}>
             Generate Group Merkle Proof
           </button>
         </div>

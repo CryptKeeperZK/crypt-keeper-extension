@@ -15,15 +15,12 @@ export interface IGenerateMerkleProofArgs {
 
 export interface IGetMerkleProof {
   identityCommitment: bigint;
-  merkleStorageAddress?: string;
+  merkleStorageUrl?: string;
   merkleProofArtifacts?: IMerkleProofArtifacts;
 }
 
-async function getRemoteMerkleProof(
-  merkleStorageAddress: string,
-  identityCommitmentHex: string,
-): Promise<IMerkleProof> {
-  return fetch(merkleStorageAddress, {
+async function getRemoteMerkleProof(merkleStorageUrl: string, identityCommitmentHex: string): Promise<IMerkleProof> {
+  return fetch(merkleStorageUrl, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
@@ -62,11 +59,11 @@ export function generateMerkleProof({ treeDepth, member, members }: IGenerateMer
 
 export async function getMerkleProof({
   identityCommitment,
-  merkleStorageAddress,
+  merkleStorageUrl,
   merkleProofArtifacts,
 }: IGetMerkleProof): Promise<IMerkleProof | undefined> {
-  if (merkleStorageAddress) {
-    return getRemoteMerkleProof(merkleStorageAddress, bigintToHex(identityCommitment));
+  if (merkleStorageUrl) {
+    return getRemoteMerkleProof(merkleStorageUrl, bigintToHex(identityCommitment));
   }
 
   if (merkleProofArtifacts) {

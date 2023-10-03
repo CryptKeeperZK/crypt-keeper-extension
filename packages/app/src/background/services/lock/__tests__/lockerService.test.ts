@@ -83,10 +83,8 @@ describe("background/services/locker", () => {
   });
 
   describe("ensure", () => {
-    test("should return false if there is no password or it's not unlocked", async () => {
-      const result = await lockService.ensure();
-
-      expect(result).toBe(false);
+    test("should throw an error if there is no password or it's not unlocked", () => {
+      expect(() => lockService.ensure()).toThrowError("CryptKeeper: Is locked");
     });
 
     test("should return args from ensure call properly", async () => {

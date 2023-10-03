@@ -37,7 +37,7 @@ describe("ui/components/ConfirmRequestModal", () => {
   };
 
   const defaultConnectionModalHookData: IUseConnectionApprovalModalData = {
-    host: "http://localhost:3000",
+    urlOrigin: "http://localhost:3000",
     checked: false,
     faviconUrl: "http://localhost:3000/favicon.ico",
     onAccept: jest.fn(),

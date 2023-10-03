@@ -1,4 +1,4 @@
-export type { IApprovals } from "./approval";
+export type { IConnectionApprovalData } from "./approval";
 export type { IInjectedMessageData, IInjectedProviderRequest } from "./contentScript";
 export type {
   IRequestResolutionAction,
@@ -27,7 +27,6 @@ export type {
   IMerkleProof,
   IMerkleProofArtifacts,
   IRLNFullProof,
-  IRLNSNARKProof,
   IRLNProverInputs,
   IRLNVerificationKey,
   IRLNProofRequest,
@@ -35,11 +34,13 @@ export type {
   ISemaphoreFullProof,
   ISemaphoreProofRequest,
   ISemaphoreGenerateArgs,
-  IZkInputs,
+  IMerkleProofInputs,
   IZKProofPayload,
   IZkMetadata,
   IRLNProofRequiredArgs,
   ISemaphoreProofRequiredArgs,
+  MerkleProofSource,
+  MerkleProofStorageUrl,
 } from "./proof";
 export { ZkProofType } from "./proof";
 export type { IRequestHandler, IPendingRequest, IRejectedRequest } from "./request";

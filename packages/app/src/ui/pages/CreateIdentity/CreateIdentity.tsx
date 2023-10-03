@@ -16,10 +16,10 @@ const CreateIdentity = (): JSX.Element => {
   const { isLoading, isWalletInstalled, isWalletConnected, errors, control, onCloseModal, onSign } =
     useCreateIdentity();
 
-  const ethWalletTitle = isWalletConnected ? "Sign with Metamask" : "Connect to Metamask";
+  const ethWalletTitle = isWalletConnected ? "Sign with MetaMask" : "Connect to MetaMask";
 
   const menuOptions = [
-    { id: "ck", title: "Sign with Cryptkeeper", checkDisabledItem: () => isLoading },
+    { id: "ck", title: "Sign with CryptKeeper", checkDisabledItem: () => isLoading },
     {
       id: "eth",
       title: isWalletInstalled ? ethWalletTitle : "Install metamask",
@@ -93,7 +93,7 @@ const CreateIdentity = (): JSX.Element => {
 
             <Tooltip
               followCursor
-              title="Identity creation can be done with your Cryptkeeper keys or with connected Ethereum wallet."
+              title="Identity creation can be done with your CryptKeeper keys or with connected Ethereum wallet."
             >
               <InfoIcon />
             </Tooltip>

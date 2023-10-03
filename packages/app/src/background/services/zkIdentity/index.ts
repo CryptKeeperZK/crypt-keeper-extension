@@ -19,11 +19,13 @@ import browser from "webextension-polyfill";
 import BrowserUtils from "@src/background/controllers/browserUtils";
 import CryptoService, { ECryptMode } from "@src/background/services/crypto";
 import HistoryService from "@src/background/services/history";
+import LockerService from "@src/background/services/lock";
 import NotificationService from "@src/background/services/notification";
 import SimpleStorage from "@src/background/services/storage";
 import WalletService from "@src/background/services/wallet";
 import { Paths } from "@src/constants";
 import { OperationType } from "@src/types";
+import { setStatus } from "@src/ui/ducks/app";
 import { setIdentities, setConnectedIdentity } from "@src/ui/ducks/identities";
 import { ellipsify } from "@src/util/account";
 import pushMessage from "@src/util/pushMessage";
@@ -50,6 +52,8 @@ export default class ZkIdentityService implements IBackupable {
 
   private cryptoService: CryptoService;
 
+  private lockService: LockerService;
+
   private connectedIdentity?: ZkIdentitySemaphore;
 
   private constructor() {
@@ -61,6 +65,7 @@ export default class ZkIdentityService implements IBackupable {
     this.browserController = BrowserUtils.getInstance();
     this.walletService = WalletService.getInstance();
     this.cryptoService = CryptoService.getInstance();
+    this.lockService = LockerService.getInstance();
   }
 
   static getInstance = (): ZkIdentityService => {
@@ -84,7 +89,7 @@ export default class ZkIdentityService implements IBackupable {
       return undefined;
     }
 
-    if (meta?.urlOrigin && identity.metadata.host !== meta.urlOrigin) {
+    if (meta?.urlOrigin && identity.metadata.urlOrigin !== meta.urlOrigin) {
       return undefined;
     }
 
@@ -159,20 +164,29 @@ export default class ZkIdentityService implements IBackupable {
     return identities.size;
   };
 
-  connectIdentity = async ({ host, identityCommitment }: IConnectIdentityArgs): Promise<boolean> => {
+  connectIdentity = async ({ urlOrigin, identityCommitment }: IConnectIdentityArgs): Promise<boolean> => {
     const identities = await this.getIdentitiesFromStore();
 
-    return this.updateConnectedIdentity({ identities, identityCommitment, host });
+    const result = await this.updateConnectedIdentity({ identities, identityCommitment, urlOrigin });
+
+    if (result) {
+      const status = await this.lockService.getStatus();
+      await this.browserController
+        .pushEvent(setStatus(status), { urlOrigin })
+        .then(() => this.browserController.closePopup());
+    }
+
+    return result;
   };
 
   private updateConnectedIdentity = async ({
     identities,
     identityCommitment,
-    host,
+    urlOrigin,
   }: {
     identities: Map<string, string>;
     identityCommitment: string;
-    host?: string;
+    urlOrigin?: string;
   }): Promise<boolean> => {
     const identity = identities.get(identityCommitment);
 
@@ -181,11 +195,11 @@ export default class ZkIdentityService implements IBackupable {
     }
 
     this.connectedIdentity = ZkIdentitySemaphore.genFromSerialized(identity);
-    this.connectedIdentity.updateMetadata({ host });
+    this.connectedIdentity.updateMetadata({ urlOrigin });
     await this.writeConnectedIdentity(identityCommitment, this.connectedIdentity.metadata);
 
-    if (host) {
-      await this.setIdentityHost({ identityCommitment, host });
+    if (urlOrigin) {
+      await this.setIdentityHost({ identityCommitment, urlOrigin });
     }
 
     return true;
@@ -197,7 +211,9 @@ export default class ZkIdentityService implements IBackupable {
     const connectedMetadata = this.getConnectedIdentityMetadata(metadata);
 
     await Promise.all([
-      this.browserController.pushEvent(setConnectedIdentity(connectedMetadata), { urlOrigin: connectedMetadata?.host }),
+      this.browserController.pushEvent(setConnectedIdentity(connectedMetadata), {
+        urlOrigin: connectedMetadata?.urlOrigin,
+      }),
       pushMessage(setConnectedIdentity(connectedMetadata)),
     ]);
   };
@@ -207,7 +223,7 @@ export default class ZkIdentityService implements IBackupable {
       return undefined;
     }
 
-    return pick(metadata, ["name", "host"]);
+    return pick(metadata, ["name", "urlOrigin"]);
   }
 
   setIdentityName = async ({ identityCommitment, name }: ISetIdentityNameArgs): Promise<boolean> => {
@@ -227,7 +243,7 @@ export default class ZkIdentityService implements IBackupable {
     return true;
   };
 
-  setIdentityHost = async ({ identityCommitment, host }: ISetIdentityHostArgs): Promise<boolean> => {
+  setIdentityHost = async ({ identityCommitment, urlOrigin }: ISetIdentityHostArgs): Promise<boolean> => {
     const identities = await this.getIdentitiesFromStore();
     const rawIdentity = identities.get(identityCommitment);
 
@@ -236,7 +252,7 @@ export default class ZkIdentityService implements IBackupable {
     }
 
     const identity = ZkIdentitySemaphore.genFromSerialized(rawIdentity);
-    identity.updateMetadata({ host });
+    identity.updateMetadata({ urlOrigin });
     identities.set(identityCommitment, identity.serialize());
     await this.writeIdentities(identities);
     await this.refresh();
@@ -253,7 +269,7 @@ export default class ZkIdentityService implements IBackupable {
       await this.updateConnectedIdentity({
         identities,
         identityCommitment,
-        host: identity?.metadata.host,
+        urlOrigin: identity?.metadata.urlOrigin,
       });
     }
 
@@ -269,12 +285,12 @@ export default class ZkIdentityService implements IBackupable {
     await this.writeConnectedIdentity("");
   };
 
-  createIdentityRequest = async ({ host }: ICreateIdentityRequestArgs): Promise<void> => {
-    await this.browserController.openPopup({ params: { redirect: Paths.CREATE_IDENTITY, host } });
+  createIdentityRequest = async ({ urlOrigin }: ICreateIdentityRequestArgs): Promise<void> => {
+    await this.browserController.openPopup({ params: { redirect: Paths.CREATE_IDENTITY, urlOrigin } });
   };
 
-  connectIdentityRequest = async ({ host }: IConnectIdentityRequestArgs): Promise<void> => {
-    await this.browserController.openPopup({ params: { redirect: Paths.CONNECT_IDENTITY, host } });
+  connectIdentityRequest = async ({ urlOrigin }: IConnectIdentityRequestArgs): Promise<void> => {
+    await this.browserController.openPopup({ params: { redirect: Paths.CONNECT_IDENTITY, urlOrigin } });
   };
 
   revealConnectedIdentityCommitmentRequest = async (): Promise<void> => {
@@ -292,7 +308,7 @@ export default class ZkIdentityService implements IBackupable {
 
     await this.browserController.pushEvent(
       { type: EventName.REVEAL_COMMITMENT, payload: { commitment } },
-      { urlOrigin: connectedIdentity.metadata.host! },
+      { urlOrigin: connectedIdentity.metadata.urlOrigin! },
     );
 
     await this.historyService.trackOperation(OperationType.REVEAL_IDENTITY_COMMITMENT, {
@@ -305,7 +321,7 @@ export default class ZkIdentityService implements IBackupable {
     messageSignature,
     isDeterministic,
     groups,
-    host,
+    urlOrigin,
     options,
   }: INewIdentityRequest): Promise<string | undefined> => {
     const numOfIdentities = await this.getNumOfIdentities();
@@ -313,7 +329,7 @@ export default class ZkIdentityService implements IBackupable {
     const config = {
       ...options,
       groups,
-      host,
+      urlOrigin,
       isDeterministic,
       nonce: isDeterministic ? options.nonce : undefined,
       name: options.name || `Account # ${numOfIdentities}`,

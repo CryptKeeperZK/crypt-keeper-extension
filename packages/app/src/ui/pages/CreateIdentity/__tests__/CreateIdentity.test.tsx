@@ -115,7 +115,7 @@ describe("ui/pages/CreateIdentity", () => {
     const menuItem = await screen.findByTestId("dropdown-menu-item-1");
     act(() => fireEvent.click(menuItem));
 
-    const metamaskButton = await screen.findByText("Connect to Metamask");
+    const metamaskButton = await screen.findByText("Connect to MetaMask");
 
     await act(async () => Promise.resolve(fireEvent.click(metamaskButton)));
 
@@ -147,7 +147,7 @@ describe("ui/pages/CreateIdentity", () => {
 
     await waitFor(() => container.firstChild !== null);
 
-    const button = await screen.findByText("Sign with Cryptkeeper");
+    const button = await screen.findByText("Sign with CryptKeeper");
     await act(async () => Promise.resolve(fireEvent.click(button)));
 
     expect(signWithSigner).toBeCalledTimes(0);
@@ -159,7 +159,7 @@ describe("ui/pages/CreateIdentity", () => {
     expect(createIdentity).toBeCalledWith({
       groups: [],
       messageSignature: undefined,
-      host: undefined,
+      urlOrigin: undefined,
       isDeterministic: true,
       options: { message: mockMessage, account: ZERO_ADDRESS, nonce: 0 },
       walletType: EWallet.CRYPTKEEPER_WALLET,
@@ -183,7 +183,7 @@ describe("ui/pages/CreateIdentity", () => {
     const menuItem = await screen.findByTestId("dropdown-menu-item-1");
     act(() => fireEvent.click(menuItem));
 
-    const button = await screen.findByText("Sign with Metamask");
+    const button = await screen.findByText("Sign with MetaMask");
     act(() => fireEvent.click(button));
 
     const error = await screen.findByText(err.message);

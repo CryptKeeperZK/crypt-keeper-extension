@@ -1,1 +1,1 @@
-export { RPCAction } from "./rpcAction";
+export { RPCExternalAction } from "./rpcExternalAction";

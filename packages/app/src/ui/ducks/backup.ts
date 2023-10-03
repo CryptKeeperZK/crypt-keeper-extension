@@ -1,5 +1,4 @@
-import { RPCAction } from "@cryptkeeperzk/providers";
-
+import { RPCInternalAction } from "@src/constants";
 import postMessage from "@src/util/postMessage";
 
 import type { IUploadArgs } from "@src/types";
@@ -9,25 +8,25 @@ export const downloadBackup =
   (password: string): TypedThunk<Promise<string>> =>
   async () =>
     postMessage({
-      method: RPCAction.DOWNLOAD_BACKUP,
+      method: RPCInternalAction.DOWNLOAD_BACKUP,
       payload: password,
     });
 
 export const createUploadBackupRequest = (): TypedThunk<Promise<void>> => async () =>
   postMessage({
-    method: RPCAction.REQUEST_UPLOAD_BACKUP,
+    method: RPCInternalAction.REQUEST_UPLOAD_BACKUP,
   });
 
 export const createOnboardingBackupRequest = (): TypedThunk<Promise<void>> => async () =>
   postMessage({
-    method: RPCAction.REQUEST_ONBOARDING_BACKUP,
+    method: RPCInternalAction.REQUEST_ONBOARDING_BACKUP,
   });
 
 export const uploadBackup =
   ({ content, password, backupPassword }: IUploadArgs): TypedThunk<Promise<boolean>> =>
   async () =>
     postMessage<boolean>({
-      method: RPCAction.UPLOAD_BACKUP,
+      method: RPCInternalAction.UPLOAD_BACKUP,
       payload: {
         content,
         password,

@@ -36,8 +36,8 @@ export const mockDefaultIdentity: IIdentityData & { secret?: string } = {
     name: "Account #1",
     groups: [],
     isDeterministic: true,
-    host: "http://localhost:3000",
     nonce: 0,
+    urlOrigin: "http://localhost:3000",
   },
 };
 

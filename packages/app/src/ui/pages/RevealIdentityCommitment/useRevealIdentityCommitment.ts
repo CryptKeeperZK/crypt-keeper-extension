@@ -40,16 +40,16 @@ export const useRevealIdentityCommitment = (): IUseRevealIdentityCommitmentData 
   }, [dispatch, setLoading, setError]);
 
   const onGoBack = useCallback(() => {
-    dispatch(rejectUserRequest({ type: EventName.REVEAL_COMMITMENT }, connectedIdentity?.metadata.host))
+    dispatch(rejectUserRequest({ type: EventName.REVEAL_COMMITMENT }, connectedIdentity?.metadata.urlOrigin))
       .then(() => dispatch(closePopup()))
       .then(() => {
         navigate(Paths.HOME);
       });
-  }, [connectedIdentity?.metadata.host, dispatch, navigate]);
+  }, [connectedIdentity?.metadata.urlOrigin, dispatch, navigate]);
 
   const onGoToHost = useCallback(() => {
-    redirectToNewTab(connectedIdentity!.metadata.host!);
-  }, [connectedIdentity?.metadata.host]);
+    redirectToNewTab(connectedIdentity!.metadata.urlOrigin!);
+  }, [connectedIdentity?.metadata.urlOrigin]);
 
   const onReveal = useCallback(() => {
     dispatch(revealConnectedIdentityCommitment())

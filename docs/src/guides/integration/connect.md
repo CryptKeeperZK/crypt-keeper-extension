@@ -33,7 +33,7 @@ Initialize the `cryptkeeper.connect` function, which returns a promise that reso
     const connectedIdentity = await this.getConnectedIdentity();
 
     if (!connectedIdentity) {
-      await this.connectIdentity({ host: window.location.origin });
+      await this.connectIdentity({ urlOrigin: window.location.origin });
     }
 
     return this;

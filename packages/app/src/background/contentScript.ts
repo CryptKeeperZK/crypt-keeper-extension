@@ -8,10 +8,10 @@ import { setConnectedIdentity } from "@src/ui/ducks/identities";
 import type {
   IInjectedMessageData,
   IReduxAction,
-  ConnectedIdentityMetadata,
   IRejectedRequest,
   IMerkleProof,
   IVerifiablePresentation,
+  ConnectedIdentityMetadata,
 } from "@cryptkeeperzk/types";
 
 function injectScript() {
@@ -43,6 +43,10 @@ function injectScript() {
 
   browser.runtime.onMessage.addListener((action: IReduxAction) => {
     switch (action.type) {
+      // TODO: I still need to enhance the idea of `connected` vs `disconnected` and `login` vs `logout`
+      // And also the relation of them with `identity_changed`
+      // This refactor enhancement left for the next PR
+      //
       case setConnectedIdentity.type: {
         window.postMessage(
           {

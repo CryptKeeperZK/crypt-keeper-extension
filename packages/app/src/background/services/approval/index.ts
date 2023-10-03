@@ -32,9 +32,9 @@ export default class ApprovalService implements IBackupable {
   getAllowedHosts = (): string[] =>
     [...this.allowedHosts.entries()].filter(([, { canSkipApprove }]) => canSkipApprove).map(([key]) => key);
 
-  isApproved = (host: string): boolean => this.allowedHosts.has(host);
+  isApproved = (urlOrigin: string): boolean => this.allowedHosts.has(urlOrigin);
 
-  canSkipApprove = (host: string): boolean => Boolean(this.allowedHosts.get(host)?.canSkipApprove);
+  canSkipApprove = (urlOrigin: string): boolean => Boolean(this.allowedHosts.get(urlOrigin)?.canSkipApprove);
 
   unlock = async (): Promise<boolean> => {
     const encryped = await this.approvals.get<string>();
@@ -47,33 +47,33 @@ export default class ApprovalService implements IBackupable {
     return true;
   };
 
-  getPermission = (host: string): IHostPermission => ({
-    host,
-    canSkipApprove: Boolean(this.allowedHosts.get(host)?.canSkipApprove),
+  getPermission = (urlOrigin: string): IHostPermission => ({
+    urlOrigin,
+    canSkipApprove: Boolean(this.allowedHosts.get(urlOrigin)?.canSkipApprove),
   });
 
-  setPermission = async ({ host, canSkipApprove }: IHostPermission): Promise<IHostPermission> => {
-    this.allowedHosts.set(host, { host, canSkipApprove });
+  setPermission = async ({ urlOrigin, canSkipApprove }: IHostPermission): Promise<IHostPermission> => {
+    this.allowedHosts.set(urlOrigin, { urlOrigin, canSkipApprove });
     await this.saveApprovals();
 
-    return { host, canSkipApprove };
+    return { urlOrigin, canSkipApprove };
   };
 
-  add = async ({ host, canSkipApprove }: IHostPermission): Promise<void> => {
-    if (this.allowedHosts.get(host)) {
+  add = async ({ urlOrigin, canSkipApprove }: IHostPermission): Promise<void> => {
+    if (this.allowedHosts.get(urlOrigin)) {
       return;
     }
 
-    this.allowedHosts.set(host, { host, canSkipApprove });
+    this.allowedHosts.set(urlOrigin, { urlOrigin, canSkipApprove });
     await this.saveApprovals();
   };
 
-  remove = async ({ host }: { host: string }): Promise<void> => {
-    if (!this.allowedHosts.has(host)) {
+  remove = async ({ urlOrigin }: { urlOrigin: string }): Promise<void> => {
+    if (!this.allowedHosts.has(urlOrigin)) {
       return;
     }
 
-    this.allowedHosts.delete(host);
+    this.allowedHosts.delete(urlOrigin);
     await this.saveApprovals();
   };
 
