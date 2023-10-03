@@ -62,6 +62,7 @@ export const useConnectIdentity = (): IUseConnectIdentityData => {
 
   const onReject = useCallback(() => {
     dispatch(closePopup()).then(() => {
+      console.log("Inside Connect Identity reject")
       navigate(Paths.HOME);
     });
   }, [dispatch, navigate]);
@@ -69,11 +70,13 @@ export const useConnectIdentity = (): IUseConnectIdentityData => {
   const onConnect = useCallback(async () => {
     await dispatch(connectIdentity({ identityCommitment: selectedIdentityCommitment!, urlOrigin }));
     await dispatch(closePopup()).then(() => {
+      console.log("Inside Connect Identity connect")
       navigate(Paths.HOME);
     });
   }, [selectedIdentityCommitment, urlOrigin, dispatch]);
 
   useEffect(() => {
+    console.log("Inside Connect Identity page")
     dispatch(fetchIdentities());
   }, [dispatch]);
 

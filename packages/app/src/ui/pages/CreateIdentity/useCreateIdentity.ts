@@ -94,6 +94,8 @@ export const useCreateIdentity = (): IUseCreateIdentityData => {
           navigate(-1);
         } else {
           dispatch(closePopup()).then(() => {
+            console.log("Inside Create Identity createNewIdentity")
+
             navigate(Paths.HOME);
           });
         }
@@ -144,6 +146,7 @@ export const useCreateIdentity = (): IUseCreateIdentityData => {
       navigate(-1);
     } else {
       dispatch(closePopup()).then(() => {
+        console.log("Inside Create Identity close")
         navigate(Paths.HOME);
       });
     }

@@ -128,6 +128,7 @@ export const deleteAllIdentities = () => async (): Promise<boolean> =>
   });
 
 export const fetchIdentities = (): TypedThunk<Promise<void>> => async (dispatch) => {
+  console.log("Inside fetchIdentities");
   const [identities, metadata, commitment] = await Promise.all([
     postMessage<IIdentityData[]>({ method: RPCInternalAction.GET_IDENTITIES }),
     postMessage<ConnectedIdentityMetadata | undefined>({
@@ -137,6 +138,7 @@ export const fetchIdentities = (): TypedThunk<Promise<void>> => async (dispatch)
   ]);
 
   dispatch(setIdentities(identities));
+  console.log("Inside setConnectedIdentity before");
   dispatch(setConnectedIdentity(metadata));
   dispatch(identitiesSlice.actions.setConnectedCommitment(commitment));
 };

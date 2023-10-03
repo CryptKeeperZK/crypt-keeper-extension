@@ -165,11 +165,13 @@ export default class ZkIdentityService implements IBackupable {
   };
 
   connectIdentity = async ({ urlOrigin, identityCommitment }: IConnectIdentityArgs): Promise<boolean> => {
+    console.log("Inside connectIdentity function");
     const identities = await this.getIdentitiesFromStore();
 
     const result = await this.updateConnectedIdentity({ identities, identityCommitment, urlOrigin });
 
     if (result) {
+      console.log("Inside connectIdentity result");
       const status = await this.lockService.getStatus();
       await this.browserController
         .pushEvent(setStatus(status), { urlOrigin })
@@ -210,6 +212,7 @@ export default class ZkIdentityService implements IBackupable {
     await this.connectedIdentityStore.set(ciphertext);
     const connectedMetadata = this.getConnectedIdentityMetadata(metadata);
 
+    console.log("Inside writeConnectedIdentity ")
     await Promise.all([
       this.browserController.pushEvent(setConnectedIdentity(connectedMetadata), {
         urlOrigin: connectedMetadata?.urlOrigin,
@@ -261,6 +264,7 @@ export default class ZkIdentityService implements IBackupable {
   };
 
   unlock = async (): Promise<boolean> => {
+    console.log("Inside ZK Identity Service unlock")
     const identities = await this.getIdentitiesFromStore();
     const identity = await this.readConnectedIdentity(identities);
     const identityCommitment = identity ? bigintToHex(identity.genIdentityCommitment()) : undefined;
@@ -290,6 +294,7 @@ export default class ZkIdentityService implements IBackupable {
   };
 
   connectIdentityRequest = async ({ urlOrigin }: IConnectIdentityRequestArgs): Promise<void> => {
+    console.log("connectIdentityRequest >>>");
     await this.browserController.openPopup({ params: { redirect: Paths.CONNECT_IDENTITY, urlOrigin } });
   };
 

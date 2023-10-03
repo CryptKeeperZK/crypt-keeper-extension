@@ -39,8 +39,12 @@ export const useLogin = (): IUseLoginData => {
   const onSubmit = useCallback(
     (data: LoginFields) => {
       dispatch(unlock(data.password))
-        .then(() => dispatch(closePopup()))
         .then(() => {
+          console.log("Inside Login closePopup")
+          dispatch(closePopup())
+        })
+        .then(() => {
+          console.log("Inside Login onSubmit")
           navigate(Paths.HOME);
         })
         .catch((error: Error) => {
