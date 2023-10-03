@@ -83,7 +83,7 @@ describe("ui/components/ConnectionModal/ConnectionModal", () => {
   test("should set approval properly", async () => {
     render(<PermissionModal {...defaultProps} />);
 
-    const button = await screen.findByLabelText("Allow urlOrigin to create proof without approvals");
+    const button = await screen.findByLabelText("Allow host to create proofs without approvals");
     act(() => {
       button.click();
     });

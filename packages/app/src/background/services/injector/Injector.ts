@@ -53,13 +53,13 @@ export class InjectorService {
       if (isApproved) {
         await this.injectorHandler.getApprovalService().add({ urlOrigin: checkedUrlOrigin, canSkipApprove });
       } else {
-        const hostPermissionChecks = (await this.injectorHandler.newRequest(PendingRequestType.APPROVE, {
+        const hostPermission = (await this.injectorHandler.newRequest(PendingRequestType.APPROVE, {
           urlOrigin,
         })) as IHostPermission;
 
         await this.injectorHandler.getApprovalService().add({
-          urlOrigin: hostPermissionChecks.urlOrigin,
-          canSkipApprove: hostPermissionChecks.canSkipApprove,
+          urlOrigin: hostPermission.urlOrigin,
+          canSkipApprove: hostPermission.canSkipApprove,
         });
       }
 

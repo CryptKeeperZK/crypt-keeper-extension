@@ -88,7 +88,7 @@ describe("ui/components/ConfirmRequestModal/components/ConnectionApprovalModal",
   test("should select permanent approval properly", async () => {
     render(<ConnectionApprovalModal {...defaultProps} />);
 
-    const label = await screen.findByLabelText("Allow urlOrigin to create proof without approvals");
+    const label = await screen.findByLabelText("Allow host to create proofs without approvals");
     act(() => {
       label.click();
     });

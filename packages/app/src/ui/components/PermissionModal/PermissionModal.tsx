@@ -47,7 +47,7 @@ export const PermissionModal = ({ refreshConnectionStatus, onClose }: IPermissio
           <Checkbox checked={checked} className="mr-2 mt-2 flex-shrink-0" id="approval" onChange={onSetApproval} />
 
           <label className="text-sm mt-2" htmlFor="approval">
-            Allow urlOrigin to create proof without approvals
+            Allow host to create proofs without approvals
           </label>
         </div>
       </FullModalContent>
