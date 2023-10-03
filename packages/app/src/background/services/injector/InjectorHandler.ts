@@ -79,8 +79,8 @@ export class InjectorHandler {
   };
 
   checkApproval = async ({ urlOrigin }: IZkMetadata): Promise<IConnectionApprovalData> => {
-    const { checkedUrlOrigin, isApproved, canSkipApprove } = this.getConnectionApprovalData({ urlOrigin });
     await this.checkLockStatus();
+    const { checkedUrlOrigin, isApproved, canSkipApprove } = this.getConnectionApprovalData({ urlOrigin });
     return { checkedUrlOrigin, isApproved, canSkipApprove };
   };
 
