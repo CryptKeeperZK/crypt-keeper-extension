@@ -50,7 +50,7 @@ export default class RequestManager {
     return new Promise((resolve, reject) => {
       const onPopupClose = (windowId: number) => {
         if (windowId === popup.id) {
-          reject(new Error("User rejected your request NOOO."));
+          reject(new Error("User rejected your request."));
           this.browserService.removeRemoveWindowListener(onPopupClose);
         }
       };
@@ -64,7 +64,7 @@ export default class RequestManager {
             resolve(action.data);
             return;
           case RequestResolutionStatus.REJECT:
-            reject(new Error("User rejected your request NOO 22."));
+            reject(new Error("User rejected your request."));
             return;
           default:
             reject(new Error(`action: ${action.status as string} not supported`));

@@ -40,11 +40,9 @@ export const useLogin = (): IUseLoginData => {
     (data: LoginFields) => {
       dispatch(unlock(data.password))
         .then(() => {
-          console.log("Inside Login closePopup")
-          dispatch(closePopup())
+          dispatch(closePopup());
         })
         .then(() => {
-          console.log("Inside Login onSubmit")
           navigate(Paths.HOME);
         })
         .catch((error: Error) => {

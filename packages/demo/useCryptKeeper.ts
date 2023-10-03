@@ -115,15 +115,10 @@ export const useCryptKeeper = (): IUseCryptKeeperData => {
   const mockIdentityCommitments: string[] = genMockIdentityCommitments();
 
   const connect = useCallback(async () => {
-    console.log("onConnect")
     await client
       ?.connect()
       .then(() => {
-        console.log("onConnect 1")
-
         if (!connectedIdentityMetadata) {
-          console.log("onConnect 2")
-
           toast(`CryptKeeper connected successfully!`, { type: "success" });
         }
       })
@@ -257,7 +252,6 @@ export const useCryptKeeper = (): IUseCryptKeeperData => {
 
   const onIdentityChanged = useCallback(
     (payload: unknown) => {
-      console.log("onIdentityChanged")
       const metadata = payload as ConnectedIdentityMetadata;
       setConnectedIdentityMetadata(metadata);
 
