@@ -126,8 +126,8 @@ export default class CryptKeeperController {
     this.handler.add(RPCInternalAction.GET_STATUS, this.lockService.getStatus);
 
     // requests
-    this.handler.add(RPCInternalAction.GET_PENDING_REQUESTS, this.lockService.ensure, this.requestManager.getRequests);
-    this.handler.add(RPCInternalAction.FINALIZE_REQUEST, this.lockService.ensure, this.requestManager.finalizeRequest);
+    this.handler.add(RPCInternalAction.GET_PENDING_REQUESTS, this.requestManager.getRequests);
+    this.handler.add(RPCInternalAction.FINALIZE_REQUEST, this.requestManager.finalizeRequest);
 
     // lock
     this.handler.add(RPCInternalAction.SETUP_PASSWORD, this.lockService.setupPassword);

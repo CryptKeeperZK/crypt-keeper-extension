@@ -117,7 +117,7 @@ export const useOnboardingBackup = (): IUseOnboardingBackupData => {
           setError("root", { message: error.message });
         });
     },
-    [dispatch, navigate, setError, setIsCompleted, onConnect],
+    [dispatch, setError, setIsCompleted, onConnect],
   );
 
   const onShowPassword = useCallback(() => {
