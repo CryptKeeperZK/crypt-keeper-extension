@@ -25,7 +25,7 @@ describe("connectors/cryptKeeper", () => {
   interface MockProvider {
     isCryptKeeper: boolean;
     accounts: () => Promise<string[]>;
-    connectIdentity: () => Promise<void>;
+    connect: () => Promise<void>;
   }
 
   const mockProvider = new EventEmitter2() as MockProvider & EventEmitter2;
@@ -33,7 +33,7 @@ describe("connectors/cryptKeeper", () => {
   beforeEach(() => {
     mockProvider.isCryptKeeper = true;
     mockProvider.accounts = jest.fn(() => Promise.resolve(mockAddresses));
-    mockProvider.connectIdentity = jest.fn(() => Promise.resolve());
+    mockProvider.connect = jest.fn(() => Promise.resolve());
 
     (initializeCryptKeeperProvider as jest.Mock).mockReturnValue(mockProvider);
   });
@@ -71,7 +71,7 @@ describe("connectors/cryptKeeper", () => {
   test("should start activation properly", async () => {
     mockProvider.isCryptKeeper = false;
     mockProvider.accounts = jest.fn(() => Promise.resolve(mockAddresses));
-    mockProvider.connectIdentity = jest.fn(() => Promise.resolve());
+    mockProvider.connect = jest.fn(() => Promise.resolve());
     (initializeCryptKeeperProvider as jest.Mock).mockReturnValue(mockProvider);
 
     const connector = new CryptkeeperConnector(mockActions);
