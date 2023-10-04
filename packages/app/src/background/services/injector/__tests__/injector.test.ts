@@ -122,7 +122,7 @@ jest.mock("@src/util/pushMessage");
 jest.mock("@src/background/shared/utils", (): unknown => ({
   getBrowserPlatform: jest.fn(),
   closeChromeOffscreen: jest.fn(),
-  createChromeOffscreen: jest.fn()
+  createChromeOffscreen: jest.fn(),
 }));
 
 describe("background/services/injector", () => {
