@@ -86,7 +86,7 @@ describe("connectors/cryptKeeper", () => {
 
     const connector = new CryptkeeperConnector(mockActions);
 
-    await expect(connector.activate()).rejects.toThrow("No cryptkeeper installed");
+    await expect(connector.activate()).rejects.toThrow("No CryptKeeper extension installed");
     expect(mockActions.startActivation).toBeCalledTimes(1);
     expect(cancelActivation).toBeCalledTimes(1);
   });

@@ -6,11 +6,11 @@ export interface ICreateIdentityOptions {
 }
 
 export interface ICreateIdentityRequestArgs {
-  host: string;
+  urlOrigin: string;
 }
 
 export interface IConnectIdentityRequestArgs {
-  host: string;
+  urlOrigin: string;
 }
 
 export interface INewIdentityRequest {
@@ -18,7 +18,7 @@ export interface INewIdentityRequest {
   walletType: EWallet;
   groups: IGroupData[];
   isDeterministic: boolean;
-  host?: string;
+  urlOrigin?: string;
   messageSignature?: string;
 }
 
@@ -32,11 +32,11 @@ export interface IIdentityMetadata {
   name: string;
   groups: IGroupData[];
   isDeterministic: boolean;
-  host?: string;
   nonce?: number;
+  urlOrigin?: string;
 }
 
-export type ConnectedIdentityMetadata = Pick<IIdentityMetadata, "name" | "host">;
+export type ConnectedIdentityMetadata = Pick<IIdentityMetadata, "name" | "urlOrigin">;
 
 export interface IGroupData {
   id: string;
@@ -59,12 +59,12 @@ export interface ISetIdentityNameArgs {
 
 export interface ISetIdentityHostArgs {
   identityCommitment: string;
-  host: string;
+  urlOrigin: string;
 }
 
 export interface IConnectIdentityArgs {
   identityCommitment: string;
-  host: string;
+  urlOrigin: string;
 }
 
 export interface ISerializedIdentity {
@@ -78,6 +78,6 @@ export interface ICreateIdentityArgs {
   groups: IGroupData[];
   isDeterministic: boolean;
   messageSignature?: string;
-  host?: string;
   nonce?: number;
+  urlOrigin?: string;
 }

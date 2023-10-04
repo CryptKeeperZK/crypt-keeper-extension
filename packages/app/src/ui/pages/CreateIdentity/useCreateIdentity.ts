@@ -19,7 +19,7 @@ export interface IUseCreateIdentityData {
     nonce: string;
   }>;
   control: Control<FormFields, unknown>;
-  host?: string;
+  urlOrigin?: string;
   onCloseModal: () => void;
   register: UseFormRegister<FormFields>;
   onSign: (index: number) => void;
@@ -51,8 +51,8 @@ export const useCreateIdentity = (): IUseCreateIdentityData => {
   const navigate = useNavigate();
 
   const { searchParams } = new URL(window.location.href.replace("#", ""));
-  const { isGoBack, host } = useMemo(
-    () => ({ isGoBack: searchParams.get("back") === "true", host: searchParams.get("host") || undefined }),
+  const { isGoBack, urlOrigin } = useMemo(
+    () => ({ isGoBack: searchParams.get("back") === "true", urlOrigin: searchParams.get("urlOrigin") || undefined }),
     [searchParams.toString()],
   );
 
@@ -86,7 +86,7 @@ export const useCreateIdentity = (): IUseCreateIdentityData => {
             options,
             walletType,
             groups: [],
-            host,
+            urlOrigin,
           }),
         );
 
@@ -101,7 +101,7 @@ export const useCreateIdentity = (): IUseCreateIdentityData => {
         setError("root", { type: "submit", message: (err as Error).message });
       }
     },
-    [ethWallet.address, ethWallet.provider, cryptKeeperWallet.address, isGoBack, host, dispatch, navigate],
+    [ethWallet.address, ethWallet.provider, cryptKeeperWallet.address, isGoBack, urlOrigin, dispatch, navigate],
   );
 
   const onCreateIdentityWithEthWallet = useCallback(
@@ -158,7 +158,7 @@ export const useCreateIdentity = (): IUseCreateIdentityData => {
       root: errors.root?.message,
     },
     control,
-    host,
+    urlOrigin,
     register,
     onCloseModal,
     onSign,

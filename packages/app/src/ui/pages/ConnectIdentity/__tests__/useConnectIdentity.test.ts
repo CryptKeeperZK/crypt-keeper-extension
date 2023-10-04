@@ -58,7 +58,7 @@ describe("ui/pages/ConnectIdentity/useConnectIdentity", () => {
         account: ZERO_ADDRESS,
         name: "Account #1",
         groups: [],
-        host: "http://localhost:3000",
+        urlOrigin: "http://localhost:3000",
       },
     },
   ];
@@ -94,7 +94,7 @@ describe("ui/pages/ConnectIdentity/useConnectIdentity", () => {
 
     (useConnectedIdentity as jest.Mock).mockReturnValue(defaultLinkedIdentities[0]);
 
-    window.location.href = `${oldHref}?host=http://localhost:3000`;
+    window.location.href = `${oldHref}?urlOrigin=http://localhost:3000`;
   });
 
   afterEach(() => {
@@ -117,7 +117,7 @@ describe("ui/pages/ConnectIdentity/useConnectIdentity", () => {
     const { result } = renderHook(() => useConnectIdentity());
     await waitForData(result.current);
 
-    expect(result.current.host).toBe("http://localhost:3000");
+    expect(result.current.urlOrigin).toBe("http://localhost:3000");
     expect(result.current.faviconUrl).toBe("http://localhost:3000/favicon.ico");
     expect(result.current.selectedTab).toBe(EConnectIdentityTabs.LINKED);
     expect(result.current.linkedIdentities).toStrictEqual(defaultLinkedIdentities);
@@ -129,7 +129,7 @@ describe("ui/pages/ConnectIdentity/useConnectIdentity", () => {
 
     const { result } = renderHook(() => useConnectIdentity());
 
-    expect(result.current.host).toBe("http://localhost:3000");
+    expect(result.current.urlOrigin).toBe("http://localhost:3000");
     expect(result.current.faviconUrl).toBe("");
   });
 
@@ -155,7 +155,7 @@ describe("ui/pages/ConnectIdentity/useConnectIdentity", () => {
     expect(mockDispatch).toBeCalledTimes(3);
     expect(fetchIdentities).toBeCalledTimes(1);
     expect(connectIdentity).toBeCalledTimes(1);
-    expect(connectIdentity).toBeCalledWith({ identityCommitment: "1", host: "http://localhost:3000" });
+    expect(connectIdentity).toBeCalledWith({ identityCommitment: "1", urlOrigin: "http://localhost:3000" });
     expect(closePopup).toBeCalledTimes(1);
     expect(mockNavigate).toBeCalledTimes(1);
     expect(mockNavigate).toBeCalledWith(Paths.HOME);

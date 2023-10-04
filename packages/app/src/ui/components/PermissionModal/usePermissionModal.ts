@@ -24,10 +24,10 @@ export const usePermissionModal = ({
 }: IUsePermissionModalArgs): IUsePermissionModalData => {
   const [url, setUrl] = useState<URL>();
   const [faviconUrl, setFaviconUrl] = useState("");
-  const host = url?.origin ?? "";
+  const urlOrigin = url?.origin ?? "";
 
   const dispatch = useAppDispatch();
-  const permission = useHostPermission(host);
+  const permission = useHostPermission(urlOrigin);
 
   useEffect(() => {
     getLastActiveTabUrl().then((tabUrl) => {
@@ -36,31 +36,31 @@ export const usePermissionModal = ({
   }, [setUrl]);
 
   useEffect(() => {
-    if (!host) {
+    if (!urlOrigin) {
       return;
     }
 
-    getLinkPreview(host).then((data) => {
+    getLinkPreview(urlOrigin).then((data) => {
       const [favicon] = data.favicons;
       setFaviconUrl(favicon);
     });
 
-    dispatch(fetchHostPermissions(host));
-  }, [host, setFaviconUrl, dispatch]);
+    dispatch(fetchHostPermissions(urlOrigin));
+  }, [urlOrigin, setFaviconUrl, dispatch]);
 
   const onRemoveHost = useCallback(() => {
-    dispatch(removeHost(host))
+    dispatch(removeHost(urlOrigin))
       .then(() => refreshConnectionStatus())
       .then(() => {
         onClose();
       });
-  }, [host, dispatch, refreshConnectionStatus, onClose]);
+  }, [urlOrigin, dispatch, refreshConnectionStatus, onClose]);
 
   const onSetApproval = useCallback(
     (event: ChangeEvent<HTMLInputElement>) => {
-      dispatch(setHostPermissions({ host, canSkipApprove: event.target.checked }));
+      dispatch(setHostPermissions({ urlOrigin, canSkipApprove: event.target.checked }));
     },
-    [host, dispatch],
+    [urlOrigin, dispatch],
   );
 
   return {

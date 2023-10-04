@@ -18,7 +18,7 @@ jest.mock("../useConnectIdentity", (): unknown => ({
 
 describe("ui/pages/ConnectIdentity", () => {
   const defaultHookData: IUseConnectIdentityData = {
-    host: "http://localhost:3000",
+    urlOrigin: "http://localhost:3000",
     faviconUrl: "",
     selectedTab: EConnectIdentityTabs.LINKED,
     selectedIdentityCommitment: "1234",
@@ -29,7 +29,7 @@ describe("ui/pages/ConnectIdentity", () => {
           account: ZERO_ADDRESS,
           name: "Account #1",
           groups: [],
-          host: "http://localhost:3000",
+          urlOrigin: "http://localhost:3000",
           isDeterministic: true,
         },
       },

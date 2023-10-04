@@ -1,19 +1,19 @@
-import { RPCAction } from "@cryptkeeperzk/providers";
 import { IRLNProofRequest, IRequestHandler, ISemaphoreProofRequest, ISemaphoreFullProof } from "@cryptkeeperzk/types";
 import { ZkIdentitySemaphore, ZkProofService } from "@cryptkeeperzk/zk";
 import { Runtime } from "webextension-polyfill";
 
 import Handler from "@src/background/controllers/handler";
+import { RPCInternalAction } from "@src/constants";
 
-const defaultMap = Object.values(RPCAction).reduce(
+const defaultMap = Object.values(RPCInternalAction).reduce(
   (acc, method) => ({ ...acc, [method]: false }),
   {},
-) as unknown as Record<RPCAction, boolean>;
+) as unknown as Record<RPCInternalAction, boolean>;
 
-const RPC_METHOD_ACCESS: Record<RPCAction, boolean> = {
+const RPC_METHOD_ACCESS: Record<RPCInternalAction, boolean> = {
   ...defaultMap,
-  [RPCAction.GENERATE_SEMAPHORE_PROOF_OFFSCREEN]: true,
-  [RPCAction.GENERATE_RLN_PROOF_OFFSCREEN]: true,
+  [RPCInternalAction.GENERATE_SEMAPHORE_PROOF_OFFSCREEN]: true,
+  [RPCInternalAction.GENERATE_RLN_PROOF_OFFSCREEN]: true,
 };
 
 export class OffscreenController {
@@ -27,11 +27,11 @@ export class OffscreenController {
   }
 
   handle = (request: IRequestHandler, sender: Runtime.MessageSender): Promise<unknown> =>
-    this.handler.handle(request, { sender, bypass: RPC_METHOD_ACCESS[request.method as RPCAction] });
+    this.handler.handle(request, { sender, bypass: RPC_METHOD_ACCESS[request.method as RPCInternalAction] });
 
   initialize = (): this => {
-    this.handler.add(RPCAction.GENERATE_SEMAPHORE_PROOF_OFFSCREEN, this.generateSemaphoreProof);
-    this.handler.add(RPCAction.GENERATE_RLN_PROOF_OFFSCREEN, this.generateRlnProof);
+    this.handler.add(RPCInternalAction.GENERATE_SEMAPHORE_PROOF_OFFSCREEN, this.generateSemaphoreProof);
+    this.handler.add(RPCInternalAction.GENERATE_RLN_PROOF_OFFSCREEN, this.generateRlnProof);
     return this;
   };
 
@@ -40,7 +40,7 @@ export class OffscreenController {
     externalNullifier,
     signal,
     merkleProofArtifacts,
-    merkleStorageAddress,
+    merkleStorageUrl,
     merkleProofProvided,
     circuitFilePath,
     zkeyFilePath,
@@ -54,7 +54,7 @@ export class OffscreenController {
       externalNullifier,
       signal,
       merkleProofArtifacts,
-      merkleStorageAddress,
+      merkleStorageUrl,
       merkleProofProvided,
       circuitFilePath,
       zkeyFilePath,
@@ -71,7 +71,7 @@ export class OffscreenController {
     messageLimit,
     epoch,
     merkleProofArtifacts,
-    merkleStorageAddress,
+    merkleStorageUrl,
     merkleProofProvided,
     circuitFilePath,
     zkeyFilePath,
@@ -90,7 +90,7 @@ export class OffscreenController {
       circuitFilePath,
       zkeyFilePath,
       merkleProofArtifacts,
-      merkleStorageAddress,
+      merkleStorageUrl,
       merkleProofProvided,
     });
 

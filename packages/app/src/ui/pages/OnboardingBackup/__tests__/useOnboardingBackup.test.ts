@@ -11,6 +11,7 @@ import { Paths } from "@src/constants";
 import { closePopup, fetchStatus } from "@src/ui/ducks/app";
 import { uploadBackup } from "@src/ui/ducks/backup";
 import { useAppDispatch } from "@src/ui/ducks/hooks";
+import { fetchPendingRequests, usePendingRequests } from "@src/ui/ducks/requests";
 import { useCryptKeeperWallet } from "@src/ui/hooks/wallet";
 import { readFile } from "@src/util/file";
 
@@ -37,6 +38,11 @@ jest.mock("@src/ui/ducks/backup", (): unknown => ({
   uploadBackup: jest.fn(),
 }));
 
+jest.mock("@src/ui/ducks/requests", (): unknown => ({
+  fetchPendingRequests: jest.fn(),
+  usePendingRequests: jest.fn(),
+}));
+
 jest.mock("@src/util/file", (): unknown => ({
   readFile: jest.fn(),
 }));
@@ -46,6 +52,8 @@ describe("ui/pages/OnboardingBackup/useOnboardingBackup", () => {
   const mockDispatch = jest.fn(() => Promise.resolve());
 
   beforeEach(() => {
+    (mockDispatch as jest.Mock).mockResolvedValue(undefined);
+
     (readFile as jest.Mock).mockResolvedValue({ target: { result: "{}" } });
 
     (useCryptKeeperWallet as jest.Mock).mockReturnValue(defaultWalletHookData);
@@ -53,6 +61,8 @@ describe("ui/pages/OnboardingBackup/useOnboardingBackup", () => {
     (useNavigate as jest.Mock).mockReturnValue(mockNavigate);
 
     (useAppDispatch as jest.Mock).mockReturnValue(mockDispatch);
+
+    (usePendingRequests as jest.Mock).mockReturnValue([]);
   });
 
   afterEach(() => {
@@ -141,9 +151,31 @@ describe("ui/pages/OnboardingBackup/useOnboardingBackup", () => {
     expect(mockNavigate).toBeCalledWith(Paths.HOME);
   });
 
+  test("should submit properly and keep popup open", async () => {
+    (usePendingRequests as jest.Mock).mockReturnValue([{}]);
+
+    const { result } = renderHook(() => useOnboardingBackup());
+
+    await act(() =>
+      Promise.resolve(result.current.register("backupPassword").onChange({ target: { value: "backupPassword" } })),
+    );
+
+    await act(() => Promise.resolve(result.current.onDrop([mockJsonFile], [], new Event("drop"))));
+
+    await act(() => Promise.resolve(result.current.onSubmit()));
+
+    expect(uploadBackup).toBeCalledTimes(1);
+    expect(fetchStatus).toBeCalledTimes(1);
+    expect(fetchPendingRequests).toBeCalledTimes(1);
+    expect(defaultWalletHookData.onConnect).toBeCalledTimes(1);
+    expect(closePopup).toBeCalledTimes(0);
+    expect(mockNavigate).toBeCalledTimes(1);
+    expect(mockNavigate).toBeCalledWith(Paths.HOME);
+  });
+
   test("should handle submit error properly", async () => {
     const error = new Error("error");
-    (mockDispatch as jest.Mock).mockRejectedValue(error);
+    (mockDispatch as jest.Mock).mockRejectedValueOnce(error);
 
     const { result } = renderHook(() => useOnboardingBackup());
 

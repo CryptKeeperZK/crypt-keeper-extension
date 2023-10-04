@@ -1,4 +1,4 @@
-import { BaseSyntheticEvent, useCallback, useState } from "react";
+import { BaseSyntheticEvent, useCallback, useEffect, useMemo, useState } from "react";
 import { FileRejection } from "react-dropzone";
 import { UseFormRegister, useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
@@ -7,6 +7,7 @@ import { Paths } from "@src/constants";
 import { closePopup, fetchStatus } from "@src/ui/ducks/app";
 import { uploadBackup } from "@src/ui/ducks/backup";
 import { useAppDispatch } from "@src/ui/ducks/hooks";
+import { fetchPendingRequests, usePendingRequests } from "@src/ui/ducks/requests";
 import { useCryptKeeperWallet } from "@src/ui/hooks/wallet";
 import { readFile } from "@src/util/file";
 
@@ -30,7 +31,12 @@ interface IOnboardingBackupFields {
 
 export const useOnboardingBackup = (): IUseOnboardingBackupData => {
   const [isShowPassword, setIsShowPassword] = useState(false);
+  const [isCompleted, setIsCompleted] = useState(false);
   const { onConnect } = useCryptKeeperWallet();
+  const navigate = useNavigate();
+  const dispatch = useAppDispatch();
+  const pendingRequests = usePendingRequests();
+  const isKeepOpen = useMemo(() => pendingRequests.length > 0, [pendingRequests.length]);
 
   const {
     formState: { isLoading, isSubmitting, errors },
@@ -46,6 +52,18 @@ export const useOnboardingBackup = (): IUseOnboardingBackupData => {
     },
   });
 
+  useEffect(() => {
+    if (!isCompleted) {
+      return;
+    }
+
+    if (!isKeepOpen) {
+      dispatch(closePopup());
+    }
+
+    navigate(Paths.HOME);
+  }, [isKeepOpen, isCompleted, dispatch]);
+
   const onDrop = useCallback(
     (acceptedFiles: File[], rejectedFiles: FileRejection[]) => {
       setValue("backupFile", acceptedFiles[0]);
@@ -58,10 +76,6 @@ export const useOnboardingBackup = (): IUseOnboardingBackupData => {
     },
     [setValue, setError, clearErrors],
   );
-
-  const navigate = useNavigate();
-
-  const dispatch = useAppDispatch();
 
   const onGoBack = useCallback(() => {
     dispatch(closePopup());
@@ -88,20 +102,22 @@ export const useOnboardingBackup = (): IUseOnboardingBackupData => {
         return;
       }
 
-      dispatch(uploadBackup({ password: "", backupPassword: data.backupPassword, content }))
+      await dispatch(uploadBackup({ password: "", backupPassword: data.backupPassword, content }))
         .then(() => onConnect())
         .then(() => {
           dispatch(fetchStatus());
         })
-        .then(() => dispatch(closePopup()))
         .then(() => {
-          navigate(Paths.HOME);
+          dispatch(fetchPendingRequests());
+        })
+        .then(() => {
+          setIsCompleted(true);
         })
         .catch((error: Error) => {
           setError("root", { message: error.message });
         });
     },
-    [dispatch, navigate, setError, onConnect],
+    [dispatch, setError, setIsCompleted, onConnect],
   );
 
   const onShowPassword = useCallback(() => {

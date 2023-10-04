@@ -165,7 +165,7 @@ describe("ui/pages/Popup/usePopup", () => {
   test("should redirect to create identity page", async () => {
     (useAppStatus as jest.Mock).mockReturnValue({ isInitialized: true, isUnlocked: true, isMnemonicGenerated: true });
 
-    const url = `${window.location.href}?redirect=${Paths.CREATE_IDENTITY}&host=http://localhost:3000`;
+    const url = `${window.location.href}?redirect=${Paths.CREATE_IDENTITY}&urlOrigin=http://localhost:3000`;
     window.location.href = url;
 
     const { result } = renderHook(() => usePopup());
@@ -174,7 +174,9 @@ describe("ui/pages/Popup/usePopup", () => {
     expect(result.current.isUnlocked).toBe(true);
     expect(result.current.isMnemonicGenerated).toBe(true);
     expect(mockNavigate).toBeCalledTimes(1);
-    expect(mockNavigate).toBeCalledWith(`${Paths.CREATE_IDENTITY}?host=${encodeURIComponent("http://localhost:3000")}`);
+    expect(mockNavigate).toBeCalledWith(
+      `${Paths.CREATE_IDENTITY}?urlOrigin=${encodeURIComponent("http://localhost:3000")}`,
+    );
   });
 
   test("should redirect to login page", async () => {

@@ -105,7 +105,7 @@ describe("ui/pages/CreateIdentity/useCreateIdentity", () => {
     expect(createIdentity).toBeCalledWith({
       groups: [],
       messageSignature: mockSignedMessage,
-      host: undefined,
+      urlOrigin: undefined,
       isDeterministic: true,
       options: { account: ZERO_ADDRESS, message: mockMessage, nonce: 0 },
       walletType: EWallet.ETH_WALLET,
@@ -115,7 +115,7 @@ describe("ui/pages/CreateIdentity/useCreateIdentity", () => {
   });
 
   test("should create identity properly and go back", async () => {
-    window.location.href = `${oldHref}?back=true&host=http://localhost:3000`;
+    window.location.href = `${oldHref}?back=true&urlOrigin=http://localhost:3000`;
 
     const { result } = renderHook(() => useCreateIdentity());
 
@@ -127,7 +127,7 @@ describe("ui/pages/CreateIdentity/useCreateIdentity", () => {
     expect(createIdentity).toBeCalledTimes(1);
     expect(createIdentity).toBeCalledWith({
       groups: [],
-      host: "http://localhost:3000",
+      urlOrigin: "http://localhost:3000",
       messageSignature: mockSignedMessage,
       isDeterministic: true,
       options: { account: ZERO_ADDRESS, message: mockMessage, nonce: 0 },
@@ -175,7 +175,7 @@ describe("ui/pages/CreateIdentity/useCreateIdentity", () => {
     expect(createIdentity).toBeCalledWith({
       groups: [],
       messageSignature: undefined,
-      host: undefined,
+      urlOrigin: undefined,
       isDeterministic: true,
       options: { account: defaultWalletHookData.address, message: mockMessage, nonce: 0 },
       walletType: EWallet.CRYPTKEEPER_WALLET,

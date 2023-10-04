@@ -1,6 +1,7 @@
-import { RPCAction } from "@cryptkeeperzk/providers";
+import { RPCExternalAction } from "@cryptkeeperzk/providers";
 import { IRequestHandler } from "@cryptkeeperzk/types";
 
+import { RPCInternalAction } from "@src/constants";
 import { BackupableServices } from "@src/types";
 
 import type { Runtime } from "webextension-polyfill";
@@ -14,35 +15,29 @@ import VerifiableCredentialsService from "./services/credentials";
 import { validateSerializedVerifiableCredential } from "./services/credentials/utils";
 import { GroupService } from "./services/group";
 import HistoryService from "./services/history";
-import InjectorService from "./services/injector";
+import { InjectorService } from "./services/injector";
 import LockerService from "./services/lock";
 import MiscStorageService from "./services/misc";
-import { validateZkInputs } from "./services/validation";
 import WalletService from "./services/wallet";
 import ZkIdentityService from "./services/zkIdentity";
 
-const defaultMap = Object.values(RPCAction).reduce(
+const defaultMap = Object.values(RPCExternalAction).reduce(
   (acc, method) => ({ ...acc, [method]: false }),
   {},
-) as unknown as Record<RPCAction, boolean>;
+) as unknown as Record<RPCExternalAction, boolean>;
 
-const RPC_METHOD_ACCESS: Record<RPCAction, boolean> = {
+const RPC_METHOD_ACCESS: Record<RPCExternalAction, boolean> = {
   ...defaultMap,
-  [RPCAction.CLOSE_POPUP]: true,
-  [RPCAction.CONNECT]: true,
-  [RPCAction.APPROVE_HOST]: true,
-  [RPCAction.GET_CONNECTED_IDENTITY_DATA]: true,
-  [RPCAction.CONNECT_IDENTITY_REQUEST]: true,
-  [RPCAction.GET_HOST_PERMISSIONS]: true,
-  [RPCAction.SET_HOST_PERMISSIONS]: true,
-  [RPCAction.CREATE_IDENTITY_REQUEST]: true,
-  [RPCAction.GENERATE_SEMAPHORE_PROOF]: true,
-  [RPCAction.GENERATE_RLN_PROOF]: true,
-  [RPCAction.ADD_VERIFIABLE_CREDENTIAL_REQUEST]: true,
-  [RPCAction.GENERATE_VERIFIABLE_PRESENTATION_REQUEST]: true,
-  [RPCAction.REVEAL_CONNECTED_IDENTITY_COMMITMENT_REQUEST]: true,
-  [RPCAction.JOIN_GROUP_REQUEST]: true,
-  [RPCAction.GENERATE_GROUP_MERKLE_PROOF_REQUEST]: true,
+  [RPCExternalAction.INJECTOR_CONNECT]: true,
+  [RPCExternalAction.INJECTOR_GENERATE_SEMAPHORE_PROOF]: true,
+  [RPCExternalAction.INJECTOR_GENERATE_RLN_PROOF]: true,
+  [RPCExternalAction.INJECTOR_GET_CONNECTED_IDENTITY_DATA]: true,
+  // TODO: Please note that the following 4 actions will be refactored in another PR
+  [RPCExternalAction.ADD_VERIFIABLE_CREDENTIAL_REQUEST]: true,
+  [RPCExternalAction.REVEAL_CONNECTED_IDENTITY_COMMITMENT_REQUEST]: true,
+  [RPCExternalAction.JOIN_GROUP_REQUEST]: true,
+  [RPCExternalAction.GENERATE_GROUP_MERKLE_PROOF_REQUEST]: true,
+  [RPCExternalAction.GENERATE_VERIFIABLE_PRESENTATION_REQUEST]: true,
 };
 
 Object.freeze(RPC_METHOD_ACCESS);
@@ -97,19 +92,30 @@ export default class CryptKeeperController {
   }
 
   handle = (request: IRequestHandler, sender: Runtime.MessageSender): Promise<unknown> =>
-    this.handler.handle(request, { sender, bypass: RPC_METHOD_ACCESS[request.method as RPCAction] });
+    this.handler.handle(request, { sender, bypass: RPC_METHOD_ACCESS[request.method as RPCExternalAction] });
 
   initialize = (): this => {
+    // Handling RPC EXTERNAL ACTIONS
+    // Injector
+    this.handler.add(
+      RPCExternalAction.INJECTOR_GET_CONNECTED_IDENTITY_DATA,
+      this.injectorService.getConnectedIdentityMetadata,
+    );
+    this.handler.add(RPCExternalAction.INJECTOR_CONNECT, this.injectorService.connect);
+    this.handler.add(RPCExternalAction.INJECTOR_GENERATE_SEMAPHORE_PROOF, this.injectorService.generateSemaphoreProof);
+    this.handler.add(RPCExternalAction.INJECTOR_GENERATE_RLN_PROOF, this.injectorService.generateRLNProof);
+
+    // Handling RPC INTERNAL ACTIONS
     // common
     this.handler.add(
-      RPCAction.UNLOCK,
+      RPCInternalAction.UNLOCK,
       this.lockService.unlock,
       this.zkIdentityService.unlock,
       this.approvalService.unlock,
       this.lockService.onUnlocked,
     );
 
-    this.handler.add(RPCAction.LOCK, this.lockService.logout);
+    this.handler.add(RPCInternalAction.LOCK, this.lockService.logout);
 
     /**
      *  Return status of background process
@@ -117,199 +123,232 @@ export default class CryptKeeperController {
      *  @returns {boolean} status.isInitialized has background process been initialized
      *  @returns {boolean} status.isUnlocked is background process unlocked
      */
-    this.handler.add(RPCAction.GET_STATUS, this.lockService.getStatus);
+    this.handler.add(RPCInternalAction.GET_STATUS, this.lockService.getStatus);
 
     // requests
-    this.handler.add(RPCAction.GET_PENDING_REQUESTS, this.lockService.ensure, this.requestManager.getRequests);
-    this.handler.add(RPCAction.FINALIZE_REQUEST, this.lockService.ensure, this.requestManager.finalizeRequest);
+    this.handler.add(RPCInternalAction.GET_PENDING_REQUESTS, this.requestManager.getRequests);
+    this.handler.add(RPCInternalAction.FINALIZE_REQUEST, this.requestManager.finalizeRequest);
 
     // lock
-    this.handler.add(RPCAction.SETUP_PASSWORD, this.lockService.setupPassword);
-    this.handler.add(RPCAction.RESET_PASSWORD, this.lockService.resetPassword);
-    this.handler.add(RPCAction.CHECK_PASSWORD, this.lockService.ensure, this.lockService.checkPassword);
+    this.handler.add(RPCInternalAction.SETUP_PASSWORD, this.lockService.setupPassword);
+    this.handler.add(RPCInternalAction.RESET_PASSWORD, this.lockService.resetPassword);
+    this.handler.add(RPCInternalAction.CHECK_PASSWORD, this.lockService.ensure, this.lockService.checkPassword);
 
     // Identities
-    this.handler.add(RPCAction.GET_IDENTITIES, this.lockService.ensure, this.zkIdentityService.getIdentities);
+    this.handler.add(RPCInternalAction.GET_IDENTITIES, this.lockService.ensure, this.zkIdentityService.getIdentities);
     this.handler.add(
-      RPCAction.GET_CONNECTED_IDENTITY_DATA,
+      RPCInternalAction.GET_CONNECTED_IDENTITY_DATA,
       this.lockService.ensure,
       this.zkIdentityService.getConnectedIdentityData,
     );
     this.handler.add(
-      RPCAction.GET_CONNECTED_IDENTITY_COMMITMENT,
+      RPCInternalAction.GET_CONNECTED_IDENTITY_COMMITMENT,
       this.lockService.ensure,
       this.zkIdentityService.getConnectedIdentityCommitment,
     );
-    this.handler.add(RPCAction.CONNECT_IDENTITY, this.lockService.ensure, this.zkIdentityService.connectIdentity);
     this.handler.add(
-      RPCAction.CONNECT_IDENTITY_REQUEST,
+      RPCInternalAction.CONNECT_IDENTITY,
+      this.lockService.ensure,
+      this.zkIdentityService.connectIdentity,
+    );
+    this.handler.add(
+      RPCInternalAction.CONNECT_IDENTITY_REQUEST,
       this.lockService.ensure,
       this.zkIdentityService.connectIdentityRequest,
     );
     this.handler.add(
-      RPCAction.REVEAL_CONNECTED_IDENTITY_COMMITMENT_REQUEST,
+      RPCExternalAction.REVEAL_CONNECTED_IDENTITY_COMMITMENT_REQUEST,
       this.lockService.ensure,
       this.zkIdentityService.revealConnectedIdentityCommitmentRequest,
     );
     this.handler.add(
-      RPCAction.REVEAL_CONNECTED_IDENTITY_COMMITMENT,
+      RPCInternalAction.REVEAL_CONNECTED_IDENTITY_COMMITMENT,
       this.lockService.ensure,
       this.zkIdentityService.revealConnectedIdentityCommitment,
     );
-    this.handler.add(RPCAction.SET_IDENTITY_NAME, this.lockService.ensure, this.zkIdentityService.setIdentityName);
-    this.handler.add(RPCAction.SET_IDENTITY_HOST, this.lockService.ensure, this.zkIdentityService.setIdentityHost);
     this.handler.add(
-      RPCAction.CREATE_IDENTITY_REQUEST,
+      RPCInternalAction.SET_IDENTITY_NAME,
+      this.lockService.ensure,
+      this.zkIdentityService.setIdentityName,
+    );
+    this.handler.add(
+      RPCInternalAction.SET_IDENTITY_HOST,
+      this.lockService.ensure,
+      this.zkIdentityService.setIdentityHost,
+    );
+    this.handler.add(
+      RPCInternalAction.CREATE_IDENTITY_REQUEST,
       this.lockService.ensure,
       this.zkIdentityService.createIdentityRequest,
     );
-    this.handler.add(RPCAction.CREATE_IDENTITY, this.lockService.ensure, this.zkIdentityService.createIdentity);
-    this.handler.add(RPCAction.DELETE_IDENTITY, this.lockService.ensure, this.zkIdentityService.deleteIdentity);
+    this.handler.add(RPCInternalAction.CREATE_IDENTITY, this.lockService.ensure, this.zkIdentityService.createIdentity);
+    this.handler.add(RPCInternalAction.DELETE_IDENTITY, this.lockService.ensure, this.zkIdentityService.deleteIdentity);
     this.handler.add(
-      RPCAction.DELETE_ALL_IDENTITIES,
+      RPCInternalAction.DELETE_ALL_IDENTITIES,
       this.lockService.ensure,
       this.zkIdentityService.deleteAllIdentities,
     );
 
     // Groups
-    this.handler.add(RPCAction.JOIN_GROUP_REQUEST, this.lockService.ensure, this.groupService.joinGroupRequest);
-    this.handler.add(RPCAction.JOIN_GROUP, this.lockService.ensure, this.groupService.joinGroup);
+    this.handler.add(RPCExternalAction.JOIN_GROUP_REQUEST, this.lockService.ensure, this.groupService.joinGroupRequest);
     this.handler.add(
-      RPCAction.GENERATE_GROUP_MERKLE_PROOF_REQUEST,
+      RPCExternalAction.GENERATE_GROUP_MERKLE_PROOF_REQUEST,
       this.lockService.ensure,
       this.groupService.generateGroupMerkleProofRequest,
     );
+    this.handler.add(RPCInternalAction.JOIN_GROUP, this.lockService.ensure, this.groupService.joinGroup);
     this.handler.add(
-      RPCAction.GENERATE_GROUP_MERKLE_PROOF,
+      RPCInternalAction.GENERATE_GROUP_MERKLE_PROOF,
       this.lockService.ensure,
       this.groupService.generateGroupMerkleProof,
     );
-    this.handler.add(RPCAction.CHECK_GROUP_MEMBERSHIP, this.lockService.ensure, this.groupService.checkGroupMembership);
+    this.handler.add(
+      RPCInternalAction.CHECK_GROUP_MEMBERSHIP,
+      this.lockService.ensure,
+      this.groupService.checkGroupMembership,
+    );
 
     // History
-    this.handler.add(RPCAction.GET_IDENTITY_HISTORY, this.lockService.ensure, this.historyService.getOperations);
-    this.handler.add(RPCAction.LOAD_IDENTITY_HISTORY, this.lockService.ensure, this.historyService.loadOperations);
-    this.handler.add(RPCAction.DELETE_HISTORY_OPERATION, this.lockService.ensure, this.historyService.removeOperation);
-    this.handler.add(RPCAction.DELETE_ALL_HISTORY_OPERATIONS, this.lockService.ensure, this.historyService.clear);
-    this.handler.add(RPCAction.ENABLE_OPERATION_HISTORY, this.lockService.ensure, this.historyService.enableHistory);
+    this.handler.add(
+      RPCInternalAction.GET_IDENTITY_HISTORY,
+      this.lockService.ensure,
+      this.historyService.getOperations,
+    );
+    this.handler.add(
+      RPCInternalAction.LOAD_IDENTITY_HISTORY,
+      this.lockService.ensure,
+      this.historyService.loadOperations,
+    );
+    this.handler.add(
+      RPCInternalAction.DELETE_HISTORY_OPERATION,
+      this.lockService.ensure,
+      this.historyService.removeOperation,
+    );
+    this.handler.add(
+      RPCInternalAction.DELETE_ALL_HISTORY_OPERATIONS,
+      this.lockService.ensure,
+      this.historyService.clear,
+    );
+    this.handler.add(
+      RPCInternalAction.ENABLE_OPERATION_HISTORY,
+      this.lockService.ensure,
+      this.historyService.enableHistory,
+    );
 
     // Backup
-    this.handler.add(RPCAction.DOWNLOAD_BACKUP, this.lockService.ensure, this.backupService.download);
+    this.handler.add(RPCInternalAction.DOWNLOAD_BACKUP, this.lockService.ensure, this.backupService.download);
     this.handler.add(
-      RPCAction.REQUEST_UPLOAD_BACKUP,
+      RPCInternalAction.REQUEST_UPLOAD_BACKUP,
       this.lockService.ensure,
       this.backupService.createUploadBackupRequest,
     );
-    this.handler.add(RPCAction.REQUEST_ONBOARDING_BACKUP, this.backupService.createOnboardingBackupRequest);
-    this.handler.add(RPCAction.UPLOAD_BACKUP, this.backupService.upload);
+    this.handler.add(RPCInternalAction.REQUEST_ONBOARDING_BACKUP, this.backupService.createOnboardingBackupRequest);
+    this.handler.add(RPCInternalAction.UPLOAD_BACKUP, this.backupService.upload);
 
     // Wallet
-    this.handler.add(RPCAction.GENERATE_MNEMONIC, this.lockService.ensure, this.walletService.generateMnemonic);
-    this.handler.add(RPCAction.SAVE_MNEMONIC, this.lockService.ensure, this.walletService.generateKeyPair);
-    this.handler.add(RPCAction.GET_ACCOUNTS, this.lockService.ensure, this.walletService.accounts);
-    this.handler.add(RPCAction.SELECT_ACCOUNT, this.lockService.ensure, this.walletService.selectAccount);
-    this.handler.add(RPCAction.GET_SELECTED_ACCOUNT, this.lockService.ensure, this.walletService.getSelectedAccount);
-    this.handler.add(RPCAction.CHECK_MNEMONIC, this.walletService.checkMnemonic);
-    this.handler.add(RPCAction.GET_MNEMONIC, this.lockService.ensure, this.walletService.getMnemonic);
+    this.handler.add(RPCInternalAction.GENERATE_MNEMONIC, this.lockService.ensure, this.walletService.generateMnemonic);
+    this.handler.add(RPCInternalAction.SAVE_MNEMONIC, this.lockService.ensure, this.walletService.generateKeyPair);
+    this.handler.add(RPCInternalAction.GET_ACCOUNTS, this.lockService.ensure, this.walletService.accounts);
+    this.handler.add(RPCInternalAction.SELECT_ACCOUNT, this.lockService.ensure, this.walletService.selectAccount);
+    this.handler.add(
+      RPCInternalAction.GET_SELECTED_ACCOUNT,
+      this.lockService.ensure,
+      this.walletService.getSelectedAccount,
+    );
+    this.handler.add(RPCInternalAction.CHECK_MNEMONIC, this.walletService.checkMnemonic);
+    this.handler.add(RPCInternalAction.GET_MNEMONIC, this.lockService.ensure, this.walletService.getMnemonic);
 
     // Credentials
     this.handler.add(
-      RPCAction.ADD_VERIFIABLE_CREDENTIAL,
+      RPCInternalAction.ADD_VERIFIABLE_CREDENTIAL,
       this.lockService.ensure,
       this.verifiableCredentialsService.addVerifiableCredential,
     );
     this.handler.add(
-      RPCAction.ADD_VERIFIABLE_CREDENTIAL_REQUEST,
+      RPCExternalAction.ADD_VERIFIABLE_CREDENTIAL_REQUEST,
       this.lockService.ensure,
       validateSerializedVerifiableCredential,
       this.verifiableCredentialsService.addVerifiableCredentialRequest,
     );
     this.handler.add(
-      RPCAction.REJECT_VERIFIABLE_CREDENTIAL_REQUEST,
+      RPCInternalAction.REJECT_VERIFIABLE_CREDENTIAL_REQUEST,
       this.lockService.ensure,
       this.verifiableCredentialsService.rejectVerifiableCredentialRequest,
     );
     this.handler.add(
-      RPCAction.RENAME_VERIFIABLE_CREDENTIAL,
+      RPCInternalAction.RENAME_VERIFIABLE_CREDENTIAL,
       this.lockService.ensure,
       this.verifiableCredentialsService.renameVerifiableCredential,
     );
     this.handler.add(
-      RPCAction.GET_ALL_VERIFIABLE_CREDENTIALS,
+      RPCInternalAction.GET_ALL_VERIFIABLE_CREDENTIALS,
       this.lockService.ensure,
       this.verifiableCredentialsService.getAllVerifiableCredentials,
     );
     this.handler.add(
-      RPCAction.DELETE_VERIFIABLE_CREDENTIAL,
+      RPCInternalAction.DELETE_VERIFIABLE_CREDENTIAL,
       this.lockService.ensure,
       this.verifiableCredentialsService.deleteVerifiableCredential,
     );
     this.handler.add(
-      RPCAction.DELETE_ALL_VERIFIABLE_CREDENTIALS,
+      RPCInternalAction.DELETE_ALL_VERIFIABLE_CREDENTIALS,
       this.lockService.ensure,
       this.verifiableCredentialsService.deleteAllVerifiableCredentials,
     );
     this.handler.add(
-      RPCAction.GENERATE_VERIFIABLE_PRESENTATION,
+      RPCInternalAction.GENERATE_VERIFIABLE_PRESENTATION,
       this.lockService.ensure,
       this.verifiableCredentialsService.generateVerifiablePresentation,
     );
     this.handler.add(
-      RPCAction.GENERATE_VERIFIABLE_PRESENTATION_WITH_CRYPTKEEPER,
+      RPCInternalAction.GENERATE_VERIFIABLE_PRESENTATION_WITH_CRYPTKEEPER,
       this.lockService.ensure,
       this.verifiableCredentialsService.generateVerifiablePresentationWithCryptkeeper,
     );
     this.handler.add(
-      RPCAction.GENERATE_VERIFIABLE_PRESENTATION_REQUEST,
+      RPCExternalAction.GENERATE_VERIFIABLE_PRESENTATION_REQUEST,
       this.lockService.ensure,
       this.verifiableCredentialsService.generateVerifiablePresentationRequest,
     );
     this.handler.add(
-      RPCAction.REJECT_VERIFIABLE_PRESENTATION_REQUEST,
+      RPCInternalAction.REJECT_VERIFIABLE_PRESENTATION_REQUEST,
       this.lockService.ensure,
       this.verifiableCredentialsService.rejectVerifiablePresentationRequest,
     );
 
-    // Injector
-    this.handler.add(RPCAction.CONNECT, this.injectorService.connect);
-    this.handler.add(
-      RPCAction.GENERATE_SEMAPHORE_PROOF,
-      this.lockService.ensure,
-      validateZkInputs,
-      this.injectorService.generateSemaphoreProof,
-    );
-    this.handler.add(
-      RPCAction.GENERATE_RLN_PROOF,
-      this.lockService.ensure,
-      validateZkInputs,
-      this.injectorService.generateRlnProof,
-    );
-
     // Approvals
-    this.handler.add(RPCAction.APPROVE_HOST, this.lockService.ensure, this.approvalService.add);
-    this.handler.add(RPCAction.IS_HOST_APPROVED, this.lockService.ensure, this.approvalService.isApproved);
-    this.handler.add(RPCAction.REMOVE_HOST, this.lockService.ensure, this.approvalService.remove);
-    this.handler.add(RPCAction.GET_HOST_PERMISSIONS, this.lockService.ensure, this.approvalService.getPermission);
-    this.handler.add(RPCAction.SET_HOST_PERMISSIONS, this.lockService.ensure, this.approvalService.setPermission);
+    this.handler.add(RPCInternalAction.APPROVE_HOST, this.lockService.ensure, this.approvalService.add);
+    this.handler.add(RPCInternalAction.IS_HOST_APPROVED, this.lockService.ensure, this.approvalService.isApproved);
+    this.handler.add(RPCInternalAction.REMOVE_HOST, this.lockService.ensure, this.approvalService.remove);
+    this.handler.add(
+      RPCInternalAction.GET_HOST_PERMISSIONS,
+      this.lockService.ensure,
+      this.approvalService.getPermission,
+    );
+    this.handler.add(
+      RPCInternalAction.SET_HOST_PERMISSIONS,
+      this.lockService.ensure,
+      this.approvalService.setPermission,
+    );
     // Approvals - DEV ONLY
-    this.handler.add(RPCAction.CLEAR_APPROVED_HOSTS, this.approvalService.clear);
+    this.handler.add(RPCInternalAction.CLEAR_APPROVED_HOSTS, this.approvalService.clear);
 
     // Misc
     this.handler.add(
-      RPCAction.SET_CONNECT_WALLET,
+      RPCInternalAction.SET_CONNECT_WALLET,
       this.lockService.ensure,
       this.miscStorageService.setExternalWalletConnection,
     );
     this.handler.add(
-      RPCAction.GET_CONNECT_WALLET,
+      RPCInternalAction.GET_CONNECT_WALLET,
       this.lockService.ensure,
       this.miscStorageService.getExternalWalletConnection,
     );
 
     // Browser
-    this.handler.add(RPCAction.CLOSE_POPUP, this.browserService.closePopup);
-    this.handler.add(RPCAction.CLEAR_STORAGE, this.lockService.ensure, this.browserService.clearStorage);
-    this.handler.add(RPCAction.PUSH_EVENT, this.lockService.ensure, this.browserService.pushEvent);
+    this.handler.add(RPCInternalAction.CLOSE_POPUP, this.browserService.closePopup);
+    this.handler.add(RPCInternalAction.CLEAR_STORAGE, this.lockService.ensure, this.browserService.clearStorage);
+    this.handler.add(RPCInternalAction.PUSH_EVENT, this.lockService.ensure, this.browserService.pushEvent);
 
     return this;
   };

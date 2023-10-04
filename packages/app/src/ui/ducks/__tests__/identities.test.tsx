@@ -2,12 +2,12 @@
  * @jest-environment jsdom
  */
 
-import { RPCAction } from "@cryptkeeperzk/providers";
 import { EWallet, IIdentityMetadata } from "@cryptkeeperzk/types";
 import { renderHook } from "@testing-library/react";
 import { Provider } from "react-redux";
 
 import { ZERO_ADDRESS } from "@src/config/const";
+import { RPCInternalAction } from "@src/constants";
 import { HistorySettings, OperationType } from "@src/types";
 import { store } from "@src/ui/store/configureAppStore";
 import postMessage from "@src/util/postMessage";
@@ -51,7 +51,7 @@ describe("ui/ducks/identities", () => {
         account: ZERO_ADDRESS,
         name: "Account #1",
         groups: [],
-        host: "http://localhost:3000",
+        urlOrigin: "http://localhost:3000",
         isDeterministic: true,
       },
     },
@@ -199,12 +199,12 @@ describe("ui/ducks/identities", () => {
   });
 
   test("should call create identity request action properly", async () => {
-    await Promise.resolve(store.dispatch(createIdentityRequest({ host: "http://localhost:3000" })));
+    await Promise.resolve(store.dispatch(createIdentityRequest({ urlOrigin: "http://localhost:3000" })));
 
     expect(postMessage).toBeCalledTimes(1);
     expect(postMessage).toBeCalledWith({
-      method: RPCAction.CREATE_IDENTITY_REQUEST,
-      payload: { host: "http://localhost:3000" },
+      method: RPCInternalAction.CREATE_IDENTITY_REQUEST,
+      payload: { urlOrigin: "http://localhost:3000" },
     });
   });
 
@@ -216,7 +216,7 @@ describe("ui/ducks/identities", () => {
           messageSignature: "signature",
           isDeterministic: true,
           groups: [],
-          host: "http://localhost:3000",
+          urlOrigin: "http://localhost:3000",
           options: { message: "message", account: ZERO_ADDRESS, nonce: 0 },
         }),
       ),
@@ -224,13 +224,13 @@ describe("ui/ducks/identities", () => {
 
     expect(postMessage).toBeCalledTimes(1);
     expect(postMessage).toBeCalledWith({
-      method: RPCAction.CREATE_IDENTITY,
+      method: RPCInternalAction.CREATE_IDENTITY,
       payload: {
         messageSignature: "signature",
         walletType: EWallet.ETH_WALLET,
         isDeterministic: true,
         groups: [],
-        host: "http://localhost:3000",
+        urlOrigin: "http://localhost:3000",
         options: { message: "message", account: ZERO_ADDRESS, nonce: 0 },
       },
     });
@@ -241,19 +241,21 @@ describe("ui/ducks/identities", () => {
 
     expect(postMessage).toBeCalledTimes(1);
     expect(postMessage).toBeCalledWith({
-      method: RPCAction.REVEAL_CONNECTED_IDENTITY_COMMITMENT,
+      method: RPCInternalAction.REVEAL_CONNECTED_IDENTITY_COMMITMENT,
     });
   });
 
   test("should call set connected identity action properly", async () => {
-    await Promise.resolve(store.dispatch(connectIdentity({ identityCommitment: "1", host: "http://localhost:3000" })));
+    await Promise.resolve(
+      store.dispatch(connectIdentity({ identityCommitment: "1", urlOrigin: "http://localhost:3000" })),
+    );
 
     expect(postMessage).toBeCalledTimes(1);
     expect(postMessage).toBeCalledWith({
-      method: RPCAction.CONNECT_IDENTITY,
+      method: RPCInternalAction.CONNECT_IDENTITY,
       payload: {
         identityCommitment: "1",
-        host: "http://localhost:3000",
+        urlOrigin: "http://localhost:3000",
       },
     });
   });
@@ -263,7 +265,7 @@ describe("ui/ducks/identities", () => {
 
     expect(postMessage).toBeCalledTimes(1);
     expect(postMessage).toBeCalledWith({
-      method: RPCAction.SET_IDENTITY_NAME,
+      method: RPCInternalAction.SET_IDENTITY_NAME,
       payload: {
         identityCommitment: "1",
         name: "name",
@@ -276,7 +278,7 @@ describe("ui/ducks/identities", () => {
 
     expect(postMessage).toBeCalledTimes(1);
     expect(postMessage).toBeCalledWith({
-      method: RPCAction.DELETE_IDENTITY,
+      method: RPCInternalAction.DELETE_IDENTITY,
       payload: {
         identityCommitment: "1",
       },
@@ -306,7 +308,7 @@ describe("ui/ducks/identities", () => {
 
     expect(postMessage).toBeCalledTimes(1);
     expect(postMessage).toBeCalledWith({
-      method: RPCAction.DELETE_ALL_IDENTITIES,
+      method: RPCInternalAction.DELETE_ALL_IDENTITIES,
     });
   });
 });

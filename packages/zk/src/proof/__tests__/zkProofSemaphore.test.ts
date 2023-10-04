@@ -31,7 +31,7 @@ describe("Semaphore proof", () => {
         siblings: ["0"],
         pathIndices: [0],
       },
-      merkleStorageAddress: "merkleStorageAddress",
+      merkleStorageUrl: "merkleStorageUrl",
     },
   };
 

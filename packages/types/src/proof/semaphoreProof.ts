@@ -1,13 +1,13 @@
-import { IZkMetadata, IZkCircuit, IZkInputs } from "./zkProof";
+import { IZkMetadata, IZkCircuit, IMerkleProofInputs } from "./zkProof";
 
 export type { FullProof as ISemaphoreFullProof } from "@cryptkeeperzk/semaphore-proof";
 
 /**
  * Represents the arguments required for generating a Semaphore proof.
- * This interface is intended to be used with the Cryptkeeper InjectedProvider.
+ * This interface is intended to be used with the CryptKeeper InjectedProvider.
  * @interface
  */
-export interface ISemaphoreProofRequiredArgs extends Partial<IZkInputs> {
+export interface ISemaphoreProofRequiredArgs extends Partial<IMerkleProofInputs> {
   /**
    * The external nullifier for the proof.
    * @type {string}

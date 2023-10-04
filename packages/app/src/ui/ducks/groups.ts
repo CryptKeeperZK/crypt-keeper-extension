@@ -1,5 +1,4 @@
-import { RPCAction } from "@cryptkeeperzk/providers";
-
+import { RPCInternalAction } from "@src/constants";
 import postMessage from "@src/util/postMessage";
 
 import type {
@@ -14,7 +13,7 @@ export const joinGroup =
   (payload: IJoinGroupMemberArgs): TypedThunk<Promise<boolean>> =>
   async () =>
     postMessage({
-      method: RPCAction.JOIN_GROUP,
+      method: RPCInternalAction.JOIN_GROUP,
       payload,
     });
 
@@ -22,7 +21,7 @@ export const generateGroupMerkleProof =
   (payload: IGenerateGroupMerkleProofArgs): TypedThunk<Promise<IMerkleProof>> =>
   async () =>
     postMessage({
-      method: RPCAction.GENERATE_GROUP_MERKLE_PROOF,
+      method: RPCInternalAction.GENERATE_GROUP_MERKLE_PROOF,
       payload,
     });
 
@@ -30,6 +29,6 @@ export const checkGroupMembership =
   (payload: ICheckGroupMembershipArgs): TypedThunk<Promise<boolean>> =>
   async () =>
     postMessage({
-      method: RPCAction.CHECK_GROUP_MEMBERSHIP,
+      method: RPCInternalAction.CHECK_GROUP_MEMBERSHIP,
       payload,
     });

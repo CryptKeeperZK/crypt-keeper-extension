@@ -6,8 +6,9 @@ import { render, screen, fireEvent, act, waitFor } from "@testing-library/react"
 import { Suspense } from "react";
 import { MemoryRouter, useNavigate } from "react-router-dom";
 
-import { unlock } from "@src/ui/ducks/app";
+import { fetchStatus, unlock, useAppStatus } from "@src/ui/ducks/app";
 import { useAppDispatch } from "@src/ui/ducks/hooks";
+import { fetchPendingRequests, usePendingRequests } from "@src/ui/ducks/requests";
 
 import Login from "..";
 
@@ -24,12 +25,30 @@ jest.mock("@src/ui/ducks/hooks", (): unknown => ({
   useAppDispatch: jest.fn(),
 }));
 
+jest.mock("@src/ui/ducks/requests", (): unknown => ({
+  fetchPendingRequests: jest.fn(),
+  usePendingRequests: jest.fn(),
+}));
+
+jest.mock("@src/ui/ducks/app", (): unknown => ({
+  closePopup: jest.fn(),
+  fetchStatus: jest.fn(),
+  unlock: jest.fn(),
+  useAppStatus: jest.fn(),
+}));
+
 describe("ui/pages/Login", () => {
   const mockDispatch = jest.fn(() => Promise.resolve());
   const mockNavigate = jest.fn();
 
   beforeEach(() => {
+    mockDispatch.mockResolvedValue(undefined);
+
     (useAppDispatch as jest.Mock).mockReturnValue(mockDispatch);
+
+    (useAppStatus as jest.Mock).mockReturnValue({ isUnlocked: false });
+
+    (usePendingRequests as jest.Mock).mockReturnValue([]);
 
     (useNavigate as jest.Mock).mockReturnValue(mockNavigate);
 
@@ -58,7 +77,7 @@ describe("ui/pages/Login", () => {
 
   test("should handle error properly", async () => {
     const err = new Error("Error");
-    (mockDispatch as jest.Mock).mockRejectedValue(err);
+    (mockDispatch as jest.Mock).mockRejectedValueOnce(err);
     const { container } = render(
       <Suspense>
         <MemoryRouter>
@@ -125,8 +144,10 @@ describe("ui/pages/Login", () => {
     const button = await screen.findByTestId("unlock-button");
     await act(async () => Promise.resolve(fireEvent.submit(button)));
 
-    expect(mockDispatch).toBeCalledTimes(1);
+    expect(mockDispatch).toBeCalledTimes(3);
     expect(unlock).toBeCalledTimes(1);
     expect(unlock).toBeCalledWith("password");
+    expect(fetchStatus).toBeCalledTimes(1);
+    expect(fetchPendingRequests).toBeCalledTimes(1);
   });
 });

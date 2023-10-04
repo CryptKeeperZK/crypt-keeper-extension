@@ -12,9 +12,9 @@ export interface IConnectionApprovalModalProps {
   len: number;
   loading: boolean;
   error: string;
-  pendingRequest: IPendingRequest<{ origin: string }>;
-  accept: () => void;
-  reject: () => void;
+  pendingRequest: IPendingRequest<{ urlOrigin: string }>;
+  accept: (data?: unknown) => void;
+  reject: (err?: Error) => void;
 }
 
 export const ConnectionApprovalModal = ({
@@ -25,7 +25,7 @@ export const ConnectionApprovalModal = ({
   accept,
   reject,
 }: IConnectionApprovalModalProps): JSX.Element => {
-  const { checked, host, faviconUrl, onAccept, onReject, onSetApproval } = useConnectionApprovalModal({
+  const { checked, urlOrigin, faviconUrl, onAccept, onReject, onSetApproval } = useConnectionApprovalModal({
     pendingRequest,
     accept,
     reject,
@@ -51,7 +51,7 @@ export const ConnectionApprovalModal = ({
           />
         </div>
 
-        <div className="text-lg font-semibold mb-2 text-center">{`${host} would like to connect to your identity`}</div>
+        <div className="text-lg font-semibold mb-2 text-center">{`${urlOrigin} would like to connect to your identity`}</div>
 
         <div className="text-sm text-gray-500 text-center">
           This site is requesting access to view your current identity. Always make sure you trust the site you interact
@@ -64,7 +64,7 @@ export const ConnectionApprovalModal = ({
           <Checkbox checked={checked} className="mr-2 mt-2 flex-shrink-0" id="approval" onChange={onSetApproval} />
 
           <label className="text-sm mt-2" htmlFor="approval">
-            Allow host to create proof without approvals
+            Allow host to create proofs without approvals
           </label>
         </div>
       </FullModalContent>

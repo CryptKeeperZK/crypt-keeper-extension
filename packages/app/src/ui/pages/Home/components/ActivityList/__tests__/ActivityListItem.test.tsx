@@ -55,14 +55,14 @@ describe("ui/pages/Home/components/ActivityList/Item", () => {
     expect(defaultProps.onDelete).toBeCalledWith("1");
   });
 
-  test("should go to connected host properly", async () => {
+  test("should go to connected urlOrigin properly", async () => {
     render(<ActivityItem {...defaultProps} />);
 
-    const host = await screen.findByTestId("host");
-    await act(() => fireEvent.click(host));
+    const urlOrigin = await screen.findByTestId("urlOrigin");
+    await act(() => fireEvent.click(urlOrigin));
 
     expect(redirectToNewTab).toBeCalledTimes(1);
-    expect(redirectToNewTab).toBeCalledWith(defaultProps.operation.identity?.metadata.host);
+    expect(redirectToNewTab).toBeCalledWith(defaultProps.operation.identity?.metadata.urlOrigin);
   });
 
   test("should go to group properly", async () => {

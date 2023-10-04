@@ -43,13 +43,6 @@ export default class Identities extends BasePage {
     await this.createIdentity(this.page, params);
   }
 
-  async createIdentityFromDemo(params: ICreateIdentityArgs): Promise<void> {
-    await this.page.getByTestId("create-new-identity").click({ delay: 1000 });
-    const cryptKeeper = await this.page.context().waitForEvent("page");
-
-    await this.createIdentity(cryptKeeper, params);
-  }
-
   async createIdentity(page: Page, { nonce, walletType, isDeterministic }: ICreateIdentityArgs): Promise<void> {
     await page.getByLabel("Nonce", { exact: true }).fill(nonce.toString());
 

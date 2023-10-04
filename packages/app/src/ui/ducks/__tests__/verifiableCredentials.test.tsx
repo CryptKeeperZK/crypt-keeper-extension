@@ -2,11 +2,11 @@
  * @jest-environment jsdom
  */
 
-import { RPCAction } from "@cryptkeeperzk/providers";
 import { renderHook } from "@testing-library/react";
 import { Provider } from "react-redux";
 
 import { serializeCryptkeeperVerifiableCredential } from "@src/background/services/credentials/utils";
+import { RPCInternalAction } from "@src/constants";
 import { store } from "@src/ui/store/configureAppStore";
 import postMessage from "@src/util/postMessage";
 
@@ -107,7 +107,7 @@ describe("ui/ducks/verifiableCredentials", () => {
 
     expect(postMessage).toBeCalledTimes(1);
     expect(postMessage).toBeCalledWith({
-      method: RPCAction.ADD_VERIFIABLE_CREDENTIAL,
+      method: RPCInternalAction.ADD_VERIFIABLE_CREDENTIAL,
       payload: {
         serializedVerifiableCredential: mockSerializedVerifiableCredential,
         verifiableCredentialName: mockName,
@@ -120,7 +120,7 @@ describe("ui/ducks/verifiableCredentials", () => {
 
     expect(postMessage).toBeCalledTimes(1);
     expect(postMessage).toBeCalledWith({
-      method: RPCAction.REJECT_VERIFIABLE_CREDENTIAL_REQUEST,
+      method: RPCInternalAction.REJECT_VERIFIABLE_CREDENTIAL_REQUEST,
     });
   });
 
@@ -131,7 +131,7 @@ describe("ui/ducks/verifiableCredentials", () => {
 
     expect(postMessage).toBeCalledTimes(1);
     expect(postMessage).toBeCalledWith({
-      method: RPCAction.RENAME_VERIFIABLE_CREDENTIAL,
+      method: RPCInternalAction.RENAME_VERIFIABLE_CREDENTIAL,
       payload: mockPayload,
     });
   });
@@ -143,7 +143,7 @@ describe("ui/ducks/verifiableCredentials", () => {
 
     expect(postMessage).toBeCalledTimes(1);
     expect(postMessage).toBeCalledWith({
-      method: RPCAction.DELETE_VERIFIABLE_CREDENTIAL,
+      method: RPCInternalAction.DELETE_VERIFIABLE_CREDENTIAL,
       payload: mockHash,
     });
   });
@@ -153,7 +153,7 @@ describe("ui/ducks/verifiableCredentials", () => {
 
     expect(postMessage).toBeCalledTimes(1);
     expect(postMessage).toBeCalledWith({
-      method: RPCAction.GENERATE_VERIFIABLE_PRESENTATION,
+      method: RPCInternalAction.GENERATE_VERIFIABLE_PRESENTATION,
       payload: mockVerifiablePresentation,
     });
   });
@@ -171,7 +171,7 @@ describe("ui/ducks/verifiableCredentials", () => {
 
     expect(postMessage).toBeCalledTimes(1);
     expect(postMessage).toBeCalledWith({
-      method: RPCAction.GENERATE_VERIFIABLE_PRESENTATION_WITH_CRYPTKEEPER,
+      method: RPCInternalAction.GENERATE_VERIFIABLE_PRESENTATION_WITH_CRYPTKEEPER,
       payload: { verifiablePresentation: mockVerifiablePresentation, address: mockAddress },
     });
   });
@@ -181,7 +181,7 @@ describe("ui/ducks/verifiableCredentials", () => {
 
     expect(postMessage).toBeCalledTimes(1);
     expect(postMessage).toBeCalledWith({
-      method: RPCAction.REJECT_VERIFIABLE_PRESENTATION_REQUEST,
+      method: RPCInternalAction.REJECT_VERIFIABLE_PRESENTATION_REQUEST,
     });
   });
 });

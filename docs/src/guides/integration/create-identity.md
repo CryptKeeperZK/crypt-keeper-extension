@@ -10,16 +10,16 @@ By default, CryptKeeper uses either its supported internal ethereum wallet, or a
 
 ```ts
   /**
-   * Connects to an existing identity for the specified host.
+   * Connects to an existing identity for the specified urlOrigin.
    *
-   * @param {IConnectIdentityRequestArgs} host - The host for which to connect to an identity.
+   * @param {IConnectIdentityRequestArgs} urlOrigin - The urlOrigin for which to connect to an identity.
    * @returns {Promise<void>} A Promise that resolves when the connection is complete.
    */
-  async connectIdentity({ host }: IConnectIdentityRequestArgs): Promise<void> {
+  async connectIdentity({ urlOrigin }: IConnectIdentityRequestArgs): Promise<void> {
     await this.post({
       method: RPCAction.CONNECT_IDENTITY_REQUEST,
       payload: {
-        host,
+        urlOrigin,
       },
     });
   }

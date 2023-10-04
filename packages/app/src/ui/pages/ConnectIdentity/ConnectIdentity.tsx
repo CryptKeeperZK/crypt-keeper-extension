@@ -17,7 +17,7 @@ const ConnectIdentity = (): JSX.Element => {
   const {
     linkedIdentities,
     unlinkedIdentities,
-    host,
+    urlOrigin,
     faviconUrl,
     selectedTab,
     selectedIdentityCommitment,
@@ -29,14 +29,14 @@ const ConnectIdentity = (): JSX.Element => {
 
   return (
     <FullModal data-testid="connect-identity-page" onClose={onReject}>
-      {host && <FullModalHeader onClose={onReject}>Connect to {`"${host}"`}</FullModalHeader>}
+      {urlOrigin && <FullModalHeader onClose={onReject}>Connect to {`"${urlOrigin}"`}</FullModalHeader>}
 
       <Box sx={{ display: "flex", alignItems: "center", flexDirection: "column", overflowY: "auto", flex: "1 1 auto" }}>
         <SiteFavicon src={faviconUrl} />
 
         <Box sx={{ mx: 2 }}>
           <Typography sx={{ mb: 2, textAlign: "center" }} variant="h5">
-            {`${host} would like to connect to your identity`}
+            {`${urlOrigin} would like to connect to your identity`}
           </Typography>
 
           <Box sx={{ mb: 2, mx: 2, textAlign: "center" }}>
@@ -44,7 +44,7 @@ const ConnectIdentity = (): JSX.Element => {
               Please choose one to connect with or choose to
             </Typography>
 
-            <NavLink data-testid="create-new-identity" to={`${Paths.CREATE_IDENTITY}?back=true&host=${host}`}>
+            <NavLink data-testid="create-new-identity" to={`${Paths.CREATE_IDENTITY}?back=true&urlOrigin=${urlOrigin}`}>
               create a new identity
             </NavLink>
           </Box>

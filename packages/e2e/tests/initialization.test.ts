@@ -28,6 +28,7 @@ test.describe("initialization", () => {
     await cryptKeeper.openBackupOnboarding();
     await cryptKeeper.createAccountFromBackup({ password: DEFAULT_BACKUP_PASSWORD, backupFilePath });
 
+    await cryptKeeper.approve();
     await cryptKeeper.connectIdentity();
     await cryptKeeper.close();
 
@@ -52,25 +53,27 @@ test.describe("initialization", () => {
       path.resolve(__dirname, "../backups/8_invalid_backup.json"),
     ];
 
-    const popup = await connectCryptKeeper(page);
-    await popup.openBackupOnboarding();
+    const cryptKeeper = await connectCryptKeeper(page);
+    await cryptKeeper.openBackupOnboarding();
 
     /* eslint-disable no-await-in-loop,no-restricted-syntax */
     for (const backupFilePath of invalidBackups) {
-      await popup.createAccountFromBackup({
+      await cryptKeeper.createAccountFromBackup({
         password: DEFAULT_BACKUP_PASSWORD,
         backupFilePath,
       });
-      await expect(popup.getByText("This backup file is not authentic")).toBeVisible();
+      await expect(cryptKeeper.getByText("This backup file is not authentic")).toBeVisible();
     }
     /* eslint-enable no-await-in-loop */
 
-    await popup.createAccountFromBackup({
+    await cryptKeeper.createAccountFromBackup({
       password: DEFAULT_BACKUP_PASSWORD,
       backupFilePath: path.resolve(__dirname, "../backups/0_backup.json"),
     });
-    await popup.connectIdentity();
-    await popup.close();
+
+    await cryptKeeper.approve();
+    await cryptKeeper.connectIdentity();
+    await cryptKeeper.close();
 
     await page.goto(`chrome-extension://${cryptKeeperExtensionId}/popup.html`);
     await expect(page.getByTestId("home-page")).toBeVisible();

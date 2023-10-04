@@ -49,11 +49,11 @@ export const test = base.extend<TestExtension>({
 
       if (!metamaskExtensionUrl.includes(process.env.METAMASK_EXTENSION_ID!)) {
         // eslint-disable-next-line no-console
-        console.error("Metamask extension id doesn't match with dowloaded version", metamaskExtensionUrl);
+        console.error("MetaMask extension id doesn't match with dowloaded version", metamaskExtensionUrl);
         process.exit(-1);
       } else {
         // eslint-disable-next-line no-console
-        console.log("Metamask url", metamaskExtensionUrl);
+        console.log("MetaMask url", metamaskExtensionUrl);
       }
 
       await initialSetup(chromium, {

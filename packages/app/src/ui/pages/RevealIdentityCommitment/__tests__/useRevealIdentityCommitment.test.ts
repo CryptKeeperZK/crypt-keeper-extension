@@ -96,14 +96,14 @@ describe("ui/pages/RevealIdentityCommitment/useRevealIdentityCommitment", () => 
     expect(result.current.error).toBe(error.message);
   });
 
-  test("should go to host properly", async () => {
+  test("should go to urlOrigin properly", async () => {
     const { result } = renderHook(() => useRevealIdentityCommitment());
     await waitForData(result.current);
 
     await act(() => Promise.resolve(result.current.onGoToHost()));
 
     expect(redirectToNewTab).toBeCalledTimes(1);
-    expect(redirectToNewTab).toBeCalledWith(mockDefaultIdentity.metadata.host);
+    expect(redirectToNewTab).toBeCalledWith(mockDefaultIdentity.metadata.urlOrigin);
   });
 
   test("should reveal connected identity commitment properly", async () => {

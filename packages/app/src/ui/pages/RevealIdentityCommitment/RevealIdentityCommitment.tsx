@@ -81,7 +81,7 @@ const RevealIdentityCommitment = (): JSX.Element => {
                   variant="h6"
                   onClick={onGoToHost}
                 >
-                  {connectedIdentity.metadata.host}
+                  {connectedIdentity.metadata.urlOrigin}
                 </Typography>
               </Typography>
 

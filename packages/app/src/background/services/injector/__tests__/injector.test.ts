@@ -2,22 +2,62 @@
  * @jest-environment jsdom
  */
 
-import { RPCAction } from "@cryptkeeperzk/providers";
-import { PendingRequestType, IRLNProofRequest, ISemaphoreProofRequest, IZkMetadata } from "@cryptkeeperzk/types";
+import {
+  PendingRequestType,
+  ConnectedIdentityMetadata,
+  IRLNProofRequest,
+  ISemaphoreProofRequest,
+  IZkMetadata,
+} from "@cryptkeeperzk/types";
 import { getMerkleProof } from "@cryptkeeperzk/zk";
+import { omit } from "lodash";
 import browser from "webextension-polyfill";
 
-import { getBrowserPlatform } from "@src/background/shared/utils";
-import { BrowserPlatform } from "@src/constants";
+import { createChromeOffscreen, getBrowserPlatform } from "@src/background/shared/utils";
+import { RPCInternalAction, BrowserPlatform } from "@src/constants";
 import pushMessage from "@src/util/pushMessage";
 
-import InjectorService from "..";
+import { InjectorService } from "..";
 
-const mockDefaultHost = "http://localhost:3000";
+const mockDefaultUrlOrigin = "http://localhost:3000";
 const mockSerializedIdentity = "identity";
+const mockConnectedIdentity: ConnectedIdentityMetadata = {
+  name: "Account 1",
+};
+const mockNewRequest = jest.fn((type: PendingRequestType, { urlOrigin }: { urlOrigin: string }): Promise<unknown> => {
+  if (urlOrigin.includes("reject")) {
+    return Promise.reject(new Error("User rejected your request."));
+  }
+
+  if (type === PendingRequestType.APPROVE) {
+    return Promise.resolve({ urlOrigin, canSkipApprove: false });
+  }
+
+  return Promise.resolve();
+});
+
 const mockGetConnectedIdentity = jest.fn();
 const mockGenerateSemaphoreProof = jest.fn();
 const mockGenerateRLNProof = jest.fn();
+const mockGetConnectedIdentityData = jest.fn(
+  (_: unknown, meta?: IZkMetadata): Promise<ConnectedIdentityMetadata | undefined> => {
+    if (meta?.urlOrigin === mockDefaultUrlOrigin || meta?.urlOrigin === "new-urlOrigin") {
+      return Promise.resolve(mockConnectedIdentity);
+    }
+
+    return Promise.resolve(undefined);
+  },
+);
+const mockConnectIdentityRequest = jest.fn();
+const mockIsApproved = jest.fn(
+  (urlOrigin) =>
+    urlOrigin === mockDefaultUrlOrigin ||
+    urlOrigin === "empty_connected_identity" ||
+    urlOrigin === "reject_semaphore_proof" ||
+    urlOrigin === "reject_rln_proof",
+);
+const mockCanSkip = jest.fn((urlOrigin) => urlOrigin === mockDefaultUrlOrigin);
+const mockAwaitUnlock = jest.fn();
 
 Object.defineProperty(global, "chrome", {
   value: {
@@ -49,16 +89,15 @@ jest.mock("@src/background/controllers/browserUtils", (): unknown => ({
 
 jest.mock("@src/background/controllers/requestManager", (): unknown => ({
   getInstance: jest.fn(() => ({
-    newRequest: jest.fn((_: PendingRequestType, meta: IZkMetadata) =>
-      meta.urlOrigin === "reject" ? Promise.reject() : Promise.resolve(),
-    ),
+    newRequest: mockNewRequest,
   })),
 }));
 
 jest.mock("@src/background/services/approval", (): unknown => ({
   getInstance: jest.fn(() => ({
-    isApproved: jest.fn((host) => host === mockDefaultHost),
-    canSkipApprove: jest.fn((host) => host === mockDefaultHost),
+    add: jest.fn(),
+    isApproved: mockIsApproved,
+    canSkipApprove: mockCanSkip,
     getPermission: jest.fn(() => ({ canSkipApprove: false })),
   })),
 }));
@@ -66,13 +105,15 @@ jest.mock("@src/background/services/approval", (): unknown => ({
 jest.mock("@src/background/services/lock", (): unknown => ({
   getInstance: jest.fn(() => ({
     getStatus: jest.fn(() => Promise.resolve({ isUnlocked: false })),
-    awaitUnlock: jest.fn(),
+    awaitUnlock: mockAwaitUnlock,
   })),
 }));
 
 jest.mock("@src/background/services/zkIdentity", (): unknown => ({
   getInstance: jest.fn(() => ({
     getConnectedIdentity: mockGetConnectedIdentity,
+    getConnectedIdentityData: mockGetConnectedIdentityData,
+    connectIdentityRequest: mockConnectIdentityRequest,
   })),
 }));
 
@@ -85,11 +126,10 @@ jest.mock("@src/background/shared/utils", (): unknown => ({
 }));
 
 describe("background/services/injector", () => {
-  const defaultMetadata = { urlOrigin: mockDefaultHost };
+  const defaultMetadata = { urlOrigin: mockDefaultUrlOrigin };
 
   beforeEach(() => {
-    (pushMessage as jest.Mock).mockClear();
-
+    (pushMessage as jest.Mock).mockReset();
     (getMerkleProof as jest.Mock).mockResolvedValue({});
 
     mockGetConnectedIdentity.mockResolvedValue({ serialize: () => mockSerializedIdentity });
@@ -99,48 +139,81 @@ describe("background/services/injector", () => {
     jest.clearAllMocks();
   });
 
+  describe("get connected identity metadata", () => {
+    test("should return connected metadata properly if all checks are passed", async () => {
+      const service = InjectorService.getInstance();
+
+      const result = await service.getConnectedIdentityMetadata({}, { urlOrigin: mockDefaultUrlOrigin });
+      expect(result).toStrictEqual(mockConnectedIdentity);
+      expect(mockIsApproved).toBeCalledTimes(1);
+      expect(mockCanSkip).toBeCalledTimes(1);
+      expect(mockAwaitUnlock).toBeCalledTimes(0);
+      expect(mockGetConnectedIdentityData).toBeCalledTimes(1);
+    });
+
+    test("should throw error if there is no urlOrigin", async () => {
+      const service = InjectorService.getInstance();
+
+      await expect(service.getConnectedIdentityMetadata({}, { urlOrigin: "" })).rejects.toThrow(
+        "CryptKeeper: Origin is not set",
+      );
+    });
+
+    test("should send undefined  if urlOrigin isn't approved", async () => {
+      const service = InjectorService.getInstance();
+
+      const result = await service.getConnectedIdentityMetadata({}, { urlOrigin: "new-urlOrigin" });
+
+      expect(result).toStrictEqual(undefined);
+    });
+
+    test("should throw error if no connected identity found", async () => {
+      const service = InjectorService.getInstance();
+
+      await expect(service.getConnectedIdentityMetadata({}, { urlOrigin: "empty_connected_identity" })).rejects.toThrow(
+        "CryptKeeper: identity metadata is not found",
+      );
+    });
+  });
+
   describe("connect", () => {
     test("should connect properly", async () => {
       const service = InjectorService.getInstance();
 
-      const result = await service.connect(defaultMetadata);
-
-      expect(result).toStrictEqual({
-        canSkipApprove: true,
-        isApproved: true,
-      });
+      await expect(service.connect(defaultMetadata)).resolves.not.toThrowError();
     });
 
-    test("should throw error if there is no host", async () => {
+    test("should throw error if there is no urlOrigin", async () => {
       const service = InjectorService.getInstance();
 
-      await expect(service.connect({ urlOrigin: "" })).rejects.toThrow("Origin is not set");
+      await expect(service.connect({ urlOrigin: "" })).rejects.toThrow("CryptKeeper: Origin is not set");
     });
 
     test("should connect with approval request properly", async () => {
       const service = InjectorService.getInstance();
 
-      const result = await service.connect({ urlOrigin: "new-host" });
-
-      expect(result).toStrictEqual({
-        isApproved: true,
-        canSkipApprove: false,
-      });
+      await expect(service.connect({ urlOrigin: "new-urlOrigin" })).resolves.not.toThrowError();
+      expect(mockNewRequest).toHaveBeenCalledTimes(1);
     });
 
-    test("should reject connect request properly", async () => {
+    test("should reject connect request from the approve connection page properly", async () => {
       const service = InjectorService.getInstance();
 
-      const result = await service.connect({ urlOrigin: "reject" });
+      await expect(service.connect({ urlOrigin: "reject_approve" })).rejects.toThrow(
+        "CryptKeeper: error in the connect request, User rejected your request.",
+      );
+    });
 
-      expect(result).toStrictEqual({
-        isApproved: false,
-        canSkipApprove: false,
-      });
+    test("should reject connect request from the connect identity page properly", async () => {
+      const service = InjectorService.getInstance();
+
+      await expect(service.connect({ urlOrigin: "reject_connect" })).rejects.toThrow(
+        "CryptKeeper: error in the connect request, User rejected your request.",
+      );
     });
   });
 
-  describe("semaphore", () => {
+  describe("generate Semaphore proof", () => {
     beforeEach(() => {
       (browser.runtime.getURL as jest.Mock).mockImplementation((path: string) => path);
     });
@@ -153,18 +226,7 @@ describe("background/services/injector", () => {
       identitySerialized: "identitySerialized",
       externalNullifier: "externalNullifier",
       signal: "signal",
-      merkleStorageAddress: "merkleStorageAddress",
-      merkleProofArtifacts: {
-        leaves: ["0"],
-        depth: 1,
-        leavesPerNode: 1,
-      },
-      merkleProofProvided: {
-        root: "0",
-        leaf: "0",
-        siblings: ["0"],
-        pathIndices: [0],
-      },
+      merkleProofSource: "merkleStorageUrl",
       circuitFilePath: "js/zkeyFiles/semaphore/semaphore.wasm",
       zkeyFilePath: "js/zkeyFiles/semaphore/semaphore.zkey",
       verificationKey: "js/zkeyFiles/semaphore/semaphore.json",
@@ -177,22 +239,6 @@ describe("background/services/injector", () => {
       },
     };
 
-    test("should prepare semaphore proof properly on Chrome platform browsers", async () => {
-      (pushMessage as jest.Mock).mockReturnValueOnce(emptyFullProof);
-      const service = InjectorService.getInstance();
-
-      const result = await service.generateSemaphoreProof(defaultProofRequest, defaultMetadata);
-
-      expect(result).toStrictEqual(emptyFullProof);
-      expect(pushMessage).toBeCalledTimes(1);
-      expect(pushMessage).toBeCalledWith({
-        method: RPCAction.GENERATE_SEMAPHORE_PROOF,
-        payload: { ...defaultProofRequest, urlOrigin: mockDefaultHost, identitySerialized: mockSerializedIdentity },
-        meta: mockDefaultHost,
-        source: "offscreen",
-      });
-    });
-
     test("should throw error if there is no origin url in metadata", async () => {
       const service = InjectorService.getInstance();
 
@@ -204,32 +250,18 @@ describe("background/services/injector", () => {
 
       const service = InjectorService.getInstance();
 
-      await expect(service.generateSemaphoreProof(defaultProofRequest, { urlOrigin: "new-host" })).rejects.toThrow(
-        "connected identity not found",
+      await expect(service.generateSemaphoreProof(defaultProofRequest, defaultMetadata)).rejects.toThrow(
+        "CryptKeeper: connected identity is not found",
       );
       expect(pushMessage).toBeCalledTimes(0);
     });
 
-    test("should throw error if host isn't approved", async () => {
+    test("should throw error if urlOrigin isn't approved", async () => {
       const service = InjectorService.getInstance();
 
-      await expect(service.generateSemaphoreProof(defaultProofRequest, { urlOrigin: "new-host" })).rejects.toThrow(
-        "new-host is not approved",
+      await expect(service.generateSemaphoreProof(defaultProofRequest, { urlOrigin: "new-urlOrigin" })).rejects.toThrow(
+        "CryptKeeper: new-urlOrigin is not approved, please call 'connectIdentity()' request first.",
       );
-      expect(pushMessage).toBeCalledTimes(0);
-    });
-
-    test("should prepare semaphore proof properly on Firefox platform browsers", async () => {
-      mockGetConnectedIdentity.mockResolvedValue({
-        serialize: () => mockSerializedIdentity,
-        genIdentityCommitment: () => "mockIdentityCommitment",
-      });
-      mockGenerateSemaphoreProof.mockReturnValueOnce(emptyFullProof);
-      (getBrowserPlatform as jest.Mock).mockReturnValueOnce(BrowserPlatform.Firefox);
-      const service = InjectorService.getInstance();
-
-      const result = await service.generateSemaphoreProof(defaultProofRequest, defaultMetadata);
-      expect(result).toStrictEqual(emptyFullProof);
       expect(pushMessage).toBeCalledTimes(0);
     });
 
@@ -243,12 +275,115 @@ describe("background/services/injector", () => {
       const service = InjectorService.getInstance();
 
       await expect(service.generateSemaphoreProof(defaultProofRequest, defaultMetadata)).rejects.toThrow(
-        "Error in generateSemaphoreProof(): Injected service: Must set circuitFilePath and zkeyFilePath",
+        "CryptKeeper: Must set Semaphore circuitFilePath and zkeyFilePath",
       );
+    });
+
+    test("should throw error if user rejected semaphore approve request", async () => {
+      mockGetConnectedIdentity.mockResolvedValue({
+        serialize: () => mockSerializedIdentity,
+        genIdentityCommitment: () => "mockIdentityCommitment",
+      });
+      const service = InjectorService.getInstance();
+
+      await expect(
+        service.generateSemaphoreProof(defaultProofRequest, { urlOrigin: "reject_semaphore_proof" }),
+      ).rejects.toThrow("CryptKeeper: error in the Semaphore approve request User rejected your request.");
+    });
+
+    test("should generate semaphore proof properly on Firefox platform browsers", async () => {
+      mockGetConnectedIdentity.mockResolvedValue({
+        serialize: () => mockSerializedIdentity,
+        genIdentityCommitment: () => "mockIdentityCommitment",
+      });
+      mockGenerateSemaphoreProof.mockReturnValueOnce(emptyFullProof);
+      (getBrowserPlatform as jest.Mock).mockReturnValueOnce(BrowserPlatform.Firefox);
+      const service = InjectorService.getInstance();
+
+      const result = await service.generateSemaphoreProof(defaultProofRequest, defaultMetadata);
+      expect(result).toStrictEqual(emptyFullProof);
+      expect(pushMessage).toBeCalledTimes(0);
+    });
+
+    test("should throw error if generate proof is failed on Firefox", async () => {
+      const error = new Error("error");
+      (pushMessage as jest.Mock).mockReturnValueOnce(JSON.stringify(emptyFullProof));
+      (getBrowserPlatform as jest.Mock).mockReturnValueOnce(BrowserPlatform.Firefox);
+      mockGenerateSemaphoreProof.mockRejectedValue(error);
+
+      const service = InjectorService.getInstance();
+
+      await expect(service.generateSemaphoreProof(defaultProofRequest, defaultMetadata)).rejects.toThrowError(
+        `CryptKeeper: Error in generating Semaphore proof on Firefox error`,
+      );
+    });
+
+    test("should generate semaphore proof properly on Chrome platform browsers", async () => {
+      (pushMessage as jest.Mock).mockReturnValueOnce(emptyFullProof);
+      (getBrowserPlatform as jest.Mock).mockReturnValueOnce(BrowserPlatform.Chrome);
+      const service = InjectorService.getInstance();
+
+      const result = await service.generateSemaphoreProof(defaultProofRequest, defaultMetadata);
+
+      expect(result).toStrictEqual(emptyFullProof);
+      expect(pushMessage).toBeCalledTimes(1);
+      expect(pushMessage).toBeCalledWith({
+        method: RPCInternalAction.GENERATE_SEMAPHORE_PROOF_OFFSCREEN,
+        payload: {
+          ...omit(defaultProofRequest, ["merkleProofSource"]),
+          urlOrigin: mockDefaultUrlOrigin,
+          identitySerialized: mockSerializedIdentity,
+          merkleStorageUrl: "merkleStorageUrl",
+          merkleProofArtifacts: undefined,
+          merkleProofProvided: undefined,
+        },
+        meta: mockDefaultUrlOrigin,
+        source: "offscreen",
+      });
+    });
+
+    test("should throw error if generate proof is failed on Chrome platform browsers", async () => {
+      const error = new Error("error");
+
+      (pushMessage as jest.Mock).mockRejectedValueOnce(error);
+      (getBrowserPlatform as jest.Mock).mockReturnValueOnce(BrowserPlatform.Chrome);
+      const service = InjectorService.getInstance();
+
+      await expect(service.generateSemaphoreProof(defaultProofRequest, defaultMetadata)).rejects.toThrowError(
+        `CryptKeeper: Error in generating Semaphore proof on Chrome error`,
+      );
+      expect(pushMessage).toBeCalledTimes(1);
+      expect(pushMessage).toBeCalledWith({
+        method: RPCInternalAction.GENERATE_SEMAPHORE_PROOF_OFFSCREEN,
+        payload: {
+          ...omit(defaultProofRequest, ["merkleProofSource"]),
+          urlOrigin: mockDefaultUrlOrigin,
+          identitySerialized: mockSerializedIdentity,
+          merkleStorageUrl: "merkleStorageUrl",
+          merkleProofArtifacts: undefined,
+          merkleProofProvided: undefined,
+        },
+        meta: mockDefaultUrlOrigin,
+        source: "offscreen",
+      });
+    });
+
+    test("should throw error if generate proof is failed to create Chrome offscreen in Chrome platform browsers", async () => {
+      const error = new Error("error");
+      (pushMessage as jest.Mock).mockReturnValueOnce(emptyFullProof);
+      (createChromeOffscreen as jest.Mock).mockRejectedValueOnce(error);
+
+      const service = InjectorService.getInstance();
+
+      await expect(service.generateSemaphoreProof(defaultProofRequest, defaultMetadata)).rejects.toThrowError(
+        `CryptKeeper: Error in generating Semaphore proof on Chrome error`,
+      );
+
+      expect(pushMessage).toBeCalledTimes(0);
     });
   });
 
-  describe("rln", () => {
+  describe("generate RLN Proof", () => {
     beforeEach(() => {
       (browser.runtime.getURL as jest.Mock).mockImplementation((path: string) => path);
     });
@@ -263,21 +398,10 @@ describe("background/services/injector", () => {
       message: "message",
       messageId: 0,
       messageLimit: 1,
-      merkleStorageAddress: "merkleStorageAddress",
+      merkleProofSource: "merkleStorageUrl",
       circuitFilePath: "js/zkeyFiles/rln/rln.wasm",
       zkeyFilePath: "js/zkeyFiles/rln/rln.zkey",
       verificationKey: "js/zkeyFiles/rln/rln.json",
-      merkleProofArtifacts: {
-        leaves: ["0"],
-        depth: 1,
-        leavesPerNode: 1,
-      },
-      merkleProofProvided: {
-        root: "0",
-        leaf: "0",
-        siblings: ["0"],
-        pathIndices: [0],
-      },
       epoch: Date.now().toString(),
     };
 
@@ -286,26 +410,74 @@ describe("background/services/injector", () => {
       publicSignals: {},
     };
 
-    test("should generate RLN proof properly in chrome platforms", async () => {
+    test("should generate rln proof properly on Chrome platform browsers", async () => {
       (pushMessage as jest.Mock).mockReturnValueOnce(JSON.stringify(emptyFullProof));
-
+      (getBrowserPlatform as jest.Mock).mockReturnValueOnce(BrowserPlatform.Chrome);
       const service = InjectorService.getInstance();
 
-      const result = await service.generateRlnProof(defaultProofRequest, defaultMetadata);
+      const result = await service.generateRLNProof(defaultProofRequest, defaultMetadata);
+
       expect(result).toStrictEqual(emptyFullProof);
       expect(pushMessage).toBeCalledTimes(1);
       expect(pushMessage).toBeCalledWith({
-        method: RPCAction.GENERATE_RLN_PROOF_OFFSCREEN,
-        payload: { ...defaultProofRequest, urlOrigin: mockDefaultHost, identitySerialized: mockSerializedIdentity },
-        meta: mockDefaultHost,
+        method: RPCInternalAction.GENERATE_RLN_PROOF_OFFSCREEN,
+        payload: {
+          ...omit(defaultProofRequest, ["merkleProofSource"]),
+          urlOrigin: mockDefaultUrlOrigin,
+          identitySerialized: mockSerializedIdentity,
+          merkleStorageUrl: "merkleStorageUrl",
+          merkleProofArtifacts: undefined,
+          merkleProofProvided: undefined,
+        },
+        meta: mockDefaultUrlOrigin,
         source: "offscreen",
       });
+    });
+
+    test("should throw error if generate RLN proof is failed on Chrome platform browsers", async () => {
+      const error = new Error("error");
+
+      (pushMessage as jest.Mock).mockRejectedValueOnce(error);
+      (getBrowserPlatform as jest.Mock).mockReturnValueOnce(BrowserPlatform.Chrome);
+      const service = InjectorService.getInstance();
+
+      await expect(service.generateRLNProof(defaultProofRequest, defaultMetadata)).rejects.toThrowError(
+        `CryptKeeper: Error in generating RLN proof on Chrome error`,
+      );
+      expect(pushMessage).toBeCalledTimes(1);
+      expect(pushMessage).toBeCalledWith({
+        method: RPCInternalAction.GENERATE_RLN_PROOF_OFFSCREEN,
+        payload: {
+          ...omit(defaultProofRequest, ["merkleProofSource"]),
+          urlOrigin: mockDefaultUrlOrigin,
+          identitySerialized: mockSerializedIdentity,
+          merkleStorageUrl: "merkleStorageUrl",
+          merkleProofArtifacts: undefined,
+          merkleProofProvided: undefined,
+        },
+        meta: mockDefaultUrlOrigin,
+        source: "offscreen",
+      });
+    });
+
+    test("should throw error if generate proof is failed to create Chrome offscreen in Chrome platform browsers", async () => {
+      const error = new Error("error");
+      (pushMessage as jest.Mock).mockReturnValueOnce(emptyFullProof);
+      (createChromeOffscreen as jest.Mock).mockRejectedValueOnce(error);
+
+      const service = InjectorService.getInstance();
+
+      await expect(service.generateRLNProof(defaultProofRequest, defaultMetadata)).rejects.toThrowError(
+        `CryptKeeper: Error in generating RLN proof on Chrome error`,
+      );
+
+      expect(pushMessage).toBeCalledTimes(0);
     });
 
     test("should throw error if there is no origin url in metadata", async () => {
       const service = InjectorService.getInstance();
 
-      await expect(service.generateRlnProof(defaultProofRequest, {})).rejects.toThrowError("Origin is not set");
+      await expect(service.generateRLNProof(defaultProofRequest, {})).rejects.toThrowError("Origin is not set");
     });
 
     test("should throw error if there is no connected identity", async () => {
@@ -313,19 +485,31 @@ describe("background/services/injector", () => {
 
       const service = InjectorService.getInstance();
 
-      await expect(service.generateRlnProof(defaultProofRequest, defaultMetadata)).rejects.toThrow(
-        "connected identity not found",
+      await expect(service.generateRLNProof(defaultProofRequest, defaultMetadata)).rejects.toThrow(
+        "CryptKeeper: connected identity is not found",
       );
       expect(pushMessage).toBeCalledTimes(0);
     });
 
-    test("should throw error if host isn't approved", async () => {
+    test("should throw error if user rejected semaphore approve request", async () => {
+      mockGetConnectedIdentity.mockResolvedValue({
+        serialize: () => mockSerializedIdentity,
+        genIdentityCommitment: () => "mockIdentityCommitment",
+      });
+      const service = InjectorService.getInstance();
+
+      await expect(service.generateRLNProof(defaultProofRequest, { urlOrigin: "reject_rln_proof" })).rejects.toThrow(
+        "CryptKeeper: error in the RLN approve request User rejected your request.",
+      );
+    });
+
+    test("should throw error if urlOrigin isn't approved", async () => {
       (pushMessage as jest.Mock).mockReturnValueOnce(JSON.stringify(emptyFullProof));
 
       const service = InjectorService.getInstance();
 
-      await expect(service.generateRlnProof(defaultProofRequest, { urlOrigin: "new-host" })).rejects.toThrow(
-        "new-host is not approved",
+      await expect(service.generateRLNProof(defaultProofRequest, { urlOrigin: "new-urlOrigin" })).rejects.toThrow(
+        "new-urlOrigin is not approved",
       );
       expect(pushMessage).toBeCalledTimes(0);
     });
@@ -337,7 +521,7 @@ describe("background/services/injector", () => {
 
       const service = InjectorService.getInstance();
 
-      const result = await service.generateRlnProof(defaultProofRequest, defaultMetadata);
+      const result = await service.generateRLNProof(defaultProofRequest, defaultMetadata);
 
       expect(result).toStrictEqual(emptyFullProof);
       expect(pushMessage).toBeCalledTimes(0);
@@ -351,8 +535,8 @@ describe("background/services/injector", () => {
 
       const service = InjectorService.getInstance();
 
-      await expect(service.generateRlnProof(defaultProofRequest, defaultMetadata)).rejects.toThrowError(
-        `Error in generateRlnProof(): ${error.message}`,
+      await expect(service.generateRLNProof(defaultProofRequest, defaultMetadata)).rejects.toThrowError(
+        `CryptKeeper: Error in generating RLN proof on Firefox error`,
       );
     });
 
@@ -365,8 +549,8 @@ describe("background/services/injector", () => {
 
       const service = InjectorService.getInstance();
 
-      await expect(service.generateRlnProof(defaultProofRequest, defaultMetadata)).rejects.toThrow(
-        "Error in generateRlnProof(): Injected service: Must set circuitFilePath and zkeyFilePath",
+      await expect(service.generateRLNProof(defaultProofRequest, defaultMetadata)).rejects.toThrow(
+        "CryptKeeper: Must set RLN circuitFilePath and zkeyFilePath",
       );
     });
   });

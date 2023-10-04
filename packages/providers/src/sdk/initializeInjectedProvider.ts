@@ -1,4 +1,5 @@
 import { CryptKeeperInjectedProvider } from "./CryptKeeperInjectedProvider";
+import { ICryptKeeperInjectedProvider } from "./interface";
 
 /**
  * Extends the global Window interface to include CryptKeeper-related properties.
@@ -25,8 +26,8 @@ declare global {
  * This function is meant to be used exclusively within the CryptKeeper extension.
  * @returns {CryptKeeperInjectedProvider | undefined} The initialized CryptKeeperInjectedProvider instance or undefined.
  */
-export function initializeCryptKeeperProvider(): CryptKeeperInjectedProvider | undefined {
-  const cryptkeeperInjectedProvider = new CryptKeeperInjectedProvider();
+export function initializeCryptKeeperProvider(connectedOrigin?: string): ICryptKeeperInjectedProvider {
+  const cryptkeeperInjectedProvider = new CryptKeeperInjectedProvider(connectedOrigin);
   window.cryptkeeper = cryptkeeperInjectedProvider;
   window.dispatchEvent(new Event(`cryptkeeper#initialized`));
   window.addEventListener("message", cryptkeeperInjectedProvider.eventResponser);
@@ -35,10 +36,14 @@ export function initializeCryptKeeperProvider(): CryptKeeperInjectedProvider | u
 }
 
 /**
- * Connects to the CryptKeeper extension by initializing an injected provider.
- * This function is meant to be used by applications to establish a connection with the CryptKeeper extension.
- * @returns {CryptKeeperInjectedProvider | undefined} A Promise that resolves to the connected CryptKeeperInjectedProvider instance, or undefined if the CryptKeeper extension is not installed.
+ * Initializes the CryptKeeper provider within the connected application.
+ * This function is meant to be used exclusively within the CryptKeeper extension.
+ * @returns {CryptKeeperInjectedProvider | undefined} A connected CryptKeeperInjectedProvider instance, or undefined if the CryptKeeper extension is not installed.
  */
-export async function cryptkeeperConnect(): Promise<CryptKeeperInjectedProvider | undefined> {
-  return initializeCryptKeeperProvider()?.connect();
+export function initializeCryptKeeper(): ICryptKeeperInjectedProvider | undefined {
+  if (!window.isCryptkeeperInjected) {
+    return undefined;
+  }
+
+  return initializeCryptKeeperProvider(window.location.origin);
 }

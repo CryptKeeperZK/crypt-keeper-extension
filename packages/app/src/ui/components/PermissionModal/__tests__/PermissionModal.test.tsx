@@ -41,10 +41,10 @@ describe("ui/components/ConnectionModal/ConnectionModal", () => {
     render(<PermissionModal {...defaultProps} />);
 
     const modal = await screen.findByTestId("connection-modal");
-    const host = await screen.findByText(defaultHookData.url!.host);
+    const urlOrigin = await screen.findByText(defaultHookData.url!.origin);
 
     expect(modal).toBeInTheDocument();
-    expect(host).toBeInTheDocument();
+    expect(urlOrigin).toBeInTheDocument();
   });
 
   test("should render properly with chrome extension protocol", async () => {
@@ -58,7 +58,7 @@ describe("ui/components/ConnectionModal/ConnectionModal", () => {
     expect(title).toBeInTheDocument();
   });
 
-  test("should remove host properly", async () => {
+  test("should remove urlOrigin properly", async () => {
     render(<PermissionModal {...defaultProps} />);
 
     const button = await screen.findByText("Disconnect");
@@ -83,7 +83,7 @@ describe("ui/components/ConnectionModal/ConnectionModal", () => {
   test("should set approval properly", async () => {
     render(<PermissionModal {...defaultProps} />);
 
-    const button = await screen.findByLabelText("Allow host to create proof without approvals");
+    const button = await screen.findByLabelText("Allow host to create proofs without approvals");
     act(() => {
       button.click();
     });

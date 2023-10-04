@@ -51,7 +51,7 @@ describe("background/services/protocols/utils", () => {
     expect(merkleProof.siblings).not.toHaveLength(0);
   });
 
-  test("should get merkle proof from remote host properly", async () => {
+  test("should get merkle proof from remote urlOrigin properly", async () => {
     const fetchSpy = jest.spyOn(global, "fetch").mockResolvedValue({
       json: () => Promise.resolve({ data: { merkleProof: defaultDeserializedMerkleProof } }),
     } as Response);
@@ -60,14 +60,14 @@ describe("background/services/protocols/utils", () => {
 
     const result = await getMerkleProof({
       identityCommitment: identity.getCommitment(),
-      merkleStorageAddress: "http://localhost:3000/merkle",
+      merkleStorageUrl: "http://localhost:3000/merkle",
     });
 
     expect(fetchSpy).toBeCalledTimes(1);
     expect(result).toStrictEqual(defaultMerkleProof);
   });
 
-  test("should throw error if can't get merkle proof from remote host", async () => {
+  test("should throw error if can't get merkle proof from remote urlOrigin", async () => {
     const error = new Error("error");
     const fetchSpy = jest.spyOn(global, "fetch").mockResolvedValue({
       json: () => Promise.reject(error),
@@ -78,7 +78,7 @@ describe("background/services/protocols/utils", () => {
     await expect(
       getMerkleProof({
         identityCommitment: identity.getCommitment(),
-        merkleStorageAddress: "http://localhost:3000/merkle",
+        merkleStorageUrl: "http://localhost:3000/merkle",
       }),
     ).rejects.toThrowError(`Error in fetching Mock Merkle Proof ${error.message}`);
     expect(fetchSpy).toBeCalledTimes(1);
@@ -105,7 +105,7 @@ describe("background/services/protocols/utils", () => {
     ).rejects.toThrowError("ZK: Cannot get MerkleProof");
   });
 
-  test("should get rln verification key proof from remote host properly", async () => {
+  test("should get rln verification key proof from remote urlOrigin properly", async () => {
     const fetchSpy = jest.spyOn(global, "fetch").mockResolvedValue({
       json: () => Promise.resolve({ data: {} }),
     } as Response);

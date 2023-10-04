@@ -74,7 +74,7 @@ export class GroupService {
 
     await this.browserController.pushEvent(
       { type: EventName.JOIN_GROUP, payload: { groupId } },
-      { urlOrigin: identity.metadata.host! },
+      { urlOrigin: identity.metadata.urlOrigin! },
     );
 
     return result;
@@ -105,7 +105,7 @@ export class GroupService {
 
     await this.browserController.pushEvent(
       { type: EventName.GROUP_MERKLE_PROOF, payload: { merkleProof } },
-      { urlOrigin: identity.metadata.host! },
+      { urlOrigin: identity.metadata.urlOrigin! },
     );
 
     return merkleProof;

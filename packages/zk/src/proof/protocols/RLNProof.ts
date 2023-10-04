@@ -2,12 +2,12 @@ import { RLNProver } from "@cryptkeeperzk/rlnjs";
 
 import { ZkIdentitySemaphore } from "@src/identity";
 
-import type { IRLNProofRequest, IRLNProverInputs, IRLNSNARKProof } from "@cryptkeeperzk/types";
+import type { IRLNProofRequest, IRLNProverInputs, IRLNFullProof } from "@cryptkeeperzk/types";
 
 import { IZkProof } from "./types";
 import { getMerkleProof, getMessageHash } from "./utils";
 
-export class RLNProofService implements IZkProof<IRLNProofRequest, IRLNSNARKProof> {
+export class RLNProofService implements IZkProof<IRLNProofRequest, IRLNFullProof> {
   async genProof(
     identity: ZkIdentitySemaphore,
     {
@@ -19,10 +19,10 @@ export class RLNProofService implements IZkProof<IRLNProofRequest, IRLNSNARKProo
       circuitFilePath,
       zkeyFilePath,
       merkleProofArtifacts,
-      merkleStorageAddress,
+      merkleStorageUrl,
       merkleProofProvided,
     }: IRLNProofRequest,
-  ): Promise<IRLNSNARKProof> {
+  ): Promise<IRLNFullProof> {
     if (!circuitFilePath || !zkeyFilePath) {
       throw new Error("Zk service: Must set circuitFilePath and zkeyFilePath");
     }
@@ -40,7 +40,7 @@ export class RLNProofService implements IZkProof<IRLNProofRequest, IRLNSNARKProo
       (await getMerkleProof({
         identityCommitment,
         merkleProofArtifacts,
-        merkleStorageAddress,
+        merkleStorageUrl,
       }));
 
     if (!merkleProof) {

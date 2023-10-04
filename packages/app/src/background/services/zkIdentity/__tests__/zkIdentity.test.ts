@@ -9,6 +9,7 @@ import SimpleStorage from "@src/background/services/storage";
 import ZkIdentityService from "@src/background/services/zkIdentity";
 import { ZERO_ADDRESS } from "@src/config/const";
 import { mockDefaultIdentity, mockDefaultIdentityCommitment } from "@src/config/mock/zk";
+import { setStatus } from "@src/ui/ducks/app";
 import { setConnectedIdentity, setIdentities } from "@src/ui/ducks/identities";
 import pushMessage from "@src/util/pushMessage";
 
@@ -47,6 +48,18 @@ jest.mock("@src/background/services/wallet", (): unknown => ({
   })),
 }));
 
+const mockDefaultStatus = {
+  isUnlocked: true,
+  isInitialized: true,
+  isMnemonicGenerated: true,
+};
+
+jest.mock("@src/background/services/lock", (): unknown => ({
+  getInstance: jest.fn(() => ({
+    getStatus: jest.fn(() => Promise.resolve(mockDefaultStatus)),
+  })),
+}));
+
 jest.mock("@src/background/services/storage");
 
 jest.mock("@src/util/pushMessage");
@@ -66,8 +79,8 @@ describe("background/services/zkIdentity", () => {
   const zkIdentityService = ZkIdentityService.getInstance();
 
   const defaultTabs = [
-    { id: 1, url: mockDefaultIdentity.metadata.host },
-    { id: 2, url: mockDefaultIdentity.metadata.host },
+    { id: 1, url: mockDefaultIdentity.metadata.urlOrigin },
+    { id: 2, url: mockDefaultIdentity.metadata.urlOrigin },
     { id: 3 },
   ];
 
@@ -76,7 +89,7 @@ describe("background/services/zkIdentity", () => {
   const defaultNewIdentity = {
     serialize: () => JSON.stringify({ secret: "1234", metadata: mockDefaultIdentity.metadata }),
     genIdentityCommitment: () => "15206603389158210388485662342360617949291660595274505642693885456541816400292",
-    metadata: { host: "http://localhost:3000" } as ConnectedIdentityMetadata,
+    metadata: { urlOrigin: "http://localhost:3000" } as ConnectedIdentityMetadata,
   };
 
   beforeEach(() => {
@@ -116,7 +129,9 @@ describe("background/services/zkIdentity", () => {
       identityStorage.get.mockResolvedValue(mockSerializedDefaultIdentities);
       connectedIdentityStorage.get.mockResolvedValue(mockDefaultIdentityCommitment);
 
-      const expectConnectIdentityAction = setConnectedIdentity(pick(mockDefaultIdentity.metadata, ["name", "host"]));
+      const expectConnectIdentityAction = setConnectedIdentity(
+        pick(mockDefaultIdentity.metadata, ["name", "urlOrigin"]),
+      );
 
       const expectSetIdentitiesAction = setIdentities([
         { commitment: mockDefaultIdentityCommitment, metadata: mockDefaultIdentity.metadata },
@@ -146,23 +161,27 @@ describe("background/services/zkIdentity", () => {
 
   describe("set connected identity", () => {
     test("should set connected identity properly", async () => {
-      const expectConnectIdentityAction = setConnectedIdentity(pick(mockDefaultIdentity.metadata, ["name", "host"]));
+      const expectConnectIdentityAction = setConnectedIdentity(
+        pick(mockDefaultIdentity.metadata, ["name", "urlOrigin"]),
+      );
       const expectedSetIdentitiesAction = setIdentities([
         { commitment: mockDefaultIdentityCommitment, metadata: mockDefaultIdentity.metadata },
       ]);
 
       const result = await zkIdentityService.connectIdentity({
         identityCommitment: mockDefaultIdentityCommitment,
-        host: "http://localhost:3000",
+        urlOrigin: "http://localhost:3000",
       });
 
       expect(result).toBe(true);
       expect(pushMessage).toBeCalledTimes(2);
       expect(pushMessage).toHaveBeenNthCalledWith(1, expectConnectIdentityAction);
       expect(pushMessage).toHaveBeenNthCalledWith(2, expectedSetIdentitiesAction);
-      expect(browser.tabs.sendMessage).toBeCalledTimes(2);
+      expect(browser.tabs.sendMessage).toBeCalledTimes(4);
       expect(browser.tabs.sendMessage).toHaveBeenNthCalledWith(1, defaultTabs[0].id, expectConnectIdentityAction);
       expect(browser.tabs.sendMessage).toHaveBeenNthCalledWith(2, defaultTabs[1].id, expectConnectIdentityAction);
+      expect(browser.tabs.sendMessage).toHaveBeenNthCalledWith(3, defaultTabs[0].id, setStatus(mockDefaultStatus));
+      expect(browser.tabs.sendMessage).toHaveBeenNthCalledWith(4, defaultTabs[1].id, setStatus(mockDefaultStatus));
     });
 
     test("should not set connected identity if there is no any saved identities", async () => {
@@ -172,7 +191,7 @@ describe("background/services/zkIdentity", () => {
 
       const result = await zkIdentityService.connectIdentity({
         identityCommitment: mockDefaultIdentityCommitment,
-        host: "http://localhost:3000",
+        urlOrigin: "http://localhost:3000",
       });
 
       expect(result).toBe(false);
@@ -201,20 +220,20 @@ describe("background/services/zkIdentity", () => {
     });
   });
 
-  describe("set identity host", () => {
-    test("should set identity host properly", async () => {
+  describe("set identity urlOrigin", () => {
+    test("should set identity urlOrigin properly", async () => {
       const result = await zkIdentityService.setIdentityHost({
         identityCommitment: mockDefaultIdentityCommitment,
-        host: "http://localhost:3000",
+        urlOrigin: "http://localhost:3000",
       });
 
       expect(result).toBe(true);
     });
 
-    test("should not set identity host if there is no such identity", async () => {
+    test("should not set identity urlOrigin if there is no such identity", async () => {
       const result = await zkIdentityService.setIdentityHost({
         identityCommitment: "unknown",
-        host: "http://localhost:3000",
+        urlOrigin: "http://localhost:3000",
       });
 
       expect(result).toBe(false);
@@ -252,7 +271,7 @@ describe("background/services/zkIdentity", () => {
     test("should delete all identities properly", async () => {
       const isIdentitySet = await zkIdentityService.connectIdentity({
         identityCommitment: mockDefaultIdentityCommitment,
-        host: "http://localhost:3000",
+        urlOrigin: "http://localhost:3000",
       });
       const result = await zkIdentityService.deleteAllIdentities();
 
@@ -307,13 +326,13 @@ describe("background/services/zkIdentity", () => {
 
       const data = await zkIdentityService.getConnectedIdentityData(
         {},
-        { urlOrigin: mockDefaultIdentity.metadata.host },
+        { urlOrigin: mockDefaultIdentity.metadata.urlOrigin },
       );
 
-      expect(data).toStrictEqual(pick(mockDefaultIdentity.metadata, ["name", "host"]));
+      expect(data).toStrictEqual(pick(mockDefaultIdentity.metadata, ["name", "urlOrigin"]));
     });
 
-    test("should no get connected identity data if host is not the same properly", async () => {
+    test("should no get connected identity data if urlOrigin is not the same properly", async () => {
       const [identityStorage, connectedIdentityStorage] = (SimpleStorage as jest.Mock).mock.instances as [
         MockStorage,
         MockStorage,
@@ -345,14 +364,14 @@ describe("background/services/zkIdentity", () => {
       const identity = await zkIdentityService.getConnectedIdentity();
       const data = await zkIdentityService.getConnectedIdentityData(
         {},
-        { urlOrigin: mockDefaultIdentity.metadata.host },
+        { urlOrigin: mockDefaultIdentity.metadata.urlOrigin },
       );
 
       expect(identity).toBeUndefined();
       expect(data).toBeUndefined();
     });
 
-    test("should not get connected identity if there is no connected host", async () => {
+    test("should not get connected identity if there is no connected urlOrigin", async () => {
       const identity = await zkIdentityService.getConnectedIdentity();
       const data = await zkIdentityService.getConnectedIdentityData({}, { urlOrigin: "" });
 
@@ -476,7 +495,7 @@ describe("background/services/zkIdentity", () => {
 
   describe("create", () => {
     test("should request a create identity modal properly", async () => {
-      await zkIdentityService.createIdentityRequest({ host: "http://localhost:3000" });
+      await zkIdentityService.createIdentityRequest({ urlOrigin: "http://localhost:3000" });
 
       expect(browser.tabs.query).toBeCalledWith({ lastFocusedWindow: true });
 
@@ -492,7 +511,7 @@ describe("background/services/zkIdentity", () => {
     });
 
     test("should request a connect identity modal properly", async () => {
-      await zkIdentityService.connectIdentityRequest({ host: "http://localhost:3000" });
+      await zkIdentityService.connectIdentityRequest({ urlOrigin: "http://localhost:3000" });
 
       expect(browser.tabs.query).toBeCalledWith({ lastFocusedWindow: true });
 
@@ -522,13 +541,13 @@ describe("background/services/zkIdentity", () => {
         options: identityOptions,
         isDeterministic: false,
         groups: [],
-        host: "http://localhost:3000",
+        urlOrigin: "http://localhost:3000",
       });
 
       expect(result).toBeDefined();
     });
 
-    test("should create a new identity with Cryptkeeper properly", async () => {
+    test("should create a new identity with CryptKeeper properly", async () => {
       const identityOptions: ICreateIdentityOptions = {
         nonce: 0,
         account: ZERO_ADDRESS,
@@ -541,7 +560,7 @@ describe("background/services/zkIdentity", () => {
         options: identityOptions,
         isDeterministic: true,
         groups: [],
-        host: "http://localhost:3000",
+        urlOrigin: "http://localhost:3000",
       });
 
       expect(result).toBeDefined();
@@ -562,7 +581,7 @@ describe("background/services/zkIdentity", () => {
         options: identityOptions,
         isDeterministic: true,
         groups: [],
-        host: "http://localhost:3000",
+        urlOrigin: "http://localhost:3000",
       });
 
       expect(successResult).toBeDefined();
@@ -578,7 +597,7 @@ describe("background/services/zkIdentity", () => {
           options: identityOptions,
           isDeterministic: true,
           groups: [],
-          host: "http://localhost:3000",
+          urlOrigin: "http://localhost:3000",
         }),
       ).rejects.toThrow("Identity is already exist. Try to change nonce or identity data.");
 
@@ -589,7 +608,7 @@ describe("background/services/zkIdentity", () => {
           isDeterministic: true,
           options: { message: "message", account: ZERO_ADDRESS, nonce: 0 },
           groups: [],
-          host: "http://localhost:3000",
+          urlOrigin: "http://localhost:3000",
         }),
       ).rejects.toThrow("Identity is already exist. Try to change nonce or identity data.");
     });

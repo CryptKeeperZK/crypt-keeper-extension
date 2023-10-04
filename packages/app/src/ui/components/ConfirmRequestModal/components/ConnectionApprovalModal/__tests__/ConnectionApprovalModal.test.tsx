@@ -22,14 +22,14 @@ describe("ui/components/ConfirmRequestModal/components/ConnectionApprovalModal",
     pendingRequest: {
       id: "1",
       type: PendingRequestType.APPROVE,
-      payload: { origin: "http://localhost:3000" },
+      payload: { urlOrigin: "http://localhost:3000" },
     },
     accept: jest.fn(),
     reject: jest.fn(),
   };
 
   const defaultHookData: IUseConnectionApprovalModalData = {
-    host: "http://localhost:3000",
+    urlOrigin: "http://localhost:3000",
     checked: false,
     faviconUrl: "http://localhost:3000/favicon.ico",
     onAccept: jest.fn(),
@@ -88,7 +88,7 @@ describe("ui/components/ConfirmRequestModal/components/ConnectionApprovalModal",
   test("should select permanent approval properly", async () => {
     render(<ConnectionApprovalModal {...defaultProps} />);
 
-    const label = await screen.findByLabelText("Allow host to create proof without approvals");
+    const label = await screen.findByLabelText("Allow host to create proofs without approvals");
     act(() => {
       label.click();
     });

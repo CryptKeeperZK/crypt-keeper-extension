@@ -59,7 +59,7 @@ jest.mock("@src/ui/ducks/identities", (): unknown => ({
 }));
 
 describe("ui/pages/JoinGroup/useJoinGroup", () => {
-  const defaultFaviconsData = { favicons: [`${mockDefaultIdentity.metadata.host}/favicon.ico`] };
+  const defaultFaviconsData = { favicons: [`${mockDefaultIdentity.metadata.urlOrigin}/favicon.ico`] };
 
   const mockNavigate = jest.fn();
   const mockDispatch = jest.fn(() => Promise.resolve(false));
@@ -138,14 +138,14 @@ describe("ui/pages/JoinGroup/useJoinGroup", () => {
     expect(result.current.connectedIdentity).toBeUndefined();
   });
 
-  test("should go to host properly", async () => {
+  test("should go to urlOrigin properly", async () => {
     const { result } = renderHook(() => useJoinGroup());
     await waitForData(result.current);
 
     await act(() => Promise.resolve(result.current.onGoToHost()));
 
     expect(redirectToNewTab).toBeCalledTimes(1);
-    expect(redirectToNewTab).toBeCalledWith(mockDefaultIdentity.metadata.host);
+    expect(redirectToNewTab).toBeCalledWith(mockDefaultIdentity.metadata.urlOrigin);
   });
 
   test("should go to group properly", async () => {

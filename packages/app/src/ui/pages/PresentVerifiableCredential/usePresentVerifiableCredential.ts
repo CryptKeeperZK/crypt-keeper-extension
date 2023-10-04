@@ -174,7 +174,7 @@ export const usePresentVerifiableCredential = (): IUsePresentVerifiableCredentia
     const address = cryptKeeperWallet.address?.toLowerCase();
 
     if (!address) {
-      setError("Could not connect to Cryptkeeper account.");
+      setError("Could not connect to CryptKeeper account.");
       return;
     }
 

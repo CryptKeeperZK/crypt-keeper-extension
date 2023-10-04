@@ -124,10 +124,10 @@ describe("ui/pages/Identity", () => {
     expect(error).toBeNull();
   });
 
-  test("should render properly without host and groups", async () => {
+  test("should render properly without urlOrigin and groups", async () => {
     (useIdentityPage as jest.Mock).mockReturnValue({
       ...defaultHookData,
-      metadata: { ...defaultHookData.metadata, groups: [], host: undefined },
+      metadata: { ...defaultHookData.metadata, groups: [], urlOrigin: undefined },
     });
 
     const { container, findByText } = render(

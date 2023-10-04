@@ -43,7 +43,7 @@ describe("background/services/protocols", () => {
     account: "account",
     name: "Identity #1",
     groups: [],
-    host: "http://localhost:3000",
+    urlOrigin: "http://localhost:3000",
     isDeterministic: true,
   };
 
@@ -82,7 +82,7 @@ describe("background/services/protocols", () => {
       const rln = new RLNProofService();
       mockRlnGenerateProof.mockResolvedValue(mockEmptyFullProof);
 
-      await rln.genProof(identityDecorator, { ...proofRequest, merkleStorageAddress: "http://localhost:3000/merkle" });
+      await rln.genProof(identityDecorator, { ...proofRequest, merkleStorageUrl: "http://localhost:3000/merkle" });
 
       expect(mockRlnGenerateProof).toBeCalledTimes(1);
     });
@@ -106,7 +106,7 @@ describe("background/services/protocols", () => {
 
       await rln.genProof(identityDecorator, {
         ...proofRequestString,
-        merkleStorageAddress: "http://localhost:3000/merkle",
+        merkleStorageUrl: "http://localhost:3000/merkle",
       });
 
       expect(mockRlnGenerateProof).toBeCalledTimes(1);
@@ -130,7 +130,7 @@ describe("background/services/protocols", () => {
 
       const promise = rln.genProof(identityDecorator, {
         ...rlnProofRequest,
-        merkleStorageAddress: "http://localhost:3000/merkle",
+        merkleStorageUrl: "http://localhost:3000/merkle",
       });
 
       await expect(promise).rejects.toThrowError("Zk service: Must set circuitFilePath and zkeyFilePath");
@@ -157,7 +157,7 @@ describe("background/services/protocols", () => {
 
       const promise = rln.genProof(identityDecorator, {
         ...rlnProofRequest,
-        merkleStorageAddress: "http://localhost:3000/merkle",
+        merkleStorageUrl: "http://localhost:3000/merkle",
       });
 
       await expect(promise).rejects.toThrowError("error");
@@ -182,7 +182,7 @@ describe("background/services/protocols", () => {
 
       const promise = rln.genProof(identityDecorator, {
         ...rlnProofRequest,
-        merkleStorageAddress: "http://localhost:3000/merkle",
+        merkleStorageUrl: "http://localhost:3000/merkle",
       });
 
       await expect(promise).rejects.toThrowError("No merkle proof error");
@@ -204,7 +204,7 @@ describe("background/services/protocols", () => {
 
       await semaphore.genProof(identityDecorator, {
         ...proofRequest,
-        merkleStorageAddress: "http://localhost:3000/merkle",
+        merkleStorageUrl: "http://localhost:3000/merkle",
       });
 
       expect(generateProof).toBeCalledTimes(1);
@@ -227,7 +227,7 @@ describe("background/services/protocols", () => {
 
       const promise = semaphore.genProof(identityDecorator, {
         ...proofRequestWrong,
-        merkleStorageAddress: "http://localhost:3000/merkle",
+        merkleStorageUrl: "http://localhost:3000/merkle",
       });
 
       await expect(promise).rejects.toThrowError("Zk service: Must set circuitFilePath and zkeyFilePath");
@@ -239,7 +239,7 @@ describe("background/services/protocols", () => {
 
       const promise = semaphore.genProof(identityDecorator, {
         ...proofRequest,
-        merkleStorageAddress: "http://localhost:3000/merkle",
+        merkleStorageUrl: "http://localhost:3000/merkle",
       });
 
       await expect(promise).rejects.toThrowError("error");
@@ -252,7 +252,7 @@ describe("background/services/protocols", () => {
 
       const promise = semaphore.genProof(identityDecorator, {
         ...proofRequest,
-        merkleStorageAddress: "http://localhost:3000/merkle",
+        merkleStorageUrl: "http://localhost:3000/merkle",
       });
 
       await expect(promise).rejects.toThrowError("No merkle proof error");

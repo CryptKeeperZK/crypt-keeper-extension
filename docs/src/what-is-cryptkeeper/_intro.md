@@ -1,4 +1,4 @@
-# What is Cryptkeeper?
+# What is CryptKeeper?
 
 Welcome to CryptKeeper browser extension, a simple, easy to use, and secure ZK identity and proof manager browser wallet.
 
