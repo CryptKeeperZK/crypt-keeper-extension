@@ -29,7 +29,7 @@
     "@cryptkeeperzk/eslint-config-react": "workspace:^",
     "@types/node": "^20.8.2",
     "@types/react": "^18.2.24",
-    "@types/react-dom": "^18.2.8",
+    "@types/react-dom": "^18.2.9",
     "assert": "^2.1.0",
     "eslint": "^8.50.0",
     "lint-staged": "^14.0.1",
