@@ -1,12 +1,18 @@
-import { IIdentityData } from "@cryptkeeperzk/types";
+import { IConnectIdentityArgs, IIdentityData, IPendingRequest } from "@cryptkeeperzk/types";
 import { getLinkPreview } from "link-preview-js";
-import { type SyntheticEvent, useState, useCallback, useEffect, useMemo } from "react";
+import { type SyntheticEvent, useState, useCallback, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
 import { Paths } from "@src/constants";
 import { closePopup } from "@src/ui/ducks/app";
 import { useAppDispatch } from "@src/ui/ducks/hooks";
 import { connectIdentity, fetchIdentities, useConnectedIdentity, useIdentities } from "@src/ui/ducks/identities";
+
+export interface IUseConnectionModalArgs {
+  pendingRequest: IPendingRequest<{ urlOrigin: string }>;
+  accept: (data?: unknown) => void;
+  reject: (err?: Error) => void;
+}
 
 export interface IUseConnectIdentityData {
   urlOrigin: string;
@@ -16,8 +22,10 @@ export interface IUseConnectIdentityData {
   selectedIdentityCommitment?: string;
   onTabChange: (event: SyntheticEvent, value: EConnectIdentityTabs) => void;
   onSelectIdentity: (identityCommitment: string) => void;
+  openCreateIdentityModal: boolean;
+  onCreateIdentityModalShow: (event?: React.MouseEvent<HTMLAnchorElement>) => void;
   onReject: () => void;
-  onConnect: () => void;
+  onAccept: () => void;
 }
 
 export enum EConnectIdentityTabs {
@@ -25,18 +33,34 @@ export enum EConnectIdentityTabs {
   UNLINKED,
 }
 
-export const useConnectIdentity = (): IUseConnectIdentityData => {
-  const { searchParams } = new URL(window.location.href.replace("#", ""));
-  const urlOrigin = useMemo(() => searchParams.get("urlOrigin")!, [searchParams.toString()]);
+export const useConnectIdentity = ({
+  pendingRequest,
+  accept,
+  reject,
+}: IUseConnectionModalArgs): IUseConnectIdentityData => {
+  const { payload } = pendingRequest;
+  const urlOrigin = payload?.urlOrigin ?? "";
 
   const connectedIdentity = useConnectedIdentity();
   const identities = useIdentities();
 
   const [faviconUrl, setFaviconUrl] = useState("");
+  const [openCreateIdentityModal, setOpenCreateIdentityModal] = useState(false);
   const [selectedTab, setSelectedTab] = useState<EConnectIdentityTabs>(EConnectIdentityTabs.LINKED);
   const [selectedIdentityCommitment, setSelectedIdentityCommitment] = useState<string>();
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
+
+  const onCreateIdentityModalShow = useCallback(
+    (event?: React.MouseEvent<HTMLAnchorElement>) => {
+      if (event) {
+        event.stopPropagation();
+      }
+
+      setOpenCreateIdentityModal((show) => !show);
+    },
+    [setOpenCreateIdentityModal],
+  );
 
   const onTabChange = useCallback(
     (_: SyntheticEvent, value: EConnectIdentityTabs) => {
@@ -56,18 +80,21 @@ export const useConnectIdentity = (): IUseConnectIdentityData => {
     dispatch(closePopup()).then(() => {
       navigate(Paths.HOME);
     });
-  }, [dispatch, navigate]);
+    reject();
+  }, [dispatch, navigate, reject]);
 
-  const onConnect = useCallback(async () => {
-    await dispatch(connectIdentity({ identityCommitment: selectedIdentityCommitment!, urlOrigin }));
-    await dispatch(closePopup()).then(() => {
-      navigate(Paths.HOME);
-    });
-  }, [selectedIdentityCommitment, urlOrigin, dispatch]);
+  const onAccept = useCallback(async () => {
+    const connectedIdentityArgs: IConnectIdentityArgs = {
+      identityCommitment: selectedIdentityCommitment!,
+      urlOrigin,
+    };
+    await dispatch(connectIdentity(connectedIdentityArgs));
+    accept(connectedIdentityArgs);
+  }, [selectedIdentityCommitment, urlOrigin, dispatch, accept]);
 
   useEffect(() => {
     dispatch(fetchIdentities());
-  }, [dispatch]);
+  }, [dispatch, setOpenCreateIdentityModal, openCreateIdentityModal]);
 
   useEffect(() => {
     if (connectedIdentity?.commitment) {
@@ -92,7 +119,9 @@ export const useConnectIdentity = (): IUseConnectIdentityData => {
     selectedIdentityCommitment,
     onTabChange,
     onReject,
-    onConnect,
+    openCreateIdentityModal,
+    onCreateIdentityModalShow,
+    onAccept,
     onSelectIdentity,
   };
 };

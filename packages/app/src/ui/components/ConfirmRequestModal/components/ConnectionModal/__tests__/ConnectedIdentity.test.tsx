@@ -2,22 +2,36 @@
  * @jest-environment jsdom
  */
 
+import { PendingRequestType } from "@cryptkeeperzk/types";
 import { act, render, waitFor } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
 
 import { ZERO_ADDRESS } from "@src/config/const";
 import { createModalRoot, deleteModalRoot } from "@src/config/mock/modal";
 
-import ConnectIdentity from "..";
-import { EConnectIdentityTabs, IUseConnectIdentityData, useConnectIdentity } from "../useConnectIdentity";
+import { ConnectIdentityModal, IConnectIdentityModalProps } from "..";
+import { EConnectIdentityTabs, IUseConnectIdentityData, useConnectIdentity } from "../useConnectionModal";
 
-jest.mock("../useConnectIdentity", (): unknown => ({
-  ...jest.requireActual("../useConnectIdentity"),
+jest.mock("../useConnectionModal", (): unknown => ({
+  ...jest.requireActual("../useConnectionModal"),
   useConnectIdentity: jest.fn(),
   useIdentities: jest.fn(),
 }));
 
 describe("ui/pages/ConnectIdentity", () => {
+  const defaultProps: IConnectIdentityModalProps = {
+    len: 1,
+    loading: false,
+    error: "",
+    pendingRequest: {
+      id: "1",
+      type: PendingRequestType.APPROVE,
+      payload: { urlOrigin: "http://localhost:3000" },
+    },
+    accept: jest.fn(),
+    reject: jest.fn(),
+  };
+
   const defaultHookData: IUseConnectIdentityData = {
     urlOrigin: "http://localhost:3000",
     faviconUrl: "",
@@ -44,10 +58,12 @@ describe("ui/pages/ConnectIdentity", () => {
         },
       },
     ],
+    openCreateIdentityModal: false,
+    onCreateIdentityModalShow: jest.fn(),
     onSelectIdentity: jest.fn(),
     onTabChange: jest.fn(),
     onReject: jest.fn(),
-    onConnect: jest.fn(),
+    onAccept: jest.fn(),
   };
 
   beforeEach(() => {
@@ -62,15 +78,10 @@ describe("ui/pages/ConnectIdentity", () => {
     deleteModalRoot();
   });
 
-  test("should render identities identity list properly", async () => {
-    (useConnectIdentity as jest.Mock).mockReturnValue({
-      ...defaultHookData,
-      selectedTab: EConnectIdentityTabs.UNLINKED,
-    });
-
+  test("should render identity list properly", async () => {
     const { container, findByTestId } = render(
       <MemoryRouter>
-        <ConnectIdentity />
+        <ConnectIdentityModal {...defaultProps} />
       </MemoryRouter>,
     );
 
@@ -84,7 +95,7 @@ describe("ui/pages/ConnectIdentity", () => {
   test("should accept connection properly", async () => {
     const { container, findByText } = render(
       <MemoryRouter>
-        <ConnectIdentity />
+        <ConnectIdentityModal {...defaultProps} />
       </MemoryRouter>,
     );
 
@@ -93,13 +104,13 @@ describe("ui/pages/ConnectIdentity", () => {
     const button = await findByText("Connect");
     await act(() => Promise.resolve(button.click()));
 
-    expect(defaultHookData.onConnect).toBeCalledTimes(1);
+    expect(defaultHookData.onAccept).toBeCalledTimes(1);
   });
 
   test("should reject connection properly", async () => {
     const { container, findByText } = render(
       <MemoryRouter>
-        <ConnectIdentity />
+        <ConnectIdentityModal {...defaultProps} />
       </MemoryRouter>,
     );
 

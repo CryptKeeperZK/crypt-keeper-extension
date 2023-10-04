@@ -2,6 +2,7 @@
  * @jest-environment jsdom
  */
 
+import { PendingRequestType } from "@cryptkeeperzk/types";
 import { act, renderHook, waitFor } from "@testing-library/react";
 import { getLinkPreview } from "link-preview-js";
 import { SyntheticEvent } from "react";
@@ -13,7 +14,12 @@ import { closePopup } from "@src/ui/ducks/app";
 import { useAppDispatch } from "@src/ui/ducks/hooks";
 import { connectIdentity, fetchIdentities, useConnectedIdentity, useIdentities } from "@src/ui/ducks/identities";
 
-import { EConnectIdentityTabs, IUseConnectIdentityData, useConnectIdentity } from "../useConnectIdentity";
+import {
+  EConnectIdentityTabs,
+  IUseConnectIdentityData,
+  IUseConnectionModalArgs,
+  useConnectIdentity,
+} from "../useConnectionModal";
 
 jest.mock("link-preview-js", (): unknown => ({
   getLinkPreview: jest.fn().mockResolvedValue({
@@ -48,6 +54,7 @@ describe("ui/pages/ConnectIdentity/useConnectIdentity", () => {
     {
       commitment: "1234",
       metadata: {
+        identityStrategy: "random",
         account: ZERO_ADDRESS,
         name: "Account #1",
         groups: [],
@@ -57,12 +64,23 @@ describe("ui/pages/ConnectIdentity/useConnectIdentity", () => {
     {
       commitment: "4321",
       metadata: {
+        identityStrategy: "random",
         account: ZERO_ADDRESS,
         name: "Account #2",
         groups: [],
       },
     },
   ];
+
+  const defaultArgs: IUseConnectionModalArgs = {
+    pendingRequest: {
+      id: "1",
+      type: PendingRequestType.APPROVE,
+      payload: { urlOrigin: "http://localhost:3000" },
+    },
+    accept: jest.fn(),
+    reject: jest.fn(),
+  };
 
   const oldHref = window.location.href;
 
@@ -102,7 +120,7 @@ describe("ui/pages/ConnectIdentity/useConnectIdentity", () => {
   };
 
   test("should return initial data", async () => {
-    const { result } = renderHook(() => useConnectIdentity());
+    const { result } = renderHook(() => useConnectIdentity({ ...defaultArgs }));
     await waitForData(result.current);
 
     expect(result.current.urlOrigin).toBe("http://localhost:3000");
@@ -114,14 +132,14 @@ describe("ui/pages/ConnectIdentity/useConnectIdentity", () => {
   test("should handle empty favicon properly", () => {
     (getLinkPreview as jest.Mock).mockRejectedValue(undefined);
 
-    const { result } = renderHook(() => useConnectIdentity());
+    const { result } = renderHook(() => useConnectIdentity({ ...defaultArgs }));
 
     expect(result.current.urlOrigin).toBe("http://localhost:3000");
     expect(result.current.faviconUrl).toBe("");
   });
 
   test("should reject connection properly", async () => {
-    const { result } = renderHook(() => useConnectIdentity());
+    const { result } = renderHook(() => useConnectIdentity({ ...defaultArgs }));
 
     await act(() => Promise.resolve(result.current.onReject()));
 
@@ -133,23 +151,20 @@ describe("ui/pages/ConnectIdentity/useConnectIdentity", () => {
   });
 
   test("should connect properly", async () => {
-    const { result } = renderHook(() => useConnectIdentity());
+    const { result } = renderHook(() => useConnectIdentity({ ...defaultArgs }));
 
     await act(() => Promise.resolve(result.current.onSelectIdentity("1")));
     await waitFor(() => result.current.selectedIdentityCommitment === "1");
-    await act(() => Promise.resolve(result.current.onConnect()));
+    await act(() => Promise.resolve(result.current.onAccept()));
 
-    expect(mockDispatch).toBeCalledTimes(3);
+    expect(mockDispatch).toBeCalledTimes(2);
     expect(fetchIdentities).toBeCalledTimes(1);
     expect(connectIdentity).toBeCalledTimes(1);
     expect(connectIdentity).toBeCalledWith({ identityCommitment: "1", urlOrigin: "http://localhost:3000" });
-    expect(closePopup).toBeCalledTimes(1);
-    expect(mockNavigate).toBeCalledTimes(1);
-    expect(mockNavigate).toBeCalledWith(Paths.HOME);
   });
 
   test("should change tab properly", async () => {
-    const { result } = renderHook(() => useConnectIdentity());
+    const { result } = renderHook(() => useConnectIdentity({ ...defaultArgs }));
     await waitForData(result.current);
 
     await act(() =>
@@ -162,7 +177,7 @@ describe("ui/pages/ConnectIdentity/useConnectIdentity", () => {
   });
 
   test("should select identity properly", async () => {
-    const { result } = renderHook(() => useConnectIdentity());
+    const { result } = renderHook(() => useConnectIdentity({ ...defaultArgs }));
     await waitForData(result.current);
 
     await act(() => Promise.resolve(result.current.onSelectIdentity("1")));

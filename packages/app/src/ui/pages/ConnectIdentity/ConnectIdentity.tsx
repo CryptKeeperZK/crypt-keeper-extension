@@ -1,7 +1,5 @@
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
-import Tab from "@mui/material/Tab";
-import Tabs from "@mui/material/Tabs";
 import Typography from "@mui/material/Typography";
 import { NavLink } from "react-router-dom";
 
@@ -11,21 +9,11 @@ import { IdentityList } from "@src/ui/components/IdentityList";
 import { SiteFavicon } from "@src/ui/components/SiteFavicon/SiteFavicon";
 
 import "./connectIdentity.scss";
-import { EConnectIdentityTabs, useConnectIdentity } from "./useConnectIdentity";
+import { useConnectIdentity } from "./useConnectIdentity";
 
 const ConnectIdentity = (): JSX.Element => {
-  const {
-    linkedIdentities,
-    unlinkedIdentities,
-    urlOrigin,
-    faviconUrl,
-    selectedTab,
-    selectedIdentityCommitment,
-    onTabChange,
-    onSelectIdentity,
-    onReject,
-    onConnect,
-  } = useConnectIdentity();
+  const { identities, urlOrigin, faviconUrl, selectedIdentityCommitment, onSelectIdentity, onReject, onConnect } =
+    useConnectIdentity();
 
   return (
     <FullModal data-testid="connect-identity-page" onClose={onReject}>
@@ -51,40 +39,14 @@ const ConnectIdentity = (): JSX.Element => {
         </Box>
 
         <Box sx={{ position: "relative", width: "100%" }}>
-          <Tabs
-            indicatorColor="primary"
-            sx={{ width: "100%" }}
-            textColor="primary"
-            value={selectedTab}
-            variant="fullWidth"
-            onChange={onTabChange}
-          >
-            <Tab label="Linked" />
-
-            <Tab label="Unlinked" />
-          </Tabs>
-
-          {selectedTab === EConnectIdentityTabs.LINKED && (
-            <IdentityList
-              className="connect-identity-list"
-              identities={linkedIdentities}
-              isShowAddNew={false}
-              isShowMenu={false}
-              selectedCommitment={selectedIdentityCommitment}
-              onSelect={onSelectIdentity}
-            />
-          )}
-
-          {selectedTab === EConnectIdentityTabs.UNLINKED && (
-            <IdentityList
-              className="connect-identity-list"
-              identities={unlinkedIdentities}
-              isShowAddNew={false}
-              isShowMenu={false}
-              selectedCommitment={selectedIdentityCommitment}
-              onSelect={onSelectIdentity}
-            />
-          )}
+          <IdentityList
+            className="connect-identity-list"
+            identities={identities}
+            isShowAddNew={false}
+            isShowMenu={false}
+            selectedCommitment={selectedIdentityCommitment}
+            onSelect={onSelectIdentity}
+          />
         </Box>
       </Box>
 

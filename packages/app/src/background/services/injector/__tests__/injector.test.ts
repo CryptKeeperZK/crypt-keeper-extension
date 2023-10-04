@@ -123,6 +123,13 @@ jest.mock("@src/background/shared/utils", (): unknown => ({
   getBrowserPlatform: jest.fn(),
   closeChromeOffscreen: jest.fn(),
   createChromeOffscreen: jest.fn(),
+  throwErrorProperly: jest.fn((error: unknown, additionalMessage?: string) => {
+    if (error instanceof Error) {
+      throw new Error(`${additionalMessage}${error.message}`);
+    } else {
+      throw new Error(`Unknown error`);
+    }
+  }),
 }));
 
 describe("background/services/injector", () => {

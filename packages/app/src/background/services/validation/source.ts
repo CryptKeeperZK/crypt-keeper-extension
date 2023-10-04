@@ -15,18 +15,15 @@ export const validateMerkleProofSource = ({
     const merkleStorageUrl: MerkleProofStorageUrl = merkleProofSource as MerkleProofStorageUrl;
     return { merkleStorageUrl };
   }
-
   if (isMerkleProofArtifacts(merkleProofSource)) {
     const merkleProofArtifacts: IMerkleProofArtifacts = merkleProofSource as IMerkleProofArtifacts;
     return { merkleProofArtifacts };
   }
-
   if (isMerkleProof(merkleProofSource)) {
     const merkleProofProvided: IMerkleProof = merkleProofSource as IMerkleProof;
     new MerkleProofValidator(merkleProofProvided).validateProof();
     return { merkleProofProvided };
   }
-
   throw new Error("CryptKeeper: invalid ZK merkle tree inputs");
 };
 
