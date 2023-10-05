@@ -98,6 +98,7 @@ export class InjectorService {
 
     try {
       await createChromeOffscreen();
+      
       const fullProof = await pushMessage({
         method: RPCInternalAction.GENERATE_SEMAPHORE_PROOF_OFFSCREEN,
         payload: checkedSemaphoreProofRequest,
@@ -138,6 +139,7 @@ export class InjectorService {
 
     try {
       await createChromeOffscreen();
+
       const rlnFullProof = await pushMessage({
         method: RPCInternalAction.GENERATE_RLN_PROOF_OFFSCREEN,
         payload: checkedRLNProofRequest,
