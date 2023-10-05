@@ -134,10 +134,6 @@ export default class LockerService implements IBackupable {
   };
 
   unlock = async (password: string, notify = true): Promise<boolean> => {
-    if (this.isUnlocked) {
-      return true;
-    }
-
     const status = await this.getStatus();
 
     this.cryptoService.setPassword(password);
