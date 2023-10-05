@@ -159,7 +159,7 @@ const GroupMerkleProof = (): JSX.Element => {
 
         <Button
           data-testid="generate-merkle-proof"
-          disabled={!connectedIdentity || isSubmitting || !isJoined}
+          disabled={!connectedIdentity || isSubmitting || !isJoined || !groupId}
           sx={{ ml: 1, width: "100%" }}
           variant="contained"
           onClick={onGenerateMerkleProof}
