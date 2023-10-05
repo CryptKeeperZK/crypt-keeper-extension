@@ -57,7 +57,10 @@ const mockIsApproved = jest.fn(
     urlOrigin === "reject_rln_proof",
 );
 const mockCanSkip = jest.fn((urlOrigin) => urlOrigin === mockDefaultUrlOrigin);
-const mockAwaitUnlock = jest.fn();
+const mockGetStatus = jest.fn(() => Promise.resolve({ isUnlocked: false }));
+const mockAwaitLockServiceUnlock = jest.fn();
+const mockAwaitZkIdentityServiceUnlock = jest.fn();
+const mockAwaitApprovalServiceUnlock = jest.fn();
 
 Object.defineProperty(global, "chrome", {
   value: {
@@ -99,13 +102,14 @@ jest.mock("@src/background/services/approval", (): unknown => ({
     isApproved: mockIsApproved,
     canSkipApprove: mockCanSkip,
     getPermission: jest.fn(() => ({ canSkipApprove: false })),
+    awaitUnlock: mockAwaitApprovalServiceUnlock,
   })),
 }));
 
 jest.mock("@src/background/services/lock", (): unknown => ({
   getInstance: jest.fn(() => ({
-    getStatus: jest.fn(() => Promise.resolve({ isUnlocked: false })),
-    awaitUnlock: mockAwaitUnlock,
+    getStatus: mockGetStatus,
+    awaitUnlock: mockAwaitLockServiceUnlock,
   })),
 }));
 
@@ -114,6 +118,7 @@ jest.mock("@src/background/services/zkIdentity", (): unknown => ({
     getConnectedIdentity: mockGetConnectedIdentity,
     getConnectedIdentityData: mockGetConnectedIdentityData,
     connectIdentityRequest: mockConnectIdentityRequest,
+    awaitUnlock: mockAwaitZkIdentityServiceUnlock,
   })),
 }));
 
@@ -141,17 +146,32 @@ describe("background/services/injector", () => {
 
   describe("get connected identity metadata", () => {
     test("should return connected metadata properly if all checks are passed", async () => {
+      mockGetStatus.mockResolvedValueOnce({ isUnlocked: true });
       const service = InjectorService.getInstance();
 
       const result = await service.getConnectedIdentityMetadata({}, { urlOrigin: mockDefaultUrlOrigin });
       expect(result).toStrictEqual(mockConnectedIdentity);
       expect(mockIsApproved).toBeCalledTimes(1);
       expect(mockCanSkip).toBeCalledTimes(1);
-      expect(mockAwaitUnlock).toBeCalledTimes(0);
+      expect(mockAwaitLockServiceUnlock).toBeCalledTimes(0);
       expect(mockGetConnectedIdentityData).toBeCalledTimes(1);
     });
 
+    test("should return undefined if extension is locked", async () => {
+      mockGetStatus.mockResolvedValueOnce({ isUnlocked: false });
+      const service = InjectorService.getInstance();
+
+      const result = await service.getConnectedIdentityMetadata({}, { urlOrigin: mockDefaultUrlOrigin });
+      expect(result).toStrictEqual(undefined);
+      expect(mockIsApproved).toBeCalledTimes(0);
+      expect(mockCanSkip).toBeCalledTimes(0);
+      expect(mockAwaitLockServiceUnlock).toBeCalledTimes(0);
+      expect(mockGetConnectedIdentityData).toBeCalledTimes(0);
+    });
+
     test("should throw error if there is no urlOrigin", async () => {
+      mockGetStatus.mockResolvedValueOnce({ isUnlocked: true });
+
       const service = InjectorService.getInstance();
 
       await expect(service.getConnectedIdentityMetadata({}, { urlOrigin: "" })).rejects.toThrow(
@@ -160,6 +180,8 @@ describe("background/services/injector", () => {
     });
 
     test("should send undefined  if urlOrigin isn't approved", async () => {
+      mockGetStatus.mockResolvedValueOnce({ isUnlocked: true });
+
       const service = InjectorService.getInstance();
 
       const result = await service.getConnectedIdentityMetadata({}, { urlOrigin: "new-urlOrigin" });
@@ -168,6 +190,8 @@ describe("background/services/injector", () => {
     });
 
     test("should throw error if no connected identity found", async () => {
+      mockGetStatus.mockResolvedValueOnce({ isUnlocked: true });
+
       const service = InjectorService.getInstance();
 
       await expect(service.getConnectedIdentityMetadata({}, { urlOrigin: "empty_connected_identity" })).rejects.toThrow(

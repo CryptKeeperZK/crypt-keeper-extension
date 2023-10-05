@@ -9,13 +9,18 @@ const APPROVALS_DB_KEY = "@APPROVED@";
 export default class ApprovalService implements IBackupable {
   private static INSTANCE?: ApprovalService;
 
+  private isUnlocked: boolean;
+
   private allowedHosts: Map<string, IHostPermission>;
 
   private approvals: SimpleStorage;
 
   private cryptoService: CryptoService;
 
+  private unlockCB?: () => void;
+
   private constructor() {
+    this.isUnlocked = false;
     this.allowedHosts = new Map();
     this.approvals = new SimpleStorage(APPROVALS_DB_KEY);
     this.cryptoService = CryptoService.getInstance();
@@ -42,9 +47,32 @@ export default class ApprovalService implements IBackupable {
     if (encryped) {
       const decrypted = this.cryptoService.decrypt(encryped, { mode: ECryptMode.MNEMONIC });
       this.allowedHosts = new Map(JSON.parse(decrypted) as Iterable<[string, IHostPermission]>);
+      this.isUnlocked = true;
+      this.onUnlocked();
     }
 
     return true;
+  };
+
+  onUnlocked = (): boolean => {
+    if (this.unlockCB) {
+      this.unlockCB();
+      this.unlockCB = undefined;
+    }
+
+    return true;
+  };
+
+  awaitUnlock = async (): Promise<void> => {
+    if (this.isUnlocked) {
+      return undefined;
+    }
+
+    return new Promise((resolve) => {
+      this.unlockCB = () => {
+        resolve(undefined);
+      };
+    });
   };
 
   getPermission = (urlOrigin: string): IHostPermission => ({

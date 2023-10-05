@@ -46,6 +46,8 @@ export class InjectorHandler {
 
   getZkProofService = (): ZkProofService => this.zkProofService;
 
+  getLockService = (): LockerService => this.lockerService;
+
   connectedIdentityMetadata = async (_: unknown, meta?: IZkMetadata): Promise<ConnectedIdentityMetadata> => {
     const connectedIdentityMetadata = await this.zkIdentityService.getConnectedIdentityData({}, meta);
 
@@ -101,6 +103,8 @@ export class InjectorHandler {
     if (!isUnlocked) {
       await this.browserService.openPopup();
       await this.lockerService.awaitUnlock();
+      await this.zkIdentityService.awaitUnlock();
+      await this.approvalService.awaitUnlock();
     }
   };
 

@@ -38,6 +38,8 @@ const CONNECTED_IDENTITY_KEY = "@@CONNECTED-IDENTITY@@";
 export default class ZkIdentityService implements IBackupable {
   private static INSTANCE?: ZkIdentityService;
 
+  private isUnlocked: boolean;
+
   private identitiesStore: SimpleStorage;
 
   private connectedIdentityStore: SimpleStorage;
@@ -56,7 +58,10 @@ export default class ZkIdentityService implements IBackupable {
 
   private connectedIdentity?: ZkIdentitySemaphore;
 
+  private unlockCB?: () => void;
+
   private constructor() {
+    this.isUnlocked = false;
     this.connectedIdentity = undefined;
     this.identitiesStore = new SimpleStorage(IDENTITY_KEY);
     this.connectedIdentityStore = new SimpleStorage(CONNECTED_IDENTITY_KEY);
@@ -261,6 +266,10 @@ export default class ZkIdentityService implements IBackupable {
   };
 
   unlock = async (): Promise<boolean> => {
+    if (this.isUnlocked) {
+      return true;
+    }
+
     const identities = await this.getIdentitiesFromStore();
     const identity = await this.readConnectedIdentity(identities);
     const identityCommitment = identity ? bigintToHex(identity.genIdentityCommitment()) : undefined;
@@ -273,7 +282,31 @@ export default class ZkIdentityService implements IBackupable {
       });
     }
 
+    this.isUnlocked = true;
+    this.onUnlocked();
+
     return true;
+  };
+
+  onUnlocked = (): boolean => {
+    if (this.unlockCB) {
+      this.unlockCB();
+      this.unlockCB = undefined;
+    }
+
+    return true;
+  };
+
+  awaitUnlock = async (): Promise<void> => {
+    if (this.isUnlocked) {
+      return undefined;
+    }
+
+    return new Promise((resolve) => {
+      this.unlockCB = () => {
+        resolve(undefined);
+      };
+    });
   };
 
   private clearConnectedIdentity = async (): Promise<void> => {

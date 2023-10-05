@@ -254,7 +254,7 @@ export const useCryptKeeper = (): IUseCryptKeeperData => {
     (payload: unknown) => {
       const metadata = payload as ConnectedIdentityMetadata;
       setConnectedIdentityMetadata(metadata);
-
+      setIsLocked(false);
       toast(`Identity has changed! ${metadata.name}`, {
         type: "success",
       });
@@ -304,6 +304,7 @@ export const useCryptKeeper = (): IUseCryptKeeperData => {
 
   const onLogin = useCallback(() => {
     getConnectedIdentityMetadata();
+    setIsLocked(false);
   }, [client]);
 
   // Initialize Injected CryptKeeper Provider Client

@@ -37,6 +37,12 @@ export class InjectorService {
     _: unknown,
     { urlOrigin }: IZkMetadata,
   ): Promise<ConnectedIdentityMetadata | undefined> => {
+    const { isUnlocked } = await this.injectorHandler.getLockService().getStatus();
+
+    if (!isUnlocked) {
+      return undefined;
+    }
+
     const { isApproved } = this.injectorHandler.getConnectionApprovalData({ urlOrigin });
 
     if (!isApproved) {
@@ -63,7 +69,11 @@ export class InjectorService {
         });
       }
 
-      await this.injectorHandler.getZkIdentityService().connectIdentityRequest({ urlOrigin: urlOrigin! });
+      const connectedIdentity = await this.injectorHandler.getZkIdentityService().getConnectedIdentity();
+
+      if (!connectedIdentity) {
+        await this.injectorHandler.getZkIdentityService().connectIdentityRequest({ urlOrigin: urlOrigin! });
+      }
     } catch (error) {
       throw new Error(`CryptKeeper: error in the connect request, ${(error as Error).message}`);
     }

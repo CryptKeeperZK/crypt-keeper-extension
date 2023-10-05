@@ -159,6 +159,24 @@ describe("background/services/zkIdentity", () => {
     });
   });
 
+  test("should await unlock properly", async () => {
+    zkIdentityService.awaitUnlock();
+    const isUnlocked = await zkIdentityService.unlock();
+    const isUnlockCompleted = zkIdentityService.onUnlocked();
+
+    expect(isUnlocked).toBe(true);
+    expect(isUnlockCompleted).toBe(true);
+  });
+
+  test("should not unlock twice", async () => {
+    const isUnlockedFirst = await zkIdentityService.unlock();
+    const isUnlockedSecond = await zkIdentityService.unlock();
+
+    expect(isUnlockedFirst).toBe(true);
+    expect(isUnlockedSecond).toBe(true);
+    expect(await zkIdentityService.awaitUnlock()).toBeUndefined();
+  });
+
   describe("set connected identity", () => {
     test("should set connected identity properly", async () => {
       const expectConnectIdentityAction = setConnectedIdentity(
