@@ -166,7 +166,7 @@ const JoinGroup = (): JSX.Element => {
 
         <Button
           data-testid="join-group"
-          disabled={!connectedIdentity || isSubmitting || isJoined}
+          disabled={!connectedIdentity || isSubmitting || isJoined || !groupId}
           sx={{ ml: 1, width: "100%" }}
           variant="contained"
           onClick={onJoin}
