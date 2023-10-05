@@ -98,11 +98,14 @@ export class InjectorHandler {
   };
 
   private checkLockStatus = async () => {
-    const { isUnlocked } = await this.lockerService.getStatus();
+    const { isUnlocked, isInitialized } = await this.lockerService.getStatus();
 
     if (!isUnlocked) {
       await this.browserService.openPopup();
       await this.lockerService.awaitUnlock();
+    }
+
+    if (isInitialized) {
       await this.zkIdentityService.awaitUnlock();
       await this.approvalService.awaitUnlock();
     }
