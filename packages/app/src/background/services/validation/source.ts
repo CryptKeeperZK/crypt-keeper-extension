@@ -26,7 +26,7 @@ export const validateMerkleProofSource = ({
     new MerkleProofValidator(merkleProofProvided).validateProof();
     return { merkleProofProvided };
   }
-  
+
   throw new Error("CryptKeeper: invalid ZK merkle tree inputs");
 };
 
