@@ -12,6 +12,7 @@ const EVENTS = [
   EventName.REVEAL_COMMITMENT,
   EventName.JOIN_GROUP,
   EventName.GROUP_MERKLE_PROOF,
+  EventName.IMPORT_IDENTITY,
   EventName.USER_REJECT,
 ];
 
