@@ -113,6 +113,7 @@ export class InjectorHandler {
     }
 
     if (isInitialized && !isUnlocked && isApprovalCheckOnly) {
+      await this.approvalService.unlock();
       await this.approvalService.awaitUnlock();
     }
   };
