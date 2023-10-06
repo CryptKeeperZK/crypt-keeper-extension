@@ -13,4 +13,7 @@ export {
   str2BigInt,
   getRateCommitmentHash,
   getMessageHash,
+  getMerkleProof,
+  getRlnVerificationKeyJson,
+  generateMerkleProof,
 } from "./proof/protocols";
