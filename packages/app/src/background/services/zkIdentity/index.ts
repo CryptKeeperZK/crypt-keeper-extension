@@ -60,7 +60,6 @@ export default class ZkIdentityService extends BaseService implements IBackupabl
 
   private constructor() {
     super();
-    this.isUnlocked = false;
     this.connectedIdentity = undefined;
     this.identitiesStore = new SimpleStorage(IDENTITY_KEY);
     this.connectedIdentityStore = new SimpleStorage(CONNECTED_IDENTITY_KEY);
