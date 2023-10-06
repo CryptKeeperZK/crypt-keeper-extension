@@ -77,8 +77,6 @@ export class InjectorHandler {
       throw new Error(`CryptKeeper: ${urlOrigin} is not approved, please call 'connectIdentity()' request first.`);
     }
 
-    await this.checkUnlockStatus(false);
-
     return { checkedUrlOrigin, isApproved, canSkipApprove };
   };
 
@@ -99,21 +97,20 @@ export class InjectorHandler {
     return { checkedUrlOrigin: urlOrigin, isApproved, canSkipApprove };
   };
 
-  private checkUnlockStatus = async (isApprovalCheckOnly = false) => {
+  private checkUnlockStatus = async (isRequiredUnlock = false) => {
     const { isUnlocked, isInitialized } = await this.lockerService.getStatus();
 
-    if (!isUnlocked && !isApprovalCheckOnly) {
+    if (!isUnlocked && isRequiredUnlock) {
+      throw new Error("CryptKeeper: please unlock your CryptKeeper wallet");
+    }
+
+    if (!isUnlocked) {
       await this.browserService.openPopup();
       await this.lockerService.awaitUnlock();
     }
 
-    if (isInitialized && !isApprovalCheckOnly) {
+    if (isInitialized) {
       await this.zkIdentityService.awaitUnlock();
-      await this.approvalService.awaitUnlock();
-    }
-
-    if (isInitialized && !isUnlocked && isApprovalCheckOnly) {
-      await this.approvalService.unlock();
       await this.approvalService.awaitUnlock();
     }
   };
