@@ -4,6 +4,7 @@ export enum Paths {
   IDENTITY = "/identity/:id",
   CREATE_IDENTITY = "/create-identity",
   REVEAL_IDENTITY_COMMITMENT = "/reveal-identity-commitment",
+  IMPORT_IDENTITY = "/import-identity",
   LOGIN = "/login",
   ONBOARDING = "/onboarding",
   ONBOARDING_BACKUP = "/onboarding-backup",

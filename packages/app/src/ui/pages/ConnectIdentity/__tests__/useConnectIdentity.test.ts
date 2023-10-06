@@ -11,13 +11,7 @@ import { ZERO_ADDRESS } from "@src/config/const";
 import { Paths } from "@src/constants";
 import { closePopup } from "@src/ui/ducks/app";
 import { useAppDispatch } from "@src/ui/ducks/hooks";
-import {
-  connectIdentity,
-  fetchIdentities,
-  useConnectedIdentity,
-  useLinkedIdentities,
-  useUnlinkedIdentities,
-} from "@src/ui/ducks/identities";
+import { connectIdentity, fetchIdentities, useConnectedIdentity, useIdentities } from "@src/ui/ducks/identities";
 
 import { EConnectIdentityTabs, IUseConnectIdentityData, useConnectIdentity } from "../useConnectIdentity";
 
@@ -43,15 +37,14 @@ jest.mock("@src/ui/ducks/identities", (): unknown => ({
   fetchIdentities: jest.fn(),
   connectIdentity: jest.fn(),
   useConnectedIdentity: jest.fn(),
-  useLinkedIdentities: jest.fn(),
-  useUnlinkedIdentities: jest.fn(),
+  useIdentities: jest.fn(),
 }));
 
 describe("ui/pages/ConnectIdentity/useConnectIdentity", () => {
   const mockDispatch = jest.fn(() => Promise.resolve());
   const mockNavigate = jest.fn();
 
-  const defaultLinkedIdentities = [
+  const defaultIdentities = [
     {
       commitment: "1234",
       metadata: {
@@ -61,9 +54,6 @@ describe("ui/pages/ConnectIdentity/useConnectIdentity", () => {
         urlOrigin: "http://localhost:3000",
       },
     },
-  ];
-
-  const defaultUnlinkedIdentities = [
     {
       commitment: "4321",
       metadata: {
@@ -88,11 +78,9 @@ describe("ui/pages/ConnectIdentity/useConnectIdentity", () => {
 
     (useAppDispatch as jest.Mock).mockReturnValue(mockDispatch);
 
-    (useLinkedIdentities as jest.Mock).mockReturnValue(defaultLinkedIdentities);
+    (useIdentities as jest.Mock).mockReturnValue(defaultIdentities);
 
-    (useUnlinkedIdentities as jest.Mock).mockReturnValue(defaultUnlinkedIdentities);
-
-    (useConnectedIdentity as jest.Mock).mockReturnValue(defaultLinkedIdentities[0]);
+    (useConnectedIdentity as jest.Mock).mockReturnValue(defaultIdentities[0]);
 
     window.location.href = `${oldHref}?urlOrigin=http://localhost:3000`;
   });
@@ -120,8 +108,7 @@ describe("ui/pages/ConnectIdentity/useConnectIdentity", () => {
     expect(result.current.urlOrigin).toBe("http://localhost:3000");
     expect(result.current.faviconUrl).toBe("http://localhost:3000/favicon.ico");
     expect(result.current.selectedTab).toBe(EConnectIdentityTabs.LINKED);
-    expect(result.current.linkedIdentities).toStrictEqual(defaultLinkedIdentities);
-    expect(result.current.unlinkedIdentities).toStrictEqual(defaultUnlinkedIdentities);
+    expect(result.current.identities).toStrictEqual(defaultIdentities);
   });
 
   test("should handle empty favicon properly", () => {
@@ -172,26 +159,6 @@ describe("ui/pages/ConnectIdentity/useConnectIdentity", () => {
     await waitFor(() => result.current.selectedTab === EConnectIdentityTabs.UNLINKED);
 
     expect(result.current.selectedTab).toBe(EConnectIdentityTabs.UNLINKED);
-  });
-
-  test("should change tab if there is no linked identities", async () => {
-    (useLinkedIdentities as jest.Mock).mockReturnValue([]);
-
-    const { result } = renderHook(() => useConnectIdentity());
-    await waitForData(result.current);
-    await waitFor(() => result.current.selectedTab === EConnectIdentityTabs.UNLINKED);
-
-    expect(result.current.selectedTab).toBe(EConnectIdentityTabs.UNLINKED);
-  });
-
-  test("should change tab if there is no unlinked identities", async () => {
-    (useUnlinkedIdentities as jest.Mock).mockReturnValue([]);
-
-    const { result } = renderHook(() => useConnectIdentity());
-    await waitForData(result.current);
-    await waitFor(() => result.current.selectedTab === EConnectIdentityTabs.LINKED);
-
-    expect(result.current.selectedTab).toBe(EConnectIdentityTabs.LINKED);
   });
 
   test("should select identity properly", async () => {

@@ -14,6 +14,7 @@ import { EConnectIdentityTabs, IUseConnectIdentityData, useConnectIdentity } fro
 jest.mock("../useConnectIdentity", (): unknown => ({
   ...jest.requireActual("../useConnectIdentity"),
   useConnectIdentity: jest.fn(),
+  useIdentities: jest.fn(),
 }));
 
 describe("ui/pages/ConnectIdentity", () => {
@@ -22,7 +23,7 @@ describe("ui/pages/ConnectIdentity", () => {
     faviconUrl: "",
     selectedTab: EConnectIdentityTabs.LINKED,
     selectedIdentityCommitment: "1234",
-    linkedIdentities: [
+    identities: [
       {
         commitment: "1234",
         metadata: {
@@ -33,8 +34,6 @@ describe("ui/pages/ConnectIdentity", () => {
           isDeterministic: true,
         },
       },
-    ],
-    unlinkedIdentities: [
       {
         commitment: "4321",
         metadata: {
@@ -63,21 +62,7 @@ describe("ui/pages/ConnectIdentity", () => {
     deleteModalRoot();
   });
 
-  test("should render linked identity list properly", async () => {
-    const { container, findByTestId } = render(
-      <MemoryRouter>
-        <ConnectIdentity />
-      </MemoryRouter>,
-    );
-
-    await waitFor(() => container.firstChild !== null);
-
-    const page = await findByTestId("connect-identity-page");
-
-    expect(page).toBeInTheDocument();
-  });
-
-  test("should render unlinked identity list properly", async () => {
+  test("should render identities identity list properly", async () => {
     (useConnectIdentity as jest.Mock).mockReturnValue({
       ...defaultHookData,
       selectedTab: EConnectIdentityTabs.UNLINKED,

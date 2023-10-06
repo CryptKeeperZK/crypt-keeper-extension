@@ -96,7 +96,7 @@ describe("ui/pages/RevealIdentityCommitment/useRevealIdentityCommitment", () => 
     expect(result.current.error).toBe(error.message);
   });
 
-  test("should go to urlOrigin properly", async () => {
+  test("should go to host properly", async () => {
     const { result } = renderHook(() => useRevealIdentityCommitment());
     await waitForData(result.current);
 

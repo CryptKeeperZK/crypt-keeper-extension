@@ -6,20 +6,13 @@ import { useNavigate } from "react-router-dom";
 import { Paths } from "@src/constants";
 import { closePopup } from "@src/ui/ducks/app";
 import { useAppDispatch } from "@src/ui/ducks/hooks";
-import {
-  connectIdentity,
-  fetchIdentities,
-  useConnectedIdentity,
-  useLinkedIdentities,
-  useUnlinkedIdentities,
-} from "@src/ui/ducks/identities";
+import { connectIdentity, fetchIdentities, useConnectedIdentity, useIdentities } from "@src/ui/ducks/identities";
 
 export interface IUseConnectIdentityData {
   urlOrigin: string;
   faviconUrl: string;
   selectedTab: EConnectIdentityTabs;
-  linkedIdentities: IIdentityData[];
-  unlinkedIdentities: IIdentityData[];
+  identities: IIdentityData[];
   selectedIdentityCommitment?: string;
   onTabChange: (event: SyntheticEvent, value: EConnectIdentityTabs) => void;
   onSelectIdentity: (identityCommitment: string) => void;
@@ -37,8 +30,7 @@ export const useConnectIdentity = (): IUseConnectIdentityData => {
   const urlOrigin = useMemo(() => searchParams.get("urlOrigin")!, [searchParams.toString()]);
 
   const connectedIdentity = useConnectedIdentity();
-  const linkedIdentities = useLinkedIdentities(urlOrigin);
-  const unlinkedIdentities = useUnlinkedIdentities();
+  const identities = useIdentities();
 
   const [faviconUrl, setFaviconUrl] = useState("");
   const [selectedTab, setSelectedTab] = useState<EConnectIdentityTabs>(EConnectIdentityTabs.LINKED);
@@ -84,14 +76,6 @@ export const useConnectIdentity = (): IUseConnectIdentityData => {
   }, [connectedIdentity?.commitment]);
 
   useEffect(() => {
-    if (unlinkedIdentities.length === 0) {
-      setSelectedTab(EConnectIdentityTabs.LINKED);
-    } else if (linkedIdentities.length === 0) {
-      setSelectedTab(EConnectIdentityTabs.UNLINKED);
-    }
-  }, [linkedIdentities.length, unlinkedIdentities.length, setSelectedTab]);
-
-  useEffect(() => {
     getLinkPreview(urlOrigin)
       .then((data) => {
         const [favicon] = data.favicons;
@@ -104,8 +88,7 @@ export const useConnectIdentity = (): IUseConnectIdentityData => {
     urlOrigin,
     faviconUrl,
     selectedTab,
-    linkedIdentities,
-    unlinkedIdentities,
+    identities,
     selectedIdentityCommitment,
     onTabChange,
     onReject,
