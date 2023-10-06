@@ -147,7 +147,7 @@ describe("ui/components/IdentityList/Item", () => {
     expect(mockNavigate).toBeCalledWith(replaceUrlParams(Paths.IDENTITY, { id: defaultProps.commitment }));
   });
 
-  test("should go to urlOrigin properly", async () => {
+  test("should go to host properly", async () => {
     render(<IdentityItem {...defaultProps} onSelectIdentity={undefined} />);
 
     const icon = await screen.findByTestId("urlOrigin-icon");

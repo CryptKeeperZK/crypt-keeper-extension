@@ -238,7 +238,7 @@ export default class LockerService implements IBackupable {
     return decryptedPasswordChecker === this.passwordChecker;
   };
 
-  ensure = (payload: unknown = null): unknown => {
+  ensure = (payload: unknown): unknown => {
     if (!this.isUnlocked) {
       return false;
     }

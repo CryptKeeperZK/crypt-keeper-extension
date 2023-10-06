@@ -21,6 +21,7 @@ export type EventHandler = (data: unknown) => void;
  * @property {string} REVEAL_COMMITMENT - "revealCommitment"
  * @property {string} JOIN_GROUP - "joinGroup"
  * @property {string} GROUP_MERKLE_PROOF - "groupMerkleProof"
+ * @property {string} IMPORT_IDENTITY - "importIdentity"
  * @property {string} USER_REJECT - "userReject"
  */
 export enum EventName {
@@ -33,6 +34,7 @@ export enum EventName {
   REVEAL_COMMITMENT = "revealCommitment",
   JOIN_GROUP = "joinGroup",
   GROUP_MERKLE_PROOF = "groupMerkleProof",
+  IMPORT_IDENTITY = "importIdentity",
   USER_REJECT = "userReject",
 }
 

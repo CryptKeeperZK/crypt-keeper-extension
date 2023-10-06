@@ -10,6 +10,7 @@ import GenerateMnemonic from "@src/ui/pages/GenerateMnemonic";
 import GroupMerkleProof from "@src/ui/pages/GroupMerkleProof";
 import Home from "@src/ui/pages/Home";
 import Identity from "@src/ui/pages/Identity";
+import ImportIdentity from "@src/ui/pages/ImportIdentity";
 import JoinGroup from "@src/ui/pages/JoinGroup";
 import Login from "@src/ui/pages/Login";
 import Onboarding from "@src/ui/pages/Onboarding";
@@ -31,6 +32,7 @@ const routeConfig: RouteObject[] = [
   { path: Paths.IDENTITY, element: <Identity /> },
   { path: Paths.CREATE_IDENTITY, element: <CreateIdentity /> },
   { path: Paths.REVEAL_IDENTITY_COMMITMENT, element: <RevealIdentityCommitment /> },
+  { path: Paths.IMPORT_IDENTITY, element: <ImportIdentity /> },
   { path: Paths.LOGIN, element: <Login /> },
   { path: Paths.ONBOARDING, element: <Onboarding /> },
   { path: Paths.ONBOARDING_BACKUP, element: <OnboardingBackup /> },
