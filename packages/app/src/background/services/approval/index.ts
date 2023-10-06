@@ -4,12 +4,12 @@ import SimpleStorage from "@src/background/services/storage";
 import type { IHostPermission } from "@cryptkeeperzk/types";
 import type { BackupData, IBackupable } from "@src/background/services/backup";
 
+import BaseService from "../base";
+
 const APPROVALS_DB_KEY = "@APPROVED@";
 
-export default class ApprovalService implements IBackupable {
+export default class ApprovalService extends BaseService implements IBackupable {
   private static INSTANCE?: ApprovalService;
-
-  private isUnlocked: boolean;
 
   private allowedHosts: Map<string, IHostPermission>;
 
@@ -17,10 +17,8 @@ export default class ApprovalService implements IBackupable {
 
   private cryptoService: CryptoService;
 
-  private unlockCB?: () => void;
-
   private constructor() {
-    this.isUnlocked = false;
+    super();
     this.allowedHosts = new Map();
     this.approvals = new SimpleStorage(APPROVALS_DB_KEY);
     this.cryptoService = CryptoService.getInstance();
@@ -52,27 +50,6 @@ export default class ApprovalService implements IBackupable {
     }
 
     return true;
-  };
-
-  onUnlocked = (): boolean => {
-    if (this.unlockCB) {
-      this.unlockCB();
-      this.unlockCB = undefined;
-    }
-
-    return true;
-  };
-
-  awaitUnlock = async (): Promise<void> => {
-    if (this.isUnlocked) {
-      return undefined;
-    }
-
-    return new Promise((resolve) => {
-      this.unlockCB = () => {
-        resolve(undefined);
-      };
-    });
   };
 
   getPermission = (urlOrigin: string): IHostPermission => ({

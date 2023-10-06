@@ -1,5 +1,6 @@
 import browser from "webextension-polyfill";
 
+import BaseService from "@src/background/services/base";
 import CryptoService, { ECryptMode } from "@src/background/services/crypto";
 import HistoryService from "@src/background/services/history";
 import MiscStorageService from "@src/background/services/misc";
@@ -21,10 +22,8 @@ interface LockStatus {
   isMnemonicGenerated: boolean;
 }
 
-export default class LockerService implements IBackupable {
+export default class LockerService extends BaseService implements IBackupable {
   private static INSTANCE?: LockerService;
-
-  private isUnlocked: boolean;
 
   private passwordChecker: string;
 
@@ -40,10 +39,8 @@ export default class LockerService implements IBackupable {
 
   private notificationService: NotificationService;
 
-  private unlockCB?: () => void;
-
   private constructor() {
-    this.isUnlocked = false;
+    super();
     this.passwordChecker = "Password is correct";
     this.passwordStorage = new SimpleStorage(PASSWORD_DB_KEY);
     this.miscStorage = MiscStorageService.getInstance();
@@ -110,27 +107,6 @@ export default class LockerService implements IBackupable {
       isUnlocked: this.isUnlocked,
       isMnemonicGenerated: initializationStep >= InitializationStep.MNEMONIC,
     };
-  };
-
-  awaitUnlock = async (): Promise<void> => {
-    if (this.isUnlocked) {
-      return undefined;
-    }
-
-    return new Promise((resolve) => {
-      this.unlockCB = () => {
-        resolve(undefined);
-      };
-    });
-  };
-
-  onUnlocked = (): boolean => {
-    if (this.unlockCB) {
-      this.unlockCB();
-      this.unlockCB = undefined;
-    }
-
-    return true;
   };
 
   unlock = async (password: string, notify = true): Promise<boolean> => {
