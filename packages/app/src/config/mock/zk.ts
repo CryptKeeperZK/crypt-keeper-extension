@@ -28,6 +28,11 @@ export const defaultMerkleProof: IMerkleProof = {
 
 export const mockDefaultIdentityCommitment = "219ea1ec38a6fffb63e2a591fec619fe9dc850d345f6d4d8823a4f72a6f729a6";
 
+export const mockDefaultIdentitySecret =
+  "18581243383539966831792047417781846056480615829070187698258804610596815513832";
+
+export const mockDefaultIdentitySecretHex = "0x29149c6e74dad2c21c8405b4c7d415f26cbadce0fba1b8a58ce1247623bc28e8";
+
 export const mockDefaultIdentity: IIdentityData & { secret?: string } = {
   commitment: mockDefaultIdentityCommitment,
   secret: "1234",

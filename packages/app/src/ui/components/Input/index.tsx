@@ -1,14 +1,18 @@
+import Box from "@mui/material/Box";
+import FormGroup from "@mui/material/FormGroup";
+import { lighten } from "@mui/material/styles";
+import TextField, { type TextFieldProps } from "@mui/material/TextField";
+import Typography from "@mui/material/Typography";
 import classNames from "classnames";
-import { forwardRef, InputHTMLAttributes, Ref } from "react";
+import { forwardRef, type Ref } from "react";
 
 import "./input.scss";
 
-export interface IInputProps extends InputHTMLAttributes<HTMLInputElement> {
+export interface IInputProps extends TextFieldProps<"filled"> {
   label: string;
+  readOnly?: boolean;
   endLabelIcon?: React.ReactNode;
-  endAdornment?: React.ReactNode;
   errorMessage?: string;
-  inputRef?: Ref<HTMLInputElement>;
 }
 
 const InputUI = (
@@ -18,39 +22,38 @@ const InputUI = (
     endLabelIcon = undefined,
     className,
     errorMessage = "",
-    endAdornment = undefined,
     inputRef = undefined,
     ...inputProps
   }: IInputProps,
   ref: Ref<HTMLInputElement>,
 ): JSX.Element => (
-  <div className={classNames("input-group", className)}>
-    {label && (
-      <div className="input-group__label-wrapper">
-        <label className="input-group__label" htmlFor={id}>
-          {label}
-        </label>
-
-        {endLabelIcon && <div className="input-group__label__end">{endLabelIcon}</div>}
-      </div>
+  <Box className={classNames("input-group", className)} sx={{ width: "100%" }}>
+    {endLabelIcon && (
+      <Box sx={{ alignItems: "center", justifyContent: "flex-end", display: "flex", mb: 1 }}>
+        <Box sx={{ color: "primary.main" }}>{endLabelIcon}</Box>
+      </Box>
     )}
 
-    <div className="input-group__group">
-      <input
+    <FormGroup>
+      <TextField
         ref={inputRef || ref}
-        className={classNames("input", {
-          "input--full-width": !endAdornment,
-        })}
+        fullWidth
+        error={Boolean(errorMessage)}
         id={id}
-        title={label}
+        label={label}
         {...inputProps}
+        sx={{
+          ...inputProps.sx,
+          backgroundColor: lighten("#000", 0.15),
+          borderRadius: 1,
+        }}
       />
+    </FormGroup>
 
-      {endAdornment}
-    </div>
-
-    <p className="input-group__error-message">{errorMessage}</p>
-  </div>
+    <Typography color="error.main" fontSize="xs" sx={{ my: 1 }} textAlign="left">
+      {errorMessage}
+    </Typography>
+  </Box>
 );
 
 export const Input = forwardRef<HTMLInputElement, IInputProps>(InputUI);

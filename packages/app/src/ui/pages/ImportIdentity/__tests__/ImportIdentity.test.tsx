@@ -5,10 +5,14 @@
 import { render, waitFor } from "@testing-library/react";
 import { Suspense } from "react";
 
-import { mockDefaultIdentity } from "@src/config/mock/zk";
+import { mockDefaultIdentity, mockDefaultIdentityCommitment, mockDefaultIdentitySecret } from "@src/config/mock/zk";
 
 import ImportIdentity from "..";
 import { IUseImportIdentityData, useImportIdentity } from "../useImportIdentity";
+
+jest.mock("bigint-conversion", (): unknown => ({
+  bigintToHex: jest.fn(),
+}));
 
 jest.mock("../useImportIdentity", (): unknown => ({
   useImportIdentity: jest.fn(),
@@ -16,11 +20,14 @@ jest.mock("../useImportIdentity", (): unknown => ({
 
 describe("ui/pages/ImportIdentity", () => {
   const defaultHookData: IUseImportIdentityData = {
-    error: "",
+    isLoading: false,
+    errors: {},
     urlOrigin: mockDefaultIdentity.metadata.urlOrigin,
-    faviconUrl: "http://localhost:3000/favicon.ico",
-    serializedIdentity: "{}",
-    serializedIdentityTooltip: "{}",
+    trapdoor: mockDefaultIdentitySecret,
+    nullifier: mockDefaultIdentitySecret,
+    secret: mockDefaultIdentitySecret,
+    commitment: mockDefaultIdentityCommitment,
+    register: jest.fn(),
     onGoBack: jest.fn(),
     onGoToHost: jest.fn(),
     onSubmit: jest.fn(),
@@ -52,12 +59,10 @@ describe("ui/pages/ImportIdentity", () => {
     (useImportIdentity as jest.Mock).mockReturnValue({
       ...defaultHookData,
       urlOrigin: "",
-      serializedIdentity: "",
-      serializedIdentityTooltip: "",
       faviconUrl: "",
     });
 
-    const { container, findByText } = render(
+    const { container, findByTestId } = render(
       <Suspense>
         <ImportIdentity />
       </Suspense>,
@@ -65,12 +70,13 @@ describe("ui/pages/ImportIdentity", () => {
 
     await waitFor(() => container.firstChild !== null);
 
-    const emptyText = await findByText("Invalid import params");
-    expect(emptyText).toBeInTheDocument();
+    const page = await findByTestId("import-identity-page");
+
+    expect(page).toBeInTheDocument();
   });
 
   test("should render error state properly", async () => {
-    (useImportIdentity as jest.Mock).mockReturnValue({ ...defaultHookData, error: "Error" });
+    (useImportIdentity as jest.Mock).mockReturnValue({ ...defaultHookData, errors: { root: "Error" } });
 
     const { container, findByText } = render(
       <Suspense>

@@ -1,49 +1,41 @@
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
-import Tooltip from "@mui/material/Tooltip";
 import Typography from "@mui/material/Typography";
 
-import logoSVG from "@src/static/icons/logo.svg";
+import { BigNumberInput } from "@src/ui/components/BigNumberInput";
 import { FullModalContent, FullModalFooter, FullModalHeader } from "@src/ui/components/FullModal";
-import { Icon } from "@src/ui/components/Icon";
+import { Input } from "@src/ui/components/Input";
 
 import { useImportIdentity } from "./useImportIdentity";
 
 const ImportIdentity = (): JSX.Element => {
   const {
-    faviconUrl,
+    isLoading,
     urlOrigin,
-    serializedIdentity,
-    serializedIdentityTooltip,
-    error,
+    errors,
+    secret,
+    commitment,
+    trapdoor,
+    nullifier,
+    register,
     onGoBack,
     onGoToHost,
     onSubmit,
   } = useImportIdentity();
 
-  const isShowContent = urlOrigin && serializedIdentity;
-
   return (
-    <Box data-testid="import-identity-page" sx={{ display: "flex", flexDirection: "column", height: "100%" }}>
+    <Box
+      component="form"
+      data-testid="import-identity-page"
+      sx={{ display: "flex", flexDirection: "column", height: "100%" }}
+    >
       <FullModalHeader onClose={onGoBack}>Import identity</FullModalHeader>
 
       <FullModalContent>
-        <Box sx={{ mx: "auto", my: 3 }}>
-          <Icon size={8} url={faviconUrl || logoSVG} />
-        </Box>
-
-        {!isShowContent && (
+        <Box>
           <Box>
-            <Typography fontWeight="bold" sx={{ textAlign: "center" }} variant="h6">
-              Invalid import params
-            </Typography>
-          </Box>
-        )}
-
-        {isShowContent && (
-          <Box>
-            <Box>
-              <Typography component="div" fontWeight="bold" sx={{ textAlign: "center", mb: 3 }} variant="h6">
+            {urlOrigin && (
+              <Typography component="div" fontWeight="bold" sx={{ textAlign: "left", mb: 3 }} variant="h6">
                 <Typography
                   component="strong"
                   fontWeight="bold"
@@ -58,35 +50,91 @@ const ImportIdentity = (): JSX.Element => {
                   requests to import an identity
                 </Typography>
               </Typography>
+            )}
+          </Box>
+
+          <Box sx={{ mt: 2 }}>
+            <Box sx={{ mb: 2 }}>
+              <Input
+                autoFocus
+                errorMessage={errors.name}
+                id="name"
+                label="Name"
+                placeholder="Enter identity name"
+                size="small"
+                type="text"
+                variant="filled"
+                {...register("name", { required: "Name is required" })}
+              />
             </Box>
 
-            <Box
-              sx={{
-                alignItems: "center",
-                display: "flex",
-                justifyContent: "center",
-              }}
-            >
-              <Tooltip
-                followCursor
-                placement="top"
-                title={
-                  <Typography sx={{ whiteSpace: "pre-wrap" }} variant="body2">
-                    {serializedIdentityTooltip}
-                  </Typography>
-                }
-              >
-                <Typography sx={{ whiteSpace: "pre-wrap", fontSize: "1.4rem", cursor: "help" }} variant="body1">
-                  {serializedIdentity}
-                </Typography>
-              </Tooltip>
+            <Box sx={{ mb: 2 }}>
+              <BigNumberInput
+                errorMessage={errors.trapdoor}
+                id="trapdoor"
+                label="Trapdoor"
+                placeholder="Enter identity trapdoor"
+                size="small"
+                type="text"
+                value={trapdoor}
+                variant="filled"
+                {...register("trapdoor", {
+                  required: "Identity trapdoor is required",
+                })}
+              />
+            </Box>
+
+            <Box sx={{ mb: 2 }}>
+              <BigNumberInput
+                errorMessage={errors.nullifier}
+                id="nullifier"
+                label="Nullifier"
+                placeholder="Enter identity nullifier"
+                size="small"
+                type="text"
+                value={nullifier}
+                variant="filled"
+                {...register("nullifier", {
+                  required: "Identity nullifier is required",
+                })}
+              />
+            </Box>
+
+            <Box sx={{ mb: 2 }}>
+              <BigNumberInput
+                id="commitment"
+                InputProps={{
+                  readOnly: true,
+                }}
+                label="Commitment"
+                placeholder="Enter identity commitment"
+                size="small"
+                type="text"
+                value={commitment}
+                variant="filled"
+              />
+            </Box>
+
+            <Box sx={{ mb: 2 }}>
+              <BigNumberInput
+                id="secret"
+                InputProps={{
+                  readOnly: true,
+                }}
+                label="Secret"
+                placeholder="Enter identity nullifier"
+                size="small"
+                type="text"
+                value={secret}
+                variant="filled"
+              />
             </Box>
           </Box>
-        )}
+        </Box>
 
-        {error && (
-          <Typography color="error.main" fontSize="xs" sx={{ py: 1 }} textAlign="center">
-            {error}
+        {errors.root && (
+          <Typography color="error.main" fontSize="xs" sx={{ my: 1 }} textAlign="center">
+            {errors.root}
           </Typography>
         )}
       </FullModalContent>
@@ -98,8 +146,9 @@ const ImportIdentity = (): JSX.Element => {
 
         <Button
           data-testid="import-identity"
-          disabled={!isShowContent}
+          disabled={isLoading}
           sx={{ ml: 1, width: "100%" }}
+          type="submit"
           variant="contained"
           onClick={onSubmit}
         >

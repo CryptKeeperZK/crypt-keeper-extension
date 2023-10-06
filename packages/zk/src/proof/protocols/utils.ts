@@ -98,3 +98,16 @@ export function getMessageHash(message: string): bigint {
 export function getRateCommitmentHash(identityCommitment: bigint, userMessageLimit: number | bigint): bigint {
   return poseidon2([identityCommitment, userMessageLimit]);
 }
+
+interface IGetSecret {
+  nullifier?: string;
+  trapdoor?: string;
+}
+
+export function calculateIdentitySecret({ nullifier, trapdoor }: IGetSecret): string {
+  return nullifier && trapdoor ? poseidon2([nullifier, trapdoor]).toString() : "";
+}
+
+export function calculateIdentityCommitment(secret?: string): string {
+  return secret ? poseidon1([secret]).toString() : "";
+}

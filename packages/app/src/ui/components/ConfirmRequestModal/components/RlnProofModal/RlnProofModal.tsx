@@ -92,15 +92,34 @@ export const RlnProofModal = ({
           className="w-full mb-2"
           defaultValue={payload?.rlnIdentifier.toString()}
           label="Rln Identifier"
+          variant="filled"
         />
 
-        <Input readOnly className="w-full mb-2" defaultValue={payload?.message} label="Message" />
+        <Input readOnly className="w-full mb-2" defaultValue={payload?.message} label="Message" variant="filled" />
 
-        <Input readOnly className="w-full mb-2" defaultValue={payload?.messageId.toString()} label="Message Id" />
+        <Input
+          readOnly
+          className="w-full mb-2"
+          defaultValue={payload?.messageId.toString()}
+          label="Message Id"
+          variant="filled"
+        />
 
-        <Input readOnly className="w-full mb-2" defaultValue={payload?.messageLimit.toString()} label="Message Limit" />
+        <Input
+          readOnly
+          className="w-full mb-2"
+          defaultValue={payload?.messageLimit.toString()}
+          label="Message Limit"
+          variant="filled"
+        />
 
-        <Input readOnly className="w-full mb-2" defaultValue={payload?.epoch.toString()} label="Epoch" />
+        <Input
+          readOnly
+          className="w-full mb-2"
+          defaultValue={payload?.epoch.toString()}
+          label="Epoch"
+          variant="filled"
+        />
       </FullModalContent>
 
       {error && <div className="text-xs text-red-500 text-center pb-1">{error}</div>}

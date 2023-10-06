@@ -105,6 +105,7 @@ export const IdentityItem = ({
               id="identityRename"
               label=""
               type="text"
+              variant="filled"
               {...register("name", { required: "Name is required" })}
             />
 

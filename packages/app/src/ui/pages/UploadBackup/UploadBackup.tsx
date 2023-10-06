@@ -59,6 +59,7 @@ const UploadBackup = (): JSX.Element => {
                 id="password"
                 isShowPassword={isShowPassword}
                 label="Password"
+                variant="filled"
                 onShowPassword={onShowPassword}
                 {...register("password", { required: "Password is required" })}
               />
@@ -70,6 +71,7 @@ const UploadBackup = (): JSX.Element => {
                 id="backupPassword"
                 isShowPassword={isShowPassword}
                 label="Backup password"
+                variant="filled"
                 onShowPassword={onShowPassword}
                 {...register("backupPassword", { required: "Backup password is required" })}
               />
