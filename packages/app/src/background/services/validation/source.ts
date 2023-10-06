@@ -1,8 +1,22 @@
-import { MerkleProofSource, MerkleProofStorageUrl } from "@cryptkeeperzk/types/dist/src/proof/zkProof";
-
-import type { IMerkleProof, IMerkleProofArtifacts, IMerkleProofInputs } from "@cryptkeeperzk/types";
+import { IMerkleProof, IMerkleProofArtifacts, IMerkleProofInputs, MerkleProofStorageUrl } from "@cryptkeeperzk/types";
+import * as yup from "yup";
 
 import { MerkleProofValidator } from "./merkle";
+
+const merkleProofStorageUrlSchema: yup.Schema<MerkleProofStorageUrl> = yup.string().url().required();
+
+const merkleProofArtifactsSchema: yup.Schema<IMerkleProofArtifacts> = yup.object({
+  leaves: yup.array().of(yup.string().required()).required(),
+  depth: yup.number().required(),
+  leavesPerNode: yup.number().required(),
+});
+
+const merkleProofSchema: yup.Schema<IMerkleProof> = yup.object({
+  root: yup.string().required(),
+  leaf: yup.string().required(),
+  siblings: yup.array().of(yup.string().required()).required(),
+  pathIndices: yup.array().of(yup.number().required()).required(),
+});
 
 export const validateMerkleProofSource = ({
   merkleProofSource,
@@ -11,41 +25,21 @@ export const validateMerkleProofSource = ({
     throw new Error("CryptKeeper: please set a merkle proof source.");
   }
 
-  if (isMerkleProofStorageUrl(merkleProofSource)) {
-    const merkleStorageUrl: MerkleProofStorageUrl = merkleProofSource as MerkleProofStorageUrl;
+  if (typeof merkleProofSource === "string" && merkleProofStorageUrlSchema.isValidSync(merkleProofSource)) {
+    const merkleStorageUrl: MerkleProofStorageUrl = merkleProofSource;
     return { merkleStorageUrl };
   }
 
-  if (isMerkleProofArtifacts(merkleProofSource)) {
-    const merkleProofArtifacts: IMerkleProofArtifacts = merkleProofSource as IMerkleProofArtifacts;
+  if (typeof merkleProofSource === "object" && merkleProofArtifactsSchema.isValidSync(merkleProofSource)) {
+    const merkleProofArtifacts: IMerkleProofArtifacts = merkleProofSource;
     return { merkleProofArtifacts };
   }
 
-  if (isMerkleProof(merkleProofSource)) {
-    const merkleProofProvided: IMerkleProof = merkleProofSource as IMerkleProof;
+  if (typeof merkleProofSource === "object" && merkleProofSchema.isValidSync(merkleProofSource)) {
+    const merkleProofProvided: IMerkleProof = merkleProofSource;
     new MerkleProofValidator(merkleProofProvided).validateProof();
     return { merkleProofProvided };
   }
 
   throw new Error("CryptKeeper: invalid ZK merkle tree inputs");
 };
-
-function isMerkleProofStorageUrl(merkleProofSource: MerkleProofSource): boolean {
-  return typeof merkleProofSource === "string";
-}
-
-function isMerkleProofArtifacts(merkleProofSource: MerkleProofSource): boolean {
-  return (
-    typeof merkleProofSource !== "string" &&
-    typeof merkleProofSource === "object" &&
-    "leaves" in merkleProofSource &&
-    "depth" in merkleProofSource &&
-    "leavesPerNode" in merkleProofSource
-  );
-}
-
-function isMerkleProof(proof: MerkleProofSource): boolean {
-  return (
-    typeof proof === "object" && "root" in proof && "leaf" in proof && "siblings" in proof && "pathIndices" in proof
-  );
-}

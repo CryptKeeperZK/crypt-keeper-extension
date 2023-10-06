@@ -5,11 +5,11 @@ import { validateMerkleProofSource } from "..";
 describe("background/services/validation", () => {
   test("should validate merkle proof storage URL properly", () => {
     const mockMerkleSource = {
-      merkleProofSource: "merkleStorageUrl",
+      merkleProofSource: "https://merkleStorageUrl.com",
     };
 
     const expectedOutput = {
-      merkleStorageUrl: "merkleStorageUrl",
+      merkleStorageUrl: "https://merkleStorageUrl.com",
     };
 
     const result = validateMerkleProofSource(mockMerkleSource);
