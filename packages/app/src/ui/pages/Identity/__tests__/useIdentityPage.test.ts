@@ -178,7 +178,7 @@ describe("ui/pages/Identity/useIdentityPage", () => {
     expect(result.current.isUpdating).toBe(false);
   });
 
-  test("should go to urlOrigin properly", async () => {
+  test("should go to host properly", async () => {
     const { result } = renderHook(() => useIdentityPage());
     await waitForData(result.current);
 
