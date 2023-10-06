@@ -239,6 +239,7 @@ describe("background/services/injector", () => {
 
   describe("generate Semaphore proof", () => {
     beforeEach(() => {
+      mockGetStatus.mockResolvedValueOnce({ isUnlocked: true });
       (browser.runtime.getURL as jest.Mock).mockImplementation((path: string) => path);
     });
 
@@ -409,6 +410,7 @@ describe("background/services/injector", () => {
 
   describe("generate RLN Proof", () => {
     beforeEach(() => {
+      mockGetStatus.mockResolvedValueOnce({ isUnlocked: true });
       (browser.runtime.getURL as jest.Mock).mockImplementation((path: string) => path);
     });
 
