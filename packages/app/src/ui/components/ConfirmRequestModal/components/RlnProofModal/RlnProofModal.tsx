@@ -100,8 +100,6 @@ export const RlnProofModal = ({
 
         <Input readOnly className="w-full mb-2" defaultValue={payload?.messageLimit.toString()} label="Message Limit" />
 
-        <Input readOnly className="w-full mb-2" defaultValue={payload?.messageId.toString()} label="Message Id" />
-
         <Input readOnly className="w-full mb-2" defaultValue={payload?.epoch.toString()} label="Epoch" />
       </FullModalContent>
 

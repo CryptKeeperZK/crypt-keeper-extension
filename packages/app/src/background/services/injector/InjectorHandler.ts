@@ -66,6 +66,8 @@ export class InjectorHandler {
   };
 
   requiredApproval = async ({ urlOrigin }: IZkMetadata): Promise<IConnectionApprovalData> => {
+    await this.checkUnlockStatus(true);
+
     const { checkedUrlOrigin, isApproved, canSkipApprove } = this.getConnectionApprovalData({ urlOrigin });
 
     // TODO: This check should be not just `isApproved` but also `isConnected`;
@@ -75,13 +77,13 @@ export class InjectorHandler {
       throw new Error(`CryptKeeper: ${urlOrigin} is not approved, please call 'connectIdentity()' request first.`);
     }
 
-    await this.checkLockStatus();
+    await this.checkUnlockStatus(false);
 
     return { checkedUrlOrigin, isApproved, canSkipApprove };
   };
 
   checkApproval = async ({ urlOrigin }: IZkMetadata): Promise<IConnectionApprovalData> => {
-    await this.checkLockStatus();
+    await this.checkUnlockStatus();
     const { checkedUrlOrigin, isApproved, canSkipApprove } = this.getConnectionApprovalData({ urlOrigin });
     return { checkedUrlOrigin, isApproved, canSkipApprove };
   };
@@ -97,16 +99,20 @@ export class InjectorHandler {
     return { checkedUrlOrigin: urlOrigin, isApproved, canSkipApprove };
   };
 
-  private checkLockStatus = async () => {
+  private checkUnlockStatus = async (isApprovalCheckOnly = false) => {
     const { isUnlocked, isInitialized } = await this.lockerService.getStatus();
 
-    if (!isUnlocked) {
+    if (!isUnlocked && !isApprovalCheckOnly) {
       await this.browserService.openPopup();
       await this.lockerService.awaitUnlock();
     }
 
-    if (isInitialized) {
+    if (isInitialized && !isApprovalCheckOnly) {
       await this.zkIdentityService.awaitUnlock();
+      await this.approvalService.awaitUnlock();
+    }
+
+    if (isInitialized && !isUnlocked && isApprovalCheckOnly) {
       await this.approvalService.awaitUnlock();
     }
   };
