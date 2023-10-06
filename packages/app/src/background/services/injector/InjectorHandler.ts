@@ -66,13 +66,14 @@ export class InjectorHandler {
   };
 
   requiredApproval = async ({ urlOrigin }: IZkMetadata): Promise<IConnectionApprovalData> => {
-    await this.checkUnlockStatus(true);
+    await this.checkUnlockStatus();
 
     const { checkedUrlOrigin, isApproved, canSkipApprove } = this.getConnectionApprovalData({ urlOrigin });
 
     // TODO: This check should be not just `isApproved` but also `isConnected`;
     // Because the idea is to force to have a connection via `connectedIdentity()`
     // which includes checking the approval part, this would be done in another PR
+    // UPDATE: maybe we should redirect to connect function at that case to go through the approval. (Out of this PR's scope)
     if (!isApproved) {
       throw new Error(`CryptKeeper: ${urlOrigin} is not approved, please call 'connectIdentity()' request first.`);
     }
@@ -97,12 +98,8 @@ export class InjectorHandler {
     return { checkedUrlOrigin: urlOrigin, isApproved, canSkipApprove };
   };
 
-  private checkUnlockStatus = async (isRequiredUnlock = false) => {
+  private checkUnlockStatus = async () => {
     const { isUnlocked, isInitialized } = await this.lockerService.getStatus();
-
-    if (!isUnlocked && isRequiredUnlock) {
-      throw new Error("CryptKeeper: please unlock your CryptKeeper wallet");
-    }
 
     if (!isUnlocked) {
       await this.browserService.openPopup();
