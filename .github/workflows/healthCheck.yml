@@ -83,7 +83,7 @@ jobs:
       - name: Install dependencies
         run: |-
           pnpm install --frozen-lockfile --prefer-offline
-          pnpm install --global playwright
+          pnpm playwright install
 
       - name: Build extension (Linux)
         if: runner.os == 'Linux'
@@ -105,7 +105,7 @@ jobs:
 
       - name: Install Playwright Browsers
         if: steps.playwright-cache.outputs.cache-hit != 'true'
-        run: playwright install 
+        run: playwright install
 
       - name: Run Playwright tests
         uses: coactions/setup-xvfb@v1
