@@ -285,7 +285,7 @@ describe("background/services/injector", () => {
       const service = InjectorService.getInstance();
 
       await expect(service.generateSemaphoreProof(defaultProofRequest, { urlOrigin: "new-urlOrigin" })).rejects.toThrow(
-        "CryptKeeper: new-urlOrigin is not approved, please call 'connectIdentity()' request first.",
+        "CryptKeeper: new-urlOrigin is not approved, please call 'connect()' request first.",
       );
       expect(pushMessage).toBeCalledTimes(0);
     });
