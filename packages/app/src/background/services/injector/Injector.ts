@@ -43,7 +43,7 @@ export class InjectorService {
       return undefined;
     }
 
-    const { isApproved } = this.injectorHandler.getConnectionApprovalData({ urlOrigin });
+    const { isApproved } = await this.injectorHandler.getConnectionApprovalData({ urlOrigin });
 
     if (!isApproved) {
       return undefined;
@@ -53,7 +53,12 @@ export class InjectorService {
   };
 
   connect = async ({ urlOrigin }: IZkMetadata): Promise<void> => {
-    const { checkedUrlOrigin, isApproved, canSkipApprove } = await this.injectorHandler.checkApproval({ urlOrigin });
+    const { checkedUrlOrigin, isApproved, canSkipApprove } = await this.injectorHandler.checkApproval(
+      {
+        urlOrigin,
+      },
+      false,
+    );
 
     try {
       if (isApproved) {
