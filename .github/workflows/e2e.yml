@@ -110,7 +110,7 @@ jobs:
       - name: Install Playwright Browsers
         if: steps.playwright-cache.outputs.cache-hit != 'true'
         run: |-
-          npx playwright install
+          pnpm exec playwright install
 
       - name: Run Playwright tests
         uses: coactions/setup-xvfb@v1
