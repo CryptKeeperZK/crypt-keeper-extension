@@ -153,7 +153,7 @@ describe("background/services/injector", () => {
       expect(result).toStrictEqual(mockConnectedIdentity);
       expect(mockIsApproved).toBeCalledTimes(1);
       expect(mockCanSkip).toBeCalledTimes(1);
-      expect(mockAwaitLockServiceUnlock).toBeCalledTimes(0);
+      expect(mockAwaitLockServiceUnlock).toBeCalledTimes(1);
       expect(mockGetConnectedIdentityData).toBeCalledTimes(1);
     });
 

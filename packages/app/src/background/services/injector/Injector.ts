@@ -43,11 +43,7 @@ export class InjectorService {
       return undefined;
     }
 
-    const { isApproved } = await this.injectorHandler.getConnectionApprovalData({ urlOrigin });
-
-    if (!isApproved) {
-      return undefined;
-    }
+    await this.injectorHandler.checkApproval({ urlOrigin });
 
     return this.injectorHandler.connectedIdentityMetadata({}, { urlOrigin });
   };
