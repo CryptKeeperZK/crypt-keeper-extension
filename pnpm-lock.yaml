@@ -558,6 +558,9 @@ importers:
       lint-staged:
         specifier: ^14.0.1
         version: 14.0.1
+      prettier:
+        specifier: ^3.0.3
+        version: 3.0.3
 
   packages/manifest-bump:
     dependencies:
