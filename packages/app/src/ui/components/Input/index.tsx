@@ -23,7 +23,8 @@ const InputUI = (
     className,
     errorMessage = "",
     inputRef = undefined,
-    ...inputProps
+    readOnly = false,
+    ...rest
   }: IInputProps,
   ref: Ref<HTMLInputElement>,
 ): JSX.Element => (
@@ -41,9 +42,13 @@ const InputUI = (
         error={Boolean(errorMessage)}
         id={id}
         label={label}
-        {...inputProps}
+        {...rest}
+        InputProps={{
+          ...rest.InputProps,
+          readOnly,
+        }}
         sx={{
-          ...inputProps.sx,
+          ...rest.sx,
           backgroundColor: lighten("#000", 0.15),
           borderRadius: 1,
         }}
