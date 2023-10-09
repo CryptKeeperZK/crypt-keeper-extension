@@ -32,10 +32,12 @@ import pushMessage from "@src/util/pushMessage";
 
 import type { BackupData, IBackupable } from "@src/background/services/backup";
 
+import BaseService from "../base";
+
 const IDENTITY_KEY = "@@ID@@";
 const CONNECTED_IDENTITY_KEY = "@@CONNECTED-IDENTITY@@";
 
-export default class ZkIdentityService implements IBackupable {
+export default class ZkIdentityService extends BaseService implements IBackupable {
   private static INSTANCE?: ZkIdentityService;
 
   private identitiesStore: SimpleStorage;
@@ -57,6 +59,7 @@ export default class ZkIdentityService implements IBackupable {
   private connectedIdentity?: ZkIdentitySemaphore;
 
   private constructor() {
+    super();
     this.connectedIdentity = undefined;
     this.identitiesStore = new SimpleStorage(IDENTITY_KEY);
     this.connectedIdentityStore = new SimpleStorage(CONNECTED_IDENTITY_KEY);
@@ -261,6 +264,10 @@ export default class ZkIdentityService implements IBackupable {
   };
 
   unlock = async (): Promise<boolean> => {
+    if (this.isUnlocked) {
+      return true;
+    }
+
     const identities = await this.getIdentitiesFromStore();
     const identity = await this.readConnectedIdentity(identities);
     const identityCommitment = identity ? bigintToHex(identity.genIdentityCommitment()) : undefined;
@@ -272,6 +279,9 @@ export default class ZkIdentityService implements IBackupable {
         urlOrigin: identity?.metadata.urlOrigin,
       });
     }
+
+    this.isUnlocked = true;
+    this.onUnlocked();
 
     return true;
   };

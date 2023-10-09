@@ -46,6 +46,8 @@ export class InjectorHandler {
 
   getZkProofService = (): ZkProofService => this.zkProofService;
 
+  getLockService = (): LockerService => this.lockerService;
+
   connectedIdentityMetadata = async (_: unknown, meta?: IZkMetadata): Promise<ConnectedIdentityMetadata> => {
     const connectedIdentityMetadata = await this.zkIdentityService.getConnectedIdentityData({}, meta);
 
@@ -70,16 +72,16 @@ export class InjectorHandler {
     // Because the idea is to force to have a connection via `connectedIdentity()`
     // which includes checking the approval part, this would be done in another PR
     if (!isApproved) {
-      throw new Error(`CryptKeeper: ${urlOrigin} is not approved, please call 'connectIdentity()' request first.`);
+      throw new Error(`CryptKeeper: ${urlOrigin} is not approved, please call 'connect()' request first.`);
     }
 
-    await this.checkLockStatus();
+    await this.checkUnlockStatus();
 
     return { checkedUrlOrigin, isApproved, canSkipApprove };
   };
 
   checkApproval = async ({ urlOrigin }: IZkMetadata): Promise<IConnectionApprovalData> => {
-    await this.checkLockStatus();
+    await this.checkUnlockStatus();
     const { checkedUrlOrigin, isApproved, canSkipApprove } = this.getConnectionApprovalData({ urlOrigin });
     return { checkedUrlOrigin, isApproved, canSkipApprove };
   };
@@ -95,12 +97,17 @@ export class InjectorHandler {
     return { checkedUrlOrigin: urlOrigin, isApproved, canSkipApprove };
   };
 
-  private checkLockStatus = async () => {
-    const { isUnlocked } = await this.lockerService.getStatus();
+  private checkUnlockStatus = async () => {
+    const { isUnlocked, isInitialized } = await this.lockerService.getStatus();
 
     if (!isUnlocked) {
       await this.browserService.openPopup();
       await this.lockerService.awaitUnlock();
+
+      if (isInitialized) {
+        await this.zkIdentityService.awaitUnlock();
+        await this.approvalService.awaitUnlock();
+      }
     }
   };
 

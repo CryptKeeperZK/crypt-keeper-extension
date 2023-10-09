@@ -4,9 +4,11 @@ import SimpleStorage from "@src/background/services/storage";
 import type { IHostPermission } from "@cryptkeeperzk/types";
 import type { BackupData, IBackupable } from "@src/background/services/backup";
 
+import BaseService from "../base";
+
 const APPROVALS_DB_KEY = "@APPROVED@";
 
-export default class ApprovalService implements IBackupable {
+export default class ApprovalService extends BaseService implements IBackupable {
   private static INSTANCE?: ApprovalService;
 
   private allowedHosts: Map<string, IHostPermission>;
@@ -16,6 +18,7 @@ export default class ApprovalService implements IBackupable {
   private cryptoService: CryptoService;
 
   private constructor() {
+    super();
     this.allowedHosts = new Map();
     this.approvals = new SimpleStorage(APPROVALS_DB_KEY);
     this.cryptoService = CryptoService.getInstance();
@@ -43,6 +46,9 @@ export default class ApprovalService implements IBackupable {
       const decrypted = this.cryptoService.decrypt(encryped, { mode: ECryptMode.MNEMONIC });
       this.allowedHosts = new Map(JSON.parse(decrypted) as Iterable<[string, IHostPermission]>);
     }
+
+    this.isUnlocked = true;
+    this.onUnlocked();
 
     return true;
   };

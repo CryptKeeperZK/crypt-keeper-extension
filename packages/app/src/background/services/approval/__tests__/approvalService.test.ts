@@ -92,6 +92,24 @@ describe("background/services/approval", () => {
       expect(hosts).toHaveLength(1);
       expect(hosts).toStrictEqual(mockDefaultHosts);
     });
+
+    test("should await unlock properly", async () => {
+      approvalService.awaitUnlock();
+      const isUnlocked = await approvalService.unlock();
+      const isUnlockCompleted = approvalService.onUnlocked();
+
+      expect(isUnlocked).toBe(true);
+      expect(isUnlockCompleted).toBe(true);
+    });
+
+    test("should not unlock twice", async () => {
+      const isUnlockedFirst = await approvalService.unlock();
+      const isUnlockedSecond = await approvalService.unlock();
+
+      expect(isUnlockedFirst).toBe(true);
+      expect(isUnlockedSecond).toBe(true);
+      expect(await approvalService.awaitUnlock()).toBeUndefined();
+    });
   });
 
   describe("permissions", () => {
