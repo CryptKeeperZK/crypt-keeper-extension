@@ -45,9 +45,10 @@ export default class ApprovalService extends BaseService implements IBackupable 
     if (encryped) {
       const decrypted = this.cryptoService.decrypt(encryped, { mode: ECryptMode.MNEMONIC });
       this.allowedHosts = new Map(JSON.parse(decrypted) as Iterable<[string, IHostPermission]>);
-      this.isUnlocked = true;
-      this.onUnlocked();
     }
+
+    this.isUnlocked = true;
+    this.onUnlocked();
 
     return true;
   };
