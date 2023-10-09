@@ -1,5 +1,5 @@
 import { IMerkleProof, IMerkleProofArtifacts, IMerkleProofInputs, MerkleProofStorageUrl } from "@cryptkeeperzk/types";
-import yup from "yup";
+import * as yup from "yup";
 
 import { MerkleProofValidator } from "./merkle";
 

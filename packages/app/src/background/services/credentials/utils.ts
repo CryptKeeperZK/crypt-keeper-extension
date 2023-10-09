@@ -9,7 +9,7 @@ import {
 } from "@cryptkeeperzk/types";
 import { SHA256 } from "crypto-js";
 import stringify from "json-stable-stringify";
-import yup from "yup";
+import * as yup from "yup";
 
 import { ICryptkeeperVerifiableCredential, IVerifiableCredentialMetadata } from "@src/types";
 
