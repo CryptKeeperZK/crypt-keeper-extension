@@ -72,7 +72,7 @@ export class InjectorHandler {
     // Because the idea is to force to have a connection via `connectedIdentity()`
     // which includes checking the approval part, this would be done in another PR
     if (!isApproved) {
-      throw new Error(`CryptKeeper: ${urlOrigin} is not approved, please call 'connectIdentity()' request first.`);
+      throw new Error(`CryptKeeper: ${urlOrigin} is not approved, please call 'connect()' request first.`);
     }
 
     await this.checkUnlockStatus();

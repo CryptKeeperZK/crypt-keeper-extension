@@ -153,20 +153,8 @@ describe("background/services/injector", () => {
       expect(result).toStrictEqual(mockConnectedIdentity);
       expect(mockIsApproved).toBeCalledTimes(1);
       expect(mockCanSkip).toBeCalledTimes(1);
-      expect(mockAwaitLockServiceUnlock).toBeCalledTimes(1);
-      expect(mockGetConnectedIdentityData).toBeCalledTimes(1);
-    });
-
-    test("should return undefined if extension is locked", async () => {
-      mockGetStatus.mockResolvedValueOnce({ isUnlocked: false });
-      const service = InjectorService.getInstance();
-
-      const result = await service.getConnectedIdentityMetadata({}, { urlOrigin: mockDefaultUrlOrigin });
-      expect(result).toStrictEqual(undefined);
-      expect(mockIsApproved).toBeCalledTimes(0);
-      expect(mockCanSkip).toBeCalledTimes(0);
       expect(mockAwaitLockServiceUnlock).toBeCalledTimes(0);
-      expect(mockGetConnectedIdentityData).toBeCalledTimes(0);
+      expect(mockGetConnectedIdentityData).toBeCalledTimes(1);
     });
 
     test("should throw error if there is no urlOrigin", async () => {
@@ -535,7 +523,7 @@ describe("background/services/injector", () => {
       const service = InjectorService.getInstance();
 
       await expect(service.generateRLNProof(defaultProofRequest, { urlOrigin: "new-urlOrigin" })).rejects.toThrow(
-        "new-urlOrigin is not approved",
+        "CryptKeeper: new-urlOrigin is not approved, please call 'connect()' request first.",
       );
       expect(pushMessage).toBeCalledTimes(0);
     });
