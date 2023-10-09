@@ -1,5 +1,11 @@
-import { IMerkleProof, IMerkleProofArtifacts, IMerkleProofInputs, MerkleProofStorageUrl } from "@cryptkeeperzk/types";
 import * as yup from "yup";
+
+import type {
+  IMerkleProof,
+  IMerkleProofArtifacts,
+  IMerkleProofInputs,
+  MerkleProofStorageUrl,
+} from "@cryptkeeperzk/types";
 
 import { MerkleProofValidator } from "./merkle";
 
