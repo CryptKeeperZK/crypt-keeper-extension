@@ -179,8 +179,8 @@ describe("background/services/injector", () => {
       );
     });
 
-    test("should send undefined  if urlOrigin isn't approved", async () => {
-      mockGetStatus.mockResolvedValueOnce({ isUnlocked: true });
+    test("should send undefined if urlOrigin isn't approved", async () => {
+      mockGetStatus.mockResolvedValueOnce({ isUnlocked: false });
 
       const service = InjectorService.getInstance();
 
