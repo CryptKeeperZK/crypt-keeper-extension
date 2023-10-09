@@ -21,6 +21,7 @@ export type {
   IConnectIdentityArgs,
   ISerializedIdentity,
   ConnectedIdentityMetadata,
+  IImportIdentityArgs,
 } from "./identity";
 export { EWallet } from "./identity";
 export type {

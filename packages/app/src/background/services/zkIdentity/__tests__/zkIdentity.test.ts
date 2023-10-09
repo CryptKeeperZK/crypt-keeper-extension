@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/unbound-method */
 import { EventName } from "@cryptkeeperzk/providers";
-import { EWallet, ConnectedIdentityMetadata, ICreateIdentityOptions } from "@cryptkeeperzk/types";
+import { EWallet, ConnectedIdentityMetadata, ICreateIdentityOptions, IImportIdentityArgs } from "@cryptkeeperzk/types";
 import { createNewIdentity } from "@cryptkeeperzk/zk";
 import pick from "lodash/pick";
 import browser from "webextension-polyfill";
@@ -153,6 +153,7 @@ describe("background/services/zkIdentity", () => {
         instance.get.mockReturnValue(undefined);
       });
 
+      zkIdentityService.lock();
       const result = await zkIdentityService.unlock();
 
       expect(result).toBe(true);
@@ -629,6 +630,34 @@ describe("background/services/zkIdentity", () => {
           urlOrigin: "http://localhost:3000",
         }),
       ).rejects.toThrow("Identity is already exist. Try to change nonce or identity data.");
+    });
+  });
+
+  describe("import", () => {
+    const defaultArgs: IImportIdentityArgs = {
+      name: "Name",
+      nullifier: "12578821460373135693013277026392552769801800051254682675996381598033497431909",
+      trapdoor: "8599172605644748803815316525430713607475871751016594621440814664229873275229",
+      urlOrigin: "http://localhost:3000",
+    };
+
+    test("should import new identity properly", async () => {
+      (createNewIdentity as jest.Mock).mockReturnValue({
+        ...defaultNewIdentity,
+        metadata: { ...defaultNewIdentity.metadata, isImported: true },
+      });
+
+      const result = await zkIdentityService.import(defaultArgs);
+
+      expect(result).toBeDefined();
+    });
+
+    test("should not import new identity if there is the same identity in the store", async () => {
+      (createNewIdentity as jest.Mock).mockReturnValue({
+        genIdentityCommitment: () => mockDefaultIdentityCommitment,
+      });
+
+      await expect(zkIdentityService.import(defaultArgs)).rejects.toThrow("Identity is already imported");
     });
   });
 

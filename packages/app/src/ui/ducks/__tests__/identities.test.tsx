@@ -53,6 +53,7 @@ describe("ui/ducks/identities", () => {
         groups: [],
         urlOrigin: "http://localhost:3000",
         isDeterministic: true,
+        isImported: false,
       },
     },
     {
@@ -62,6 +63,7 @@ describe("ui/ducks/identities", () => {
         name: "Account #2",
         groups: [],
         isDeterministic: true,
+        isImported: false,
       },
     },
   ];

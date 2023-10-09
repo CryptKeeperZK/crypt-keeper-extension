@@ -22,16 +22,24 @@ export interface INewIdentityRequest {
   messageSignature?: string;
 }
 
+export interface IImportIdentityArgs {
+  name: string;
+  trapdoor: string;
+  nullifier: string;
+  urlOrigin?: string;
+}
+
 export enum EWallet {
   ETH_WALLET,
   CRYPTKEEPER_WALLET,
 }
 
 export interface IIdentityMetadata {
-  account: string;
   name: string;
   groups: IGroupData[];
   isDeterministic: boolean;
+  isImported: boolean;
+  account?: string;
   nonce?: number;
   urlOrigin?: string;
 }
@@ -74,10 +82,12 @@ export interface ISerializedIdentity {
 
 export interface ICreateIdentityArgs {
   name: string;
-  account: string;
   groups: IGroupData[];
   isDeterministic: boolean;
+  account?: string;
   messageSignature?: string;
   nonce?: number;
   urlOrigin?: string;
+  trapdoor?: string;
+  nullifier?: string;
 }

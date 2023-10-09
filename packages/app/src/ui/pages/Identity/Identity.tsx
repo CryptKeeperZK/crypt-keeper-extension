@@ -124,14 +124,23 @@ const Identity = (): JSX.Element | null => {
 
             {renderRow("Name", !isUpdating ? metadata.name : renderRenameForm())}
 
-            {renderRow(
-              "Owner account",
-              <Tooltip title={metadata.account}>
+            {metadata.account &&
+              renderRow(
+                "Owner account",
+                <Tooltip title={metadata.account}>
+                  <Typography component="span" variant="h6">
+                    {ellipsify(metadata.account)}
+                  </Typography>
+                </Tooltip>,
+              )}
+
+            {metadata.isImported &&
+              renderRow(
+                "Imported",
                 <Typography component="span" variant="h6">
-                  {ellipsify(metadata.account)}
-                </Typography>
-              </Tooltip>,
-            )}
+                  Yes
+                </Typography>,
+              )}
 
             {metadata.isDeterministic &&
               !isNil(metadata.nonce) &&

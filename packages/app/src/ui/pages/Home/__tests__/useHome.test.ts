@@ -55,6 +55,7 @@ describe("ui/pages/Home/useHome", () => {
         groups: [],
         urlOrigin: "http://localhost:3000",
         isDeterministic: true,
+        isImported: false,
       },
     },
     {
@@ -65,6 +66,7 @@ describe("ui/pages/Home/useHome", () => {
         groups: [],
         urlOrigin: "http://localhost:3000",
         isDeterministic: true,
+        isImported: false,
       },
     },
   ];

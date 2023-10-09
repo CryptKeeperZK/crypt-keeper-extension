@@ -45,6 +45,7 @@ describe("background/services/protocols", () => {
     groups: [],
     urlOrigin: "http://localhost:3000",
     isDeterministic: true,
+    isImported: false,
   };
 
   const defaultMerkleProof: MerkleProof = {

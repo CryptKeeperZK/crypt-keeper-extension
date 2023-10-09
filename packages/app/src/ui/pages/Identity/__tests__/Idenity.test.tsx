@@ -166,7 +166,7 @@ describe("ui/pages/Identity", () => {
       isConfirmModalOpen: true,
     });
 
-    const { container, findByText } = render(
+    const { container, findByTestId } = render(
       <Suspense>
         <Identity />
       </Suspense>,
@@ -174,11 +174,11 @@ describe("ui/pages/Identity", () => {
 
     await waitFor(() => container.firstChild !== null);
 
-    const noButton = await findByText("No");
+    const noButton = await findByTestId("danger-modal-reject");
     await act(() => Promise.resolve(noButton.click()));
     expect(defaultHookData.onConfirmDeleteIdentity).toBeCalledTimes(1);
 
-    const yesButton = await findByText("Yes");
+    const yesButton = await findByTestId("danger-modal-accept");
     await act(() => Promise.resolve(yesButton.click()));
     expect(defaultHookData.onDeleteIdentity).toBeCalledTimes(1);
   });

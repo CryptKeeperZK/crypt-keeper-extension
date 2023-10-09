@@ -61,7 +61,7 @@ const mockIsApproved = jest.fn(
     urlOrigin === "reject-joinGroup",
 );
 const mockCanSkip = jest.fn((urlOrigin) => urlOrigin === mockDefaultUrlOrigin);
-const mockGetStatus = jest.fn(() => Promise.resolve({ isUnlocked: false }));
+const mockGetStatus = jest.fn(() => Promise.resolve({ isUnlocked: false, isInitialized: false }));
 const mockAwaitLockServiceUnlock = jest.fn();
 const mockAwaitZkIdentityServiceUnlock = jest.fn();
 const mockAwaitApprovalServiceUnlock = jest.fn();
@@ -161,7 +161,7 @@ describe("background/services/injector", () => {
 
   describe("get connected identity metadata", () => {
     test("should return connected metadata properly if all checks are passed", async () => {
-      mockGetStatus.mockResolvedValueOnce({ isUnlocked: true });
+      mockGetStatus.mockResolvedValueOnce({ isUnlocked: true, isInitialized: true });
       const service = InjectorService.getInstance();
 
       const result = await service.getConnectedIdentityMetadata({}, { urlOrigin: mockDefaultUrlOrigin });
@@ -173,7 +173,7 @@ describe("background/services/injector", () => {
     });
 
     test("should throw error if there is no urlOrigin", async () => {
-      mockGetStatus.mockResolvedValueOnce({ isUnlocked: true });
+      mockGetStatus.mockResolvedValueOnce({ isUnlocked: true, isInitialized: true });
 
       const service = InjectorService.getInstance();
 
@@ -183,7 +183,7 @@ describe("background/services/injector", () => {
     });
 
     test("should send undefined if urlOrigin isn't approved", async () => {
-      mockGetStatus.mockResolvedValueOnce({ isUnlocked: false });
+      mockGetStatus.mockResolvedValueOnce({ isUnlocked: false, isInitialized: true });
 
       const service = InjectorService.getInstance();
 
@@ -193,7 +193,7 @@ describe("background/services/injector", () => {
     });
 
     test("should throw error if no connected identity found", async () => {
-      mockGetStatus.mockResolvedValueOnce({ isUnlocked: true });
+      mockGetStatus.mockResolvedValueOnce({ isUnlocked: true, isInitialized: true });
 
       const service = InjectorService.getInstance();
 
@@ -246,7 +246,7 @@ describe("background/services/injector", () => {
 
   describe("generate Semaphore proof", () => {
     beforeEach(() => {
-      mockGetStatus.mockResolvedValueOnce({ isUnlocked: true });
+      mockGetStatus.mockResolvedValueOnce({ isUnlocked: true, isInitialized: true });
       (browser.runtime.getURL as jest.Mock).mockImplementation((path: string) => path);
     });
 
@@ -417,7 +417,7 @@ describe("background/services/injector", () => {
 
   describe("generate RLN Proof", () => {
     beforeEach(() => {
-      mockGetStatus.mockResolvedValueOnce({ isUnlocked: true });
+      mockGetStatus.mockResolvedValueOnce({ isUnlocked: true, isInitialized: true });
       (browser.runtime.getURL as jest.Mock).mockImplementation((path: string) => path);
     });
 
