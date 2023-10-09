@@ -19,7 +19,7 @@ env:
   BANDADA_URL: ${{ vars.BANDADA_URL }}
   TARGET: "chrome"
   DEMO_URL: ""
-  MERKLE_MOCK_SERVER: ${{ vars.MERKLE_MOCK_SERVER }}
+  MERKLE_MOCK_SERVER: "http://localhost:8090"
   PLAYWRIGHT_VERSION: ""
   MANIFEST_VERSION: 3
   VERIFIABLE_CREDENTIALS: false
@@ -81,7 +81,8 @@ jobs:
           key: ${{ runner.os }}-playwright-${{ env.PLAYWRIGHT_VERSION }}
 
       - name: Install dependencies
-        run: pnpm install --frozen-lockfile --prefer-offline
+        run: |-
+          pnpm install --frozen-lockfile --prefer-offline
 
       - name: Build extension (Linux)
         if: runner.os == 'Linux'
@@ -103,7 +104,8 @@ jobs:
 
       - name: Install Playwright Browsers
         if: steps.playwright-cache.outputs.cache-hit != 'true'
-        run: pnpx playwright install --with-deps chromium
+        run: |-
+          pnpm exec playwright install
 
       - name: Run Playwright tests
         uses: coactions/setup-xvfb@v1
