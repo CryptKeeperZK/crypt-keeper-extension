@@ -37,24 +37,17 @@ export class InjectorService {
     _: unknown,
     { urlOrigin }: IZkMetadata,
   ): Promise<ConnectedIdentityMetadata | undefined> => {
-    const { isUnlocked } = await this.injectorHandler.getLockService().getStatus();
+    const { isApproved } = this.injectorHandler.getConnectionApprovalData({ urlOrigin });
 
-    if (!isUnlocked) {
+    if (!isApproved) {
       return undefined;
     }
-
-    await this.injectorHandler.checkApproval({ urlOrigin });
 
     return this.injectorHandler.connectedIdentityMetadata({}, { urlOrigin });
   };
 
   connect = async ({ urlOrigin }: IZkMetadata): Promise<void> => {
-    const { checkedUrlOrigin, isApproved, canSkipApprove } = await this.injectorHandler.checkApproval(
-      {
-        urlOrigin,
-      },
-      false,
-    );
+    const { checkedUrlOrigin, isApproved, canSkipApprove } = await this.injectorHandler.checkApproval({ urlOrigin });
 
     try {
       if (isApproved) {

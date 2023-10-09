@@ -65,26 +65,31 @@ export class InjectorHandler {
     return responsePayload;
   };
 
-  checkApproval = async ({ urlOrigin }: IZkMetadata, isForceCheck = true): Promise<IConnectionApprovalData> => {
-    const { checkedUrlOrigin, isApproved, canSkipApprove } = await this.getConnectionApprovalData({ urlOrigin });
+  requiredApproval = async ({ urlOrigin }: IZkMetadata): Promise<IConnectionApprovalData> => {
+    const { checkedUrlOrigin, isApproved, canSkipApprove } = this.getConnectionApprovalData({ urlOrigin });
 
     // TODO: This check should be not just `isApproved` but also `isConnected`;
     // Because the idea is to force to have a connection via `connectedIdentity()`
     // which includes checking the approval part, this would be done in another PR
-    // UPDATE: maybe we should redirect to connect function at that case to go through the approval. (Out of this PR's scope)
-    if (isForceCheck && !isApproved) {
-      throw new Error(`CryptKeeper: ${urlOrigin} is not approved, please call 'connect()' request first.`);
+    if (!isApproved) {
+      throw new Error(`CryptKeeper: ${urlOrigin} is not approved, please call 'connectIdentity()' request first.`);
     }
+
+    await this.checkUnlockStatus();
 
     return { checkedUrlOrigin, isApproved, canSkipApprove };
   };
 
-  getConnectionApprovalData = async ({ urlOrigin }: IZkMetadata): Promise<IConnectionApprovalData> => {
+  checkApproval = async ({ urlOrigin }: IZkMetadata): Promise<IConnectionApprovalData> => {
+    await this.checkUnlockStatus();
+    const { checkedUrlOrigin, isApproved, canSkipApprove } = this.getConnectionApprovalData({ urlOrigin });
+    return { checkedUrlOrigin, isApproved, canSkipApprove };
+  };
+
+  getConnectionApprovalData = ({ urlOrigin }: IZkMetadata): IConnectionApprovalData => {
     if (!urlOrigin) {
       throw new Error("CryptKeeper: Origin is not set");
     }
-
-    await this.checkUnlockStatus();
 
     const isApproved = this.approvalService.isApproved(urlOrigin);
     const canSkipApprove = this.approvalService.canSkipApprove(urlOrigin);
@@ -113,7 +118,7 @@ export class InjectorHandler {
     { externalNullifier, signal, merkleProofSource }: ISemaphoreProofRequest,
     { urlOrigin }: IZkMetadata,
   ): Promise<ISemaphoreProofRequest> => {
-    const { checkedUrlOrigin, canSkipApprove } = await this.checkApproval({ urlOrigin });
+    const { checkedUrlOrigin, canSkipApprove } = await this.requiredApproval({ urlOrigin });
 
     const checkedZkInputs = this.checkMerkleProofSource({
       merkleProofSource,
@@ -166,7 +171,7 @@ export class InjectorHandler {
     { rlnIdentifier, message, epoch, messageLimit, messageId, merkleProofSource }: IRLNProofRequest,
     { urlOrigin }: IZkMetadata,
   ): Promise<IRLNProofRequest> => {
-    const { checkedUrlOrigin, canSkipApprove } = await this.checkApproval({ urlOrigin });
+    const { checkedUrlOrigin, canSkipApprove } = await this.requiredApproval({ urlOrigin });
 
     const checkedZkInputs = this.checkMerkleProofSource({
       merkleProofSource,
