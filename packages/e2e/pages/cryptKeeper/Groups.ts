@@ -4,8 +4,12 @@ import BasePage from "../BasePage";
 
 export default class Groups extends BasePage {
   async joinGroupRequest(): Promise<Page> {
-    await this.page.getByText("Join test group").click({ delay: 1000 });
-    return this.page.context().waitForEvent("page");
+    const [popup] = await Promise.all([
+      this.page.context().waitForEvent("page"),
+      this.page.getByText("Join test group").click({ delay: 1000 }),
+    ]);
+
+    return popup;
   }
 
   async joinGroup(): Promise<void> {
@@ -14,8 +18,12 @@ export default class Groups extends BasePage {
   }
 
   async generateGroupMerkleProofRequest(): Promise<Page> {
-    await this.page.getByText("Generate Group Merkle Proof").click({ delay: 1000 });
-    return this.page.context().waitForEvent("page");
+    const [popup] = await Promise.all([
+      this.page.context().waitForEvent("page"),
+      this.page.getByText("Generate Group Merkle Proof").click({ delay: 1000 }),
+    ]);
+
+    return popup;
   }
 
   async generateGroupMerkleProof(): Promise<void> {
