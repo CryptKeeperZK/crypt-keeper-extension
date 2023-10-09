@@ -3,7 +3,12 @@ import * as yup from "yup";
 
 import { MerkleProofValidator } from "./merkle";
 
-const merkleProofStorageUrlSchema: yup.Schema<MerkleProofStorageUrl> = yup.string().url().required();
+const URL_PATTERN = /^(https?|ftp):\/\/[^\s/$.?#].[^\s]*$/;
+
+const merkleProofStorageUrlSchema: yup.Schema<MerkleProofStorageUrl> = yup
+  .string()
+  .matches(URL_PATTERN, "Invalid URL format")
+  .required();
 
 const merkleProofArtifactsSchema: yup.Schema<IMerkleProofArtifacts> = yup.object({
   leaves: yup.array().of(yup.string().required()).required(),
