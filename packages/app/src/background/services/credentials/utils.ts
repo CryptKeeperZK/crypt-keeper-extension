@@ -9,27 +9,29 @@ import {
 } from "@cryptkeeperzk/types";
 import { SHA256 } from "crypto-js";
 import stringify from "json-stable-stringify";
-import { string, array, lazy, object, mixed, date, type Schema } from "yup";
+import yup from "yup";
 
 import { ICryptkeeperVerifiableCredential, IVerifiableCredentialMetadata } from "@src/types";
 
-let claimValueSchema: Schema<ClaimValue>;
+let claimValueSchema: yup.Schema<ClaimValue>;
 
-const claimValueMapSchema = lazy((value: Record<string, unknown> | null | undefined) => {
+const claimValueMapSchema = yup.lazy((value: Record<string, unknown> | null | undefined) => {
   if (typeof value !== "object" || value === null) {
-    return mixed()
+    return yup
+      .mixed()
       .required()
       .test("is-object", "claims must be an object", () => false);
   }
 
-  const shape = {} as Record<string, Schema>;
+  const shape = {} as Record<string, yup.Schema>;
   Object.keys(value).forEach((key) => {
     shape[key] = claimValueSchema;
   });
-  return object().shape(shape);
+  return yup.object().shape(shape);
 });
 
-claimValueSchema = mixed()
+claimValueSchema = yup
+  .mixed()
   .required()
   .test("is-claim-value", "claim value must be a string, array, or object", async (value) => {
     if (typeof value === "string") {
@@ -55,34 +57,35 @@ claimValueSchema = mixed()
       .catch(() => false);
   });
 
-const credentialSubjectSchema: Schema<ICredentialSubject> = object({
-  id: string().strict().optional(),
+const credentialSubjectSchema: yup.Schema<ICredentialSubject> = yup.object({
+  id: yup.string().strict().optional(),
   claims: claimValueMapSchema,
 });
 
-const credentialIssuerSchema: Schema<ICredentialIssuer> = object({
-  id: string().strict().optional(),
+const credentialIssuerSchema: yup.Schema<ICredentialIssuer> = yup.object({
+  id: yup.string().strict().optional(),
 });
 
-const credentialProofSchema: Schema<ICredentialProof> = object({
-  id: string().strict().optional(),
-  type: array().strict().of(string().required()).required(),
-  proofPurpose: string().strict().required(),
-  verificationMethod: string().strict().required(),
-  created: date().transform(parseDate).required(),
-  proofValue: string().strict().required(),
+const credentialProofSchema: yup.Schema<ICredentialProof> = yup.object({
+  id: yup.string().strict().optional(),
+  type: yup.array().strict().of(yup.string().required()).required(),
+  proofPurpose: yup.string().strict().required(),
+  verificationMethod: yup.string().strict().required(),
+  created: yup.date().transform(parseDate).required(),
+  proofValue: yup.string().strict().required(),
 });
 
-const credentialStatusSchema: Schema<ICredentialStatus> = object({
-  id: string().strict().required(),
-  type: string().strict().required(),
+const credentialStatusSchema: yup.Schema<ICredentialStatus> = yup.object({
+  id: yup.string().strict().required(),
+  type: yup.string().strict().required(),
 });
 
-const verifiableCredentialSchema: Schema<IVerifiableCredential> = object({
-  context: array().strict().of(string().required()).required(),
-  id: string().strict().optional(),
-  type: array().strict().of(string().required()).required(),
-  issuer: mixed()
+const verifiableCredentialSchema: yup.Schema<IVerifiableCredential> = yup.object({
+  context: yup.array().strict().of(yup.string().required()).required(),
+  id: yup.string().strict().optional(),
+  type: yup.array().strict().of(yup.string().required()).required(),
+  issuer: yup
+    .mixed()
     .required()
     .test("is-string-or-CredentialIssuer", "issuer must be a string or CredentialIssuer", async (value) => {
       if (typeof value === "string") {
@@ -94,17 +97,17 @@ const verifiableCredentialSchema: Schema<IVerifiableCredential> = object({
         .then(() => true)
         .catch(() => false);
     }),
-  issuanceDate: date().transform(parseDate).required(),
-  expirationDate: date().transform(parseDate).optional(),
+  issuanceDate: yup.date().transform(parseDate).required(),
+  expirationDate: yup.date().transform(parseDate).optional(),
   credentialSubject: credentialSubjectSchema,
-  credentialStatus: lazy((value) => {
+  credentialStatus: yup.lazy((value) => {
     if (!value) {
-      return object().optional();
+      return yup.object().optional();
     }
 
-    return credentialStatusSchema.required() as Schema;
+    return credentialStatusSchema.required() as yup.Schema;
   }),
-  proof: array().of(credentialProofSchema).optional(),
+  proof: yup.array().of(credentialProofSchema).optional(),
 });
 
 /**
@@ -238,6 +241,6 @@ export function generateVerifiablePresentationFromVerifiableCredentials(
 }
 
 function parseDate(_: string, originalValue: string): Date | string {
-  const parsedDate = new Date(originalValue);
-  return Number.isNaN(parsedDate.getTime()) ? originalValue : parsedDate;
+  const date = new Date(originalValue);
+  return Number.isNaN(date.getTime()) ? originalValue : date;
 }

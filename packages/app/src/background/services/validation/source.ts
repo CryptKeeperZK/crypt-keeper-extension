@@ -1,21 +1,21 @@
 import { IMerkleProof, IMerkleProofArtifacts, IMerkleProofInputs, MerkleProofStorageUrl } from "@cryptkeeperzk/types";
-import { string, array, number, object, type Schema } from "yup";
+import yup from "yup";
 
 import { MerkleProofValidator } from "./merkle";
 
-const merkleProofStorageUrlSchema: Schema<MerkleProofStorageUrl> = string().url().required();
+const merkleProofStorageUrlSchema: yup.Schema<MerkleProofStorageUrl> = yup.string().url().required();
 
-const merkleProofArtifactsSchema: Schema<IMerkleProofArtifacts> = object({
-  leaves: array().of(string().required()).required(),
-  depth: number().required(),
-  leavesPerNode: number().required(),
+const merkleProofArtifactsSchema: yup.Schema<IMerkleProofArtifacts> = yup.object({
+  leaves: yup.array().of(yup.string().required()).required(),
+  depth: yup.number().required(),
+  leavesPerNode: yup.number().required(),
 });
 
-const merkleProofSchema: Schema<IMerkleProof> = object({
-  root: string().required(),
-  leaf: string().required(),
-  siblings: array().of(string().required()).required(),
-  pathIndices: array().of(number().required()).required(),
+const merkleProofSchema: yup.Schema<IMerkleProof> = yup.object({
+  root: yup.string().required(),
+  leaf: yup.string().required(),
+  siblings: yup.array().of(yup.string().required()).required(),
+  pathIndices: yup.array().of(yup.number().required()).required(),
 });
 
 export const validateMerkleProofSource = ({
