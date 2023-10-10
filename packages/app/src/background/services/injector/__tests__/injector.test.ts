@@ -130,8 +130,9 @@ jest.mock("@src/background/services/zkIdentity", (): unknown => ({
   getInstance: jest.fn(() => ({
     getConnectedIdentity: mockGetConnectedIdentity,
     getConnectedIdentityData: mockGetConnectedIdentityData,
-    connectIdentityRequest: mockConnectIdentityRequest,
+    connectRequest: mockConnectIdentityRequest,
     awaitUnlock: mockAwaitZkIdentityServiceUnlock,
+    connectIdentityRequest: jest.fn(),
   })),
 }));
 
@@ -607,10 +608,10 @@ describe("background/services/injector", () => {
       const service = InjectorService.getInstance();
 
       await expect(service.joinGroup(defaultArgs, { urlOrigin: "new-urlOrigin" })).rejects.toThrow(
-        "CryptKeeper: new-urlOrigin is not approved, please call 'connectIdentity()' request first.",
+        "CryptKeeper: new-urlOrigin is not approved, please call 'connect()' request first.",
       );
       await expect(service.joinGroup({ groupId: defaultArgs.groupId }, { urlOrigin: "new-urlOrigin" })).rejects.toThrow(
-        "CryptKeeper: new-urlOrigin is not approved, please call 'connectIdentity()' request first.",
+        "CryptKeeper: new-urlOrigin is not approved, please call 'connect()' request first.",
       );
     });
 
@@ -655,11 +656,11 @@ describe("background/services/injector", () => {
       const service = InjectorService.getInstance();
 
       await expect(service.generateGroupMerkleProof(defaultArgs, { urlOrigin: "new-urlOrigin" })).rejects.toThrow(
-        "CryptKeeper: new-urlOrigin is not approved, please call 'connectIdentity()' request first.",
+        "CryptKeeper: new-urlOrigin is not approved, please call 'connect()' request first.",
       );
       await expect(
         service.generateGroupMerkleProof({ groupId: defaultArgs.groupId }, { urlOrigin: "new-urlOrigin" }),
-      ).rejects.toThrow("CryptKeeper: new-urlOrigin is not approved, please call 'connectIdentity()' request first.");
+      ).rejects.toThrow("CryptKeeper: new-urlOrigin is not approved, please call 'connect()' request first.");
     });
 
     test("should reject connect request from the approve connection page properly", async () => {
