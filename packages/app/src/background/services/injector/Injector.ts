@@ -65,7 +65,11 @@ export class InjectorService {
         });
       }
 
-      await this.injectorHandler.getZkIdentityService().connectIdentityRequest({ urlOrigin: urlOrigin! });
+      const connectedIdentity = await this.injectorHandler.getZkIdentityService().getConnectedIdentity();
+
+      if (!connectedIdentity || !isApproved) {
+        await this.injectorHandler.getZkIdentityService().connectIdentityRequest({ urlOrigin: urlOrigin! });
+      }
     } catch (error) {
       throw new Error(`CryptKeeper: error in the connect request, ${(error as Error).message}`);
     }
