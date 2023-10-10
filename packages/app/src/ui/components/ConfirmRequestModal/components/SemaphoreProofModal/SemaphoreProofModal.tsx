@@ -89,9 +89,15 @@ export const SemaphoreProofModal = ({
           </div>
         </div>
 
-        <Input readOnly className="w-full mb-2" defaultValue={payload?.externalNullifier} label="External Nullifier" />
+        <Input
+          readOnly
+          className="w-full mb-2"
+          defaultValue={payload?.externalNullifier}
+          label="External Nullifier"
+          variant="filled"
+        />
 
-        <Input readOnly className="w-full mb-2" defaultValue={payload?.signal} label="Signal" />
+        <Input readOnly className="w-full mb-2" defaultValue={payload?.signal} label="Signal" variant="filled" />
       </FullModalContent>
 
       {error && <div className="text-xs text-red-500 text-center pb-1">{error}</div>}

@@ -38,6 +38,7 @@ const Onboarding = (): JSX.Element => {
             id="password"
             isShowPassword={isShowPassword}
             label="Password"
+            variant="filled"
             onShowPassword={onShowPassword}
             {...register("password")}
           />
@@ -47,6 +48,7 @@ const Onboarding = (): JSX.Element => {
             id="confirmPassword"
             isShowPassword={isShowPassword}
             label="Confirm Password"
+            variant="filled"
             onShowPassword={onShowPassword}
             {...register("confirmPassword")}
           />

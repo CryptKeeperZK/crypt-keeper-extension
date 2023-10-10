@@ -10,4 +10,6 @@ export {
   getMessageHash,
   getRateCommitmentHash,
   str2BigInt,
+  calculateIdentitySecret,
+  calculateIdentityCommitment,
 } from "./utils";

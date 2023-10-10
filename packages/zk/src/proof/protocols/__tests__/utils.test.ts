@@ -11,6 +11,7 @@ import {
   getRlnVerificationKeyJson,
   str2BigInt,
 } from "../..";
+import { calculateIdentitySecret, calculateIdentityCommitment } from "../utils";
 
 describe("background/services/protocols/utils", () => {
   const defaultMerkleProof: MerkleProof = {
@@ -144,5 +145,27 @@ describe("background/services/protocols/utils", () => {
     expect(actualCommitmentHash).toBeDefined();
     expect(typeof actualCommitmentHash).toStrictEqual("bigint");
     expect(expectedCommitmentHash).toStrictEqual(actualCommitmentHash);
+  });
+
+  test("should calculate identity secret and commitment properly", () => {
+    const secret = calculateIdentitySecret({
+      nullifier: "12578821460373135693013277026392552769801800051254682675996381598033497431909",
+      trapdoor: "8599172605644748803815316525430713607475871751016594621440814664229873275229",
+    });
+    const commitment = calculateIdentityCommitment(secret);
+
+    expect(secret).toBe("18581243383539966831792047417781846056480615829070187698258804610596815513832");
+    expect(commitment).toBe("771513069964543266361335293794342776740652616031495715975492466025590633824");
+  });
+
+  test("should not calculate identity secret and commitment if data is empty", () => {
+    const secret = calculateIdentitySecret({
+      nullifier: "",
+      trapdoor: "",
+    });
+    const commitment = calculateIdentityCommitment(secret);
+
+    expect(secret).toBe("");
+    expect(commitment).toBe("");
   });
 });

@@ -1,13 +1,15 @@
 import InputAdornment from "@mui/material/InputAdornment";
+import { type TextFieldProps } from "@mui/material/TextField";
 import Tooltip from "@mui/material/Tooltip";
-import { forwardRef, InputHTMLAttributes, Ref } from "react";
+import omit from "lodash/omit";
+import { forwardRef, Ref } from "react";
 
 import { Icon } from "../Icon";
 import { Input } from "../Input";
 
 import "./passwordInput.scss";
 
-interface IPasswordInputProps extends InputHTMLAttributes<HTMLInputElement> {
+interface IPasswordInputProps extends TextFieldProps<"filled"> {
   id: string;
   label: string;
   isShowPassword: boolean;
@@ -28,37 +30,10 @@ const PasswordInputUI = (
     onShowPassword,
     ...passwordInputProps
   }: IPasswordInputProps,
-  ref: Ref<HTMLInputElement>,
+  inputRef: Ref<HTMLInputElement>,
 ): JSX.Element => (
   <Input
     className="mb-4 password-input__content"
-    endAdornment={
-      <InputAdornment position="end">
-        {isShowHint && (
-          <Tooltip
-            key={1}
-            className="password-input__info-tooltip"
-            title={
-              <div>
-                <p>Password requirements:</p>
-
-                <p>- At least 8 characters</p>
-
-                <p>- At least 1 upper case letter</p>
-
-                <p>- At least 1 lower case letter</p>
-
-                <p>- At least 1 special character</p>
-
-                <p>- At least 1 number</p>
-              </div>
-            }
-          >
-            <Icon className="password-input__info-icon" fontAwesome="fa-info" />
-          </Tooltip>
-        )}
-      </InputAdornment>
-    }
     endLabelIcon={
       isShowEye && (
         <InputAdornment className="password-input__adornment" position="end">
@@ -76,10 +51,39 @@ const PasswordInputUI = (
     }
     errorMessage={errorMessage}
     id={id}
-    inputRef={ref}
+    InputProps={{
+      endAdornment: (
+        <InputAdornment position="end">
+          {isShowHint && (
+            <Tooltip
+              key={1}
+              className="password-input__info-tooltip"
+              title={
+                <div>
+                  <p>Password requirements:</p>
+
+                  <p>- At least 8 characters</p>
+
+                  <p>- At least 1 upper case letter</p>
+
+                  <p>- At least 1 lower case letter</p>
+
+                  <p>- At least 1 special character</p>
+
+                  <p>- At least 1 number</p>
+                </div>
+              }
+            >
+              <Icon className="password-input__info-icon" fontAwesome="fa-info" />
+            </Tooltip>
+          )}
+        </InputAdornment>
+      ),
+    }}
+    inputRef={inputRef}
     label={label}
     type={isShowPassword ? "text" : "password"}
-    {...passwordInputProps}
+    {...omit(passwordInputProps, ["ref"])}
   />
 );
 

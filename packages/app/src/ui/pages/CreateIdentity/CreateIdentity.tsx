@@ -41,7 +41,14 @@ const CreateIdentity = (): JSX.Element => {
               defaultValue={0}
               name="nonce"
               render={({ field }) => (
-                <Input {...field} className="my-2" errorMessage={errors.nonce} id="nonce" label="Nonce" />
+                <Input
+                  {...field}
+                  className="my-2"
+                  errorMessage={errors.nonce}
+                  id="nonce"
+                  label="Nonce"
+                  variant="filled"
+                />
               )}
               rules={{
                 required: "Nonce is required",

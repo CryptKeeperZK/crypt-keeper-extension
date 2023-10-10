@@ -60,6 +60,7 @@ const OnboardingBackup = (): JSX.Element => {
                 id="backupPassword"
                 isShowPassword={isShowPassword}
                 label="Backup password"
+                variant="filled"
                 onShowPassword={onShowPassword}
                 {...register("backupPassword", { required: "Backup password is required" })}
               />

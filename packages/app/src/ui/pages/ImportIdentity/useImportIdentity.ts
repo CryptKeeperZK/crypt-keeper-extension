@@ -1,6 +1,7 @@
 import { EventName } from "@cryptkeeperzk/providers";
-import { getLinkPreview } from "link-preview-js";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { calculateIdentityCommitment, calculateIdentitySecret } from "@cryptkeeperzk/zk";
+import { useCallback, useMemo } from "react";
+import { UseFormRegister, useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 
 import { Paths } from "@src/constants";
@@ -8,75 +9,58 @@ import { closePopup } from "@src/ui/ducks/app";
 import { useAppDispatch } from "@src/ui/ducks/hooks";
 import { rejectUserRequest } from "@src/ui/ducks/requests";
 import { useSearchParam } from "@src/ui/hooks/url";
-import { ellipsify } from "@src/util/account";
 import { redirectToNewTab } from "@src/util/browser";
 
 export interface IUseImportIdentityData {
-  error: string;
-  faviconUrl: string;
+  isLoading: boolean;
+  errors: Partial<{
+    name: string;
+    trapdoor: string;
+    nullifier: string;
+    root: string;
+  }>;
+  trapdoor: string;
+  nullifier: string;
+  secret: string;
+  commitment: string;
   urlOrigin?: string;
-  serializedIdentityTooltip?: string;
-  serializedIdentity?: string;
+  register: UseFormRegister<FormFields>;
   onGoBack: () => void;
   onGoToHost: () => void;
   onSubmit: () => void;
 }
 
+interface FormFields {
+  name: string;
+  trapdoor: string;
+  nullifier: string;
+}
+
 export const useImportIdentity = (): IUseImportIdentityData => {
-  const [error, setError] = useState("");
-  const [faviconUrl, setFaviconUrl] = useState("");
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
   const urlOrigin = useSearchParam("urlOrigin");
-  const identity = useSearchParam("identity");
+  const trapdoorUrlParam = useSearchParam("trapdoor");
+  const nullifierUrlParam = useSearchParam("nullifier");
 
-  const identityObject = useMemo(() => {
-    try {
-      return JSON.parse(identity!) as Record<string, string>;
-    } catch (err) {
-      return undefined;
-    }
-  }, [identity]);
+  const {
+    formState: { isSubmitting, isLoading, errors },
+    setError,
+    register,
+    watch,
+    handleSubmit,
+  } = useForm({
+    defaultValues: {
+      name: "",
+      trapdoor: trapdoorUrlParam || "",
+      nullifier: nullifierUrlParam || "",
+    },
+  });
 
-  const space = useMemo(() => (Array.isArray(identityObject) ? 0 : 4), [identityObject]);
-
-  const serializedIdentityTooltip = useMemo(
-    () => (identityObject ? JSON.stringify(identityObject, null, space) : undefined),
-    [space, identityObject],
-  );
-
-  const serializedIdentity = useMemo(
-    () =>
-      identityObject
-        ? JSON.stringify(
-            Array.isArray(identityObject)
-              ? identityObject.map((value) => ellipsify(value as string))
-              : Object.entries(identityObject).reduce<Record<string, string>>((acc, [key, value]) => {
-                  acc[key] = ellipsify(value);
-
-                  return acc;
-                }, {}),
-            null,
-            space,
-          )
-        : undefined,
-    [identityObject, space],
-  );
-
-  useEffect(() => {
-    if (!urlOrigin) {
-      return;
-    }
-
-    getLinkPreview(urlOrigin)
-      .then((data) => {
-        setFaviconUrl(data.favicons[0]);
-      })
-      .catch(() => {
-        setFaviconUrl("");
-      });
-  }, [urlOrigin, setFaviconUrl]);
+  const [trapdoor, nullifier] = watch(["trapdoor", "nullifier"]);
+  const secret = useMemo(() => calculateIdentitySecret({ trapdoor, nullifier }), [trapdoor, nullifier]);
+  const commitment = useMemo(() => calculateIdentityCommitment(secret), [secret]);
 
   const onGoBack = useCallback(() => {
     dispatch(rejectUserRequest({ type: EventName.IMPORT_IDENTITY }, urlOrigin))
@@ -91,17 +75,25 @@ export const useImportIdentity = (): IUseImportIdentityData => {
   }, [urlOrigin]);
 
   const onSubmit = useCallback(() => {
-    setError("not implemented");
+    setError("root", { message: "not implemented" });
   }, [setError]);
 
   return {
-    error,
-    faviconUrl,
+    isLoading: isSubmitting || isLoading,
+    errors: {
+      root: errors.root?.message,
+      name: errors.name?.message,
+      trapdoor: errors.trapdoor?.message,
+      nullifier: errors.nullifier?.message,
+    },
     urlOrigin,
-    serializedIdentityTooltip,
-    serializedIdentity,
+    trapdoor,
+    nullifier,
+    secret,
+    commitment,
+    register,
     onGoBack,
     onGoToHost,
-    onSubmit,
+    onSubmit: handleSubmit(onSubmit),
   };
 };
