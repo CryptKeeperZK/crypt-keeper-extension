@@ -52,7 +52,7 @@ export class InjectorHandler {
   getZkProofService = (): ZkProofService => this.zkProofService;
 
   getLockService = (): LockerService => this.lockerService;
-  
+
   getGroupService = (): GroupService => this.groupService;
 
   connectedIdentityMetadata = async (_: unknown, meta?: IZkMetadata): Promise<ConnectedIdentityMetadata> => {
