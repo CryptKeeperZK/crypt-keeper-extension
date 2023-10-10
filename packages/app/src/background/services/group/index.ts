@@ -1,1 +1,3 @@
-export { GroupService } from "./GroupService";
+import GroupService from "./GroupService";
+
+export default GroupService;

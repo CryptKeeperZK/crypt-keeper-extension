@@ -17,7 +17,7 @@ import type {
   IMerkleProof,
 } from "@cryptkeeperzk/types";
 
-export class GroupService {
+export default class GroupService {
   private static INSTANCE?: GroupService;
 
   private bandadaSevice: BandadaService;

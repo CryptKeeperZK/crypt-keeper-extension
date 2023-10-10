@@ -36,17 +36,17 @@ export class CryptKeeperInjectedProvider extends Handler implements ICryptKeeper
     super(connectedOrigin);
   }
 
-  async connect(): Promise<void> {
-    await this.post({
-      method: RPCExternalAction.INJECTOR_CONNECT,
-      payload: { urlOrigin: this.connectedOrigin },
-    });
-  }
-
   async getConnectedIdentity(): Promise<ConnectedIdentityMetadata | undefined> {
     return this.post({
-      method: RPCExternalAction.INJECTOR_GET_CONNECTED_IDENTITY_DATA,
+      method: RPCExternalAction.GET_CONNECTED_IDENTITY_DATA,
     }) as Promise<ConnectedIdentityMetadata | undefined>;
+  }
+
+  async connect(): Promise<void> {
+    await this.post({
+      method: RPCExternalAction.CONNECT,
+      payload: { urlOrigin: this.connectedOrigin },
+    });
   }
 
   async generateSemaphoreProof({
@@ -55,7 +55,7 @@ export class CryptKeeperInjectedProvider extends Handler implements ICryptKeeper
     merkleProofSource,
   }: ISemaphoreProofRequiredArgs): Promise<ISemaphoreFullProof> {
     return this.post({
-      method: RPCExternalAction.INJECTOR_GENERATE_SEMAPHORE_PROOF,
+      method: RPCExternalAction.GENERATE_SEMAPHORE_PROOF,
       payload: {
         externalNullifier,
         signal,
@@ -73,7 +73,7 @@ export class CryptKeeperInjectedProvider extends Handler implements ICryptKeeper
     merkleProofSource,
   }: IRLNProofRequiredArgs): Promise<IRLNFullProof> {
     return this.post({
-      method: RPCExternalAction.INJECTOR_GENERATE_RLN_PROOF,
+      method: RPCExternalAction.GENERATE_RLN_PROOF,
       payload: {
         rlnIdentifier,
         message,

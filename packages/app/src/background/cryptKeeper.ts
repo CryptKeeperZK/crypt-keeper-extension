@@ -13,7 +13,7 @@ import ApprovalService from "./services/approval";
 import BackupService from "./services/backup";
 import VerifiableCredentialsService from "./services/credentials";
 import { validateSerializedVerifiableCredential } from "./services/credentials/utils";
-import { GroupService } from "./services/group";
+import GroupService from "./services/group";
 import HistoryService from "./services/history";
 import { InjectorService } from "./services/injector";
 import LockerService from "./services/lock";
@@ -28,15 +28,15 @@ const defaultMap = Object.values(RPCExternalAction).reduce(
 
 const RPC_METHOD_ACCESS: Record<RPCExternalAction, boolean> = {
   ...defaultMap,
-  [RPCExternalAction.INJECTOR_CONNECT]: true,
-  [RPCExternalAction.INJECTOR_GENERATE_SEMAPHORE_PROOF]: true,
-  [RPCExternalAction.INJECTOR_GENERATE_RLN_PROOF]: true,
-  [RPCExternalAction.INJECTOR_GET_CONNECTED_IDENTITY_DATA]: true,
+  [RPCExternalAction.GET_CONNECTED_IDENTITY_DATA]: true,
+  [RPCExternalAction.CONNECT]: true,
+  [RPCExternalAction.GENERATE_SEMAPHORE_PROOF]: true,
+  [RPCExternalAction.GENERATE_RLN_PROOF]: true,
+  [RPCExternalAction.JOIN_GROUP_REQUEST]: true,
+  [RPCExternalAction.GENERATE_GROUP_MERKLE_PROOF_REQUEST]: true,
   // TODO: Please note that the following 4 actions will be refactored in another PR
   [RPCExternalAction.ADD_VERIFIABLE_CREDENTIAL_REQUEST]: true,
   [RPCExternalAction.REVEAL_CONNECTED_IDENTITY_COMMITMENT_REQUEST]: true,
-  [RPCExternalAction.JOIN_GROUP_REQUEST]: true,
-  [RPCExternalAction.GENERATE_GROUP_MERKLE_PROOF_REQUEST]: true,
   [RPCExternalAction.GENERATE_VERIFIABLE_PRESENTATION_REQUEST]: true,
 };
 
@@ -97,13 +97,15 @@ export default class CryptKeeperController {
   initialize = (): this => {
     // Handling RPC EXTERNAL ACTIONS
     // Injector
+    this.handler.add(RPCExternalAction.GET_CONNECTED_IDENTITY_DATA, this.injectorService.getConnectedIdentityMetadata);
+    this.handler.add(RPCExternalAction.CONNECT, this.injectorService.connect);
+    this.handler.add(RPCExternalAction.GENERATE_SEMAPHORE_PROOF, this.injectorService.generateSemaphoreProof);
+    this.handler.add(RPCExternalAction.GENERATE_RLN_PROOF, this.injectorService.generateRLNProof);
+    this.handler.add(RPCExternalAction.JOIN_GROUP_REQUEST, this.injectorService.joinGroup);
     this.handler.add(
-      RPCExternalAction.INJECTOR_GET_CONNECTED_IDENTITY_DATA,
-      this.injectorService.getConnectedIdentityMetadata,
+      RPCExternalAction.GENERATE_GROUP_MERKLE_PROOF_REQUEST,
+      this.injectorService.generateGroupMerkleProof,
     );
-    this.handler.add(RPCExternalAction.INJECTOR_CONNECT, this.injectorService.connect);
-    this.handler.add(RPCExternalAction.INJECTOR_GENERATE_SEMAPHORE_PROOF, this.injectorService.generateSemaphoreProof);
-    this.handler.add(RPCExternalAction.INJECTOR_GENERATE_RLN_PROOF, this.injectorService.generateRLNProof);
 
     // Handling RPC INTERNAL ACTIONS
     // common
@@ -190,9 +192,9 @@ export default class CryptKeeperController {
     );
 
     // Groups
-    this.handler.add(RPCExternalAction.JOIN_GROUP_REQUEST, this.lockService.ensure, this.groupService.joinGroupRequest);
+    this.handler.add(RPCInternalAction.JOIN_GROUP_REQUEST, this.lockService.ensure, this.groupService.joinGroupRequest);
     this.handler.add(
-      RPCExternalAction.GENERATE_GROUP_MERKLE_PROOF_REQUEST,
+      RPCInternalAction.GENERATE_GROUP_MERKLE_PROOF_REQUEST,
       this.lockService.ensure,
       this.groupService.generateGroupMerkleProofRequest,
     );
