@@ -8,6 +8,8 @@ import {
   IRLNProofRequest,
   ISemaphoreProofRequest,
   IZkMetadata,
+  IJoinGroupMemberArgs,
+  IGenerateGroupMerkleProofArgs,
 } from "@cryptkeeperzk/types";
 import { getMerkleProof } from "@cryptkeeperzk/zk";
 import { omit } from "lodash";
@@ -54,13 +56,17 @@ const mockIsApproved = jest.fn(
     urlOrigin === mockDefaultUrlOrigin ||
     urlOrigin === "empty_connected_identity" ||
     urlOrigin === "reject_semaphore_proof" ||
-    urlOrigin === "reject_rln_proof",
+    urlOrigin === "reject_rln_proof" ||
+    urlOrigin === "reject-joinGroup",
 );
 const mockCanSkip = jest.fn((urlOrigin) => urlOrigin === mockDefaultUrlOrigin);
 const mockGetStatus = jest.fn(() => Promise.resolve({ isUnlocked: false }));
 const mockAwaitLockServiceUnlock = jest.fn();
 const mockAwaitZkIdentityServiceUnlock = jest.fn();
 const mockAwaitApprovalServiceUnlock = jest.fn();
+
+const mockJoinGroupRequest = jest.fn();
+const mockGenerateGroupProofRequest = jest.fn();
 
 Object.defineProperty(global, "chrome", {
   value: {
@@ -93,6 +99,13 @@ jest.mock("@src/background/controllers/browserUtils", (): unknown => ({
 jest.mock("@src/background/controllers/requestManager", (): unknown => ({
   getInstance: jest.fn(() => ({
     newRequest: mockNewRequest,
+  })),
+}));
+
+jest.mock("@src/background/services/group", (): unknown => ({
+  getInstance: jest.fn(() => ({
+    joinGroupRequest: mockJoinGroupRequest,
+    generateGroupMerkleProofRequest: mockGenerateGroupProofRequest,
   })),
 }));
 
@@ -565,6 +578,101 @@ describe("background/services/injector", () => {
 
       await expect(service.generateRLNProof(defaultProofRequest, defaultMetadata)).rejects.toThrow(
         "CryptKeeper: Must set RLN circuitFilePath and zkeyFilePath",
+      );
+    });
+  });
+
+  describe("Join Group", () => {
+    const defaultArgs: IJoinGroupMemberArgs = {
+      groupId: "90694543209366256629502773954857",
+      apiKey: "api-key",
+    };
+
+    beforeEach(() => {
+      (browser.runtime.getURL as jest.Mock).mockImplementation((path: string) => path);
+    });
+
+    afterEach(() => {
+      jest.clearAllMocks();
+    });
+
+    test("should request group joining properly", async () => {
+      const service = InjectorService.getInstance();
+
+      await expect(service.joinGroup(defaultArgs, defaultMetadata)).resolves.toBeUndefined();
+      await expect(service.joinGroup({ groupId: defaultArgs.groupId }, defaultMetadata)).resolves.toBeUndefined();
+    });
+
+    test("should reject request group joining if urlOrigin isn't approved", async () => {
+      const service = InjectorService.getInstance();
+
+      await expect(service.joinGroup(defaultArgs, { urlOrigin: "new-urlOrigin" })).rejects.toThrow(
+        "CryptKeeper: new-urlOrigin is not approved, please call 'connectIdentity()' request first.",
+      );
+      await expect(service.joinGroup({ groupId: defaultArgs.groupId }, { urlOrigin: "new-urlOrigin" })).rejects.toThrow(
+        "CryptKeeper: new-urlOrigin is not approved, please call 'connectIdentity()' request first.",
+      );
+    });
+
+    test("should reject connect request from the approve connection page properly", async () => {
+      const error = new Error("User rejected your request.");
+      mockJoinGroupRequest.mockRejectedValue(error);
+
+      const service = InjectorService.getInstance();
+
+      await expect(service.joinGroup(defaultArgs, defaultMetadata)).rejects.toThrow(
+        "CryptKeeper: joining a group via Bandada service User rejected your request.",
+      );
+      await expect(service.joinGroup({ groupId: defaultArgs.groupId }, defaultMetadata)).rejects.toThrow(
+        "CryptKeeper: joining a group via Bandada service User rejected your request.",
+      );
+    });
+  });
+
+  describe("Generate Group Merkle Proof", () => {
+    const defaultArgs: IGenerateGroupMerkleProofArgs = {
+      groupId: "90694543209366256629502773954857",
+    };
+
+    beforeEach(() => {
+      (browser.runtime.getURL as jest.Mock).mockImplementation((path: string) => path);
+    });
+
+    afterEach(() => {
+      jest.clearAllMocks();
+    });
+
+    test("should request group joining properly", async () => {
+      const service = InjectorService.getInstance();
+
+      await expect(service.generateGroupMerkleProof(defaultArgs, defaultMetadata)).resolves.toBeUndefined();
+      await expect(
+        service.generateGroupMerkleProof({ groupId: defaultArgs.groupId }, defaultMetadata),
+      ).resolves.toBeUndefined();
+    });
+
+    test("should reject request group joining if urlOrigin isn't approved", async () => {
+      const service = InjectorService.getInstance();
+
+      await expect(service.generateGroupMerkleProof(defaultArgs, { urlOrigin: "new-urlOrigin" })).rejects.toThrow(
+        "CryptKeeper: new-urlOrigin is not approved, please call 'connectIdentity()' request first.",
+      );
+      await expect(
+        service.generateGroupMerkleProof({ groupId: defaultArgs.groupId }, { urlOrigin: "new-urlOrigin" }),
+      ).rejects.toThrow("CryptKeeper: new-urlOrigin is not approved, please call 'connectIdentity()' request first.");
+    });
+
+    test("should reject connect request from the approve connection page properly", async () => {
+      const error = new Error("User rejected your request.");
+      mockGenerateGroupProofRequest.mockRejectedValue(error);
+
+      const service = InjectorService.getInstance();
+
+      await expect(service.generateGroupMerkleProof(defaultArgs, defaultMetadata)).rejects.toThrow(
+        "CryptKeeper: generate Merkle Proof via Bandada service User rejected your request.",
+      );
+      await expect(service.generateGroupMerkleProof({ groupId: defaultArgs.groupId }, defaultMetadata)).rejects.toThrow(
+        "CryptKeeper: generate Merkle Proof via Bandada service User rejected your request.",
       );
     });
   });

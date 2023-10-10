@@ -18,6 +18,8 @@ import LockerService from "@src/background/services/lock";
 import { validateMerkleProofSource } from "@src/background/services/validation";
 import ZkIdentityService from "@src/background/services/zkIdentity";
 
+import GroupService from "../group";
+
 export class InjectorHandler {
   private readonly lockerService: LockerService;
 
@@ -31,12 +33,15 @@ export class InjectorHandler {
 
   private readonly zkIdentityService: ZkIdentityService;
 
+  private readonly groupService: GroupService;
+
   constructor() {
     this.approvalService = ApprovalService.getInstance();
     this.browserService = BrowserUtils.getInstance();
     this.lockerService = LockerService.getInstance();
     this.requestManager = RequestManager.getInstance();
     this.zkIdentityService = ZkIdentityService.getInstance();
+    this.groupService = GroupService.getInstance();
     this.zkProofService = new ZkProofService();
   }
 
@@ -47,6 +52,8 @@ export class InjectorHandler {
   getZkProofService = (): ZkProofService => this.zkProofService;
 
   getLockService = (): LockerService => this.lockerService;
+  
+  getGroupService = (): GroupService => this.groupService;
 
   connectedIdentityMetadata = async (_: unknown, meta?: IZkMetadata): Promise<ConnectedIdentityMetadata> => {
     const connectedIdentityMetadata = await this.zkIdentityService.getConnectedIdentityData({}, meta);

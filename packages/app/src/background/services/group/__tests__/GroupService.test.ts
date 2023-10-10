@@ -9,7 +9,7 @@ import type {
   IJoinGroupMemberArgs,
 } from "@cryptkeeperzk/types";
 
-import { GroupService } from "..";
+import GroupService from "..";
 
 const mockGetConnectedIdentityCommitment = jest.fn(() => Promise.resolve(mockDefaultIdentityCommitment));
 const mockGetConnectedIdentity = jest.fn(() => Promise.resolve(mockDefaultIdentity));

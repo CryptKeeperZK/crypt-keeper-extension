@@ -7,6 +7,8 @@ import {
   IRLNFullProof,
   ConnectedIdentityMetadata,
   IHostPermission,
+  IJoinGroupMemberArgs,
+  IGenerateGroupMerkleProofArgs,
 } from "@cryptkeeperzk/types";
 import { identity } from "webextension-polyfill";
 
@@ -98,7 +100,6 @@ export class InjectorService {
 
     try {
       await createChromeOffscreen();
-
       const fullProof = await pushMessage({
         method: RPCInternalAction.GENERATE_SEMAPHORE_PROOF_OFFSCREEN,
         payload: checkedSemaphoreProofRequest,
@@ -139,7 +140,6 @@ export class InjectorService {
 
     try {
       await createChromeOffscreen();
-
       const rlnFullProof = await pushMessage({
         method: RPCInternalAction.GENERATE_RLN_PROOF_OFFSCREEN,
         payload: checkedRLNProofRequest,
@@ -152,6 +152,30 @@ export class InjectorService {
       throw new Error(`CryptKeeper: Error in generating RLN proof on Chrome ${(error as Error).message}`);
     } finally {
       await closeChromeOffscreen();
+    }
+  };
+
+  joinGroup = async (
+    { groupId, apiKey, inviteCode }: IJoinGroupMemberArgs,
+    { urlOrigin }: IZkMetadata,
+  ): Promise<void> => {
+    try {
+      await this.injectorHandler.requiredApproval({ urlOrigin });
+      await this.injectorHandler.getGroupService().joinGroupRequest({ groupId, apiKey, inviteCode });
+    } catch (error) {
+      throw new Error(`CryptKeeper: joining a group via Bandada service ${(error as Error).message}`);
+    }
+  };
+
+  generateGroupMerkleProof = async (
+    { groupId }: IGenerateGroupMerkleProofArgs,
+    { urlOrigin }: IZkMetadata,
+  ): Promise<void> => {
+    try {
+      await this.injectorHandler.requiredApproval({ urlOrigin });
+      await this.injectorHandler.getGroupService().generateGroupMerkleProofRequest({ groupId });
+    } catch (error) {
+      throw new Error(`CryptKeeper: generate Merkle Proof via Bandada service ${(error as Error).message}`);
     }
   };
 }
