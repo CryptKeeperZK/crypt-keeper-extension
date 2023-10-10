@@ -35,6 +35,7 @@ export enum EventName {
   JOIN_GROUP = "joinGroup",
   GROUP_MERKLE_PROOF = "groupMerkleProof",
   IMPORT_IDENTITY = "importIdentity",
+  CREATE_IDENTITY = "createIdentity",
   USER_REJECT = "userReject",
 }
 

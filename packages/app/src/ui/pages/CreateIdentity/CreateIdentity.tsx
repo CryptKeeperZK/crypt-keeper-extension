@@ -13,8 +13,16 @@ import { Input } from "@src/ui/components/Input";
 import { useCreateIdentity } from "./useCreateIdentity";
 
 const CreateIdentity = (): JSX.Element => {
-  const { isLoading, isWalletInstalled, isWalletConnected, errors, control, onCloseModal, onSign } =
-    useCreateIdentity();
+  const {
+    isLoading,
+    isWalletInstalled,
+    isWalletConnected,
+    errors,
+    control,
+    onCloseModal,
+    onSign,
+    onGoToImportIdentity,
+  } = useCreateIdentity();
 
   const ethWalletTitle = isWalletConnected ? "Sign with MetaMask" : "Connect to MetaMask";
 
@@ -108,20 +116,26 @@ const CreateIdentity = (): JSX.Element => {
         </Box>
 
         <FullModalFooter>
-          <Box sx={{ alignItems: "center", display: "flex", justifyContent: "space-between", width: "100%" }}>
-            <Button
-              data-testid="reject-create-identity"
-              name="reject"
-              size="small"
-              sx={{ textTransform: "none", flex: 1, mr: 1, width: "30%" }}
-              type="submit"
-              variant="outlined"
-              onClick={onCloseModal}
-            >
-              Reject
-            </Button>
+          <Box sx={{ width: "100%" }}>
+            <Box sx={{ alignItems: "center", display: "flex", justifyContent: "space-between", width: "100%" }}>
+              <Button
+                data-testid="reject-create-identity"
+                name="reject"
+                size="small"
+                sx={{ textTransform: "none", flex: 1, mr: 1, width: "30%" }}
+                type="submit"
+                variant="outlined"
+                onClick={onCloseModal}
+              >
+                Reject
+              </Button>
 
-            <DropdownButton menuOptions={menuOptions} onClick={onSign} />
+              <DropdownButton menuOptions={menuOptions} onClick={onSign} />
+            </Box>
+
+            <Button sx={{ color: "primary.main", mt: 1, width: "100%" }} variant="text" onClick={onGoToImportIdentity}>
+              Import identity
+            </Button>
           </Box>
         </FullModalFooter>
       </Box>

@@ -115,7 +115,7 @@ describe("ui/pages/CreateIdentity/useCreateIdentity", () => {
   });
 
   test("should create identity properly and go back", async () => {
-    window.location.href = `${oldHref}?back=true&urlOrigin=http://localhost:3000`;
+    window.location.href = `${oldHref}?back=${Paths.CONNECT_IDENTITY}&urlOrigin=http://localhost:3000`;
 
     const { result } = renderHook(() => useCreateIdentity());
 
@@ -134,7 +134,9 @@ describe("ui/pages/CreateIdentity/useCreateIdentity", () => {
       walletType: EWallet.ETH_WALLET,
     });
     expect(mockNavigate).toBeCalledTimes(1);
-    expect(mockNavigate).toBeCalledWith(-1);
+    expect(mockNavigate).toBeCalledWith(
+      `${Paths.CONNECT_IDENTITY}?urlOrigin=http://localhost:3000&back=${Paths.CONNECT_IDENTITY}`,
+    );
   });
 
   test("should connect eth wallet properly", async () => {
@@ -193,7 +195,7 @@ describe("ui/pages/CreateIdentity/useCreateIdentity", () => {
   });
 
   test("should go back properly", async () => {
-    window.location.href = `${oldHref}?back=true`;
+    window.location.href = `${oldHref}?back=${Paths.CONNECT_IDENTITY}`;
 
     const { result } = renderHook(() => useCreateIdentity());
 
@@ -201,6 +203,28 @@ describe("ui/pages/CreateIdentity/useCreateIdentity", () => {
 
     expect(mockNavigate).toBeCalledTimes(1);
     expect(mockNavigate).toBeCalledWith(-1);
+  });
+
+  test("should go to import identity properly", async () => {
+    window.location.href = oldHref;
+
+    const { result } = renderHook(() => useCreateIdentity());
+
+    await act(() => Promise.resolve(result.current.onGoToImportIdentity()));
+
+    expect(mockNavigate).toBeCalledTimes(1);
+    expect(mockNavigate).toBeCalledWith(`${Paths.IMPORT_IDENTITY}?back=${Paths.CREATE_IDENTITY}&urlOrigin=`);
+  });
+
+  test("should go to import identity properly with redirect", async () => {
+    window.location.href = `${oldHref}?back=${Paths.CONNECT_IDENTITY}`;
+
+    const { result } = renderHook(() => useCreateIdentity());
+
+    await act(() => Promise.resolve(result.current.onGoToImportIdentity()));
+
+    expect(mockNavigate).toBeCalledTimes(1);
+    expect(mockNavigate).toBeCalledWith(`${Paths.IMPORT_IDENTITY}?back=${Paths.CONNECT_IDENTITY}&urlOrigin=`);
   });
 
   test("should handle create identity error properly", async () => {

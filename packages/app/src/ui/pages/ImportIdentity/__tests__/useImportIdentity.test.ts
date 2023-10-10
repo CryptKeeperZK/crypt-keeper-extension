@@ -11,6 +11,7 @@ import { mockDefaultIdentity, mockDefaultIdentityCommitment, mockDefaultIdentity
 import { Paths } from "@src/constants";
 import { closePopup } from "@src/ui/ducks/app";
 import { useAppDispatch } from "@src/ui/ducks/hooks";
+import { importIdentity } from "@src/ui/ducks/identities";
 import { rejectUserRequest } from "@src/ui/ducks/requests";
 import { useSearchParam } from "@src/ui/hooks/url";
 import { redirectToNewTab } from "@src/util/browser";
@@ -40,6 +41,10 @@ jest.mock("@src/util/browser", (): unknown => ({
 
 jest.mock("@src/ui/ducks/app", (): unknown => ({
   closePopup: jest.fn(),
+}));
+
+jest.mock("@src/ui/ducks/identities", (): unknown => ({
+  importIdentity: jest.fn(),
 }));
 
 jest.mock("@src/ui/ducks/requests", (): unknown => ({
@@ -106,6 +111,20 @@ describe("ui/pages/ImportIdentity/useImportIdentity", () => {
     expect(closePopup).toBeCalledTimes(1);
   });
 
+  test("should go back properly without closing popup", async () => {
+    (useSearchParam as jest.Mock).mockReturnValue(Paths.CREATE_IDENTITY);
+
+    const { result } = renderHook(() => useImportIdentity());
+
+    await act(() => Promise.resolve(result.current.onGoBack()));
+
+    expect(mockNavigate).toBeCalledTimes(1);
+    expect(mockNavigate).toBeCalledWith(-1);
+    expect(mockDispatch).toBeCalledTimes(1);
+    expect(rejectUserRequest).toBeCalledTimes(1);
+    expect(closePopup).toBeCalledTimes(0);
+  });
+
   test("should go to host properly", async () => {
     const { result } = renderHook(() => useImportIdentity());
 
@@ -118,9 +137,43 @@ describe("ui/pages/ImportIdentity/useImportIdentity", () => {
   test("should submit properly", async () => {
     const { result } = renderHook(() => useImportIdentity());
 
+    await act(() => result.current.register("name").onChange({ target: { value: "name" } }));
     await act(() => Promise.resolve(result.current.onSubmit()));
-    await waitFor(() => result.current.errors.root !== "");
 
-    expect(result.current.errors.root).toBe("not implemented");
+    expect(mockDispatch).toBeCalledTimes(2);
+    expect(importIdentity).toBeCalledTimes(1);
+    expect(closePopup).toBeCalledTimes(1);
+    expect(mockNavigate).toBeCalledTimes(1);
+    expect(mockNavigate).toBeCalledWith(Paths.HOME);
+  });
+
+  test("should submit and go back properly", async () => {
+    (useSearchParam as jest.Mock).mockImplementation((arg: string) =>
+      arg === "urlOrigin" ? mockDefaultIdentity.metadata.urlOrigin : Paths.CONNECT_IDENTITY,
+    );
+
+    const { result } = renderHook(() => useImportIdentity());
+
+    await act(() => result.current.register("name").onChange({ target: { value: "name" } }));
+    await act(() => Promise.resolve(result.current.onSubmit()));
+
+    expect(mockDispatch).toBeCalledTimes(1);
+    expect(importIdentity).toBeCalledTimes(1);
+    expect(mockNavigate).toBeCalledTimes(1);
+    expect(mockNavigate).toBeCalledWith(
+      `${Paths.CONNECT_IDENTITY}?urlOrigin=${mockDefaultIdentity.metadata.urlOrigin}&back=${Paths.CONNECT_IDENTITY}`,
+    );
+  });
+
+  test("should handle submit error properly", async () => {
+    const error = new Error("error");
+    (useAppDispatch as jest.Mock).mockReturnValue(jest.fn(() => Promise.reject(error)));
+    const { result } = renderHook(() => useImportIdentity());
+
+    await act(() => result.current.register("name").onChange({ target: { value: "name" } }));
+    await act(() => Promise.resolve(result.current.onSubmit()));
+    await waitFor(() => result.current.errors.root);
+
+    expect(result.current.errors.root).toBe(error.message);
   });
 });

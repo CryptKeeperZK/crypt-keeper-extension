@@ -659,6 +659,26 @@ describe("background/services/zkIdentity", () => {
 
       await expect(zkIdentityService.import(defaultArgs)).rejects.toThrow("Identity is already imported");
     });
+
+    test("should request an import identity modal properly", async () => {
+      await zkIdentityService.importRequest({
+        urlOrigin: "http://localhost:3000",
+        trapdoor: defaultArgs.trapdoor,
+        nullifier: defaultArgs.nullifier,
+      });
+
+      expect(browser.tabs.query).toBeCalledWith({ lastFocusedWindow: true });
+
+      const defaultOptions = {
+        tabId: defaultPopupTab.id,
+        type: "popup",
+        focused: true,
+        width: 385,
+        height: 610,
+      };
+
+      expect(browser.windows.create).toBeCalledWith(defaultOptions);
+    });
   });
 
   describe("backup", () => {

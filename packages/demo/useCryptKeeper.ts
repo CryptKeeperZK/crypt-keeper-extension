@@ -263,8 +263,10 @@ export const useCryptKeeper = (): IUseCryptKeeperData => {
     setIsLocked(true);
   }, [setConnectedIdentityMetadata, setIsLocked]);
 
-  const onAddVerifiableCredential = useCallback((verifiableCredentialHash: unknown) => {
-    toast(`Added a Verifiable Credential! ${verifiableCredentialHash as string}`, { type: "success" });
+  const onAddVerifiableCredential = useCallback((payload: unknown) => {
+    const { verifiableCredentialHash } = payload as { verifiableCredentialHash: string };
+
+    toast(`Added a Verifiable Credential! ${verifiableCredentialHash}`, { type: "success" });
   }, []);
 
   const onReject = useCallback(() => {
@@ -278,9 +280,12 @@ export const useCryptKeeper = (): IUseCryptKeeperData => {
     [setConnectedIdentityCommitment],
   );
 
-  const onGenerateVerifiablePresentation = useCallback((verifiablePresentation: unknown) => {
-    const credentialList = (verifiablePresentation as IVerifiablePresentation).verifiableCredential;
+  const onGenerateVerifiablePresentation = useCallback((payload: unknown) => {
+    const {
+      verifiablePresentation: { verifiableCredential: credentialList },
+    } = payload as { verifiablePresentation: IVerifiablePresentation };
     const credentialCount = credentialList ? credentialList.length : 0;
+
     toast(`Generated a Verifiable Presentation from ${credentialCount} credentials!`, { type: "success" });
   }, []);
 
@@ -297,6 +302,14 @@ export const useCryptKeeper = (): IUseCryptKeeperData => {
     },
     [setProof],
   );
+
+  const onImportIdentity = useCallback((payload: unknown) => {
+    toast(`Identity has been imported ${JSON.stringify(payload)}`, { type: "success" });
+  }, []);
+
+  const onCreateIdentity = useCallback((payload: unknown) => {
+    toast(`Identity has been created ${JSON.stringify(payload)}`, { type: "success" });
+  }, []);
 
   const onLogin = useCallback(() => {
     getConnectedIdentityMetadata();
@@ -328,6 +341,8 @@ export const useCryptKeeper = (): IUseCryptKeeperData => {
     client.on(EventName.REVEAL_COMMITMENT, onRevealCommitment);
     client.on(EventName.JOIN_GROUP, onJoinGroup);
     client.on(EventName.GROUP_MERKLE_PROOF, onGroupMerkleProof);
+    client.on(EventName.IMPORT_IDENTITY, onImportIdentity);
+    client.on(EventName.CREATE_IDENTITY, onCreateIdentity);
 
     getConnectedIdentityMetadata();
 
@@ -343,6 +358,8 @@ export const useCryptKeeper = (): IUseCryptKeeperData => {
     onRevealCommitment,
     onGroupMerkleProof,
     onJoinGroup,
+    onImportIdentity,
+    onCreateIdentity,
   ]);
 
   return {

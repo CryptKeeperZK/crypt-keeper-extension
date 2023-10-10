@@ -3,16 +3,8 @@ import log from "loglevel";
 import browser from "webextension-polyfill";
 
 import { setStatus } from "@src/ui/ducks/app";
-import { setConnectedIdentity } from "@src/ui/ducks/identities";
 
-import type {
-  IInjectedMessageData,
-  IReduxAction,
-  IRejectedRequest,
-  IMerkleProof,
-  IVerifiablePresentation,
-  ConnectedIdentityMetadata,
-} from "@cryptkeeperzk/types";
+import type { IInjectedMessageData, IReduxAction } from "@cryptkeeperzk/types";
 
 function injectScript() {
   const url = browser.runtime.getURL("js/injected.js");
@@ -41,105 +33,17 @@ function injectScript() {
     }
   });
 
-  browser.runtime.onMessage.addListener((action: IReduxAction) => {
-    switch (action.type) {
-      // TODO: I still need to enhance the idea of `connected` vs `disconnected` and `login` vs `logout`
-      // And also the relation of them with `identity_changed`
-      // This refactor enhancement left for the next PR
-      //
-      case setConnectedIdentity.type: {
-        window.postMessage(
-          {
-            target: "injected-injectedscript",
-            payload: [null, action.payload as ConnectedIdentityMetadata],
-            nonce: EventName.IDENTITY_CHANGED,
-          },
-          "*",
-        );
-        return;
-      }
+  browser.runtime.onMessage.addListener(({ type, payload }: IReduxAction) => {
+    switch (type) {
       case setStatus.type: {
-        window.postMessage(
-          {
-            target: "injected-injectedscript",
-            payload: [null],
-            nonce: !(action.payload as { isUnlocked: boolean }).isUnlocked ? EventName.LOGOUT : EventName.LOGIN,
-          },
-          "*",
-        );
+        const { isUnlocked } = payload as { isUnlocked: boolean };
+        const nonce = !isUnlocked ? EventName.LOGOUT : EventName.LOGIN;
+        window.postMessage({ target: "injected-injectedscript", payload: [null], nonce }, "*");
         return;
       }
-      case EventName.ADD_VERIFIABLE_CREDENTIAL: {
-        window.postMessage(
-          {
-            target: "injected-injectedscript",
-            payload: [null, (action.payload as { verifiableCredentialHash: string }).verifiableCredentialHash],
-            nonce: EventName.ADD_VERIFIABLE_CREDENTIAL,
-          },
-          "*",
-        );
-        break;
+      default: {
+        window.postMessage({ target: "injected-injectedscript", payload: [null, payload], nonce: type }, "*");
       }
-      case EventName.REVEAL_COMMITMENT: {
-        window.postMessage(
-          {
-            target: "injected-injectedscript",
-            payload: [null, action.payload as { commitment: string }],
-            nonce: EventName.REVEAL_COMMITMENT,
-          },
-          "*",
-        );
-        break;
-      }
-      case EventName.JOIN_GROUP: {
-        window.postMessage(
-          {
-            target: "injected-injectedscript",
-            payload: [null, action.payload as { groupId: string }],
-            nonce: EventName.JOIN_GROUP,
-          },
-          "*",
-        );
-        break;
-      }
-      case EventName.GROUP_MERKLE_PROOF: {
-        window.postMessage(
-          {
-            target: "injected-injectedscript",
-            payload: [null, action.payload as { merkleProof: IMerkleProof }],
-            nonce: EventName.GROUP_MERKLE_PROOF,
-          },
-          "*",
-        );
-        break;
-      }
-      case EventName.USER_REJECT: {
-        window.postMessage(
-          {
-            target: "injected-injectedscript",
-            payload: [null, action.payload as IRejectedRequest],
-            nonce: EventName.USER_REJECT,
-          },
-          "*",
-        );
-        break;
-      }
-      case EventName.GENERATE_VERIFIABLE_PRESENTATION: {
-        window.postMessage(
-          {
-            target: "injected-injectedscript",
-            payload: [
-              null,
-              (action.payload as { verifiablePresentation: IVerifiablePresentation }).verifiablePresentation,
-            ],
-            nonce: EventName.GENERATE_VERIFIABLE_PRESENTATION,
-          },
-          "*",
-        );
-        break;
-      }
-      default:
-        log.warn("unknown action in content script");
     }
   });
 }

@@ -7,6 +7,7 @@ import { useNavigate } from "react-router-dom";
 import { Paths } from "@src/constants";
 import { closePopup } from "@src/ui/ducks/app";
 import { useAppDispatch } from "@src/ui/ducks/hooks";
+import { importIdentity } from "@src/ui/ducks/identities";
 import { rejectUserRequest } from "@src/ui/ducks/requests";
 import { useSearchParam } from "@src/ui/hooks/url";
 import { redirectToNewTab } from "@src/util/browser";
@@ -36,13 +37,21 @@ interface FormFields {
   nullifier: string;
 }
 
+const REDIRECT_MAP: Record<string, string> = {
+  [Paths.CONNECT_IDENTITY]: Paths.CONNECT_IDENTITY,
+  [Paths.CREATE_IDENTITY]: Paths.CREATE_IDENTITY,
+};
+
 export const useImportIdentity = (): IUseImportIdentityData => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
+  const back = useSearchParam("back");
   const urlOrigin = useSearchParam("urlOrigin");
   const trapdoorUrlParam = useSearchParam("trapdoor");
   const nullifierUrlParam = useSearchParam("nullifier");
+  const redirect = REDIRECT_MAP[back!];
+  const redirectUrl = redirect ? `${redirect}?urlOrigin=${urlOrigin}&back=${back}` : redirect;
 
   const {
     formState: { isSubmitting, isLoading, errors },
@@ -63,20 +72,39 @@ export const useImportIdentity = (): IUseImportIdentityData => {
   const commitment = useMemo(() => calculateIdentityCommitment(secret), [secret]);
 
   const onGoBack = useCallback(() => {
-    dispatch(rejectUserRequest({ type: EventName.IMPORT_IDENTITY }, urlOrigin))
-      .then(() => dispatch(closePopup()))
-      .then(() => {
-        navigate(Paths.HOME);
-      });
-  }, [urlOrigin, dispatch, navigate]);
+    dispatch(rejectUserRequest({ type: EventName.IMPORT_IDENTITY }, urlOrigin)).then(() => {
+      if (redirect) {
+        navigate(-1);
+      } else {
+        dispatch(closePopup()).then(() => {
+          navigate(Paths.HOME);
+        });
+      }
+    });
+  }, [redirect, urlOrigin, dispatch, navigate]);
 
   const onGoToHost = useCallback(() => {
     redirectToNewTab(urlOrigin!);
   }, [urlOrigin]);
 
-  const onSubmit = useCallback(() => {
-    setError("root", { message: "not implemented" });
-  }, [setError]);
+  const onSubmit = useCallback(
+    (data: FormFields) => {
+      dispatch(importIdentity({ ...data, urlOrigin }))
+        .then(() => {
+          if (redirectUrl) {
+            navigate(redirectUrl);
+          } else {
+            dispatch(closePopup()).then(() => {
+              navigate(Paths.HOME);
+            });
+          }
+        })
+        .catch((error: Error) => {
+          setError("root", { message: error.message });
+        });
+    },
+    [redirectUrl, urlOrigin, setError, dispatch],
+  );
 
   return {
     isLoading: isSubmitting || isLoading,
