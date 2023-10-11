@@ -38,7 +38,7 @@ How should reviewers and QA manually test your changes? For instance:
 - Then do this
 -->
 
-## Pre-Merge Checklist
+## Assignees Checklist
 
 - [ ] PR template is filled out
 - [ ] Pre-commit and pre-push hook checks are passed
@@ -47,4 +47,5 @@ How should reviewers and QA manually test your changes? For instance:
 - [ ] PR is linked to the appropriate GitHub issue
 - [ ] PR has been added to the appropriate release Milestone
 
-> PR template source from [github.com/MetaMask](https://github.com/MetaMask)
+## Reviewers Checklist
+- [ ] Manual testing checked and passed.
