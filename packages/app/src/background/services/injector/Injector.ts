@@ -67,7 +67,7 @@ export class InjectorService {
 
       const connectedIdentity = await this.injectorHandler.getZkIdentityService().getConnectedIdentity();
 
-      if (!connectedIdentity || !isApproved) {
+      if (connectedIdentity?.metadata.urlOrigin !== urlOrigin) {
         await this.injectorHandler.getZkIdentityService().connectIdentityRequest({ urlOrigin: urlOrigin! });
       }
     } catch (error) {
