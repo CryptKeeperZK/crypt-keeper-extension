@@ -74,9 +74,11 @@ export const resetPassword =
   async (): Promise<void> =>
     postMessage({ method: RPCInternalAction.RESET_PASSWORD, payload: { password, mnemonic } });
 
-export const fetchStatus = (): TypedThunk<Promise<void>> => async (dispatch) => {
+export const fetchStatus = (): TypedThunk<Promise<IAppState>> => async (dispatch) => {
   const status = await postMessage<IAppState>({ method: RPCInternalAction.GET_STATUS });
   dispatch(setStatus(status));
+
+  return status;
 };
 
 export const setWalletConnection =

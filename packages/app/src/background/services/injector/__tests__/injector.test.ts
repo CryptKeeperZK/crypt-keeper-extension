@@ -16,6 +16,7 @@ import { omit } from "lodash";
 import browser from "webextension-polyfill";
 
 import { createChromeOffscreen, getBrowserPlatform } from "@src/background/shared/utils";
+import { mockDefaultIdentity } from "@src/config/mock/zk";
 import { RPCInternalAction, BrowserPlatform } from "@src/constants";
 import pushMessage from "@src/util/pushMessage";
 
@@ -44,7 +45,7 @@ const mockGenerateRLNProof = jest.fn();
 const mockGetConnectedIdentityData = jest.fn(
   (_: unknown, meta?: IZkMetadata): Promise<ConnectedIdentityMetadata | undefined> => {
     if (meta?.urlOrigin === mockDefaultUrlOrigin || meta?.urlOrigin === "new-urlOrigin") {
-      return Promise.resolve(mockConnectedIdentity);
+      return Promise.resolve({ ...mockConnectedIdentity, ...meta });
     }
 
     return Promise.resolve(undefined);
@@ -164,7 +165,7 @@ describe("background/services/injector", () => {
       const service = InjectorService.getInstance();
 
       const result = await service.getConnectedIdentityMetadata({}, { urlOrigin: mockDefaultUrlOrigin });
-      expect(result).toStrictEqual(mockConnectedIdentity);
+      expect(result).toStrictEqual({ ...mockConnectedIdentity, urlOrigin: mockDefaultUrlOrigin });
       expect(mockIsApproved).toBeCalledTimes(1);
       expect(mockCanSkip).toBeCalledTimes(1);
       expect(mockAwaitLockServiceUnlock).toBeCalledTimes(0);
@@ -204,6 +205,8 @@ describe("background/services/injector", () => {
 
   describe("connect", () => {
     test("should connect properly", async () => {
+      mockGetConnectedIdentity.mockResolvedValue(mockDefaultIdentity);
+
       const service = InjectorService.getInstance();
 
       await expect(service.connect(defaultMetadata)).resolves.not.toThrowError();
@@ -216,6 +219,8 @@ describe("background/services/injector", () => {
     });
 
     test("should connect with approval request properly", async () => {
+      mockGetConnectedIdentity.mockResolvedValue(mockDefaultIdentity);
+
       const service = InjectorService.getInstance();
 
       await expect(service.connect({ urlOrigin: "new-urlOrigin" })).resolves.not.toThrowError();

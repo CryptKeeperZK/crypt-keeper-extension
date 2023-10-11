@@ -4,9 +4,8 @@ import { useNavigate } from "react-router-dom";
 
 import { Paths } from "@src/constants";
 import { PasswordFormFields } from "@src/types";
-import { closePopup, fetchStatus, unlock } from "@src/ui/ducks/app";
+import { closePopup, unlock } from "@src/ui/ducks/app";
 import { useAppDispatch } from "@src/ui/ducks/hooks";
-import { fetchPendingRequests } from "@src/ui/ducks/requests";
 
 export interface IUseLoginData {
   isLoading: boolean;
@@ -37,19 +36,16 @@ export const useLogin = (): IUseLoginData => {
 
   const onSubmit = useCallback(
     async (data: LoginFields) => {
-      try {
-        await dispatch(unlock(data.password));
-        const requests = await dispatch(fetchPendingRequests());
-        await dispatch(fetchStatus());
-
-        if (requests.length === 0) {
+      await dispatch(unlock(data.password))
+        .then(() => {
+          navigate(Paths.HOME);
+        })
+        .then(() => {
           dispatch(closePopup());
-        }
-
-        navigate(Paths.HOME);
-      } catch (error) {
-        setError("password", { message: (error as Error).message });
-      }
+        })
+        .catch((error: Error) => {
+          setError("password", { message: error.message });
+        });
     },
     [dispatch, setError],
   );

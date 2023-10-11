@@ -112,9 +112,11 @@ export class InjectorHandler {
       await this.lockerService.awaitUnlock();
 
       if (isInitialized) {
-        await this.zkIdentityService.awaitUnlock();
         await this.approvalService.awaitUnlock();
+        await this.zkIdentityService.awaitUnlock();
       }
+
+      await this.browserService.closePopup();
     }
   };
 

@@ -38,6 +38,7 @@ describe("background/services/approval", () => {
 
   afterEach(async () => {
     process.env.NODE_ENV = "test";
+    await approvalService.lock();
     await approvalService.clear();
 
     (SimpleStorage as jest.Mock).mock.instances.forEach((instance: MockStorage) => {
