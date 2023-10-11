@@ -1,12 +1,11 @@
-import { BaseSyntheticEvent, useCallback, useEffect, useMemo, useState } from "react";
+import { BaseSyntheticEvent, useCallback, useState } from "react";
 import { UseFormRegister, useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 
 import { Paths } from "@src/constants";
 import { PasswordFormFields } from "@src/types";
-import { closePopup, fetchStatus, unlock, useAppStatus } from "@src/ui/ducks/app";
+import { closePopup, unlock } from "@src/ui/ducks/app";
 import { useAppDispatch } from "@src/ui/ducks/hooks";
-import { fetchPendingRequests, usePendingRequests } from "@src/ui/ducks/requests";
 
 export interface IUseLoginData {
   isLoading: boolean;
@@ -23,9 +22,6 @@ export const useLogin = (): IUseLoginData => {
   const [isShowPassword, setIsShowPassword] = useState(false);
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
-  const pendingRequests = usePendingRequests();
-  const status = useAppStatus();
-  const isKeepOpen = useMemo(() => pendingRequests.length > 0, [pendingRequests.length]);
 
   const {
     formState: { isLoading, isSubmitting, errors },
@@ -38,26 +34,14 @@ export const useLogin = (): IUseLoginData => {
     },
   });
 
-  useEffect(() => {
-    if (!status.isUnlocked) {
-      return;
-    }
-
-    if (!isKeepOpen) {
-      dispatch(closePopup());
-    }
-
-    navigate(Paths.HOME);
-  }, [isKeepOpen, status.isUnlocked, dispatch]);
-
   const onSubmit = useCallback(
     async (data: LoginFields) => {
       await dispatch(unlock(data.password))
         .then(() => {
-          dispatch(fetchStatus());
+          navigate(Paths.HOME);
         })
         .then(() => {
-          dispatch(fetchPendingRequests());
+          dispatch(closePopup());
         })
         .catch((error: Error) => {
           setError("password", { message: error.message });

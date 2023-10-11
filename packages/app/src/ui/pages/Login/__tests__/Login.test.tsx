@@ -6,9 +6,9 @@ import { render, screen, fireEvent, act, waitFor } from "@testing-library/react"
 import { Suspense } from "react";
 import { MemoryRouter, useNavigate } from "react-router-dom";
 
-import { fetchStatus, unlock, useAppStatus } from "@src/ui/ducks/app";
+import { Paths } from "@src/constants";
+import { closePopup, unlock } from "@src/ui/ducks/app";
 import { useAppDispatch } from "@src/ui/ducks/hooks";
-import { fetchPendingRequests, usePendingRequests } from "@src/ui/ducks/requests";
 
 import Login from "..";
 
@@ -25,16 +25,9 @@ jest.mock("@src/ui/ducks/hooks", (): unknown => ({
   useAppDispatch: jest.fn(),
 }));
 
-jest.mock("@src/ui/ducks/requests", (): unknown => ({
-  fetchPendingRequests: jest.fn(),
-  usePendingRequests: jest.fn(),
-}));
-
 jest.mock("@src/ui/ducks/app", (): unknown => ({
   closePopup: jest.fn(),
-  fetchStatus: jest.fn(),
   unlock: jest.fn(),
-  useAppStatus: jest.fn(),
 }));
 
 describe("ui/pages/Login", () => {
@@ -45,10 +38,6 @@ describe("ui/pages/Login", () => {
     mockDispatch.mockResolvedValue(undefined);
 
     (useAppDispatch as jest.Mock).mockReturnValue(mockDispatch);
-
-    (useAppStatus as jest.Mock).mockReturnValue({ isUnlocked: false });
-
-    (usePendingRequests as jest.Mock).mockReturnValue([]);
 
     (useNavigate as jest.Mock).mockReturnValue(mockNavigate);
 
@@ -144,10 +133,11 @@ describe("ui/pages/Login", () => {
     const button = await screen.findByTestId("unlock-button");
     await act(async () => Promise.resolve(fireEvent.submit(button)));
 
-    expect(mockDispatch).toBeCalledTimes(3);
+    expect(mockDispatch).toBeCalledTimes(2);
     expect(unlock).toBeCalledTimes(1);
     expect(unlock).toBeCalledWith("password");
-    expect(fetchStatus).toBeCalledTimes(1);
-    expect(fetchPendingRequests).toBeCalledTimes(1);
+    expect(closePopup).toBeCalledTimes(1);
+    expect(mockNavigate).toBeCalledTimes(1);
+    expect(mockNavigate).toBeCalledWith(Paths.HOME);
   });
 });

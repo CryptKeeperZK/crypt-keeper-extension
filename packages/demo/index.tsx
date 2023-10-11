@@ -99,6 +99,14 @@ const App = () => {
       <hr />
 
       <div>
+        <h2>Connect identity</h2>
+
+        <button type="button" onClick={connect}>
+          Connect identity
+        </button>
+      </div>
+
+      <div>
         <h2>Get Connected Identity Metadata</h2>
 
         <button type="button" onClick={getConnectedIdentityMetadata}>

@@ -29,4 +29,17 @@ export abstract class BaseService {
       };
     });
   };
+
+  abstract lock(): Promise<boolean>;
+
+  onLock = async (internalLock?: () => Promise<unknown>): Promise<boolean> => {
+    this.isUnlocked = false;
+    this.unlockCB = undefined;
+
+    if (internalLock) {
+      await internalLock();
+    }
+
+    return true;
+  };
 }

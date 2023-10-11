@@ -269,15 +269,18 @@ export default class ZkIdentityService extends BaseService implements IBackupabl
     }
 
     const identities = await this.getIdentitiesFromStore();
-    const identity = await this.readConnectedIdentity(identities);
-    const identityCommitment = identity ? bigintToHex(identity.genIdentityCommitment()) : undefined;
 
-    if (identityCommitment) {
-      await this.updateConnectedIdentity({
-        identities,
-        identityCommitment,
-        urlOrigin: identity?.metadata.urlOrigin,
-      });
+    if (identities.size !== 0) {
+      const identity = await this.readConnectedIdentity(identities);
+      const identityCommitment = identity ? bigintToHex(identity.genIdentityCommitment()) : undefined;
+
+      if (identityCommitment) {
+        await this.updateConnectedIdentity({
+          identities,
+          identityCommitment,
+          urlOrigin: identity?.metadata.urlOrigin,
+        });
+      }
     }
 
     this.isUnlocked = true;
@@ -285,6 +288,8 @@ export default class ZkIdentityService extends BaseService implements IBackupabl
 
     return true;
   };
+
+  lock = (): Promise<boolean> => this.onLock();
 
   private clearConnectedIdentity = async (): Promise<void> => {
     if (!this.connectedIdentity) {

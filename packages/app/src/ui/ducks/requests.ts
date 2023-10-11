@@ -31,9 +31,11 @@ const requestsSlice = createSlice({
 
 export const { setPendingRequests } = requestsSlice.actions;
 
-export const fetchPendingRequests = (): TypedThunk<Promise<void>> => async (dispatch) => {
+export const fetchPendingRequests = (): TypedThunk<Promise<IPendingRequest[]>> => async (dispatch) => {
   const pendingRequests = await postMessage<IPendingRequest[]>({ method: RPCInternalAction.GET_PENDING_REQUESTS });
   dispatch(setPendingRequests(pendingRequests));
+
+  return pendingRequests;
 };
 
 export const finalizeRequest =

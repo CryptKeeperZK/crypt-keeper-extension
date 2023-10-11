@@ -117,7 +117,12 @@ export default class CryptKeeperController {
       this.lockService.onUnlocked,
     );
 
-    this.handler.add(RPCInternalAction.LOCK, this.lockService.logout);
+    this.handler.add(
+      RPCInternalAction.LOCK,
+      this.lockService.lock,
+      this.zkIdentityService.lock,
+      this.approvalService.lock,
+    );
 
     /**
      *  Return status of background process

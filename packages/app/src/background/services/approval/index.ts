@@ -53,6 +53,8 @@ export default class ApprovalService extends BaseService implements IBackupable 
     return true;
   };
 
+  lock = (): Promise<boolean> => this.onLock();
+
   getPermission = (urlOrigin: string): IHostPermission => ({
     urlOrigin,
     canSkipApprove: Boolean(this.allowedHosts.get(urlOrigin)?.canSkipApprove),

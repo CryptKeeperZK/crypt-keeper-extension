@@ -218,17 +218,10 @@ export default class LockerService extends BaseService implements IBackupable {
     return payload;
   };
 
-  logout = async (): Promise<boolean> => {
-    await this.internalLogout();
+  lock = async (): Promise<boolean> => this.onLock(this.internalLock);
 
-    return true;
-  };
-
-  private internalLogout = async (): Promise<LockStatus> => {
-    this.isUnlocked = false;
+  private internalLock = async (): Promise<LockStatus> => {
     this.cryptoService.clear();
-    this.unlockCB = undefined;
-
     return this.notifyStatusChange();
   };
 
