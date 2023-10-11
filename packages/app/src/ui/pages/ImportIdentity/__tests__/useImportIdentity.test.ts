@@ -7,7 +7,13 @@ import { act, renderHook, waitFor } from "@testing-library/react";
 import { getLinkPreview } from "link-preview-js";
 import { useNavigate } from "react-router-dom";
 
-import { mockDefaultIdentity, mockDefaultIdentityCommitment, mockDefaultIdentitySecret } from "@src/config/mock/zk";
+import {
+  mockDefaultIdentity,
+  mockDefaultIdentityCommitment,
+  mockDefaultIdentitySecret,
+  mockDefaultNullifier,
+  mockDefaultTrapdoor,
+} from "@src/config/mock/zk";
 import { Paths } from "@src/constants";
 import { closePopup } from "@src/ui/ducks/app";
 import { useAppDispatch } from "@src/ui/ducks/hooks";
@@ -55,8 +61,18 @@ jest.mock("@src/ui/ducks/hooks", (): unknown => ({
   useAppDispatch: jest.fn(),
 }));
 
+jest.mock("@src/ui/hooks/validation", (): unknown => ({
+  ...jest.requireActual("@src/ui/hooks/validation"),
+  useValidationResolver: jest.fn(),
+}));
+
 describe("ui/pages/ImportIdentity/useImportIdentity", () => {
   const defaultFaviconsData = { favicons: [`${mockDefaultIdentity.metadata.urlOrigin}/favicon.ico`] };
+  const defaultUrlParams = {
+    urlOrigin: mockDefaultIdentity.metadata.urlOrigin,
+    trapdoor: mockDefaultTrapdoor,
+    nullifier: mockDefaultNullifier,
+  };
 
   const mockNavigate = jest.fn();
   const mockDispatch = jest.fn(() => Promise.resolve(false));
@@ -68,9 +84,7 @@ describe("ui/pages/ImportIdentity/useImportIdentity", () => {
 
     (useAppDispatch as jest.Mock).mockReturnValue(mockDispatch);
 
-    (useSearchParam as jest.Mock).mockImplementation((arg: string) =>
-      arg === "urlOrigin" ? mockDefaultIdentity.metadata.urlOrigin : arg,
-    );
+    (useSearchParam as jest.Mock).mockImplementation((arg: keyof typeof defaultUrlParams) => defaultUrlParams[arg]);
 
     (calculateIdentitySecret as jest.Mock).mockReturnValue(mockDefaultIdentitySecret);
 
@@ -85,8 +99,8 @@ describe("ui/pages/ImportIdentity/useImportIdentity", () => {
     const { result } = renderHook(() => useImportIdentity());
 
     expect(result.current.isLoading).toBe(false);
-    expect(result.current.trapdoor).toBe("trapdoor");
-    expect(result.current.nullifier).toBe("nullifier");
+    expect(result.current.trapdoor).toBe(mockDefaultTrapdoor);
+    expect(result.current.nullifier).toBe(mockDefaultNullifier);
     expect(result.current.secret).toBe(mockDefaultIdentitySecret);
     expect(result.current.commitment).toBe(mockDefaultIdentityCommitment);
     expect(result.current.errors).toStrictEqual({

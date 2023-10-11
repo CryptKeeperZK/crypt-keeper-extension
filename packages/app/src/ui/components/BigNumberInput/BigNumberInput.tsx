@@ -7,6 +7,7 @@ import omit from "lodash/omit";
 import { forwardRef, type Ref } from "react";
 
 import { ellipsify } from "@src/util/account";
+import { checkBigNumber } from "@src/util/numbers";
 
 import type { TextFieldProps } from "@mui/material/TextField";
 
@@ -34,7 +35,8 @@ const BigNumberInputUI = (
     onBlurHandler,
     onFocusHandler,
   });
-  const formattedValue = isHex && typeof value === "string" ? bigintToHex(BigInt(value)) : (value as string);
+  const formattedValue =
+    isHex && typeof value === "string" && checkBigNumber(value) ? bigintToHex(BigInt(value), true) : (value as string);
 
   return (
     <Box>

@@ -3,6 +3,7 @@ import { calculateIdentityCommitment, calculateIdentitySecret } from "@cryptkeep
 import { useCallback, useMemo } from "react";
 import { UseFormRegister, useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
+import { object, string } from "yup";
 
 import { Paths } from "@src/constants";
 import { closePopup } from "@src/ui/ducks/app";
@@ -10,7 +11,9 @@ import { useAppDispatch } from "@src/ui/ducks/hooks";
 import { importIdentity } from "@src/ui/ducks/identities";
 import { rejectUserRequest } from "@src/ui/ducks/requests";
 import { useSearchParam } from "@src/ui/hooks/url";
+import { useValidationResolver } from "@src/ui/hooks/validation";
 import { redirectToNewTab } from "@src/util/browser";
+import { checkBigNumber, convertFromHexToDec } from "@src/util/numbers";
 
 export interface IUseImportIdentityData {
   isLoading: boolean;
@@ -42,6 +45,18 @@ const REDIRECT_MAP: Record<string, string> = {
   [Paths.CREATE_IDENTITY]: Paths.CREATE_IDENTITY,
 };
 
+const validationSchema = object({
+  name: string().required("Name is required"),
+  trapdoor: string()
+    .transform(convertFromHexToDec)
+    .test("trapdoor-bignumber", "Trapdoor is not a number", checkBigNumber)
+    .required("Identity trapdoor is required"),
+  nullifier: string()
+    .transform(convertFromHexToDec)
+    .test("nullifier-bignumber", "Nullifier is not a number", checkBigNumber)
+    .required("Identity nullifier is required"),
+});
+
 export const useImportIdentity = (): IUseImportIdentityData => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
@@ -53,6 +68,7 @@ export const useImportIdentity = (): IUseImportIdentityData => {
   const redirect = REDIRECT_MAP[back!];
   const redirectUrl = redirect ? `${redirect}?urlOrigin=${urlOrigin}&back=${back}` : redirect;
 
+  const resolver = useValidationResolver(validationSchema);
   const {
     formState: { isSubmitting, isLoading, errors },
     setError,
@@ -65,10 +81,15 @@ export const useImportIdentity = (): IUseImportIdentityData => {
       trapdoor: trapdoorUrlParam || "",
       nullifier: nullifierUrlParam || "",
     },
+    resolver,
   });
 
   const [trapdoor, nullifier] = watch(["trapdoor", "nullifier"]);
-  const secret = useMemo(() => calculateIdentitySecret({ trapdoor, nullifier }), [trapdoor, nullifier]);
+  const secret = useMemo(
+    () =>
+      checkBigNumber(trapdoor) && checkBigNumber(nullifier) ? calculateIdentitySecret({ trapdoor, nullifier }) : "",
+    [trapdoor, nullifier],
+  );
   const commitment = useMemo(() => calculateIdentityCommitment(secret), [secret]);
 
   const onGoBack = useCallback(() => {
@@ -115,8 +136,8 @@ export const useImportIdentity = (): IUseImportIdentityData => {
       nullifier: errors.nullifier?.message,
     },
     urlOrigin,
-    trapdoor,
-    nullifier,
+    trapdoor: convertFromHexToDec(trapdoor),
+    nullifier: convertFromHexToDec(nullifier),
     secret,
     commitment,
     register,

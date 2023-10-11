@@ -8,7 +8,12 @@ import browser from "webextension-polyfill";
 import SimpleStorage from "@src/background/services/storage";
 import ZkIdentityService from "@src/background/services/zkIdentity";
 import { ZERO_ADDRESS } from "@src/config/const";
-import { mockDefaultIdentity, mockDefaultIdentityCommitment } from "@src/config/mock/zk";
+import {
+  mockDefaultIdentity,
+  mockDefaultIdentityCommitment,
+  mockDefaultNullifier,
+  mockDefaultTrapdoor,
+} from "@src/config/mock/zk";
 import { setStatus } from "@src/ui/ducks/app";
 import { setConnectedIdentity, setIdentities } from "@src/ui/ducks/identities";
 import pushMessage from "@src/util/pushMessage";
@@ -153,7 +158,6 @@ describe("background/services/zkIdentity", () => {
         instance.get.mockReturnValue(undefined);
       });
 
-      zkIdentityService.lock();
       const result = await zkIdentityService.unlock();
 
       expect(result).toBe(true);
@@ -636,8 +640,8 @@ describe("background/services/zkIdentity", () => {
   describe("import", () => {
     const defaultArgs: IImportIdentityArgs = {
       name: "Name",
-      nullifier: "12578821460373135693013277026392552769801800051254682675996381598033497431909",
-      trapdoor: "8599172605644748803815316525430713607475871751016594621440814664229873275229",
+      nullifier: mockDefaultNullifier,
+      trapdoor: mockDefaultTrapdoor,
       urlOrigin: "http://localhost:3000",
     };
 

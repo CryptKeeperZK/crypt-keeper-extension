@@ -9,11 +9,6 @@ export abstract class BaseService {
 
   abstract unlock(password?: string, notify?: boolean): Promise<boolean>;
 
-  lock(): void {
-    this.isUnlocked = false;
-    this.unlockCB = undefined;
-  }
-
   onUnlocked = (): boolean => {
     if (this.unlockCB) {
       this.unlockCB();
