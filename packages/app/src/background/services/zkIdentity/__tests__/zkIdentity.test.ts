@@ -153,7 +153,6 @@ describe("background/services/zkIdentity", () => {
         instance.get.mockReturnValue(undefined);
       });
 
-      zkIdentityService.lock();
       const result = await zkIdentityService.unlock();
 
       expect(result).toBe(true);
