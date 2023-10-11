@@ -78,7 +78,7 @@ describe("ui/pages/Login/useLogin", () => {
     rerender();
 
     expect(result.current.isLoading).toBe(false);
-    expect(mockDispatch).toBeCalledTimes(4);
+    expect(mockDispatch).toBeCalledTimes(3);
     expect(mockNavigate).toBeCalledTimes(1);
     expect(mockNavigate).toBeCalledWith(Paths.HOME);
   });

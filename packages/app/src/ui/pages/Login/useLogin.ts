@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 
 import { Paths } from "@src/constants";
 import { PasswordFormFields } from "@src/types";
-import { closePopup, fetchStatus, unlock, useAppStatus } from "@src/ui/ducks/app";
+import { fetchStatus, unlock, useAppStatus } from "@src/ui/ducks/app";
 import { useAppDispatch } from "@src/ui/ducks/hooks";
 import { fetchPendingRequests, usePendingRequests } from "@src/ui/ducks/requests";
 
@@ -43,9 +43,13 @@ export const useLogin = (): IUseLoginData => {
       return;
     }
 
-    if (!isKeepOpen) {
-      dispatch(closePopup());
-    }
+    // TODO: I am not sure yet why is that is the cause for that bug:
+    // (https://github.com/CryptKeeperZK/crypt-keeper-extension/issues/992)
+    // When commented the bug was resolved.
+    // I think because at that scenario described in the bug issue, the pendingRequests would be already zero.
+    // if (!isKeepOpen) {
+    //   dispatch(closePopup());
+    // }
 
     navigate(Paths.HOME);
   }, [isKeepOpen, status.isUnlocked, dispatch]);

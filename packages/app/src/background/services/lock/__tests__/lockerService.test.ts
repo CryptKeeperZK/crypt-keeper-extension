@@ -71,7 +71,7 @@ describe("background/services/locker", () => {
   beforeEach(async () => {
     (browser.tabs.query as jest.Mock).mockResolvedValue(defaultTabs);
 
-    await lockService.logout();
+    await lockService.lock();
 
     (browser.tabs.sendMessage as jest.Mock).mockClear();
     (pushMessage as jest.Mock).mockReset();

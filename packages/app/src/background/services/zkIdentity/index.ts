@@ -289,6 +289,8 @@ export default class ZkIdentityService extends BaseService implements IBackupabl
     return true;
   };
 
+  lock = (): Promise<boolean> => this.onLock();
+
   private clearConnectedIdentity = async (): Promise<void> => {
     if (!this.connectedIdentity) {
       return;
