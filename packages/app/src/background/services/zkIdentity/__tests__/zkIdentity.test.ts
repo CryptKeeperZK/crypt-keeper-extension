@@ -155,9 +155,10 @@ describe("background/services/zkIdentity", () => {
 
     test("should unlock properly with empty store", async () => {
       (SimpleStorage as jest.Mock).mock.instances.forEach((instance: MockStorage) => {
-        instance.get.mockReturnValue(undefined);
+        instance.get.mockResolvedValueOnce(mockSerializedDefaultIdentities).mockResolvedValue(undefined);
       });
 
+      await zkIdentityService.lock();
       const result = await zkIdentityService.unlock();
 
       expect(result).toBe(true);

@@ -112,9 +112,11 @@ export default class CryptKeeperController {
     this.handler.add(
       RPCInternalAction.UNLOCK,
       this.lockService.unlock,
-      this.zkIdentityService.unlock,
       this.approvalService.unlock,
+      this.zkIdentityService.unlock,
       this.lockService.onUnlocked,
+      this.approvalService.onUnlocked,
+      this.zkIdentityService.onUnlocked,
     );
 
     this.handler.add(

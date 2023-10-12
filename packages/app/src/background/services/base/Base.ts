@@ -9,11 +9,11 @@ export abstract class BaseService {
 
   abstract unlock(password?: string, notify?: boolean): Promise<boolean>;
 
+  abstract lock(): Promise<boolean>;
+
   onUnlocked = (): boolean => {
-    if (this.unlockCB) {
-      this.unlockCB();
-      this.unlockCB = undefined;
-    }
+    this.unlockCB?.();
+    this.unlockCB = undefined;
 
     return true;
   };
@@ -30,15 +30,11 @@ export abstract class BaseService {
     });
   };
 
-  abstract lock(): Promise<boolean>;
-
   onLock = async (internalLock?: () => Promise<unknown>): Promise<boolean> => {
     this.isUnlocked = false;
     this.unlockCB = undefined;
 
-    if (internalLock) {
-      await internalLock();
-    }
+    await internalLock?.();
 
     return true;
   };

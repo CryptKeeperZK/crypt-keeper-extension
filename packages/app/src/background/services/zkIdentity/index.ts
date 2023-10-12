@@ -415,7 +415,7 @@ export default class ZkIdentityService extends BaseService implements IBackupabl
     await this.browserController.pushEvent(
       {
         type: newIdentity.metadata.isImported ? EventName.IMPORT_IDENTITY : EventName.CREATE_IDENTITY,
-        payload: this.getConnectedIdentityMetadata(),
+        payload: this.getConnectedIdentityMetadata(newIdentity.metadata),
       },
       { urlOrigin: newIdentity.metadata.urlOrigin! },
     );
