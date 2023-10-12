@@ -316,7 +316,21 @@ export const useCryptKeeper = (): IUseCryptKeeperData => {
 
   const onLogin = useCallback(() => {
     getConnectedIdentityMetadata();
-  }, [client]);
+  }, [getConnectedIdentityMetadata]);
+
+  const onApproval = useCallback(
+    (payload: unknown) => {
+      const { isApproved } = payload as { isApproved: boolean };
+
+      if (isApproved) {
+        getConnectedIdentityMetadata();
+      } else {
+        setIsLocked(true);
+        setConnectedIdentityMetadata(undefined);
+      }
+    },
+    [setIsLocked, setConnectedIdentityMetadata, getConnectedIdentityMetadata],
+  );
 
   // Initialize Injected CryptKeeper Provider Client
   useEffect(() => {
@@ -338,6 +352,7 @@ export const useCryptKeeper = (): IUseCryptKeeperData => {
     client.on(EventName.LOGIN, onLogin);
     client.on(EventName.IDENTITY_CHANGED, onIdentityChanged);
     client.on(EventName.LOGOUT, onLogout);
+    client.on(EventName.APPROVAL, onApproval);
     client.on(EventName.ADD_VERIFIABLE_CREDENTIAL, onAddVerifiableCredential);
     client.on(EventName.GENERATE_VERIFIABLE_PRESENTATION, onGenerateVerifiablePresentation);
     client.on(EventName.USER_REJECT, onReject);
@@ -363,6 +378,7 @@ export const useCryptKeeper = (): IUseCryptKeeperData => {
     onJoinGroup,
     onImportIdentity,
     onCreateIdentity,
+    onApproval,
   ]);
 
   return {
