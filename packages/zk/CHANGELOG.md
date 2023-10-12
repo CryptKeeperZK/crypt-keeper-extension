@@ -2,6 +2,20 @@
 
 This file was generated using [@jscutlery/semver](https://github.com/jscutlery/semver).
 
+## [0.5.0](https://github.com/CryptKeeperZK/crypt-keeper-extension/compare/@cryptkeeperzk/zk-0.4.0...@cryptkeeperzk/zk-0.5.0) (2023-10-12)
+
+### Dependency Updates
+
+* `@cryptkeeperzk/types` updated to version `0.5.0`
+* `@cryptkeeperzk/eslint-config-base` updated to version `0.1.6`
+
+### Features
+
+* import identity ([#990](https://github.com/CryptKeeperZK/crypt-keeper-extension/issues/990)) ([f246091](https://github.com/CryptKeeperZK/crypt-keeper-extension/commit/f246091db2bf78cb6bb33da00c57e2c773e8adc3))
+* major refactoring to the provider APIs pipeline ([#875](https://github.com/CryptKeeperZK/crypt-keeper-extension/issues/875)) ([0246df6](https://github.com/CryptKeeperZK/crypt-keeper-extension/commit/0246df68ed275d746377e35679c5b769aad0b244))
+* update identity creation ([#937](https://github.com/CryptKeeperZK/crypt-keeper-extension/issues/937)) ([26ee60e](https://github.com/CryptKeeperZK/crypt-keeper-extension/commit/26ee60eacc3cd99e96f049f9c53ab453d58e20f2))
+* update input styles ([#975](https://github.com/CryptKeeperZK/crypt-keeper-extension/issues/975)) ([591a345](https://github.com/CryptKeeperZK/crypt-keeper-extension/commit/591a34534f5284eb6af3afc167d2b25b0a02266b))
+
 ## [0.4.0](https://github.com/CryptKeeperZK/crypt-keeper-extension/compare/@cryptkeeperzk/zk-0.3.0...@cryptkeeperzk/zk-0.4.0) (2023-09-25)
 
 ### Dependency Updates
