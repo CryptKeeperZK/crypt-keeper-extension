@@ -67,6 +67,6 @@ jobs:
 
       - name: Publish
         run: |-
-          pnpm run publish:packages -- --access=public --no-git-checks
+          pnpm run publish:packages
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
