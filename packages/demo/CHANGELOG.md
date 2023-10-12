@@ -2,6 +2,12 @@
 
 This file was generated using [@jscutlery/semver](https://github.com/jscutlery/semver).
 
+## [0.4.1](https://github.com/CryptKeeperZK/crypt-keeper-extension/compare/@cryptkeeperzk/demo-0.4.0...@cryptkeeperzk/demo-0.4.1) (2023-10-12)
+
+### Dependency Updates
+
+* `@cryptkeeperzk/providers` updated to version `0.4.1`
+* `@cryptkeeperzk/types` updated to version `0.5.1`
 ## [0.4.0](https://github.com/CryptKeeperZK/crypt-keeper-extension/compare/@cryptkeeperzk/demo-0.3.0...@cryptkeeperzk/demo-0.4.0) (2023-10-12)
 
 ### Dependency Updates
