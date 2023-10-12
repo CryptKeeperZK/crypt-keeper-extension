@@ -8,8 +8,8 @@ const PALETTE = {
   },
 
   common: {
-    black: "#000",
     white: "#fff",
+    black: "#000",
   },
 
   action: {

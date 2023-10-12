@@ -29,7 +29,6 @@
     "build": "tsc -p tsconfig.json",
     "build:e2e": "pnpm run build",
     "dev": "pnpm run build",
-    "publish:package": "pnpm publish --access=public --no-git-checks",
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
     "lint:fix": "pnpm run lint --fix",
     "prettier": "prettier -c . --ignore-path ../../.prettierignore",
