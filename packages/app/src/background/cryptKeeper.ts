@@ -159,6 +159,12 @@ export default class CryptKeeperController {
       this.zkIdentityService.connectIdentity,
     );
     this.handler.add(
+      RPCInternalAction.IMPORT_IDENTITY_REQUEST,
+      this.lockService.ensure,
+      this.zkIdentityService.importRequest,
+    );
+    this.handler.add(RPCInternalAction.IMPORT_IDENTITY, this.lockService.ensure, this.zkIdentityService.import);
+    this.handler.add(
       RPCInternalAction.CONNECT_IDENTITY_REQUEST,
       this.lockService.ensure,
       this.zkIdentityService.connectIdentityRequest,

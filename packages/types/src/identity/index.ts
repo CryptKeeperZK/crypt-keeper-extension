@@ -13,6 +13,12 @@ export interface IConnectIdentityRequestArgs {
   urlOrigin: string;
 }
 
+export interface IImportIdentityRequestArgs {
+  urlOrigin: string;
+  trapdoor: string;
+  nullifier: string;
+}
+
 export interface INewIdentityRequest {
   options: ICreateIdentityOptions;
   walletType: EWallet;

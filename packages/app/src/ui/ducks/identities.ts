@@ -1,11 +1,4 @@
 /* eslint-disable no-param-reassign */
-import {
-  ICreateIdentityUiArgs,
-  IIdentityData,
-  ICreateIdentityRequestArgs,
-  ConnectedIdentityMetadata,
-  IConnectIdentityArgs,
-} from "@cryptkeeperzk/types";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import deepEqual from "fast-deep-equal";
 
@@ -13,6 +6,14 @@ import { RPCInternalAction } from "@src/constants";
 import { Operation, HistorySettings } from "@src/types";
 import postMessage from "@src/util/postMessage";
 
+import type {
+  ICreateIdentityUiArgs,
+  IIdentityData,
+  ICreateIdentityRequestArgs,
+  ConnectedIdentityMetadata,
+  IConnectIdentityArgs,
+  IImportIdentityArgs,
+} from "@cryptkeeperzk/types";
 import type { TypedThunk } from "@src/ui/store/configureAppStore";
 
 import { useAppSelector } from "./hooks";
@@ -104,6 +105,12 @@ export const connectIdentity =
         urlOrigin,
       },
     });
+
+export const importIdentity = (payload: IImportIdentityArgs) => async (): Promise<string> =>
+  postMessage({
+    method: RPCInternalAction.IMPORT_IDENTITY,
+    payload,
+  });
 
 export const setIdentityName = (identityCommitment: string, name: string) => async (): Promise<boolean> =>
   postMessage({

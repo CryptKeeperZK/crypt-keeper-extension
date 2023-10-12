@@ -4,17 +4,7 @@ import { EventEmitter, EventHandler, EventName } from "../event";
 
 import { RequestsPromisesHandlers } from "./types";
 
-const EVENTS = [
-  EventName.IDENTITY_CHANGED,
-  EventName.LOGIN,
-  EventName.LOGOUT,
-  EventName.ADD_VERIFIABLE_CREDENTIAL,
-  EventName.REVEAL_COMMITMENT,
-  EventName.JOIN_GROUP,
-  EventName.GROUP_MERKLE_PROOF,
-  EventName.IMPORT_IDENTITY,
-  EventName.USER_REJECT,
-];
+const EVENTS = Object.values(EventName);
 
 export class Handler {
   /**
