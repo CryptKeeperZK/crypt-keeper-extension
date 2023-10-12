@@ -43,6 +43,7 @@ export const mockDefaultIdentity: IIdentityData & { secret?: string } = {
     isDeterministic: true,
     nonce: 0,
     urlOrigin: "http://localhost:3000",
+    isImported: true,
   },
 };
 

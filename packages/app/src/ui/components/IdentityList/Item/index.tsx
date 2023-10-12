@@ -159,6 +159,12 @@ export const IdentityItem = ({
             Address: {ellipsify(metadata.account)}
           </Typography>
         )}
+
+        {metadata.isImported && (
+          <Typography color="text.secondary" variant="body2">
+            Imported
+          </Typography>
+        )}
       </Box>
 
       {isShowMenu && (

@@ -1,15 +1,16 @@
 import { EventName } from "@cryptkeeperzk/providers";
 import {
-  IIdentityMetadata,
-  ISetIdentityNameArgs,
+  type IIdentityMetadata,
+  type ISetIdentityNameArgs,
+  type INewIdentityRequest,
+  type ConnectedIdentityMetadata,
+  type ISetIdentityHostArgs,
+  type IConnectIdentityArgs,
+  type ICreateIdentityRequestArgs,
+  type IConnectIdentityRequestArgs,
+  type IZkMetadata,
+  type IImportIdentityArgs,
   EWallet,
-  INewIdentityRequest,
-  ConnectedIdentityMetadata,
-  ISetIdentityHostArgs,
-  IConnectIdentityArgs,
-  ICreateIdentityRequestArgs,
-  IConnectIdentityRequestArgs,
-  IZkMetadata,
 } from "@cryptkeeperzk/types";
 import { ZkIdentitySemaphore, createNewIdentity } from "@cryptkeeperzk/zk";
 import { bigintToHex } from "bigint-conversion";
@@ -331,6 +332,17 @@ export default class ZkIdentityService extends BaseService implements IBackupabl
     });
   };
 
+  import = async (args: IImportIdentityArgs): Promise<string> => {
+    const identity = createNewIdentity({ ...args, groups: [], isDeterministic: false });
+    const status = await this.insertIdentity(identity);
+
+    if (!status) {
+      throw new Error("Identity is already imported");
+    }
+
+    return bigintToHex(identity.genIdentityCommitment());
+  };
+
   createIdentity = async ({
     walletType,
     messageSignature,
@@ -379,13 +391,14 @@ export default class ZkIdentityService extends BaseService implements IBackupabl
     identities.set(identityCommitment, newIdentity.serialize());
     await this.writeIdentities(identities);
     await this.refresh();
-    await this.historyService.trackOperation(OperationType.CREATE_IDENTITY, {
-      identity: { commitment: identityCommitment, metadata: newIdentity.metadata },
-    });
+    await this.historyService.trackOperation(
+      newIdentity.metadata.isImported ? OperationType.IMPORT_IDENTITY : OperationType.CREATE_IDENTITY,
+      { identity: { commitment: identityCommitment, metadata: newIdentity.metadata } },
+    );
 
     await this.notificationService.create({
       options: {
-        title: "New identity has been created.",
+        title: newIdentity.metadata.isImported ? "New identity has been imported." : "New identity has been created.",
         message: `Identity commitment: ${ellipsify(identityCommitment)}`,
         iconUrl: browser.runtime.getURL("/icons/logo.png"),
         type: "basic",

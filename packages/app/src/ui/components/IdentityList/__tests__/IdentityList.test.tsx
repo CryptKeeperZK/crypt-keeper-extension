@@ -42,15 +42,16 @@ describe("ui/components/IdentityList", () => {
         groups: [],
         urlOrigin: "http://localhost:3000",
         isDeterministic: true,
+        isImported: false,
       },
     },
     {
       commitment: "1",
       metadata: {
-        account: ZERO_ADDRESS,
         name: "Account #1",
         groups: [],
         isDeterministic: true,
+        isImported: true,
       },
     },
   ];

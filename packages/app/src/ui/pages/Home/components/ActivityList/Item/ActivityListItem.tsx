@@ -19,6 +19,7 @@ export interface IActivityItemProps {
 
 const OPERATIONS: Record<OperationType, string> = {
   [OperationType.CREATE_IDENTITY]: "Identity created",
+  [OperationType.IMPORT_IDENTITY]: "Identity imported",
   [OperationType.DELETE_IDENTITY]: "Identity removed",
   [OperationType.DELETE_ALL_IDENTITIES]: "All identities removed",
   [OperationType.DOWNLOAD_BACKUP]: "Backup download",

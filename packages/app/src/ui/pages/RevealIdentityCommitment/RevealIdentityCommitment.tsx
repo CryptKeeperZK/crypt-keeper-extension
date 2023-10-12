@@ -99,14 +99,23 @@ const RevealIdentityCommitment = (): JSX.Element => {
 
                 {renderRow("Name", connectedIdentity.metadata.name)}
 
-                {renderRow(
-                  "Owner account",
-                  <Tooltip title={connectedIdentity.metadata.account}>
+                {connectedIdentity.metadata.account &&
+                  renderRow(
+                    "Owner account",
+                    <Tooltip title={connectedIdentity.metadata.account}>
+                      <Typography component="span" variant="h6">
+                        {ellipsify(connectedIdentity.metadata.account)}
+                      </Typography>
+                    </Tooltip>,
+                  )}
+
+                {connectedIdentity.metadata.isImported &&
+                  renderRow(
+                    "Imported",
                     <Typography component="span" variant="h6">
-                      {ellipsify(connectedIdentity.metadata.account)}
-                    </Typography>
-                  </Tooltip>,
-                )}
+                      Yes
+                    </Typography>,
+                  )}
               </Box>
 
               <Box component="hr" sx={{ my: 2 }} />
