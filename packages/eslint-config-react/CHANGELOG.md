@@ -2,6 +2,11 @@
 
 This file was generated using [@jscutlery/semver](https://github.com/jscutlery/semver).
 
+## [0.1.6](https://github.com/CryptKeeperZK/crypt-keeper-extension/compare/@cryptkeeperzk/eslint-config-react-0.1.5...@cryptkeeperzk/eslint-config-react-0.1.6) (2023-10-12)
+
+### Dependency Updates
+
+* `@cryptkeeperzk/eslint-config-base` updated to version `0.1.6`
 ## [0.1.5](https://github.com/CryptKeeperZK/crypt-keeper-extension/compare/@cryptkeeperzk/eslint-config-react-0.1.4...@cryptkeeperzk/eslint-config-react-0.1.5) (2023-09-25)
 
 ### Dependency Updates
