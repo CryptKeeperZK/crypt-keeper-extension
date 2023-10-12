@@ -310,7 +310,10 @@ export default class ZkIdentityService extends BaseService implements IBackupabl
     await this.browserController.openPopup({ params: { redirect: Paths.CONNECT_IDENTITY, urlOrigin } });
   };
 
-  importRequest = async ({ urlOrigin, trapdoor, nullifier }: IImportIdentityRequestArgs): Promise<void> => {
+  importRequest = async (
+    { trapdoor, nullifier }: IImportIdentityRequestArgs,
+    { urlOrigin = "" }: IZkMetadata,
+  ): Promise<void> => {
     await this.browserController.openPopup({
       params: { redirect: Paths.IMPORT_IDENTITY, urlOrigin, trapdoor, nullifier },
     });

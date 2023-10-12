@@ -1,15 +1,5 @@
-import {
-  ConnectedIdentityMetadata,
-  ISemaphoreFullProof,
-  ISemaphoreProofRequiredArgs,
-  IRLNProofRequiredArgs,
-  IRLNFullProof,
-  IJoinGroupMemberArgs,
-  IGenerateGroupMerkleProofArgs,
-  IVerifiablePresentationRequest,
-} from "@cryptkeeperzk/types";
-
-import { EventHandler, EventName } from "../services";
+import type { EventHandler, EventName } from "../services";
+import type { IInjectedMessageData, IInjectedProviderRequest } from "@cryptkeeperzk/types";
 
 /**
  * Represents the CryptKeeper provider that is injected into the application.
@@ -18,6 +8,9 @@ import { EventHandler, EventName } from "../services";
  * @interface
  */
 export interface ICryptKeeperInjectedProvider {
+  /**
+   * Indicates whether the provider is CryptKeeper.
+   */
   readonly isCryptKeeper: boolean;
 
   /**
@@ -28,90 +21,20 @@ export interface ICryptKeeperInjectedProvider {
   connect(isChangeIdentity?: boolean): Promise<void>;
 
   /**
-   * Retrieves the connected identity.
+   * Sends a message to the extension.
    *
-   * @returns {Promise<IConnectedIdentity>} A Promise that resolves to the connected identity.
+   * @param {IInjectedProviderRequest} message - The message to send.
+   * @returns {Promise<unknown>} A Promise that resolves to the response from the extension.
    */
-  getConnectedIdentity(): Promise<ConnectedIdentityMetadata | undefined>;
+  request(message: IInjectedProviderRequest): Promise<unknown>;
 
   /**
-   * Generates a semaphore proof.
+   * Handles incoming messages from the extension.
    *
-   * @param {string} externalNullifier - The external nullifier.
-   * @param {string} signal - The signal.
-   * @param {MerkleProofSource} merkleProofSource - The merkle proof source weather it is a storage url, artifacts or merkle proof it self.
-   *
-   * @returns {Promise<SemaphoreFullProof>} A Promise that resolves to the semaphore proof.
+   * @param {IInjectedMessageData} event - The message event.
+   * @returns {unknown} The result of handling the event.
    */
-  generateSemaphoreProof({
-    externalNullifier,
-    signal,
-    merkleProofSource,
-  }: ISemaphoreProofRequiredArgs): Promise<ISemaphoreFullProof>;
-
-  /**
-   * Generates an RLN (Reputation Linked-Note) proof based on the provided RLN proof request.
-   *
-   * @param {string} rlnIdentifier - The RLN identifier as a string.
-   * @param {string} message - The message content as a string.
-   * @param {bigint | number} [messageLimit=1] - The message limit as a bigint or number. Defaults to 1 if not provided.
-   * @param {bigint | number} [messageId=0] - The ID of the message as a bigint or number. Defaults to 0 if not provided.
-   * @param {bigint | string} epoch - The epoch value as a bigint or string.
-   * @param {MerkleProofSource} merkleProofSource - The merkle proof source weather it is a storage url, artifacts or merkle proof it self.
-   *
-   * @returns {Promise<RLNSNARKProof>} A Promise that resolves to the generated RLN proof.
-   */
-  generateRlnProof({
-    rlnIdentifier,
-    message,
-    messageLimit,
-    messageId,
-    epoch,
-    merkleProofSource,
-  }: IRLNProofRequiredArgs): Promise<IRLNFullProof>;
-
-  /**
-   * Requests user to join a group with current connected identity.
-   * @param {string} groupId - The group ID.
-   * @param {string} apiKey - The Bandada API key (optional).
-   * @param {string} inviteCode - The Bandada invite code (optional).
-   *
-   * @returns {Promise<void>}
-   */
-  joinGroup({ groupId, apiKey, inviteCode }: IJoinGroupMemberArgs): Promise<void>;
-
-  /**
-   * Requests user to generate a group Merkle proof with current connected identity.
-   * @param {string} groupId - The group ID.
-   * @returns {Promise<void>}
-   */
-  generateGroupMerkleProof({ groupId }: IGenerateGroupMerkleProofArgs): Promise<void>;
-
-  /**
-   * Requests user to add a verifiable credential.
-   *
-   * @param {string} serializedVerifiableCredential - The json string representation of the verifiable credential to add.
-   * @returns {void}
-   */
-  DEV_addVerifiableCredentialRequest(serializedVerifiableCredential: string): Promise<void>;
-
-  /**
-   * Requests user to provide a verifiable presentation.
-   * NOTE: THIS FUNCTION IS UNDER DEVELOPMENT AND NOT READY FOR PRODUCTION USE
-   *
-   * @param {IVerifiablePresentationRequest} verifiablePresentationRequest - The information provided to the user when requesting a verifiable presentation.
-   * @returns {void}
-   */
-  DEV_generateVerifiablePresentationRequest(
-    verifiablePresentationRequest: IVerifiablePresentationRequest,
-  ): Promise<void>;
-
-  /**
-   * Requests user to reveal a connected identity commitment.
-   *
-   * @returns {Promise<void>}
-   */
-  revealConnectedIdentityRequest(): Promise<void>;
+  eventResponser(event: MessageEvent<IInjectedMessageData>): unknown;
 
   /**
    * Registers an event listener for the specified event.

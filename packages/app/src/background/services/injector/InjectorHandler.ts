@@ -53,7 +53,7 @@ export class InjectorHandler {
 
   getGroupService = (): GroupService => this.groupService;
 
-  connectedIdentityMetadata = async (_: unknown, meta?: IZkMetadata): Promise<ConnectedIdentityMetadata> => {
+  getConnectedIdentityMetadata = async (_: unknown, meta?: IZkMetadata): Promise<ConnectedIdentityMetadata> => {
     const connectedIdentityMetadata = await this.zkIdentityService.getConnectedIdentityData({}, meta);
 
     if (!connectedIdentityMetadata) {

@@ -1,18 +1,8 @@
-import {
-  ConnectedIdentityMetadata,
-  ISemaphoreFullProof,
-  ISemaphoreProofRequiredArgs,
-  IRLNProofRequiredArgs,
-  IRLNFullProof,
-  IJoinGroupMemberArgs,
-  IGenerateGroupMerkleProofArgs,
-  IVerifiablePresentationRequest,
-} from "@cryptkeeperzk/types";
+import type { ICryptKeeperInjectedProvider } from "./interface";
+import type { IInjectedMessageData, IInjectedProviderRequest } from "@cryptkeeperzk/types";
 
 import { RPCExternalAction } from "../constants";
-import { Handler } from "../services";
-
-import { ICryptKeeperInjectedProvider } from "./interface";
+import { type EventHandler, type EventName, Handler } from "../services";
 
 /**
  * Represents the CryptKeeper provider that is injected into the application.
@@ -20,7 +10,12 @@ import { ICryptKeeperInjectedProvider } from "./interface";
  *
  * @class
  */
-export class CryptKeeperInjectedProvider extends Handler implements ICryptKeeperInjectedProvider {
+export class CryptKeeperInjectedProvider implements ICryptKeeperInjectedProvider {
+  /**
+   * Handler service
+   */
+  private readonly handler: Handler;
+
   /**
    * Indicates whether the provider is CryptKeeper.
    */
@@ -31,121 +26,50 @@ export class CryptKeeperInjectedProvider extends Handler implements ICryptKeeper
    *
    * @constructor
    */
-  // eslint-disable-next-line @typescript-eslint/no-useless-constructor
   constructor(connectedOrigin?: string) {
-    super(connectedOrigin);
-  }
-
-  async getConnectedIdentity(): Promise<ConnectedIdentityMetadata | undefined> {
-    return this.post({
-      method: RPCExternalAction.GET_CONNECTED_IDENTITY_DATA,
-    }) as Promise<ConnectedIdentityMetadata | undefined>;
-  }
-
-  async connect(isChangeIdentity = false): Promise<void> {
-    await this.post({
-      method: RPCExternalAction.CONNECT,
-      payload: {
-        isChangeIdentity,
-        urlOrigin: this.connectedOrigin,
-      },
-    });
-  }
-
-  async generateSemaphoreProof({
-    externalNullifier,
-    signal,
-    merkleProofSource,
-  }: ISemaphoreProofRequiredArgs): Promise<ISemaphoreFullProof> {
-    return this.post({
-      method: RPCExternalAction.GENERATE_SEMAPHORE_PROOF,
-      payload: {
-        externalNullifier,
-        signal,
-        merkleProofSource,
-      },
-    }) as Promise<ISemaphoreFullProof>;
-  }
-
-  async generateRlnProof({
-    rlnIdentifier,
-    message,
-    messageLimit,
-    messageId,
-    epoch,
-    merkleProofSource,
-  }: IRLNProofRequiredArgs): Promise<IRLNFullProof> {
-    return this.post({
-      method: RPCExternalAction.GENERATE_RLN_PROOF,
-      payload: {
-        rlnIdentifier,
-        message,
-        messageId,
-        messageLimit,
-        epoch,
-        merkleProofSource,
-      },
-    }) as Promise<IRLNFullProof>;
-  }
-
-  async joinGroup({ groupId, apiKey, inviteCode }: IJoinGroupMemberArgs): Promise<void> {
-    await this.post({
-      method: RPCExternalAction.JOIN_GROUP_REQUEST,
-      payload: {
-        groupId,
-        apiKey,
-        inviteCode,
-      },
-    });
-  }
-
-  async generateGroupMerkleProof({ groupId }: IGenerateGroupMerkleProofArgs): Promise<void> {
-    await this.post({
-      method: RPCExternalAction.GENERATE_GROUP_MERKLE_PROOF_REQUEST,
-      payload: {
-        groupId,
-      },
-    });
+    this.handler = new Handler(connectedOrigin);
   }
 
   /**
-   * Requests user to reveal a connected identity commitment.
+   * Connects to the CryptKeeper extension.
    *
    * @returns {Promise<void>}
    */
-  async revealConnectedIdentityRequest(): Promise<void> {
-    await this.post({
-      method: RPCExternalAction.REVEAL_CONNECTED_IDENTITY_COMMITMENT_REQUEST,
+  connect = async (isChangeIdentity = false): Promise<void> => {
+    await this.request({
+      method: RPCExternalAction.CONNECT,
+      payload: {
+        isChangeIdentity,
+        urlOrigin: this.handler.getConnectedOrigin(),
+      },
     });
-  }
+  };
 
   /**
-   * Requests user to provide a verifiable presentation.
-   * NOTE: THIS FUNCTION IS UNDER DEVELOPMENT AND NOT READY FOR PRODUCTION USE
+   * Sends a message to the extension.
    *
-   * @param {IVerifiablePresentationRequest} verifiablePresentationRequest - The information provided to the user when requesting a verifiable presentation.
-   * @returns {void}
+   * @param {IInjectedProviderRequest} message - The message to send.
+   * @returns {Promise<unknown>} A Promise that resolves to the response from the extension.
    */
-  async DEV_generateVerifiablePresentationRequest(
-    verifiablePresentationRequest: IVerifiablePresentationRequest,
-  ): Promise<void> {
-    await this.post({
-      method: RPCExternalAction.GENERATE_VERIFIABLE_PRESENTATION_REQUEST,
-      payload: verifiablePresentationRequest,
-    });
-  }
+  request = async (message: IInjectedProviderRequest): Promise<unknown> => this.handler.request(message);
 
   /**
-   * Requests user to reveal a connected identity commitment.
-   * NOTE: THIS FUNCTION IS UNDER DEVELOPMENT AND NOT READY FOR PRODUCTION USE
+   * Handles incoming messages from the extension.
    *
-   * @param {string} serializedVerifiableCredential - The json string representation of the verifiable credential to add.
-   * @returns {void}
+   * @param {IInjectedMessageData} event - The message event.
+   * @returns {unknown} The result of handling the event.
    */
-  async DEV_addVerifiableCredentialRequest(serializedVerifiableCredential: string): Promise<void> {
-    await this.post({
-      method: RPCExternalAction.ADD_VERIFIABLE_CREDENTIAL_REQUEST,
-      payload: serializedVerifiableCredential,
-    });
-  }
+  eventResponser = (event: MessageEvent<IInjectedMessageData>): unknown => this.handler.eventResponser(event);
+
+  on = (eventName: EventName, cb: EventHandler): void => {
+    this.handler.on(eventName, cb);
+  };
+
+  emit = (eventName: EventName, payload?: unknown): void => {
+    this.handler.emit(eventName, payload);
+  };
+
+  cleanListeners = (): void => {
+    this.handler.cleanListeners();
+  };
 }

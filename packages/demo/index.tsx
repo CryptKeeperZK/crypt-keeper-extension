@@ -67,6 +67,7 @@ const App = () => {
     revealConnectedIdentityCommitment,
     joinGroup,
     generateGroupMerkleProof,
+    importIdentity,
   } = useCryptKeeper();
 
   if (isLocked) {
@@ -113,6 +114,39 @@ const App = () => {
           }}
         >
           Connect identity
+        </button>
+      </div>
+
+      <div>
+        <h2>Import identity</h2>
+
+        <div>
+          <label htmlFor="trapdoor">Trapdoor</label>
+
+          <br />
+
+          <input id="trapdoor" placeholder="Enter trapdoor" />
+        </div>
+
+        <br />
+
+        <div>
+          <label htmlFor="nullifier">Nullifier</label>
+
+          <br />
+
+          <input id="nullifier" placeholder="Enter nullifier" />
+        </div>
+
+        <br />
+
+        <button
+          type="button"
+          onClick={() => {
+            importIdentity();
+          }}
+        >
+          Import
         </button>
       </div>
 
