@@ -2,6 +2,16 @@
 
 This file was generated using [@jscutlery/semver](https://github.com/jscutlery/semver).
 
+## [0.5.1](https://github.com/CryptKeeperZK/crypt-keeper-extension/compare/@cryptkeeperzk/zk-0.5.0...@cryptkeeperzk/zk-0.5.1) (2023-10-12)
+
+### Dependency Updates
+
+* `@cryptkeeperzk/types` updated to version `0.5.1`
+
+### Bug Fixes
+
+* release workflow ([#1013](https://github.com/CryptKeeperZK/crypt-keeper-extension/issues/1013)) ([eafc7ad](https://github.com/CryptKeeperZK/crypt-keeper-extension/commit/eafc7adacb185b6b1783f6d1486ee97a5c4b7f0f))
+
 ## [0.5.0](https://github.com/CryptKeeperZK/crypt-keeper-extension/compare/@cryptkeeperzk/zk-0.4.0...@cryptkeeperzk/zk-0.5.0) (2023-10-12)
 
 ### Dependency Updates
