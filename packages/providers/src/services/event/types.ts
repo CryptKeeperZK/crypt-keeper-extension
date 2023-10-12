@@ -28,6 +28,7 @@ export enum EventName {
   LOGIN = "login",
   IDENTITY_CHANGED = "identityChanged",
   LOGOUT = "logout",
+  APPROVAL = "approval",
   ADD_VERIFIABLE_CREDENTIAL = "addVerifiableCredential",
   VERIFIABLE_PRESENTATION_REQUEST = "verifiablePresentationRequest",
   GENERATE_VERIFIABLE_PRESENTATION = "generateVerifiablePresentation",

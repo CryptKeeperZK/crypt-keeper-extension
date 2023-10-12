@@ -1,3 +1,6 @@
+import { EventName } from "@cryptkeeperzk/providers";
+
+import BrowserUtils from "@src/background/controllers/browserUtils";
 import CryptoService, { ECryptMode } from "@src/background/services/crypto";
 import SimpleStorage from "@src/background/services/storage";
 
@@ -13,6 +16,8 @@ export default class ApprovalService extends BaseService implements IBackupable 
 
   private allowedHosts: Map<string, IHostPermission>;
 
+  private browserController: BrowserUtils;
+
   private approvals: SimpleStorage;
 
   private cryptoService: CryptoService;
@@ -22,6 +27,7 @@ export default class ApprovalService extends BaseService implements IBackupable 
     this.allowedHosts = new Map();
     this.approvals = new SimpleStorage(APPROVALS_DB_KEY);
     this.cryptoService = CryptoService.getInstance();
+    this.browserController = BrowserUtils.getInstance();
   }
 
   static getInstance = (): ApprovalService => {
@@ -74,6 +80,10 @@ export default class ApprovalService extends BaseService implements IBackupable 
 
     this.allowedHosts.set(urlOrigin, { urlOrigin, canSkipApprove });
     await this.saveApprovals();
+
+    await this.browserController
+      .pushEvent({ type: EventName.APPROVAL, payload: { isApproved: true, urlOrigin } }, { urlOrigin })
+      .then(() => this.browserController.closePopup());
   };
 
   remove = async ({ urlOrigin }: { urlOrigin: string }): Promise<void> => {
@@ -83,6 +93,10 @@ export default class ApprovalService extends BaseService implements IBackupable 
 
     this.allowedHosts.delete(urlOrigin);
     await this.saveApprovals();
+
+    await this.browserController
+      .pushEvent({ type: EventName.APPROVAL, payload: { isApproved: false, urlOrigin } }, { urlOrigin })
+      .then(() => this.browserController.closePopup());
   };
 
   /** dev only */
