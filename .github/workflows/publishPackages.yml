@@ -20,7 +20,6 @@ env:
   TARGET: "chrome"
   DEMO_URL: ${{ vars.DEMO_URL }}
   MERKLE_MOCK_SERVER: ${{ vars.MERKLE_MOCK_SERVER }}
-  PACKAGE_VERSION: ""
   MANIFEST_VERSION: 3
   VERIFIABLE_CREDENTIALS: false
   WEBPACK_ANALYZER: false
@@ -52,22 +51,19 @@ jobs:
           node-version: ${{ matrix.node-version }}
           cache: "pnpm"
 
-      - run: pnpm install --frozen-lockfile --prefer-offline
-
-      - name: Get package version
-        run: |-
-          echo "PACKAGE_VERSION=$(node -e "console.log('${{ github.ref_name }}'.split('-')[1])")" >> $GITHUB_ENV
-
-      - run: |-
-          pnpm run build
-
       - name: Setup publisher
         run: |
           git config user.name "${{ github.actor }}"
           git config user.email "${{ github.actor}}@users.noreply.github.com"
           pnpm config set commit-hooks false
-          pnpm config set git-checks false 
+          pnpm config set git-checks false
+          pnpm config set always-auth true
           pnpm config set //registry.npmjs.org/:_authToken ${{ secrets.NPM_TOKEN }}
+
+      - run: pnpm install --frozen-lockfile --prefer-offline
+
+      - run: |-
+          pnpm run build
 
       - name: Publish
         run: |-
