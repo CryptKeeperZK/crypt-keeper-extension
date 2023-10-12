@@ -42,10 +42,13 @@ export class CryptKeeperInjectedProvider extends Handler implements ICryptKeeper
     }) as Promise<ConnectedIdentityMetadata | undefined>;
   }
 
-  async connect(): Promise<void> {
+  async connect(isChangeIdentity = false): Promise<void> {
     await this.post({
       method: RPCExternalAction.CONNECT,
-      payload: { urlOrigin: this.connectedOrigin },
+      payload: {
+        isChangeIdentity,
+        urlOrigin: this.connectedOrigin,
+      },
     });
   }
 

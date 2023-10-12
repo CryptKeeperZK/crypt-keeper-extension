@@ -25,7 +25,7 @@ export interface ICryptKeeperInjectedProvider {
    *
    * @returns {Promise<void>}
    */
-  connect(): Promise<void>;
+  connect(isChangeIdentity?: boolean): Promise<void>;
 
   /**
    * Retrieves the connected identity.

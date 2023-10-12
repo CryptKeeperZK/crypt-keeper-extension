@@ -10,6 +10,7 @@ import {
   IJoinGroupMemberArgs,
   IGenerateGroupMerkleProofArgs,
 } from "@cryptkeeperzk/types";
+import { IConnectionOptions } from "@cryptkeeperzk/types/dist/src/approval";
 import { identity } from "webextension-polyfill";
 
 import { closeChromeOffscreen, createChromeOffscreen, getBrowserPlatform } from "@src/background/shared/utils";
@@ -48,7 +49,7 @@ export class InjectorService {
     return this.injectorHandler.connectedIdentityMetadata({}, { urlOrigin });
   };
 
-  connect = async ({ urlOrigin }: IZkMetadata): Promise<void> => {
+  connect = async ({ isChangeIdentity }: IConnectionOptions, { urlOrigin }: IZkMetadata): Promise<void> => {
     const { checkedUrlOrigin, isApproved, canSkipApprove } = await this.injectorHandler.checkApproval({ urlOrigin });
 
     try {
@@ -67,7 +68,7 @@ export class InjectorService {
 
       const connectedIdentity = await this.injectorHandler.getZkIdentityService().getConnectedIdentity();
 
-      if (connectedIdentity?.metadata.urlOrigin !== urlOrigin) {
+      if (connectedIdentity?.metadata.urlOrigin !== urlOrigin || isChangeIdentity) {
         await this.injectorHandler.getZkIdentityService().connectIdentityRequest({ urlOrigin: urlOrigin! });
       }
     } catch (error) {
