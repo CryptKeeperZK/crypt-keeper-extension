@@ -2,6 +2,35 @@
 
 This file was generated using [@jscutlery/semver](https://github.com/jscutlery/semver).
 
+## [0.5.0](https://github.com/CryptKeeperZK/crypt-keeper-extension/compare/@cryptkeeperzk/app-0.4.0...@cryptkeeperzk/app-0.5.0) (2023-10-12)
+
+### Dependency Updates
+
+* `@cryptkeeperzk/providers` updated to version `0.4.0`
+* `@cryptkeeperzk/types` updated to version `0.5.0`
+* `@cryptkeeperzk/zk` updated to version `0.5.0`
+* `@cryptkeeperzk/eslint-config-react` updated to version `0.1.6`
+
+### Features
+
+* add approval event ([#1012](https://github.com/CryptKeeperZK/crypt-keeper-extension/issues/1012)) ([cd41be5](https://github.com/CryptKeeperZK/crypt-keeper-extension/commit/cd41be5c63cbc1ea2d778941b42b03b0e20bf9f0))
+* add import identity page ([#962](https://github.com/CryptKeeperZK/crypt-keeper-extension/issues/962)) ([d7c4428](https://github.com/CryptKeeperZK/crypt-keeper-extension/commit/d7c4428b33a3779b3575814fd5752797a4060b20))
+* added a temp fix for change identity ([#1006](https://github.com/CryptKeeperZK/crypt-keeper-extension/issues/1006)) ([23efbf0](https://github.com/CryptKeeperZK/crypt-keeper-extension/commit/23efbf0b6a41d3a40e5e31dd678a3cd263c93bae))
+* import identity ([#990](https://github.com/CryptKeeperZK/crypt-keeper-extension/issues/990)) ([f246091](https://github.com/CryptKeeperZK/crypt-keeper-extension/commit/f246091db2bf78cb6bb33da00c57e2c773e8adc3))
+* import identity integration ([#993](https://github.com/CryptKeeperZK/crypt-keeper-extension/issues/993)) ([d5eb868](https://github.com/CryptKeeperZK/crypt-keeper-extension/commit/d5eb868fdb8f29ba9a90055a2b7098272d7467c2))
+* major refactoring to the provider APIs pipeline ([#875](https://github.com/CryptKeeperZK/crypt-keeper-extension/issues/875)) ([0246df6](https://github.com/CryptKeeperZK/crypt-keeper-extension/commit/0246df68ed275d746377e35679c5b769aad0b244))
+* update identity creation ([#937](https://github.com/CryptKeeperZK/crypt-keeper-extension/issues/937)) ([26ee60e](https://github.com/CryptKeeperZK/crypt-keeper-extension/commit/26ee60eacc3cd99e96f049f9c53ab453d58e20f2))
+* update input styles ([#975](https://github.com/CryptKeeperZK/crypt-keeper-extension/issues/975)) ([591a345](https://github.com/CryptKeeperZK/crypt-keeper-extension/commit/591a34534f5284eb6af3afc167d2b25b0a02266b))
+
+
+### Bug Fixes
+
+* awaiting unlocked for approval and zk identity ([#966](https://github.com/CryptKeeperZK/crypt-keeper-extension/issues/966)) ([58aa6ce](https://github.com/CryptKeeperZK/crypt-keeper-extension/commit/58aa6ce544013bbc67bbfb0756154eca61d4f288))
+* check connected identity on connect() ([#978](https://github.com/CryptKeeperZK/crypt-keeper-extension/issues/978)) ([691966e](https://github.com/CryptKeeperZK/crypt-keeper-extension/commit/691966eac872c7a0a04548266ff6f5f08d8edff1))
+* protect external bandada apis ([#973](https://github.com/CryptKeeperZK/crypt-keeper-extension/issues/973)) ([18f7843](https://github.com/CryptKeeperZK/crypt-keeper-extension/commit/18f7843d0db1bfbe8ead3999e1027aa1f67dc597))
+* unlock approval and identity services ([#1011](https://github.com/CryptKeeperZK/crypt-keeper-extension/issues/1011)) ([2786b47](https://github.com/CryptKeeperZK/crypt-keeper-extension/commit/2786b47db72801699925daee3216915eb829dc20))
+* yup merkle source ([#972](https://github.com/CryptKeeperZK/crypt-keeper-extension/issues/972)) ([c3d3272](https://github.com/CryptKeeperZK/crypt-keeper-extension/commit/c3d32726286df719b1d6ca30ce9ca7a1b8b43920))
+
 ## [0.4.0](https://github.com/CryptKeeperZK/crypt-keeper-extension/compare/@cryptkeeperzk/app-0.3.0...@cryptkeeperzk/app-0.4.0) (2023-09-25)
 
 ### Dependency Updates
