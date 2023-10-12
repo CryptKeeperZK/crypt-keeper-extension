@@ -1,6 +1,6 @@
 {
   "name": "@cryptkeeperzk/types",
-  "version": "0.5.1",
+  "version": "0.5.2",
   "description": "CryptKeeper Extension types",
   "main": "./dist/src/index.js",
   "types": "./dist/src/index.d.ts",
