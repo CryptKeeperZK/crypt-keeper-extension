@@ -26,7 +26,12 @@ Are there any issues, Slack conversations, Zendesk issues, user stories, etc. re
 
 ## Screenshots
 
-<!-- If you're making a change to the UI, make sure to capture a screenshot or a short video showing off your work! -->
+<details>
+<summary>Expand</summary>
+
+<!-- Add screenshoots here -->
+
+</details>
 
 ## Manual Testing Steps
 
@@ -37,6 +42,7 @@ How should reviewers and QA manually test your changes? For instance:
 - Do this
 - Then do this
 -->
+
 ## Pre-Merge Checklist
 
 ### Assignees Checklist
@@ -49,4 +55,5 @@ How should reviewers and QA manually test your changes? For instance:
 - [ ] PR has been added to the appropriate release Milestone
 
 ### Reviewers Checklist
+
 - [ ] Manual testing checked and passed.
