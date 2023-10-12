@@ -2,6 +2,26 @@
 
 This file was generated using [@jscutlery/semver](https://github.com/jscutlery/semver).
 
+## [0.4.0](https://github.com/CryptKeeperZK/crypt-keeper-extension/compare/@cryptkeeperzk/demo-0.3.0...@cryptkeeperzk/demo-0.4.0) (2023-10-12)
+
+### Dependency Updates
+
+* `@cryptkeeperzk/providers` updated to version `0.4.0`
+* `@cryptkeeperzk/types` updated to version `0.5.0`
+* `@cryptkeeperzk/eslint-config-react` updated to version `0.1.6`
+
+### Features
+
+* add approval event ([#1012](https://github.com/CryptKeeperZK/crypt-keeper-extension/issues/1012)) ([cd41be5](https://github.com/CryptKeeperZK/crypt-keeper-extension/commit/cd41be5c63cbc1ea2d778941b42b03b0e20bf9f0))
+* added a temp fix for change identity ([#1006](https://github.com/CryptKeeperZK/crypt-keeper-extension/issues/1006)) ([23efbf0](https://github.com/CryptKeeperZK/crypt-keeper-extension/commit/23efbf0b6a41d3a40e5e31dd678a3cd263c93bae))
+* import identity integration ([#993](https://github.com/CryptKeeperZK/crypt-keeper-extension/issues/993)) ([d5eb868](https://github.com/CryptKeeperZK/crypt-keeper-extension/commit/d5eb868fdb8f29ba9a90055a2b7098272d7467c2))
+* major refactoring to the provider APIs pipeline ([#875](https://github.com/CryptKeeperZK/crypt-keeper-extension/issues/875)) ([0246df6](https://github.com/CryptKeeperZK/crypt-keeper-extension/commit/0246df68ed275d746377e35679c5b769aad0b244))
+
+
+### Bug Fixes
+
+* check connected identity on connect() ([#978](https://github.com/CryptKeeperZK/crypt-keeper-extension/issues/978)) ([691966e](https://github.com/CryptKeeperZK/crypt-keeper-extension/commit/691966eac872c7a0a04548266ff6f5f08d8edff1))
+
 ## [0.3.0](https://github.com/CryptKeeperZK/crypt-keeper-extension/compare/@cryptkeeperzk/demo-0.2.0...@cryptkeeperzk/demo-0.3.0) (2023-09-25)
 
 ### Dependency Updates
