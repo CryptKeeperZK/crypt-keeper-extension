@@ -12,8 +12,8 @@ export {
   calculateIdentitySecret,
   str2BigInt,
   getRateCommitmentHash,
-  getMessageHash,
   getMerkleProof,
+  getMessageHash,
   getRlnVerificationKeyJson,
   generateMerkleProof,
 } from "./proof/protocols";
