@@ -2,6 +2,11 @@
 
 This file was generated using [@jscutlery/semver](https://github.com/jscutlery/semver).
 
+## [0.1.8](https://github.com/CryptKeeperZK/crypt-keeper-extension/compare/@cryptkeeperzk/merkle-mock-server-0.1.7...@cryptkeeperzk/merkle-mock-server-0.1.8) (2023-10-12)
+
+### Dependency Updates
+
+* `@cryptkeeperzk/zk` updated to version `0.5.2`
 ## [0.1.7](https://github.com/CryptKeeperZK/crypt-keeper-extension/compare/@cryptkeeperzk/merkle-mock-server-0.1.6...@cryptkeeperzk/merkle-mock-server-0.1.7) (2023-10-12)
 
 ### Dependency Updates
