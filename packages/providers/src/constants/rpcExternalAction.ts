@@ -8,7 +8,7 @@ export enum RPCExternalAction {
   GENERATE_GROUP_MERKLE_PROOF = "rpc/injector/groups/generateGroupMerkleProof",
   IMPORT_IDENTITY = "rpc/injector/identity/import",
   // TODO: the following 3 RPC calls will be refactored in another PR
-  GENERATE_VERIFIABLE_PRESENTATION = "rpc/credentials/generateVerifiablePresentation",
-  ADD_VERIFIABLE_CREDENTIAL = "rpc/credentials/addVerifiableCredential",
-  REVEAL_CONNECTED_IDENTITY_COMMITMENT = "rpc/identity/revealConnectedIdentityCommitment",
+  GENERATE_VERIFIABLE_PRESENTATION = "rpc/injector/credentials/generateVerifiablePresentation",
+  ADD_VERIFIABLE_CREDENTIAL = "rpc/injector/credentials/addVerifiableCredential",
+  REVEAL_CONNECTED_IDENTITY_COMMITMENT = "rpc/injector/identity/revealConnectedIdentityCommitment",
 }
