@@ -23,6 +23,7 @@ export interface IUseCreateIdentityData {
   onCloseModal: () => void;
   register: UseFormRegister<FormFields>;
   onSign: (index: number) => void;
+  onGoToImportIdentity: () => void;
 }
 
 interface FormFields {
@@ -34,6 +35,10 @@ export enum SignatureOptions {
   CRYPTKEEPER_WALLET = 0,
   ETH_WALLET = 1,
 }
+
+const REDIRECT_MAP: Record<string, string> = {
+  [Paths.CONNECT_IDENTITY]: Paths.CONNECT_IDENTITY,
+};
 
 export const useCreateIdentity = (): IUseCreateIdentityData => {
   const {
@@ -51,10 +56,14 @@ export const useCreateIdentity = (): IUseCreateIdentityData => {
   const navigate = useNavigate();
 
   const { searchParams } = new URL(window.location.href.replace("#", ""));
-  const { isGoBack, urlOrigin } = useMemo(
-    () => ({ isGoBack: searchParams.get("back") === "true", urlOrigin: searchParams.get("urlOrigin") || undefined }),
+  const { redirect, urlOrigin } = useMemo(
+    () => ({
+      redirect: REDIRECT_MAP[searchParams.get("back")!],
+      urlOrigin: searchParams.get("urlOrigin") || undefined,
+    }),
     [searchParams.toString()],
   );
+  const redirectUrl = redirect ? `${redirect}?urlOrigin=${urlOrigin}&back=${redirect}` : redirect;
 
   const ethWallet = useEthWallet();
   const cryptKeeperWallet = useCryptKeeperWallet();
@@ -90,8 +99,8 @@ export const useCreateIdentity = (): IUseCreateIdentityData => {
           }),
         );
 
-        if (isGoBack) {
-          navigate(-1);
+        if (redirectUrl) {
+          navigate(redirectUrl);
         } else {
           dispatch(closePopup()).then(() => {
             navigate(Paths.HOME);
@@ -101,7 +110,7 @@ export const useCreateIdentity = (): IUseCreateIdentityData => {
         setError("root", { type: "submit", message: (err as Error).message });
       }
     },
-    [ethWallet.address, ethWallet.provider, cryptKeeperWallet.address, isGoBack, urlOrigin, dispatch, navigate],
+    [ethWallet.address, ethWallet.provider, cryptKeeperWallet.address, redirectUrl, urlOrigin, dispatch, navigate],
   );
 
   const onCreateIdentityWithEthWallet = useCallback(
@@ -140,14 +149,18 @@ export const useCreateIdentity = (): IUseCreateIdentityData => {
   );
 
   const onCloseModal = useCallback(() => {
-    if (isGoBack) {
+    if (redirect) {
       navigate(-1);
     } else {
       dispatch(closePopup()).then(() => {
         navigate(Paths.HOME);
       });
     }
-  }, [isGoBack, navigate, dispatch]);
+  }, [redirect, navigate, dispatch]);
+
+  const onGoToImportIdentity = useCallback(() => {
+    navigate(`${Paths.IMPORT_IDENTITY}?back=${redirect || Paths.CREATE_IDENTITY}&urlOrigin=${urlOrigin || ""}`);
+  }, [redirect, urlOrigin, navigate]);
 
   return {
     isLoading: ethWallet.isActivating || cryptKeeperWallet.isActivating || isLoading || isSubmitting,
@@ -162,5 +175,6 @@ export const useCreateIdentity = (): IUseCreateIdentityData => {
     register,
     onCloseModal,
     onSign,
+    onGoToImportIdentity,
   };
 };

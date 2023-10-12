@@ -11,6 +11,7 @@ import {
   type IZkMetadata,
   type IImportIdentityArgs,
   EWallet,
+  IImportIdentityRequestArgs,
 } from "@cryptkeeperzk/types";
 import { ZkIdentitySemaphore, createNewIdentity } from "@cryptkeeperzk/zk";
 import { bigintToHex } from "bigint-conversion";
@@ -309,6 +310,12 @@ export default class ZkIdentityService extends BaseService implements IBackupabl
     await this.browserController.openPopup({ params: { redirect: Paths.CONNECT_IDENTITY, urlOrigin } });
   };
 
+  importRequest = async ({ urlOrigin, trapdoor, nullifier }: IImportIdentityRequestArgs): Promise<void> => {
+    await this.browserController.openPopup({
+      params: { redirect: Paths.IMPORT_IDENTITY, urlOrigin, trapdoor, nullifier },
+    });
+  };
+
   revealConnectedIdentityCommitmentRequest = async (): Promise<void> => {
     await this.browserController.openPopup({ params: { redirect: Paths.REVEAL_IDENTITY_COMMITMENT } });
   };
@@ -404,6 +411,14 @@ export default class ZkIdentityService extends BaseService implements IBackupabl
         type: "basic",
       },
     });
+
+    await this.browserController.pushEvent(
+      {
+        type: newIdentity.metadata.isImported ? EventName.IMPORT_IDENTITY : EventName.CREATE_IDENTITY,
+        payload: this.getConnectedIdentityMetadata(),
+      },
+      { urlOrigin: newIdentity.metadata.urlOrigin! },
+    );
 
     return true;
   };

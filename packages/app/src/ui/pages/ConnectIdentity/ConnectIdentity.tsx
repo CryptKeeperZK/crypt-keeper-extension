@@ -32,7 +32,10 @@ const ConnectIdentity = (): JSX.Element => {
               Please choose one to connect with or choose to
             </Typography>
 
-            <NavLink data-testid="create-new-identity" to={`${Paths.CREATE_IDENTITY}?back=true&urlOrigin=${urlOrigin}`}>
+            <NavLink
+              data-testid="create-new-identity"
+              to={`${Paths.CREATE_IDENTITY}?back=${Paths.CONNECT_IDENTITY}&urlOrigin=${urlOrigin}`}
+            >
               create a new identity
             </NavLink>
           </Box>

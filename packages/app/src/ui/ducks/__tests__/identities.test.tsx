@@ -39,6 +39,7 @@ import {
   useUnlinkedIdentities,
   useIdentity,
   revealConnectedIdentityCommitment,
+  importIdentity,
 } from "../identities";
 
 jest.unmock("@src/ui/ducks/hooks");
@@ -235,6 +236,23 @@ describe("ui/ducks/identities", () => {
         urlOrigin: "http://localhost:3000",
         options: { message: "message", account: ZERO_ADDRESS, nonce: 0 },
       },
+    });
+  });
+
+  test("should call import identity action properly", async () => {
+    const args = {
+      name: "Name",
+      nullifier: "nullifier",
+      trapdoor: "trapdoor",
+      urlOrigin: "http://localhost:3000",
+    };
+
+    await Promise.resolve(store.dispatch(importIdentity(args)));
+
+    expect(postMessage).toBeCalledTimes(1);
+    expect(postMessage).toBeCalledWith({
+      method: RPCInternalAction.IMPORT_IDENTITY,
+      payload: args,
     });
   });
 

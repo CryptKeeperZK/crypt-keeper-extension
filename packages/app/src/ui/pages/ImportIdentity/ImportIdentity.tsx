@@ -51,6 +51,12 @@ const ImportIdentity = (): JSX.Element => {
                 </Typography>
               </Typography>
             )}
+
+            {!urlOrigin && (
+              <Typography component="div" fontWeight="bold" sx={{ textAlign: "left", mb: 3 }} variant="h6">
+                Import identity with trapdoor and nullifier
+              </Typography>
+            )}
           </Box>
 
           <Box sx={{ mt: 2 }}>

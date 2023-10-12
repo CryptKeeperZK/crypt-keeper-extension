@@ -22,6 +22,7 @@ export type {
   ISerializedIdentity,
   ConnectedIdentityMetadata,
   IImportIdentityArgs,
+  IImportIdentityRequestArgs,
 } from "./identity";
 export { EWallet } from "./identity";
 export type {
