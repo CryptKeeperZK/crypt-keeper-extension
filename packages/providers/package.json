@@ -1,6 +1,6 @@
 {
   "name": "@cryptkeeperzk/providers",
-  "version": "0.4.1",
+  "version": "0.4.2",
   "description": "CryptKeeper providers",
   "publishConfig": {
     "access": "public"
