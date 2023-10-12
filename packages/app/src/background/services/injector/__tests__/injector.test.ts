@@ -51,6 +51,7 @@ const mockGetConnectedIdentityData = jest.fn(
     return Promise.resolve(undefined);
   },
 );
+const mockConnectRequest = jest.fn();
 const mockConnectIdentityRequest = jest.fn();
 const mockIsApproved = jest.fn(
   (urlOrigin) =>
@@ -131,9 +132,9 @@ jest.mock("@src/background/services/zkIdentity", (): unknown => ({
   getInstance: jest.fn(() => ({
     getConnectedIdentity: mockGetConnectedIdentity,
     getConnectedIdentityData: mockGetConnectedIdentityData,
-    connectRequest: mockConnectIdentityRequest,
+    connectRequest: mockConnectRequest,
     awaitUnlock: mockAwaitZkIdentityServiceUnlock,
-    connectIdentityRequest: jest.fn(),
+    connectIdentityRequest: mockConnectIdentityRequest,
   })),
 }));
 
@@ -204,18 +205,39 @@ describe("background/services/injector", () => {
   });
 
   describe("connect", () => {
-    test("should connect properly", async () => {
+    test("should connect properly if not connected identity found", async () => {
+      mockGetConnectedIdentity.mockResolvedValue(undefined);
+
+      const service = InjectorService.getInstance();
+
+      await expect(service.connect({ isChangeIdentity: false }, defaultMetadata)).resolves.not.toThrowError();
+      expect(mockConnectIdentityRequest).toHaveBeenCalledTimes(1);
+    });
+
+    test("should connect properly if connected identity found", async () => {
       mockGetConnectedIdentity.mockResolvedValue(mockDefaultIdentity);
 
       const service = InjectorService.getInstance();
 
-      await expect(service.connect(defaultMetadata)).resolves.not.toThrowError();
+      await expect(service.connect({ isChangeIdentity: false }, defaultMetadata)).resolves.not.toThrowError();
+      expect(mockConnectIdentityRequest).toHaveBeenCalledTimes(0);
+    });
+
+    test("should connect properly if change identity request added", async () => {
+      mockGetConnectedIdentity.mockResolvedValue(mockDefaultIdentity);
+
+      const service = InjectorService.getInstance();
+
+      await expect(service.connect({ isChangeIdentity: true }, defaultMetadata)).resolves.not.toThrowError();
+      expect(mockConnectIdentityRequest).toHaveBeenCalledTimes(1);
     });
 
     test("should throw error if there is no urlOrigin", async () => {
       const service = InjectorService.getInstance();
 
-      await expect(service.connect({ urlOrigin: "" })).rejects.toThrow("CryptKeeper: Origin is not set");
+      await expect(service.connect({ isChangeIdentity: false }, { urlOrigin: "" })).rejects.toThrow(
+        "CryptKeeper: Origin is not set",
+      );
     });
 
     test("should connect with approval request properly", async () => {
@@ -223,14 +245,16 @@ describe("background/services/injector", () => {
 
       const service = InjectorService.getInstance();
 
-      await expect(service.connect({ urlOrigin: "new-urlOrigin" })).resolves.not.toThrowError();
+      await expect(
+        service.connect({ isChangeIdentity: false }, { urlOrigin: "new-urlOrigin" }),
+      ).resolves.not.toThrowError();
       expect(mockNewRequest).toHaveBeenCalledTimes(1);
     });
 
     test("should reject connect request from the approve connection page properly", async () => {
       const service = InjectorService.getInstance();
 
-      await expect(service.connect({ urlOrigin: "reject_approve" })).rejects.toThrow(
+      await expect(service.connect({ isChangeIdentity: false }, { urlOrigin: "reject_approve" })).rejects.toThrow(
         "CryptKeeper: error in the connect request, User rejected your request.",
       );
     });
@@ -238,7 +262,7 @@ describe("background/services/injector", () => {
     test("should reject connect request from the connect identity page properly", async () => {
       const service = InjectorService.getInstance();
 
-      await expect(service.connect({ urlOrigin: "reject_connect" })).rejects.toThrow(
+      await expect(service.connect({ isChangeIdentity: false }, { urlOrigin: "reject_connect" })).rejects.toThrow(
         "CryptKeeper: error in the connect request, User rejected your request.",
       );
     });
