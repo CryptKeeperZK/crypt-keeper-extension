@@ -1,6 +1,6 @@
 {
   "name": "@cryptkeeperzk/eslint-config-base",
-  "version": "0.1.5",
+  "version": "0.1.6",
   "description": "ESLint base config for CryptKeeper extension",
   "private": true,
   "main": "index.js",
