@@ -69,22 +69,6 @@ jobs:
           pnpm run build
           zip -r cryptkeeper-chrome-extension-v${{ env.EXTENSION_VERSION }}.zip ./packages/app/dist
 
-      - name: Sign build
-        run: |-
-          export GPG_TTY=`tty`
-          echo -n "$GPG_SIGNING_KEY" | base64 --decode | gpg --passphrase "$GPG_SIGNING_KEY_PASSPHRASE" --batch --pinentry-mode loopback --import
-          gpg --passphrase $GPG_SIGNING_KEY_PASSPHRASE --batch --pinentry-mode loopback --detach-sign --armor cryptkeeper-chrome-extension-v${{ env.EXTENSION_VERSION }}.zip
-          echo $(shasum cryptkeeper-chrome-extension-v${{ env.EXTENSION_VERSION }}.zip | awk '{ print $1 }') >> cryptkeeper-chrome-extension-checksum-v${{ env.EXTENSION_VERSION }}.txt
-        env:
-          GPG_SIGNING_KEY: ${{ secrets.GPG_SIGNING_KEY }}
-          GPG_SIGNING_KEY_PASSPHRASE: ${{ secrets.GPG_SIGNING_KEY_PASSPHRASE }}
-
       - name: Upload artifact to chrome store
         run: |-
           chrome-webstore-upload upload --source cryptkeeper-chrome-extension-v${{ env.EXTENSION_VERSION }}.zip --extension-id ${{ vars.CHROME_EXTENSION_ID }} --client-id ${{ secrets.CI_GOOGLE_CLIENT_ID }} --client-secret ${{ secrets.CI_GOOGLE_CLIENT_SECRET }} --refresh-token ${{ secrets.CI_GOOGLE_REFRESH_TOKEN }} --auto-publish
-
-      - name: Upload build
-        run: |-
-          gh release upload "${{ github.ref_name }}" "cryptkeeper-chrome-extension-v${{ env.EXTENSION_VERSION }}.zip" "cryptkeeper-chrome-extension-checksum-v${{ env.EXTENSION_VERSION }}.txt" "cryptkeeper-chrome-extension-v${{ env.EXTENSION_VERSION }}.zip.asc"
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

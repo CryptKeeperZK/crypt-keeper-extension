@@ -4,8 +4,6 @@ on:
   push:
     tags:
       - "@cryptkeeperzk/providers-*"
-      - "@cryptkeeperzk/types-*"
-      - "@cryptkeeperzk/zk-*"
 
 env:
   CRYPTKEEPER_DEBUG: false
@@ -56,14 +54,12 @@ jobs:
 
       - run: pnpm install --frozen-lockfile --prefer-offline
 
-      - name: Get providers version
-        if: startsWith(github.ref_name, '@cryptkeeperzk/providers-') == true
+      - name: Get package version
         run: |-
           echo "PACKAGE_VERSION=$(node -e "console.log('${{ github.ref_name }}'.split('-')[1])")" >> $GITHUB_ENV
 
       - run: |-
           pnpm run build
-          zip -r cryptkeeper-providers-v${{ env.PACKAGE_VERSION }}.zip ./packages/providers/dist
 
       - name: Setup publisher
         run: |
@@ -73,68 +69,8 @@ jobs:
           pnpm config set git-checks false 
           pnpm config set //registry.npmjs.org/:_authToken ${{ secrets.NPM_TOKEN }}
 
-      - name: Sign @cryptkeeperzk/providers
-        if: startsWith(github.ref_name, '@cryptkeeperzk/providers-') == true
+      - name: Publish
         run: |-
-          export GPG_TTY=`tty`
-          echo -n "$GPG_SIGNING_KEY" | base64 --decode | gpg --passphrase "$GPG_SIGNING_KEY_PASSPHRASE" --batch --pinentry-mode loopback --import
-          gpg --passphrase $GPG_SIGNING_KEY_PASSPHRASE --batch --pinentry-mode loopback --detach-sign --armor cryptkeeper-providers-v${{ env.PACKAGE_VERSION }}.zip
-          echo $(shasum cryptkeeper-providers-v${{ env.PACKAGE_VERSION }}.zip | awk '{ print $1 }') >> cryptkeeper-providers-checksum-v${{ env.PACKAGE_VERSION }}.txt
-        env:
-          GPG_SIGNING_KEY: ${{ secrets.GPG_SIGNING_KEY }}
-          GPG_SIGNING_KEY_PASSPHRASE: ${{ secrets.GPG_SIGNING_KEY_PASSPHRASE }}
-
-      - name: Sign @cryptkeeperzk/zk
-        if: startsWith(github.ref_name, '@cryptkeeperzk/zk-') == true
-        run: |-
-          export GPG_TTY=`tty`
-          echo -n "$GPG_SIGNING_KEY" | base64 --decode | gpg --passphrase "$GPG_SIGNING_KEY_PASSPHRASE" --batch --pinentry-mode loopback --import
-          gpg --passphrase $GPG_SIGNING_KEY_PASSPHRASE --batch --pinentry-mode loopback --detach-sign --armor cryptkeeper-zk-v${{ env.PACKAGE_VERSION }}.zip
-          echo $(shasum cryptkeeper-zk-v${{ env.PACKAGE_VERSION }}.zip | awk '{ print $1 }') >> cryptkeeper-zk-checksum-v${{ env.PACKAGE_VERSION }}.txt
-        env:
-          GPG_SIGNING_KEY: ${{ secrets.GPG_SIGNING_KEY }}
-          GPG_SIGNING_KEY_PASSPHRASE: ${{ secrets.GPG_SIGNING_KEY_PASSPHRASE }}
-
-      - name: Sign @cryptkeeperzk/types
-        if: startsWith(github.ref_name, '@cryptkeeperzk/types-') == true
-        run: |-
-          export GPG_TTY=`tty`
-          echo -n "$GPG_SIGNING_KEY" | base64 --decode | gpg --passphrase "$GPG_SIGNING_KEY_PASSPHRASE" --batch --pinentry-mode loopback --import
-          gpg --passphrase $GPG_SIGNING_KEY_PASSPHRASE --batch --pinentry-mode loopback --detach-sign --armor cryptkeeper-types-v${{ env.PACKAGE_VERSION }}.zip
-          echo $(shasum cryptkeeper-types-v${{ env.PACKAGE_VERSION }}.zip | awk '{ print $1 }') >> cryptkeeper-types-checksum-v${{ env.PACKAGE_VERSION }}.txt
-        env:
-          GPG_SIGNING_KEY: ${{ secrets.GPG_SIGNING_KEY }}
-          GPG_SIGNING_KEY_PASSPHRASE: ${{ secrets.GPG_SIGNING_KEY_PASSPHRASE }}
-
-      - name: Publish @cryptkeeperzk/providers
-        if: startsWith(github.ref_name, '@cryptkeeperzk/providers-') == true
-        working-directory: ./packages/providers
-        run: |-
-          pnpm run publish:package -- --access=public --no-git-checks
-          cd ../..
-          gh release upload "${{ github.ref_name }}" "cryptkeeper-providers-v${{ env.PACKAGE_VERSION }}.zip" "cryptkeeper-providers-checksum-v${{ env.PACKAGE_VERSION }}.txt" "cryptkeeper-providers-v${{ env.PACKAGE_VERSION }}.zip.asc"
+          pnpm run publish:packages -- --access=public --no-git-checks
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Publish @cryptkeeperzk/zk
-        if: startsWith(github.ref_name, '@cryptkeeperzk/zk-') == true
-        working-directory: ./packages/zk
-        run: |-
-          pnpm run publish:package -- --access=public --no-git-checks
-          cd ../..
-          gh release upload "${{ github.ref_name }}" "cryptkeeper-zk-v${{ env.PACKAGE_VERSION }}.zip" "cryptkeeper-zk-checksum-v${{ env.PACKAGE_VERSION }}.txt" "cryptkeeper-zk-v${{ env.PACKAGE_VERSION }}.zip.asc"
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Publish @cryptkeeperzk/types
-        if: startsWith(github.ref_name, '@cryptkeeperzk/types-') == true
-        working-directory: ./packages/types
-        run: |-
-          pnpm run publish:package -- --access=public --no-git-checks
-          cd ../..
-          gh release upload "${{ github.ref_name }}" "cryptkeeper-types-v${{ env.PACKAGE_VERSION }}.zip" "cryptkeeper-types-checksum-v${{ env.PACKAGE_VERSION }}.txt" "cryptkeeper-types-v${{ env.PACKAGE_VERSION }}.zip.asc"
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
