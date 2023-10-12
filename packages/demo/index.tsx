@@ -10,17 +10,22 @@ import { MerkleProofType, useCryptKeeper } from "./useCryptKeeper";
 dotenv.config({ path: path.resolve(__dirname, "../..", ".env"), override: true });
 
 interface INotConnectedProps {
-  onClick: () => void;
+  connect: (isChangeIdentity: boolean) => void;
   genSemaphoreProof: (proofType: MerkleProofType) => void;
 }
 
-const NotConnected = ({ onClick, genSemaphoreProof }: INotConnectedProps) => (
+const NotConnected = ({ connect, genSemaphoreProof }: INotConnectedProps) => (
   <div>
     <h2>Start the Authorization Process</h2>
 
     <p style={{ marginRight: 8 }}>Please connect to CryptKeeper to continue.</p>
 
-    <button type="button" onClick={onClick}>
+    <button
+      type="button"
+      onClick={() => {
+        connect(false);
+      }}
+    >
       Connect Identity
     </button>
 
@@ -65,7 +70,7 @@ const App = () => {
   } = useCryptKeeper();
 
   if (isLocked) {
-    return <NotConnected genSemaphoreProof={genSemaphoreProof} onClick={connect} />;
+    return <NotConnected connect={connect} genSemaphoreProof={genSemaphoreProof} />;
   }
 
   return (
@@ -101,7 +106,12 @@ const App = () => {
       <div>
         <h2>Connect identity</h2>
 
-        <button type="button" onClick={connect}>
+        <button
+          type="button"
+          onClick={() => {
+            connect(true);
+          }}
+        >
           Connect identity
         </button>
       </div>

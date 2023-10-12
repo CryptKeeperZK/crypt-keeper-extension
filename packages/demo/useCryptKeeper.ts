@@ -90,7 +90,7 @@ interface IUseCryptKeeperData {
   client?: ICryptKeeperInjectedProvider;
   proof?: ISemaphoreFullProof | IRLNFullProof | IMerkleProof;
   connectedCommitment?: string;
-  connect: () => void;
+  connect: (isChangeIdentity: boolean) => void;
   onLogin: () => void;
   getConnectedIdentityMetadata: () => void;
   genSemaphoreProof: (proofType: MerkleProofType) => void;
@@ -110,18 +110,21 @@ export const useCryptKeeper = (): IUseCryptKeeperData => {
   const [connectedIdentityMetadata, setConnectedIdentityMetadata] = useState<ConnectedIdentityMetadata>();
   const mockIdentityCommitments: string[] = genMockIdentityCommitments();
 
-  const connect = useCallback(async () => {
-    await client
-      ?.connect()
-      .then(() => {
-        if (!connectedIdentityMetadata) {
-          toast(`CryptKeeper connected successfully!`, { type: "success" });
-        }
-      })
-      .catch((error: Error) => {
-        toast(error.message, { type: "error" });
-      });
-  }, [client]);
+  const connect = useCallback(
+    async (isChangeIdentity = false) => {
+      await client
+        ?.connect(isChangeIdentity)
+        .then(() => {
+          if (!connectedIdentityMetadata) {
+            toast(`CryptKeeper connected successfully!`, { type: "success" });
+          }
+        })
+        .catch((error: Error) => {
+          toast(error.message, { type: "error" });
+        });
+    },
+    [client],
+  );
 
   const genSemaphoreProof = async (proofType: MerkleProofType = MerkleProofType.STORAGE_ADDRESS) => {
     const externalNullifier = encodeBytes32String("voting-1");
