@@ -1,5 +1,10 @@
 /* eslint-disable no-console */
-import { initializeCryptKeeper, ICryptKeeperInjectedProvider, EventName } from "@cryptkeeperzk/providers";
+import {
+  initializeCryptKeeper,
+  ICryptKeeperInjectedProvider,
+  EventName,
+  RPCExternalAction,
+} from "@cryptkeeperzk/providers";
 import { Identity } from "@cryptkeeperzk/semaphore-identity";
 import { bigintToHex } from "bigint-conversion";
 import { encodeBytes32String } from "ethers";
@@ -100,6 +105,7 @@ interface IUseCryptKeeperData {
   joinGroup: () => Promise<void>;
   generateGroupMerkleProof: () => Promise<void>;
   revealConnectedIdentityCommitment: () => Promise<void>;
+  importIdentity: () => Promise<void>;
 }
 
 export const useCryptKeeper = (): IUseCryptKeeperData => {
@@ -147,9 +153,16 @@ export const useCryptKeeper = (): IUseCryptKeeperData => {
     });
 
     await client
-      ?.generateSemaphoreProof({ externalNullifier, signal, merkleProofSource })
+      ?.request({
+        method: RPCExternalAction.GENERATE_SEMAPHORE_PROOF,
+        payload: {
+          externalNullifier,
+          signal,
+          merkleProofSource,
+        },
+      })
       .then((generatedProof) => {
-        setProof(generatedProof);
+        setProof(generatedProof as ISemaphoreFullProof);
         toast("Semaphore proof generated successfully!", { type: "success" });
       })
       .catch((error) => {
@@ -185,16 +198,19 @@ export const useCryptKeeper = (): IUseCryptKeeperData => {
     });
 
     await client
-      ?.generateRlnProof({
-        rlnIdentifier,
-        message,
-        epoch,
-        merkleProofSource,
-        messageLimit,
-        messageId,
+      ?.request({
+        method: RPCExternalAction.GENERATE_RLN_PROOF,
+        payload: {
+          rlnIdentifier,
+          message,
+          messageId,
+          messageLimit,
+          epoch,
+          merkleProofSource,
+        },
       })
       .then((generatedProof) => {
-        setProof(generatedProof);
+        setProof(generatedProof as IRLNFullProof);
         toast("RLN proof generated successfully!", { type: "success" });
       })
       .catch((error) => {
@@ -211,42 +227,73 @@ export const useCryptKeeper = (): IUseCryptKeeperData => {
       const mockVerifiableCredential = genMockVerifiableCredential(credentialType);
       const verifiableCredentialJson = JSON.stringify(mockVerifiableCredential);
 
-      await client?.DEV_addVerifiableCredentialRequest(verifiableCredentialJson);
+      await client?.request({
+        method: RPCExternalAction.ADD_VERIFIABLE_CREDENTIAL,
+        payload: verifiableCredentialJson,
+      });
     },
     [client],
   );
 
   const generateVerifiablePresentationRequest = useCallback(async () => {
     const verifiablePresentationRequest = genMockVerifiablePresentationRequest();
-    await client?.DEV_generateVerifiablePresentationRequest(verifiablePresentationRequest);
+    await client?.request({
+      method: RPCExternalAction.GENERATE_VERIFIABLE_PRESENTATION,
+      payload: verifiablePresentationRequest,
+    });
   }, [client]);
 
   const getConnectedIdentityMetadata = useCallback(async () => {
-    await client?.getConnectedIdentity().then((connectedIdentity) => {
-      if (connectedIdentity) {
-        setConnectedIdentityMetadata(connectedIdentity);
-        setIsLocked(false);
-        toast(`Getting Identity Metadata Successfully!`, { type: "success" });
-      }
-    });
+    await client
+      ?.request({
+        method: RPCExternalAction.GET_CONNECTED_IDENTITY_DATA,
+      })
+      .then((connectedIdentity) => {
+        if (connectedIdentity) {
+          setConnectedIdentityMetadata(connectedIdentity as ConnectedIdentityMetadata);
+          setIsLocked(false);
+          toast(`Getting Identity Metadata Successfully!`, { type: "success" });
+        }
+      });
   }, [client, setConnectedIdentityMetadata, setIsLocked]);
 
   const joinGroup = useCallback(async () => {
-    await client?.joinGroup({
-      groupId: process.env.TEST_GROUP_ID!,
-      apiKey: process.env.TEST_GROUP_API_KEY,
-      inviteCode: process.env.TEST_GROUP_INVITE_CODE,
+    await client?.request({
+      method: RPCExternalAction.JOIN_GROUP,
+      payload: {
+        groupId: process.env.TEST_GROUP_ID!,
+        apiKey: process.env.TEST_GROUP_API_KEY,
+        inviteCode: process.env.TEST_GROUP_INVITE_CODE,
+      },
     });
   }, [client]);
 
   const generateGroupMerkleProof = useCallback(async () => {
-    await client?.generateGroupMerkleProof({
-      groupId: process.env.TEST_GROUP_ID!,
+    await client?.request({
+      method: RPCExternalAction.GENERATE_GROUP_MERKLE_PROOF,
+      payload: {
+        groupId: process.env.TEST_GROUP_ID!,
+      },
     });
   }, [client]);
 
   const revealConnectedIdentityCommitment = useCallback(async () => {
-    await client?.revealConnectedIdentityRequest();
+    await client?.request({
+      method: RPCExternalAction.REVEAL_CONNECTED_IDENTITY_COMMITMENT,
+    });
+  }, [client]);
+
+  const importIdentity = useCallback(async () => {
+    const trapdoor = (document.getElementById("trapdoor") as HTMLInputElement | null)?.value ?? undefined;
+    const nullifier = (document.getElementById("nullifier") as HTMLInputElement | null)?.value ?? undefined;
+
+    await client?.request({
+      method: RPCExternalAction.IMPORT_IDENTITY,
+      payload: {
+        trapdoor,
+        nullifier,
+      },
+    });
   }, [client]);
 
   const onIdentityChanged = useCallback(
@@ -397,5 +444,6 @@ export const useCryptKeeper = (): IUseCryptKeeperData => {
     revealConnectedIdentityCommitment,
     joinGroup,
     generateGroupMerkleProof,
+    importIdentity,
   };
 };

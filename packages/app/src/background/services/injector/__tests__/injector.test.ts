@@ -204,6 +204,24 @@ describe("background/services/injector", () => {
     });
   });
 
+  describe("checks", () => {
+    test("should check if origin is connected properly", async () => {
+      const service = InjectorService.getInstance();
+
+      const result = await service.isConnected({}, { urlOrigin: mockDefaultUrlOrigin });
+
+      expect(result).toStrictEqual({});
+    });
+
+    test("should throw error if origin is not connected", async () => {
+      const service = InjectorService.getInstance();
+
+      await expect(service.isConnected({}, { urlOrigin: "" })).rejects.toThrowError(
+        "CryptKeeper: identity metadata is not found",
+      );
+    });
+  });
+
   describe("connect", () => {
     test("should connect properly if not connected identity found", async () => {
       mockGetConnectedIdentity.mockResolvedValue(undefined);

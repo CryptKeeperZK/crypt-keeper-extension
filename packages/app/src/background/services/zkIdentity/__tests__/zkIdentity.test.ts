@@ -666,11 +666,26 @@ describe("background/services/zkIdentity", () => {
     });
 
     test("should request an import identity modal properly", async () => {
-      await zkIdentityService.importRequest({
-        urlOrigin: "http://localhost:3000",
-        trapdoor: defaultArgs.trapdoor,
-        nullifier: defaultArgs.nullifier,
-      });
+      await zkIdentityService.importRequest(
+        { trapdoor: defaultArgs.trapdoor, nullifier: defaultArgs.nullifier },
+        { urlOrigin: "http://localhost:3000" },
+      );
+
+      expect(browser.tabs.query).toBeCalledWith({ lastFocusedWindow: true });
+
+      const defaultOptions = {
+        tabId: defaultPopupTab.id,
+        type: "popup",
+        focused: true,
+        width: 385,
+        height: 610,
+      };
+
+      expect(browser.windows.create).toBeCalledWith(defaultOptions);
+    });
+
+    test("should request an import identity modal without origin properly", async () => {
+      await zkIdentityService.importRequest({ trapdoor: defaultArgs.trapdoor, nullifier: defaultArgs.nullifier }, {});
 
       expect(browser.tabs.query).toBeCalledWith({ lastFocusedWindow: true });
 

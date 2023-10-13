@@ -1,8 +1,7 @@
-import { IInjectedMessageData, IInjectedProviderRequest } from "@cryptkeeperzk/types";
+import type { RequestsPromisesHandlers } from "./types";
+import type { IInjectedMessageData, IInjectedProviderRequest } from "@cryptkeeperzk/types";
 
-import { EventEmitter, EventHandler, EventName } from "../event";
-
-import { RequestsPromisesHandlers } from "./types";
+import { type EventHandler, EventEmitter, EventName } from "../event";
 
 const EVENTS = Object.values(EventName);
 
@@ -23,9 +22,9 @@ export class Handler {
   private requestsPromises: Map<string, RequestsPromisesHandlers>;
 
   /**
-   * EventEmitter for handling events.
+   * Connected origin
    */
-  protected connectedOrigin?: string;
+  private connectedOrigin?: string;
 
   /**
    * Creates an instance of CryptKeeperInjectedProvider.
@@ -37,6 +36,10 @@ export class Handler {
     this.connectedOrigin = connectedOrigin;
     this.emitter = new EventEmitter();
     this.requestsPromises = new Map<string, RequestsPromisesHandlers>();
+  }
+
+  getConnectedOrigin(): string | undefined {
+    return this.connectedOrigin;
   }
 
   on(eventName: EventName, cb: EventHandler): void {
@@ -57,7 +60,7 @@ export class Handler {
    * @param {IInjectedProviderRequest} message - The message to send.
    * @returns {Promise<unknown>} A Promise that resolves to the response from the extension.
    */
-  protected async post(message: IInjectedProviderRequest): Promise<unknown> {
+  async request(message: IInjectedProviderRequest): Promise<unknown> {
     // TODO: (#75) enhance by moving towards long-lived connections #75
     return new Promise((resolve, reject) => {
       const messageNonce = this.nonce;
@@ -89,7 +92,7 @@ export class Handler {
    * @param {IInjectedMessageData} event - The message event.
    * @returns {unknown} The result of handling the event.
    */
-  eventResponser = (event: MessageEvent<IInjectedMessageData>): unknown => {
+  eventResponser(event: MessageEvent<IInjectedMessageData>): unknown {
     const { data } = event;
 
     if (data.target === "injected-injectedscript") {
@@ -115,5 +118,5 @@ export class Handler {
 
       this.requestsPromises.delete(data.nonce.toString());
     }
-  };
+  }
 }

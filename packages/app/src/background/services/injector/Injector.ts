@@ -36,6 +36,12 @@ export class InjectorService {
     return InjectorService.INSTANCE;
   }
 
+  isConnected = async (payload: unknown, { urlOrigin }: IZkMetadata): Promise<unknown> => {
+    await this.injectorHandler.getConnectedIdentityMetadata({}, { urlOrigin });
+
+    return payload;
+  };
+
   getConnectedIdentityMetadata = async (
     _: unknown,
     { urlOrigin }: IZkMetadata,
@@ -46,7 +52,7 @@ export class InjectorService {
       return undefined;
     }
 
-    return this.injectorHandler.connectedIdentityMetadata({}, { urlOrigin });
+    return this.injectorHandler.getConnectedIdentityMetadata({}, { urlOrigin });
   };
 
   connect = async ({ isChangeIdentity }: IConnectionOptions, { urlOrigin }: IZkMetadata): Promise<void> => {

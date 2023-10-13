@@ -1,5 +1,6 @@
+import type { ICryptKeeperInjectedProvider } from "./interface";
+
 import { CryptKeeperInjectedProvider } from "./CryptKeeperInjectedProvider";
-import { ICryptKeeperInjectedProvider } from "./interface";
 
 /**
  * Extends the global Window interface to include CryptKeeper-related properties.

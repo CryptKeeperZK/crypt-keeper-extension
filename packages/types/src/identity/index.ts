@@ -14,7 +14,6 @@ export interface IConnectIdentityRequestArgs {
 }
 
 export interface IImportIdentityRequestArgs {
-  urlOrigin: string;
   trapdoor: string;
   nullifier: string;
 }

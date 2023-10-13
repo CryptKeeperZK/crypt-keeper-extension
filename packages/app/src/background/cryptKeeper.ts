@@ -32,12 +32,13 @@ const RPC_METHOD_ACCESS: Record<RPCExternalAction, boolean> = {
   [RPCExternalAction.CONNECT]: true,
   [RPCExternalAction.GENERATE_SEMAPHORE_PROOF]: true,
   [RPCExternalAction.GENERATE_RLN_PROOF]: true,
-  [RPCExternalAction.JOIN_GROUP_REQUEST]: true,
-  [RPCExternalAction.GENERATE_GROUP_MERKLE_PROOF_REQUEST]: true,
-  // TODO: Please note that the following 4 actions will be refactored in another PR
-  [RPCExternalAction.ADD_VERIFIABLE_CREDENTIAL_REQUEST]: true,
-  [RPCExternalAction.REVEAL_CONNECTED_IDENTITY_COMMITMENT_REQUEST]: true,
-  [RPCExternalAction.GENERATE_VERIFIABLE_PRESENTATION_REQUEST]: true,
+  [RPCExternalAction.JOIN_GROUP]: true,
+  [RPCExternalAction.GENERATE_GROUP_MERKLE_PROOF]: true,
+  [RPCExternalAction.IMPORT_IDENTITY]: true,
+  // TODO: Please note that the following 3 actions will be refactored in another PR
+  [RPCExternalAction.ADD_VERIFIABLE_CREDENTIAL]: true,
+  [RPCExternalAction.REVEAL_CONNECTED_IDENTITY_COMMITMENT]: true,
+  [RPCExternalAction.GENERATE_VERIFIABLE_PRESENTATION]: true,
 };
 
 Object.freeze(RPC_METHOD_ACCESS);
@@ -101,10 +102,13 @@ export default class CryptKeeperController {
     this.handler.add(RPCExternalAction.CONNECT, this.injectorService.connect);
     this.handler.add(RPCExternalAction.GENERATE_SEMAPHORE_PROOF, this.injectorService.generateSemaphoreProof);
     this.handler.add(RPCExternalAction.GENERATE_RLN_PROOF, this.injectorService.generateRLNProof);
-    this.handler.add(RPCExternalAction.JOIN_GROUP_REQUEST, this.injectorService.joinGroup);
+    this.handler.add(RPCExternalAction.JOIN_GROUP, this.injectorService.joinGroup);
+    this.handler.add(RPCExternalAction.GENERATE_GROUP_MERKLE_PROOF, this.injectorService.generateGroupMerkleProof);
     this.handler.add(
-      RPCExternalAction.GENERATE_GROUP_MERKLE_PROOF_REQUEST,
-      this.injectorService.generateGroupMerkleProof,
+      RPCExternalAction.IMPORT_IDENTITY,
+      this.approvalService.isOriginApproved,
+      this.injectorService.isConnected,
+      this.zkIdentityService.importRequest,
     );
 
     // Handling RPC INTERNAL ACTIONS
@@ -160,11 +164,6 @@ export default class CryptKeeperController {
       this.lockService.ensure,
       this.zkIdentityService.connectIdentity,
     );
-    this.handler.add(
-      RPCInternalAction.IMPORT_IDENTITY_REQUEST,
-      this.lockService.ensure,
-      this.zkIdentityService.importRequest,
-    );
     this.handler.add(RPCInternalAction.IMPORT_IDENTITY, this.lockService.ensure, this.zkIdentityService.import);
     this.handler.add(
       RPCInternalAction.CONNECT_IDENTITY_REQUEST,
@@ -172,7 +171,7 @@ export default class CryptKeeperController {
       this.zkIdentityService.connectIdentityRequest,
     );
     this.handler.add(
-      RPCExternalAction.REVEAL_CONNECTED_IDENTITY_COMMITMENT_REQUEST,
+      RPCExternalAction.REVEAL_CONNECTED_IDENTITY_COMMITMENT,
       this.lockService.ensure,
       this.zkIdentityService.revealConnectedIdentityCommitmentRequest,
     );
@@ -280,7 +279,7 @@ export default class CryptKeeperController {
       this.verifiableCredentialsService.addVerifiableCredential,
     );
     this.handler.add(
-      RPCExternalAction.ADD_VERIFIABLE_CREDENTIAL_REQUEST,
+      RPCExternalAction.ADD_VERIFIABLE_CREDENTIAL,
       this.lockService.ensure,
       validateSerializedVerifiableCredential,
       this.verifiableCredentialsService.addVerifiableCredentialRequest,
@@ -321,7 +320,7 @@ export default class CryptKeeperController {
       this.verifiableCredentialsService.generateVerifiablePresentationWithCryptkeeper,
     );
     this.handler.add(
-      RPCExternalAction.GENERATE_VERIFIABLE_PRESENTATION_REQUEST,
+      RPCExternalAction.GENERATE_VERIFIABLE_PRESENTATION,
       this.lockService.ensure,
       this.verifiableCredentialsService.generateVerifiablePresentationRequest,
     );
