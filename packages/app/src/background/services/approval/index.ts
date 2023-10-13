@@ -4,7 +4,7 @@ import BrowserUtils from "@src/background/controllers/browserUtils";
 import CryptoService, { ECryptMode } from "@src/background/services/crypto";
 import SimpleStorage from "@src/background/services/storage";
 
-import type { IHostPermission } from "@cryptkeeperzk/types";
+import type { IHostPermission, IZkMetadata } from "@cryptkeeperzk/types";
 import type { BackupData, IBackupable } from "@src/background/services/backup";
 
 import BaseService from "../base";
@@ -44,6 +44,20 @@ export default class ApprovalService extends BaseService implements IBackupable 
   isApproved = (urlOrigin: string): boolean => this.allowedHosts.has(urlOrigin);
 
   canSkipApprove = (urlOrigin: string): boolean => Boolean(this.allowedHosts.get(urlOrigin)?.canSkipApprove);
+
+  isOriginApproved = (payload: unknown, { urlOrigin }: IZkMetadata): unknown => {
+    if (!urlOrigin) {
+      throw new Error("CryptKeeper: origin is not set");
+    }
+
+    const isApproved = this.isApproved(urlOrigin);
+
+    if (!isApproved) {
+      throw new Error("CryptKeeper: origin is not approved");
+    }
+
+    return payload;
+  };
 
   unlock = async (): Promise<boolean> => {
     const encryped = await this.approvals.get<string>();

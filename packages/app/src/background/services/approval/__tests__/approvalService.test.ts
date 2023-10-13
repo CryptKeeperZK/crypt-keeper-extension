@@ -199,6 +199,22 @@ describe("background/services/approval", () => {
         expect(instance.set).not.toBeCalled();
       });
     });
+
+    test("should check if origin is approved properly", async () => {
+      await approvalService.unlock();
+
+      const result = approvalService.isOriginApproved({}, { urlOrigin: mockDefaultHosts[0] });
+
+      expect(result).toStrictEqual({});
+    });
+
+    test("should throw error if origin is not approved", async () => {
+      await approvalService.unlock();
+
+      expect(() => approvalService.isOriginApproved({}, { urlOrigin: "unknown" })).toThrowError(
+        "CryptKeeper: origin is not approved",
+      );
+    });
   });
 
   describe("backup", () => {

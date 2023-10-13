@@ -36,22 +36,8 @@ export class InjectorService {
     return InjectorService.INSTANCE;
   }
 
-  isApproved = (payload: unknown, { urlOrigin }: IZkMetadata): unknown => {
-    const { isApproved } = this.injectorHandler.getConnectionApprovalData({ urlOrigin });
-
-    if (!isApproved) {
-      throw new Error("CryptKeeper: Origin is not approved");
-    }
-
-    return payload;
-  };
-
   isConnected = async (payload: unknown, { urlOrigin }: IZkMetadata): Promise<unknown> => {
-    const connectedIdentity = await this.injectorHandler.getConnectedIdentityMetadata({}, { urlOrigin });
-
-    if (connectedIdentity.urlOrigin !== urlOrigin) {
-      throw new Error("CryptKeeper: Origin is not connected");
-    }
+    await this.injectorHandler.getConnectedIdentityMetadata({}, { urlOrigin });
 
     return payload;
   };

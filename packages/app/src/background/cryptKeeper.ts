@@ -104,6 +104,12 @@ export default class CryptKeeperController {
     this.handler.add(RPCExternalAction.GENERATE_RLN_PROOF, this.injectorService.generateRLNProof);
     this.handler.add(RPCExternalAction.JOIN_GROUP, this.injectorService.joinGroup);
     this.handler.add(RPCExternalAction.GENERATE_GROUP_MERKLE_PROOF, this.injectorService.generateGroupMerkleProof);
+    this.handler.add(
+      RPCExternalAction.IMPORT_IDENTITY,
+      this.approvalService.isOriginApproved,
+      this.injectorService.isConnected,
+      this.zkIdentityService.importRequest,
+    );
 
     // Handling RPC INTERNAL ACTIONS
     // common
@@ -157,12 +163,6 @@ export default class CryptKeeperController {
       RPCInternalAction.CONNECT_IDENTITY,
       this.lockService.ensure,
       this.zkIdentityService.connectIdentity,
-    );
-    this.handler.add(
-      RPCExternalAction.IMPORT_IDENTITY,
-      this.injectorService.isApproved,
-      this.injectorService.isConnected,
-      this.zkIdentityService.importRequest,
     );
     this.handler.add(RPCInternalAction.IMPORT_IDENTITY, this.lockService.ensure, this.zkIdentityService.import);
     this.handler.add(

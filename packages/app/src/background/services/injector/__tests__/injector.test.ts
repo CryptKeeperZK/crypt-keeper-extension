@@ -48,10 +48,6 @@ const mockGetConnectedIdentityData = jest.fn(
       return Promise.resolve({ ...mockConnectedIdentity, ...meta });
     }
 
-    if (meta?.urlOrigin === "unknown") {
-      return Promise.resolve({ ...mockConnectedIdentity, urlOrigin: undefined });
-    }
-
     return Promise.resolve(undefined);
   },
 );
@@ -209,22 +205,6 @@ describe("background/services/injector", () => {
   });
 
   describe("checks", () => {
-    test("should check if origin is approved properly", () => {
-      const service = InjectorService.getInstance();
-
-      const result = service.isApproved({}, { urlOrigin: mockDefaultUrlOrigin });
-
-      expect(result).toStrictEqual({});
-    });
-
-    test("should throw error if origin is not approved", () => {
-      const service = InjectorService.getInstance();
-
-      expect(() => service.isApproved({}, { urlOrigin: "unknown" })).toThrowError(
-        "CryptKeeper: Origin is not approved",
-      );
-    });
-
     test("should check if origin is connected properly", async () => {
       const service = InjectorService.getInstance();
 
@@ -236,8 +216,8 @@ describe("background/services/injector", () => {
     test("should throw error if origin is not connected", async () => {
       const service = InjectorService.getInstance();
 
-      await expect(service.isConnected({}, { urlOrigin: "unknown" })).rejects.toThrowError(
-        "CryptKeeper: Origin is not connected",
+      await expect(service.isConnected({}, { urlOrigin: "" })).rejects.toThrowError(
+        "CryptKeeper: identity metadata is not found",
       );
     });
   });
