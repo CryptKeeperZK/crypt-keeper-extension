@@ -4,6 +4,14 @@ import { encodeBytes32String } from "ethers";
 import { useState, useEffect, useCallback } from "react";
 import { toast } from "react-toastify";
 
+import { MERKLE_STORAGE_URL } from "@src/constants";
+import { MerkleProofType } from "@src/types";
+import {
+  genMockIdentityCommitments,
+  genMockVerifiableCredential,
+  genMockVerifiablePresentationRequest,
+} from "@src/utils";
+
 import type {
   ISemaphoreFullProof,
   IMerkleProofArtifacts,
@@ -12,14 +20,6 @@ import type {
   IVerifiablePresentation,
   IMerkleProof,
 } from "@cryptkeeperzk/types";
-
-import { MERKLE_STORAGE_URL } from "../constants";
-import { MerkleProofType } from "../types";
-import {
-  genMockIdentityCommitments,
-  genMockVerifiableCredential,
-  genMockVerifiablePresentationRequest,
-} from "../utils";
 
 interface IUseCryptKeeperData {
   isLocked: boolean;

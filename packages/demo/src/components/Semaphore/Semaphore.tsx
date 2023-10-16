@@ -1,4 +1,4 @@
-import { MerkleProofType } from "../../types";
+import { MerkleProofType } from "@src/types";
 
 interface ISemaphoreProps {
   genSemaphoreProof: (proofType: MerkleProofType) => void;

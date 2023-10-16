@@ -1,4 +1,3 @@
-/* eslint-disable react/require-default-props */
 interface IConnectedIdentityProps {
   identityCommitment?: string;
   identityName?: string;
@@ -6,9 +5,9 @@ interface IConnectedIdentityProps {
 }
 
 export const ConnectedIdentity = ({
-  identityCommitment,
-  identityName,
-  identityHost,
+  identityCommitment = "",
+  identityName = "",
+  identityHost = "",
 }: IConnectedIdentityProps): JSX.Element => (
   <div>
     <h2>Connected identity:</h2>

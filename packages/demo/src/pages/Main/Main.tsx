@@ -1,15 +1,15 @@
 import { ToastContainer } from "react-toastify";
 
-import { Bandada } from "../../components/Bandada/Bandada";
-import { Connect } from "../../components/Connect/Connect";
-import { ConnectedIdentity } from "../../components/ConnectedIdentity/ConnectedIdentity";
-import { DisplayProof } from "../../components/DisplayProof/DisplayProof";
-import { GetCommitment } from "../../components/GetComitment/GetComitment";
-import { GetMetadata } from "../../components/GetMetadata/GetMetadata";
-import { RateLimitingNullifier } from "../../components/RateLimitingNullifier/RateLimitingNullifier";
-import { Semaphore } from "../../components/Semaphore/Semaphore";
-import { VerifiableCredentials } from "../../components/VerifiableCredentials/VerifiableCredentials";
-import { useCryptKeeper } from "../../hooks/useCryptKeeper";
+import Bandada from "@src/components/Bandada";
+import Connect from "@src/components/Connect";
+import ConnectedIdentity from "@src/components/ConnectedIdentity";
+import DisplayProof from "@src/components/DisplayProof";
+import GetCommitment from "@src/components/GetCommitment";
+import GetMetadata from "@src/components/GetMetadata";
+import RateLimitingNullifier from "@src/components/RateLimitingNullifier";
+import Semaphore from "@src/components/Semaphore";
+import VerifiableCredentials from "@src/components/VerifiableCredentials";
+import { useCryptKeeper } from "@src/hooks/useCryptKeeper";
 
 export const Main = (): JSX.Element => {
   const {

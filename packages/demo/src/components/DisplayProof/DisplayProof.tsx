@@ -1,11 +1,10 @@
-/* eslint-disable react/require-default-props */
 import { ISemaphoreFullProof, IRLNFullProof, IMerkleProof } from "@cryptkeeperzk/types";
 
 interface IDisplayProofProps {
   proof?: ISemaphoreFullProof | IRLNFullProof | IMerkleProof;
 }
 
-export const DisplayProof = ({ proof }: IDisplayProofProps): JSX.Element => (
+export const DisplayProof = ({ proof = undefined }: IDisplayProofProps): JSX.Element => (
   <div>
     <h2>Generated proof output:</h2>
 
