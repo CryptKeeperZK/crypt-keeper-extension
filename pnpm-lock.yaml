@@ -385,8 +385,8 @@ importers:
         specifier: ^5.1.4
         version: 5.1.4(webpack-bundle-analyzer@4.9.1)(webpack@5.88.2)
       webpack-merge:
-        specifier: ^5.9.0
-        version: 5.9.0
+        specifier: ^5.10.0
+        version: 5.10.0
 
   packages/demo:
     dependencies:
@@ -2185,31 +2185,6 @@ packages:
       '@commitlint/types': 17.4.4
     dev: true
 
-  /@commitlint/load@17.7.2(@swc/core@1.3.82):
-    resolution: {integrity: sha512-XA7WTnsjHZ4YH6ZYsrnxgLdXzriwMMq+utZUET6spbOEEIPBCDLdOQXS26P+v3TTO4hUHOEhzUquaBv3jbBixw==}
-    engines: {node: '>=v14'}
-    requiresBuild: true
-    dependencies:
-      '@commitlint/config-validator': 17.6.7
-      '@commitlint/execute-rule': 17.4.0
-      '@commitlint/resolve-extends': 17.6.7
-      '@commitlint/types': 17.4.4
-      '@types/node': 20.5.1
-      chalk: 4.1.2
-      cosmiconfig: 8.2.0
-      cosmiconfig-typescript-loader: 4.3.0(@types/node@20.5.1)(cosmiconfig@8.2.0)(ts-node@10.9.1)(typescript@5.2.2)
-      lodash.isplainobject: 4.0.6
-      lodash.merge: 4.6.2
-      lodash.uniq: 4.5.0
-      resolve-from: 5.0.0
-      ts-node: 10.9.1(@swc/core@1.3.82)(@types/node@20.5.1)(typescript@5.2.2)
-      typescript: 5.2.2
-    transitivePeerDependencies:
-      - '@swc/core'
-      - '@swc/wasm'
-    dev: true
-    optional: true
-
   /@commitlint/load@17.8.0(@swc/core@1.3.82):
     resolution: {integrity: sha512-9VnGXYJCP4tXmR4YrwP8n5oX6T5ZsHfPQq6WuUQOvAI+QsDQMaTGgTRXr7us+xsjz+b+mMBSagogqfUx2aixyw==}
     engines: {node: '>=v14'}
@@ -2456,7 +2431,7 @@ packages:
       speed-measure-webpack-plugin: 1.4.2(webpack@5.88.2)
       tslib: 2.6.2
       webpack-dev-server: 4.15.1(debug@4.3.4)(webpack@5.88.2)
-      webpack-merge: 5.9.0
+      webpack-merge: 5.10.0
     transitivePeerDependencies:
       - bufferutil
       - debug
@@ -8418,7 +8393,7 @@ packages:
       longest: 2.0.1
       word-wrap: 1.2.3
     optionalDependencies:
-      '@commitlint/load': 17.7.2(@swc/core@1.3.82)
+      '@commitlint/load': 17.8.0(@swc/core@1.3.82)
     transitivePeerDependencies:
       - '@swc/core'
       - '@swc/wasm'
@@ -17646,7 +17621,7 @@ packages:
       rechoir: 0.8.0
       webpack: 5.88.2(@swc/core@1.3.82)(webpack-cli@5.1.4)
       webpack-bundle-analyzer: 4.9.1
-      webpack-merge: 5.9.0
+      webpack-merge: 5.10.0
     dev: true
 
   /webpack-dev-middleware@5.3.3(webpack@5.88.2):
@@ -17714,11 +17689,12 @@ packages:
       - utf-8-validate
     dev: true
 
-  /webpack-merge@5.9.0:
-    resolution: {integrity: sha512-6NbRQw4+Sy50vYNTw7EyOn41OZItPiXB8GNv3INSoe3PSFaHJEz3SHTrYVaRm2LilNGnFUzh0FAwqPEmU/CwDg==}
+  /webpack-merge@5.10.0:
+    resolution: {integrity: sha512-+4zXKdx7UnO+1jaN4l2lHVD+mFvnlZQP/6ljaJVb4SZiwIKeUnrT5l0gkT8z+n4hKpC+jpOv6O9R+gLtag7pSA==}
     engines: {node: '>=10.0.0'}
     dependencies:
       clone-deep: 4.0.1
+      flat: 5.0.2
       wildcard: 2.0.1
     dev: true
 
