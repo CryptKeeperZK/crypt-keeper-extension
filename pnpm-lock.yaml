@@ -18,8 +18,8 @@ importers:
         specifier: workspace:^
         version: link:packages/manifest-bump
       '@jscutlery/semver':
-        specifier: ^3.3.0
-        version: 3.3.0(@nx/devkit@16.10.0)
+        specifier: ^3.4.1
+        version: 3.4.1(@nx/devkit@16.10.0)
       '@nx/js':
         specifier: ^16.10.0
         version: 16.10.0(@swc/core@1.3.82)(@types/node@20.8.5)(nx@16.10.0)(typescript@5.2.2)
@@ -3349,8 +3349,8 @@ packages:
       '@jridgewell/sourcemap-codec': 1.4.15
     dev: true
 
-  /@jscutlery/semver@3.3.0(@nx/devkit@16.10.0):
-    resolution: {integrity: sha512-kY+lbVZ60LWnI5EyZHbWBE2slZaWMWK4utiI/8HKoR0HiaeVpLvtT+D/Q9fC9xlqnjQbtw2DthOjo+eTjahu3w==}
+  /@jscutlery/semver@3.4.1(@nx/devkit@16.10.0):
+    resolution: {integrity: sha512-2qBDjE4j/vn43nl/oAS7f2+Pi53vvQs9SeFRaXuEwzvCI69yLb3EmWdFtx6i8lACxCAxd3R64KxT2pZIackg/Q==}
     engines: {node: '>=12.0.0'}
     peerDependencies:
       '@nx/devkit': ^16.0.0
