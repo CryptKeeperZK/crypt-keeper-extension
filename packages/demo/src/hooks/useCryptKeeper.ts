@@ -1,5 +1,10 @@
 /* eslint-disable no-console */
-import { initializeCryptKeeper, ICryptKeeperInjectedProvider, EventName } from "@cryptkeeperzk/providers";
+import {
+  initializeCryptKeeper,
+  ICryptKeeperInjectedProvider,
+  EventName,
+  RPCExternalAction,
+} from "@cryptkeeperzk/providers";
 import { encodeBytes32String } from "ethers";
 import { useState, useEffect, useCallback } from "react";
 import { toast } from "react-toastify";
