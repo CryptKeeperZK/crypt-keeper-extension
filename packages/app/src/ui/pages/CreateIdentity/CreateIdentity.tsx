@@ -123,7 +123,7 @@ const CreateIdentity = (): JSX.Element => {
                 name="reject"
                 size="small"
                 sx={{ textTransform: "none", flex: 1, mr: 1, width: "30%" }}
-                type="submit"
+                type="button"
                 variant="outlined"
                 onClick={onCloseModal}
               >
@@ -133,7 +133,12 @@ const CreateIdentity = (): JSX.Element => {
               <DropdownButton menuOptions={menuOptions} onClick={onSign} />
             </Box>
 
-            <Button sx={{ color: "primary.main", mt: 1, width: "100%" }} variant="text" onClick={onGoToImportIdentity}>
+            <Button
+              data-testid="import-identity"
+              sx={{ color: "primary.main", mt: 1, width: "100%" }}
+              variant="text"
+              onClick={onGoToImportIdentity}
+            >
               Import identity
             </Button>
           </Box>

@@ -12,6 +12,12 @@ export interface IUpdateIdentityArgs {
   name: string;
 }
 
+export interface IImportIdentityArgs {
+  name: string;
+  trapdoor?: string;
+  nullifier?: string;
+}
+
 type WalletType = "eth" | "ck";
 
 export default class Identities extends BasePage {
@@ -84,5 +90,24 @@ export default class Identities extends BasePage {
 
     await this.page.getByText("Delete").click();
     await this.page.getByText("Yes").click();
+  }
+
+  async goToImportIdentity(): Promise<void> {
+    await this.page.getByTestId("create-new-identity").click();
+    await this.page.getByTestId("import-identity").click();
+  }
+
+  async importIdentity({ name, trapdoor, nullifier }: IImportIdentityArgs): Promise<void> {
+    await this.page.getByLabel("Name").fill(name);
+
+    if (trapdoor) {
+      await this.page.getByLabel("Trapdoor").fill(trapdoor);
+    }
+
+    if (nullifier) {
+      await this.page.getByLabel("Nullifier").fill(nullifier);
+    }
+
+    await this.page.getByTestId("import-identity").click();
   }
 }
