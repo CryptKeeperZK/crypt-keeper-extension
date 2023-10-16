@@ -12,8 +12,8 @@ importers:
         specifier: ^17.8.0
         version: 17.8.0(@swc/core@1.3.82)
       '@commitlint/config-conventional':
-        specifier: ^17.6.6
-        version: 17.6.6
+        specifier: ^17.8.0
+        version: 17.8.0
       '@cryptkeeperzk/manifest-bump':
         specifier: workspace:^
         version: link:packages/manifest-bump
@@ -204,8 +204,8 @@ importers:
         specifier: ^1.8.1
         version: 1.8.1
       nanoid:
-        specifier: ^5.0.1
-        version: 5.0.1
+        specifier: ^5.0.2
+        version: 5.0.2
       react:
         specifier: ^18.2.0
         version: 18.2.0
@@ -385,8 +385,8 @@ importers:
         specifier: ^5.1.4
         version: 5.1.4(webpack-bundle-analyzer@4.9.1)(webpack@5.89.0)
       webpack-merge:
-        specifier: ^5.9.0
-        version: 5.9.0
+        specifier: ^5.10.0
+        version: 5.10.0
 
   packages/demo:
     dependencies:
@@ -2125,11 +2125,11 @@ packages:
       - '@swc/wasm'
     dev: true
 
-  /@commitlint/config-conventional@17.6.6:
-    resolution: {integrity: sha512-phqPz3BDhfj49FUYuuZIuDiw+7T6gNAEy7Yew1IBHqSohVUCWOK2FXMSAExzS2/9X+ET93g0Uz83KjiHDOOFag==}
+  /@commitlint/config-conventional@17.8.0:
+    resolution: {integrity: sha512-MgiFXujmqAvi7M33C7OSMTznwrVkckrbXe/aZWQ/+KFGLLF6IE50XIcjGrW0/uiDGb/im5qbqF2dh1dCFNa+sQ==}
     engines: {node: '>=v14'}
     dependencies:
-      conventional-changelog-conventionalcommits: 5.0.0
+      conventional-changelog-conventionalcommits: 6.1.0
     dev: true
 
   /@commitlint/config-validator@17.6.7:
@@ -2431,7 +2431,7 @@ packages:
       speed-measure-webpack-plugin: 1.4.2(webpack@5.89.0)
       tslib: 2.6.2
       webpack-dev-server: 4.15.1(debug@4.3.4)(webpack@5.89.0)
-      webpack-merge: 5.9.0
+      webpack-merge: 5.10.0
     transitivePeerDependencies:
       - bufferutil
       - debug
@@ -7857,15 +7857,6 @@ packages:
   /conventional-changelog-codemirror@3.0.0:
     resolution: {integrity: sha512-wzchZt9HEaAZrenZAUUHMCFcuYzGoZ1wG/kTRMICxsnW5AXohYMRxnyecP9ob42Gvn5TilhC0q66AtTPRSNMfw==}
     engines: {node: '>=14'}
-    dev: true
-
-  /conventional-changelog-conventionalcommits@5.0.0:
-    resolution: {integrity: sha512-lCDbA+ZqVFQGUj7h9QBKoIpLhl8iihkO0nCTyRNzuXtcd7ubODpYB04IFy31JloiJgG0Uovu8ot8oxRzn7Nwtw==}
-    engines: {node: '>=10'}
-    dependencies:
-      compare-func: 2.0.0
-      lodash: 4.17.21
-      q: 1.5.1
     dev: true
 
   /conventional-changelog-conventionalcommits@6.1.0:
@@ -13533,8 +13524,8 @@ packages:
     hasBin: true
     dev: true
 
-  /nanoid@5.0.1:
-    resolution: {integrity: sha512-vWeVtV5Cw68aML/QaZvqN/3QQXc6fBfIieAlu05m7FZW2Dgb+3f0xc0TTxuJW+7u30t7iSDTV/j3kVI0oJqIfQ==}
+  /nanoid@5.0.2:
+    resolution: {integrity: sha512-2ustYUX1R2rL/Br5B/FMhi8d5/QzvkJ912rBYxskcpu0myTHzSZfTr1LAS2Sm7jxRUObRrSBFoyzwAhL49aVSg==}
     engines: {node: ^18 || >=20}
     hasBin: true
     dev: false
@@ -14712,11 +14703,6 @@ packages:
 
   /pure-rand@6.0.2:
     resolution: {integrity: sha512-6Yg0ekpKICSjPswYOuC5sku/TSWaRYlA0qsXqJgM/d/4pLPHPuTxK7Nbf7jFKzAeedUhR8C7K9Uv63FBsSo8xQ==}
-    dev: true
-
-  /q@1.5.1:
-    resolution: {integrity: sha512-kV/CThkXo6xyFEZUugw/+pIOywXcDbFYgSct5cT3gqlbkBE1SJdwy6UQoZvodiWF/ckQLZyDE/Bu1M6gVu5lVw==}
-    engines: {node: '>=0.6.0', teleport: '>=0.2.0'}
     dev: true
 
   /qs@6.10.4:
@@ -17621,7 +17607,7 @@ packages:
       rechoir: 0.8.0
       webpack: 5.89.0(@swc/core@1.3.82)(webpack-cli@5.1.4)
       webpack-bundle-analyzer: 4.9.1
-      webpack-merge: 5.9.0
+      webpack-merge: 5.10.0
     dev: true
 
   /webpack-dev-middleware@5.3.3(webpack@5.89.0):
@@ -17689,11 +17675,12 @@ packages:
       - utf-8-validate
     dev: true
 
-  /webpack-merge@5.9.0:
-    resolution: {integrity: sha512-6NbRQw4+Sy50vYNTw7EyOn41OZItPiXB8GNv3INSoe3PSFaHJEz3SHTrYVaRm2LilNGnFUzh0FAwqPEmU/CwDg==}
+  /webpack-merge@5.10.0:
+    resolution: {integrity: sha512-+4zXKdx7UnO+1jaN4l2lHVD+mFvnlZQP/6ljaJVb4SZiwIKeUnrT5l0gkT8z+n4hKpC+jpOv6O9R+gLtag7pSA==}
     engines: {node: '>=10.0.0'}
     dependencies:
       clone-deep: 4.0.1
+      flat: 5.0.2
       wildcard: 2.0.1
     dev: true
 
