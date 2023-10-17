@@ -101,7 +101,7 @@
     "@interep/identity": "^0.3.0",
     "@metamask/providers": "^13.1.0",
     "@mui/icons-material": "^5.14.14",
-    "@mui/material": "^5.14.13",
+    "@mui/material": "^5.14.14",
     "@reduxjs/toolkit": "^1.9.7",
     "@types/json-stable-stringify": "^1.0.34",
     "@web3-react/core": "^8.2.3",
