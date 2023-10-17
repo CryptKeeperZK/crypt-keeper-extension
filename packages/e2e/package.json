@@ -28,7 +28,7 @@
     "@playwright/test": "^1.37.1",
     "@synthetixio/synpress": "^3.7.1",
     "eslint": "^8.51.0",
-    "eslint-plugin-playwright": "^0.16.0",
+    "eslint-plugin-playwright": "^0.17.0",
     "lint-staged": "^15.0.1",
     "prettier": "^3.0.3",
     "typescript": "^5.2.2",
