@@ -5,89 +5,26 @@ import {
   EventName,
   RPCExternalAction,
 } from "@cryptkeeperzk/providers";
-import { Identity } from "@cryptkeeperzk/semaphore-identity";
-import { bigintToHex } from "bigint-conversion";
 import { encodeBytes32String } from "ethers";
 import { useState, useEffect, useCallback } from "react";
 import { toast } from "react-toastify";
+
+import { MERKLE_STORAGE_URL } from "@src/constants";
+import { MerkleProofType } from "@src/types";
+import {
+  genMockIdentityCommitments,
+  genMockVerifiableCredential,
+  genMockVerifiablePresentationRequest,
+} from "@src/utils";
 
 import type {
   ISemaphoreFullProof,
   IMerkleProofArtifacts,
   IRLNFullProof,
   ConnectedIdentityMetadata,
-  IVerifiableCredential,
   IVerifiablePresentation,
-  IVerifiablePresentationRequest,
   IMerkleProof,
 } from "@cryptkeeperzk/types";
-
-const SERVER_URL = process.env.MERKLE_MOCK_SERVER;
-
-const merkleStorageUrl = `${SERVER_URL}/merkleProof`;
-
-const genMockIdentityCommitments = (): string[] => {
-  const identityCommitments: string[] = [];
-  for (let i = 0; i < 10; i += 1) {
-    const mockIdentity = new Identity();
-    const idCommitment = bigintToHex(mockIdentity.getCommitment());
-
-    identityCommitments.push(idCommitment);
-  }
-  return identityCommitments;
-};
-
-const genMockVerifiableCredential = (credentialType: string): IVerifiableCredential => {
-  const mockVerifiableCredentialMap: Record<string, IVerifiableCredential> = {
-    UniversityDegreeCredential: {
-      context: ["https://www.w3.org/2018/credentials/v1"],
-      id: "http://example.edu/credentials/1872",
-      type: ["VerifiableCredential", "UniversityDegreeCredential"],
-      issuer: {
-        id: "did:example:76e12ec712ebc6f1c221ebfeb1f",
-      },
-      issuanceDate: new Date("2010-01-01T19:23:24Z"),
-      credentialSubject: {
-        id: "did:example:ebfeb1f712ebc6f1c276e12ec21",
-        claims: {
-          type: "BachelorDegree",
-          name: "Bachelor of Science and Arts",
-        },
-      },
-    },
-    DriversLicenseCredential: {
-      context: ["https://www.w3.org/2018/credentials/v1"],
-      id: "http://example.edu/credentials/1873",
-      type: ["VerifiableCredential", "DriversLicenseCredential"],
-      issuer: {
-        id: "did:example:76e12ec712ebc6f1c221ebfeb1e",
-      },
-      issuanceDate: new Date("2020-01-01T19:23:24Z"),
-      credentialSubject: {
-        id: "did:example:ebfeb1f712ebc6f1c276e12ec21",
-        claims: {
-          name: "John Smith",
-          licenseNumber: "123-abc",
-        },
-      },
-    },
-  };
-
-  if (!(credentialType in mockVerifiableCredentialMap)) {
-    throw new Error("Invalid credential type");
-  }
-
-  return mockVerifiableCredentialMap[credentialType];
-};
-
-const genMockVerifiablePresentationRequest = (): IVerifiablePresentationRequest => ({
-  request: "Please provide your University Degree Credential AND Drivers License Credential.",
-});
-
-export enum MerkleProofType {
-  STORAGE_ADDRESS,
-  ARTIFACTS,
-}
 
 interface IUseCryptKeeperData {
   isLocked: boolean;
@@ -135,7 +72,7 @@ export const useCryptKeeper = (): IUseCryptKeeperData => {
   const genSemaphoreProof = async (proofType: MerkleProofType = MerkleProofType.STORAGE_ADDRESS) => {
     const externalNullifier = encodeBytes32String("voting-1");
     const signal = encodeBytes32String("hello-world");
-    let merkleProofSource: string | IMerkleProofArtifacts = `${merkleStorageUrl}/Semaphore`;
+    let merkleProofSource: string | IMerkleProofArtifacts = `${MERKLE_STORAGE_URL}/Semaphore`;
 
     if (proofType === MerkleProofType.ARTIFACTS) {
       merkleProofSource = {
@@ -180,7 +117,7 @@ export const useCryptKeeper = (): IUseCryptKeeperData => {
     const messageLimit = 1;
     const messageId = 0;
     const epoch = Date.now().toString();
-    let merkleProofSource: string | IMerkleProofArtifacts = `${merkleStorageUrl}/RLN`;
+    let merkleProofSource: string | IMerkleProofArtifacts = `${MERKLE_STORAGE_URL}/RLN`;
 
     if (proofType === MerkleProofType.ARTIFACTS) {
       merkleProofSource = {
