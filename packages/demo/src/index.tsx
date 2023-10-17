@@ -4,7 +4,7 @@ import "react-toastify/dist/ReactToastify.css";
 
 import path from "path";
 
-import { Main } from "./pages/Main/Main";
+import Main from "./pages/Main";
 
 dotenv.config({ path: path.resolve(__dirname, "../..", ".env"), override: true });
 

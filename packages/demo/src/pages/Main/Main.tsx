@@ -6,7 +6,7 @@ import ConnectedIdentity from "@src/components/ConnectedIdentity";
 import DisplayProof from "@src/components/DisplayProof";
 import GetCommitment from "@src/components/GetCommitment";
 import GetMetadata from "@src/components/GetMetadata";
-import { ImportIdentity } from "@src/components/ImportIdentity/ImportIdentity";
+import ImportIdentity from "@src/components/ImportIdentity";
 import RateLimitingNullifier from "@src/components/RateLimitingNullifier";
 import Semaphore from "@src/components/Semaphore";
 import VerifiableCredentials from "@src/components/VerifiableCredentials";
