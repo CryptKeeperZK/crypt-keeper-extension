@@ -3,12 +3,12 @@ import { EventName } from "@cryptkeeperzk/providers";
 import browser from "webextension-polyfill";
 
 import VerifiableCredentialsService from "@src/background/services/credentials";
+import SimpleStorage from "@src/background/services/storage";
 import {
   generateInitialMetadataForVerifiableCredential,
   serializeCryptkeeperVerifiableCredential,
   serializeVerifiableCredential,
-} from "@src/background/services/credentials/utils";
-import SimpleStorage from "@src/background/services/storage";
+} from "@src/util/credentials";
 import pushMessage from "@src/util/pushMessage";
 
 import type {
@@ -16,7 +16,7 @@ import type {
   IVerifiableCredential,
   IVerifiablePresentationRequest,
 } from "@cryptkeeperzk/types";
-import type { ICryptkeeperVerifiableCredential } from "@src/types";
+import type { ICryptkeeperVerifiableCredential, IRenameVerifiableCredentialArgs } from "@src/types";
 
 jest.mock("@src/background/services/crypto", (): unknown => ({
   ...jest.requireActual("@src/background/services/crypto"),
@@ -127,9 +127,9 @@ describe("background/services/credentials", () => {
     (browser.tabs.sendMessage as jest.Mock).mockRejectedValueOnce(false).mockResolvedValue(true);
 
     (SimpleStorage as jest.Mock).mock.instances.forEach((instance: MockStorage) => {
-      instance.get.mockReturnValue(credentialsStorageString);
-      instance.set.mockReturnValue(undefined);
-      instance.clear.mockReturnValue(undefined);
+      instance.get.mockResolvedValue(credentialsStorageString);
+      instance.set.mockResolvedValue(undefined);
+      instance.clear.mockResolvedValue(undefined);
     });
   });
 
@@ -170,6 +170,38 @@ describe("background/services/credentials", () => {
         type: EventName.USER_REJECT,
         payload: { type: EventName.ADD_VERIFIABLE_CREDENTIAL },
       });
+    });
+  });
+
+  describe("rename vc", () => {
+    const defaultArgs: IRenameVerifiableCredentialArgs = {
+      verifiableCredentialHash: exampleCredentialHash,
+      newVerifiableCredentialName: "name",
+    };
+
+    test("should throw error if there is no hash or name", async () => {
+      await expect(
+        verifiableCredentialsService.renameVerifiableCredential({
+          verifiableCredentialHash: "",
+          newVerifiableCredentialName: "",
+        }),
+      ).rejects.toThrowError("Verifiable Credential hash and name are required.");
+    });
+
+    test("should throw error if there is no credential in the store", async () => {
+      const [storage] = (SimpleStorage as jest.Mock).mock.instances as [MockStorage];
+      storage.get.mockResolvedValue(undefined);
+
+      await expect(verifiableCredentialsService.renameVerifiableCredential(defaultArgs)).rejects.toThrowError(
+        "Verifiable Credential does not exist.",
+      );
+    });
+
+    test("should rename vc properly", async () => {
+      const [storage] = (SimpleStorage as jest.Mock).mock.instances as [MockStorage];
+      await verifiableCredentialsService.renameVerifiableCredential(defaultArgs);
+
+      expect(storage.set).toBeCalledTimes(1);
     });
   });
 
@@ -241,13 +273,25 @@ describe("background/services/credentials", () => {
         payload: { verifiablePresentation: signedVerifiablePresentation },
       });
     });
+
+    test("should successfully generate a verifiable presentation without date", async () => {
+      const exampleAddress = "0x123";
+
+      await verifiableCredentialsService.generateVerifiablePresentationWithCryptkeeper({
+        verifiablePresentation: exampleVerifiablePresentation,
+        address: exampleAddress,
+      });
+
+      expect(browser.tabs.query).toBeCalledWith({ lastFocusedWindow: true });
+      expect(browser.tabs.sendMessage).toBeCalledTimes(1);
+    });
   });
 
   describe("add and retrieve verifiable credentials", () => {
     test("should successfully add a verifiable credential", async () => {
       const [credentialsStorage] = (SimpleStorage as jest.Mock).mock.instances as [MockStorage];
-      credentialsStorage.get.mockReturnValue(undefined);
-      credentialsStorage.set.mockReturnValue(undefined);
+      credentialsStorage.get.mockResolvedValue(undefined);
+      credentialsStorage.set.mockResolvedValue(undefined);
 
       const result = verifiableCredentialsService.addVerifiableCredential({
         serializedVerifiableCredential: exampleCredentialString,
@@ -257,9 +301,22 @@ describe("background/services/credentials", () => {
       await expect(result).resolves.toBe(undefined);
     });
 
+    test("should throw error is there is no serialized vc", async () => {
+      const [credentialsStorage] = (SimpleStorage as jest.Mock).mock.instances as [MockStorage];
+      credentialsStorage.get.mockResolvedValue(undefined);
+      credentialsStorage.set.mockResolvedValue(undefined);
+
+      const result = verifiableCredentialsService.addVerifiableCredential({
+        serializedVerifiableCredential: "",
+        verifiableCredentialName: "",
+      });
+
+      await expect(result).rejects.toThrowError("Serialized Verifiable Credential is required.");
+    });
+
     test("should add and retrieve a verifiable credential", async () => {
       const [credentialsStorage] = (SimpleStorage as jest.Mock).mock.instances as [MockStorage];
-      credentialsStorage.get.mockReturnValue(undefined);
+      credentialsStorage.get.mockResolvedValue(undefined);
 
       await verifiableCredentialsService.addVerifiableCredential({
         serializedVerifiableCredential: exampleCredentialString,
@@ -270,7 +327,7 @@ describe("background/services/credentials", () => {
         verifiableCredentialName: defaultCredentialName,
       });
 
-      credentialsStorage.get.mockReturnValue(credentialsStorageString);
+      credentialsStorage.get.mockResolvedValue(credentialsStorageString);
       const verifiableCredentials = await verifiableCredentialsService.getAllVerifiableCredentials();
 
       expect(verifiableCredentials.length).toBe(2);
@@ -280,8 +337,8 @@ describe("background/services/credentials", () => {
 
     test("should not add a verifiable credential with an existing id", async () => {
       const [credentialsStorage] = (SimpleStorage as jest.Mock).mock.instances as [MockStorage];
-      credentialsStorage.get.mockReturnValue(credentialsStorageString);
-      credentialsStorage.set.mockReturnValue(undefined);
+      credentialsStorage.get.mockResolvedValue(credentialsStorageString);
+      credentialsStorage.set.mockResolvedValue(undefined);
 
       await expect(
         verifiableCredentialsService.addVerifiableCredential({
@@ -304,8 +361,8 @@ describe("background/services/credentials", () => {
   describe("delete verifiable credentials", () => {
     test("should delete a verifiable credential", async () => {
       const [credentialsStorage] = (SimpleStorage as jest.Mock).mock.instances as [MockStorage];
-      credentialsStorage.get.mockReturnValue(credentialsStorageString);
-      credentialsStorage.set.mockReturnValue(undefined);
+      credentialsStorage.get.mockResolvedValue(credentialsStorageString);
+      credentialsStorage.set.mockResolvedValue(undefined);
 
       await verifiableCredentialsService.deleteVerifiableCredential(exampleCredentialHash);
 
@@ -313,10 +370,22 @@ describe("background/services/credentials", () => {
       expect(credentialsStorage.set).toBeCalledWith(JSON.stringify([[...credentialsMap.entries()][1]]));
     });
 
+    test("should throw error if there is no vc hash", async () => {
+      const [credentialsStorage] = (SimpleStorage as jest.Mock).mock.instances as [MockStorage];
+      credentialsStorage.get.mockResolvedValue(credentialsStorageString);
+      credentialsStorage.set.mockResolvedValue(undefined);
+
+      await expect(verifiableCredentialsService.deleteVerifiableCredential("")).rejects.toThrowError(
+        "Verifiable Credential hash is required.",
+      );
+
+      expect(credentialsStorage.set).toBeCalledTimes(0);
+    });
+
     test("should not delete a verifiable credential if it does not exist", async () => {
       const [credentialsStorage] = (SimpleStorage as jest.Mock).mock.instances as [MockStorage];
-      credentialsStorage.get.mockReturnValue(credentialsStorageString);
-      credentialsStorage.set.mockReturnValue(undefined);
+      credentialsStorage.get.mockResolvedValue(credentialsStorageString);
+      credentialsStorage.set.mockResolvedValue(undefined);
 
       await expect(verifiableCredentialsService.deleteVerifiableCredential("example hash")).rejects.toThrow(
         "Verifiable Credential does not exist.",
@@ -326,8 +395,8 @@ describe("background/services/credentials", () => {
 
     test("should delete all verifiable credentials", async () => {
       const [credentialsStorage] = (SimpleStorage as jest.Mock).mock.instances as [MockStorage];
-      credentialsStorage.get.mockReturnValue(credentialsStorageString);
-      credentialsStorage.set.mockReturnValue(undefined);
+      credentialsStorage.get.mockResolvedValue(credentialsStorageString);
+      credentialsStorage.set.mockResolvedValue(undefined);
 
       await verifiableCredentialsService.deleteAllVerifiableCredentials();
 
@@ -336,8 +405,8 @@ describe("background/services/credentials", () => {
 
     test("should return false when deleting all verifiable credentials from empty storage", async () => {
       const [credentialsStorage] = (SimpleStorage as jest.Mock).mock.instances as [MockStorage];
-      credentialsStorage.get.mockReturnValue(undefined);
-      credentialsStorage.set.mockReturnValue(undefined);
+      credentialsStorage.get.mockResolvedValue(undefined);
+      credentialsStorage.set.mockResolvedValue(undefined);
 
       await expect(verifiableCredentialsService.deleteAllVerifiableCredentials()).rejects.toThrow(
         "No Verifiable Credentials to delete.",
@@ -357,7 +426,7 @@ describe("background/services/credentials", () => {
 
     test("should not download encrypted identities if storage is empty", async () => {
       const [credentialsStorage] = (SimpleStorage as jest.Mock).mock.instances as [MockStorage];
-      credentialsStorage.get.mockReturnValue(undefined);
+      credentialsStorage.get.mockResolvedValue(undefined);
 
       const result = await verifiableCredentialsService.downloadEncryptedStorage(examplePassword);
 
@@ -379,6 +448,35 @@ describe("background/services/credentials", () => {
       await verifiableCredentialsService.uploadEncryptedStorage("", "");
 
       expect(credentialsStorage.set).toBeCalledTimes(0);
+    });
+
+    test("should throw error when trying upload incorrect backup", async () => {
+      await expect(verifiableCredentialsService.uploadEncryptedStorage({}, "password")).rejects.toThrow(
+        "Incorrect backup format for credentials",
+      );
+    });
+
+    test("should download storage properly", async () => {
+      const [storage] = (SimpleStorage as jest.Mock).mock.instances as [MockStorage];
+
+      await verifiableCredentialsService.downloadStorage();
+
+      expect(storage.get).toBeCalledTimes(1);
+    });
+
+    test("should restore storage properly", async () => {
+      const [storage] = (SimpleStorage as jest.Mock).mock.instances as [MockStorage];
+
+      await verifiableCredentialsService.restoreStorage("storage");
+
+      expect(storage.set).toBeCalledTimes(1);
+      expect(storage.set).toBeCalledWith("storage");
+    });
+
+    test("should throw error when trying to restore incorrect data", async () => {
+      await expect(verifiableCredentialsService.restoreStorage({})).rejects.toThrow(
+        "Incorrect restore format for credentials",
+      );
     });
   });
 });

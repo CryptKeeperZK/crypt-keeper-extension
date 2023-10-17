@@ -1,9 +1,15 @@
-import { IRLNProofRequest, IRequestHandler, ISemaphoreProofRequest, ISemaphoreFullProof } from "@cryptkeeperzk/types";
 import { ZkIdentitySemaphore, ZkProofService } from "@cryptkeeperzk/zk";
 import { Runtime } from "webextension-polyfill";
 
 import Handler from "@src/background/controllers/handler";
 import { RPCInternalAction } from "@src/constants";
+
+import type {
+  IRLNProofRequest,
+  IRequestHandler,
+  ISemaphoreProofRequest,
+  ISemaphoreFullProof,
+} from "@cryptkeeperzk/types";
 
 const defaultMap = Object.values(RPCInternalAction).reduce(
   (acc, method) => ({ ...acc, [method]: false }),

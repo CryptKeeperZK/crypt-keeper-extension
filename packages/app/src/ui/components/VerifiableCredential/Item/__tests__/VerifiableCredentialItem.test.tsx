@@ -61,6 +61,38 @@ describe("ui/components/VerifiableCredential/Item", () => {
     expect(name).toBeInTheDocument();
   });
 
+  test("should render with issuer object properly", async () => {
+    render(
+      <VerifiableCredentialItem
+        {...defaultProps}
+        verifiableCredential={{
+          ...defaultProps.verifiableCredential,
+          issuer: { id: "123" },
+        }}
+      />,
+    );
+
+    const issuer = await screen.findByText(`Issuer: 123`);
+
+    expect(issuer).toBeInTheDocument();
+  });
+
+  test("should render with unknown issuer properly", async () => {
+    render(
+      <VerifiableCredentialItem
+        {...defaultProps}
+        verifiableCredential={{
+          ...defaultProps.verifiableCredential,
+          issuer: { id: "" },
+        }}
+      />,
+    );
+
+    const issuer = await screen.findByText("Issuer: unknown");
+
+    expect(issuer).toBeInTheDocument();
+  });
+
   test("should rename identity properly", async () => {
     (defaultProps.onRenameVerifiableCredential as jest.Mock).mockResolvedValue(true);
 

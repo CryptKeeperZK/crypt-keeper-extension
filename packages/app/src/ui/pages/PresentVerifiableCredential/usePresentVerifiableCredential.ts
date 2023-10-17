@@ -1,9 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
 
-import {
-  generateVerifiablePresentationFromVerifiableCredentials,
-  serializeVerifiablePresentation,
-} from "@src/background/services/credentials/utils";
 import { closePopup } from "@src/ui/ducks/app";
 import { useAppDispatch } from "@src/ui/ducks/hooks";
 import {
@@ -14,6 +10,10 @@ import {
 } from "@src/ui/ducks/verifiableCredentials";
 import { useCryptkeeperVerifiableCredentials } from "@src/ui/hooks/verifiableCredentials";
 import { useCryptKeeperWallet, useEthWallet } from "@src/ui/hooks/wallet";
+import {
+  generateVerifiablePresentationFromVerifiableCredentials,
+  serializeVerifiablePresentation,
+} from "@src/util/credentials";
 
 import type { ICryptkeeperVerifiableCredential } from "@src/types";
 
