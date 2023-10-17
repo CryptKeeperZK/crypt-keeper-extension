@@ -33,6 +33,7 @@
     "prettier": "prettier -c . --ignore-path ../../.prettierignore",
     "prettier:fix": "prettier -w . --ignore-path ../../.prettierignore",
     "types": "tsc -p tsconfig.json --noEmit",
+    "publish:package": "pnpm publish --access=public --no-git-checks",
     "githook:precommit": "lint-staged && pnpm run types",
     "githook:prepush": "pnpm run test:coverage"
   },

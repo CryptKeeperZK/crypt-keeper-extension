@@ -141,6 +141,7 @@ const App = () => {
         <br />
 
         <button
+          data-testid="import-identity"
           type="button"
           onClick={() => {
             importIdentity();
