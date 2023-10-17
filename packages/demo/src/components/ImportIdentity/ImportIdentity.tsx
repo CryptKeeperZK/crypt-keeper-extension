@@ -27,6 +27,7 @@ export const ImportIdentity = ({ importIdentity }: IImportIdentityProps): JSX.El
     <br />
 
     <button
+      data-testid="import-identity"
       type="button"
       onClick={() => {
         importIdentity();
