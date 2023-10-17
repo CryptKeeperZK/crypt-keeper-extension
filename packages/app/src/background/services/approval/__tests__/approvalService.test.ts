@@ -215,6 +215,14 @@ describe("background/services/approval", () => {
         "CryptKeeper: origin is not approved",
       );
     });
+
+    test("should throw error if origin is not provided", async () => {
+      await approvalService.unlock();
+
+      expect(() => approvalService.isOriginApproved({}, { urlOrigin: "" })).toThrowError(
+        "CryptKeeper: origin is not set",
+      );
+    });
   });
 
   describe("backup", () => {

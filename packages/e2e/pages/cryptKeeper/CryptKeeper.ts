@@ -94,11 +94,11 @@ export default class CryptKeeper extends BasePage {
     await this.page.getByText("Approve").click();
   }
 
-  async connectIdentity(index = 0): Promise<void> {
+  async connectIdentity(index = 0, isImport = false): Promise<void> {
     const cryptKeeper = await this.page.context().waitForEvent("page");
 
     await new ConnectIdentity(cryptKeeper, this.identities)
-      .createIdentity({ walletType: "ck", nonce: 0, isDeterministic: false })
+      .createIdentity({ walletType: "ck", nonce: 0, isDeterministic: false, isImport })
       .then((page) => page.selectIdentity(index));
   }
 

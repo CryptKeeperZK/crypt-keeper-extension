@@ -1,5 +1,6 @@
 import { EventName } from "@cryptkeeperzk/providers";
 import { calculateIdentityCommitment, calculateIdentitySecret } from "@cryptkeeperzk/zk";
+import get from "lodash/get";
 import { useCallback, useMemo } from "react";
 import { UseFormRegister, useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
@@ -13,7 +14,11 @@ import { rejectUserRequest } from "@src/ui/ducks/requests";
 import { useSearchParam } from "@src/ui/hooks/url";
 import { useValidationResolver } from "@src/ui/hooks/validation";
 import { redirectToNewTab } from "@src/util/browser";
+import { readFile } from "@src/util/file";
 import { checkBigNumber, convertFromHexToDec } from "@src/util/numbers";
+
+import type { onDropCallback } from "@src/ui/components/UploadButton";
+import type { FileRejection } from "react-dropzone";
 
 export interface IUseImportIdentityData {
   isLoading: boolean;
@@ -31,6 +36,7 @@ export interface IUseImportIdentityData {
   register: UseFormRegister<FormFields>;
   onGoBack: () => void;
   onGoToHost: () => void;
+  onDrop: onDropCallback;
   onSubmit: () => void;
 }
 
@@ -72,8 +78,10 @@ export const useImportIdentity = (): IUseImportIdentityData => {
   const {
     formState: { isSubmitting, isLoading, errors },
     setError,
+    setValue,
     register,
     watch,
+    clearErrors,
     handleSubmit,
   } = useForm({
     defaultValues: {
@@ -108,11 +116,56 @@ export const useImportIdentity = (): IUseImportIdentityData => {
     redirectToNewTab(urlOrigin!);
   }, [urlOrigin]);
 
+  const onDrop = useCallback(
+    async (acceptedFiles: File[], rejectedFiles: FileRejection[]) => {
+      if (rejectedFiles[0]) {
+        setError("root", { message: rejectedFiles[0].errors[0].message });
+        return;
+      }
+
+      clearErrors();
+      await readFile(acceptedFiles[0])
+        .then((res) => {
+          const text = res.target?.result;
+
+          if (!text) {
+            setError("root", { message: "File is empty" });
+          }
+
+          return text?.toString();
+        })
+        .then((content?: string) => {
+          if (!content) {
+            return;
+          }
+
+          const parsed = JSON.parse(content) as
+            | Partial<{ trapdoor: string; nullifier: string; _trapdoor: string; _nullifier: string }>
+            | [string, string];
+
+          if (Array.isArray(parsed)) {
+            setValue("trapdoor", parsed[0]);
+            setValue("nullifier", parsed[1]);
+            return;
+          }
+
+          setValue("trapdoor", get(parsed, "trapdoor", "") || get(parsed, "_trapdoor", ""));
+          setValue("nullifier", get(parsed, "nullifier", "") || get(parsed, "_nullifier", ""));
+        })
+        .catch((error: Error) => {
+          setError("root", { message: error.message });
+        });
+    },
+    [setValue, setError, clearErrors],
+  );
+
   const onSubmit = useCallback(
     (data: FormFields) => {
       dispatch(importIdentity({ ...data, urlOrigin }))
         .then(() => {
-          if (redirectUrl) {
+          if (redirect === Paths.CREATE_IDENTITY.toString()) {
+            navigate(Paths.HOME);
+          } else if (redirectUrl) {
             navigate(redirectUrl);
           } else {
             dispatch(closePopup()).then(() => {
@@ -124,7 +177,7 @@ export const useImportIdentity = (): IUseImportIdentityData => {
           setError("root", { message: error.message });
         });
     },
-    [redirectUrl, urlOrigin, setError, dispatch],
+    [redirect, redirectUrl, urlOrigin, setError, dispatch],
   );
 
   return {
@@ -143,6 +196,7 @@ export const useImportIdentity = (): IUseImportIdentityData => {
     register,
     onGoBack,
     onGoToHost,
+    onDrop,
     onSubmit: handleSubmit(onSubmit),
   };
 };

@@ -23,7 +23,7 @@ describe("ui/components/UploadInput", () => {
   };
 
   const defaultProps: IUploadInputProps = {
-    accept: { "application/json": [] },
+    accept: { "application/json": [".json"] },
     onDrop: jest.fn(),
   };
 

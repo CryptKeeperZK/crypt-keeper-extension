@@ -14,7 +14,13 @@ export default class ConnectIdentity extends BasePage {
 
   async createIdentity(params: ICreateIdentityArgs): Promise<ConnectIdentity> {
     await this.page.getByTestId("create-new-identity").click();
-    await this.identities.createIdentity(this.page, params);
+
+    if (!params.isImport) {
+      await this.identities.createIdentity(params, this.page);
+    } else {
+      await this.page.getByTestId("import-identity").click();
+      await this.identities.importIdentity({ name: "Account Zero", trapdoor: "0", nullifier: "0" }, this.page);
+    }
 
     return this;
   }

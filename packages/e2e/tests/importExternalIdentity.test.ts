@@ -1,3 +1,5 @@
+import path from "path";
+
 import type { IImportIdentityArgs } from "../pages/cryptKeeper/Identities";
 import type { Page } from "@playwright/test";
 
@@ -14,7 +16,7 @@ test.describe("import external identity", () => {
   };
 
   test.beforeEach(async ({ page, cryptKeeperExtensionId, context }) => {
-    await createAccount({ page, cryptKeeperExtensionId, context });
+    await createAccount({ page, cryptKeeperExtensionId, context, isImport: true });
 
     await page.goto(`chrome-extension://${cryptKeeperExtensionId}/popup.html`);
     await expect(page.getByTestId("home-page")).toBeVisible();
@@ -32,10 +34,9 @@ test.describe("import external identity", () => {
     const cryptKeeper = new CryptKeeper(page);
 
     await cryptKeeper.identities.goToImportIdentity();
-    await cryptKeeper.identities.importIdentity({ name: "Test #0", trapdoor: "0", nullifier: "0" });
-    await cryptKeeper.getByText("Reject", { exact: true }).click();
+    await cryptKeeper.identities.importIdentity({ name: "Test #1", trapdoor: "1", nullifier: "1" });
 
-    await expect(cryptKeeper.getByText(/Test #0/)).toHaveCount(1);
+    await expect(cryptKeeper.getByText(/Test #1/)).toHaveCount(1);
   });
 
   test("should import identity from demo properly [health-check]", async ({ page, cryptKeeperExtensionId }) => {
@@ -64,5 +65,48 @@ test.describe("import external identity", () => {
     await expect(page.getByText(/Test #2/)).toHaveCount(1);
     await expect(page.getByText(/Test #3/)).toHaveCount(1);
     await expect(page.getByText(/Test #4/)).toHaveCount(1);
+  });
+
+  test("should import identity with json files properly [health-check]", async ({ page, cryptKeeperExtensionId }) => {
+    await page.goto(`chrome-extension://${cryptKeeperExtensionId}/popup.html`);
+    await expect(page.getByTestId("home-page")).toBeVisible();
+
+    const cryptKeeper = new CryptKeeper(page);
+
+    const invalidBackups = [
+      path.resolve(__dirname, "../backups/12_invalid_identity.json"),
+      path.resolve(__dirname, "../backups/13_empty_identity.json"),
+    ];
+
+    await cryptKeeper.identities.goToImportIdentity();
+
+    /* eslint-disable no-await-in-loop,no-restricted-syntax */
+    for (const backupFilePath of invalidBackups) {
+      await cryptKeeper.identities.importIdentityWithFile({
+        name: "Test",
+        filepath: backupFilePath,
+      });
+    }
+    /* eslint-enable no-await-in-loop */
+    await cryptKeeper.getByText("Reject", { exact: true }).click();
+    await cryptKeeper.getByText("Reject", { exact: true }).click();
+
+    const backupFilePaths = [
+      path.resolve(__dirname, "../backups/9_identity.json"),
+      path.resolve(__dirname, "../backups/10_identity.json"),
+      path.resolve(__dirname, "../backups/11_identity.json"),
+    ];
+
+    /* eslint-disable no-await-in-loop,no-restricted-syntax */
+    for (const backupFilePath of backupFilePaths) {
+      await cryptKeeper.identities.goToImportIdentity();
+      await cryptKeeper.identities.importIdentityWithFile({
+        name: "Test",
+        filepath: backupFilePath,
+      });
+    }
+    /* eslint-enable no-await-in-loop */
+
+    await expect(cryptKeeper.getByText(/Test/)).toHaveCount(3);
   });
 });

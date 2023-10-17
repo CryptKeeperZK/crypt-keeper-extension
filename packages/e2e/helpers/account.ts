@@ -7,18 +7,20 @@ import { CryptKeeper } from "../pages";
 interface ICreateAccountArgs extends TestExtension {
   password?: string;
   mnemonic?: string;
+  isImport?: boolean;
 }
 
 export async function createAccount({
   page,
   password = CRYPT_KEEPER_PASSWORD,
   mnemonic,
+  isImport = false,
 }: ICreateAccountArgs): Promise<void> {
   const cryptKeeper = await connectCryptKeeper(page);
 
   await cryptKeeper.createAccount({ password, mnemonic });
   await cryptKeeper.approve();
-  await cryptKeeper.connectIdentity();
+  await cryptKeeper.connectIdentity(0, isImport);
 
   await cryptKeeper.close();
 }

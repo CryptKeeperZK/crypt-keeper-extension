@@ -5,23 +5,13 @@ import Typography from "@mui/material/Typography";
 import { BigNumberInput } from "@src/ui/components/BigNumberInput";
 import { FullModalContent, FullModalFooter, FullModalHeader } from "@src/ui/components/FullModal";
 import { Input } from "@src/ui/components/Input";
+import { UploadButton } from "@src/ui/components/UploadButton";
 
 import { useImportIdentity } from "./useImportIdentity";
 
 const ImportIdentity = (): JSX.Element => {
-  const {
-    isLoading,
-    urlOrigin,
-    errors,
-    secret,
-    commitment,
-    trapdoor,
-    nullifier,
-    register,
-    onGoBack,
-    onGoToHost,
-    onSubmit,
-  } = useImportIdentity();
+  const { isLoading, urlOrigin, errors, trapdoor, nullifier, register, onGoBack, onGoToHost, onDrop, onSubmit } =
+    useImportIdentity();
 
   return (
     <Box
@@ -35,7 +25,7 @@ const ImportIdentity = (): JSX.Element => {
         <Box>
           <Box>
             {urlOrigin && (
-              <Typography component="div" fontWeight="bold" sx={{ textAlign: "left", mb: 3 }} variant="h6">
+              <Typography component="div" fontWeight="bold" sx={{ textAlign: "left", mb: 1 }} variant="h6">
                 <Typography
                   component="strong"
                   fontWeight="bold"
@@ -53,13 +43,13 @@ const ImportIdentity = (): JSX.Element => {
             )}
 
             {!urlOrigin && (
-              <Typography component="div" fontWeight="bold" sx={{ textAlign: "left", mb: 3 }} variant="h6">
+              <Typography component="div" fontWeight="bold" sx={{ textAlign: "left", mb: 1 }} variant="h6">
                 Import identity with trapdoor and nullifier
               </Typography>
             )}
           </Box>
 
-          <Box sx={{ mt: 2 }}>
+          <Box>
             <Box sx={{ mb: 2 }}>
               <Input
                 autoFocus
@@ -73,6 +63,16 @@ const ImportIdentity = (): JSX.Element => {
                 {...register("name", { required: "Name is required" })}
               />
             </Box>
+
+            <UploadButton
+              accept={{ "application/json": [".json"] }}
+              isLoading={isLoading}
+              multiple={false}
+              name="file"
+              onDrop={onDrop}
+            />
+
+            <Typography sx={{ textAlign: "center", my: 1 }}>Or enter data manually</Typography>
 
             <Box sx={{ mb: 2 }}>
               <BigNumberInput
@@ -103,36 +103,6 @@ const ImportIdentity = (): JSX.Element => {
                 {...register("nullifier", {
                   required: "Identity nullifier is required",
                 })}
-              />
-            </Box>
-
-            <Box sx={{ mb: 2 }}>
-              <BigNumberInput
-                id="commitment"
-                InputProps={{
-                  readOnly: true,
-                }}
-                label="Commitment"
-                placeholder="Enter identity commitment"
-                size="small"
-                type="text"
-                value={commitment}
-                variant="filled"
-              />
-            </Box>
-
-            <Box sx={{ mb: 2 }}>
-              <BigNumberInput
-                id="secret"
-                InputProps={{
-                  readOnly: true,
-                }}
-                label="Secret"
-                placeholder="Enter identity nullifier"
-                size="small"
-                type="text"
-                value={secret}
-                variant="filled"
               />
             </Box>
           </Box>
