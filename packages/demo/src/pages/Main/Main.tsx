@@ -6,6 +6,7 @@ import ConnectedIdentity from "@src/components/ConnectedIdentity";
 import DisplayProof from "@src/components/DisplayProof";
 import GetCommitment from "@src/components/GetCommitment";
 import GetMetadata from "@src/components/GetMetadata";
+import { ImportIdentity } from "@src/components/ImportIdentity/ImportIdentity";
 import RateLimitingNullifier from "@src/components/RateLimitingNullifier";
 import Semaphore from "@src/components/Semaphore";
 import VerifiableCredentials from "@src/components/VerifiableCredentials";
@@ -26,6 +27,7 @@ export const Main = (): JSX.Element => {
     revealConnectedIdentityCommitment,
     joinGroup,
     generateGroupMerkleProof,
+    importIdentity,
   } = useCryptKeeper();
 
   if (isLocked) {
@@ -65,6 +67,8 @@ export const Main = (): JSX.Element => {
       <hr />
 
       <Connect isChangeIdentity connect={connect} title="Connect identity" />
+
+      <ImportIdentity importIdentity={importIdentity} />
 
       <GetMetadata getConnectedIdentityMetadata={getConnectedIdentityMetadata} />
 
