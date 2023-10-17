@@ -1,4 +1,4 @@
-import { ISemaphoreFullProof, IRLNFullProof, IMerkleProof } from "@cryptkeeperzk/types";
+import type { ISemaphoreFullProof, IRLNFullProof, IMerkleProof } from "@cryptkeeperzk/types";
 
 interface IDisplayProofProps {
   proof?: ISemaphoreFullProof | IRLNFullProof | IMerkleProof;

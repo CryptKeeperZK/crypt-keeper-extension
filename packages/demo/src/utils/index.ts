@@ -1,6 +1,7 @@
 import { Identity } from "@cryptkeeperzk/semaphore-identity";
-import { IVerifiableCredential, IVerifiablePresentationRequest } from "@cryptkeeperzk/types";
 import { bigintToHex } from "bigint-conversion";
+
+import type { IVerifiableCredential, IVerifiablePresentationRequest } from "@cryptkeeperzk/types";
 
 export const genMockIdentityCommitments = (): string[] => {
   const identityCommitments: string[] = [];
