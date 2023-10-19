@@ -6,6 +6,7 @@ export interface ICreateIdentityArgs {
   walletType: WalletType;
   nonce: number;
   isDeterministic: boolean;
+  isImport?: boolean;
 }
 
 export interface IUpdateIdentityArgs {
@@ -16,6 +17,11 @@ export interface IImportIdentityArgs {
   name: string;
   trapdoor?: string;
   nullifier?: string;
+}
+
+export interface IImportIdentityWithFileArgs {
+  name: string;
+  filepath: string;
 }
 
 type WalletType = "eth" | "ck";
@@ -46,10 +52,13 @@ export default class Identities extends BasePage {
   async createIdentityFromHome(params: ICreateIdentityArgs): Promise<void> {
     await this.page.getByTestId("create-new-identity").click({ delay: 1000 });
 
-    await this.createIdentity(this.page, params);
+    await this.createIdentity(params);
   }
 
-  async createIdentity(page: Page, { nonce, walletType, isDeterministic }: ICreateIdentityArgs): Promise<void> {
+  async createIdentity(
+    { nonce, walletType, isDeterministic }: ICreateIdentityArgs,
+    page: Page | undefined = this.page,
+  ): Promise<void> {
     await page.getByLabel("Nonce", { exact: true }).fill(nonce.toString());
 
     const deterministicCheckbox = page.getByLabel("Deterministic identity", { exact: true });
@@ -97,17 +106,27 @@ export default class Identities extends BasePage {
     await this.page.getByTestId("import-identity").click();
   }
 
-  async importIdentity({ name, trapdoor, nullifier }: IImportIdentityArgs): Promise<void> {
+  async importIdentityWithFile({ name, filepath }: IImportIdentityWithFileArgs): Promise<void> {
     await this.page.getByLabel("Name").fill(name);
+    await this.page.setInputFiles(`input[name="file"]`, filepath);
+
+    await this.page.getByTestId("import-identity").click();
+  }
+
+  async importIdentity(
+    { name, trapdoor, nullifier }: IImportIdentityArgs,
+    page: Page | undefined = this.page,
+  ): Promise<void> {
+    await page.getByLabel("Name").fill(name);
 
     if (trapdoor) {
-      await this.page.getByLabel("Trapdoor").fill(trapdoor);
+      await page.getByLabel("Trapdoor").fill(trapdoor);
     }
 
     if (nullifier) {
-      await this.page.getByLabel("Nullifier").fill(nullifier);
+      await page.getByLabel("Nullifier").fill(nullifier);
     }
 
-    await this.page.getByTestId("import-identity").click();
+    await page.getByTestId("import-identity").click();
   }
 }

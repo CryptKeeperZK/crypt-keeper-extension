@@ -8,6 +8,13 @@ import { getLinkPreview } from "link-preview-js";
 import { useNavigate } from "react-router-dom";
 
 import {
+  mockArrayIdenityJsonFile,
+  mockEmptyJsonFile,
+  mockIdenityJsonFile,
+  mockIdenityPrivateJsonFile,
+  mockJsonFile,
+} from "@src/config/mock/file";
+import {
   mockDefaultIdentity,
   mockDefaultIdentityCommitment,
   mockDefaultIdentitySecret,
@@ -148,6 +155,74 @@ describe("ui/pages/ImportIdentity/useImportIdentity", () => {
     expect(redirectToNewTab).toBeCalledWith(mockDefaultIdentity.metadata.urlOrigin);
   });
 
+  test("should drop object file properly", async () => {
+    const acceptedFiles = [mockIdenityJsonFile];
+
+    const { result } = renderHook(() => useImportIdentity());
+
+    await act(() => result.current.onDrop(acceptedFiles, []));
+
+    expect(result.current.errors.root).toBeUndefined();
+    expect(result.current.trapdoor).toBe("1");
+    expect(result.current.nullifier).toBe("1");
+  });
+
+  test("should drop array file properly", async () => {
+    const acceptedFiles = [mockArrayIdenityJsonFile];
+
+    const { result } = renderHook(() => useImportIdentity());
+
+    await act(() => result.current.onDrop(acceptedFiles, []));
+
+    expect(result.current.errors.root).toBeUndefined();
+    expect(result.current.trapdoor).toBe("2");
+    expect(result.current.nullifier).toBe("2");
+  });
+
+  test("should drop private object file properly", async () => {
+    const acceptedFiles = [mockIdenityPrivateJsonFile];
+
+    const { result } = renderHook(() => useImportIdentity());
+
+    await act(() => result.current.onDrop(acceptedFiles, []));
+
+    expect(result.current.errors.root).toBeUndefined();
+    expect(result.current.trapdoor).toBe("3");
+    expect(result.current.nullifier).toBe("3");
+  });
+
+  test("should handle empty file properly", async () => {
+    const acceptedFiles = [mockEmptyJsonFile];
+
+    const { result } = renderHook(() => useImportIdentity());
+
+    await act(() => result.current.onDrop(acceptedFiles, []));
+
+    expect(result.current.errors.root).toBe("File is empty");
+  });
+
+  test("should drop files and handle reject errors properly", async () => {
+    const rejectedFiles = [{ file: mockJsonFile, errors: [{ code: "code", message: "error" }] }];
+
+    const { result } = renderHook(() => useImportIdentity());
+
+    await act(() => result.current.onDrop([], rejectedFiles));
+
+    expect(result.current.errors.root).toBe("error");
+  });
+
+  test("should handle file read error properly", async () => {
+    const acceptedFiles: File[] = [];
+
+    const { result } = renderHook(() => useImportIdentity());
+
+    await act(() => result.current.onDrop(acceptedFiles, []));
+
+    expect(result.current.errors.root).toBe(
+      "Failed to execute 'readAsText' on 'FileReader': parameter 1 is not of type 'Blob'.",
+    );
+  });
+
   test("should submit properly", async () => {
     const { result } = renderHook(() => useImportIdentity());
 
@@ -177,6 +252,22 @@ describe("ui/pages/ImportIdentity/useImportIdentity", () => {
     expect(mockNavigate).toBeCalledWith(
       `${Paths.CONNECT_IDENTITY}?urlOrigin=${mockDefaultIdentity.metadata.urlOrigin}&back=${Paths.CONNECT_IDENTITY}`,
     );
+  });
+
+  test("should submit and go home properly", async () => {
+    (useSearchParam as jest.Mock).mockImplementation((arg: string) =>
+      arg === "urlOrigin" ? mockDefaultIdentity.metadata.urlOrigin : Paths.CREATE_IDENTITY,
+    );
+
+    const { result } = renderHook(() => useImportIdentity());
+
+    await act(() => result.current.register("name").onChange({ target: { value: "name" } }));
+    await act(() => Promise.resolve(result.current.onSubmit()));
+
+    expect(mockDispatch).toBeCalledTimes(1);
+    expect(importIdentity).toBeCalledTimes(1);
+    expect(mockNavigate).toBeCalledTimes(1);
+    expect(mockNavigate).toBeCalledWith(Paths.HOME);
   });
 
   test("should handle submit error properly", async () => {

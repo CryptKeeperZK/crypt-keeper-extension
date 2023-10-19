@@ -6,10 +6,10 @@ import { act, fireEvent, render, renderHook } from "@testing-library/react";
 
 import { createDataTransfer, mockJsonFile } from "@src/config/mock/file";
 
-import { IUseUploadInputArgs, useUploadInput } from "../useUploadInput";
+import { IUseUploadButtonArgs, useUploadButton } from "../useUploadButton";
 
-describe("ui/components/UploadInput/useUploadInput", () => {
-  const defaultHookArgs: IUseUploadInputArgs = {
+describe("ui/components/UploadButton/useUploadButton", () => {
+  const defaultHookArgs: IUseUploadButtonArgs = {
     isLoading: false,
     accept: { "application/json": [".json"] },
     onDrop: jest.fn(),
@@ -22,7 +22,7 @@ describe("ui/components/UploadInput/useUploadInput", () => {
   test("should upload file properly", async () => {
     const data = createDataTransfer([mockJsonFile]);
 
-    const { result } = renderHook(() => useUploadInput(defaultHookArgs));
+    const { result } = renderHook(() => useUploadButton(defaultHookArgs));
 
     const { container } = render(
       <div {...result.current.getRootProps()}>

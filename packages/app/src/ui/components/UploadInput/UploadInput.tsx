@@ -16,7 +16,7 @@ export interface IUploadInputProps extends Omit<HTMLAttributes<HTMLInputElement>
   onDrop: onDropCallback;
 }
 
-export const UploadInputUI = (
+const UploadInputUI = (
   { isLoading = false, multiple = true, errorMessage = "", accept, onDrop, ...rest }: IUploadInputProps,
   ref: Ref<HTMLInputElement>,
 ): JSX.Element => {

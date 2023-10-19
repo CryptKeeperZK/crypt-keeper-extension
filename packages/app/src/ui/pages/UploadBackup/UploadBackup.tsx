@@ -44,7 +44,7 @@ const UploadBackup = (): JSX.Element => {
             </Typography>
 
             <UploadInput
-              accept={{ "application/json": [] }}
+              accept={{ "application/json": [".json"] }}
               errorMessage={errors.backupFile}
               isLoading={isLoading}
               multiple={false}

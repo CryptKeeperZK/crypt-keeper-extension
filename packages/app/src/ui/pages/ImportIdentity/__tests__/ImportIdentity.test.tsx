@@ -30,6 +30,7 @@ describe("ui/pages/ImportIdentity", () => {
     register: jest.fn(),
     onGoBack: jest.fn(),
     onGoToHost: jest.fn(),
+    onDrop: jest.fn(),
     onSubmit: jest.fn(),
   };
 
