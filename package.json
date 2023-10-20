@@ -57,7 +57,7 @@
     "@commitlint/cli": "^17.8.0",
     "@commitlint/config-conventional": "^17.8.0",
     "@cryptkeeperzk/manifest-bump": "workspace:^",
-    "@jscutlery/semver": "^3.4.1",
+    "@jscutlery/semver": "^4.0.0",
     "@nx/js": "^16.10.0",
     "@playwright/test": "^1.37.1",
     "@swc/core": "^1.3.82",
