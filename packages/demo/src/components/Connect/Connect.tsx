@@ -1,20 +1,47 @@
+import Box from "@mui/material/Box";
+import Typography from "@mui/material/Typography";
+
+import { useGlobalStyles } from "@src/styles";
+
+import { ActionBox } from "../ActionBox/ActionBox";
+
 interface IConnectProps {
   title: string;
   isChangeIdentity: boolean;
   connect: (isChangeIdentity: boolean) => void;
 }
 
-export const Connect = ({ title, isChangeIdentity, connect }: IConnectProps): JSX.Element => (
-  <div>
-    <h2>{title}</h2>
+const CONNECT_CODE = `import { initializeCryptKeeper } from "@cryptkeeperzk/providers";
 
-    <button
-      type="button"
-      onClick={() => {
-        connect(isChangeIdentity);
-      }}
+const client = initializeCryptKeeper();
+
+const connect = async (isChangeIdentity = false) => {
+    await client
+      ?.connect(isChangeIdentity)
+      .then(() => {
+          // SOME CODE
+      })
+      .catch((error: Error) => {
+          // THROW ERROR
+      });
+  };`;
+
+export const Connect = ({ title, isChangeIdentity = false, connect }: IConnectProps): JSX.Element => {
+  const classes = useGlobalStyles();
+
+  return (
+    <Box
+      className={classes.popup}
+      sx={{ p: 3, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}
     >
-      Connect Identity
-    </button>
-  </div>
-);
+      <Typography variant="h6">{title}</Typography>
+
+      <ActionBox<boolean, void>
+        code={CONNECT_CODE}
+        option={isChangeIdentity}
+        title="Connect Identity"
+        onClick={connect}
+      />
+    </Box>
+  );
+};
