@@ -307,8 +307,8 @@ importers:
         specifier: ^8.51.0
         version: 8.51.0
       fast-check:
-        specifier: ^3.13.1
-        version: 3.13.1
+        specifier: ^3.13.2
+        version: 3.13.2
       file-loader:
         specifier: ^6.2.0
         version: 6.2.0(webpack@5.89.0)
@@ -2179,6 +2179,7 @@ packages:
   /@commitlint/config-validator@18.0.0:
     resolution: {integrity: sha512-PlXy5QZzQeMgQM7jb0odIhxsI6GWcbGgfy+Hkz5ap31KES/oJgtEvgD8pjg0Z9Ri296bT6zK3ts6brS0MAcMgg==}
     engines: {node: '>=v18'}
+    requiresBuild: true
     dependencies:
       '@commitlint/types': 18.0.0
       ajv: 8.12.0
@@ -2199,6 +2200,7 @@ packages:
   /@commitlint/execute-rule@18.0.0:
     resolution: {integrity: sha512-eNUSaHajb+g3sgZeIrfc6cXNnKIkYN2SXtDVXuiE+hOa055T0bLdZK29gSd945JCztxPVwdOkPLDeLg3NfDubg==}
     engines: {node: '>=v18'}
+    requiresBuild: true
     dev: true
 
   /@commitlint/format@18.0.0:
@@ -2278,6 +2280,7 @@ packages:
   /@commitlint/resolve-extends@18.0.0:
     resolution: {integrity: sha512-MD9+6GSiWvqgdJtfos+1gqz+zmy2vV7TbUVz2ETZzpfECgmUZSZSYzyivivBAQK6feS71KxmMLL8+YFF9+FFRQ==}
     engines: {node: '>=v18'}
+    requiresBuild: true
     dependencies:
       '@commitlint/config-validator': 18.0.0
       '@commitlint/types': 18.0.0
@@ -8252,6 +8255,7 @@ packages:
   /cosmiconfig-typescript-loader@4.3.0(@types/node@18.15.13)(cosmiconfig@8.2.0)(ts-node@10.9.1)(typescript@5.2.2):
     resolution: {integrity: sha512-NTxV1MFfZDLPiBMjxbHRwSh5LaLcPMwNdCutmnHJCKoVnlvldPWlllonKwrsRJ5pYZBIBGRWWU2tfvzxgeSW5Q==}
     engines: {node: '>=12', npm: '>=6'}
+    requiresBuild: true
     peerDependencies:
       '@types/node': '*'
       cosmiconfig: '>=7'
@@ -10159,8 +10163,8 @@ packages:
     resolution: {integrity: sha512-11Ndz7Nv+mvAC1j0ktTa7fAb0vLyGGX+rMHNBYQviQDGU0Hw7lhctJANqbPhu9nV9/izT/IntTgZ7Im/9LJs9g==}
     engines: {'0': node >=0.6.0}
 
-  /fast-check@3.13.1:
-    resolution: {integrity: sha512-Xp00tFuWd83i8rbG/4wU54qU+yINjQha7bXH2N4ARNTkyOimzHtUBJ5+htpdXk7RMaCOD/j2jxSjEt9u9ZPNeQ==}
+  /fast-check@3.13.2:
+    resolution: {integrity: sha512-ouTiFyeMoqmNg253xqy4NSacr5sHxH6pZpLOaHgaAdgZxFWdtsfxExwolpveoAE9CJdV+WYjqErNGef6SqA5Mg==}
     engines: {node: '>=8.0.0'}
     dependencies:
       pure-rand: 6.0.2
