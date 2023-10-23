@@ -4,8 +4,8 @@
 
 import { renderHook, waitFor } from "@testing-library/react";
 
-import { serializeCryptkeeperVerifiableCredential } from "@src/background/services/credentials/utils";
 import { useVerifiableCredentials } from "@src/ui/ducks/verifiableCredentials";
+import { serializeCryptkeeperVerifiableCredential } from "@src/util/credentials";
 
 import { useCryptkeeperVerifiableCredentials } from "..";
 

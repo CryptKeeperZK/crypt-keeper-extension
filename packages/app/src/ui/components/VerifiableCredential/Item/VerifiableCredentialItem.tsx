@@ -45,9 +45,8 @@ export const VerifiableCredentialItem = ({
   ];
 
   const issuer =
-    typeof verifiableCredential.issuer === "string"
-      ? verifiableCredential.issuer
-      : verifiableCredential.issuer.id || "unknown";
+    (typeof verifiableCredential.issuer === "string" ? verifiableCredential.issuer : verifiableCredential.issuer.id) ||
+    "unknown";
 
   const isSelectorEnabled = selected !== undefined;
 

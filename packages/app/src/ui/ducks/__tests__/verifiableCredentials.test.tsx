@@ -5,9 +5,9 @@
 import { renderHook } from "@testing-library/react";
 import { Provider } from "react-redux";
 
-import { serializeCryptkeeperVerifiableCredential } from "@src/background/services/credentials/utils";
 import { RPCInternalAction } from "@src/constants";
 import { store } from "@src/ui/store/configureAppStore";
+import { serializeCryptkeeperVerifiableCredential } from "@src/util/credentials";
 import postMessage from "@src/util/postMessage";
 
 import {

@@ -9,14 +9,6 @@ import SimpleStorage from "@src/background/services/storage";
 import WalletService from "@src/background/services/wallet";
 import { Paths } from "@src/constants";
 import { OperationType, IRenameVerifiableCredentialArgs, ICryptkeeperVerifiableCredential } from "@src/types";
-
-import type { IVerifiablePresentation, IVerifiablePresentationRequest } from "@cryptkeeperzk/types";
-import type { BackupData, IBackupable } from "@src/background/services/backup";
-import type {
-  IAddVerifiableCredentialArgs,
-  IGenerateVerifiablePresentationWithCryptkeeperArgs,
-} from "@src/types/verifiableCredentials";
-
 import {
   generateInitialMetadataForVerifiableCredential,
   serializeCryptkeeperVerifiableCredential,
@@ -24,7 +16,14 @@ import {
   deserializeCryptkeeperVerifiableCredential,
   validateSerializedVerifiableCredential,
   serializeVerifiablePresentation,
-} from "./utils";
+} from "@src/util/credentials";
+
+import type { IVerifiablePresentation, IVerifiablePresentationRequest } from "@cryptkeeperzk/types";
+import type { BackupData, IBackupable } from "@src/background/services/backup";
+import type {
+  IAddVerifiableCredentialArgs,
+  IGenerateVerifiablePresentationWithCryptkeeperArgs,
+} from "@src/types/verifiableCredentials";
 
 const VERIFIABLE_CREDENTIALS_KEY = "@@VERIFIABLE-CREDENTIALS@@";
 const ETHEREUM_SIGNATURE_SPECIFICATION_TYPE = "EthereumEip712Signature2021";
@@ -92,8 +91,10 @@ export default class VerifiableCredentialsService implements IBackupable {
     );
   };
 
-  addVerifiableCredential = async (addVerifiableCredentialArgs: IAddVerifiableCredentialArgs): Promise<void> => {
-    const { serializedVerifiableCredential, verifiableCredentialName } = addVerifiableCredentialArgs;
+  addVerifiableCredential = async ({
+    serializedVerifiableCredential,
+    verifiableCredentialName,
+  }: IAddVerifiableCredentialArgs): Promise<void> => {
     if (!serializedVerifiableCredential) {
       throw new Error("Serialized Verifiable Credential is required.");
     }
@@ -121,10 +122,10 @@ export default class VerifiableCredentialsService implements IBackupable {
     }
   };
 
-  renameVerifiableCredential = async (
-    renameVerifiableCredentialArgs: IRenameVerifiableCredentialArgs,
-  ): Promise<void> => {
-    const { verifiableCredentialHash, newVerifiableCredentialName } = renameVerifiableCredentialArgs;
+  renameVerifiableCredential = async ({
+    verifiableCredentialHash,
+    newVerifiableCredentialName,
+  }: IRenameVerifiableCredentialArgs): Promise<void> => {
     if (!verifiableCredentialHash || !newVerifiableCredentialName) {
       throw new Error("Verifiable Credential hash and name are required.");
     }
@@ -146,6 +147,7 @@ export default class VerifiableCredentialsService implements IBackupable {
       serializeCryptkeeperVerifiableCredential(cryptkeeperVerifiableCredential),
     );
     await this.writeCryptkeeperVerifiableCredentials(cryptkeeperVerifiableCredentials);
+
     await this.historyService.trackOperation(OperationType.RENAME_VERIFIABLE_CREDENTIAL, {});
     await this.notificationService.create({
       options: {
@@ -181,6 +183,7 @@ export default class VerifiableCredentialsService implements IBackupable {
 
     cryptkeeperVerifiableCredentials.delete(verifiableCredentialHash);
     await this.writeCryptkeeperVerifiableCredentials(cryptkeeperVerifiableCredentials);
+
     await this.historyService.trackOperation(OperationType.DELETE_VERIFIABLE_CREDENTIAL, {});
     await this.notificationService.create({
       options: {
@@ -230,6 +233,7 @@ export default class VerifiableCredentialsService implements IBackupable {
         type: "basic",
       },
     });
+
     const tabs = await browser.tabs.query({ active: true });
     await Promise.all(
       tabs.map((tab) =>
@@ -276,6 +280,7 @@ export default class VerifiableCredentialsService implements IBackupable {
         type: "basic",
       },
     });
+
     const tabs = await browser.tabs.query({ active: true });
     await Promise.all(
       tabs.map((tab) =>
@@ -299,6 +304,7 @@ export default class VerifiableCredentialsService implements IBackupable {
         type: "basic",
       },
     });
+
     const tabs = await browser.tabs.query({ active: true });
     await Promise.all(
       tabs.map((tab) =>
@@ -347,6 +353,7 @@ export default class VerifiableCredentialsService implements IBackupable {
         type: "basic",
       },
     });
+
     const tabs = await browser.tabs.query({ active: true });
     await Promise.all(
       tabs.map((tab) =>

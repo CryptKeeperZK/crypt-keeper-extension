@@ -25,9 +25,9 @@ export interface UseVerifiableCredentialItemArgs {
 }
 
 export const useVerifiableCredentialItem = (
-  useVerifiableCredentialItemArgs: UseVerifiableCredentialItemArgs,
+  args: UseVerifiableCredentialItemArgs,
 ): IUseVerifiableCredentialItemData => {
-  const { metadata, onRename, onDelete, onSelect } = useVerifiableCredentialItemArgs;
+  const { metadata, onRename, onDelete, onSelect } = args;
   const { hash, name: initialName } = metadata;
 
   const { register, watch } = useForm<RenameVerifiableCredentialItemData>({
@@ -47,25 +47,22 @@ export const useVerifiableCredentialItem = (
   const onSubmit = useCallback(
     async (event: ReactFormEvent<HTMLFormElement>) => {
       event.preventDefault();
+
       if (onRename) {
         await onRename(hash, name);
         setIsRenaming(false);
       }
     },
-    [onRename, name, setIsRenaming],
+    [name, setIsRenaming, onRename],
   );
 
   const onDeleteVerifiableCredential = useCallback(async () => {
-    if (onDelete) {
-      await onDelete(hash);
-    }
-  }, [onDelete, hash]);
+    await onDelete?.(hash);
+  }, [hash, onDelete]);
 
   const onToggleSelect = useCallback(() => {
-    if (onSelect) {
-      onSelect(hash);
-    }
-  }, [onSelect, hash]);
+    onSelect?.(hash);
+  }, [hash, onSelect]);
 
   return {
     isRenaming,

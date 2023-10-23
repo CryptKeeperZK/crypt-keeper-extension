@@ -40,6 +40,7 @@ describe("ui/pages/AddVerifiableCredential", () => {
   };
 
   const defaultHookData: IUseAddVerifiableCredentialData = {
+    isLoading: false,
     cryptkeeperVerifiableCredential,
     error: undefined,
     onCloseModal: jest.fn(),

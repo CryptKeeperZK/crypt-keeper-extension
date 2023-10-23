@@ -1,18 +1,20 @@
 import { useCallback, useEffect, useState } from "react";
 
-import {
-  deserializeVerifiableCredential,
-  hashVerifiableCredential,
-  serializeVerifiableCredential,
-} from "@src/background/services/credentials/utils";
 import { ICryptkeeperVerifiableCredential } from "@src/types";
 import { closePopup } from "@src/ui/ducks/app";
 import { useAppDispatch } from "@src/ui/ducks/hooks";
 import { addVerifiableCredential, rejectVerifiableCredentialRequest } from "@src/ui/ducks/verifiableCredentials";
+import { useSearchParam } from "@src/ui/hooks/url";
+import {
+  deserializeVerifiableCredential,
+  hashVerifiableCredential,
+  serializeVerifiableCredential,
+} from "@src/util/credentials";
 
 export const defaultVerifiableCredentialName = "Verifiable Credential";
 
 export interface IUseAddVerifiableCredentialData {
+  isLoading: boolean;
   cryptkeeperVerifiableCredential?: ICryptkeeperVerifiableCredential;
   error?: string;
   onCloseModal: () => void;
@@ -25,17 +27,18 @@ export const useAddVerifiableCredential = (): IUseAddVerifiableCredentialData =>
   const [cryptkeeperVerifiableCredential, setCryptkeeperVerifiableCredential] =
     useState<ICryptkeeperVerifiableCredential>();
   const [error, setError] = useState<string>();
+  const [isLoading, setIsLoading] = useState(false);
+
+  const dispatch = useAppDispatch();
+  const serializedVC = useSearchParam("serializedVerifiableCredential");
 
   useEffect(() => {
     async function deserialize() {
-      const { searchParams } = new URL(window.location.href.replace("#", ""));
-      const serializedVerifiableCredential = searchParams.get("serializedVerifiableCredential");
-
-      if (!serializedVerifiableCredential) {
+      if (!serializedVC) {
         return;
       }
 
-      const deserializedVerifiableCredential = await deserializeVerifiableCredential(serializedVerifiableCredential);
+      const deserializedVerifiableCredential = await deserializeVerifiableCredential(serializedVC);
       setCryptkeeperVerifiableCredential({
         verifiableCredential: deserializedVerifiableCredential,
         metadata: {
@@ -44,10 +47,12 @@ export const useAddVerifiableCredential = (): IUseAddVerifiableCredentialData =>
         },
       });
     }
-    deserialize();
-  }, [setCryptkeeperVerifiableCredential]);
 
-  const dispatch = useAppDispatch();
+    setIsLoading(true);
+    deserialize().finally(() => {
+      setIsLoading(false);
+    });
+  }, [serializedVC, setIsLoading, setError, setCryptkeeperVerifiableCredential]);
 
   const onCloseModal = useCallback(() => {
     dispatch(closePopup());
@@ -55,14 +60,10 @@ export const useAddVerifiableCredential = (): IUseAddVerifiableCredentialData =>
 
   const onRenameVerifiableCredential = useCallback(
     (newVerifiableCredentialName: string) => {
-      if (!cryptkeeperVerifiableCredential) {
-        return;
-      }
-
       setCryptkeeperVerifiableCredential({
-        verifiableCredential: cryptkeeperVerifiableCredential.verifiableCredential,
+        verifiableCredential: cryptkeeperVerifiableCredential!.verifiableCredential,
         metadata: {
-          hash: cryptkeeperVerifiableCredential.metadata.hash,
+          hash: cryptkeeperVerifiableCredential!.metadata.hash,
           name: newVerifiableCredentialName,
         },
       });
@@ -71,22 +72,13 @@ export const useAddVerifiableCredential = (): IUseAddVerifiableCredentialData =>
   );
 
   const onApproveVerifiableCredential = useCallback(async () => {
-    if (!cryptkeeperVerifiableCredential) {
-      return;
-    }
+    const serialized = serializeVerifiableCredential(cryptkeeperVerifiableCredential!.verifiableCredential);
 
-    const serializedVerifiableCredential = serializeVerifiableCredential(
-      cryptkeeperVerifiableCredential.verifiableCredential,
-    );
-
-    try {
-      await dispatch(
-        addVerifiableCredential(serializedVerifiableCredential, cryptkeeperVerifiableCredential.metadata.name),
-      );
-      onCloseModal();
-    } catch (err) {
-      setError((err as Error).message);
-    }
+    await dispatch(addVerifiableCredential(serialized, cryptkeeperVerifiableCredential!.metadata.name))
+      .then(onCloseModal)
+      .catch((err: Error) => {
+        setError(err.message);
+      });
   }, [cryptkeeperVerifiableCredential, onCloseModal]);
 
   const onRejectVerifiableCredential = useCallback(async () => {
@@ -95,6 +87,7 @@ export const useAddVerifiableCredential = (): IUseAddVerifiableCredentialData =>
   }, [dispatch, onCloseModal]);
 
   return {
+    isLoading,
     cryptkeeperVerifiableCredential,
     error,
     onCloseModal,

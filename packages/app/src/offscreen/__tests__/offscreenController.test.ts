@@ -1,8 +1,14 @@
-import { IMerkleProof, ISemaphoreProofRequest } from "@cryptkeeperzk/types";
+import { IMerkleProof, IRLNProofRequest, ISemaphoreProofRequest } from "@cryptkeeperzk/types";
 import { ZkIdentitySemaphore, getMerkleProof } from "@cryptkeeperzk/zk";
 
-import { mockSemaphoreGenerateProof } from "../mocks";
 import { OffscreenController } from "../Offscreen";
+
+const mockEmptyFullProof = {
+  fullProof: {
+    proof: {},
+    publicSignals: {},
+  },
+};
 
 jest.mock("@cryptkeeperzk/zk", (): unknown => ({
   ZkIdentitySemaphore: {
@@ -11,20 +17,13 @@ jest.mock("@cryptkeeperzk/zk", (): unknown => ({
   },
   getMerkleProof: jest.fn(),
   ZkProofService: jest.fn(() => ({
-    generateSemaphoreProof: mockSemaphoreGenerateProof,
-    generateRLNProof: jest.fn(),
+    generateSemaphoreProof: jest.fn(() => Promise.resolve(mockEmptyFullProof)),
+    generateRLNProof: jest.fn(() => Promise.resolve(mockEmptyFullProof)),
   })),
 }));
 
-const emptyFullProof = {
-  fullProof: {
-    proof: {},
-    publicSignals: {},
-  },
-};
-
 describe("offscreen/offscreenController", () => {
-  const defaultGenerateArgs: ISemaphoreProofRequest = {
+  const defaultSemaphoreProofArgs: ISemaphoreProofRequest = {
     identitySerialized: "identitySerialized",
     externalNullifier: "externalNullifier",
     signal: "0x0",
@@ -32,6 +31,15 @@ describe("offscreen/offscreenController", () => {
     verificationKey: "verificationKey",
     zkeyFilePath: "zkeyFilePath",
     urlOrigin: "origin",
+  };
+
+  const defaultRlnProofArgs: IRLNProofRequest = {
+    identitySerialized: "identitySerialized",
+    rlnIdentifier: "id",
+    message: "message",
+    messageLimit: 1,
+    messageId: 0,
+    epoch: "epoch",
   };
 
   const defaultMerkleProof: IMerkleProof = {
@@ -46,21 +54,55 @@ describe("offscreen/offscreenController", () => {
       genIdentityCommitment: jest.fn().mockReturnValue("identityCommitment"),
       zkIdentity: "zkIdentity",
     });
+
+    (getMerkleProof as jest.Mock).mockReturnValue(defaultMerkleProof);
   });
 
   afterEach(() => {
     jest.clearAllMocks();
   });
 
-  test("should generate a semaphore proof properly", async () => {
-    (getMerkleProof as jest.Mock).mockReturnValue(defaultMerkleProof);
-    mockSemaphoreGenerateProof.mockResolvedValueOnce(emptyFullProof);
+  test("should not handle unknown requests", async () => {
+    const offscreenController = new OffscreenController();
 
+    await expect(offscreenController.handle({ method: "unknown" }, {})).rejects.toThrowError(
+      "method: unknown is not detected",
+    );
+  });
+
+  test("should generate semaphore proof properly", async () => {
     const offscreenController = new OffscreenController();
     offscreenController.initialize();
 
-    const result = await offscreenController.generateSemaphoreProof(defaultGenerateArgs);
+    const result = await offscreenController.generateSemaphoreProof(defaultSemaphoreProofArgs);
 
-    expect(result).toStrictEqual(emptyFullProof);
+    expect(result).toStrictEqual(mockEmptyFullProof);
+  });
+
+  test("should throw error while generating semaphore proof if there is no serialized identity", async () => {
+    const offscreenController = new OffscreenController();
+    offscreenController.initialize();
+
+    await expect(
+      offscreenController.generateSemaphoreProof({ ...defaultSemaphoreProofArgs, identitySerialized: "" }),
+    ).rejects.toThrowError("Offscreen: Serialized Identity is not set");
+  });
+
+  test("should generate rln proof properly", async () => {
+    const offscreenController = new OffscreenController();
+    offscreenController.initialize();
+
+    const result = await offscreenController.generateRlnProof(defaultRlnProofArgs);
+
+    expect(result).toBe(JSON.stringify(mockEmptyFullProof));
+  });
+
+  test("should throw error while generating rnl proof if there is no serialized identity", async () => {
+    const offscreenController = new OffscreenController();
+    offscreenController.initialize();
+
+    await expect(
+      offscreenController.generateRlnProof({ ...defaultRlnProofArgs, identitySerialized: "" }),
+    ).rejects.toThrowError("Offscreen: Serialized Identity is not set");
   });
 });

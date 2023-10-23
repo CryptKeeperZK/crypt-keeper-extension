@@ -1,25 +1,24 @@
 import { RPCExternalAction } from "@cryptkeeperzk/providers";
 import { IRequestHandler } from "@cryptkeeperzk/types";
 
+import BrowserUtils from "@src/background/controllers/browserUtils";
+import Handler from "@src/background/controllers/handler";
+import RequestManager from "@src/background/controllers/requestManager";
+import ApprovalService from "@src/background/services/approval";
+import BackupService from "@src/background/services/backup";
+import VerifiableCredentialsService from "@src/background/services/credentials";
+import GroupService from "@src/background/services/group";
+import HistoryService from "@src/background/services/history";
+import { InjectorService } from "@src/background/services/injector";
+import LockerService from "@src/background/services/lock";
+import MiscStorageService from "@src/background/services/misc";
+import WalletService from "@src/background/services/wallet";
+import ZkIdentityService from "@src/background/services/zkIdentity";
 import { RPCInternalAction } from "@src/constants";
 import { BackupableServices } from "@src/types";
+import { validateSerializedVerifiableCredential } from "@src/util/credentials";
 
 import type { Runtime } from "webextension-polyfill";
-
-import BrowserUtils from "./controllers/browserUtils";
-import Handler from "./controllers/handler";
-import RequestManager from "./controllers/requestManager";
-import ApprovalService from "./services/approval";
-import BackupService from "./services/backup";
-import VerifiableCredentialsService from "./services/credentials";
-import { validateSerializedVerifiableCredential } from "./services/credentials/utils";
-import GroupService from "./services/group";
-import HistoryService from "./services/history";
-import { InjectorService } from "./services/injector";
-import LockerService from "./services/lock";
-import MiscStorageService from "./services/misc";
-import WalletService from "./services/wallet";
-import ZkIdentityService from "./services/zkIdentity";
 
 const defaultMap = Object.values(RPCExternalAction).reduce(
   (acc, method) => ({ ...acc, [method]: false }),

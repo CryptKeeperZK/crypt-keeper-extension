@@ -55,6 +55,42 @@ describe("ui/components/VerifiableCredential/Display", () => {
   });
 
   test("should render properly", async () => {
+    const now = new Date();
+
+    render(
+      <VerifiableCredentialDisplay
+        {...defaultProps}
+        cryptkeeperVerifiableCredential={{
+          ...defaultProps.cryptkeeperVerifiableCredential,
+          verifiableCredential: {
+            ...defaultProps.cryptkeeperVerifiableCredential.verifiableCredential,
+            expirationDate: now,
+            issuer: {
+              id: defaultProps.cryptkeeperVerifiableCredential.verifiableCredential.issuer as string,
+            },
+          },
+        }}
+      />,
+    );
+
+    const name = await screen.findByText(defaultProps.cryptkeeperVerifiableCredential.metadata.name);
+    const type = await screen.findByText(defaultProps.cryptkeeperVerifiableCredential.verifiableCredential.type[0]);
+    const issuer = await screen.findByText(
+      defaultProps.cryptkeeperVerifiableCredential.verifiableCredential.issuer as string,
+    );
+    const issuanceDate = await screen.findByText(
+      defaultProps.cryptkeeperVerifiableCredential.verifiableCredential.issuanceDate.toString(),
+    );
+    const expirationDate = await screen.findByText(now.toString());
+
+    expect(name).toBeInTheDocument();
+    expect(type).toBeInTheDocument();
+    expect(issuer).toBeInTheDocument();
+    expect(issuanceDate).toBeInTheDocument();
+    expect(expirationDate).toBeInTheDocument();
+  });
+
+  test("should render with issuer object properly", async () => {
     render(<VerifiableCredentialDisplay {...defaultProps} />);
 
     const name = await screen.findByText(defaultProps.cryptkeeperVerifiableCredential.metadata.name);

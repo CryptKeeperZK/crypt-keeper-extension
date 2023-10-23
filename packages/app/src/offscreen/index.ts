@@ -1,27 +1,21 @@
-import { IRequestHandler } from "@cryptkeeperzk/types";
-import log from "loglevel";
-import browser, { Runtime } from "webextension-polyfill";
+import browser, { type Runtime } from "webextension-polyfill";
 
-import { isDebugMode } from "@src/config/env";
+import type { IRequestHandler } from "@cryptkeeperzk/types";
 
 import { OffscreenController } from "./Offscreen";
 
-log.setDefaultLevel(isDebugMode() ? "debug" : "info");
-
 const offscreenMessageListener = async (request: IRequestHandler, sender: Runtime.MessageSender) => {
-  log.debug("Inside Offscreen onMessage", request);
   if (request.source !== "offscreen") {
-    return;
+    return undefined;
   }
 
   try {
+    // TODO: offscreen controller is created on each request
     const offscreenController = new OffscreenController();
     offscreenController.initialize();
-    // eslint-disable-next-line consistent-return
     return offscreenController.handle(request, sender);
-  } catch (e) {
-    log.error("CryptKeeper offscreen error!", e);
-    throw new Error("Proof generation is failed");
+  } catch (error) {
+    throw new Error(`Proof generation is failed ${(error as Error).message}`);
   } finally {
     browser.runtime.onMessage.removeListener(offscreenMessageListener);
   }

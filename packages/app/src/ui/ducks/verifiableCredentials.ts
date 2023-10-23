@@ -1,8 +1,8 @@
 /* eslint-disable no-param-reassign */
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
-import { serializeCryptkeeperVerifiableCredential } from "@src/background/services/credentials/utils";
 import { RPCInternalAction } from "@src/constants";
+import { serializeCryptkeeperVerifiableCredential } from "@src/util/credentials";
 import postMessage from "@src/util/postMessage";
 
 import type { IVerifiablePresentation } from "@cryptkeeperzk/types";

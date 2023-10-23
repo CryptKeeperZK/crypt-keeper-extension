@@ -9,14 +9,14 @@ module.exports = {
     "@src/(.*)$": "<rootDir>/src/$1",
   },
   modulePathIgnorePatterns: ["<rootDir>/dist/"],
-  coveragePathIgnorePatterns: ["/node_modules/", "/test/", "/__tests__/"],
+  coveragePathIgnorePatterns: ["/node_modules/", "/test/", "/__tests__/", "src/background/cryptKeeper.ts"],
   collectCoverageFrom: ["src/**/*.{ts,tsx}"],
   coverageThreshold: {
     global: {
-      statements: 90,
-      branches: 90,
-      functions: 90,
-      lines: 90,
+      statements: 97,
+      branches: 97,
+      functions: 97,
+      lines: 97,
     },
   },
 };
