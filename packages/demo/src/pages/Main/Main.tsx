@@ -1,3 +1,6 @@
+import LockOpenIcon from "@mui/icons-material/LockOpen";
+import Box from "@mui/material/Box";
+import Typography from "@mui/material/Typography";
 import { ToastContainer } from "react-toastify";
 
 import Bandada from "@src/components/Bandada";
@@ -32,27 +35,41 @@ export const Main = (): JSX.Element => {
 
   if (isLocked) {
     return (
-      <div>
-        <h2>Start the Authorization Process</h2>
+      <Box component="form" sx={{ display: "flex", flexDirection: "column", flexWrap: "nowrap", height: "100%" }}>
+        <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center", p: 3, flexGrow: 1 }}>
+          <LockOpenIcon color="primary" fontSize="inherit" />
 
-        <Connect connect={connect} isChangeIdentity={false} title="Please connect to CryptKeeper to continue." />
+          <Typography sx={{ pt: 3, fontWeight: "bold", color: "primary.main" }} variant="h4">
+            Welcome to CryptKeeper Demo!
+          </Typography>
+        </Box>
 
-        <hr />
-
-        <div>
-          <h2>Example of Unauthorized Actions</h2>
-
-          <br />
-
-          <Semaphore genSemaphoreProof={genSemaphoreProof} />
-        </div>
-
-        <hr />
-
-        <ToastContainer newestOnTop />
-      </div>
+        <Connect
+          connect={connect}
+          isChangeIdentity={false}
+          title="To continue, please connect to your CryptKeeper to continue."
+        />
+      </Box>
     );
   }
+
+  <div>
+    <h2>Start the Authorization Process</h2>
+
+    <hr />
+
+    <div>
+      <h2>Example of Unauthorized Actions</h2>
+
+      <br />
+
+      <Semaphore genSemaphoreProof={genSemaphoreProof} />
+    </div>
+
+    <hr />
+
+    <ToastContainer newestOnTop />
+  </div>;
 
   return (
     <div>
@@ -64,8 +81,6 @@ export const Main = (): JSX.Element => {
         identityName={connectedIdentityMetadata?.name}
       />
 
-      <hr />
-
       <Connect isChangeIdentity connect={connect} title="Connect identity" />
 
       <ImportIdentity importIdentity={importIdentity} />
@@ -74,23 +89,13 @@ export const Main = (): JSX.Element => {
 
       <GetCommitment revealConnectedIdentityCommitment={revealConnectedIdentityCommitment} />
 
-      <hr />
-
       <Semaphore genSemaphoreProof={genSemaphoreProof} />
-
-      <hr />
 
       <RateLimitingNullifier genRLNProof={genRLNProof} />
 
-      <hr />
-
       <Bandada generateGroupMerkleProof={generateGroupMerkleProof} joinGroup={joinGroup} />
 
-      <hr />
-
       <DisplayProof proof={proof} />
-
-      <hr />
 
       {process.env.VERIFIABLE_CREDENTIALS === "true" && (
         <VerifiableCredentials

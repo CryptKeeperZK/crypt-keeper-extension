@@ -1,39 +1,55 @@
+import Box from "@mui/material/Box";
+import TextField from "@mui/material/TextField";
+import Typography from "@mui/material/Typography";
+
+import { useGlobalStyles } from "@src/styles";
+
+import { ActionBox } from "../ActionBox/ActionBox";
+
 interface IImportIdentityProps {
   importIdentity: () => Promise<void>;
 }
 
-export const ImportIdentity = ({ importIdentity }: IImportIdentityProps): JSX.Element => (
-  <div>
-    <h2>Import identity</h2>
+const IMPORT_IDENTITY = `import { initializeCryptKeeper } from "@cryptkeeperzk/providers";
 
-    <div>
-      <label htmlFor="trapdoor">Trapdoor</label>
+const client = initializeCryptKeeper();
 
-      <br />
+const importIdentity = async () => {
+  await client?.request({
+    method: RPCExternalAction.IMPORT_IDENTITY,
+    payload: {
+      trapdoor,
+      nullifier,
+    },
+  });
+}`;
 
-      <input id="trapdoor" placeholder="Enter trapdoor" />
-    </div>
+export const ImportIdentity = ({ importIdentity }: IImportIdentityProps): JSX.Element => {
+  const classes = useGlobalStyles();
 
-    <br />
-
-    <div>
-      <label htmlFor="nullifier">Nullifier</label>
-
-      <br />
-
-      <input id="nullifier" placeholder="Enter nullifier" />
-    </div>
-
-    <br />
-
-    <button
-      data-testid="import-identity"
-      type="button"
-      onClick={() => {
-        importIdentity();
-      }}
+  return (
+    <Box
+      className={classes.popup}
+      component="form"
+      sx={{ p: 3, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}
     >
-      Import
-    </button>
-  </div>
-);
+      <Typography variant="h6">Import identity</Typography>
+
+      <Typography component="div" fontWeight="bold" sx={{ textAlign: "left", mb: 3 }} variant="h6">
+        Import identity with trapdoor and nullifier
+      </Typography>
+
+      <TextField id="trapdoor" label="Trapdoor" variant="filled" />
+
+      <TextField id="nullifier" label="Nullifier" variant="filled" />
+
+      <ActionBox<undefined, void>
+        code={IMPORT_IDENTITY}
+        option={undefined}
+        testId="import-identity"
+        title="Import identity"
+        onClick={importIdentity}
+      />
+    </Box>
+  );
+};
