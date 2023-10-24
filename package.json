@@ -55,7 +55,7 @@
   "homepage": "https://github.com/CryptKeeperZK/crypt-keeper-extension",
   "devDependencies": {
     "@commitlint/cli": "^18.0.0",
-    "@commitlint/config-conventional": "^17.8.0",
+    "@commitlint/config-conventional": "^18.0.0",
     "@cryptkeeperzk/manifest-bump": "workspace:^",
     "@jscutlery/semver": "^4.0.0",
     "@nx/js": "^17.0.1",
