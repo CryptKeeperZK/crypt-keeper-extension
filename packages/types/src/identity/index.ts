@@ -98,3 +98,11 @@ export interface ICreateIdentityArgs {
   trapdoor?: string;
   nullifier?: string;
 }
+
+export interface IIdenityConnection extends ConnectedIdentityMetadata {
+  commitment: string;
+}
+
+export interface IConnectArgs {
+  commitment: string;
+}

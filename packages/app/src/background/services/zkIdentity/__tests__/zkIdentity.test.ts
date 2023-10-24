@@ -515,6 +515,21 @@ describe("background/services/zkIdentity", () => {
       expect(identities).toHaveLength(mockDefaultIdentities.length);
     });
 
+    test("should get identity properly", async () => {
+      const identity = await zkIdentityService.getIdentity(mockDefaultIdentityCommitment);
+
+      expect(identity).toStrictEqual({
+        commitment: mockDefaultIdentityCommitment,
+        metadata: mockDefaultIdentity.metadata,
+      });
+    });
+
+    test("should return undefined if there is no such identity", async () => {
+      const identity = await zkIdentityService.getIdentity("unknown");
+
+      expect(identity).toBeUndefined();
+    });
+
     test("should get number of identities properly", async () => {
       const result = await zkIdentityService.getNumOfIdentities();
 

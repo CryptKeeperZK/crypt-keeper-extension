@@ -164,6 +164,24 @@ export default class ZkIdentityService extends BaseService implements IBackupabl
       });
   };
 
+  getIdentity = async (
+    commitment: string,
+  ): Promise<{ commitment: string; metadata: IIdentityMetadata } | undefined> => {
+    const identities = await this.getIdentitiesFromStore();
+    const serializedIdentity = identities.get(commitment);
+
+    if (!serializedIdentity) {
+      return undefined;
+    }
+
+    const identity = ZkIdentitySemaphore.genFromSerialized(serializedIdentity);
+
+    return {
+      commitment,
+      metadata: identity.metadata,
+    };
+  };
+
   getNumOfIdentities = async (): Promise<number> => {
     const identities = await this.getIdentitiesFromStore();
     return identities.size;
