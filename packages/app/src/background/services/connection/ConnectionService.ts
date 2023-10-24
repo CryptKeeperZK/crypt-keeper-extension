@@ -43,7 +43,12 @@ export default class ConnectionService extends BaseService implements IBackupabl
     return ConnectionService.INSTANCE;
   };
 
-  lock = (): Promise<boolean> => this.onLock();
+  lock = async (): Promise<boolean> => this.onLock(this.onClean);
+
+  private onClean = (): boolean => {
+    this.connections.clear();
+    return true;
+  };
 
   unlock = async (): Promise<boolean> => {
     const encryped = await this.connectionsStorage.get<string>();
@@ -64,13 +69,13 @@ export default class ConnectionService extends BaseService implements IBackupabl
       throw new Error("CryptKeeper: origin is not provided");
     }
 
-    const idenity = await this.zkIdenityService.getIdentity(commitment);
+    const identity = this.zkIdenityService.getIdentity(commitment);
 
-    if (!idenity) {
+    if (!identity) {
       throw new Error("CryptKeeper: identity is not found");
     }
 
-    const connection = this.getIdentityConnection(commitment, idenity.metadata);
+    const connection = this.getIdentityConnection(commitment, identity.metadata);
     this.connections.set(urlOrigin, connection);
     await this.save();
 

@@ -30,7 +30,7 @@ export abstract class BaseService {
     });
   };
 
-  onLock = async (internalLock?: () => Promise<unknown>): Promise<boolean> => {
+  onLock = async (internalLock?: () => Promise<unknown> | boolean): Promise<boolean> => {
     this.isUnlocked = false;
     this.unlockCB = undefined;
 

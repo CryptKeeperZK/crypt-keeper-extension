@@ -29,7 +29,7 @@ jest.mock("@src/background/services/crypto", (): unknown => ({
 
 jest.mock("@src/background/services/zkIdentity", (): unknown => ({
   getInstance: jest.fn(() => ({
-    getIdentity: jest.fn((arg: string) => (arg !== "unknown" ? Promise.resolve(mockDefaultIdentity) : undefined)),
+    getIdentity: jest.fn((arg: string) => (arg !== "unknown" ? mockDefaultIdentity : undefined)),
   })),
 }));
 
@@ -108,6 +108,10 @@ describe("background/services/connection", () => {
       commitment: mockDefaultIdentity.commitment,
     };
 
+    beforeEach(async () => {
+      await connectionService.unlock();
+    });
+
     test("should connect identity properly", async () => {
       const [storage] = (SimpleStorage as jest.Mock).mock.instances as [MockStorage];
 
@@ -164,10 +168,6 @@ describe("background/services/connection", () => {
   describe("checks", () => {
     beforeEach(async () => {
       await connectionService.unlock();
-    });
-
-    afterEach(async () => {
-      await connectionService.lock();
     });
 
     test("should throw error if there is no url origin", () => {
