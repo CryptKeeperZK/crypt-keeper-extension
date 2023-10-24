@@ -2,6 +2,8 @@ import { Page } from "@playwright/test";
 
 import BasePage from "../BasePage";
 
+type WalletType = "eth" | "ck";
+
 export interface ICreateIdentityArgs {
   walletType: WalletType;
   nonce: number;
@@ -15,6 +17,7 @@ export interface IUpdateIdentityArgs {
 
 export interface IImportIdentityArgs {
   name: string;
+  walletType?: WalletType;
   trapdoor?: string;
   nullifier?: string;
 }
@@ -22,9 +25,8 @@ export interface IImportIdentityArgs {
 export interface IImportIdentityWithFileArgs {
   name: string;
   filepath: string;
+  walletType?: WalletType;
 }
-
-type WalletType = "eth" | "ck";
 
 export default class Identities extends BasePage {
   async openTab(): Promise<void> {
@@ -106,15 +108,25 @@ export default class Identities extends BasePage {
     await this.page.getByTestId("import-identity").click();
   }
 
-  async importIdentityWithFile({ name, filepath }: IImportIdentityWithFileArgs): Promise<void> {
+  async importIdentityWithFile({ name, filepath, walletType = "ck" }: IImportIdentityWithFileArgs): Promise<void> {
     await this.page.getByLabel("Name").fill(name);
     await this.page.setInputFiles(`input[name="file"]`, filepath);
 
-    await this.page.getByTestId("import-identity").click();
+    if (walletType === "eth") {
+      await this.page.getByTestId("dropdown-menu-button").click();
+      await this.page.getByTestId("dropdown-menu-item-1").click();
+    }
+
+    await this.page.getByTestId("dropdown-button").click();
+
+    if (walletType === "eth") {
+      const metamask = await this.page.context().waitForEvent("page");
+      await metamask.getByTestId("page-container-footer-next").click();
+    }
   }
 
   async importIdentity(
-    { name, trapdoor, nullifier }: IImportIdentityArgs,
+    { name, trapdoor, nullifier, walletType = "ck" }: IImportIdentityArgs,
     page: Page | undefined = this.page,
   ): Promise<void> {
     await page.getByLabel("Name").fill(name);
@@ -127,6 +139,16 @@ export default class Identities extends BasePage {
       await page.getByLabel("Nullifier").fill(nullifier);
     }
 
-    await page.getByTestId("import-identity").click();
+    if (walletType === "eth") {
+      await page.getByTestId("dropdown-menu-button").click();
+      await page.getByTestId("dropdown-menu-item-1").click();
+    }
+
+    await page.getByTestId("dropdown-button").click();
+
+    if (walletType === "eth") {
+      const metamask = await page.context().waitForEvent("page");
+      await metamask.getByTestId("page-container-footer-next").click();
+    }
   }
 }

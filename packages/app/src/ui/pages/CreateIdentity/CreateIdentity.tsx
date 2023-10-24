@@ -9,31 +9,14 @@ import { Checkbox } from "@src/ui/components/Checkbox";
 import { DropdownButton } from "@src/ui/components/DropdownButton";
 import { FullModalContent, FullModalFooter, FullModalHeader } from "@src/ui/components/FullModal";
 import { Input } from "@src/ui/components/Input";
+import { useSignatureOptions } from "@src/ui/hooks/wallet";
 
 import { useCreateIdentity } from "./useCreateIdentity";
 
 const CreateIdentity = (): JSX.Element => {
-  const {
-    isLoading,
-    isWalletInstalled,
-    isWalletConnected,
-    errors,
-    control,
-    onCloseModal,
-    onSign,
-    onGoToImportIdentity,
-  } = useCreateIdentity();
+  const { isLoading, errors, control, onCloseModal, onSign, onGoToImportIdentity } = useCreateIdentity();
 
-  const ethWalletTitle = isWalletConnected ? "Sign with MetaMask" : "Connect to MetaMask";
-
-  const menuOptions = [
-    { id: "ck", title: "Sign with CryptKeeper", checkDisabledItem: () => isLoading },
-    {
-      id: "eth",
-      title: isWalletInstalled ? ethWalletTitle : "Install metamask",
-      checkDisabledItem: () => isLoading || !isWalletInstalled,
-    },
-  ];
+  const { options } = useSignatureOptions({ isLoading });
 
   return (
     <Box data-testid="create-identity-page" sx={{ height: "100%" }}>
@@ -130,7 +113,7 @@ const CreateIdentity = (): JSX.Element => {
                 Reject
               </Button>
 
-              <DropdownButton menuOptions={menuOptions} onClick={onSign} />
+              <DropdownButton options={options} onClick={onSign} />
             </Box>
 
             <Button

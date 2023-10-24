@@ -245,6 +245,7 @@ describe("ui/ducks/identities", () => {
       nullifier: "nullifier",
       trapdoor: "trapdoor",
       urlOrigin: "http://localhost:3000",
+      messageSignature: "signature",
     };
 
     await Promise.resolve(store.dispatch(importIdentity(args)));

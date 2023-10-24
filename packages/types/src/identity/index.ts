@@ -31,12 +31,13 @@ export interface IImportIdentityArgs {
   name: string;
   trapdoor: string;
   nullifier: string;
+  messageSignature: string;
   urlOrigin?: string;
 }
 
 export enum EWallet {
-  ETH_WALLET,
   CRYPTKEEPER_WALLET,
+  ETH_WALLET,
 }
 
 export interface IIdentityMetadata {
@@ -89,6 +90,7 @@ export interface ICreateIdentityArgs {
   name: string;
   groups: IGroupData[];
   isDeterministic: boolean;
+  isImported: boolean;
   account?: string;
   messageSignature?: string;
   nonce?: number;

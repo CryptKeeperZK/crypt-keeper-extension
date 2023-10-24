@@ -2,6 +2,7 @@
  * @jest-environment jsdom
  */
 
+import { EWallet } from "@cryptkeeperzk/types";
 import { calculateIdentityCommitment, calculateIdentitySecret } from "@cryptkeeperzk/zk";
 import { act, renderHook, waitFor } from "@testing-library/react";
 import { getLinkPreview } from "link-preview-js";
@@ -14,6 +15,7 @@ import {
   mockIdenityPrivateJsonFile,
   mockJsonFile,
 } from "@src/config/mock/file";
+import { defaultWalletHookData } from "@src/config/mock/wallet";
 import {
   mockDefaultIdentity,
   mockDefaultIdentityCommitment,
@@ -27,6 +29,8 @@ import { useAppDispatch } from "@src/ui/ducks/hooks";
 import { importIdentity } from "@src/ui/ducks/identities";
 import { rejectUserRequest } from "@src/ui/ducks/requests";
 import { useSearchParam } from "@src/ui/hooks/url";
+import { useCryptKeeperWallet, useEthWallet } from "@src/ui/hooks/wallet";
+import { getImportMessageTemplate, signWithSigner } from "@src/ui/services/identity";
 import { redirectToNewTab } from "@src/util/browser";
 
 import { useImportIdentity } from "../useImportIdentity";
@@ -44,12 +48,22 @@ jest.mock("link-preview-js", (): unknown => ({
   getLinkPreview: jest.fn(),
 }));
 
+jest.mock("@src/ui/services/identity", (): unknown => ({
+  signWithSigner: jest.fn(),
+  getImportMessageTemplate: jest.fn(),
+}));
+
 jest.mock("@src/ui/hooks/url", (): unknown => ({
   useSearchParam: jest.fn(),
 }));
 
 jest.mock("@src/util/browser", (): unknown => ({
   redirectToNewTab: jest.fn(),
+}));
+
+jest.mock("@src/ui/hooks/wallet", (): unknown => ({
+  useEthWallet: jest.fn(),
+  useCryptKeeperWallet: jest.fn(),
 }));
 
 jest.mock("@src/ui/ducks/app", (): unknown => ({
@@ -80,6 +94,8 @@ describe("ui/pages/ImportIdentity/useImportIdentity", () => {
     trapdoor: mockDefaultTrapdoor,
     nullifier: mockDefaultNullifier,
   };
+  const mockSignedMessage = "signed-message";
+  const mockMessage = "message";
 
   const mockNavigate = jest.fn();
   const mockDispatch = jest.fn(() => Promise.resolve(false));
@@ -92,6 +108,14 @@ describe("ui/pages/ImportIdentity/useImportIdentity", () => {
     (useAppDispatch as jest.Mock).mockReturnValue(mockDispatch);
 
     (useSearchParam as jest.Mock).mockImplementation((arg: keyof typeof defaultUrlParams) => defaultUrlParams[arg]);
+
+    (signWithSigner as jest.Mock).mockResolvedValue(mockSignedMessage);
+
+    (getImportMessageTemplate as jest.Mock).mockReturnValue(mockMessage);
+
+    (useEthWallet as jest.Mock).mockReturnValue({ ...defaultWalletHookData, isActive: true });
+
+    (useCryptKeeperWallet as jest.Mock).mockReturnValue({ ...defaultWalletHookData, isActive: true });
 
     (calculateIdentitySecret as jest.Mock).mockReturnValue(mockDefaultIdentitySecret);
 
@@ -223,11 +247,63 @@ describe("ui/pages/ImportIdentity/useImportIdentity", () => {
     );
   });
 
-  test("should submit properly", async () => {
+  test("should submit with cryptkeeper properly", async () => {
     const { result } = renderHook(() => useImportIdentity());
 
     await act(() => result.current.register("name").onChange({ target: { value: "name" } }));
-    await act(() => Promise.resolve(result.current.onSubmit()));
+    await act(() => Promise.resolve(result.current.onSubmit(EWallet.CRYPTKEEPER_WALLET)));
+
+    expect(signWithSigner).toBeCalledTimes(0);
+    expect(mockDispatch).toBeCalledTimes(2);
+    expect(importIdentity).toBeCalledTimes(1);
+    expect(closePopup).toBeCalledTimes(1);
+    expect(mockNavigate).toBeCalledTimes(1);
+    expect(mockNavigate).toBeCalledWith(Paths.HOME);
+  });
+
+  test("should connect eth wallet properly", async () => {
+    (useEthWallet as jest.Mock).mockReturnValue({ ...defaultWalletHookData, isActive: false });
+    const { result } = renderHook(() => useImportIdentity());
+
+    await act(async () => Promise.resolve(result.current.onSubmit(EWallet.ETH_WALLET)));
+
+    expect(result.current.isLoading).toBe(false);
+    expect(defaultWalletHookData.onConnect).toBeCalledTimes(1);
+  });
+
+  test("should handle error when trying to connect with eth wallet", async () => {
+    (useEthWallet as jest.Mock).mockReturnValue({
+      ...defaultWalletHookData,
+      isActive: false,
+      onConnect: jest.fn(() => Promise.reject()),
+    });
+
+    const { result } = renderHook(() => useImportIdentity());
+
+    await act(async () => Promise.resolve(result.current.onSubmit(EWallet.ETH_WALLET)));
+
+    expect(result.current.isLoading).toBe(false);
+    expect(result.current.errors.root).toBe("Wallet connection error");
+  });
+
+  test("should handle error when trying to sign with eth wallet", async () => {
+    const error = new Error("error");
+    (signWithSigner as jest.Mock).mockRejectedValue(error);
+
+    const { result } = renderHook(() => useImportIdentity());
+
+    await act(async () => Promise.resolve(result.current.onSubmit(EWallet.ETH_WALLET)));
+
+    expect(mockDispatch).toBeCalledTimes(0);
+    expect(result.current.isLoading).toBe(false);
+    expect(result.current.errors.root).toBe(error.message);
+  });
+
+  test("should submit with eth wallet properly", async () => {
+    const { result } = renderHook(() => useImportIdentity());
+
+    await act(() => result.current.register("name").onChange({ target: { value: "name" } }));
+    await act(() => Promise.resolve(result.current.onSubmit(EWallet.ETH_WALLET)));
 
     expect(mockDispatch).toBeCalledTimes(2);
     expect(importIdentity).toBeCalledTimes(1);
@@ -244,7 +320,7 @@ describe("ui/pages/ImportIdentity/useImportIdentity", () => {
     const { result } = renderHook(() => useImportIdentity());
 
     await act(() => result.current.register("name").onChange({ target: { value: "name" } }));
-    await act(() => Promise.resolve(result.current.onSubmit()));
+    await act(() => Promise.resolve(result.current.onSubmit(EWallet.CRYPTKEEPER_WALLET)));
 
     expect(mockDispatch).toBeCalledTimes(1);
     expect(importIdentity).toBeCalledTimes(1);
@@ -262,7 +338,7 @@ describe("ui/pages/ImportIdentity/useImportIdentity", () => {
     const { result } = renderHook(() => useImportIdentity());
 
     await act(() => result.current.register("name").onChange({ target: { value: "name" } }));
-    await act(() => Promise.resolve(result.current.onSubmit()));
+    await act(() => Promise.resolve(result.current.onSubmit(EWallet.CRYPTKEEPER_WALLET)));
 
     expect(mockDispatch).toBeCalledTimes(1);
     expect(importIdentity).toBeCalledTimes(1);
@@ -276,9 +352,18 @@ describe("ui/pages/ImportIdentity/useImportIdentity", () => {
     const { result } = renderHook(() => useImportIdentity());
 
     await act(() => result.current.register("name").onChange({ target: { value: "name" } }));
-    await act(() => Promise.resolve(result.current.onSubmit()));
+    await act(() => Promise.resolve(result.current.onSubmit(EWallet.CRYPTKEEPER_WALLET)));
     await waitFor(() => result.current.errors.root);
 
     expect(result.current.errors.root).toBe(error.message);
+  });
+
+  test("should handle unknown signature option properly", async () => {
+    const { result } = renderHook(() => useImportIdentity());
+
+    await act(async () => Promise.resolve(result.current.onSubmit(9000)));
+
+    expect(result.current.isLoading).toBe(false);
+    expect(mockDispatch).toBeCalledTimes(0);
   });
 });

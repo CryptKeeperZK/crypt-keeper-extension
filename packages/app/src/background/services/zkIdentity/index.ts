@@ -343,7 +343,8 @@ export default class ZkIdentityService extends BaseService implements IBackupabl
   };
 
   import = async (args: IImportIdentityArgs): Promise<string> => {
-    const identity = createNewIdentity({ ...args, groups: [], isDeterministic: false });
+    const identity = createNewIdentity({ ...args, groups: [], isDeterministic: false, isImported: true });
+
     const status = await this.insertIdentity(identity);
 
     if (!status) {
@@ -369,6 +370,7 @@ export default class ZkIdentityService extends BaseService implements IBackupabl
       urlOrigin,
       isDeterministic,
       nonce: isDeterministic ? options.nonce : undefined,
+      isImported: false,
       name: options.name || `Account # ${numOfIdentities}`,
       messageSignature,
     };

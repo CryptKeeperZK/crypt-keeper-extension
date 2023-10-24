@@ -103,6 +103,7 @@ test.describe("import external identity", () => {
       await cryptKeeper.identities.importIdentityWithFile({
         name: "Test",
         filepath: backupFilePath,
+        walletType: "eth",
       });
     }
     /* eslint-enable no-await-in-loop */

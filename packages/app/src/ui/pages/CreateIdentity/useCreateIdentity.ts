@@ -12,8 +12,6 @@ import { getMessageTemplate, signWithSigner } from "@src/ui/services/identity";
 
 export interface IUseCreateIdentityData {
   isLoading: boolean;
-  isWalletConnected: boolean;
-  isWalletInstalled: boolean;
   errors: Partial<{
     root: string;
     nonce: string;
@@ -110,7 +108,16 @@ export const useCreateIdentity = (): IUseCreateIdentityData => {
         setError("root", { type: "submit", message: (err as Error).message });
       }
     },
-    [ethWallet.address, ethWallet.provider, cryptKeeperWallet.address, redirectUrl, urlOrigin, dispatch, navigate],
+    [
+      ethWallet.address,
+      ethWallet.provider,
+      cryptKeeperWallet.address,
+      redirectUrl,
+      urlOrigin,
+      dispatch,
+      navigate,
+      setError,
+    ],
   );
 
   const onCreateIdentityWithEthWallet = useCallback(
@@ -164,8 +171,6 @@ export const useCreateIdentity = (): IUseCreateIdentityData => {
 
   return {
     isLoading: ethWallet.isActivating || cryptKeeperWallet.isActivating || isLoading || isSubmitting,
-    isWalletInstalled: ethWallet.isInjectedWallet,
-    isWalletConnected: ethWallet.isActive,
     errors: {
       nonce: errors.nonce?.message,
       root: errors.root?.message,
