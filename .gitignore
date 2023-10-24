@@ -27,6 +27,7 @@ temp
 .DS_Store
 app/.DS_Store
 .parcel-cache
+.nx
 
 storybook-build/
 coverage/
