@@ -68,3 +68,9 @@ export const ellipsify = (text: string, start = 6, end = 4): string => {
 
   return `${text.slice(0, start)}...${text.slice(text.length - end, text.length)}`;
 };
+
+export const loadFile = async (filePath: string): Promise<string> => {
+  const response = await fetch(filePath);
+  const data: string = await response.text();
+  return data;
+};

@@ -1,11 +1,9 @@
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 
+import ActionBox from "@src/components/ActionBox";
+import { useCodeExample } from "@src/hooks/useCodeExample";
 import { useGlobalStyles } from "@src/styles";
-
-import { ActionBox } from "../ActionBox/ActionBox";
-
-import GET_METADATA_CODE from "./codeExported";
 
 interface IGetMetadataProps {
   getConnectedIdentityMetadata: () => void;
@@ -13,6 +11,7 @@ interface IGetMetadataProps {
 
 export const GetMetadata = ({ getConnectedIdentityMetadata }: IGetMetadataProps): JSX.Element => {
   const classes = useGlobalStyles();
+  const { code } = useCodeExample("getConnectedIdentityMetadata.ts");
 
   return (
     <Box
@@ -22,7 +21,7 @@ export const GetMetadata = ({ getConnectedIdentityMetadata }: IGetMetadataProps)
       <Typography variant="h6">Get Connected Identity Metadata</Typography>
 
       <ActionBox<undefined, void>
-        code={GET_METADATA_CODE}
+        code={code}
         option={undefined}
         title="Get Connected Identity"
         onClick={getConnectedIdentityMetadata}

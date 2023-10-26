@@ -1,11 +1,10 @@
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 
+import { useCodeExample } from "@src/hooks/useCodeExample";
 import { useGlobalStyles } from "@src/styles";
 
 import ActionBox from "../ActionBox";
-
-import { GENERATE_MERKLE_TREE_CODE, JOIN_GROUP_CODE } from "./codeExported";
 
 interface IBandadaProps {
   joinGroup: () => Promise<void>;
@@ -15,6 +14,9 @@ interface IBandadaProps {
 export const Bandada = ({ joinGroup, generateGroupMerkleProof }: IBandadaProps): JSX.Element => {
   const classes = useGlobalStyles();
 
+  const { code: joinGroupCode } = useCodeExample("joinGroup.ts");
+  const { code: generateGroupMerkleProofCode } = useCodeExample("generateGroupMerkleProof.ts");
+
   return (
     <Box
       className={classes.popup}
@@ -23,13 +25,13 @@ export const Bandada = ({ joinGroup, generateGroupMerkleProof }: IBandadaProps):
       <Typography variant="h6">Integration with Bandada service</Typography>
 
       <ActionBox<null, void>
-        code={GENERATE_MERKLE_TREE_CODE}
+        code={generateGroupMerkleProofCode}
         option={null}
         title="Generate Group Merkle Proof"
         onClick={generateGroupMerkleProof}
       />
 
-      <ActionBox<null, void> code={JOIN_GROUP_CODE} option={null} title="Join test group" onClick={joinGroup} />
+      <ActionBox<null, void> code={joinGroupCode} option={null} title="Join test group" onClick={joinGroup} />
     </Box>
   );
 };
