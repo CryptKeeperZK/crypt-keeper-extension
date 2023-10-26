@@ -20,6 +20,8 @@
     "@cryptkeeperzk/semaphore-identity": "^3.10.3",
     "@cryptkeeperzk/types": "workspace:^",
     "@mui/icons-material": "^5.14.14",
+    "@mui/base": "5.0.0-beta.20",
+    "@mui/lab": "5.0.0-alpha.149",
     "@mui/material": "^5.14.13",
     "@mui/styles": "^5.14.14",
     "bigint-conversion": "^2.4.2",

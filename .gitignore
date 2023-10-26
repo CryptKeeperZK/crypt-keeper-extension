@@ -67,3 +67,4 @@ playwright/.cache/
 playwright-downloads/
 user-data/
 tmp/
+.nx

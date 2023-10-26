@@ -105,16 +105,6 @@ export const theme = createTheme({
       },
     },
 
-    MuiSvgIcon: {
-      styleOverrides: {
-        root: {
-          fontSize: "8rem",
-          width: "8rem",
-          height: "8rem",
-        },
-      },
-    },
-
     MuiCssBaseline: {
       styleOverrides: {
         body: {
@@ -127,6 +117,14 @@ export const theme = createTheme({
           WebkitFontSmoothing: "antialiased",
           MozOsxFontSmoothing: "grayscale",
           WebkitTapHighlightColor: "rgba(255, 255, 255, 0)",
+        },
+      },
+    },
+
+    MuiTabs: {
+      styleOverrides: {
+        flexContainer: {
+          justifyContent: "center",
         },
       },
     },

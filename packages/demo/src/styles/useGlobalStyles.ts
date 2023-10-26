@@ -9,6 +9,10 @@ const basePopupStyle = {
   margin: "2rem auto",
 };
 
+const drawerWidth = 256;
+
+const drawerColor = "#012120";
+
 export const useGlobalStyles = makeStyles((theme: Theme) => ({
   popup: {
     ...basePopupStyle,
@@ -43,5 +47,48 @@ export const useGlobalStyles = makeStyles((theme: Theme) => ({
     },
 
     scrollbarWidth: "thin", // For Firefox: Set the width of the scrollbar
+  },
+
+  drawer: {
+    left: 0,
+    top: 0,
+    bottom: 0,
+    overflowY: "auto",
+    flexShrink: 0,
+    position: "fixed",
+    backgroundColor: drawerColor,
+  },
+
+  connectedIdentity: {
+    top: 64,
+    right: 0,
+    bottom: 0,
+    overflowY: "auto",
+    flexShrink: 0,
+    position: "fixed",
+    backgroundColor: drawerColor,
+  },
+
+  header: {
+    position: "fixed",
+    top: 0,
+    height: "63px",
+    width: `calc(100% - ${drawerWidth}px)`,
+  },
+
+  headerToolbar: {
+    backgroundColor: drawerColor,
+    color: theme.palette.primary.main,
+  },
+
+  drawerList: {
+    position: "fixed",
+    backgroundColor: "#012120",
+    color: theme.palette.primary.main,
+    width: drawerWidth,
+  },
+
+  drawerToolbar: {
+    backgroundColor: "#012120",
   },
 }));
