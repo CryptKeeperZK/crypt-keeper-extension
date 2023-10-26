@@ -37,7 +37,7 @@ importers:
         version: 6.0.3
       commitizen:
         specifier: ^4.3.0
-        version: 4.3.0(@swc/core@1.3.95)
+        version: 4.3.0(typescript@5.2.2)
       constants-browserify:
         specifier: ^1.0.0
         version: 1.0.0
@@ -49,7 +49,7 @@ importers:
         version: 3.12.0
       cz-conventional-changelog:
         specifier: ^3.3.0
-        version: 3.3.0(@swc/core@1.3.95)
+        version: 3.3.0(typescript@5.2.2)
       dotenv:
         specifier: ^16.3.1
         version: 16.3.1
@@ -349,11 +349,11 @@ importers:
         specifier: ^1.3.0
         version: 1.3.0
       sass:
-        specifier: ^1.69.4
-        version: 1.69.4
+        specifier: ^1.69.5
+        version: 1.69.5
       sass-loader:
         specifier: ^13.3.2
-        version: 13.3.2(sass@1.69.4)(webpack@5.89.0)
+        version: 13.3.2(sass@1.69.5)(webpack@5.89.0)
       sharp:
         specifier: ^0.32.6
         version: 0.32.6
@@ -2178,31 +2178,6 @@ packages:
       '@commitlint/rules': 18.1.0
       '@commitlint/types': 18.1.0
     dev: true
-
-  /@commitlint/load@18.1.0(@swc/core@1.3.95):
-    resolution: {integrity: sha512-oZbAV3wdh4f5EB99y6U1uY1grvU1Oz1EYtWML9Zu4he6sgzVGHuIP81mka8exFp4bGytaUmuIKl+ahck3P4HoQ==}
-    engines: {node: '>=v18'}
-    requiresBuild: true
-    dependencies:
-      '@commitlint/config-validator': 18.1.0
-      '@commitlint/execute-rule': 18.1.0
-      '@commitlint/resolve-extends': 18.1.0
-      '@commitlint/types': 18.1.0
-      '@types/node': 18.15.13
-      chalk: 4.1.2
-      cosmiconfig: 8.2.0
-      cosmiconfig-typescript-loader: 4.3.0(@types/node@18.15.13)(cosmiconfig@8.2.0)(ts-node@10.9.1)(typescript@5.2.2)
-      lodash.isplainobject: 4.0.6
-      lodash.merge: 4.6.2
-      lodash.uniq: 4.5.0
-      resolve-from: 5.0.0
-      ts-node: 10.9.1(@swc/core@1.3.95)(@types/node@18.15.13)(typescript@5.2.2)
-      typescript: 5.2.2
-    transitivePeerDependencies:
-      - '@swc/core'
-      - '@swc/wasm'
-    dev: true
-    optional: true
 
   /@commitlint/load@18.2.0(typescript@5.2.2):
     resolution: {integrity: sha512-xjX3d3CRlOALwImhOsmLYZh14/+gW/KxsY7+bPKrzmGuFailf9K7ckhB071oYZVJdACnpY4hDYiosFyOC+MpAA==}
@@ -7915,13 +7890,13 @@ packages:
     engines: {node: '>= 12'}
     dev: true
 
-  /commitizen@4.3.0(@swc/core@1.3.95):
+  /commitizen@4.3.0(typescript@5.2.2):
     resolution: {integrity: sha512-H0iNtClNEhT0fotHvGV3E9tDejDeS04sN1veIebsKYGMuGscFaswRoYJKmT3eW85eIJAs0F28bG2+a/9wCOfPw==}
     engines: {node: '>= 12'}
     hasBin: true
     dependencies:
       cachedir: 2.3.0
-      cz-conventional-changelog: 3.3.0(@swc/core@1.3.95)
+      cz-conventional-changelog: 3.3.0(typescript@5.2.2)
       dedent: 0.7.0
       detect-indent: 6.1.0
       find-node-modules: 2.1.3
@@ -7935,8 +7910,7 @@ packages:
       strip-bom: 4.0.0
       strip-json-comments: 3.1.1
     transitivePeerDependencies:
-      - '@swc/core'
-      - '@swc/wasm'
+      - typescript
     dev: true
 
   /common-tags@1.8.2:
@@ -8269,26 +8243,10 @@ packages:
       vary: 1.1.2
     dev: false
 
-  /cosmiconfig-typescript-loader@4.3.0(@types/node@18.15.13)(cosmiconfig@8.2.0)(ts-node@10.9.1)(typescript@5.2.2):
-    resolution: {integrity: sha512-NTxV1MFfZDLPiBMjxbHRwSh5LaLcPMwNdCutmnHJCKoVnlvldPWlllonKwrsRJ5pYZBIBGRWWU2tfvzxgeSW5Q==}
-    engines: {node: '>=12', npm: '>=6'}
-    requiresBuild: true
-    peerDependencies:
-      '@types/node': '*'
-      cosmiconfig: '>=7'
-      ts-node: '>=10'
-      typescript: '>=3'
-    dependencies:
-      '@types/node': 18.15.13
-      cosmiconfig: 8.2.0
-      ts-node: 10.9.1(@swc/core@1.3.95)(@types/node@18.15.13)(typescript@5.2.2)
-      typescript: 5.2.2
-    dev: true
-    optional: true
-
   /cosmiconfig-typescript-loader@5.0.0(@types/node@18.15.13)(cosmiconfig@8.2.0)(typescript@5.2.2):
     resolution: {integrity: sha512-+8cK7jRAReYkMwMiG+bxhcNKiHJDM6bR9FD/nGBXOWdMLuYawjF5cGrtLilJ+LGd3ZjCXnJjR5DkfWPoIVlqJA==}
     engines: {node: '>=v16'}
+    requiresBuild: true
     peerDependencies:
       '@types/node': '*'
       cosmiconfig: '>=8.2'
@@ -8599,21 +8557,20 @@ packages:
       yauzl: 2.10.0
     dev: true
 
-  /cz-conventional-changelog@3.3.0(@swc/core@1.3.95):
+  /cz-conventional-changelog@3.3.0(typescript@5.2.2):
     resolution: {integrity: sha512-U466fIzU5U22eES5lTNiNbZ+d8dfcHcssH4o7QsdWaCcRs/feIPCxKYSWkYBNs5mny7MvEfwpTLWjvbm94hecw==}
     engines: {node: '>= 10'}
     dependencies:
       chalk: 2.4.2
-      commitizen: 4.3.0(@swc/core@1.3.95)
+      commitizen: 4.3.0(typescript@5.2.2)
       conventional-commit-types: 3.0.0
       lodash.map: 4.6.0
       longest: 2.0.1
       word-wrap: 1.2.3
     optionalDependencies:
-      '@commitlint/load': 18.1.0(@swc/core@1.3.95)
+      '@commitlint/load': 18.2.0(typescript@5.2.2)
     transitivePeerDependencies:
-      - '@swc/core'
-      - '@swc/wasm'
+      - typescript
     dev: true
 
   /d@1.0.1:
@@ -12663,6 +12620,7 @@ packages:
   /jiti@1.20.0:
     resolution: {integrity: sha512-3TV69ZbrvV6U5DfQimop50jE9Dl6J8O1ja1dvBbMba/sZ3YBEQqJ2VZRoQPVnhlzjNtU1vaXRZVrVjU4qtm8yA==}
     hasBin: true
+    requiresBuild: true
     dev: true
 
   /joi@17.9.2:
@@ -15780,7 +15738,7 @@ packages:
   /safer-buffer@2.1.2:
     resolution: {integrity: sha512-YZo3K82SD7Riyi0E1EQPojLz7kpepnSQI9IyPbHHg1XXXevb5dJI7tpyN2ADxGcQbHG7vcyRHk0cbwqcQriUtg==}
 
-  /sass-loader@13.3.2(sass@1.69.4)(webpack@5.89.0):
+  /sass-loader@13.3.2(sass@1.69.5)(webpack@5.89.0):
     resolution: {integrity: sha512-CQbKl57kdEv+KDLquhC+gE3pXt74LEAzm+tzywcA0/aHZuub8wTErbjAoNI57rPUWRYRNC5WUnNl8eGJNbDdwg==}
     engines: {node: '>= 14.15.0'}
     peerDependencies:
@@ -15800,12 +15758,12 @@ packages:
         optional: true
     dependencies:
       neo-async: 2.6.2
-      sass: 1.69.4
+      sass: 1.69.5
       webpack: 5.89.0(@swc/core@1.3.95)(webpack-cli@5.1.4)
     dev: true
 
-  /sass@1.69.4:
-    resolution: {integrity: sha512-+qEreVhqAy8o++aQfCJwp0sklr2xyEzkm9Pp/Igu9wNPoe7EZEQ8X/MBvvXggI2ql607cxKg/RKOwDj6pp2XDA==}
+  /sass@1.69.5:
+    resolution: {integrity: sha512-qg2+UCJibLr2LCVOt3OlPhr/dqVHWOa9XtZf2OjbLs/T4VPSJ00udtgJxH3neXZm+QqX8B+3cU7RaLqp1iVfcQ==}
     engines: {node: '>=14.0.0'}
     hasBin: true
     dependencies:
@@ -17004,39 +16962,6 @@ packages:
       typescript: 5.2.2
       webpack: 5.89.0(@swc/core@1.3.95)(webpack-cli@5.1.4)
     dev: true
-
-  /ts-node@10.9.1(@swc/core@1.3.95)(@types/node@18.15.13)(typescript@5.2.2):
-    resolution: {integrity: sha512-NtVysVPkxxrwFGUUxGYhfux8k78pQB3JqYBXlLRZgdGUqTO5wU/UyHop5p70iEbGhB7q5KmiZiU0Y3KlJrScEw==}
-    hasBin: true
-    peerDependencies:
-      '@swc/core': '>=1.2.50'
-      '@swc/wasm': '>=1.2.50'
-      '@types/node': '*'
-      typescript: '>=2.7'
-    peerDependenciesMeta:
-      '@swc/core':
-        optional: true
-      '@swc/wasm':
-        optional: true
-    dependencies:
-      '@cspotcode/source-map-support': 0.8.1
-      '@swc/core': 1.3.95
-      '@tsconfig/node10': 1.0.9
-      '@tsconfig/node12': 1.0.11
-      '@tsconfig/node14': 1.0.3
-      '@tsconfig/node16': 1.0.4
-      '@types/node': 18.15.13
-      acorn: 8.9.0
-      acorn-walk: 8.2.0
-      arg: 4.1.3
-      create-require: 1.1.1
-      diff: 4.0.2
-      make-error: 1.3.6
-      typescript: 5.2.2
-      v8-compile-cache-lib: 3.0.1
-      yn: 3.1.1
-    dev: true
-    optional: true
 
   /ts-node@10.9.1(@swc/core@1.3.95)(@types/node@20.8.8)(typescript@5.2.2):
     resolution: {integrity: sha512-NtVysVPkxxrwFGUUxGYhfux8k78pQB3JqYBXlLRZgdGUqTO5wU/UyHop5p70iEbGhB7q5KmiZiU0Y3KlJrScEw==}
