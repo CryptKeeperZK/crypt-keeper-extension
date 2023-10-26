@@ -1,6 +1,7 @@
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 
+import { useCodeExample } from "@src/hooks/useCodeExample";
 import { useGlobalStyles } from "@src/styles";
 
 import { ActionBox } from "../ActionBox/ActionBox";
@@ -9,17 +10,9 @@ interface IGetCommitmentProps {
   revealConnectedIdentityCommitment: () => Promise<void>;
 }
 
-const REVEAL_CODE = `import { initializeCryptKeeper } from "@cryptkeeperzk/providers";
-
-const client = initializeCryptKeeper();
-
-const connect = async () => {
-  await client?.request({
-    method: RPCExternalAction.REVEAL_CONNECTED_IDENTITY_COMMITMENT,
-  });`;
-
 export const GetCommitment = ({ revealConnectedIdentityCommitment }: IGetCommitmentProps): JSX.Element => {
   const classes = useGlobalStyles();
+  const { code } = useCodeExample("revealIdentityCommitment.ts");
 
   return (
     <Box
@@ -29,7 +22,7 @@ export const GetCommitment = ({ revealConnectedIdentityCommitment }: IGetCommitm
       <Typography variant="h6">Reveal connected identity Commitment</Typography>
 
       <ActionBox<undefined, void>
-        code={REVEAL_CODE}
+        code={code}
         option={undefined}
         testId="reveal-connected-identity-commitment"
         title="Reveal"

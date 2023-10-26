@@ -1,6 +1,7 @@
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 
+import { useCodeExample } from "@src/hooks/useCodeExample";
 import { useGlobalStyles } from "@src/styles";
 
 import { ActionBox } from "../ActionBox/ActionBox";
@@ -11,23 +12,10 @@ interface IConnectProps {
   connect: (isChangeIdentity: boolean) => void;
 }
 
-const CONNECT_CODE = `import { initializeCryptKeeper } from "@cryptkeeperzk/providers";
-
-const client = initializeCryptKeeper();
-
-const connect = async (isChangeIdentity = false) => {
-    await client
-      ?.connect(isChangeIdentity)
-      .then(() => {
-          // SOME CODE
-      })
-      .catch((error: Error) => {
-          // THROW ERROR
-      });
-  };`;
-
 export const Connect = ({ title, isChangeIdentity = false, connect }: IConnectProps): JSX.Element => {
   const classes = useGlobalStyles();
+
+  const { code } = useCodeExample("connect.ts");
 
   return (
     <Box
@@ -36,12 +24,7 @@ export const Connect = ({ title, isChangeIdentity = false, connect }: IConnectPr
     >
       <Typography variant="h6">{title}</Typography>
 
-      <ActionBox<boolean, void>
-        code={CONNECT_CODE}
-        option={isChangeIdentity}
-        title="Connect Identity"
-        onClick={connect}
-      />
+      <ActionBox<boolean, void> code={code} option={isChangeIdentity} title="Connect Identity" onClick={connect} />
     </Box>
   );
 };

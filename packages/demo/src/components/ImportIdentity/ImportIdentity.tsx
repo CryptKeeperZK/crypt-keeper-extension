@@ -2,6 +2,7 @@ import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
 
+import { useCodeExample } from "@src/hooks/useCodeExample";
 import { useGlobalStyles } from "@src/styles";
 
 import { ActionBox } from "../ActionBox/ActionBox";
@@ -10,22 +11,10 @@ interface IImportIdentityProps {
   importIdentity: () => Promise<void>;
 }
 
-const IMPORT_IDENTITY = `import { initializeCryptKeeper } from "@cryptkeeperzk/providers";
-
-const client = initializeCryptKeeper();
-
-const importIdentity = async () => {
-  await client?.request({
-    method: RPCExternalAction.IMPORT_IDENTITY,
-    payload: {
-      trapdoor,
-      nullifier,
-    },
-  });
-}`;
-
 export const ImportIdentity = ({ importIdentity }: IImportIdentityProps): JSX.Element => {
   const classes = useGlobalStyles();
+
+  const { code } = useCodeExample("importIdentity.ts");
 
   return (
     <Box
@@ -44,7 +33,7 @@ export const ImportIdentity = ({ importIdentity }: IImportIdentityProps): JSX.El
       <TextField id="nullifier" label="Nullifier" variant="filled" />
 
       <ActionBox<undefined, void>
-        code={IMPORT_IDENTITY}
+        code={code}
         option={undefined}
         testId="import-identity"
         title="Import identity"

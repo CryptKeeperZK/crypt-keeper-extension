@@ -1,6 +1,10 @@
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
-import { CopyBlock, vs2015 } from "react-code-blocks";
+import { useTheme } from "@mui/styles";
+import { themes } from "prism-react-renderer";
+import { LiveProvider, LiveEditor } from "react-live";
+
+import { useGlobalStyles } from "@src/styles";
 
 type actionFnRequiredOption<T = unknown, U = unknown> = (option: T) => U;
 type actionFnOptionalOption<T = unknown, U = unknown> = (option?: T) => U;
@@ -13,22 +17,29 @@ interface IActionBox<T = unknown, U = unknown> {
   onClick: actionFnOptionalOption<T, U> | actionFnRequiredOption<T, U>;
 }
 
-export const ActionBox = <T, U>({ title, option, code, testId = "", onClick }: IActionBox<T, U>): JSX.Element => (
-  <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center", p: 3, flexGrow: 1 }}>
-    <Box>
-      <Button
-        data-testid={testId}
-        sx={{ textTransform: "none", mb: 1 }}
-        type="submit"
-        variant="contained"
-        onClick={() => onClick(option)}
-      >
-        {title}
-      </Button>
-    </Box>
+export const ActionBox = <T, U>({ title, option, code, testId = "", onClick }: IActionBox<T, U>): JSX.Element => {
+  const theme = useTheme();
+  const classes = useGlobalStyles(theme);
 
-    {/* // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-expect-error */}
-    <CopyBlock codeBlock showLineNumbers wrapLines language="typescript" text={code} theme={vs2015} />
-  </Box>
-);
+  return (
+    <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center", p: 3, flexGrow: 1 }}>
+      <Box>
+        <Button
+          data-testid={testId}
+          sx={{ textTransform: "none", mb: 1 }}
+          type="submit"
+          variant="contained"
+          onClick={() => onClick(option)}
+        >
+          {title}
+        </Button>
+      </Box>
+
+      <Box className={classes.codePreview}>
+        <LiveProvider disabled enableTypeScript noInline code={code}>
+          <LiveEditor theme={themes.vsDark} />
+        </LiveProvider>
+      </Box>
+    </Box>
+  );
+};
