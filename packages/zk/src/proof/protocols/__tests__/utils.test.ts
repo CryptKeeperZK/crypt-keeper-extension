@@ -1,6 +1,7 @@
 import { Identity } from "@cryptkeeperzk/semaphore-identity";
 import { MerkleProof } from "@zk-kit/incremental-merkle-tree";
-import { poseidon1, poseidon2 } from "poseidon-lite";
+import { poseidon1 } from "poseidon-lite/poseidon1";
+import { poseidon2 } from "poseidon-lite/poseidon2";
 
 import {
   deserializeMerkleProof,

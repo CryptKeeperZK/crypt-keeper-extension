@@ -102,7 +102,7 @@ const PresentVerifiableCredential = (): JSX.Element => {
             Reject
           </Button>
 
-          <DropdownButton menuOptions={menuOptions} onClick={onSubmitVerifiablePresentation} />
+          <DropdownButton options={menuOptions} onClick={onSubmitVerifiablePresentation} />
         </Box>
       </FullModalFooter>
     </Box>

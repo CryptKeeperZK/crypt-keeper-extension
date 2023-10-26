@@ -1,8 +1,9 @@
 import { ZERO_ADDRESS } from "@src/config/const";
+import { mockDefaultNullifier, mockDefaultTrapdoor } from "@src/config/mock/zk";
 
 import type { JsonRpcSigner } from "ethers";
 
-import { getMessageTemplate, signWithSigner } from "..";
+import { getImportMessageTemplate, getMessageTemplate, signWithSigner } from "..";
 
 describe("ui/services/identity", () => {
   test("should sign message properly", async () => {
@@ -22,6 +23,28 @@ describe("ui/services/identity", () => {
     expect(mockSigner.signMessage).toBeCalledTimes(1);
     expect(mockSigner.signMessage).toBeCalledWith(
       `Sign this message with account ${ZERO_ADDRESS} to generate your Semaphore identity with key nonce: 0`,
+    );
+    expect(result).toBe("signed");
+  });
+
+  test("should sign import message properly", async () => {
+    const mockSigner = {
+      signMessage: jest.fn().mockResolvedValue("signed"),
+    };
+
+    const message = getImportMessageTemplate({
+      account: ZERO_ADDRESS,
+      trapdoor: mockDefaultTrapdoor,
+      nullifier: mockDefaultNullifier,
+    });
+    const result = await signWithSigner({
+      message,
+      signer: mockSigner as unknown as JsonRpcSigner,
+    });
+
+    expect(mockSigner.signMessage).toBeCalledTimes(1);
+    expect(mockSigner.signMessage).toBeCalledWith(
+      `Sign this message with account ${ZERO_ADDRESS} to import your Semaphore identity with trapdoor: ${mockDefaultTrapdoor}, nullifier: ${mockDefaultNullifier}`,
     );
     expect(result).toBe("signed");
   });

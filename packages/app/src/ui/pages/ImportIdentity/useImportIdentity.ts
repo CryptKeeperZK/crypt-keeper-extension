@@ -1,4 +1,5 @@
 import { EventName } from "@cryptkeeperzk/providers";
+import { EWallet } from "@cryptkeeperzk/types";
 import { calculateIdentityCommitment, calculateIdentitySecret } from "@cryptkeeperzk/zk";
 import get from "lodash/get";
 import { useCallback, useMemo } from "react";
@@ -13,6 +14,8 @@ import { importIdentity } from "@src/ui/ducks/identities";
 import { rejectUserRequest } from "@src/ui/ducks/requests";
 import { useSearchParam } from "@src/ui/hooks/url";
 import { useValidationResolver } from "@src/ui/hooks/validation";
+import { useCryptKeeperWallet, useEthWallet } from "@src/ui/hooks/wallet";
+import { getImportMessageTemplate, signWithSigner } from "@src/ui/services/identity";
 import { redirectToNewTab } from "@src/util/browser";
 import { readFile } from "@src/util/file";
 import { checkBigNumber, convertFromHexToDec } from "@src/util/numbers";
@@ -37,7 +40,7 @@ export interface IUseImportIdentityData {
   onGoBack: () => void;
   onGoToHost: () => void;
   onDrop: onDropCallback;
-  onSubmit: () => void;
+  onSubmit: (option: number) => void;
 }
 
 interface FormFields {
@@ -66,6 +69,9 @@ const validationSchema = object({
 export const useImportIdentity = (): IUseImportIdentityData => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
+
+  const ethWallet = useEthWallet();
+  const cryptKeeperWallet = useCryptKeeperWallet();
 
   const back = useSearchParam("back");
   const urlOrigin = useSearchParam("urlOrigin");
@@ -159,9 +165,28 @@ export const useImportIdentity = (): IUseImportIdentityData => {
     [setValue, setError, clearErrors],
   );
 
-  const onSubmit = useCallback(
-    (data: FormFields) => {
-      dispatch(importIdentity({ ...data, urlOrigin }))
+  const importNewIdentity = useCallback(
+    async (data: FormFields, walletType: EWallet) => {
+      const account =
+        walletType === EWallet.ETH_WALLET ? ethWallet.address?.toLowerCase() : cryptKeeperWallet.address?.toLowerCase();
+      const message = getImportMessageTemplate({
+        trapdoor: data.trapdoor,
+        nullifier: data.nullifier,
+        account: account!,
+      });
+
+      const messageSignature =
+        walletType === EWallet.ETH_WALLET
+          ? await signWithSigner({ signer: await ethWallet.provider?.getSigner(), message }).catch((error: Error) => {
+              setError("root", { message: error.message });
+            })
+          : "";
+
+      if (messageSignature === undefined) {
+        return;
+      }
+
+      dispatch(importIdentity({ ...data, messageSignature, urlOrigin }))
         .then(() => {
           if (redirect === Paths.CREATE_IDENTITY.toString()) {
             navigate(Paths.HOME);
@@ -177,7 +202,51 @@ export const useImportIdentity = (): IUseImportIdentityData => {
           setError("root", { message: error.message });
         });
     },
-    [redirect, redirectUrl, urlOrigin, setError, dispatch],
+    [
+      ethWallet.address,
+      ethWallet.provider,
+      cryptKeeperWallet.address,
+      redirectUrl,
+      urlOrigin,
+      dispatch,
+      navigate,
+      setError,
+    ],
+  );
+
+  const onImportIdentityWithEthWallet = useCallback(
+    async (data: FormFields) => importNewIdentity(data, EWallet.ETH_WALLET),
+    [ethWallet.isActive, importNewIdentity],
+  );
+
+  const onImportIdentityWithCryptkeeper = useCallback(
+    async (data: FormFields) => importNewIdentity(data, EWallet.CRYPTKEEPER_WALLET),
+    [cryptKeeperWallet.isActive, importNewIdentity],
+  );
+
+  const onConnectWallet = useCallback(async () => {
+    await ethWallet.onConnect().catch(() => {
+      setError("root", { type: "submit", message: "Wallet connection error" });
+    });
+  }, [setError, ethWallet.onConnect]);
+
+  const onSubmit = useCallback(
+    (index: number) => {
+      const option = index as EWallet;
+
+      switch (true) {
+        case option === EWallet.CRYPTKEEPER_WALLET:
+          return handleSubmit(onImportIdentityWithCryptkeeper)();
+        case option === EWallet.ETH_WALLET && !ethWallet.isActive:
+          return handleSubmit(onConnectWallet)();
+        case option === EWallet.ETH_WALLET && ethWallet.isActive:
+          return handleSubmit(onImportIdentityWithEthWallet)();
+
+        default:
+          return undefined;
+      }
+    },
+    [ethWallet.isActive, handleSubmit, onConnectWallet, onImportIdentityWithEthWallet, onImportIdentityWithCryptkeeper],
   );
 
   return {
@@ -197,6 +266,6 @@ export const useImportIdentity = (): IUseImportIdentityData => {
     onGoBack,
     onGoToHost,
     onDrop,
-    onSubmit: handleSubmit(onSubmit),
+    onSubmit,
   };
 };

@@ -5,13 +5,19 @@
 import { render, waitFor } from "@testing-library/react";
 import { Suspense } from "react";
 
+import { mockSignatureOptions } from "@src/config/mock/wallet";
 import { mockDefaultIdentity, mockDefaultIdentityCommitment, mockDefaultIdentitySecret } from "@src/config/mock/zk";
+import { useSignatureOptions } from "@src/ui/hooks/wallet";
 
 import ImportIdentity from "..";
 import { IUseImportIdentityData, useImportIdentity } from "../useImportIdentity";
 
 jest.mock("bigint-conversion", (): unknown => ({
   bigintToHex: jest.fn(),
+}));
+
+jest.mock("@src/ui/hooks/wallet", (): unknown => ({
+  useSignatureOptions: jest.fn(),
 }));
 
 jest.mock("../useImportIdentity", (): unknown => ({
@@ -36,6 +42,8 @@ describe("ui/pages/ImportIdentity", () => {
 
   beforeEach(() => {
     (useImportIdentity as jest.Mock).mockReturnValue(defaultHookData);
+
+    (useSignatureOptions as jest.Mock).mockReturnValue(mockSignatureOptions);
   });
 
   afterEach(() => {

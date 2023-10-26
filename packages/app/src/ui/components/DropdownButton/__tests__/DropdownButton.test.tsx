@@ -8,7 +8,7 @@ import { DropdownButton, IDropdownButtonProps } from "..";
 
 describe("ui/components/DropdownButton", () => {
   const defaultProps: IDropdownButtonProps = {
-    menuOptions: [
+    options: [
       {
         id: "metamask",
         title: "Connect to MetaMask",
@@ -60,7 +60,7 @@ describe("ui/components/DropdownButton", () => {
     const menuItem = await findByTestId("dropdown-menu-item-1");
     act(() => fireEvent.click(menuItem));
 
-    const selectedItem = await findByText(defaultProps.menuOptions[1].title);
+    const selectedItem = await findByText(defaultProps.options[1].title);
     expect(selectedItem).toBeInTheDocument();
   });
 });

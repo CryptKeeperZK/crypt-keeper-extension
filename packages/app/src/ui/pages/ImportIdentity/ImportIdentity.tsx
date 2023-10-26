@@ -3,15 +3,19 @@ import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 
 import { BigNumberInput } from "@src/ui/components/BigNumberInput";
+import { DropdownButton } from "@src/ui/components/DropdownButton";
 import { FullModalContent, FullModalFooter, FullModalHeader } from "@src/ui/components/FullModal";
 import { Input } from "@src/ui/components/Input";
 import { UploadButton } from "@src/ui/components/UploadButton";
+import { useSignatureOptions } from "@src/ui/hooks/wallet";
 
 import { useImportIdentity } from "./useImportIdentity";
 
 const ImportIdentity = (): JSX.Element => {
   const { isLoading, urlOrigin, errors, trapdoor, nullifier, register, onGoBack, onGoToHost, onDrop, onSubmit } =
     useImportIdentity();
+
+  const { options } = useSignatureOptions({ isLoading });
 
   return (
     <Box
@@ -116,20 +120,11 @@ const ImportIdentity = (): JSX.Element => {
       </FullModalContent>
 
       <FullModalFooter>
-        <Button sx={{ mr: 1, width: "100%" }} variant="outlined" onClick={onGoBack}>
+        <Button sx={{ mr: 1, width: "30%" }} variant="outlined" onClick={onGoBack}>
           Reject
         </Button>
 
-        <Button
-          data-testid="import-identity"
-          disabled={isLoading}
-          sx={{ ml: 1, width: "100%" }}
-          type="submit"
-          variant="contained"
-          onClick={onSubmit}
-        >
-          Accept
-        </Button>
+        <DropdownButton disabled={isLoading} options={options} sx={{ ml: 1, width: "70%" }} onClick={onSubmit} />
       </FullModalFooter>
     </Box>
   );

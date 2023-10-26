@@ -83,8 +83,6 @@ describe("ui/pages/CreateIdentity/useCreateIdentity", () => {
     const { result } = renderHook(() => useCreateIdentity());
 
     expect(result.current.isLoading).toBe(false);
-    expect(result.current.isWalletConnected).toBe(true);
-    expect(result.current.isWalletInstalled).toBe(true);
     expect(result.current.control).toBeDefined();
     expect(result.current.errors).toStrictEqual({
       root: undefined,

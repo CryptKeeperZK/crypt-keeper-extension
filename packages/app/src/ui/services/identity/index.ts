@@ -26,3 +26,14 @@ export function getMessageTemplate({ account, nonce }: IGetMessageTemplateArgs):
   const nonceEnd = `with key nonce: ${nonce}`;
   return `Sign this message with account ${account} to generate your Semaphore identity ${nonceEnd}`.trim();
 }
+
+export interface IGetImportMessageTemplateArgs {
+  account: string;
+  trapdoor: string;
+  nullifier: string;
+}
+
+export function getImportMessageTemplate({ account, trapdoor, nullifier }: IGetImportMessageTemplateArgs): string {
+  const end = `with trapdoor: ${trapdoor}, nullifier: ${nullifier}`;
+  return `Sign this message with account ${account} to import your Semaphore identity ${end}`.trim();
+}

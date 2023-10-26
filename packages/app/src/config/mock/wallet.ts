@@ -1,8 +1,9 @@
 import BigNumber from "bignumber.js";
 
 import { mockConnector } from "@src/connectors/mock";
-import { ConnectorNames, IUseWalletData } from "@src/types";
+import { ConnectorNames, type IUseWalletData } from "@src/types";
 
+import type { IUseSignatureOptionsData } from "@src/ui/hooks/wallet/useSignatureOptions";
 import type { BrowserProvider } from "ethers";
 
 import { ZERO_ADDRESS } from "../const";
@@ -28,4 +29,15 @@ export const defaultWalletHookData: IUseWalletData = {
   onConnectEagerly: jest.fn(() => Promise.resolve()),
   onDisconnect: jest.fn(),
   onLock: jest.fn(),
+};
+
+export const mockSignatureOptions: IUseSignatureOptionsData = {
+  options: [
+    { id: "ck", title: "Sign with CryptKeeper", checkDisabledItem: () => false },
+    {
+      id: "eth",
+      title: "Sign with MetaMask",
+      checkDisabledItem: () => false,
+    },
+  ],
 };

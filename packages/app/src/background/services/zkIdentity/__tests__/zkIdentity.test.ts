@@ -1,6 +1,11 @@
 /* eslint-disable @typescript-eslint/unbound-method */
 import { EventName } from "@cryptkeeperzk/providers";
-import { EWallet, ConnectedIdentityMetadata, ICreateIdentityOptions, IImportIdentityArgs } from "@cryptkeeperzk/types";
+import {
+  EWallet,
+  type ConnectedIdentityMetadata,
+  type ICreateIdentityOptions,
+  type IImportIdentityArgs,
+} from "@cryptkeeperzk/types";
 import { createNewIdentity } from "@cryptkeeperzk/zk";
 import pick from "lodash/pick";
 import browser from "webextension-polyfill";
@@ -643,6 +648,7 @@ describe("background/services/zkIdentity", () => {
       name: "Name",
       nullifier: mockDefaultNullifier,
       trapdoor: mockDefaultTrapdoor,
+      messageSignature: "signature",
       urlOrigin: "http://localhost:3000",
     };
 

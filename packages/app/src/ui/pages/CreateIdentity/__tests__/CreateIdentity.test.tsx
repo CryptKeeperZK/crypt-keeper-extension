@@ -8,12 +8,12 @@ import { Suspense } from "react";
 import { useNavigate } from "react-router-dom";
 
 import { ZERO_ADDRESS } from "@src/config/const";
-import { defaultWalletHookData } from "@src/config/mock/wallet";
+import { defaultWalletHookData, mockSignatureOptions } from "@src/config/mock/wallet";
 import { Paths } from "@src/constants";
 import { closePopup } from "@src/ui/ducks/app";
 import { useAppDispatch } from "@src/ui/ducks/hooks";
 import { createIdentity } from "@src/ui/ducks/identities";
-import { useCryptKeeperWallet, useEthWallet } from "@src/ui/hooks/wallet";
+import { useCryptKeeperWallet, useEthWallet, useSignatureOptions } from "@src/ui/hooks/wallet";
 import { signWithSigner, getMessageTemplate } from "@src/ui/services/identity";
 
 import CreateIdentity from "..";
@@ -42,6 +42,7 @@ jest.mock("@src/ui/ducks/identities", (): unknown => ({
 jest.mock("@src/ui/hooks/wallet", (): unknown => ({
   useEthWallet: jest.fn(),
   useCryptKeeperWallet: jest.fn(),
+  useSignatureOptions: jest.fn(),
 }));
 
 describe("ui/pages/CreateIdentity", () => {
@@ -63,6 +64,8 @@ describe("ui/pages/CreateIdentity", () => {
     (useEthWallet as jest.Mock).mockReturnValue({ ...defaultWalletHookData, isActive: true });
 
     (useCryptKeeperWallet as jest.Mock).mockReturnValue({ ...defaultWalletHookData, isActive: true });
+
+    (useSignatureOptions as jest.Mock).mockReturnValue(mockSignatureOptions);
 
     (useAppDispatch as jest.Mock).mockReturnValue(mockDispatch);
 
@@ -100,6 +103,17 @@ describe("ui/pages/CreateIdentity", () => {
 
   test("should connect properly to eth wallet", async () => {
     (useEthWallet as jest.Mock).mockReturnValue({ ...defaultWalletHookData, isActive: false });
+    (useSignatureOptions as jest.Mock).mockReturnValue({
+      ...mockSignatureOptions,
+      options: [
+        ...mockSignatureOptions.options.filter(({ id }) => id === "eth"),
+        {
+          id: "eth",
+          title: "Connect to MetaMask",
+          checkDisabledItem: () => false,
+        },
+      ],
+    });
 
     const { container } = render(
       <Suspense>
