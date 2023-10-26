@@ -9,6 +9,7 @@ import type {
   IRequestHandler,
   ISemaphoreProofRequest,
   ISemaphoreFullProof,
+  IRLNFullProof,
 } from "@cryptkeeperzk/types";
 
 const defaultMap = Object.values(RPCInternalAction).reduce(
@@ -81,7 +82,7 @@ export class OffscreenController {
     merkleProofProvided,
     circuitFilePath,
     zkeyFilePath,
-  }: IRLNProofRequest): Promise<string> => {
+  }: IRLNProofRequest): Promise<IRLNFullProof> => {
     if (!identitySerialized) {
       throw new Error("Offscreen: Serialized Identity is not set");
     }
@@ -100,6 +101,6 @@ export class OffscreenController {
       merkleProofProvided,
     });
 
-    return JSON.stringify(rlnFullProof);
+    return rlnFullProof;
   };
 }

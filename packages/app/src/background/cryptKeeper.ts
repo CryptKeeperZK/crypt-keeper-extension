@@ -12,6 +12,7 @@ import HistoryService from "@src/background/services/history";
 import { InjectorService } from "@src/background/services/injector";
 import LockerService from "@src/background/services/lock";
 import MiscStorageService from "@src/background/services/misc";
+import ProtocolService from "@src/background/services/protocol";
 import WalletService from "@src/background/services/wallet";
 import ZkIdentityService from "@src/background/services/zkIdentity";
 import { RPCInternalAction } from "@src/constants";
@@ -34,9 +35,9 @@ const RPC_METHOD_ACCESS: Record<RPCExternalAction, boolean> = {
   [RPCExternalAction.JOIN_GROUP]: true,
   [RPCExternalAction.GENERATE_GROUP_MERKLE_PROOF]: true,
   [RPCExternalAction.IMPORT_IDENTITY]: true,
-  // TODO: Please note that the following 3 actions will be refactored in another PR
-  [RPCExternalAction.ADD_VERIFIABLE_CREDENTIAL]: true,
   [RPCExternalAction.REVEAL_CONNECTED_IDENTITY_COMMITMENT]: true,
+  // TODO: Please note that the following 2 actions will be refactored in another PR
+  [RPCExternalAction.ADD_VERIFIABLE_CREDENTIAL]: true,
   [RPCExternalAction.GENERATE_VERIFIABLE_PRESENTATION]: true,
 };
 
@@ -69,6 +70,8 @@ export default class CryptKeeperController {
 
   private groupService: GroupService;
 
+  private protocolService: ProtocolService;
+
   constructor() {
     this.handler = new Handler();
     this.requestManager = RequestManager.getInstance();
@@ -83,6 +86,7 @@ export default class CryptKeeperController {
     this.verifiableCredentialsService = VerifiableCredentialsService.getInstance();
     this.verifiableCredentialsService = VerifiableCredentialsService.getInstance();
     this.groupService = GroupService.getInstance();
+    this.protocolService = ProtocolService.getInstance();
     this.backupService = BackupService.getInstance()
       .add(BackupableServices.LOCK, this.lockService)
       .add(BackupableServices.WALLET, this.walletService)
@@ -96,15 +100,46 @@ export default class CryptKeeperController {
 
   initialize = (): this => {
     // Handling RPC EXTERNAL ACTIONS
-    // Injector
     this.handler.add(RPCExternalAction.GET_CONNECTED_IDENTITY_DATA, this.injectorService.getConnectedIdentityMetadata);
     this.handler.add(RPCExternalAction.CONNECT, this.injectorService.connect);
-    this.handler.add(RPCExternalAction.GENERATE_SEMAPHORE_PROOF, this.injectorService.generateSemaphoreProof);
-    this.handler.add(RPCExternalAction.GENERATE_RLN_PROOF, this.injectorService.generateRLNProof);
-    this.handler.add(RPCExternalAction.JOIN_GROUP, this.injectorService.joinGroup);
-    this.handler.add(RPCExternalAction.GENERATE_GROUP_MERKLE_PROOF, this.injectorService.generateGroupMerkleProof);
+    this.handler.add(
+      RPCExternalAction.GENERATE_SEMAPHORE_PROOF,
+      this.lockService.ensure,
+      this.approvalService.isOriginApproved,
+      this.injectorService.isConnected,
+      this.protocolService.generateSemaphoreProof,
+    );
+    this.handler.add(
+      RPCExternalAction.GENERATE_RLN_PROOF,
+      this.lockService.ensure,
+      this.approvalService.isOriginApproved,
+      this.injectorService.isConnected,
+      this.protocolService.generateRLNProof,
+    );
+    this.handler.add(
+      RPCExternalAction.REVEAL_CONNECTED_IDENTITY_COMMITMENT,
+      this.lockService.ensure,
+      this.approvalService.isOriginApproved,
+      this.injectorService.isConnected,
+      this.zkIdentityService.revealConnectedIdentityCommitmentRequest,
+    );
+    this.handler.add(
+      RPCExternalAction.JOIN_GROUP,
+      this.lockService.ensure,
+      this.approvalService.isOriginApproved,
+      this.injectorService.isConnected,
+      this.groupService.joinGroupRequest,
+    );
+    this.handler.add(
+      RPCExternalAction.GENERATE_GROUP_MERKLE_PROOF,
+      this.lockService.ensure,
+      this.approvalService.isOriginApproved,
+      this.injectorService.isConnected,
+      this.groupService.generateGroupMerkleProofRequest,
+    );
     this.handler.add(
       RPCExternalAction.IMPORT_IDENTITY,
+      this.lockService.ensure,
       this.approvalService.isOriginApproved,
       this.injectorService.isConnected,
       this.zkIdentityService.importRequest,
@@ -170,11 +205,6 @@ export default class CryptKeeperController {
       this.zkIdentityService.connectIdentityRequest,
     );
     this.handler.add(
-      RPCExternalAction.REVEAL_CONNECTED_IDENTITY_COMMITMENT,
-      this.lockService.ensure,
-      this.zkIdentityService.revealConnectedIdentityCommitmentRequest,
-    );
-    this.handler.add(
       RPCInternalAction.REVEAL_CONNECTED_IDENTITY_COMMITMENT,
       this.lockService.ensure,
       this.zkIdentityService.revealConnectedIdentityCommitment,
@@ -203,12 +233,6 @@ export default class CryptKeeperController {
     );
 
     // Groups
-    this.handler.add(RPCInternalAction.JOIN_GROUP_REQUEST, this.lockService.ensure, this.groupService.joinGroupRequest);
-    this.handler.add(
-      RPCInternalAction.GENERATE_GROUP_MERKLE_PROOF_REQUEST,
-      this.lockService.ensure,
-      this.groupService.generateGroupMerkleProofRequest,
-    );
     this.handler.add(RPCInternalAction.JOIN_GROUP, this.lockService.ensure, this.groupService.joinGroup);
     this.handler.add(
       RPCInternalAction.GENERATE_GROUP_MERKLE_PROOF,

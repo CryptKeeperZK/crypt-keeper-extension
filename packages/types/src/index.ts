@@ -1,4 +1,4 @@
-export type { IConnectionApprovalData } from "./approval";
+export type { IConnectionApprovalData, IConnectionOptions } from "./approval";
 export type { IInjectedMessageData, IInjectedProviderRequest } from "./contentScript";
 export type {
   IRequestResolutionAction,
