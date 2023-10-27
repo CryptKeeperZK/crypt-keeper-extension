@@ -20,7 +20,7 @@ import RateLimitingNullifier from "@src/components/RateLimitingNullifier";
 import Semaphore from "@src/components/Semaphore";
 import VerifiableCredentials from "@src/components/VerifiableCredentials";
 import { useCryptKeeper } from "@src/hooks/useCryptKeeper";
-import LeftSideBar from "@src/components/LeftSideBar";
+import RightSideBar from "@src/components/RightSideBar";
 
 export const Main = (): JSX.Element => {
   const theme = useTheme();
@@ -90,71 +90,48 @@ export const Main = (): JSX.Element => {
   </div>;
 
   return (
-    <Grid container>
+    <Box sx={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}>
+      {/* Header */}
       <Header />
 
-      <Grid xs={5}>
-        <Container
-          sx={{
-            position: "absolute",
-            top: 64,
-          }}
-        >
-          <Grid container>
-            <Grid xs={8}>
-              <Box
-                className="popup"
-                sx={{
-                  p: 2,
-                  borderBottom: "1px solid",
-                  borderColor: "text.800",
-                  border: "2px solid $gray-800",
-                  width: "100%",
-                  justifyContent: "center",
-                  top: "64",
-                }}
-              >
-                <Connect
-                  isChangeIdentity
-                  connect={connect}
-                  title="Connect identity"
-                />
+      {/* Center Content */}
+      <Box sx={{ display: "flex", flex: 1 }}>
+        <Container sx={{ flex: 1, position: "relative", top: 64 }}>
+          <Connect isChangeIdentity connect={connect} title="Connect identity" />
 
-                <ImportIdentity importIdentity={importIdentity} />
+          <ImportIdentity importIdentity={importIdentity} />
 
-                <GetMetadata getConnectedIdentityMetadata={getConnectedIdentityMetadata} />
+          <GetMetadata getConnectedIdentityMetadata={getConnectedIdentityMetadata} />
 
-                <GetCommitment revealConnectedIdentityCommitment={revealConnectedIdentityCommitment} />
+          <GetCommitment revealConnectedIdentityCommitment={revealConnectedIdentityCommitment} />
 
-                <DisplayCode code={codeData.code} isShowCode={codeData.isShowCode} />
+          <DisplayCode code={codeData.code} isShowCode={codeData.isShowCode} />
 
-                <Semaphore genSemaphoreProof={genSemaphoreProof} />
+          <Semaphore genSemaphoreProof={genSemaphoreProof} />
 
-                <RateLimitingNullifier genRLNProof={genRLNProof} />
+          <RateLimitingNullifier genRLNProof={genRLNProof} />
 
-                <Bandada generateGroupMerkleProof={generateGroupMerkleProof} joinGroup={joinGroup} />
+          <Bandada generateGroupMerkleProof={generateGroupMerkleProof} joinGroup={joinGroup} />
 
-                <DisplayProof proof={proof} />
+          <DisplayProof proof={proof} />
 
-                <VerifiableCredentials
-                  addVerifiableCredentialRequest={addVerifiableCredentialRequest}
-                  generateVerifiablePresentationRequest={generateVerifiablePresentationRequest}
-                />
-              </Box>
-            </Grid>
-          </Grid>
+          <VerifiableCredentials
+            addVerifiableCredentialRequest={addVerifiableCredentialRequest}
+            generateVerifiablePresentationRequest={generateVerifiablePresentationRequest}
+          />
         </Container>
-      </Grid>
 
-      <LeftSideBar>
-        <ConnectedIdentity
-          identityCommitment={connectedCommitment}
-          identityHost={connectedIdentityMetadata?.urlOrigin}
-          identityName={connectedIdentityMetadata?.name}
-        />
-      </LeftSideBar>
+        {/* RightSideBar */}
+        <RightSideBar>
+          <ConnectedIdentity
+            identityCommitment={connectedCommitment}
+            identityHost={connectedIdentityMetadata?.urlOrigin}
+            identityName={connectedIdentityMetadata?.name}
+          />
+        </RightSideBar>
+      </Box>
+
       <ToastContainer newestOnTop />
-    </Grid>
-
+    </Box>
   );
 };

@@ -20,6 +20,7 @@ root.render(
     <ThemeProvider theme={theme}>
       <CssBaseline />
       <Main />
-    </ThemeProvider>,
-  </ClientProvider>
+    </ThemeProvider>
+    ,
+  </ClientProvider>,
 );

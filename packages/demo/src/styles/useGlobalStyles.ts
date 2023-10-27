@@ -11,8 +11,8 @@ const basePopupStyle = {
 
 export const sharedStyles = {
   sideBarWidth: 256,
-  sideBarColor: "#012120"
-}
+  sideBarColor: "#012120",
+};
 
 export const useGlobalStyles = makeStyles((theme: Theme) => ({
   popup: {
@@ -59,7 +59,7 @@ export const useGlobalStyles = makeStyles((theme: Theme) => ({
     flexShrink: 0,
     position: "fixed",
     backgroundColor: theme.palette.background.default,
-    zIndex: 1
+    zIndex: 1,
   },
 
   rightSideBar: {

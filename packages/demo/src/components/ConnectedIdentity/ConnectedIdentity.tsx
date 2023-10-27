@@ -54,11 +54,15 @@ export const ConnectedIdentity = ({
           <Typography sx={{ pt: 3, fontWeight: "bold", color: "primary.main", alignItems: "center" }} variant="h6">
             <strong>Commitment: </strong>
           </Typography>
-          {identityCommitment ? (<Typography className="identity-name" color="text.primary" data-testid="commitment">
-            {identityCommitment}
-          </Typography>) : (<Typography className="identity-name" color="text.primary" data-testid="commitment">
-            You need to ask to reveal identity Commitment
-          </Typography>)}
+          {identityCommitment ? (
+            <Typography className="identity-name" color="text.primary" data-testid="commitment">
+              {identityCommitment}
+            </Typography>
+          ) : (
+            <Typography className="identity-name" color="text.primary" data-testid="commitment">
+              You need to ask to reveal identity Commitment
+            </Typography>
+          )}
         </Box>
       </Box>
     </Box>

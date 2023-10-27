@@ -1,6 +1,6 @@
-import { initializeCryptKeeper, type ICryptKeeperInjectedProvider } from '@cryptkeeperzk/providers';
-import { createContext, useContext, useState, useEffect, type PropsWithChildren } from 'react';
-import { toast } from 'react-toastify';
+import { initializeCryptKeeper, type ICryptKeeperInjectedProvider } from "@cryptkeeperzk/providers";
+import { createContext, useContext, useState, useEffect, type PropsWithChildren } from "react";
+import { toast } from "react-toastify";
 
 interface IClientContext {
   client: ICryptKeeperInjectedProvider | undefined;
@@ -9,7 +9,7 @@ interface IClientContext {
 
 const ClientContext = createContext<IClientContext>({
   client: undefined,
-  setClient: () => { }
+  setClient: () => {},
 });
 
 export const ClientProvider = ({ children }: PropsWithChildren<{}>) => {
@@ -26,11 +26,7 @@ export const ClientProvider = ({ children }: PropsWithChildren<{}>) => {
     }
   }, [setClient]);
 
-  return (
-    <ClientContext.Provider value={{ client, setClient }}>
-      {children}
-    </ClientContext.Provider>
-  );
+  return <ClientContext.Provider value={{ client, setClient }}>{children}</ClientContext.Provider>;
 };
 
 export const useClient = () => {

@@ -133,20 +133,20 @@ export const theme = createTheme({
       styleOverrides: {
         root: ({ theme: { palette } }) => ({
           top: 0,
-          backgroundColor: palette.background.default
+          backgroundColor: palette.background.default,
         }),
         paper: {
           top: 64,
-        }
-      }
+        },
+      },
     },
 
     MuiPaper: {
       styleOverrides: {
         root: ({ theme: { palette } }) => ({
-          backgroundColor: palette.background.default
-        })
-      }
-    }
+          backgroundColor: palette.background.default,
+        }),
+      },
+    },
   },
 });
