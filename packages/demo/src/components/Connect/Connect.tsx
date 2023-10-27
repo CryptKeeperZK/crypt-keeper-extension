@@ -10,7 +10,6 @@ interface IConnectProps {
   title: string;
   isChangeIdentity: boolean;
   connect: (isChangeIdentity: boolean) => void;
-  sendCodeData: ({ isShowCode, code }: IDisplayCodeProps) => void;
 }
 
 export const Connect = ({ title, isChangeIdentity = false, connect }: IConnectProps): JSX.Element => {

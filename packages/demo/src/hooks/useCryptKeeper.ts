@@ -25,6 +25,7 @@ import type {
   IVerifiablePresentation,
   IMerkleProof,
 } from "@cryptkeeperzk/types";
+import { useClient } from "@src/context/ClientProvider";
 
 interface IUseCryptKeeperData {
   isLocked: boolean;
@@ -46,7 +47,8 @@ interface IUseCryptKeeperData {
 }
 
 export const useCryptKeeper = (): IUseCryptKeeperData => {
-  const [client, setClient] = useState<ICryptKeeperInjectedProvider>();
+  const { client } = useClient();
+
   const [isLocked, setIsLocked] = useState(true);
   const [proof, setProof] = useState<ISemaphoreFullProof | IRLNFullProof | IMerkleProof>();
   const [connectedCommitment, setConnectedIdentityCommitment] = useState<string>();
@@ -315,17 +317,6 @@ export const useCryptKeeper = (): IUseCryptKeeperData => {
     },
     [setIsLocked, setConnectedIdentityMetadata, getConnectedIdentityMetadata],
   );
-
-  // Initialize Injected CryptKeeper Provider Client
-  useEffect(() => {
-    const cryptkeeperInjectedProvider = initializeCryptKeeper();
-
-    if (cryptkeeperInjectedProvider) {
-      setClient(cryptkeeperInjectedProvider);
-    } else {
-      toast(`CryptKeeper is not installed in the browser`, { type: "error" });
-    }
-  }, [setClient]);
 
   // Listen to Injected CryptKeeper Provider Client Events
   useEffect(() => {

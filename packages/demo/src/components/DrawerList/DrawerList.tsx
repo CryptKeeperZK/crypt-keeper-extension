@@ -7,6 +7,8 @@ import useTheme from "@mui/styles/useTheme";
 import { useGlobalStyles } from "@src/styles/useGlobalStyles";
 
 import { useDrawerList } from "./useDrawerList";
+import ListItemIcon from "@mui/material/ListItemIcon";
+import Toolbar from "@mui/material/Toolbar";
 
 export const DrawerList = () => {
   const theme = useTheme();
@@ -25,6 +27,22 @@ export const DrawerList = () => {
   } = useDrawerList();
   return (
     <Box className={classes.drawerList}>
+      <Toolbar className={classes.drawerToolbar} />
+
+      <ListItemButton component="a" href="#customized-list">
+        <ListItemIcon sx={{ fontSize: 20 }}>🔥</ListItemIcon>
+
+        <ListItemText
+          primary="Features"
+          primaryTypographyProps={{
+            fontSize: 20,
+            fontWeight: "medium",
+            letterSpacing: 0,
+          }}
+          sx={{ my: 0 }}
+        />
+      </ListItemButton>
+      
       {/* Get started */}
       <Box
         sx={{

@@ -3,13 +3,13 @@ import { createTheme, lighten } from "@mui/material/styles";
 
 export const PALETTE = {
   background: {
-    default: "#000",
+    default: "#181818",
     paper: "#fff",
   },
 
   common: {
     white: "#fff",
-    black: "#000",
+    black: "#181818",
   },
 
   action: {
@@ -112,7 +112,7 @@ export const theme = createTheme({
             'system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif',
           margin: 0,
           padding: 0,
-          backgroundColor: PALETTE.common.black,
+          backgroundColor: PALETTE.background.default,
           color: PALETTE.common.white,
           WebkitFontSmoothing: "antialiased",
           MozOsxFontSmoothing: "grayscale",
@@ -128,5 +128,25 @@ export const theme = createTheme({
         },
       },
     },
+
+    MuiDrawer: {
+      styleOverrides: {
+        root: ({ theme: { palette } }) => ({
+          top: 0,
+          backgroundColor: palette.background.default
+        }),
+        paper: {
+          top: 64,
+        }
+      }
+    },
+
+    MuiPaper: {
+      styleOverrides: {
+        root: ({ theme: { palette } }) => ({
+          backgroundColor: palette.background.default
+        })
+      }
+    }
   },
 });

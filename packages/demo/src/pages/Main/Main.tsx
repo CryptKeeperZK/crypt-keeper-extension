@@ -12,7 +12,6 @@ import Connect from "@src/components/Connect";
 import ConnectedIdentity from "@src/components/ConnectedIdentity";
 import DisplayCode, { type IDisplayCodeProps } from "@src/components/DisplayCode";
 import DisplayProof from "@src/components/DisplayProof";
-import Drawer from "@src/components/Drawer";
 import GetCommitment from "@src/components/GetCommitment";
 import GetMetadata from "@src/components/GetMetadata";
 import Header from "@src/components/Header";
@@ -21,6 +20,7 @@ import RateLimitingNullifier from "@src/components/RateLimitingNullifier";
 import Semaphore from "@src/components/Semaphore";
 import VerifiableCredentials from "@src/components/VerifiableCredentials";
 import { useCryptKeeper } from "@src/hooks/useCryptKeeper";
+import LeftSideBar from "@src/components/LeftSideBar";
 
 export const Main = (): JSX.Element => {
   const theme = useTheme();
@@ -32,10 +32,6 @@ export const Main = (): JSX.Element => {
 
   const handleCodeFromActionBox = ({ isShowCode, code }: IDisplayCodeProps) => {
     setCodeData({ isShowCode, code });
-  };
-
-  const handleChange = (event: SyntheticEvent, newValue: string) => {
-    setValue(newValue);
   };
 
   const {
@@ -94,80 +90,71 @@ export const Main = (): JSX.Element => {
   </div>;
 
   return (
-    <Box>
-      <Grid container>
-        <Grid xs={9}>
-          <Header />
-        </Grid>
+    <Grid container>
+      <Header />
 
-        <Grid xs={4}>
-          <Drawer />
-        </Grid>
+      <Grid xs={5}>
+        <Container
+          sx={{
+            position: "absolute",
+            top: 64,
+          }}
+        >
+          <Grid container>
+            <Grid xs={8}>
+              <Box
+                className="popup"
+                sx={{
+                  p: 2,
+                  borderBottom: "1px solid",
+                  borderColor: "text.800",
+                  border: "2px solid $gray-800",
+                  width: "100%",
+                  justifyContent: "center",
+                  top: "64",
+                }}
+              >
+                <Connect
+                  isChangeIdentity
+                  connect={connect}
+                  title="Connect identity"
+                />
 
-        <Grid xs={5}>
-          <Container
-            sx={{
-              position: "absolute",
-              top: 64,
-            }}
-          >
-            <Grid container>
-              <Grid xs={8}>
-                <Box
-                  className="popup"
-                  sx={{
-                    p: 2,
-                    borderBottom: "1px solid",
-                    borderColor: "text.800",
-                    border: "2px solid $gray-800",
-                    width: "100%",
-                    justifyContent: "center",
-                    top: "64",
-                  }}
-                >
-                  <Connect
-                    isChangeIdentity
-                    connect={connect}
-                    sendCodeData={handleCodeFromActionBox}
-                    title="Connect identity"
-                  />
+                <ImportIdentity importIdentity={importIdentity} />
 
-                  <ImportIdentity importIdentity={importIdentity} />
+                <GetMetadata getConnectedIdentityMetadata={getConnectedIdentityMetadata} />
 
-                  <GetMetadata getConnectedIdentityMetadata={getConnectedIdentityMetadata} />
+                <GetCommitment revealConnectedIdentityCommitment={revealConnectedIdentityCommitment} />
 
-                  <GetCommitment revealConnectedIdentityCommitment={revealConnectedIdentityCommitment} />
+                <DisplayCode code={codeData.code} isShowCode={codeData.isShowCode} />
 
-                  <DisplayCode code={codeData.code} isShowCode={codeData.isShowCode} />
+                <Semaphore genSemaphoreProof={genSemaphoreProof} />
 
-                  <Semaphore genSemaphoreProof={genSemaphoreProof} />
+                <RateLimitingNullifier genRLNProof={genRLNProof} />
 
-                  <RateLimitingNullifier genRLNProof={genRLNProof} />
+                <Bandada generateGroupMerkleProof={generateGroupMerkleProof} joinGroup={joinGroup} />
 
-                  <Bandada generateGroupMerkleProof={generateGroupMerkleProof} joinGroup={joinGroup} />
+                <DisplayProof proof={proof} />
 
-                  <DisplayProof proof={proof} />
-
-                  <VerifiableCredentials
-                    addVerifiableCredentialRequest={addVerifiableCredentialRequest}
-                    generateVerifiablePresentationRequest={generateVerifiablePresentationRequest}
-                  />
-                </Box>
-              </Grid>
+                <VerifiableCredentials
+                  addVerifiableCredentialRequest={addVerifiableCredentialRequest}
+                  generateVerifiablePresentationRequest={generateVerifiablePresentationRequest}
+                />
+              </Box>
             </Grid>
-          </Container>
-        </Grid>
-
-        <Grid xs={3}>
-          <ConnectedIdentity
-            identityCommitment={connectedCommitment}
-            identityHost={connectedIdentityMetadata?.urlOrigin}
-            identityName={connectedIdentityMetadata?.name}
-          />
-        </Grid>
+          </Grid>
+        </Container>
       </Grid>
 
+      <LeftSideBar>
+        <ConnectedIdentity
+          identityCommitment={connectedCommitment}
+          identityHost={connectedIdentityMetadata?.urlOrigin}
+          identityName={connectedIdentityMetadata?.name}
+        />
+      </LeftSideBar>
       <ToastContainer newestOnTop />
-    </Box>
+    </Grid>
+
   );
 };

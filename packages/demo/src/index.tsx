@@ -8,6 +8,7 @@ import path from "path";
 
 import Main from "@src/pages/Main";
 import { theme } from "@src/styles";
+import { ClientProvider } from "@src/context/ClientProvider";
 
 dotenv.config({ path: path.resolve(__dirname, "../..", ".env"), override: true });
 
@@ -15,9 +16,10 @@ const container = document.getElementById("root");
 const root = createRoot(container!);
 
 root.render(
-  <ThemeProvider theme={theme}>
-    <CssBaseline />
-
-    <Main />
-  </ThemeProvider>,
+  <ClientProvider>
+    <ThemeProvider theme={theme}>
+      <CssBaseline />
+      <Main />
+    </ThemeProvider>,
+  </ClientProvider>
 );

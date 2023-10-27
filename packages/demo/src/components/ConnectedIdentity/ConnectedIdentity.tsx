@@ -18,55 +18,48 @@ export const ConnectedIdentity = ({
 
   return (
     <Box
-      className={classes.popup}
       sx={{
         p: 2,
         display: "flex",
         alignItems: "center",
         flexWrap: "nowrap",
-        borderBottom: "1px solid",
-        borderColor: "text.800",
-        border: "2px solid $gray-800",
-        height: "100%",
-        justifyContent: "center",
       }}
     >
-      <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center", p: 3, flexGrow: 1 }}>
-        <AccountCircleIcon color="primary" fontSize="inherit" />
-
+      <Box>
         <Typography sx={{ pt: 3, fontWeight: "bold", color: "primary.main", alignItems: "center" }} variant="h5">
           CryptKeeper Connected Identity
         </Typography>
-      </Box>
 
-      <Box>
         <Box>
-          <Typography className="identity-name" color="text.primary" data-testid="connected-name">
+          <Typography sx={{ pt: 3, fontWeight: "bold", color: "primary.main", alignItems: "center" }} variant="h6">
             <strong>Name: </strong>
-
+          </Typography>
+          <Typography className="identity-name" color="text.primary" data-testid="connected-name">
             {identityName}
           </Typography>
         </Box>
 
         {identityHost && (
-          <Typography className="identity-name" color="text.primary" data-testid="connected-urlOrigin">
-            <strong>Host: </strong>
-
-            {identityHost}
-          </Typography>
+          <Box>
+            <Typography sx={{ pt: 3, fontWeight: "bold", color: "primary.main", alignItems: "center" }} variant="h6">
+              <strong>Name: </strong>
+            </Typography>
+            <Typography className="identity-name" color="text.primary" data-testid="connected-urlOrigin">
+              {identityHost}
+            </Typography>
+          </Box>
         )}
 
-        {identityCommitment ? (
-          <Typography className="identity-name" color="text.primary" data-testid="commitment">
+        <Box>
+          <Typography sx={{ pt: 3, fontWeight: "bold", color: "primary.main", alignItems: "center" }} variant="h6">
             <strong>Commitment: </strong>
-
+          </Typography>
+          {identityCommitment ? (<Typography className="identity-name" color="text.primary" data-testid="commitment">
             {identityCommitment}
-          </Typography>
-        ) : (
-          <Typography className="identity-name" color="text.primary" data-testid="commitment">
+          </Typography>) : (<Typography className="identity-name" color="text.primary" data-testid="commitment">
             You need to ask to reveal identity Commitment
-          </Typography>
-        )}
+          </Typography>)}
+        </Box>
       </Box>
     </Box>
   );
