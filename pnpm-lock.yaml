@@ -186,8 +186,8 @@ importers:
         specifier: ^6.4.9
         version: 6.4.9
       extension-port-stream:
-        specifier: ^2.1.1
-        version: 2.1.1
+        specifier: ^3.0.0
+        version: 3.0.0
       fast-deep-equal:
         specifier: ^3.1.3
         version: 3.1.3
@@ -9967,6 +9967,14 @@ packages:
     resolution: {integrity: sha512-qknp5o5rj2J9CRKfVB8KJr+uXQlrojNZzdESUPhKYLXf97TPcGf6qWWKmpsNNtUyOdzFhab1ON0jzouNxHHvow==}
     engines: {node: '>=12.0.0'}
     dependencies:
+      webextension-polyfill: 0.10.0
+    dev: false
+
+  /extension-port-stream@3.0.0:
+    resolution: {integrity: sha512-an2S5quJMiy5bnZKEf6AkfH/7r8CzHvhchU40gxN+OM6HPhe7Z9T1FUychcf2M9PpPOO0Hf7BAEfJkw2TDIBDw==}
+    engines: {node: '>=12.0.0'}
+    dependencies:
+      readable-stream: 3.6.2
       webextension-polyfill: 0.10.0
     dev: false
 
