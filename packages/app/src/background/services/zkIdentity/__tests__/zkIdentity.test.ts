@@ -118,7 +118,9 @@ describe("background/services/zkIdentity", () => {
     (createNewIdentity as jest.Mock).mockReturnValue(defaultNewIdentity);
   });
 
-  afterEach(() => {
+  afterEach(async () => {
+    await zkIdentityService.lock();
+
     (SimpleStorage as jest.Mock).mock.instances.forEach((instance: MockStorage) => {
       instance.get.mockClear();
       instance.set.mockClear();
@@ -189,6 +191,10 @@ describe("background/services/zkIdentity", () => {
   });
 
   describe("set connected identity", () => {
+    beforeEach(async () => {
+      await zkIdentityService.unlock();
+    });
+
     test("should set connected identity properly", async () => {
       const expectConnectIdentityAction = setConnectedIdentity(
         pick(mockDefaultIdentity.metadata, ["name", "urlOrigin"]),
@@ -218,6 +224,9 @@ describe("background/services/zkIdentity", () => {
         instance.get.mockReturnValue(undefined);
       });
 
+      await zkIdentityService.lock();
+      await zkIdentityService.unlock();
+
       const result = await zkIdentityService.connectIdentity({
         identityCommitment: mockDefaultIdentityCommitment,
         urlOrigin: "http://localhost:3000",
@@ -230,6 +239,10 @@ describe("background/services/zkIdentity", () => {
   });
 
   describe("set identity name", () => {
+    beforeEach(async () => {
+      await zkIdentityService.unlock();
+    });
+
     test("should set identity name properly", async () => {
       const result = await zkIdentityService.setIdentityName({
         identityCommitment: mockDefaultIdentityCommitment,
@@ -249,8 +262,12 @@ describe("background/services/zkIdentity", () => {
     });
   });
 
-  describe("set identity urlOrigin", () => {
-    test("should set identity urlOrigin properly", async () => {
+  describe("set identity url origin", () => {
+    beforeEach(async () => {
+      await zkIdentityService.unlock();
+    });
+
+    test("should set identity url origin properly", async () => {
       const result = await zkIdentityService.setIdentityHost({
         identityCommitment: mockDefaultIdentityCommitment,
         urlOrigin: "http://localhost:3000",
@@ -259,7 +276,7 @@ describe("background/services/zkIdentity", () => {
       expect(result).toBe(true);
     });
 
-    test("should not set identity urlOrigin if there is no such identity", async () => {
+    test("should not set identity url origin if there is no such identity", async () => {
       const result = await zkIdentityService.setIdentityHost({
         identityCommitment: "unknown",
         urlOrigin: "http://localhost:3000",
@@ -270,6 +287,10 @@ describe("background/services/zkIdentity", () => {
   });
 
   describe("delete identity", () => {
+    beforeEach(async () => {
+      await zkIdentityService.unlock();
+    });
+
     test("should delete identity properly", async () => {
       const [identityStorage, connectedIdentityStorage] = (SimpleStorage as jest.Mock).mock.instances as [
         MockStorage,
@@ -290,6 +311,9 @@ describe("background/services/zkIdentity", () => {
         instance.get.mockReturnValue(undefined);
       });
 
+      await zkIdentityService.lock();
+      await zkIdentityService.unlock();
+
       const result = await zkIdentityService.deleteIdentity({ identityCommitment: mockDefaultIdentityCommitment });
 
       expect(result).toBe(false);
@@ -297,6 +321,10 @@ describe("background/services/zkIdentity", () => {
   });
 
   describe("delete all identities", () => {
+    beforeEach(async () => {
+      await zkIdentityService.unlock();
+    });
+
     test("should delete all identities properly", async () => {
       const isIdentitySet = await zkIdentityService.connectIdentity({
         identityCommitment: mockDefaultIdentityCommitment,
@@ -323,6 +351,9 @@ describe("background/services/zkIdentity", () => {
         instance.get.mockReturnValue(undefined);
       });
 
+      await zkIdentityService.lock();
+      await zkIdentityService.unlock();
+
       const result = await zkIdentityService.deleteAllIdentities();
 
       expect(result).toBe(false);
@@ -330,6 +361,10 @@ describe("background/services/zkIdentity", () => {
   });
 
   describe("get connected identity", () => {
+    beforeEach(async () => {
+      await zkIdentityService.unlock();
+    });
+
     test("should get connected identity properly", async () => {
       const [identityStorage, connectedIdentityStorage] = (SimpleStorage as jest.Mock).mock.instances as [
         MockStorage,
@@ -416,6 +451,9 @@ describe("background/services/zkIdentity", () => {
       identityStorage.get.mockReturnValue(undefined);
       connectedIdentityStorage.get.mockReturnValue(mockDefaultIdentityCommitment);
 
+      await zkIdentityService.lock();
+      await zkIdentityService.unlock();
+
       const result = await zkIdentityService.getConnectedIdentity();
 
       expect(result).toBeUndefined();
@@ -429,6 +467,9 @@ describe("background/services/zkIdentity", () => {
       identityStorage.get.mockReturnValue(undefined);
       connectedIdentityStorage.get.mockReturnValue(mockDefaultIdentityCommitment);
 
+      await zkIdentityService.lock();
+      await zkIdentityService.unlock();
+
       const result = await zkIdentityService.getConnectedIdentityData({}, {});
 
       expect(result).toBeUndefined();
@@ -441,6 +482,9 @@ describe("background/services/zkIdentity", () => {
       ];
       identityStorage.get.mockReturnValue(undefined);
       connectedIdentityStorage.get.mockReturnValue(mockDefaultIdentityCommitment);
+
+      await zkIdentityService.lock();
+      await zkIdentityService.unlock();
 
       const result = await zkIdentityService.getConnectedIdentityCommitment();
 
@@ -502,21 +546,39 @@ describe("background/services/zkIdentity", () => {
   });
 
   describe("get identities", () => {
-    test("should get identity commitments properly", async () => {
-      const { commitments, identities } = await zkIdentityService.getIdentityCommitments();
-
-      expect(commitments).toStrictEqual([mockDefaultIdentityCommitment]);
-      expect(identities.size).toBe(mockDefaultIdentities.length);
+    beforeEach(async () => {
+      await zkIdentityService.unlock();
     });
 
-    test("should get identities properly", async () => {
-      const identities = await zkIdentityService.getIdentities();
+    test("should get identity commitments properly", () => {
+      const { commitments } = zkIdentityService.getIdentityCommitments();
+
+      expect(commitments).toStrictEqual([mockDefaultIdentityCommitment]);
+    });
+
+    test("should get identities properly", () => {
+      const identities = zkIdentityService.getIdentities();
 
       expect(identities).toHaveLength(mockDefaultIdentities.length);
     });
 
-    test("should get number of identities properly", async () => {
-      const result = await zkIdentityService.getNumOfIdentities();
+    test("should get identity properly", () => {
+      const identity = zkIdentityService.getIdentity(mockDefaultIdentityCommitment);
+
+      expect(identity).toStrictEqual({
+        commitment: mockDefaultIdentityCommitment,
+        metadata: mockDefaultIdentity.metadata,
+      });
+    });
+
+    test("should return undefined if there is no such identity", () => {
+      const identity = zkIdentityService.getIdentity("unknown");
+
+      expect(identity).toBeUndefined();
+    });
+
+    test("should get number of identities properly", () => {
+      const result = zkIdentityService.getNumOfIdentities();
 
       expect(result).toBe(mockDefaultIdentities.length);
     });
@@ -616,8 +678,13 @@ describe("background/services/zkIdentity", () => {
       expect(successResult).toBeDefined();
 
       (createNewIdentity as jest.Mock).mockReturnValue({
+        serialize: () => JSON.stringify({ secret: "1234", metadata: mockDefaultIdentity.metadata }),
         genIdentityCommitment: () => mockDefaultIdentityCommitment,
+        metadata: mockDefaultIdentity.metadata,
       });
+
+      await zkIdentityService.lock();
+      await zkIdentityService.unlock();
 
       await expect(
         zkIdentityService.createIdentity({
@@ -652,6 +719,10 @@ describe("background/services/zkIdentity", () => {
       urlOrigin: "http://localhost:3000",
     };
 
+    beforeEach(async () => {
+      await zkIdentityService.unlock();
+    });
+
     test("should import new identity properly", async () => {
       (createNewIdentity as jest.Mock).mockReturnValue({
         ...defaultNewIdentity,
@@ -665,6 +736,7 @@ describe("background/services/zkIdentity", () => {
 
     test("should not import new identity if there is the same identity in the store", async () => {
       (createNewIdentity as jest.Mock).mockReturnValue({
+        serialize: () => JSON.stringify({ secret: "1234", metadata: mockDefaultIdentity.metadata }),
         genIdentityCommitment: () => mockDefaultIdentityCommitment,
       });
 

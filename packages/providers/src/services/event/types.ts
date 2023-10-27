@@ -15,6 +15,7 @@ export type EventHandler = (data: unknown) => void;
  * @property {string} LOGIN - "login"
  * @property {string} IDENTITY_CHANGED - "identityChanged"
  * @property {string} LOGOUT - "logout"
+ * @property {string} APPROVAL - "approval"
  * @property {string} ADD_VERIFIABLE_CREDENTIAL - "addVerifiableCredential"
  * @property {string} VERIFIABLE_PRESENTATION_REQUEST - "verifiablePresentationRequest"
  * @property {string} GENERATE_VERIFIABLE_PRESENTATION - "generateVerifiablePresentation"
@@ -22,6 +23,9 @@ export type EventHandler = (data: unknown) => void;
  * @property {string} JOIN_GROUP - "joinGroup"
  * @property {string} GROUP_MERKLE_PROOF - "groupMerkleProof"
  * @property {string} IMPORT_IDENTITY - "importIdentity"
+ * @property {string} CREATE_IDENTITY - "createIdentity"
+ * @property {string} CONNECT_IDENTITY - "connectIdentity"
+ * @property {string} DISCONNECT_IDENTITY - "disconnectIdentity"
  * @property {string} USER_REJECT - "userReject"
  */
 export enum EventName {
@@ -37,6 +41,8 @@ export enum EventName {
   GROUP_MERKLE_PROOF = "groupMerkleProof",
   IMPORT_IDENTITY = "importIdentity",
   CREATE_IDENTITY = "createIdentity",
+  CONNECT_IDENTITY = "connectIdenity",
+  DISCONNECT_IDENTITY = "disconnectIdentity",
   USER_REJECT = "userReject",
 }
 

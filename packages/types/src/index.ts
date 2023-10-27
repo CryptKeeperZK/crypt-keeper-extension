@@ -23,6 +23,8 @@ export type {
   ConnectedIdentityMetadata,
   IImportIdentityArgs,
   IImportIdentityRequestArgs,
+  IIdenityConnection,
+  IConnectArgs,
 } from "./identity";
 export { EWallet } from "./identity";
 export type {
