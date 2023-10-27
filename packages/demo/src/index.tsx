@@ -10,7 +10,7 @@ import Main from "@src/pages/Main";
 import { theme } from "@src/styles";
 import { ClientProvider } from "@src/context/ClientProvider";
 
-dotenv.config({ path: path.resolve(__dirname, "../..", ".env"), override: true });
+//dotenv.config({ path: path.resolve(__dirname, "../..", ".env"), override: true });
 
 const container = document.getElementById("root");
 const root = createRoot(container!);
@@ -21,6 +21,5 @@ root.render(
       <CssBaseline />
       <Main />
     </ThemeProvider>
-    ,
   </ClientProvider>,
 );

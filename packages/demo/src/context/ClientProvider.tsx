@@ -23,10 +23,10 @@ export const ClientProvider = ({ children }: PropsWithChildren<{}>) => {
       setClient(cryptkeeperInjectedProvider);
     } else {
       toast(`CryptKeeper is not installed in the browser`, { type: "error" });
-    }
+    } 
   }, [setClient]);
 
-  return <ClientContext.Provider value={{ client, setClient }}>{children}</ClientContext.Provider>;
+  return( <ClientContext.Provider value={{ client, setClient }}>{children}</ClientContext.Provider>);
 };
 
 export const useClient = () => {
