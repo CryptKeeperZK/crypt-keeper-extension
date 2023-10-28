@@ -35,7 +35,6 @@ interface IUseCryptKeeperData {
   generateVerifiablePresentationRequest: () => Promise<void>;
   joinGroup: () => Promise<void>;
   generateGroupMerkleProof: () => Promise<void>;
-  revealConnectedIdentityCommitment: () => Promise<void>;
 }
 
 export const useCryptKeeper = (): IUseCryptKeeperData => {
@@ -173,13 +172,6 @@ export const useCryptKeeper = (): IUseCryptKeeperData => {
       },
     });
   }, [client]);
-
-  const revealConnectedIdentityCommitment = useCallback(async () => {
-    await client?.request({
-      method: RPCExternalAction.REVEAL_CONNECTED_IDENTITY_COMMITMENT,
-    });
-  }, [client]);
-
   
 
   return {
@@ -187,7 +179,6 @@ export const useCryptKeeper = (): IUseCryptKeeperData => {
     genRLNProof,
     addVerifiableCredentialRequest,
     generateVerifiablePresentationRequest,
-    revealConnectedIdentityCommitment,
     joinGroup,
     generateGroupMerkleProof,
   };

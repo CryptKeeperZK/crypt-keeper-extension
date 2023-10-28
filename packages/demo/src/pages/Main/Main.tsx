@@ -9,7 +9,6 @@ import Bandada from "@src/components/Bandada";
 import ConnectedIdentity from "@src/components/ConnectedIdentity";
 import DisplayCode, { type IDisplayCodeProps } from "@src/components/DisplayCode";
 import DisplayProof from "@src/components/DisplayProof";
-import GetCommitment from "@src/components/GetCommitment";
 import Header from "@src/components/Header";
 import RateLimitingNullifier from "@src/components/RateLimitingNullifier";
 import Semaphore from "@src/components/Semaphore";
@@ -20,11 +19,13 @@ import { Paths } from "@src/constants";
 import Connect from "@src/pages/Connect";
 import IdentityMetadata from "@src/pages/IdentityMetadata";
 import ImportIdentity from "@src/pages/ImportIdentity";
+import RevealIdentity from "@src/pages/RevealIdentity";
 
 const routeConfig: RouteObject[] = [
   { path: Paths.CONNECT, element: <Connect /> },
-  { path: Paths.GET_IDENTITY_METADATA, element: <IdentityMetadata />}
-  { path: Paths.IMPORT_IDENTITY, element: <ImportIdentity />}
+  { path: Paths.GET_IDENTITY_METADATA, element: <IdentityMetadata />},
+  { path: Paths.IMPORT_IDENTITY, element: <ImportIdentity />},
+  { path: Paths.REVEAL_IDENTITY_COMMITMENT, element: <RevealIdentity />},
 ];
 
 export const Main = (): JSX.Element => {
@@ -35,7 +36,6 @@ export const Main = (): JSX.Element => {
     genRLNProof,
     addVerifiableCredentialRequest,
     generateVerifiablePresentationRequest,
-    revealConnectedIdentityCommitment,
     joinGroup,
     generateGroupMerkleProof,
   } = useCryptKeeper();

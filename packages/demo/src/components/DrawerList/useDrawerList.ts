@@ -42,7 +42,7 @@ export const useDrawerList = (): IUserDrawerListOutput => {
     features: [
       { label: "Get Identity Metadata", path: Paths.GET_IDENTITY_METADATA },
       { label: "Import Identity", path: Paths.IMPORT_IDENTITY },
-      { label: "Reveal Identity Commitment" },
+      { label: "Reveal Identity Commitment", path: Paths.REVEAL_IDENTITY_COMMITMENT },
     ],
   };
 
