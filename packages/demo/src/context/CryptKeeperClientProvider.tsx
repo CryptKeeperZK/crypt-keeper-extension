@@ -37,7 +37,7 @@ export const CryptKeeperClientProvider = ({ children }: PropsWithChildren<{}>) =
   const [client, setClient] = useState<ICryptKeeperInjectedProvider>();
   const [connectedCommitment, setConnectedIdentityCommitment] = useState<string>("");
   const [connectedIdentityMetadata, setConnectedIdentityMetadata] = useState<ConnectedIdentityMetadata>();
-  const [proof, setProof] = useState<ISemaphoreFullProof | IRLNFullProof | IMerkleProof>();
+  const [proof, setProof] = useState<IRLNFullProof | IMerkleProof>();
 
   const getConnectedIdentityMetadata = useCallback(async () => {
     await client

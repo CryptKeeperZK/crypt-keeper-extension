@@ -5,7 +5,6 @@ import {
   EventName,
   RPCExternalAction,
 } from "@cryptkeeperzk/providers";
-import { encodeBytes32String } from "ethers";
 import { useState, useEffect, useCallback } from "react";
 import { toast } from "react-toastify";
 
@@ -29,7 +28,6 @@ import { useCryptKeeperClient } from "@src/context/CryptKeeperClientProvider";
 
 interface IUseCryptKeeperData {
   client?: ICryptKeeperInjectedProvider;
-  genSemaphoreProof: (proofType: MerkleProofType) => void;
   genRLNProof: (proofType: MerkleProofType) => void;
   addVerifiableCredentialRequest: (credentialType: string) => Promise<void>;
   generateVerifiablePresentationRequest: () => Promise<void>;
@@ -40,50 +38,8 @@ interface IUseCryptKeeperData {
 export const useCryptKeeper = (): IUseCryptKeeperData => {
   const { client } = useCryptKeeperClient();
 
-  const mockIdentityCommitments: string[] = genMockIdentityCommitments();
 
-  const genSemaphoreProof = async (proofType: MerkleProofType = MerkleProofType.STORAGE_ADDRESS) => {
-    // const externalNullifier = encodeBytes32String("voting-1");
-    // const signal = encodeBytes32String("hello-world");
-    // let merkleProofSource: string | IMerkleProofArtifacts = `${MERKLE_STORAGE_URL}/Semaphore`;
-
-    // if (proofType === MerkleProofType.ARTIFACTS) {
-    //   merkleProofSource = {
-    //     leaves: mockIdentityCommitments,
-    //     depth: 20,
-    //     leavesPerNode: 2,
-    //   };
-    // }
-
-    // const toastId = toast("Generating semaphore proof...", {
-    //   type: "info",
-    //   hideProgressBar: true,
-    //   closeOnClick: true,
-    //   pauseOnHover: false,
-    // });
-
-    // await client
-    //   ?.request({
-    //     method: RPCExternalAction.GENERATE_SEMAPHORE_PROOF,
-    //     payload: {
-    //       externalNullifier,
-    //       signal,
-    //       merkleProofSource,
-    //     },
-    //   })
-    //   .then((generatedProof) => {
-    //     setProof(generatedProof as ISemaphoreFullProof);
-    //     toast("Semaphore proof generated successfully!", { type: "success" });
-    //   })
-    //   .catch((error) => {
-    //     toast("Error while generating Semaphore proof!", { type: "error" });
-    //     console.error(error);
-    //   })
-    //   .finally(() => {
-    //     toast.dismiss(toastId);
-    //   });
-  };
-
+  
   const genRLNProof = async (proofType: MerkleProofType = MerkleProofType.STORAGE_ADDRESS) => {
     // const rlnIdentifier = "1";
     // const message = "Hello RLN";
@@ -175,7 +131,6 @@ export const useCryptKeeper = (): IUseCryptKeeperData => {
   
 
   return {
-    genSemaphoreProof,
     genRLNProof,
     addVerifiableCredentialRequest,
     generateVerifiablePresentationRequest,

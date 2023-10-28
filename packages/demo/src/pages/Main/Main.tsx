@@ -11,7 +11,6 @@ import DisplayCode, { type IDisplayCodeProps } from "@src/components/DisplayCode
 import DisplayProof from "@src/components/DisplayProof";
 import Header from "@src/components/Header";
 import RateLimitingNullifier from "@src/components/RateLimitingNullifier";
-import Semaphore from "@src/components/Semaphore";
 import VerifiableCredentials from "@src/components/VerifiableCredentials";
 import { useCryptKeeper } from "@src/hooks/useCryptKeeper";
 import RightSideBar from "@src/components/RightSideBar";
@@ -32,7 +31,6 @@ export const Main = (): JSX.Element => {
   const routes = useRoutes(routeConfig);
 
   const {
-    genSemaphoreProof,
     genRLNProof,
     addVerifiableCredentialRequest,
     generateVerifiablePresentationRequest,
