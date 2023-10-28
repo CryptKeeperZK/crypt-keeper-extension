@@ -1,7 +1,7 @@
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 
-import { useCodeExample } from "@src/hooks/useCodeExample";
+import { useFileReader } from "@src/hooks";
 import { useGlobalStyles } from "@src/styles";
 
 import ActionBox from "../ActionBox";
@@ -14,8 +14,8 @@ interface IBandadaProps {
 export const Bandada = ({ joinGroup, generateGroupMerkleProof }: IBandadaProps): JSX.Element => {
   const classes = useGlobalStyles();
 
-  const { code: joinGroupCode } = useCodeExample("joinGroup.ts");
-  const { code: generateGroupMerkleProofCode } = useCodeExample("generateGroupMerkleProof.ts");
+  const { fileContent: joinGroupCode } = useFileReader("joinGroup.ts");
+  const { fileContent: generateGroupMerkleProofCode } = useFileReader("generateGroupMerkleProof.ts");
 
   return (
     <Box

@@ -73,3 +73,6 @@ export const loadFile = async (filePath: string): Promise<string> => {
   const data: string = await response.text();
   return data;
 };
+
+export const replaceUrlParams = (path: string, params: Record<string, string>): string =>
+  Object.entries(params).reduce((acc, [key, value]) => acc.replace(`:${key}`, value), path);

@@ -1,3 +1,3 @@
-import { ClientProvider } from "./ClientProvider";
+import { CryptKeeperClientProvider } from "./CryptKeeperClientProvider";
 
-export default ClientProvider;
+export default CryptKeeperClientProvider;

@@ -1,7 +1,7 @@
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 
-import { useCodeExample } from "@src/hooks/useCodeExample";
+import { useFileReader } from "@src/hooks";
 import { useGlobalStyles } from "@src/styles";
 
 import { ActionBox } from "../ActionBox/ActionBox";
@@ -12,7 +12,7 @@ interface IGetCommitmentProps {
 
 export const GetCommitment = ({ revealConnectedIdentityCommitment }: IGetCommitmentProps): JSX.Element => {
   const classes = useGlobalStyles();
-  const { code } = useCodeExample("revealIdentityCommitment.ts");
+  const { fileContent: code } = useFileReader("revealIdentityCommitment.ts");
 
   return (
     <Box

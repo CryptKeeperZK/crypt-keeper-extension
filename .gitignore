@@ -37,7 +37,7 @@ builds/
 builds.zip
 development/ts-migration-dashboard/build
 development/ts-migration-dashboard/intermediate
-
+packages/demo/public/docs
 test-artifacts
 test-builds
 build-artifacts

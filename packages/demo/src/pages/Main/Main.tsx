@@ -1,14 +1,11 @@
+import { Navigate, RouteObject, useRoutes } from "react-router-dom";
 import LockOpenIcon from "@mui/icons-material/LockOpen";
 import Box from "@mui/material/Box";
 import Container from "@mui/material/Container";
 import Typography from "@mui/material/Typography";
-import Grid from "@mui/material/Unstable_Grid2";
-import { useTheme } from "@mui/styles";
-import { type SyntheticEvent, useState } from "react";
 import { ToastContainer } from "react-toastify";
 
 import Bandada from "@src/components/Bandada";
-import Connect from "@src/components/Connect";
 import ConnectedIdentity from "@src/components/ConnectedIdentity";
 import DisplayCode, { type IDisplayCodeProps } from "@src/components/DisplayCode";
 import DisplayProof from "@src/components/DisplayProof";
@@ -21,26 +18,17 @@ import Semaphore from "@src/components/Semaphore";
 import VerifiableCredentials from "@src/components/VerifiableCredentials";
 import { useCryptKeeper } from "@src/hooks/useCryptKeeper";
 import RightSideBar from "@src/components/RightSideBar";
+import { Paths } from "@src/constants";
+import Connect from "@src/pages/Connect";
+
+const routeConfig: RouteObject[] = [
+  { path: Paths.CONNECT, element: <Connect /> },
+];
 
 export const Main = (): JSX.Element => {
-  const theme = useTheme();
-  const [value, setValue] = useState("0");
-  const [codeData, setCodeData] = useState<IDisplayCodeProps>({
-    isShowCode: false,
-    code: "",
-  });
-
-  const handleCodeFromActionBox = ({ isShowCode, code }: IDisplayCodeProps) => {
-    setCodeData({ isShowCode, code });
-  };
+  const routes = useRoutes(routeConfig);
 
   const {
-    isLocked,
-    connectedIdentityMetadata,
-    proof,
-    connectedCommitment,
-    getConnectedIdentityMetadata,
-    connect,
     genSemaphoreProof,
     genRLNProof,
     addVerifiableCredentialRequest,
@@ -51,43 +39,25 @@ export const Main = (): JSX.Element => {
     importIdentity,
   } = useCryptKeeper();
 
-  if (isLocked) {
-    return (
-      <Box component="form" sx={{ display: "flex", flexDirection: "column", flexWrap: "nowrap", height: "100%" }}>
-        <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center", p: 3, flexGrow: 1 }}>
-          <LockOpenIcon color="primary" fontSize="inherit" />
+  // if (isLocked) {
+  //   return (
+  //     <Box sx={{ display: "flex", flexDirection: "column", flexWrap: "nowrap", height: "100%" }}>
+  //       <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center", p: 3, flexGrow: 1 }}>
+  //         <LockOpenIcon color="primary" fontSize="inherit" />
 
-          <Typography sx={{ pt: 3, fontWeight: "bold", color: "primary.main" }} variant="h4">
-            Welcome to CryptKeeper Demo!
-          </Typography>
-        </Box>
+  //         <Typography sx={{ pt: 3, fontWeight: "bold", color: "primary.main" }} variant="h4">
+  //           Welcome to CryptKeeper Demo!
+  //         </Typography>
+  //       </Box>
 
-        <Connect
-          connect={connect}
-          isChangeIdentity={false}
-          title="To continue, please connect to your CryptKeeper to continue."
-        />
-      </Box>
-    );
-  }
-
-  <div>
-    <h2>Start the Authorization Process</h2>
-
-    <hr />
-
-    <div>
-      <h2>Example of Unauthorized Actions</h2>
-
-      <br />
-
-      <Semaphore genSemaphoreProof={genSemaphoreProof} />
-    </div>
-
-    <hr />
-
-    <ToastContainer newestOnTop />
-  </div>;
+  //       <ConnectToCK
+  //         connect={connect}
+  //         isChangeIdentity={false}
+  //         title=""
+  //       />
+  //     </Box>
+  //   );
+  // }
 
   return (
     <Box sx={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}>
@@ -96,15 +66,9 @@ export const Main = (): JSX.Element => {
 
       {/* Center Content */}
       <Box sx={{ display: "flex", flex: 1 }}>
-        <Container
-          sx={{ flex: 1, position: "relative", top: 64 }}
-        >
-          <Connect
-            isChangeIdentity
-            connect={connect}
-            title="Connect identity"
-          />
+        {routes}
 
+        {/* <Container sx={{ flex: 1, position: "relative", top: 64 }}>
           <ImportIdentity importIdentity={importIdentity} />
 
           <GetMetadata getConnectedIdentityMetadata={getConnectedIdentityMetadata} />
@@ -125,20 +89,19 @@ export const Main = (): JSX.Element => {
             addVerifiableCredentialRequest={addVerifiableCredentialRequest}
             generateVerifiablePresentationRequest={generateVerifiablePresentationRequest}
           />
-        </Container>
+        </Container> */}
       </Box>
 
       {/* RightSideBar */}
       <RightSideBar>
-        <ConnectedIdentity
+        {/* <ConnectedIdentity
           identityCommitment={connectedCommitment}
           identityHost={connectedIdentityMetadata?.urlOrigin}
           identityName={connectedIdentityMetadata?.name}
-        />
+        /> */}
       </RightSideBar>
 
       <ToastContainer newestOnTop />
     </Box>
-
   );
 };

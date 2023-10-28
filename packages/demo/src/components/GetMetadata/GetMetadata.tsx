@@ -2,7 +2,7 @@ import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 
 import ActionBox from "@src/components/ActionBox";
-import { useCodeExample } from "@src/hooks/useCodeExample";
+import { useFileReader } from "@src/hooks";
 import { useGlobalStyles } from "@src/styles";
 
 interface IGetMetadataProps {
@@ -11,7 +11,7 @@ interface IGetMetadataProps {
 
 export const GetMetadata = ({ getConnectedIdentityMetadata }: IGetMetadataProps): JSX.Element => {
   const classes = useGlobalStyles();
-  const { code } = useCodeExample("getConnectedIdentityMetadata.ts");
+  const { fileContent: code } = useFileReader("getConnectedIdentityMetadata.ts");
 
   return (
     <Box

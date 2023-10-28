@@ -53,11 +53,14 @@ export class InjectorHandler {
 
   getGroupService = (): GroupService => this.groupService;
 
-  getConnectedIdentityMetadata = async (_: unknown, meta?: IZkMetadata): Promise<ConnectedIdentityMetadata> => {
+  getConnectedIdentityMetadata = async (
+    _: unknown,
+    meta?: IZkMetadata,
+  ): Promise<ConnectedIdentityMetadata | undefined> => {
     const connectedIdentityMetadata = await this.zkIdentityService.getConnectedIdentityData({}, meta);
 
     if (!connectedIdentityMetadata) {
-      throw new Error(`CryptKeeper: identity metadata is not found`);
+      return undefined;
     }
 
     return connectedIdentityMetadata;

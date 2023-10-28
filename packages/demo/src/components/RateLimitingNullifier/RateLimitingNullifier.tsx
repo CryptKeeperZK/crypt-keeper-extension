@@ -1,7 +1,7 @@
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 
-import { useCodeExample } from "@src/hooks/useCodeExample";
+import { useFileReader } from "@src/hooks";
 import { useGlobalStyles } from "@src/styles";
 import { MerkleProofType } from "@src/types";
 
@@ -13,7 +13,7 @@ interface IRateLimitingNullifierProps {
 
 export const RateLimitingNullifier = ({ genRLNProof }: IRateLimitingNullifierProps): JSX.Element => {
   const classes = useGlobalStyles();
-  const { code } = useCodeExample("rateLimitingNullifier.ts");
+  const { fileContent: code } = useFileReader("rateLimitingNullifier.ts");
 
   return (
     <Box

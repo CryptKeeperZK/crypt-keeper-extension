@@ -1,7 +1,7 @@
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 
-import { useCodeExample } from "@src/hooks/useCodeExample";
+import { useFileReader } from "@src/hooks";
 import { useGlobalStyles } from "@src/styles";
 import { MerkleProofType } from "@src/types";
 
@@ -14,7 +14,7 @@ interface ISemaphoreProps {
 export const Semaphore = ({ genSemaphoreProof }: ISemaphoreProps): JSX.Element => {
   const classes = useGlobalStyles();
 
-  const { code } = useCodeExample("semaphore.ts");
+  const { fileContent: code } = useFileReader("semaphore.ts");
 
   return (
     <Box

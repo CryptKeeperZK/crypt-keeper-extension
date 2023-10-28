@@ -21,6 +21,7 @@ export const DrawerList = () => {
     getStartedData,
     identityManagementData,
     zkpManagementData,
+    goToConnectPage,
     handleGetStartedList,
     handleIdentityManagementList,
     handleZkpManagementList,
@@ -92,9 +93,7 @@ export const DrawerList = () => {
             <ListItemButton
               key={item.label}
               sx={{ py: 0, minHeight: 32, color: "rgba(255,255,255,.8)" }}
-              onClick={() => {
-                console.log("Hi");
-              }}
+              onClick={() => goToConnectPage("false")}
             >
               <ListItemText primary={item.label} primaryTypographyProps={{ fontSize: 14, fontWeight: "medium" }} />
             </ListItemButton>

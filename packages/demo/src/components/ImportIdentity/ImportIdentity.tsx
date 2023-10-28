@@ -2,7 +2,7 @@ import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
 
-import { useCodeExample } from "@src/hooks/useCodeExample";
+import { useFileReader } from "@src/hooks";
 import { useGlobalStyles } from "@src/styles";
 
 import { ActionBox } from "../ActionBox/ActionBox";
@@ -14,7 +14,7 @@ interface IImportIdentityProps {
 export const ImportIdentity = ({ importIdentity }: IImportIdentityProps): JSX.Element => {
   const classes = useGlobalStyles();
 
-  const { code } = useCodeExample("importIdentity.ts");
+  const { fileContent: code } = useFileReader("importIdentity.ts");
 
   return (
     <Box
