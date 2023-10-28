@@ -1,14 +1,15 @@
-import { useCryptKeeperClient } from "@src/context/CryptKeeperClientProvider";
 import { useCallback } from "react";
 import { toast } from "react-toastify";
 
+import { useCryptKeeperClient } from "@src/context/CryptKeeperClientProvider";
+
 interface IUseConnectToCK {
-    connect: (isChangeIdentity: boolean) => void;
+  connect: (isChangeIdentity: boolean) => void;
 }
 
 export const useConnect = (): IUseConnectToCK => {
   const { client, connectedIdentityMetadata } = useCryptKeeperClient();
-  
+
   const connect = useCallback(
     async (isChangeIdentity = false) => {
       await client
@@ -26,6 +27,6 @@ export const useConnect = (): IUseConnectToCK => {
   );
 
   return {
-    connect
-  }
+    connect,
+  };
 };

@@ -1,17 +1,18 @@
+import MenuIcon from "@mui/icons-material/Menu";
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
+import Divider from "@mui/material/Divider";
+import Drawer from "@mui/material/Drawer";
 import IconButton from "@mui/material/IconButton";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
-import MenuIcon from "@mui/icons-material/Menu";
 import { useTheme } from "@mui/styles";
+import { useState } from "react";
 
 import { useGlobalStyles } from "@src/styles";
-import { useState } from "react";
-import Drawer from "@mui/material/Drawer";
-import Divider from "@mui/material/Divider";
-import { DrawerList } from "../DrawerList/DrawerList";
 import { sharedStyles } from "@src/styles/useGlobalStyles";
+
+import { DrawerList } from "../DrawerList/DrawerList";
 
 export const Header = (): JSX.Element => {
   const theme = useTheme();
@@ -40,14 +41,15 @@ export const Header = (): JSX.Element => {
       >
         <Toolbar className={classes.headerToolbar}>
           <IconButton
-            color="inherit"
             aria-label="open drawer"
+            color="inherit"
             edge="start"
-            onClick={handleDrawerToggle}
             sx={{ mr: 2, display: { sm: "none" } }}
+            onClick={handleDrawerToggle}
           >
             <MenuIcon />
           </IconButton>
+
           <Typography component="div" variant="h6">
             CryptKeeper Demo
           </Typography>
@@ -63,31 +65,32 @@ export const Header = (): JSX.Element => {
         <Drawer
           anchor="left"
           container={container}
-          variant="temporary"
-          open={mobileOpen}
-          onClose={handleDrawerToggle}
           ModalProps={{
             keepMounted: true, // Better open performance on mobile.
           }}
+          open={mobileOpen}
           sx={{
             display: { xs: "block", sm: "none" },
             "& .MuiDrawer-paper": { boxSizing: "border-box", width: sharedStyles.sideBarWidth },
           }}
+          variant="temporary"
+          onClose={handleDrawerToggle}
         >
           <DrawerList />
         </Drawer>
 
         <Drawer
+          open
           anchor="left"
-          variant="permanent"
           sx={{
             display: { xs: "none", sm: "block" },
             "& .MuiDrawer-paper": { boxSizing: "border-box", width: sharedStyles.sideBarWidth },
           }}
-          open
+          variant="permanent"
         >
           <DrawerList />
         </Drawer>
+
         <Divider />
       </Box>
     </Box>

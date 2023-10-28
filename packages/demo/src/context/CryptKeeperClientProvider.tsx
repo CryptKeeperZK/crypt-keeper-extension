@@ -1,5 +1,10 @@
-import { initializeCryptKeeper, type ICryptKeeperInjectedProvider, EventName, RPCExternalAction } from "@cryptkeeperzk/providers";
-import type { ConnectedIdentityMetadata, IMerkleProof, IRLNFullProof, ISemaphoreFullProof, IVerifiablePresentation } from "@cryptkeeperzk/types";
+/* eslint-disable @typescript-eslint/no-empty-function */
+import {
+  initializeCryptKeeper,
+  type ICryptKeeperInjectedProvider,
+  EventName,
+  RPCExternalAction,
+} from "@cryptkeeperzk/providers";
 import {
   createContext,
   useContext,
@@ -9,35 +14,39 @@ import {
   type Dispatch,
   type SetStateAction,
   useCallback,
+  useMemo,
 } from "react";
 import { toast } from "react-toastify";
 
+import type { ConnectedIdentityMetadata } from "@cryptkeeperzk/types";
+
 interface IClientContext {
   client: ICryptKeeperInjectedProvider | undefined;
+  isConnected: boolean;
   connectedCommitment: string;
   connectedIdentityMetadata?: ConnectedIdentityMetadata;
   setConnectedIdentityCommitment: Dispatch<SetStateAction<string>>;
   setConnectedIdentityMetadata: Dispatch<SetStateAction<ConnectedIdentityMetadata>>;
   setClient: Dispatch<SetStateAction<ICryptKeeperInjectedProvider | undefined>>;
-  getConnectedIdentityMetadata: () => Promise<void>
+  getConnectedIdentityMetadata: () => Promise<void>;
 }
 
 const ClientContext = createContext<IClientContext>({
   client: undefined,
+  isConnected: false,
   connectedCommitment: "",
   connectedIdentityMetadata: undefined,
-  setConnectedIdentityCommitment: () => { },
-  setConnectedIdentityMetadata: () => { },
-  setClient: () => { },
+  setConnectedIdentityCommitment: () => {},
+  setConnectedIdentityMetadata: () => {},
+  setClient: () => {},
   getConnectedIdentityMetadata: async () => {},
 });
 
-export const CryptKeeperClientProvider = ({ children }: PropsWithChildren<{}>) => {
+export const CryptKeeperClientProvider = ({ children }: PropsWithChildren): JSX.Element => {
   const [isConnected, setIsConnected] = useState(false);
   const [client, setClient] = useState<ICryptKeeperInjectedProvider>();
   const [connectedCommitment, setConnectedIdentityCommitment] = useState<string>("");
   const [connectedIdentityMetadata, setConnectedIdentityMetadata] = useState<ConnectedIdentityMetadata>();
-  const [proof, setProof] = useState<IRLNFullProof | IMerkleProof>();
 
   const getConnectedIdentityMetadata = useCallback(async () => {
     await client
@@ -52,6 +61,29 @@ export const CryptKeeperClientProvider = ({ children }: PropsWithChildren<{}>) =
         }
       });
   }, [client, setConnectedIdentityMetadata, setIsConnected]);
+
+  const contextValues = useMemo(
+    () => ({
+      client,
+      isConnected,
+      connectedCommitment,
+      connectedIdentityMetadata,
+      setConnectedIdentityCommitment,
+      setConnectedIdentityMetadata,
+      setClient,
+      getConnectedIdentityMetadata,
+    }),
+    [
+      client,
+      isConnected,
+      connectedCommitment,
+      connectedIdentityMetadata,
+      setConnectedIdentityCommitment,
+      setConnectedIdentityMetadata,
+      setClient,
+      getConnectedIdentityMetadata,
+    ],
+  );
 
   const onLogin = useCallback(() => {
     getConnectedIdentityMetadata();
@@ -87,34 +119,8 @@ export const CryptKeeperClientProvider = ({ children }: PropsWithChildren<{}>) =
     setIsConnected(false);
   }, [setConnectedIdentityMetadata, setIsConnected]);
 
-  const onAddVerifiableCredential = useCallback((payload: unknown) => {
-    const { verifiableCredentialHash } = payload as { verifiableCredentialHash: string };
-
-    toast(`Added a Verifiable Credential! ${verifiableCredentialHash}`, { type: "success" });
-  }, []);
-
   const onReject = useCallback(() => {
     toast(`User rejected request`, { type: "error" });
-  }, []);
-
-  const onRevealCommitment = useCallback(
-    (data: unknown) => {
-      setConnectedIdentityCommitment((data as { commitment: string }).commitment);
-    },
-    [setConnectedIdentityCommitment],
-  );
-
-  const onGenerateVerifiablePresentation = useCallback((payload: unknown) => {
-    const {
-      verifiablePresentation: { verifiableCredential: credentialList },
-    } = payload as { verifiablePresentation: IVerifiablePresentation };
-    const credentialCount = credentialList ? credentialList.length : 0;
-
-    toast(`Generated a Verifiable Presentation from ${credentialCount} credentials!`, { type: "success" });
-  }, []);
-
-  const onImportIdentity = useCallback((payload: unknown) => {
-    toast(`Identity has been imported ${JSON.stringify(payload)}`, { type: "success" });
   }, []);
 
   const onCreateIdentity = useCallback((payload: unknown) => {
@@ -142,11 +148,7 @@ export const CryptKeeperClientProvider = ({ children }: PropsWithChildren<{}>) =
     client.on(EventName.IDENTITY_CHANGED, onIdentityChanged);
     client.on(EventName.LOGOUT, onLogout);
     client.on(EventName.APPROVAL, onApproval);
-    client.on(EventName.ADD_VERIFIABLE_CREDENTIAL, onAddVerifiableCredential);
-    client.on(EventName.GENERATE_VERIFIABLE_PRESENTATION, onGenerateVerifiablePresentation);
     client.on(EventName.USER_REJECT, onReject);
-    client.on(EventName.REVEAL_COMMITMENT, onRevealCommitment);
-    client.on(EventName.IMPORT_IDENTITY, onImportIdentity);
     client.on(EventName.CREATE_IDENTITY, onCreateIdentity);
 
     getConnectedIdentityMetadata();
@@ -154,35 +156,10 @@ export const CryptKeeperClientProvider = ({ children }: PropsWithChildren<{}>) =
     return () => {
       client.cleanListeners();
     };
-  }, [
-    client,
-    onLogout,
-    onIdentityChanged,
-    onAddVerifiableCredential,
-    onReject,
-    onRevealCommitment,
-    onImportIdentity,
-    onCreateIdentity,
-    onApproval,
-  ]);
+  }, [client, onLogout, onIdentityChanged, onReject, onCreateIdentity, onApproval]);
 
-  return (
-    <ClientContext.Provider
-      value={{
-        client,
-        connectedCommitment,
-        connectedIdentityMetadata,
-        setConnectedIdentityCommitment,
-        setConnectedIdentityMetadata,
-        setClient,
-        getConnectedIdentityMetadata
-      }}
-    >
-      {children}
-    </ClientContext.Provider>
-  );
+  return <ClientContext.Provider value={contextValues}>{children}</ClientContext.Provider>;
 };
 
-export const useCryptKeeperClient = () => {
-  return useContext(ClientContext);
-};
+export const useCryptKeeperClient = (): IClientContext => useContext(ClientContext);
+/* eslint-enable @typescript-eslint/no-empty-function */

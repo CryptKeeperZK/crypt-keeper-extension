@@ -3,7 +3,7 @@
 CURRENT_DIR=$(pwd)
 
 # Source directory containing codeExamples (assuming it's in the parent directory)
-SOURCE_DIR="$CURRENT_DIR/src/components"
+SOURCE_DIR="$CURRENT_DIR/src/pages"
 
 # Destination directory to copy codeExamples
 DEST_DIR="$CURRENT_DIR/public/docs"

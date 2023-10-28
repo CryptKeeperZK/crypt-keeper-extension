@@ -1,7 +1,8 @@
+import { useState, type MouseEvent as ReactMouseEvent, useCallback } from "react";
+import { useNavigate } from "react-router-dom";
+
 import { Paths } from "@src/constants";
 import { replaceUrlParams } from "@src/utils";
-import { useState, type MouseEvent, useCallback } from "react";
-import { useNavigate } from "react-router-dom";
 
 interface featureList {
   title: string;
@@ -20,9 +21,9 @@ interface IUserDrawerListOutput {
   zkpManagementData: featureList;
   goToPage: (path?: string) => void;
   goToConnectPage: (isChangeIdentity: string) => void;
-  handleGetStartedList: (event: MouseEvent) => void;
-  handleIdentityManagementList: (event: MouseEvent) => void;
-  handleZkpManagementList: (event: MouseEvent) => void;
+  handleGetStartedList: (event: ReactMouseEvent) => void;
+  handleIdentityManagementList: (event: ReactMouseEvent) => void;
+  handleZkpManagementList: (event: ReactMouseEvent) => void;
 }
 
 export const useDrawerList = (): IUserDrawerListOutput => {
@@ -48,21 +49,31 @@ export const useDrawerList = (): IUserDrawerListOutput => {
 
   const zkpManagementData: featureList = {
     title: "Zero-Knowledge Proofs Management",
-    features: [{ label: "Semaphore", path: Paths.SEMAPHORE }, { label: "Rate-Limiting Nullifier", path: Paths.RLN }, { label: "Bandada", path: Paths.BANDADA }],
+    features: [
+      { label: "Semaphore", path: Paths.SEMAPHORE },
+      { label: "Rate-Limiting Nullifier", path: Paths.RLN },
+      { label: "Bandada", path: Paths.BANDADA },
+    ],
   };
 
-  const goToPage = useCallback((path?: string) => {
-    if (path) {
-      navigate(path);
-    }
-  }, [navigate]);
+  const goToPage = useCallback(
+    (path?: string) => {
+      if (path) {
+        navigate(path);
+      }
+    },
+    [navigate],
+  );
 
-  const goToConnectPage = useCallback((isChangeIdentityParam: string) => {
-    navigate(replaceUrlParams(Paths.CONNECT, { isChangeIdentityParam }));
-  }, [navigate]);
+  const goToConnectPage = useCallback(
+    (isChangeIdentityParam: string) => {
+      navigate(replaceUrlParams(Paths.CONNECT, { isChangeIdentityParam }));
+    },
+    [navigate],
+  );
 
   const handleGetStartedList = useCallback(
-    (event: MouseEvent) => {
+    (event: ReactMouseEvent) => {
       event.stopPropagation();
       setIsShowGetStarted((isShow) => !isShow);
     },
@@ -70,7 +81,7 @@ export const useDrawerList = (): IUserDrawerListOutput => {
   );
 
   const handleIdentityManagementList = useCallback(
-    (event: MouseEvent) => {
+    (event: ReactMouseEvent) => {
       event.stopPropagation();
       setIsShowIdentityManagement((isShow) => !isShow);
     },
@@ -78,7 +89,7 @@ export const useDrawerList = (): IUserDrawerListOutput => {
   );
 
   const handleZkpManagementList = useCallback(
-    (event: MouseEvent) => {
+    (event: ReactMouseEvent) => {
       event.stopPropagation();
       setIsShowZkpManagement((isShow) => !isShow);
     },

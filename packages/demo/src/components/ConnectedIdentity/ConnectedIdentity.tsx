@@ -1,5 +1,6 @@
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
+
 import { useCryptKeeperClient } from "@src/context/CryptKeeperClientProvider";
 
 export const ConnectedIdentity = (): JSX.Element => {
@@ -23,6 +24,7 @@ export const ConnectedIdentity = (): JSX.Element => {
           <Typography sx={{ pt: 3, fontWeight: "bold", color: "primary.main", alignItems: "center" }} variant="h6">
             <strong>Name: </strong>
           </Typography>
+
           <Typography className="identity-name" color="text.primary" data-testid="connected-name">
             {connectedIdentityMetadata?.name}
           </Typography>
@@ -33,6 +35,7 @@ export const ConnectedIdentity = (): JSX.Element => {
             <Typography sx={{ pt: 3, fontWeight: "bold", color: "primary.main", alignItems: "center" }} variant="h6">
               <strong>Name: </strong>
             </Typography>
+
             <Typography className="identity-name" color="text.primary" data-testid="connected-urlOrigin">
               {connectedIdentityMetadata.urlOrigin}
             </Typography>
@@ -43,6 +46,7 @@ export const ConnectedIdentity = (): JSX.Element => {
           <Typography sx={{ pt: 3, fontWeight: "bold", color: "primary.main", alignItems: "center" }} variant="h6">
             <strong>Commitment: </strong>
           </Typography>
+
           {connectedCommitment ? (
             <Typography className="identity-name" color="text.primary" data-testid="commitment">
               {connectedCommitment}

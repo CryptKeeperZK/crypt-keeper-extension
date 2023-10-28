@@ -5,7 +5,6 @@ import makeStyles from "@mui/styles/makeStyles";
 const basePopupStyle = {
   width: "50rem",
   height: "auto",
-  border: `1px solid ${grey[700]}`,
   margin: "2rem auto",
 };
 
@@ -21,6 +20,7 @@ export const useGlobalStyles = makeStyles((theme: Theme) => ({
 
   popupProof: {
     ...basePopupStyle,
+    border: `1px solid ${grey[700]}`,
     width: "70rem",
   },
 

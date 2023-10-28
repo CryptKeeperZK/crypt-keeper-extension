@@ -1,43 +1,37 @@
-import { Navigate, RouteObject, useRoutes } from "react-router-dom";
-import LockOpenIcon from "@mui/icons-material/LockOpen";
 import Box from "@mui/material/Box";
-import Container from "@mui/material/Container";
-import Typography from "@mui/material/Typography";
+import { Navigate, RouteObject, useRoutes } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 
 import ConnectedIdentity from "@src/components/ConnectedIdentity";
-import DisplayCode, { type IDisplayCodeProps } from "@src/components/DisplayCode";
-import DisplayProof from "@src/components/DisplayProof";
 import Header from "@src/components/Header";
-import VerifiableCredentials from "@src/components/VerifiableCredentials";
-import { useCryptKeeper } from "@src/hooks/useCryptKeeper";
 import RightSideBar from "@src/components/RightSideBar";
 import { Paths } from "@src/constants";
+import Bandada from "@src/pages/Bandada";
 import Connect from "@src/pages/Connect";
 import IdentityMetadata from "@src/pages/IdentityMetadata";
 import ImportIdentity from "@src/pages/ImportIdentity";
+import RateLimitingNullifier from "@src/pages/RateLimitingNullifier";
 import RevealIdentity from "@src/pages/RevealIdentity";
 import Semaphore from "@src/pages/Semaphore";
-import RateLimitingNullifier from "@src/pages/RateLimitingNullifier";
-import Bandada from "@src/pages/Bandada";
+import VerifiableCredentials from "@src/pages/VerifiableCredentials";
 
 const routeConfig: RouteObject[] = [
   { path: Paths.CONNECT, element: <Connect /> },
-  { path: Paths.GET_IDENTITY_METADATA, element: <IdentityMetadata />},
-  { path: Paths.IMPORT_IDENTITY, element: <ImportIdentity />},
-  { path: Paths.REVEAL_IDENTITY_COMMITMENT, element: <RevealIdentity />},
-  { path: Paths.SEMAPHORE, element: <Semaphore />},
+  { path: Paths.GET_IDENTITY_METADATA, element: <IdentityMetadata /> },
+  { path: Paths.IMPORT_IDENTITY, element: <ImportIdentity /> },
+  { path: Paths.REVEAL_IDENTITY_COMMITMENT, element: <RevealIdentity /> },
+  { path: Paths.SEMAPHORE, element: <Semaphore /> },
   { path: Paths.RLN, element: <RateLimitingNullifier /> },
   { path: Paths.BANDADA, element: <Bandada /> },
+  { path: Paths.VERIFIABLE_CREDENTIALS, element: <VerifiableCredentials /> },
+  {
+    path: "*",
+    element: <Navigate to={Paths.GET_IDENTITY_METADATA} />,
+  },
 ];
 
 export const Main = (): JSX.Element => {
   const routes = useRoutes(routeConfig);
-
-  const {
-    addVerifiableCredentialRequest,
-    generateVerifiablePresentationRequest,
-  } = useCryptKeeper();
 
   // if (isLocked) {
   //   return (
@@ -65,32 +59,7 @@ export const Main = (): JSX.Element => {
       <Header />
 
       {/* Center Content */}
-      <Box sx={{ display: "flex", flex: 1 }}>
-        {routes}
-
-        {/* <Container sx={{ flex: 1, position: "relative", top: 64 }}>
-          <ImportIdentity importIdentity={importIdentity} />
-
-          <GetMetadata getConnectedIdentityMetadata={getConnectedIdentityMetadata} />
-
-          <GetCommitment revealConnectedIdentityCommitment={revealConnectedIdentityCommitment} />
-
-          <DisplayCode code={codeData.code} isShowCode={codeData.isShowCode} />
-
-          <Semaphore genSemaphoreProof={genSemaphoreProof} />
-
-          <RateLimitingNullifier genRLNProof={genRLNProof} />
-
-          <Bandada generateGroupMerkleProof={generateGroupMerkleProof} joinGroup={joinGroup} />
-
-          <DisplayProof proof={proof} />
-
-          <VerifiableCredentials
-            addVerifiableCredentialRequest={addVerifiableCredentialRequest}
-            generateVerifiablePresentationRequest={generateVerifiablePresentationRequest}
-          />
-        </Container> */}
-      </Box>
+      <Box sx={{ display: "flex", flex: 1 }}>{routes}</Box>
 
       {/* RightSideBar */}
       <RightSideBar>

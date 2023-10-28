@@ -50,6 +50,8 @@
     "copy-webpack-plugin": "^11.0.0",
     "css-loader": "^6.8.1",
     "eslint": "^8.52.0",
+    "glob": "^10.3.10",
+    "html-webpack-plugin": "^5.5.3",
     "lint-staged": "^15.0.2",
     "path-browserify": "^1.0.1",
     "prettier": "^3.0.3",
@@ -58,6 +60,7 @@
     "typescript": "^5.2.2",
     "webpack": "^5.89.0",
     "webpack-cli": "^5.1.4",
-    "webpack-dev-server": "^4.15.1"
+    "webpack-dev-server": "^4.15.1",
+    "webpack-merge": "^5.10.0"
   }
 }

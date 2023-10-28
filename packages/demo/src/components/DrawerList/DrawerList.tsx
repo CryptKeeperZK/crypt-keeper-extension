@@ -1,16 +1,16 @@
 import KeyboardArrowDown from "@mui/icons-material/KeyboardArrowDown";
 import Box from "@mui/material/Box";
 import ListItemButton from "@mui/material/ListItemButton";
+import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
+import Toolbar from "@mui/material/Toolbar";
 import useTheme from "@mui/styles/useTheme";
 
 import { useGlobalStyles } from "@src/styles/useGlobalStyles";
 
 import { useDrawerList } from "./useDrawerList";
-import ListItemIcon from "@mui/material/ListItemIcon";
-import Toolbar from "@mui/material/Toolbar";
 
-export const DrawerList = () => {
+export const DrawerList = (): JSX.Element => {
   const theme = useTheme();
   const classes = useGlobalStyles(theme);
 
@@ -21,6 +21,7 @@ export const DrawerList = () => {
     getStartedData,
     identityManagementData,
     zkpManagementData,
+    goToPage,
     goToConnectPage,
     handleGetStartedList,
     handleIdentityManagementList,
@@ -93,7 +94,9 @@ export const DrawerList = () => {
             <ListItemButton
               key={item.label}
               sx={{ py: 0, minHeight: 32, color: "rgba(255,255,255,.8)" }}
-              onClick={() => goToConnectPage("false")}
+              onClick={() => {
+                goToConnectPage("false");
+              }}
             >
               <ListItemText primary={item.label} primaryTypographyProps={{ fontSize: 14, fontWeight: "medium" }} />
             </ListItemButton>
@@ -150,7 +153,7 @@ export const DrawerList = () => {
               key={item.label}
               sx={{ py: 0, minHeight: 32, color: "rgba(255,255,255,.8)" }}
               onClick={() => {
-                console.log("Hi");
+                goToPage(item.path);
               }}
             >
               <ListItemText primary={item.label} primaryTypographyProps={{ fontSize: 14, fontWeight: "medium" }} />
@@ -208,7 +211,7 @@ export const DrawerList = () => {
               key={item.label}
               sx={{ py: 0, minHeight: 32, color: "rgba(255,255,255,.8)" }}
               onClick={() => {
-                console.log("Hi");
+                goToPage(item.path);
               }}
             >
               <ListItemText primary={item.label} primaryTypographyProps={{ fontSize: 14, fontWeight: "medium" }} />

@@ -1,7 +1,7 @@
-const path = require("path");
-const HtmlWebpackPlugin = require("html-webpack-plugin");
 const CopyWebpackPlugin = require("copy-webpack-plugin");
-const glob = require("glob");
+const HtmlWebpackPlugin = require("html-webpack-plugin");
+
+const path = require("path");
 
 module.exports = {
   entry: path.resolve(__dirname, "src", "index.tsx"),
@@ -10,14 +10,14 @@ module.exports = {
     path: path.resolve(__dirname, "dist"),
   },
   plugins: [
-    new CopyWebpackPlugin({
-      patterns: [
-        {
-          from: __dirname + "/src/components/**/docs/*.+(ts|md)",
-          to: path.resolve(__dirname, "./public/docs"),
-        },
-      ],
-    }),
+    // new CopyWebpackPlugin({
+    //   patterns: [
+    //     {
+    //       from: `${__dirname}/src/components/**/docs/*.+(ts|md)`,
+    //       to: path.resolve(__dirname, "./public/docs"),
+    //     },
+    //   ],
+    // }),
     new HtmlWebpackPlugin({
       template: "./public/index.html",
     }),
