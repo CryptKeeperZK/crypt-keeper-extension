@@ -1,20 +1,9 @@
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
+import { useCryptKeeperClient } from "@src/context/CryptKeeperClientProvider";
 
-import { useGlobalStyles } from "@src/styles";
-
-interface IConnectedIdentityProps {
-  identityCommitment?: string;
-  identityName?: string;
-  identityHost?: string;
-}
-
-export const ConnectedIdentity = ({
-  identityCommitment = "",
-  identityName = "",
-  identityHost = "",
-}: IConnectedIdentityProps): JSX.Element => {
-  const classes = useGlobalStyles();
+export const ConnectedIdentity = (): JSX.Element => {
+  const { connectedCommitment, connectedIdentityMetadata } = useCryptKeeperClient();
 
   return (
     <Box
@@ -35,17 +24,17 @@ export const ConnectedIdentity = ({
             <strong>Name: </strong>
           </Typography>
           <Typography className="identity-name" color="text.primary" data-testid="connected-name">
-            {identityName}
+            {connectedIdentityMetadata?.name}
           </Typography>
         </Box>
 
-        {identityHost && (
+        {connectedIdentityMetadata?.urlOrigin && (
           <Box>
             <Typography sx={{ pt: 3, fontWeight: "bold", color: "primary.main", alignItems: "center" }} variant="h6">
               <strong>Name: </strong>
             </Typography>
             <Typography className="identity-name" color="text.primary" data-testid="connected-urlOrigin">
-              {identityHost}
+              {connectedIdentityMetadata.urlOrigin}
             </Typography>
           </Box>
         )}
@@ -54,9 +43,9 @@ export const ConnectedIdentity = ({
           <Typography sx={{ pt: 3, fontWeight: "bold", color: "primary.main", alignItems: "center" }} variant="h6">
             <strong>Commitment: </strong>
           </Typography>
-          {identityCommitment ? (
+          {connectedCommitment ? (
             <Typography className="identity-name" color="text.primary" data-testid="commitment">
-              {identityCommitment}
+              {connectedCommitment}
             </Typography>
           ) : (
             <Typography className="identity-name" color="text.primary" data-testid="commitment">

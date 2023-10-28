@@ -19,6 +19,7 @@ interface IClientContext {
   setConnectedIdentityCommitment: Dispatch<SetStateAction<string>>;
   setConnectedIdentityMetadata: Dispatch<SetStateAction<ConnectedIdentityMetadata>>;
   setClient: Dispatch<SetStateAction<ICryptKeeperInjectedProvider | undefined>>;
+  getConnectedIdentityMetadata: () => Promise<void>
 }
 
 const ClientContext = createContext<IClientContext>({
@@ -28,6 +29,7 @@ const ClientContext = createContext<IClientContext>({
   setConnectedIdentityCommitment: () => { },
   setConnectedIdentityMetadata: () => { },
   setClient: () => { },
+  getConnectedIdentityMetadata: async () => {},
 });
 
 export const CryptKeeperClientProvider = ({ children }: PropsWithChildren<{}>) => {
@@ -191,6 +193,7 @@ export const CryptKeeperClientProvider = ({ children }: PropsWithChildren<{}>) =
         setConnectedIdentityCommitment,
         setConnectedIdentityMetadata,
         setClient,
+        getConnectedIdentityMetadata
       }}
     >
       {children}

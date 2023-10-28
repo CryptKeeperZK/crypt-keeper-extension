@@ -36,7 +36,6 @@ interface IUseCryptKeeperData {
   joinGroup: () => Promise<void>;
   generateGroupMerkleProof: () => Promise<void>;
   revealConnectedIdentityCommitment: () => Promise<void>;
-  importIdentity: () => Promise<void>;
 }
 
 export const useCryptKeeper = (): IUseCryptKeeperData => {
@@ -181,18 +180,7 @@ export const useCryptKeeper = (): IUseCryptKeeperData => {
     });
   }, [client]);
 
-  const importIdentity = useCallback(async () => {
-    const trapdoor = (document.getElementById("trapdoor") as HTMLInputElement | null)?.value ?? undefined;
-    const nullifier = (document.getElementById("nullifier") as HTMLInputElement | null)?.value ?? undefined;
-
-    await client?.request({
-      method: RPCExternalAction.IMPORT_IDENTITY,
-      payload: {
-        trapdoor,
-        nullifier,
-      },
-    });
-  }, [client]);
+  
 
   return {
     genSemaphoreProof,
@@ -202,6 +190,5 @@ export const useCryptKeeper = (): IUseCryptKeeperData => {
     revealConnectedIdentityCommitment,
     joinGroup,
     generateGroupMerkleProof,
-    importIdentity,
   };
 };

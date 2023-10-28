@@ -10,9 +10,7 @@ import ConnectedIdentity from "@src/components/ConnectedIdentity";
 import DisplayCode, { type IDisplayCodeProps } from "@src/components/DisplayCode";
 import DisplayProof from "@src/components/DisplayProof";
 import GetCommitment from "@src/components/GetCommitment";
-import GetMetadata from "@src/components/GetMetadata";
 import Header from "@src/components/Header";
-import ImportIdentity from "@src/components/ImportIdentity";
 import RateLimitingNullifier from "@src/components/RateLimitingNullifier";
 import Semaphore from "@src/components/Semaphore";
 import VerifiableCredentials from "@src/components/VerifiableCredentials";
@@ -20,9 +18,13 @@ import { useCryptKeeper } from "@src/hooks/useCryptKeeper";
 import RightSideBar from "@src/components/RightSideBar";
 import { Paths } from "@src/constants";
 import Connect from "@src/pages/Connect";
+import IdentityMetadata from "@src/pages/IdentityMetadata";
+import ImportIdentity from "@src/pages/ImportIdentity";
 
 const routeConfig: RouteObject[] = [
   { path: Paths.CONNECT, element: <Connect /> },
+  { path: Paths.GET_IDENTITY_METADATA, element: <IdentityMetadata />}
+  { path: Paths.IMPORT_IDENTITY, element: <ImportIdentity />}
 ];
 
 export const Main = (): JSX.Element => {
@@ -36,7 +38,6 @@ export const Main = (): JSX.Element => {
     revealConnectedIdentityCommitment,
     joinGroup,
     generateGroupMerkleProof,
-    importIdentity,
   } = useCryptKeeper();
 
   // if (isLocked) {
@@ -94,11 +95,7 @@ export const Main = (): JSX.Element => {
 
       {/* RightSideBar */}
       <RightSideBar>
-        {/* <ConnectedIdentity
-          identityCommitment={connectedCommitment}
-          identityHost={connectedIdentityMetadata?.urlOrigin}
-          identityName={connectedIdentityMetadata?.name}
-        /> */}
+        <ConnectedIdentity />
       </RightSideBar>
 
       <ToastContainer newestOnTop />

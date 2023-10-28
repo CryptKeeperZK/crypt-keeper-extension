@@ -11,8 +11,6 @@ interface featureList {
   }[];
 }
 
-interface IUserDocsDrawerData { }
-
 interface IUserDrawerListOutput {
   isShowGetStarted: boolean;
   isShowIdentityManagement: boolean;
@@ -42,8 +40,8 @@ export const useDrawerList = (): IUserDrawerListOutput => {
   const identityManagementData: featureList = {
     title: "Identity Management",
     features: [
-      { label: "Get Identity Metadata" },
-      { label: "Import Identity" },
+      { label: "Get Identity Metadata", path: Paths.GET_IDENTITY_METADATA },
+      { label: "Import Identity", path: Paths.IMPORT_IDENTITY },
       { label: "Reveal Identity Commitment" },
     ],
   };
