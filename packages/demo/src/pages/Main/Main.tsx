@@ -96,8 +96,14 @@ export const Main = (): JSX.Element => {
 
       {/* Center Content */}
       <Box sx={{ display: "flex", flex: 1 }}>
-        <Container sx={{ flex: 1, position: "relative", top: 64 }}>
-          <Connect isChangeIdentity connect={connect} title="Connect identity" />
+        <Container
+          sx={{ flex: 1, position: "relative", top: 64 }}
+        >
+          <Connect
+            isChangeIdentity
+            connect={connect}
+            title="Connect identity"
+          />
 
           <ImportIdentity importIdentity={importIdentity} />
 
@@ -120,18 +126,19 @@ export const Main = (): JSX.Element => {
             generateVerifiablePresentationRequest={generateVerifiablePresentationRequest}
           />
         </Container>
-
-        {/* RightSideBar */}
-        <RightSideBar>
-          <ConnectedIdentity
-            identityCommitment={connectedCommitment}
-            identityHost={connectedIdentityMetadata?.urlOrigin}
-            identityName={connectedIdentityMetadata?.name}
-          />
-        </RightSideBar>
       </Box>
+
+      {/* RightSideBar */}
+      <RightSideBar>
+        <ConnectedIdentity
+          identityCommitment={connectedCommitment}
+          identityHost={connectedIdentityMetadata?.urlOrigin}
+          identityName={connectedIdentityMetadata?.name}
+        />
+      </RightSideBar>
 
       <ToastContainer newestOnTop />
     </Box>
+
   );
 };
