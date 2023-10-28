@@ -113,20 +113,6 @@ export const CryptKeeperClientProvider = ({ children }: PropsWithChildren<{}>) =
     toast(`Generated a Verifiable Presentation from ${credentialCount} credentials!`, { type: "success" });
   }, []);
 
-  const onJoinGroup = useCallback((data: unknown) => {
-    const result = data as { groupId: string };
-    toast(`User has joined the group. ${result.groupId}`, { type: "success" });
-  }, []);
-
-  const onGroupMerkleProof = useCallback(
-    (data: unknown) => {
-      const result = data as { merkleProof: IMerkleProof };
-      setProof(result.merkleProof);
-      toast("Group Merkle Proof has been successfully generated!", { type: "success" });
-    },
-    [setProof],
-  );
-
   const onImportIdentity = useCallback((payload: unknown) => {
     toast(`Identity has been imported ${JSON.stringify(payload)}`, { type: "success" });
   }, []);
@@ -160,8 +146,6 @@ export const CryptKeeperClientProvider = ({ children }: PropsWithChildren<{}>) =
     client.on(EventName.GENERATE_VERIFIABLE_PRESENTATION, onGenerateVerifiablePresentation);
     client.on(EventName.USER_REJECT, onReject);
     client.on(EventName.REVEAL_COMMITMENT, onRevealCommitment);
-    client.on(EventName.JOIN_GROUP, onJoinGroup);
-    client.on(EventName.GROUP_MERKLE_PROOF, onGroupMerkleProof);
     client.on(EventName.IMPORT_IDENTITY, onImportIdentity);
     client.on(EventName.CREATE_IDENTITY, onCreateIdentity);
 
@@ -177,8 +161,6 @@ export const CryptKeeperClientProvider = ({ children }: PropsWithChildren<{}>) =
     onAddVerifiableCredential,
     onReject,
     onRevealCommitment,
-    onGroupMerkleProof,
-    onJoinGroup,
     onImportIdentity,
     onCreateIdentity,
     onApproval,

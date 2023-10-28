@@ -5,12 +5,10 @@ import Container from "@mui/material/Container";
 import Typography from "@mui/material/Typography";
 import { ToastContainer } from "react-toastify";
 
-import Bandada from "@src/components/Bandada";
 import ConnectedIdentity from "@src/components/ConnectedIdentity";
 import DisplayCode, { type IDisplayCodeProps } from "@src/components/DisplayCode";
 import DisplayProof from "@src/components/DisplayProof";
 import Header from "@src/components/Header";
-import RateLimitingNullifier from "@src/components/RateLimitingNullifier";
 import VerifiableCredentials from "@src/components/VerifiableCredentials";
 import { useCryptKeeper } from "@src/hooks/useCryptKeeper";
 import RightSideBar from "@src/components/RightSideBar";
@@ -19,23 +17,26 @@ import Connect from "@src/pages/Connect";
 import IdentityMetadata from "@src/pages/IdentityMetadata";
 import ImportIdentity from "@src/pages/ImportIdentity";
 import RevealIdentity from "@src/pages/RevealIdentity";
+import Semaphore from "@src/pages/Semaphore";
+import RateLimitingNullifier from "@src/pages/RateLimitingNullifier";
+import Bandada from "@src/pages/Bandada";
 
 const routeConfig: RouteObject[] = [
   { path: Paths.CONNECT, element: <Connect /> },
   { path: Paths.GET_IDENTITY_METADATA, element: <IdentityMetadata />},
   { path: Paths.IMPORT_IDENTITY, element: <ImportIdentity />},
   { path: Paths.REVEAL_IDENTITY_COMMITMENT, element: <RevealIdentity />},
+  { path: Paths.SEMAPHORE, element: <Semaphore />},
+  { path: Paths.RLN, element: <RateLimitingNullifier /> },
+  { path: Paths.BANDADA, element: <Bandada /> },
 ];
 
 export const Main = (): JSX.Element => {
   const routes = useRoutes(routeConfig);
 
   const {
-    genRLNProof,
     addVerifiableCredentialRequest,
     generateVerifiablePresentationRequest,
-    joinGroup,
-    generateGroupMerkleProof,
   } = useCryptKeeper();
 
   // if (isLocked) {

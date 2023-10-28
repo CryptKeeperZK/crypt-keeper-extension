@@ -48,7 +48,7 @@ export const useDrawerList = (): IUserDrawerListOutput => {
 
   const zkpManagementData: featureList = {
     title: "Zero-Knowledge Proofs Management",
-    features: [{ label: "Semaphore" }, { label: "Rate-Limiting Nullifier" }, { label: "Bandada" }],
+    features: [{ label: "Semaphore", path: Paths.SEMAPHORE }, { label: "Rate-Limiting Nullifier", path: Paths.RLN }, { label: "Bandada", path: Paths.BANDADA }],
   };
 
   const goToPage = useCallback((path?: string) => {
