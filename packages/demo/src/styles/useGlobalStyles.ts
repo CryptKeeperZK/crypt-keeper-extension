@@ -9,11 +9,39 @@ const basePopupStyle = {
 };
 
 export const sharedStyles = {
-  sideBarWidth: 256,
+  sideBarWidth: 340,
   sideBarColor: "#012120",
 };
 
 export const useGlobalStyles = makeStyles((theme: Theme) => ({
+  hero: {
+    backgroundColor: theme.palette.primary.main,
+    color: theme.palette.primary.contrastText,
+    padding: theme.spacing(8, 0),
+    textAlign: "center",
+    width: 256,
+  },
+  featurePaper: {
+    padding: theme.spacing(4),
+  },
+  featureImage: {
+    maxWidth: "100%",
+    height: "auto",
+  },
+  button: {
+    marginTop: theme.spacing(2),
+  },
+
+  connectedIdentity: {
+    p: 2,
+    border: 1,
+    borderColor: "primary.main",
+    borderRadius: 2,
+    width: sharedStyles.sideBarWidth * 0.9,
+    position: "fixed",
+    top: 64,
+  },
+
   popup: {
     ...basePopupStyle,
   },
@@ -63,6 +91,7 @@ export const useGlobalStyles = makeStyles((theme: Theme) => ({
   },
 
   rightSideBar: {
+    width: sharedStyles.sideBarWidth,
     right: 0,
     bottom: 0,
     overflowY: "auto",

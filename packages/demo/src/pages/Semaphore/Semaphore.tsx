@@ -4,6 +4,7 @@ import Typography from "@mui/material/Typography";
 
 import ActionBox from "@src/components/ActionBox";
 import DisplayProof from "@src/components/DisplayProof";
+import Header from "@src/components/Header";
 import { useFileReader } from "@src/hooks";
 import { useGlobalStyles } from "@src/styles";
 import { MerkleProofType } from "@src/types";
@@ -17,30 +18,38 @@ export const Semaphore = (): JSX.Element => {
   const { fileContent: code } = useFileReader("semaphore.ts");
 
   return (
-    <Container sx={{ flex: 1, position: "relative", top: 64 }}>
-      <Box
-        className={classes.popup}
-        sx={{ p: 3, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}
-      >
-        <Typography variant="h6">Integration with Semaphore</Typography>
+    <Box sx={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}>
+      {/* Header */}
+      <Header />
 
-        <ActionBox<MerkleProofType, void>
-          code={code}
-          option={MerkleProofType.STORAGE_ADDRESS}
-          title="Generate proof from Merkle proof storage address"
-          onClick={genSemaphoreProof}
-        />
+      {/* Center Content */}
+      <Box sx={{ display: "flex", flex: 1 }}>
+        <Container sx={{ flex: 1, position: "relative", top: 64 }}>
+          <Box
+            className={classes.popup}
+            sx={{ p: 3, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}
+          >
+            <Typography variant="h6">Integration with Semaphore</Typography>
 
-        <ActionBox<MerkleProofType, void>
-          code={code}
-          option={MerkleProofType.ARTIFACTS}
-          title="Generate proof from Merkle proof artifacts"
-          onClick={genSemaphoreProof}
-        />
+            <ActionBox<MerkleProofType, void>
+              code={code}
+              option={MerkleProofType.STORAGE_ADDRESS}
+              title="Generate proof from Merkle proof storage address"
+              onClick={genSemaphoreProof}
+            />
 
-        <DisplayProof proof={proof} />
+            <ActionBox<MerkleProofType, void>
+              code={code}
+              option={MerkleProofType.ARTIFACTS}
+              title="Generate proof from Merkle proof artifacts"
+              onClick={genSemaphoreProof}
+            />
+
+            <DisplayProof proof={proof} />
+          </Box>
+        </Container>
       </Box>
-    </Container>
+    </Box>
   );
 };
 

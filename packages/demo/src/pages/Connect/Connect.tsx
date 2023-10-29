@@ -1,12 +1,10 @@
 import Box from "@mui/material/Box";
 import Container from "@mui/material/Container";
 import Typography from "@mui/material/Typography";
-import Markdown from "react-markdown";
-import { useParams } from "react-router-dom";
-import rehypeAutolinkHeadings from "rehype-autolink-headings";
-import rehypeSlug from "rehype-slug";
 
 import ActionBox from "@src/components/ActionBox";
+import Header from "@src/components/Header";
+import { useCryptKeeperClient } from "@src/context/CryptKeeperClientProvider";
 import { useFileReader } from "@src/hooks";
 import { useGlobalStyles } from "@src/styles";
 
@@ -15,30 +13,40 @@ import { useConnect } from "./useConnect";
 const Connect = (): JSX.Element => {
   const classes = useGlobalStyles();
   const { connect } = useConnect();
-  const { isChangeIdentityParam } = useParams<{
-    isChangeIdentityParam?: string;
-  }>();
+  const { isConnected } = useCryptKeeperClient();
 
-  const isChangeIdentity = isChangeIdentityParam === "true";
+  const isChangeIdentity = isConnected;
 
   const { fileContent: code } = useFileReader("connect.ts");
-  const { fileContent: doc } = useFileReader("connect.md");
 
   return (
-    <Container sx={{ flex: 1, position: "relative", top: 64 }}>
-      <Box
-        className={classes.popup}
-        sx={{ p: 3, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}
-      >
-        <Typography variant="h6">
-          {isChangeIdentity ? "Connect to CryptKeeper" : "To continue, please connect to your CryptKeeper to continue."}
-        </Typography>
+    <Box sx={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}>
+      {/* Header */}
+      <Header />
 
-        <Markdown rehypePlugins={[rehypeSlug, [rehypeAutolinkHeadings, { behavior: "wrap" }]]}>{doc}</Markdown>
+      {/* Center Content */}
+      <Box sx={{ display: "flex", flex: 1 }}>
+        <Container sx={{ flex: 1, position: "relative", top: 64 }}>
+          <Box
+            className={classes.popup}
+            sx={{ p: 3, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}
+          >
+            <Typography variant="h6">
+              {isConnected
+                ? "Change Connected Identity"
+                : "To continue, please connect to your CryptKeeper to continue."}
+            </Typography>
 
-        <ActionBox<boolean, void> code={code} option={isChangeIdentity} title="Connect Identity" onClick={connect} />
+            <ActionBox<boolean, void>
+              code={code}
+              option={isChangeIdentity}
+              title="Connect Identity"
+              onClick={connect}
+            />
+          </Box>
+        </Container>
       </Box>
-    </Container>
+    </Box>
   );
 };
 

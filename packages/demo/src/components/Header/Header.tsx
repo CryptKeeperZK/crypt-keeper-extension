@@ -8,11 +8,14 @@ import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import { useTheme } from "@mui/styles";
 import { useState } from "react";
+import { ToastContainer } from "react-toastify";
 
 import { useGlobalStyles } from "@src/styles";
 import { sharedStyles } from "@src/styles/useGlobalStyles";
 
+import ConnectedIdentity from "../ConnectedIdentity";
 import { DrawerList } from "../DrawerList/DrawerList";
+import RightSideBar from "../RightSideBar";
 
 export const Header = (): JSX.Element => {
   const theme = useTheme();
@@ -26,73 +29,82 @@ export const Header = (): JSX.Element => {
   const container = window.document.body;
 
   return (
-    <Box
-      sx={{
-        display: "flex",
-        flexDirection: "column",
-      }}
-    >
-      <AppBar
-        className={classes.header}
+    <Box>
+      <Box
         sx={{
-          width: { sm: `calc(100% - ${sharedStyles.sideBarWidth}px)` },
-          ml: { sm: `${sharedStyles.sideBarWidth}px` },
+          display: "flex",
+          flexDirection: "column",
         }}
       >
-        <Toolbar className={classes.headerToolbar}>
-          <IconButton
-            aria-label="open drawer"
-            color="inherit"
-            edge="start"
-            sx={{ mr: 2, display: { sm: "none" } }}
-            onClick={handleDrawerToggle}
+        <AppBar
+          className={classes.header}
+          sx={{
+            width: { sm: `calc(100% - ${sharedStyles.sideBarWidth}px)` },
+            ml: { sm: `${sharedStyles.sideBarWidth}px` },
+          }}
+        >
+          <Toolbar className={classes.headerToolbar}>
+            <IconButton
+              aria-label="open drawer"
+              color="inherit"
+              edge="start"
+              sx={{ mr: 2, display: { sm: "none" } }}
+              onClick={handleDrawerToggle}
+            >
+              <MenuIcon />
+            </IconButton>
+
+            <Typography component="div" variant="h6">
+              CryptKeeper Demo
+            </Typography>
+          </Toolbar>
+        </AppBar>
+
+        {/* LeftSideBar */}
+        <Box
+          className={classes.leftSideBar}
+          component="nav"
+          sx={{ width: { sm: sharedStyles.sideBarWidth }, flexShrink: { sm: 0 } }}
+        >
+          <Drawer
+            anchor="left"
+            container={container}
+            ModalProps={{
+              keepMounted: true, // Better open performance on mobile.
+            }}
+            open={mobileOpen}
+            sx={{
+              display: { xs: "block", sm: "none" },
+              "& .MuiDrawer-paper": { boxSizing: "border-box", width: sharedStyles.sideBarWidth },
+            }}
+            variant="temporary"
+            onClose={handleDrawerToggle}
           >
-            <MenuIcon />
-          </IconButton>
+            <DrawerList />
+          </Drawer>
 
-          <Typography component="div" variant="h6">
-            CryptKeeper Demo
-          </Typography>
-        </Toolbar>
-      </AppBar>
+          <Drawer
+            open
+            anchor="left"
+            sx={{
+              display: { xs: "none", sm: "block" },
+              "& .MuiDrawer-paper": { boxSizing: "border-box", width: sharedStyles.sideBarWidth },
+            }}
+            variant="permanent"
+          >
+            <DrawerList />
+          </Drawer>
 
-      {/* LeftSideBar */}
-      <Box
-        className={classes.leftSideBar}
-        component="nav"
-        sx={{ width: { sm: sharedStyles.sideBarWidth }, flexShrink: { sm: 0 } }}
-      >
-        <Drawer
-          anchor="left"
-          container={container}
-          ModalProps={{
-            keepMounted: true, // Better open performance on mobile.
-          }}
-          open={mobileOpen}
-          sx={{
-            display: { xs: "block", sm: "none" },
-            "& .MuiDrawer-paper": { boxSizing: "border-box", width: sharedStyles.sideBarWidth },
-          }}
-          variant="temporary"
-          onClose={handleDrawerToggle}
-        >
-          <DrawerList />
-        </Drawer>
-
-        <Drawer
-          open
-          anchor="left"
-          sx={{
-            display: { xs: "none", sm: "block" },
-            "& .MuiDrawer-paper": { boxSizing: "border-box", width: sharedStyles.sideBarWidth },
-          }}
-          variant="permanent"
-        >
-          <DrawerList />
-        </Drawer>
-
-        <Divider />
+          <Divider />
+        </Box>
       </Box>
+
+      {/* RightSideBar */}
+      <RightSideBar>
+        <ConnectedIdentity />
+      </RightSideBar>
+
+      <ToastContainer newestOnTop />
     </Box>
   );
 };

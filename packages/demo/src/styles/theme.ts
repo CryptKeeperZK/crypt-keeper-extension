@@ -136,7 +136,7 @@ export const theme = createTheme({
           backgroundColor: palette.background.default,
         }),
         paper: {
-          top: 64,
+          width: "inherit",
         },
       },
     },
@@ -145,6 +145,35 @@ export const theme = createTheme({
       styleOverrides: {
         root: ({ theme: { palette } }) => ({
           backgroundColor: palette.background.default,
+        }),
+      },
+    },
+
+    MuiList: {
+      styleOverrides: {
+        root: ({ theme: { palette } }) => ({
+          backgroundColor: palette.background.default,
+          color: palette.text.primary,
+          width: "240px",
+          borderRight: `1px solid ${palette.text.primary}`,
+        }),
+      },
+    },
+
+    MuiListItem: {
+      styleOverrides: {
+        root: ({ theme: { palette } }) => ({
+          fontSize: "16px",
+          fontWeight: 500,
+          padding: "12px 24px",
+          "&:hover": {
+            backgroundColor: palette.text.primary,
+            color: palette.common.white,
+          },
+          "&.Mui-selected": {
+            backgroundColor: palette.text.primary,
+            color: palette.common.white,
+          },
         }),
       },
     },
