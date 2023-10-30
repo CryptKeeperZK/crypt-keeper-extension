@@ -40,7 +40,7 @@ const Connect = (): JSX.Element => {
             <ActionBox<boolean, void>
               code={code}
               option={isChangeIdentity}
-              title="Connect Identity"
+              title="Connect to CryptKeeper"
               onClick={connect}
             />
           </Box>

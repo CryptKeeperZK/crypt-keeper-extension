@@ -9,7 +9,7 @@ const basePopupStyle = {
 };
 
 export const sharedStyles = {
-  sideBarWidth: 340,
+  sideBarWidth: 350,
   sideBarColor: "#012120",
 };
 
@@ -21,15 +21,14 @@ export const useGlobalStyles = makeStyles((theme: Theme) => ({
     textAlign: "center",
     width: 256,
   },
+
   featurePaper: {
     padding: theme.spacing(4),
   },
+
   featureImage: {
     maxWidth: "100%",
     height: "auto",
-  },
-  button: {
-    marginTop: theme.spacing(2),
   },
 
   connectedIdentity: {

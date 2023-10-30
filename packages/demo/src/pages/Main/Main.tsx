@@ -22,7 +22,7 @@ const routeConfig: RouteObject[] = [
   { path: Paths.VERIFIABLE_CREDENTIALS, element: <VerifiableCredentials /> },
   {
     path: "*",
-    element: <Navigate to={Paths.GET_IDENTITY_METADATA} />,
+    element: <Navigate to={Paths.CONNECT} />,
   },
 ];
 

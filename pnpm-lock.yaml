@@ -432,6 +432,9 @@ importers:
       react-code-blocks:
         specifier: ^0.1.4
         version: 0.1.4(react-dom@18.2.0)(react@18.2.0)
+      react-collapse:
+        specifier: ^5.1.1
+        version: 5.1.1(react@18.2.0)
       react-dom:
         specifier: ^18.2.0
         version: 18.2.0(react@18.2.0)
@@ -460,6 +463,9 @@ importers:
       '@types/react':
         specifier: ^18.2.32
         version: 18.2.32
+      '@types/react-collapse':
+        specifier: ^5.0.3
+        version: 5.0.3
       '@types/react-dom':
         specifier: ^18.2.14
         version: 18.2.14
@@ -5444,6 +5450,12 @@ packages:
 
   /@types/range-parser@1.2.4:
     resolution: {integrity: sha512-EEhsLsD6UsDM1yFhAvy0Cjr6VwmpMWqFBCb9w07wVugF7w9nfajxLuVmngTIpgS6svCnm6Vaw+MZhoDCKnOfsw==}
+
+  /@types/react-collapse@5.0.3:
+    resolution: {integrity: sha512-/UBdZtLac+JBaHehz8S1UDKUEGNA9FxMXHEYZXHKXqGDcoM/rdexc9UMInBNs3iDLDytIc26N4Ad6ou9P0CnvQ==}
+    dependencies:
+      '@types/react': 18.2.32
+    dev: true
 
   /@types/react-dom@18.2.14:
     resolution: {integrity: sha512-V835xgdSVmyQmI1KLV2BEIUgqEuinxp9O4G6g3FqO/SqLac049E53aysv0oEFD2kHfejeKU+ZqL2bcFWj9gLAQ==}
@@ -16513,6 +16525,14 @@ packages:
       tslib: 2.6.2
     transitivePeerDependencies:
       - react-dom
+    dev: false
+
+  /react-collapse@5.1.1(react@18.2.0):
+    resolution: {integrity: sha512-k6cd7csF1o9LBhQ4AGBIdxB60SUEUMQDAnL2z1YvYNr9KoKr+nDkhN6FK7uGaBd/rYrYfrMpzpmJEIeHRYogBw==}
+    peerDependencies:
+      react: '>=16.3.0'
+    dependencies:
+      react: 18.2.0
     dev: false
 
   /react-dev-utils@12.0.1(eslint@8.52.0)(typescript@5.2.2)(webpack@5.89.0):

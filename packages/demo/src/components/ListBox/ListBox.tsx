@@ -1,8 +1,9 @@
-import KeyboardArrowDown from "@mui/icons-material/KeyboardArrowDown";
+import { KeyboardArrowRight } from "@mui/icons-material";
 import Box from "@mui/material/Box";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemText from "@mui/material/ListItemText";
 import { useCallback, useState, type MouseEvent as ReactMouseEvent } from "react";
+import { Collapse } from "react-collapse";
 import { useNavigate } from "react-router-dom";
 
 import { type IListComponents } from "@src/constants";
@@ -10,6 +11,52 @@ import { type IListComponents } from "@src/constants";
 interface IListBoxProps {
   listComponents: IListComponents;
 }
+
+const headerStyle = {
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "space-between",
+  px: 3,
+  py: 2,
+  fontSize: 18,
+  fontWeight: 600,
+  "&:hover, &:focus": { bgcolor: "rgba(0, 0, 0, 0.9)" },
+};
+
+const arrowStyle = (isShowList: boolean) => ({
+  mr: 2,
+  transform: isShowList ? "rotate(90deg)" : "rotate(0deg)",
+  transition: "0.2s",
+});
+
+const subHeaderStyle = {
+  px: 3,
+  py: 1,
+  fontSize: 15,
+  position: "relative",
+};
+
+const indicatorStyle = {
+  width: 8,
+  height: 8,
+  borderRadius: "50%",
+  bgcolor: "grey",
+  mr: 2,
+  position: "absolute",
+  transform: "translateY(-50%)",
+  left: 2,
+  top: "50%",
+};
+
+const itemStyle = {
+  px: 4,
+  py: 1,
+  color: "rgba(255, 255, 255, 0.7)",
+  fontSize: 13,
+  "&:hover, &:focus": { bgcolor: "rgba(255, 255, 255, 0.05)" },
+  borderLeft: "2px solid white",
+  marginLeft: 5,
+};
 
 export const ListBox = ({ listComponents }: IListBoxProps): JSX.Element => {
   const navigate = useNavigate();
@@ -34,71 +81,31 @@ export const ListBox = ({ listComponents }: IListBoxProps): JSX.Element => {
   );
 
   return (
-    <Box>
-      <ListItemButton
-        component="a"
-        href="#customized-list"
-        sx={{
-          px: 3,
-          pt: 2.5,
-          pb: isShowList ? 0 : 2.5,
-          "&:hover, &:focus": { "& svg": { opacity: isShowList ? 1 : 0 } },
-        }}
-        onClick={handleShowList}
-      >
-        <ListItemText
-          primary={listComponents.header.title}
-          primaryTypographyProps={{
-            fontSize: 20,
-            fontWeight: 600,
-            letterSpacing: 0,
-          }}
-          sx={{ my: 0 }}
-        />
+    <Box sx={{ borderRadius: 2 }}>
+      <ListItemButton component="a" href="#customized-list" sx={headerStyle} onClick={handleShowList}>
+        <KeyboardArrowRight sx={arrowStyle(isShowList)} />
 
-        <KeyboardArrowDown
-          sx={{
-            mr: -1,
-            opacity: 0,
-            transform: isShowList ? "rotate(-180deg)" : "rotate(0)",
-            transition: "0.2s",
-          }}
-        />
+        <ListItemText primary={listComponents.header.title} />
       </ListItemButton>
 
-      {isShowList &&
-        listComponents.subHeader.map((subHeader) => (
-          <Box
-            key={subHeader.title}
-            sx={{
-              bgcolor: "rgba(71, 98, 130, 0.2)",
-              pb: 2,
-            }}
-          >
-            <ListItemButton key={subHeader.title} alignItems="flex-start">
-              <ListItemText
-                key={subHeader.title}
-                primary={subHeader.title}
-                primaryTypographyProps={{
-                  fontSize: 15,
-                  fontWeight: "medium",
-                  lineHeight: "20px",
-                  mb: "2px",
-                }}
-                secondaryTypographyProps={{
-                  noWrap: true,
-                  fontSize: 12,
-                  lineHeight: "16px",
-                  color: "rgba(0,0,0,0)",
-                }}
-                sx={{ my: 0 }}
-              />
+      <Collapse
+        isOpened={isShowList}
+        style={{
+          transition: "height 500ms",
+        }}
+      >
+        {listComponents.subHeader.map((subHeader) => (
+          <Box key={subHeader.title} sx={subHeaderStyle}>
+            <ListItemButton disabled>
+              <Box sx={indicatorStyle} />
+
+              <ListItemText primary={subHeader.title} />
             </ListItemButton>
 
             {subHeader.items.map((item) => (
               <ListItemButton
                 key={item.title}
-                sx={{ py: 0, minHeight: 32, color: "rgba(255,255,255,.8)" }}
+                sx={itemStyle}
                 onClick={() => {
                   goToPage(item.path);
                 }}
@@ -108,6 +115,7 @@ export const ListBox = ({ listComponents }: IListBoxProps): JSX.Element => {
             ))}
           </Box>
         ))}
+      </Collapse>
     </Box>
   );
 };

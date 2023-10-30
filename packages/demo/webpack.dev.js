@@ -12,6 +12,7 @@ module.exports = merge(common, {
       directory: path.join(__dirname, "public"),
     },
     port: 4000,
-    hot: true, // Enable Hot Module Replacement (HMR)
+    hot: true,
+    historyApiFallback: true,
   },
 });
