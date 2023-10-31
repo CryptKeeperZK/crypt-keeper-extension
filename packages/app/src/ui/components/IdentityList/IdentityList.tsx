@@ -17,6 +17,7 @@ export interface IIdentityListProps {
   isShowAddNew: boolean;
   isShowMenu: boolean;
   identities: IIdentityData[];
+  connectedOrigins: Record<string, string>;
   className?: string;
   selectedCommitment?: string;
   onSelect?: (identityCommitment: string) => void;
@@ -26,6 +27,7 @@ export const IdentityList = ({
   isShowAddNew,
   isShowMenu,
   identities,
+  connectedOrigins,
   className = "",
   selectedCommitment = undefined,
   onSelect = undefined,
@@ -80,6 +82,7 @@ export const IdentityList = ({
           <IdentityItem
             key={commitment}
             commitment={commitment}
+            connectedOrigin={connectedOrigins[commitment]}
             isShowMenu={isShowMenu}
             metadata={metadata}
             selected={selectedCommitment}

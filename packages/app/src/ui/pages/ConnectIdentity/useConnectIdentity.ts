@@ -5,14 +5,16 @@ import { useNavigate } from "react-router-dom";
 
 import { Paths } from "@src/constants";
 import { closePopup } from "@src/ui/ducks/app";
+import { connect, fetchConnections, useConnectedOrigins, useConnection } from "@src/ui/ducks/connections";
 import { useAppDispatch } from "@src/ui/ducks/hooks";
-import { connectIdentity, fetchIdentities, useConnectedIdentity, useIdentities } from "@src/ui/ducks/identities";
+import { fetchIdentities, useIdentities } from "@src/ui/ducks/identities";
 
 export interface IUseConnectIdentityData {
   urlOrigin: string;
   faviconUrl: string;
   selectedTab: EConnectIdentityTabs;
   identities: IIdentityData[];
+  connectedOrigins: Record<string, string>;
   selectedIdentityCommitment?: string;
   onTabChange: (event: SyntheticEvent, value: EConnectIdentityTabs) => void;
   onSelectIdentity: (identityCommitment: string) => void;
@@ -29,8 +31,9 @@ export const useConnectIdentity = (): IUseConnectIdentityData => {
   const { searchParams } = new URL(window.location.href.replace("#", ""));
   const urlOrigin = useMemo(() => searchParams.get("urlOrigin")!, [searchParams.toString()]);
 
-  const connectedIdentity = useConnectedIdentity();
+  const connection = useConnection(urlOrigin);
   const identities = useIdentities();
+  const connectedOrigins = useConnectedOrigins();
 
   const [faviconUrl, setFaviconUrl] = useState("");
   const [selectedTab, setSelectedTab] = useState<EConnectIdentityTabs>(EConnectIdentityTabs.LINKED);
@@ -59,7 +62,7 @@ export const useConnectIdentity = (): IUseConnectIdentityData => {
   }, [dispatch, navigate]);
 
   const onConnect = useCallback(async () => {
-    await dispatch(connectIdentity({ identityCommitment: selectedIdentityCommitment!, urlOrigin }));
+    await dispatch(connect({ commitment: selectedIdentityCommitment!, urlOrigin }));
     await dispatch(closePopup()).then(() => {
       navigate(Paths.HOME);
     });
@@ -67,13 +70,14 @@ export const useConnectIdentity = (): IUseConnectIdentityData => {
 
   useEffect(() => {
     dispatch(fetchIdentities());
+    dispatch(fetchConnections());
   }, [dispatch]);
 
   useEffect(() => {
-    if (connectedIdentity?.commitment) {
-      setSelectedIdentityCommitment(connectedIdentity.commitment);
+    if (connection?.commitment) {
+      setSelectedIdentityCommitment(connection.commitment);
     }
-  }, [connectedIdentity?.commitment]);
+  }, [connection?.commitment]);
 
   useEffect(() => {
     getLinkPreview(urlOrigin)
@@ -89,6 +93,7 @@ export const useConnectIdentity = (): IUseConnectIdentityData => {
     faviconUrl,
     selectedTab,
     identities,
+    connectedOrigins,
     selectedIdentityCommitment,
     onTabChange,
     onReject,

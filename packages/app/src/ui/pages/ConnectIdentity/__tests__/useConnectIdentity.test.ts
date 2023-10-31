@@ -8,10 +8,12 @@ import { SyntheticEvent } from "react";
 import { useNavigate } from "react-router-dom";
 
 import { ZERO_ADDRESS } from "@src/config/const";
+import { mockDefaultConnection } from "@src/config/mock/zk";
 import { Paths } from "@src/constants";
 import { closePopup } from "@src/ui/ducks/app";
+import { connect, fetchConnections, useConnectedOrigins, useConnection } from "@src/ui/ducks/connections";
 import { useAppDispatch } from "@src/ui/ducks/hooks";
-import { connectIdentity, fetchIdentities, useConnectedIdentity, useIdentities } from "@src/ui/ducks/identities";
+import { fetchIdentities, useIdentities } from "@src/ui/ducks/identities";
 
 import { EConnectIdentityTabs, IUseConnectIdentityData, useConnectIdentity } from "../useConnectIdentity";
 
@@ -33,10 +35,15 @@ jest.mock("@src/ui/ducks/app", (): unknown => ({
   closePopup: jest.fn(),
 }));
 
+jest.mock("@src/ui/ducks/connections", (): unknown => ({
+  connect: jest.fn(),
+  fetchConnections: jest.fn(),
+  useConnection: jest.fn(),
+  useConnectedOrigins: jest.fn(),
+}));
+
 jest.mock("@src/ui/ducks/identities", (): unknown => ({
   fetchIdentities: jest.fn(),
-  connectIdentity: jest.fn(),
-  useConnectedIdentity: jest.fn(),
   useIdentities: jest.fn(),
 }));
 
@@ -80,7 +87,9 @@ describe("ui/pages/ConnectIdentity/useConnectIdentity", () => {
 
     (useIdentities as jest.Mock).mockReturnValue(defaultIdentities);
 
-    (useConnectedIdentity as jest.Mock).mockReturnValue(defaultIdentities[0]);
+    (useConnection as jest.Mock).mockReturnValue(mockDefaultConnection);
+
+    (useConnectedOrigins as jest.Mock).mockReturnValue({});
 
     window.location.href = `${oldHref}?urlOrigin=http://localhost:3000`;
   });
@@ -94,10 +103,9 @@ describe("ui/pages/ConnectIdentity/useConnectIdentity", () => {
   const waitForData = async (current: IUseConnectIdentityData) => {
     await waitFor(() => current.faviconUrl !== "");
     await waitFor(() => {
-      expect(mockDispatch).toBeCalledTimes(1);
-    });
-    await waitFor(() => {
+      expect(mockDispatch).toBeCalledTimes(2);
       expect(fetchIdentities).toBeCalledTimes(1);
+      expect(fetchConnections).toBeCalledTimes(1);
     });
   };
 
@@ -109,6 +117,7 @@ describe("ui/pages/ConnectIdentity/useConnectIdentity", () => {
     expect(result.current.faviconUrl).toBe("http://localhost:3000/favicon.ico");
     expect(result.current.selectedTab).toBe(EConnectIdentityTabs.LINKED);
     expect(result.current.identities).toStrictEqual(defaultIdentities);
+    expect(result.current.connectedOrigins).toStrictEqual({});
   });
 
   test("should handle empty favicon properly", () => {
@@ -125,8 +134,9 @@ describe("ui/pages/ConnectIdentity/useConnectIdentity", () => {
 
     await act(() => Promise.resolve(result.current.onReject()));
 
-    expect(mockDispatch).toBeCalledTimes(2);
+    expect(mockDispatch).toBeCalledTimes(3);
     expect(fetchIdentities).toBeCalledTimes(1);
+    expect(fetchConnections).toBeCalledTimes(1);
     expect(closePopup).toBeCalledTimes(1);
     expect(mockNavigate).toBeCalledTimes(1);
     expect(mockNavigate).toBeCalledWith(Paths.HOME);
@@ -139,10 +149,11 @@ describe("ui/pages/ConnectIdentity/useConnectIdentity", () => {
     await waitFor(() => result.current.selectedIdentityCommitment === "1");
     await act(() => Promise.resolve(result.current.onConnect()));
 
-    expect(mockDispatch).toBeCalledTimes(3);
+    expect(mockDispatch).toBeCalledTimes(4);
     expect(fetchIdentities).toBeCalledTimes(1);
-    expect(connectIdentity).toBeCalledTimes(1);
-    expect(connectIdentity).toBeCalledWith({ identityCommitment: "1", urlOrigin: "http://localhost:3000" });
+    expect(fetchConnections).toBeCalledTimes(1);
+    expect(connect).toBeCalledTimes(1);
+    expect(connect).toBeCalledWith({ commitment: "1", urlOrigin: "http://localhost:3000" });
     expect(closePopup).toBeCalledTimes(1);
     expect(mockNavigate).toBeCalledTimes(1);
     expect(mockNavigate).toBeCalledWith(Paths.HOME);

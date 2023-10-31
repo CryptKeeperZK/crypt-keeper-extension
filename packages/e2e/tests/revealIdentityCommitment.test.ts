@@ -1,3 +1,4 @@
+import { DEMO_URL } from "../constants";
 import { expect, test } from "../fixtures";
 import { connectWallet, createAccount } from "../helpers/account";
 
@@ -30,7 +31,9 @@ test.describe("reveal identity commitment", () => {
   }) => {
     const cryptKeeper = await context.newPage();
     await cryptKeeper.bringToFront();
-    await cryptKeeper.goto(`chrome-extension://${cryptKeeperExtensionId}/popup.html#/reveal-identity-commitment`);
+    await cryptKeeper.goto(
+      `chrome-extension://${cryptKeeperExtensionId}/popup.html#/reveal-identity-commitment?urlOrigin=${DEMO_URL}`,
+    );
     await cryptKeeper.getByTestId("reveal-identity-commitment").click();
 
     await page.bringToFront();
@@ -47,7 +50,9 @@ test.describe("reveal identity commitment", () => {
 
     const cryptKeeper = await context.newPage();
     await cryptKeeper.bringToFront();
-    await cryptKeeper.goto(`chrome-extension://${cryptKeeperExtensionId}/popup.html#/reveal-identity-commitment`);
+    await cryptKeeper.goto(
+      `chrome-extension://${cryptKeeperExtensionId}/popup.html#/reveal-identity-commitment?urlOrigin=${DEMO_URL}`,
+    );
     await cryptKeeper.getByTestId("reveal-identity-commitment").click();
 
     await page.bringToFront();

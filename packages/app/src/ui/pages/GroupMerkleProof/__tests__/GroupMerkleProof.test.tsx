@@ -5,7 +5,7 @@
 import { render, waitFor } from "@testing-library/react";
 import { Suspense } from "react";
 
-import { mockDefaultIdentity } from "@src/config/mock/zk";
+import { mockDefaultConnection } from "@src/config/mock/zk";
 
 import GroupMerkleProof from "..";
 import { IUseGroupMerkleProofData, useGroupMerkleProof } from "../useGroupMerkleProof";
@@ -22,7 +22,7 @@ describe("ui/pages/GroupMerkleProof", () => {
     error: "",
     faviconUrl: "favicon",
     groupId: "groupId",
-    connectedIdentity: mockDefaultIdentity,
+    connection: mockDefaultConnection,
     onGoBack: jest.fn(),
     onGoToHost: jest.fn(),
     onGoToGroup: jest.fn(),
@@ -86,7 +86,7 @@ describe("ui/pages/GroupMerkleProof", () => {
   test("should render empty state properly", async () => {
     (useGroupMerkleProof as jest.Mock).mockReturnValue({
       ...defaultHookData,
-      connectedIdentity: undefined,
+      connection: undefined,
       groupId: undefined,
       faviconUrl: "",
     });

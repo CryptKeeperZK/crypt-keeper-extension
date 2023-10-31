@@ -1,4 +1,4 @@
-export type { IConnectionApprovalData, IConnectionOptions } from "./approval";
+export type { IConnectionData, IConnectionOptions } from "./approval";
 export type { IInjectedMessageData, IInjectedProviderRequest } from "./contentScript";
 export type {
   IRequestResolutionAction,
@@ -10,21 +10,21 @@ export type {
 export type {
   ICreateIdentityOptions,
   ICreateIdentityRequestArgs,
-  IConnectIdentityRequestArgs,
   ICreateIdentityArgs,
   INewIdentityRequest,
   IIdentityMetadata,
   IGroupData,
   IIdentityData,
   ISetIdentityNameArgs,
-  ISetIdentityHostArgs,
   IConnectIdentityArgs,
   ISerializedIdentity,
   ConnectedIdentityMetadata,
   IImportIdentityArgs,
   IImportIdentityRequestArgs,
-  IIdenityConnection,
+  IIdentityConnection,
   IConnectArgs,
+  IRevealConnectedIdentityCommitmentArgs,
+  IDeleteIdentityArgs,
 } from "./identity";
 export { EWallet } from "./identity";
 export type {

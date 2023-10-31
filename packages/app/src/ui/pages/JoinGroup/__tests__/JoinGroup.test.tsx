@@ -5,7 +5,7 @@
 import { render, waitFor } from "@testing-library/react";
 import { Suspense } from "react";
 
-import { mockDefaultIdentity } from "@src/config/mock/zk";
+import { mockDefaultConnection } from "@src/config/mock/zk";
 
 import JoinGroup from "..";
 import { IUseJoinGroupData, useJoinGroup } from "../useJoinGroup";
@@ -24,7 +24,7 @@ describe("ui/pages/JoinGroup", () => {
     groupId: "groupId",
     apiKey: "apiKey",
     inviteCode: "inviteCode",
-    connectedIdentity: mockDefaultIdentity,
+    connection: mockDefaultConnection,
     onGoBack: jest.fn(),
     onGoToHost: jest.fn(),
     onGoToGroup: jest.fn(),
@@ -88,7 +88,7 @@ describe("ui/pages/JoinGroup", () => {
   test("should render empty state properly", async () => {
     (useJoinGroup as jest.Mock).mockReturnValue({
       ...defaultHookData,
-      connectedIdentity: undefined,
+      connection: undefined,
       groupId: undefined,
       inviteCode: undefined,
       apiKey: undefined,

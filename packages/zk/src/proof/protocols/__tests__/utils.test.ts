@@ -53,7 +53,7 @@ describe("background/services/protocols/utils", () => {
     expect(merkleProof.siblings).not.toHaveLength(0);
   });
 
-  test("should get merkle proof from remote urlOrigin properly", async () => {
+  test("should get merkle proof from remote url origin properly", async () => {
     const fetchSpy = jest.spyOn(global, "fetch").mockResolvedValue({
       json: () => Promise.resolve({ data: { merkleProof: defaultDeserializedMerkleProof } }),
     } as Response);
@@ -107,7 +107,7 @@ describe("background/services/protocols/utils", () => {
     ).rejects.toThrowError("ZK: Cannot get MerkleProof");
   });
 
-  test("should get rln verification key proof from remote urlOrigin properly", async () => {
+  test("should get rln verification key proof from remote url origin properly", async () => {
     const fetchSpy = jest.spyOn(global, "fetch").mockResolvedValue({
       json: () => Promise.resolve({ data: {} }),
     } as Response);

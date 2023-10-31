@@ -1,3 +1,5 @@
+import identity from "lodash/identity";
+import pickBy from "lodash/pickBy";
 import browser, { Windows } from "webextension-polyfill";
 
 import type { IReduxAction, IZkMetadata } from "@cryptkeeperzk/types";
@@ -19,7 +21,7 @@ interface CreateTabArgs {
 }
 
 interface OpenPopupArgs {
-  params?: Record<string, string>;
+  params?: Record<string, string | undefined>;
 }
 
 export default class BrowserUtils {
@@ -51,7 +53,9 @@ export default class BrowserUtils {
 
     const tabs = await browser.tabs.query({ lastFocusedWindow: true });
     const index = tabs.findIndex((tab) => tab.active && tab.highlighted);
-    const searchParams = params ? `?${new URLSearchParams(params).toString()}` : "";
+    const searchParams = params
+      ? `?${new URLSearchParams(pickBy(params, identity) as Record<string, string>).toString()}`
+      : "";
     const tab = await this.createTab({
       url: `popup.html#/${searchParams}`,
       active: index >= 0,

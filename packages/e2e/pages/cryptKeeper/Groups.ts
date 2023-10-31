@@ -12,10 +12,11 @@ export default class Groups extends BasePage {
     return popup;
   }
 
-  async joinGroup(): Promise<void> {
+  async joinGroup(): Promise<Page> {
     const cryptKeeper = await this.joinGroupRequest();
     await cryptKeeper.getByText("Accept", { exact: true }).click({ delay: 1000 });
-    await cryptKeeper.close();
+
+    return cryptKeeper;
   }
 
   async generateGroupMerkleProofRequest(): Promise<Page> {

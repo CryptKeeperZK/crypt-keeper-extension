@@ -6,6 +6,7 @@ import Handler from "@src/background/controllers/handler";
 import RequestManager from "@src/background/controllers/requestManager";
 import ApprovalService from "@src/background/services/approval";
 import BackupService from "@src/background/services/backup";
+import ConnectionService from "@src/background/services/connection";
 import VerifiableCredentialsService from "@src/background/services/credentials";
 import GroupService from "@src/background/services/group";
 import HistoryService from "@src/background/services/history";
@@ -72,6 +73,8 @@ export default class CryptKeeperController {
 
   private protocolService: ProtocolService;
 
+  private connectionService: ConnectionService;
+
   constructor() {
     this.handler = new Handler();
     this.requestManager = RequestManager.getInstance();
@@ -87,12 +90,14 @@ export default class CryptKeeperController {
     this.verifiableCredentialsService = VerifiableCredentialsService.getInstance();
     this.groupService = GroupService.getInstance();
     this.protocolService = ProtocolService.getInstance();
+    this.connectionService = ConnectionService.getInstance();
     this.backupService = BackupService.getInstance()
       .add(BackupableServices.LOCK, this.lockService)
       .add(BackupableServices.WALLET, this.walletService)
       .add(BackupableServices.APPROVAL, this.approvalService)
       .add(BackupableServices.IDENTITY, this.zkIdentityService)
-      .add(BackupableServices.VERIFIABLE_CREDENTIALS, this.verifiableCredentialsService);
+      .add(BackupableServices.VERIFIABLE_CREDENTIALS, this.verifiableCredentialsService)
+      .add(BackupableServices.CONNECTIONS, this.connectionService);
   }
 
   handle = (request: IRequestHandler, sender: Runtime.MessageSender): Promise<unknown> =>
@@ -106,42 +111,42 @@ export default class CryptKeeperController {
       RPCExternalAction.GENERATE_SEMAPHORE_PROOF,
       this.lockService.ensure,
       this.approvalService.isOriginApproved,
-      this.injectorService.isConnected,
+      this.connectionService.isOriginConnected,
       this.protocolService.generateSemaphoreProof,
     );
     this.handler.add(
       RPCExternalAction.GENERATE_RLN_PROOF,
       this.lockService.ensure,
       this.approvalService.isOriginApproved,
-      this.injectorService.isConnected,
+      this.connectionService.isOriginConnected,
       this.protocolService.generateRLNProof,
     );
     this.handler.add(
       RPCExternalAction.REVEAL_CONNECTED_IDENTITY_COMMITMENT,
       this.lockService.ensure,
       this.approvalService.isOriginApproved,
-      this.injectorService.isConnected,
-      this.zkIdentityService.revealConnectedIdentityCommitmentRequest,
+      this.connectionService.isOriginConnected,
+      this.connectionService.revealConnectedIdentityCommitmentRequest,
     );
     this.handler.add(
       RPCExternalAction.JOIN_GROUP,
       this.lockService.ensure,
       this.approvalService.isOriginApproved,
-      this.injectorService.isConnected,
+      this.connectionService.isOriginConnected,
       this.groupService.joinGroupRequest,
     );
     this.handler.add(
       RPCExternalAction.GENERATE_GROUP_MERKLE_PROOF,
       this.lockService.ensure,
       this.approvalService.isOriginApproved,
-      this.injectorService.isConnected,
+      this.connectionService.isOriginConnected,
       this.groupService.generateGroupMerkleProofRequest,
     );
     this.handler.add(
       RPCExternalAction.IMPORT_IDENTITY,
       this.lockService.ensure,
       this.approvalService.isOriginApproved,
-      this.injectorService.isConnected,
+      this.connectionService.isOriginConnected,
       this.zkIdentityService.importRequest,
     );
 
@@ -152,72 +157,45 @@ export default class CryptKeeperController {
       this.lockService.unlock,
       this.approvalService.unlock,
       this.zkIdentityService.unlock,
+      this.connectionService.unlock,
       this.lockService.onUnlocked,
       this.approvalService.onUnlocked,
       this.zkIdentityService.onUnlocked,
+      this.connectionService.onUnlocked,
     );
-
     this.handler.add(
       RPCInternalAction.LOCK,
       this.lockService.lock,
       this.zkIdentityService.lock,
       this.approvalService.lock,
     );
-
-    /**
-     *  Return status of background process
-     *  @returns {Object} status Background process status
-     *  @returns {boolean} status.isInitialized has background process been initialized
-     *  @returns {boolean} status.isUnlocked is background process unlocked
-     */
     this.handler.add(RPCInternalAction.GET_STATUS, this.lockService.getStatus);
 
-    // requests
+    // Requests
     this.handler.add(RPCInternalAction.GET_PENDING_REQUESTS, this.requestManager.getRequests);
     this.handler.add(RPCInternalAction.FINALIZE_REQUEST, this.requestManager.finalizeRequest);
 
-    // lock
+    // Lock
     this.handler.add(RPCInternalAction.SETUP_PASSWORD, this.lockService.setupPassword);
     this.handler.add(RPCInternalAction.RESET_PASSWORD, this.lockService.resetPassword);
     this.handler.add(RPCInternalAction.CHECK_PASSWORD, this.lockService.ensure, this.lockService.checkPassword);
 
-    // Identities
-    this.handler.add(RPCInternalAction.GET_IDENTITIES, this.lockService.ensure, this.zkIdentityService.getIdentities);
-    this.handler.add(
-      RPCInternalAction.GET_CONNECTED_IDENTITY_DATA,
-      this.lockService.ensure,
-      this.zkIdentityService.getConnectedIdentityData,
-    );
-    this.handler.add(
-      RPCInternalAction.GET_CONNECTED_IDENTITY_COMMITMENT,
-      this.lockService.ensure,
-      this.zkIdentityService.getConnectedIdentityCommitment,
-    );
-    this.handler.add(
-      RPCInternalAction.CONNECT_IDENTITY,
-      this.lockService.ensure,
-      this.zkIdentityService.connectIdentity,
-    );
-    this.handler.add(RPCInternalAction.IMPORT_IDENTITY, this.lockService.ensure, this.zkIdentityService.import);
-    this.handler.add(
-      RPCInternalAction.CONNECT_IDENTITY_REQUEST,
-      this.lockService.ensure,
-      this.zkIdentityService.connectIdentityRequest,
-    );
+    // Connections
+    this.handler.add(RPCInternalAction.CONNECT, this.lockService.ensure, this.connectionService.connect);
     this.handler.add(
       RPCInternalAction.REVEAL_CONNECTED_IDENTITY_COMMITMENT,
       this.lockService.ensure,
-      this.zkIdentityService.revealConnectedIdentityCommitment,
+      this.connectionService.revealConnectedIdentityCommitment,
     );
+    this.handler.add(RPCInternalAction.GET_CONNECTIONS, this.lockService.ensure, this.connectionService.getConnections);
+
+    // Identities
+    this.handler.add(RPCInternalAction.GET_IDENTITIES, this.lockService.ensure, this.zkIdentityService.getIdentities);
+    this.handler.add(RPCInternalAction.IMPORT_IDENTITY, this.lockService.ensure, this.zkIdentityService.import);
     this.handler.add(
       RPCInternalAction.SET_IDENTITY_NAME,
       this.lockService.ensure,
       this.zkIdentityService.setIdentityName,
-    );
-    this.handler.add(
-      RPCInternalAction.SET_IDENTITY_HOST,
-      this.lockService.ensure,
-      this.zkIdentityService.setIdentityHost,
     );
     this.handler.add(
       RPCInternalAction.CREATE_IDENTITY_REQUEST,
@@ -225,10 +203,16 @@ export default class CryptKeeperController {
       this.zkIdentityService.createIdentityRequest,
     );
     this.handler.add(RPCInternalAction.CREATE_IDENTITY, this.lockService.ensure, this.zkIdentityService.createIdentity);
-    this.handler.add(RPCInternalAction.DELETE_IDENTITY, this.lockService.ensure, this.zkIdentityService.deleteIdentity);
+    this.handler.add(
+      RPCInternalAction.DELETE_IDENTITY,
+      this.lockService.ensure,
+      this.zkIdentityService.deleteIdentity,
+      this.connectionService.disconnect,
+    );
     this.handler.add(
       RPCInternalAction.DELETE_ALL_IDENTITIES,
       this.lockService.ensure,
+      this.connectionService.clear,
       this.zkIdentityService.deleteAllIdentities,
     );
 

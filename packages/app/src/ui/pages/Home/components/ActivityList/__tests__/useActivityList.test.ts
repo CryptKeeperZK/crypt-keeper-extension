@@ -4,8 +4,9 @@
 
 import { act, renderHook, waitFor } from "@testing-library/react";
 
-import { mockDefaultIdentity } from "@src/config/mock/zk";
+import { mockDefaultConnection, mockDefaultIdentity } from "@src/config/mock/zk";
 import { HistorySettings, Operation, OperationType } from "@src/types";
+import { useConnectedOrigins } from "@src/ui/ducks/connections";
 import { useAppDispatch } from "@src/ui/ducks/hooks";
 import {
   deleteHistoryOperation,
@@ -21,6 +22,10 @@ jest.mock("@src/ui/ducks/identities", (): unknown => ({
   fetchHistory: jest.fn(),
   useHistorySettings: jest.fn(),
   useIdentityOperations: jest.fn(),
+}));
+
+jest.mock("@src/ui/ducks/connections", (): unknown => ({
+  useConnectedOrigins: jest.fn(),
 }));
 
 jest.mock("@src/ui/ducks/hooks", (): unknown => ({
@@ -45,6 +50,10 @@ describe("ui/pages/Home/components/ActivityList/useActivityList", () => {
     },
   ];
 
+  const defaultConnectedOrigins = {
+    [mockDefaultIdentity.commitment]: mockDefaultConnection.urlOrigin,
+  };
+
   const defaultHistorySettings: HistorySettings = {
     isEnabled: true,
   };
@@ -53,6 +62,8 @@ describe("ui/pages/Home/components/ActivityList/useActivityList", () => {
     (useAppDispatch as jest.Mock).mockReturnValue(mockDispatch);
 
     (useIdentityOperations as jest.Mock).mockReturnValue(defaultIdentityOperations);
+
+    (useConnectedOrigins as jest.Mock).mockReturnValue(defaultConnectedOrigins);
 
     (useHistorySettings as jest.Mock).mockReturnValue(defaultHistorySettings);
   });

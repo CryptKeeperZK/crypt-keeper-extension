@@ -25,19 +25,10 @@ export class InjectorService {
     return InjectorService.INSTANCE;
   }
 
-  isConnected = async (payload: unknown, { urlOrigin }: IZkMetadata): Promise<unknown> => {
-    await this.injectorHandler.getConnectedIdentityMetadata({}, { urlOrigin });
+  getConnectedIdentityMetadata = (_: unknown, { urlOrigin }: IZkMetadata): ConnectedIdentityMetadata | undefined => {
+    const { isApproved, isConnected } = this.injectorHandler.getConnectionData({ urlOrigin });
 
-    return payload;
-  };
-
-  getConnectedIdentityMetadata = async (
-    _: unknown,
-    { urlOrigin }: IZkMetadata,
-  ): Promise<ConnectedIdentityMetadata | undefined> => {
-    const { isApproved } = this.injectorHandler.getConnectionApprovalData({ urlOrigin });
-
-    if (!isApproved) {
+    if (!isApproved || !isConnected) {
       return undefined;
     }
 
@@ -61,10 +52,10 @@ export class InjectorService {
         });
       }
 
-      const connectedIdentity = await this.injectorHandler.getZkIdentityService().getConnectedIdentity();
+      const connectedIdentity = this.injectorHandler.getConnectionService().getConnectedIdentity(urlOrigin!);
 
-      if (connectedIdentity?.metadata.urlOrigin !== urlOrigin || isChangeIdentity) {
-        await this.injectorHandler.getZkIdentityService().connectIdentityRequest({ urlOrigin: urlOrigin! });
+      if (!connectedIdentity || isChangeIdentity) {
+        await this.injectorHandler.getConnectionService().connectRequest({}, { urlOrigin: urlOrigin! });
       }
     } catch (error) {
       throw new Error(`CryptKeeper: error in the connect request, ${(error as Error).message}`);

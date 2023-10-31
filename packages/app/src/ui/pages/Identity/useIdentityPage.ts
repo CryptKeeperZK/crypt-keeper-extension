@@ -1,26 +1,22 @@
 import { IIdentityMetadata } from "@cryptkeeperzk/types";
+import get from "lodash/get";
 import { useCallback, useEffect, useState } from "react";
 import { UseFormRegister, useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 
 import { Paths } from "@src/constants";
+import { fetchConnections, useConnectedOrigins } from "@src/ui/ducks/connections";
 import { useAppDispatch } from "@src/ui/ducks/hooks";
-import {
-  deleteIdentity,
-  fetchIdentities,
-  setIdentityName,
-  useConnectedIdentity,
-  useIdentity,
-} from "@src/ui/ducks/identities";
+import { deleteIdentity, fetchIdentities, setIdentityName, useIdentity } from "@src/ui/ducks/identities";
 import { useUrlParam } from "@src/ui/hooks/url";
 import { redirectToNewTab } from "@src/util/browser";
 
 export interface IUseIdentityPageData {
   isLoading: boolean;
-  isConnectedIdentity: boolean;
   isConfirmModalOpen: boolean;
   isUpdating: boolean;
   errors: Partial<{ root: string; name: string }>;
+  urlOrigin: string;
   commitment?: string;
   metadata?: IIdentityMetadata;
   register: UseFormRegister<FormFields>;
@@ -45,7 +41,8 @@ export const useIdentityPage = (): IUseIdentityPageData => {
 
   const commitment = useUrlParam("id");
   const identity = useIdentity(commitment);
-  const connectedIdentity = useConnectedIdentity();
+  const connectedOrigins = useConnectedOrigins();
+  const urlOrigin = connectedOrigins[get(identity, "commitment")!];
 
   const {
     formState: { errors, isSubmitting },
@@ -65,7 +62,7 @@ export const useIdentityPage = (): IUseIdentityPageData => {
 
   useEffect(() => {
     setIsLoading(true);
-    dispatch(fetchIdentities())
+    Promise.all([dispatch(fetchIdentities()), dispatch(fetchConnections())])
       .catch((err: Error) => {
         setError("root", { message: err.message });
       })
@@ -104,8 +101,8 @@ export const useIdentityPage = (): IUseIdentityPageData => {
   }, [setUpdating]);
 
   const onGoToHost = useCallback(() => {
-    redirectToNewTab(identity!.metadata.urlOrigin!);
-  }, [identity?.metadata.urlOrigin]);
+    redirectToNewTab(urlOrigin);
+  }, [urlOrigin]);
 
   const onConfirmUpdate = useCallback(
     (data: FormFields) => {
@@ -122,7 +119,6 @@ export const useIdentityPage = (): IUseIdentityPageData => {
 
   return {
     isLoading: isLoading || isSubmitting,
-    isConnectedIdentity: identity ? identity.commitment === connectedIdentity?.commitment : false,
     isConfirmModalOpen,
     isUpdating,
     errors: {
@@ -131,6 +127,7 @@ export const useIdentityPage = (): IUseIdentityPageData => {
     },
     commitment: identity?.commitment,
     metadata: identity?.metadata,
+    urlOrigin,
     register,
     onGoBack,
     onConfirmDeleteIdentity,

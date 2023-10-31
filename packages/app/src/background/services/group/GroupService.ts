@@ -1,11 +1,12 @@
 import { EventName } from "@cryptkeeperzk/providers";
+import { bigintToHex } from "bigint-conversion";
 import browser from "webextension-polyfill";
 
 import BrowserUtils from "@src/background/controllers/browserUtils";
 import { BandadaService } from "@src/background/services/bandada";
+import ConnectionService from "@src/background/services/connection";
 import HistoryService from "@src/background/services/history";
 import NotificationService from "@src/background/services/notification";
-import ZkIdentityService from "@src/background/services/zkIdentity";
 import { Paths } from "@src/constants";
 import { OperationType } from "@src/types";
 
@@ -15,6 +16,7 @@ import type {
   IIdentityData,
   IJoinGroupMemberArgs,
   IMerkleProof,
+  IZkMetadata,
 } from "@cryptkeeperzk/types";
 
 export default class GroupService {
@@ -22,7 +24,7 @@ export default class GroupService {
 
   private bandadaSevice: BandadaService;
 
-  private zkIdentityService: ZkIdentityService;
+  private connectionService: ConnectionService;
 
   private historyService: HistoryService;
 
@@ -32,7 +34,7 @@ export default class GroupService {
 
   private constructor() {
     this.bandadaSevice = BandadaService.getInstance();
-    this.zkIdentityService = ZkIdentityService.getInstance();
+    this.connectionService = ConnectionService.getInstance();
     this.historyService = HistoryService.getInstance();
     this.notificationService = NotificationService.getInstance();
     this.browserController = BrowserUtils.getInstance();
@@ -46,19 +48,26 @@ export default class GroupService {
     return GroupService.INSTANCE;
   }
 
-  joinGroupRequest = async ({ groupId, apiKey, inviteCode }: IJoinGroupMemberArgs): Promise<void> => {
+  joinGroupRequest = async (
+    { groupId, apiKey, inviteCode }: IJoinGroupMemberArgs,
+    { urlOrigin }: IZkMetadata,
+  ): Promise<void> => {
     await this.browserController.openPopup({
       params: {
         redirect: Paths.JOIN_GROUP,
         groupId,
-        apiKey: apiKey ?? "",
-        inviteCode: inviteCode ?? "",
+        apiKey,
+        inviteCode,
+        urlOrigin,
       },
     });
   };
 
-  joinGroup = async ({ groupId, apiKey, inviteCode }: IJoinGroupMemberArgs): Promise<boolean> => {
-    const identity = await this.getConnectedIdentity();
+  joinGroup = async (
+    { groupId, apiKey, inviteCode }: IJoinGroupMemberArgs,
+    { urlOrigin }: IZkMetadata,
+  ): Promise<boolean> => {
+    const identity = this.getConnectedIdentity(urlOrigin!);
 
     const result = await this.bandadaSevice.addMember({ groupId, apiKey, inviteCode, identity });
 
@@ -72,25 +81,29 @@ export default class GroupService {
       },
     });
 
-    await this.browserController.pushEvent(
-      { type: EventName.JOIN_GROUP, payload: { groupId } },
-      { urlOrigin: identity.metadata.urlOrigin! },
-    );
+    await this.browserController.pushEvent({ type: EventName.JOIN_GROUP, payload: { groupId } }, { urlOrigin });
 
     return result;
   };
 
-  generateGroupMerkleProofRequest = async ({ groupId }: IGenerateGroupMerkleProofArgs): Promise<void> => {
+  generateGroupMerkleProofRequest = async (
+    { groupId }: IGenerateGroupMerkleProofArgs,
+    { urlOrigin }: IZkMetadata,
+  ): Promise<void> => {
     await this.browserController.openPopup({
       params: {
         redirect: Paths.GROUP_MERKLE_PROOF,
         groupId,
+        urlOrigin,
       },
     });
   };
 
-  generateGroupMerkleProof = async ({ groupId }: IGenerateGroupMerkleProofArgs): Promise<IMerkleProof> => {
-    const identity = await this.getConnectedIdentity();
+  generateGroupMerkleProof = async (
+    { groupId }: IGenerateGroupMerkleProofArgs,
+    { urlOrigin }: IZkMetadata,
+  ): Promise<IMerkleProof> => {
+    const identity = this.getConnectedIdentity(urlOrigin!);
 
     const merkleProof = await this.bandadaSevice.generateMerkleProof({ groupId, identity });
 
@@ -105,31 +118,31 @@ export default class GroupService {
 
     await this.browserController.pushEvent(
       { type: EventName.GROUP_MERKLE_PROOF, payload: { merkleProof } },
-      { urlOrigin: identity.metadata.urlOrigin! },
+      { urlOrigin },
     );
 
     return merkleProof;
   };
 
-  checkGroupMembership = async ({ groupId }: ICheckGroupMembershipArgs): Promise<boolean> => {
-    const identity = await this.getConnectedIdentity();
+  checkGroupMembership = async (
+    { groupId }: ICheckGroupMembershipArgs,
+    { urlOrigin }: IZkMetadata,
+  ): Promise<boolean> => {
+    const identity = this.getConnectedIdentity(urlOrigin!);
 
     return this.bandadaSevice.checkGroupMembership({ groupId, identity });
   };
 
-  private getConnectedIdentity = async (): Promise<IIdentityData> => {
-    const [commitment, identity] = await Promise.all([
-      this.zkIdentityService.getConnectedIdentityCommitment(),
-      this.zkIdentityService.getConnectedIdentity(),
-    ]);
+  private getConnectedIdentity = (urlOrigin: string): IIdentityData => {
+    const connectedIdenity = this.connectionService.getConnectedIdentity(urlOrigin);
 
-    if (!commitment || !identity) {
+    if (!connectedIdenity) {
       throw new Error("No connected identity found");
     }
 
     return {
-      commitment,
-      metadata: identity.metadata,
+      commitment: bigintToHex(connectedIdenity.genIdentityCommitment()),
+      metadata: connectedIdenity.metadata,
     };
   };
 }

@@ -17,12 +17,12 @@ import { useIdentityPage } from "./useIdentityPage";
 const Identity = (): JSX.Element | null => {
   const {
     isLoading,
-    isConnectedIdentity,
     isConfirmModalOpen,
     isUpdating,
     errors,
     commitment,
     metadata,
+    urlOrigin,
     register,
     onGoBack,
     onConfirmDeleteIdentity,
@@ -153,8 +153,8 @@ const Identity = (): JSX.Element | null => {
 
             {renderRow(
               "Connected site",
-              metadata.urlOrigin ? (
-                <Tooltip title={metadata.urlOrigin}>
+              urlOrigin ? (
+                <Tooltip title={urlOrigin}>
                   <FontAwesomeIcon
                     data-testid="urlOrigin"
                     icon="link"
@@ -193,13 +193,7 @@ const Identity = (): JSX.Element | null => {
               {!isUpdating ? "Update" : "Confirm"}
             </Button>
 
-            <Button
-              color="error"
-              disabled={isConnectedIdentity}
-              sx={{ flex: 1, ml: 1 }}
-              variant="contained"
-              onClick={onConfirmDeleteIdentity}
-            >
+            <Button color="error" sx={{ flex: 1, ml: 1 }} variant="contained" onClick={onConfirmDeleteIdentity}>
               Delete
             </Button>
           </Box>

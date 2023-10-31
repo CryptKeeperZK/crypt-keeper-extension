@@ -14,8 +14,8 @@ import browser from "webextension-polyfill";
 import BrowserUtils from "@src/background/controllers/browserUtils";
 import RequestManager from "@src/background/controllers/requestManager";
 import ApprovalService from "@src/background/services/approval";
+import ConnectionService from "@src/background/services/connection";
 import { validateMerkleProofSource } from "@src/background/services/validation";
-import ZkIdentityService from "@src/background/services/zkIdentity";
 import { closeChromeOffscreen, createChromeOffscreen, getBrowserPlatform } from "@src/background/shared/utils";
 import { BrowserPlatform, RPCInternalAction } from "@src/constants";
 import pushMessage from "@src/util/pushMessage";
@@ -29,7 +29,7 @@ export default class ProtocolService {
 
   private readonly browserService: BrowserUtils;
 
-  private readonly zkIdentityService: ZkIdentityService;
+  private readonly connectionService: ConnectionService;
 
   private readonly approvalService: ApprovalService;
 
@@ -37,7 +37,7 @@ export default class ProtocolService {
     this.zkProofService = ZkProofService.getInstance();
     this.browserService = BrowserUtils.getInstance();
     this.requestManager = RequestManager.getInstance();
-    this.zkIdentityService = ZkIdentityService.getInstance();
+    this.connectionService = ConnectionService.getInstance();
     this.approvalService = ApprovalService.getInstance();
   }
 
@@ -62,7 +62,7 @@ export default class ProtocolService {
       const browserPlatform = getBrowserPlatform();
 
       if (browserPlatform === BrowserPlatform.Firefox) {
-        const identity = await this.zkIdentityService.getConnectedIdentity();
+        const identity = this.connectionService.getConnectedIdentity(urlOrigin!);
         const proof = await this.zkProofService.generateSemaphoreProof(identity, checkedSemaphoreProofRequest);
 
         return proof;
@@ -98,7 +98,7 @@ export default class ProtocolService {
       const browserPlatform = getBrowserPlatform();
 
       if (browserPlatform === BrowserPlatform.Firefox) {
-        const identity = await this.zkIdentityService.getConnectedIdentity();
+        const identity = this.connectionService.getConnectedIdentity(urlOrigin!);
         const proof = await this.zkProofService.generateRLNProof(identity, checkedRLNProofRequest);
 
         return proof;
@@ -138,7 +138,7 @@ export default class ProtocolService {
       merkleProofSource,
     });
 
-    const identity = await this.zkIdentityService.getConnectedIdentity();
+    const identity = this.connectionService.getConnectedIdentity(urlOrigin);
     const identitySerialized = identity?.serialize();
 
     if (!identity || !identitySerialized) {
@@ -191,7 +191,7 @@ export default class ProtocolService {
       merkleProofSource,
     });
 
-    const identity = await this.zkIdentityService.getConnectedIdentity();
+    const identity = this.connectionService.getConnectedIdentity(urlOrigin);
     const identitySerialized = identity?.serialize();
 
     if (!identity || !identitySerialized) {

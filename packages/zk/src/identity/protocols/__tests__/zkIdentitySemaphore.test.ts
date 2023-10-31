@@ -11,7 +11,6 @@ describe("protocols/ZkIdentitySemaphore", () => {
     account: "account",
     name: "Identity #1",
     groups: [],
-    urlOrigin: "http://localhost:3000",
     isDeterministic: true,
     isImported: false,
   };

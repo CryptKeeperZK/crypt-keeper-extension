@@ -164,7 +164,7 @@ describe("background/services/approval", () => {
       });
     });
 
-    test("should not approve duplicated urlOrigin after unlock", async () => {
+    test("should not approve duplicated url origin after unlock", async () => {
       await approvalService.unlock();
       await approvalService.add({ urlOrigin: mockDefaultHosts[0], canSkipApprove: true });
       const hosts = approvalService.getAllowedHosts();
@@ -176,7 +176,7 @@ describe("background/services/approval", () => {
       });
     });
 
-    test("should remove approved urlOrigin properly", async () => {
+    test("should remove approved url origin properly", async () => {
       await approvalService.unlock();
       await approvalService.remove({ urlOrigin: mockDefaultHosts[0] });
       const hosts = approvalService.getAllowedHosts();

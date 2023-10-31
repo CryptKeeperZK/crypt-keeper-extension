@@ -1,4 +1,4 @@
-import type { IGroupData, IIdentityData, IMerkleProof } from "@cryptkeeperzk/types";
+import type { IGroupData, IIdentityConnection, IIdentityData, IMerkleProof } from "@cryptkeeperzk/types";
 
 import { ZERO_ADDRESS } from "../const";
 
@@ -37,7 +37,7 @@ export const mockDefaultIdentitySecret =
 
 export const mockDefaultIdentitySecretHex = "0x29149c6e74dad2c21c8405b4c7d415f26cbadce0fba1b8a58ce1247623bc28e8";
 
-export const mockDefaultIdentity: IIdentityData & { secret?: string } = {
+export const mockDefaultIdentity: IIdentityData & { secret?: string; genIdentityCommitment?: () => string } = {
   commitment: mockDefaultIdentityCommitment,
   secret: "1234",
   metadata: {
@@ -46,9 +46,15 @@ export const mockDefaultIdentity: IIdentityData & { secret?: string } = {
     groups: [],
     isDeterministic: true,
     nonce: 0,
-    urlOrigin: "http://localhost:3000",
     isImported: true,
   },
+  genIdentityCommitment: () => mockDefaultIdentityCommitment,
+};
+
+export const mockDefaultConnection: IIdentityConnection = {
+  commitment: mockDefaultIdentityCommitment,
+  name: "Account #1",
+  urlOrigin: "http://localhost:3000",
 };
 
 export const mockDefaultGroup: IGroupData = {

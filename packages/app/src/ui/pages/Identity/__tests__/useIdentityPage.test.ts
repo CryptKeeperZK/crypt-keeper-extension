@@ -5,16 +5,11 @@
 import { act, renderHook, waitFor } from "@testing-library/react";
 import { useNavigate } from "react-router-dom";
 
-import { mockDefaultIdentity } from "@src/config/mock/zk";
+import { mockDefaultConnection, mockDefaultIdentity } from "@src/config/mock/zk";
 import { Paths } from "@src/constants";
+import { fetchConnections, useConnectedOrigins, useConnection } from "@src/ui/ducks/connections";
 import { useAppDispatch } from "@src/ui/ducks/hooks";
-import {
-  deleteIdentity,
-  fetchIdentities,
-  setIdentityName,
-  useConnectedIdentity,
-  useIdentity,
-} from "@src/ui/ducks/identities";
+import { deleteIdentity, fetchIdentities, setIdentityName, useIdentity } from "@src/ui/ducks/identities";
 import { useUrlParam } from "@src/ui/hooks/url";
 import { redirectToNewTab } from "@src/util/browser";
 
@@ -36,22 +31,33 @@ jest.mock("@src/ui/ducks/identities", (): unknown => ({
   deleteIdentity: jest.fn(),
   fetchIdentities: jest.fn(),
   setIdentityName: jest.fn(),
-  useConnectedIdentity: jest.fn(),
   useIdentity: jest.fn(),
+}));
+
+jest.mock("@src/ui/ducks/connections", (): unknown => ({
+  fetchConnections: jest.fn(),
+  useConnection: jest.fn(),
+  useConnectedOrigins: jest.fn(),
 }));
 
 describe("ui/pages/Identity/useIdentityPage", () => {
   const mockNavigate = jest.fn();
   const mockDispatch = jest.fn(() => Promise.resolve());
 
+  const defaultConnectedOrigins = {
+    [mockDefaultConnection.commitment]: mockDefaultConnection.urlOrigin,
+  };
+
   beforeEach(() => {
-    (useConnectedIdentity as jest.Mock).mockReturnValue(mockDefaultIdentity);
+    (useConnection as jest.Mock).mockReturnValue(mockDefaultConnection);
 
     (useIdentity as jest.Mock).mockReturnValue(mockDefaultIdentity);
 
     (useNavigate as jest.Mock).mockReturnValue(mockNavigate);
 
     (useUrlParam as jest.Mock).mockReturnValue(mockDefaultIdentity.commitment);
+
+    (useConnectedOrigins as jest.Mock).mockReturnValue(defaultConnectedOrigins);
 
     (useAppDispatch as jest.Mock).mockReturnValue(mockDispatch);
   });
@@ -72,7 +78,6 @@ describe("ui/pages/Identity/useIdentityPage", () => {
     await waitForData(result.current);
 
     expect(result.current.isLoading).toBe(false);
-    expect(result.current.isConnectedIdentity).toBe(true);
     expect(result.current.isConfirmModalOpen).toBe(false);
     expect(result.current.errors).toStrictEqual({ root: undefined, name: undefined });
     expect(result.current.commitment).toBe(mockDefaultIdentity.commitment);
@@ -98,7 +103,6 @@ describe("ui/pages/Identity/useIdentityPage", () => {
     await waitForData(result.current);
 
     expect(result.current.isLoading).toBe(false);
-    expect(result.current.isConnectedIdentity).toBe(false);
     expect(result.current.commitment).toBeUndefined();
     expect(result.current.metadata).toBeUndefined();
     expect(result.current.errors.root).toBe(error.message);
@@ -110,8 +114,9 @@ describe("ui/pages/Identity/useIdentityPage", () => {
 
     await act(() => Promise.resolve(result.current.onDeleteIdentity()));
 
-    expect(mockDispatch).toBeCalledTimes(2);
+    expect(mockDispatch).toBeCalledTimes(3);
     expect(fetchIdentities).toBeCalledTimes(1);
+    expect(fetchConnections).toBeCalledTimes(1);
     expect(deleteIdentity).toBeCalledTimes(1);
     expect(deleteIdentity).toBeCalledWith(result.current.commitment);
     expect(mockNavigate).toBeCalledTimes(1);
@@ -149,8 +154,9 @@ describe("ui/pages/Identity/useIdentityPage", () => {
     await act(() => Promise.resolve(result.current.onConfirmUpdate()));
 
     expect(result.current.isUpdating).toBe(false);
-    expect(mockDispatch).toBeCalledTimes(2);
+    expect(mockDispatch).toBeCalledTimes(3);
     expect(fetchIdentities).toBeCalledTimes(1);
+    expect(fetchConnections).toBeCalledTimes(1);
     expect(setIdentityName).toBeCalledTimes(1);
   });
 
@@ -185,6 +191,6 @@ describe("ui/pages/Identity/useIdentityPage", () => {
     await act(() => Promise.resolve(result.current.onGoToHost()));
 
     expect(redirectToNewTab).toBeCalledTimes(1);
-    expect(redirectToNewTab).toBeCalledWith(mockDefaultIdentity.metadata.urlOrigin);
+    expect(redirectToNewTab).toBeCalledWith(mockDefaultConnection.urlOrigin);
   });
 });

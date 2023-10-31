@@ -12,8 +12,16 @@ import "./connectIdentity.scss";
 import { useConnectIdentity } from "./useConnectIdentity";
 
 const ConnectIdentity = (): JSX.Element => {
-  const { identities, urlOrigin, faviconUrl, selectedIdentityCommitment, onSelectIdentity, onReject, onConnect } =
-    useConnectIdentity();
+  const {
+    identities,
+    connectedOrigins,
+    urlOrigin,
+    faviconUrl,
+    selectedIdentityCommitment,
+    onSelectIdentity,
+    onReject,
+    onConnect,
+  } = useConnectIdentity();
 
   return (
     <FullModal data-testid="connect-identity-page" onClose={onReject}>
@@ -44,6 +52,7 @@ const ConnectIdentity = (): JSX.Element => {
         <Box sx={{ position: "relative", width: "100%" }}>
           <IdentityList
             className="connect-identity-list"
+            connectedOrigins={connectedOrigins}
             identities={identities}
             isShowAddNew={false}
             isShowMenu={false}

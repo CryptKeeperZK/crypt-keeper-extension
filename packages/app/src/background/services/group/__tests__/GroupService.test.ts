@@ -1,18 +1,18 @@
 import browser from "webextension-polyfill";
 
-import { defaultMerkleProof, mockDefaultIdentity, mockDefaultIdentityCommitment } from "@src/config/mock/zk";
+import { defaultMerkleProof, mockDefaultConnection, mockDefaultIdentity } from "@src/config/mock/zk";
 
 import type {
   ICheckGroupMembershipArgs,
   IGenerateGroupMerkleProofArgs,
   IIdentityData,
   IJoinGroupMemberArgs,
+  IZkMetadata,
 } from "@cryptkeeperzk/types";
 
 import GroupService from "..";
 
-const mockGetConnectedIdentityCommitment = jest.fn(() => Promise.resolve(mockDefaultIdentityCommitment));
-const mockGetConnectedIdentity = jest.fn(() => Promise.resolve(mockDefaultIdentity));
+const mockGetConnectedIdentity = jest.fn(() => mockDefaultIdentity);
 
 jest.mock("@src/background/services/bandada", (): unknown => ({
   BandadaService: {
@@ -24,9 +24,8 @@ jest.mock("@src/background/services/bandada", (): unknown => ({
   },
 }));
 
-jest.mock("@src/background/services/zkIdentity", (): unknown => ({
+jest.mock("@src/background/services/connection", (): unknown => ({
   getInstance: jest.fn(() => ({
-    getConnectedIdentityCommitment: mockGetConnectedIdentityCommitment,
     getConnectedIdentity: mockGetConnectedIdentity,
   })),
 }));
@@ -45,10 +44,12 @@ jest.mock("@src/background/services/notification", (): unknown => ({
 }));
 
 describe("background/services/group/GroupService", () => {
-  beforeEach(() => {
-    mockGetConnectedIdentityCommitment.mockResolvedValue(mockDefaultIdentityCommitment);
+  const metadata: IZkMetadata = {
+    urlOrigin: mockDefaultConnection.urlOrigin,
+  };
 
-    mockGetConnectedIdentity.mockResolvedValue(mockDefaultIdentity);
+  beforeEach(() => {
+    mockGetConnectedIdentity.mockReturnValue(mockDefaultIdentity);
 
     (browser.tabs.create as jest.Mock).mockResolvedValue({});
 
@@ -68,23 +69,23 @@ describe("background/services/group/GroupService", () => {
     test("should request group joining properly", async () => {
       const service = GroupService.getInstance();
 
-      await expect(service.joinGroupRequest(defaultArgs)).resolves.toBeUndefined();
-      await expect(service.joinGroupRequest({ groupId: defaultArgs.groupId })).resolves.toBeUndefined();
+      await expect(service.joinGroupRequest(defaultArgs, metadata)).resolves.toBeUndefined();
+      await expect(service.joinGroupRequest({ groupId: defaultArgs.groupId }, metadata)).resolves.toBeUndefined();
     });
 
     test("should join group properly", async () => {
       const service = GroupService.getInstance();
 
-      const result = await service.joinGroup(defaultArgs);
+      const result = await service.joinGroup(defaultArgs, metadata);
 
       expect(result).toBe(true);
     });
 
     test("should throw error if there is no connected identity", async () => {
-      mockGetConnectedIdentityCommitment.mockResolvedValue("");
+      mockGetConnectedIdentity.mockReturnValue(undefined as unknown as IIdentityData);
       const service = GroupService.getInstance();
 
-      await expect(service.joinGroup(defaultArgs)).rejects.toThrowError("No connected identity found");
+      await expect(service.joinGroup(defaultArgs, metadata)).rejects.toThrowError("No connected identity found");
     });
   });
 
@@ -96,23 +97,24 @@ describe("background/services/group/GroupService", () => {
     test("should request generate group merkle proof properly", async () => {
       const service = GroupService.getInstance();
 
-      await expect(service.generateGroupMerkleProofRequest(defaultArgs)).resolves.toBeUndefined();
+      await expect(service.generateGroupMerkleProofRequest(defaultArgs, metadata)).resolves.toBeUndefined();
     });
 
     test("should generate proof properly ", async () => {
       const service = GroupService.getInstance();
 
-      const result = await service.generateGroupMerkleProof(defaultArgs);
+      const result = await service.generateGroupMerkleProof(defaultArgs, metadata);
 
       expect(result).toStrictEqual(defaultMerkleProof);
     });
 
     test("should throw error if there is no connected identity", async () => {
-      mockGetConnectedIdentityCommitment.mockResolvedValue("");
-      mockGetConnectedIdentity.mockResolvedValue(undefined as unknown as IIdentityData);
+      mockGetConnectedIdentity.mockReturnValue(undefined as unknown as IIdentityData);
       const service = GroupService.getInstance();
 
-      await expect(service.generateGroupMerkleProof(defaultArgs)).rejects.toThrowError("No connected identity found");
+      await expect(service.generateGroupMerkleProof(defaultArgs, metadata)).rejects.toThrowError(
+        "No connected identity found",
+      );
     });
   });
 
@@ -124,17 +126,18 @@ describe("background/services/group/GroupService", () => {
     test("should check membership properly ", async () => {
       const service = GroupService.getInstance();
 
-      const result = await service.checkGroupMembership(defaultArgs);
+      const result = await service.checkGroupMembership(defaultArgs, metadata);
 
       expect(result).toBe(true);
     });
 
     test("should throw error if there is no connected identity", async () => {
-      mockGetConnectedIdentityCommitment.mockResolvedValue("");
-      mockGetConnectedIdentity.mockResolvedValue(undefined as unknown as IIdentityData);
+      mockGetConnectedIdentity.mockReturnValue(undefined as unknown as IIdentityData);
       const service = GroupService.getInstance();
 
-      await expect(service.checkGroupMembership(defaultArgs)).rejects.toThrowError("No connected identity found");
+      await expect(service.checkGroupMembership(defaultArgs, metadata)).rejects.toThrowError(
+        "No connected identity found",
+      );
     });
   });
 });

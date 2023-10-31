@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 
-import { EWallet, IIdentityMetadata } from "@cryptkeeperzk/types";
+import { EWallet } from "@cryptkeeperzk/types";
 import { renderHook } from "@testing-library/react";
 import { Provider } from "react-redux";
 
@@ -15,7 +15,6 @@ import postMessage from "@src/util/postMessage";
 import {
   createIdentityRequest,
   createIdentity,
-  setConnectedIdentity,
   setIdentityName,
   deleteIdentity,
   deleteAllIdentities,
@@ -23,10 +22,8 @@ import {
   IIdentitiesState,
   setIdentities,
   setIdentityRequestPending,
-  connectIdentity,
   useIdentities,
   useIdentityRequestPending,
-  useConnectedIdentity,
   fetchHistory,
   useIdentityOperations,
   setOperations,
@@ -35,10 +32,7 @@ import {
   useHistorySettings,
   setSettings,
   enableHistory,
-  useLinkedIdentities,
-  useUnlinkedIdentities,
   useIdentity,
-  revealConnectedIdentityCommitment,
   importIdentity,
 } from "../identities";
 
@@ -52,7 +46,6 @@ describe("ui/ducks/identities", () => {
         account: ZERO_ADDRESS,
         name: "Account #1",
         groups: [],
-        urlOrigin: "http://localhost:3000",
         isDeterministic: true,
         isImported: false,
       },
@@ -80,19 +73,16 @@ describe("ui/ducks/identities", () => {
 
   const defaultSettings: HistorySettings = { isEnabled: true };
 
-  const defaultConnectedIdentityMetadata: IIdentityMetadata = {
-    ...defaultIdentities[0].metadata,
-  };
+  beforeEach(() => {
+    (postMessage as jest.Mock).mockResolvedValue(undefined);
+  });
 
   afterEach(() => {
     jest.clearAllMocks();
   });
 
   test("should fetch identities properly", async () => {
-    (postMessage as jest.Mock)
-      .mockResolvedValueOnce(defaultIdentities)
-      .mockResolvedValueOnce(defaultConnectedIdentityMetadata)
-      .mockResolvedValueOnce(defaultIdentities[0].commitment);
+    (postMessage as jest.Mock).mockResolvedValue(defaultIdentities);
 
     await Promise.resolve(store.dispatch(fetchIdentities()));
     const { identities } = store.getState();
@@ -105,23 +95,11 @@ describe("ui/ducks/identities", () => {
     const emptyIdentityHookData = renderHook(() => useIdentity(), {
       wrapper: ({ children }) => <Provider store={store}>{children}</Provider>,
     });
-    const linkedIdentitiesHookData = renderHook(() => useLinkedIdentities("http://localhost:3000"), {
-      wrapper: ({ children }) => <Provider store={store}>{children}</Provider>,
-    });
-    const unlinkedIdentitiesHookData = renderHook(() => useUnlinkedIdentities(), {
-      wrapper: ({ children }) => <Provider store={store}>{children}</Provider>,
-    });
-    const connectedIdentityHookData = renderHook(() => useConnectedIdentity(), {
-      wrapper: ({ children }) => <Provider store={store}>{children}</Provider>,
-    });
 
     expect(identities.identities).toStrictEqual(defaultIdentities);
     expect(identitiesHookData.result.current).toStrictEqual(defaultIdentities);
     expect(identityHookData.result.current).toStrictEqual(defaultIdentities[0]);
     expect(emptyIdentityHookData.result.current).toBeUndefined();
-    expect(linkedIdentitiesHookData.result.current).toStrictEqual(defaultIdentities.slice(0, 1));
-    expect(unlinkedIdentitiesHookData.result.current).toStrictEqual(defaultIdentities.slice(1));
-    expect(connectedIdentityHookData.result.current).toStrictEqual(defaultIdentities[0]);
   });
 
   test("should fetch history properly", async () => {
@@ -174,13 +152,6 @@ describe("ui/ducks/identities", () => {
     const { identities } = store.getState();
 
     expect(identities.operations).toStrictEqual(defaultOperations);
-  });
-
-  test("should set connected identity properly", async () => {
-    await Promise.resolve(store.dispatch(setConnectedIdentity(defaultConnectedIdentityMetadata)));
-    const { identities } = store.getState();
-
-    expect(identities.connectedMetadata).toStrictEqual(defaultIdentities[0].metadata);
   });
 
   test("should set identities properly", async () => {
@@ -254,30 +225,6 @@ describe("ui/ducks/identities", () => {
     expect(postMessage).toBeCalledWith({
       method: RPCInternalAction.IMPORT_IDENTITY,
       payload: args,
-    });
-  });
-
-  test("should reveal identity commitment properly", async () => {
-    await Promise.resolve(store.dispatch(revealConnectedIdentityCommitment()));
-
-    expect(postMessage).toBeCalledTimes(1);
-    expect(postMessage).toBeCalledWith({
-      method: RPCInternalAction.REVEAL_CONNECTED_IDENTITY_COMMITMENT,
-    });
-  });
-
-  test("should call set connected identity action properly", async () => {
-    await Promise.resolve(
-      store.dispatch(connectIdentity({ identityCommitment: "1", urlOrigin: "http://localhost:3000" })),
-    );
-
-    expect(postMessage).toBeCalledTimes(1);
-    expect(postMessage).toBeCalledWith({
-      method: RPCInternalAction.CONNECT_IDENTITY,
-      payload: {
-        identityCommitment: "1",
-        urlOrigin: "http://localhost:3000",
-      },
     });
   });
 

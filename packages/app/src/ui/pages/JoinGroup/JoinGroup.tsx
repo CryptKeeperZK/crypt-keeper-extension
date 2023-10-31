@@ -17,7 +17,7 @@ const JoinGroup = (): JSX.Element => {
     faviconUrl,
     apiKey,
     inviteCode,
-    connectedIdentity,
+    connection,
     groupId,
     onGoBack,
     onGoToHost,
@@ -25,7 +25,7 @@ const JoinGroup = (): JSX.Element => {
     onJoin,
   } = useJoinGroup();
 
-  const isShowContent = !isJoined && Boolean(connectedIdentity && groupId);
+  const isShowContent = !isJoined && Boolean(connection && groupId);
   const isShowInviteInfo = Boolean(apiKey || inviteCode);
 
   if (isLoading) {
@@ -54,7 +54,7 @@ const JoinGroup = (): JSX.Element => {
           <Icon size={8} url={faviconUrl || logoSVG} />
         </Box>
 
-        {!connectedIdentity && (
+        {!connection && (
           <Box
             sx={{
               display: "flex",
@@ -119,7 +119,7 @@ const JoinGroup = (): JSX.Element => {
                   variant="h6"
                   onClick={onGoToHost}
                 >
-                  {connectedIdentity!.metadata.urlOrigin}
+                  {connection!.urlOrigin}
                 </Typography>
 
                 <Typography fontWeight="bold" sx={{ display: "inline" }} variant="h6">
@@ -166,7 +166,7 @@ const JoinGroup = (): JSX.Element => {
 
         <Button
           data-testid="join-group"
-          disabled={!connectedIdentity || isSubmitting || isJoined || !groupId}
+          disabled={!connection || isSubmitting || isJoined || !groupId}
           sx={{ ml: 1, width: "100%" }}
           variant="contained"
           onClick={onJoin}

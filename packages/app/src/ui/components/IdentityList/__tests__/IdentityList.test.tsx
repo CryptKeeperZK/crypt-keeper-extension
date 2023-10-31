@@ -7,6 +7,7 @@ import { act, render, screen, fireEvent } from "@testing-library/react";
 import { useNavigate } from "react-router-dom";
 
 import { ZERO_ADDRESS } from "@src/config/const";
+import { mockDefaultConnection } from "@src/config/mock/zk";
 import { Paths } from "@src/constants";
 import { useAppDispatch } from "@src/ui/ducks/hooks";
 import { deleteIdentity, setIdentityName, useIdentities } from "@src/ui/ducks/identities";
@@ -40,7 +41,6 @@ describe("ui/components/IdentityList", () => {
         account: ZERO_ADDRESS,
         name: "Account #0",
         groups: [],
-        urlOrigin: "http://localhost:3000",
         isDeterministic: true,
         isImported: false,
       },
@@ -61,6 +61,7 @@ describe("ui/components/IdentityList", () => {
     isShowMenu: true,
     identities: defaultIdentities,
     selectedCommitment: defaultIdentities[0].commitment,
+    connectedOrigins: { 0: mockDefaultConnection.urlOrigin },
     onSelect: jest.fn(),
   };
 

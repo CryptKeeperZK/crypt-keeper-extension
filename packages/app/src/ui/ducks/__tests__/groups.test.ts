@@ -20,10 +20,14 @@ describe("ui/ducks/groups", () => {
     const args = { groupId: "groupId", apiKey: "apiKey", inviteCode: "inviteCode" };
     (postMessage as jest.Mock).mockResolvedValue(true);
 
-    const result = await Promise.resolve(store.dispatch(joinGroup(args)));
+    const result = await Promise.resolve(store.dispatch(joinGroup(args, "urlOrigin")));
 
     expect(postMessage).toBeCalledTimes(1);
-    expect(postMessage).toBeCalledWith({ method: RPCInternalAction.JOIN_GROUP, payload: args });
+    expect(postMessage).toBeCalledWith({
+      method: RPCInternalAction.JOIN_GROUP,
+      payload: args,
+      meta: { urlOrigin: "urlOrigin" },
+    });
     expect(result).toBe(true);
   });
 
@@ -31,10 +35,14 @@ describe("ui/ducks/groups", () => {
     const args = { groupId: "groupId" };
     (postMessage as jest.Mock).mockResolvedValue(defaultMerkleProof);
 
-    const result = await Promise.resolve(store.dispatch(generateGroupMerkleProof(args)));
+    const result = await Promise.resolve(store.dispatch(generateGroupMerkleProof(args, "urlOrigin")));
 
     expect(postMessage).toBeCalledTimes(1);
-    expect(postMessage).toBeCalledWith({ method: RPCInternalAction.GENERATE_GROUP_MERKLE_PROOF, payload: args });
+    expect(postMessage).toBeCalledWith({
+      method: RPCInternalAction.GENERATE_GROUP_MERKLE_PROOF,
+      payload: args,
+      meta: { urlOrigin: "urlOrigin" },
+    });
     expect(result).toStrictEqual(defaultMerkleProof);
   });
 
@@ -42,10 +50,14 @@ describe("ui/ducks/groups", () => {
     const args = { groupId: "groupId", apiKey: "apiKey", inviteCode: "inviteCode" };
     (postMessage as jest.Mock).mockResolvedValue(true);
 
-    const result = await Promise.resolve(store.dispatch(checkGroupMembership(args)));
+    const result = await Promise.resolve(store.dispatch(checkGroupMembership(args, "urlOrigin")));
 
     expect(postMessage).toBeCalledTimes(1);
-    expect(postMessage).toBeCalledWith({ method: RPCInternalAction.CHECK_GROUP_MEMBERSHIP, payload: args });
+    expect(postMessage).toBeCalledWith({
+      method: RPCInternalAction.CHECK_GROUP_MEMBERSHIP,
+      payload: args,
+      meta: { urlOrigin: "urlOrigin" },
+    });
     expect(result).toBe(true);
   });
 });

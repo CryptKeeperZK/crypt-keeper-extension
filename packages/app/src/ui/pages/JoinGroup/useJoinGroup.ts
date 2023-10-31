@@ -5,15 +5,16 @@ import { useNavigate } from "react-router-dom";
 
 import { Paths } from "@src/constants";
 import { closePopup } from "@src/ui/ducks/app";
+import { fetchConnections, useConnection } from "@src/ui/ducks/connections";
 import { checkGroupMembership, joinGroup } from "@src/ui/ducks/groups";
 import { useAppDispatch } from "@src/ui/ducks/hooks";
-import { fetchIdentities, useConnectedIdentity } from "@src/ui/ducks/identities";
+import { fetchIdentities } from "@src/ui/ducks/identities";
 import { rejectUserRequest } from "@src/ui/ducks/requests";
 import { useSearchParam } from "@src/ui/hooks/url";
 import { redirectToNewTab } from "@src/util/browser";
 import { getBandadaGroupUrl } from "@src/util/groups";
 
-import type { IIdentityData } from "@cryptkeeperzk/types";
+import type { IIdentityConnection } from "@cryptkeeperzk/types";
 
 export interface IUseJoinGroupData {
   isLoading: boolean;
@@ -24,7 +25,7 @@ export interface IUseJoinGroupData {
   groupId?: string;
   apiKey?: string;
   inviteCode?: string;
-  connectedIdentity?: IIdentityData;
+  connection?: IIdentityConnection;
   onGoBack: () => void;
   onGoToHost: () => void;
   onGoToGroup: () => void;
@@ -44,15 +45,13 @@ export const useJoinGroup = (): IUseJoinGroupData => {
   const groupId = useSearchParam("groupId");
   const apiKey = useSearchParam("apiKey");
   const inviteCode = useSearchParam("inviteCode");
+  const urlOrigin = useSearchParam("urlOrigin");
 
-  const connectedIdentity = useConnectedIdentity();
+  const connection = useConnection(urlOrigin);
 
   useEffect(() => {
     setLoading(true);
-    Promise.all([dispatch(fetchIdentities()), dispatch(checkGroupMembership({ groupId: groupId! }))])
-      .then(([, isJoinedToGroup]) => {
-        setJoined(isJoinedToGroup);
-      })
+    Promise.all([dispatch(fetchIdentities()), dispatch(fetchConnections())])
       .catch((err: Error) => {
         setError(err.message);
       })
@@ -62,32 +61,41 @@ export const useJoinGroup = (): IUseJoinGroupData => {
   }, [groupId, dispatch, setLoading, setError]);
 
   useEffect(() => {
-    if (!connectedIdentity?.metadata.urlOrigin) {
+    if (!connection?.urlOrigin) {
       return;
     }
 
-    getLinkPreview(connectedIdentity.metadata.urlOrigin)
+    dispatch(checkGroupMembership({ groupId: groupId! }, connection.urlOrigin))
+      .then((isJoinedToGroup) => {
+        setJoined(isJoinedToGroup);
+      })
+      .catch((err: Error) => {
+        setError(err.message);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+
+    getLinkPreview(connection.urlOrigin)
       .then((data) => {
         setFaviconUrl(data.favicons[0]);
       })
       .catch(() => {
         setFaviconUrl("");
       });
-  }, [connectedIdentity?.metadata.urlOrigin, setFaviconUrl]);
+  }, [connection?.urlOrigin, groupId, dispatch, setLoading, setError, setJoined, setFaviconUrl]);
 
   const onGoBack = useCallback(() => {
-    dispatch(
-      rejectUserRequest({ type: EventName.JOIN_GROUP, payload: { groupId } }, connectedIdentity?.metadata.urlOrigin),
-    )
+    dispatch(rejectUserRequest({ type: EventName.JOIN_GROUP, payload: { groupId } }, connection?.urlOrigin))
       .then(() => dispatch(closePopup()))
       .then(() => {
         navigate(Paths.HOME);
       });
-  }, [groupId, connectedIdentity?.metadata.urlOrigin, dispatch, navigate]);
+  }, [groupId, connection?.urlOrigin, dispatch, navigate]);
 
   const onGoToHost = useCallback(() => {
-    redirectToNewTab(connectedIdentity!.metadata.urlOrigin!);
-  }, [connectedIdentity?.metadata.urlOrigin]);
+    redirectToNewTab(connection!.urlOrigin);
+  }, [connection?.urlOrigin]);
 
   const onGoToGroup = useCallback(() => {
     redirectToNewTab(getBandadaGroupUrl(groupId!));
@@ -95,7 +103,7 @@ export const useJoinGroup = (): IUseJoinGroupData => {
 
   const onJoin = useCallback(() => {
     setSubmitting(true);
-    dispatch(joinGroup({ groupId: groupId!, apiKey, inviteCode }))
+    dispatch(joinGroup({ groupId: groupId!, apiKey, inviteCode }, connection!.urlOrigin))
       .then(() => dispatch(closePopup()))
       .then(() => {
         navigate(Paths.HOME);
@@ -106,7 +114,7 @@ export const useJoinGroup = (): IUseJoinGroupData => {
       .finally(() => {
         setSubmitting(false);
       });
-  }, [groupId, apiKey, inviteCode, dispatch, navigate, setError, setSubmitting]);
+  }, [groupId, apiKey, inviteCode, connection?.urlOrigin, dispatch, navigate, setError, setSubmitting]);
 
   return {
     isLoading,
@@ -114,7 +122,7 @@ export const useJoinGroup = (): IUseJoinGroupData => {
     isJoined,
     error,
     faviconUrl,
-    connectedIdentity,
+    connection,
     groupId,
     apiKey,
     inviteCode,

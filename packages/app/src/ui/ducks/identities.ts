@@ -10,8 +10,6 @@ import type {
   ICreateIdentityUiArgs,
   IIdentityData,
   ICreateIdentityRequestArgs,
-  ConnectedIdentityMetadata,
-  IConnectIdentityArgs,
   IImportIdentityArgs,
 } from "@cryptkeeperzk/types";
 import type { TypedThunk } from "@src/ui/store/configureAppStore";
@@ -22,8 +20,6 @@ export interface IIdentitiesState {
   identities: IIdentityData[];
   operations: Operation[];
   requestPending: boolean;
-  connectedCommitment: string;
-  connectedMetadata?: ConnectedIdentityMetadata;
   settings?: HistorySettings;
 }
 
@@ -32,22 +28,12 @@ const initialState: IIdentitiesState = {
   operations: [],
   settings: undefined,
   requestPending: false,
-  connectedCommitment: "",
-  connectedMetadata: undefined,
 };
 
 const identitiesSlice = createSlice({
   name: "identities",
   initialState,
   reducers: {
-    setConnectedIdentity: (state: IIdentitiesState, action: PayloadAction<ConnectedIdentityMetadata | undefined>) => {
-      state.connectedMetadata = action.payload;
-    },
-
-    setConnectedCommitment: (state: IIdentitiesState, action: PayloadAction<string>) => {
-      state.connectedCommitment = action.payload;
-    },
-
     setIdentityRequestPending: (state: IIdentitiesState, action: PayloadAction<boolean>) => {
       state.requestPending = action.payload;
     },
@@ -66,8 +52,7 @@ const identitiesSlice = createSlice({
   },
 });
 
-export const { setConnectedIdentity, setIdentities, setIdentityRequestPending, setOperations, setSettings } =
-  identitiesSlice.actions;
+export const { setIdentities, setIdentityRequestPending, setOperations, setSettings } = identitiesSlice.actions;
 
 export const createIdentityRequest =
   ({ urlOrigin }: ICreateIdentityRequestArgs) =>
@@ -92,17 +77,6 @@ export const createIdentity =
         groups,
         urlOrigin,
         options,
-      },
-    });
-
-export const connectIdentity =
-  ({ identityCommitment, urlOrigin }: IConnectIdentityArgs) =>
-  async (): Promise<boolean> =>
-    postMessage({
-      method: RPCInternalAction.CONNECT_IDENTITY,
-      payload: {
-        identityCommitment,
-        urlOrigin,
       },
     });
 
@@ -135,17 +109,9 @@ export const deleteAllIdentities = () => async (): Promise<boolean> =>
   });
 
 export const fetchIdentities = (): TypedThunk<Promise<void>> => async (dispatch) => {
-  const [identities, metadata, commitment] = await Promise.all([
-    postMessage<IIdentityData[]>({ method: RPCInternalAction.GET_IDENTITIES }),
-    postMessage<ConnectedIdentityMetadata | undefined>({
-      method: RPCInternalAction.GET_CONNECTED_IDENTITY_DATA,
-    }),
-    postMessage<string>({ method: RPCInternalAction.GET_CONNECTED_IDENTITY_COMMITMENT }),
-  ]);
+  const [identities] = await Promise.all([postMessage<IIdentityData[]>({ method: RPCInternalAction.GET_IDENTITIES })]);
 
   dispatch(setIdentities(identities));
-  dispatch(setConnectedIdentity(metadata));
-  dispatch(identitiesSlice.actions.setConnectedCommitment(commitment));
 };
 
 export const fetchHistory = (): TypedThunk<Promise<void>> => async (dispatch) => {
@@ -178,31 +144,12 @@ export const enableHistory =
     dispatch(setSettings({ isEnabled }));
   };
 
-export const revealConnectedIdentityCommitment = (): TypedThunk<Promise<void>> => async () => {
-  await postMessage({ method: RPCInternalAction.REVEAL_CONNECTED_IDENTITY_COMMITMENT });
-};
-
 export const useIdentities = (): IIdentityData[] => useAppSelector((state) => state.identities.identities, deepEqual);
 
 export const useIdentity = (commitment?: string): IIdentityData | undefined =>
   useAppSelector((state) =>
     commitment ? state.identities.identities.find((identity) => identity.commitment === commitment) : undefined,
   );
-
-export const useLinkedIdentities = (urlOrigin: string): IIdentityData[] =>
-  useAppSelector(
-    (state) => state.identities.identities.filter((identity) => identity.metadata.urlOrigin === urlOrigin),
-    deepEqual,
-  );
-
-export const useUnlinkedIdentities = (): IIdentityData[] =>
-  useAppSelector((state) => state.identities.identities.filter((identity) => !identity.metadata.urlOrigin), deepEqual);
-
-export const useConnectedIdentity = (): IIdentityData | undefined =>
-  useAppSelector((state) => {
-    const { identities, connectedCommitment } = state.identities;
-    return identities.find(({ commitment }) => commitment === connectedCommitment);
-  }, deepEqual);
 
 export const useIdentityRequestPending = (): boolean =>
   useAppSelector((state) => state.identities.requestPending, deepEqual);

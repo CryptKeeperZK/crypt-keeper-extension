@@ -30,7 +30,6 @@ describe("ui/pages/ConnectIdentity", () => {
           account: ZERO_ADDRESS,
           name: "Account #1",
           groups: [],
-          urlOrigin: "http://localhost:3000",
           isDeterministic: true,
           isImported: false,
         },
@@ -46,6 +45,9 @@ describe("ui/pages/ConnectIdentity", () => {
         },
       },
     ],
+    connectedOrigins: {
+      1234: "http://localhost:3000",
+    },
     onSelectIdentity: jest.fn(),
     onTabChange: jest.fn(),
     onReject: jest.fn(),

@@ -1,13 +1,15 @@
 import {
   PendingRequestType,
-  type IConnectionApprovalData,
+  type IConnectionData,
   type IZkMetadata,
   type ConnectedIdentityMetadata,
 } from "@cryptkeeperzk/types";
+import pick from "lodash/pick";
 
 import BrowserUtils from "@src/background/controllers/browserUtils";
 import RequestManager from "@src/background/controllers/requestManager";
 import ApprovalService from "@src/background/services/approval";
+import ConnectionService from "@src/background/services/connection";
 import LockerService from "@src/background/services/lock";
 import ZkIdentityService from "@src/background/services/zkIdentity";
 
@@ -20,6 +22,8 @@ export class InjectorHandler {
 
   private readonly requestManager: RequestManager;
 
+  private readonly connectionService: ConnectionService;
+
   private readonly zkIdentityService: ZkIdentityService;
 
   constructor() {
@@ -27,21 +31,18 @@ export class InjectorHandler {
     this.browserService = BrowserUtils.getInstance();
     this.lockerService = LockerService.getInstance();
     this.requestManager = RequestManager.getInstance();
+    this.connectionService = ConnectionService.getInstance();
     this.zkIdentityService = ZkIdentityService.getInstance();
   }
 
   getApprovalService = (): ApprovalService => this.approvalService;
 
-  getZkIdentityService = (): ZkIdentityService => this.zkIdentityService;
+  getConnectionService = (): ConnectionService => this.connectionService;
 
-  getConnectedIdentityMetadata = async (_: unknown, meta?: IZkMetadata): Promise<ConnectedIdentityMetadata> => {
-    const connectedIdentityMetadata = await this.zkIdentityService.getConnectedIdentityData({}, meta);
+  getConnectedIdentityMetadata = (_: unknown, meta: IZkMetadata): ConnectedIdentityMetadata | undefined => {
+    const connectedIdentity = this.connectionService.getConnectedIdentity(meta.urlOrigin!);
 
-    if (!connectedIdentityMetadata) {
-      throw new Error(`CryptKeeper: identity metadata is not found`);
-    }
-
-    return connectedIdentityMetadata;
+    return pick(connectedIdentity?.metadata, ["name"]) as ConnectedIdentityMetadata | undefined;
   };
 
   newRequest = async (type: PendingRequestType, payload: unknown): Promise<unknown> => {
@@ -51,21 +52,22 @@ export class InjectorHandler {
     return response;
   };
 
-  checkApproval = async ({ urlOrigin }: IZkMetadata): Promise<IConnectionApprovalData> => {
+  checkApproval = async ({ urlOrigin }: IZkMetadata): Promise<IConnectionData> => {
     await this.checkUnlockStatus();
-    const { isApproved, canSkipApprove } = this.getConnectionApprovalData({ urlOrigin });
-    return { isApproved, canSkipApprove };
+
+    return this.getConnectionData({ urlOrigin });
   };
 
-  getConnectionApprovalData = ({ urlOrigin }: IZkMetadata): IConnectionApprovalData => {
+  getConnectionData = ({ urlOrigin }: IZkMetadata): IConnectionData => {
     if (!urlOrigin) {
       throw new Error("CryptKeeper: Origin is not set");
     }
 
     const isApproved = this.approvalService.isApproved(urlOrigin);
     const canSkipApprove = this.approvalService.canSkipApprove(urlOrigin);
+    const identity = this.connectionService.getConnectedIdentity(urlOrigin);
 
-    return { isApproved, canSkipApprove };
+    return { isApproved, isConnected: Boolean(identity), canSkipApprove };
   };
 
   private checkUnlockStatus = async () => {
@@ -78,6 +80,7 @@ export class InjectorHandler {
       if (isInitialized) {
         await this.approvalService.awaitUnlock();
         await this.zkIdentityService.awaitUnlock();
+        await this.connectionService.awaitUnlock();
         await this.browserService.closePopup();
       }
     }

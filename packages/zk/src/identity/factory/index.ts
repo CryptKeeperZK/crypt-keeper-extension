@@ -4,18 +4,7 @@ import { ICreateIdentityArgs } from "@cryptkeeperzk/types";
 import { ZkIdentitySemaphore } from "../protocols";
 
 export function createNewIdentity(config: ICreateIdentityArgs): ZkIdentitySemaphore {
-  const {
-    name,
-    messageSignature,
-    account,
-    groups,
-    urlOrigin,
-    isDeterministic,
-    isImported,
-    nonce,
-    trapdoor,
-    nullifier,
-  } = config;
+  const { name, messageSignature, account, groups, isDeterministic, isImported, nonce, trapdoor, nullifier } = config;
   const serialized = trapdoor && nullifier ? JSON.stringify([trapdoor, nullifier]) : undefined;
 
   const identity = new Identity(serialized || messageSignature);
@@ -25,7 +14,6 @@ export function createNewIdentity(config: ICreateIdentityArgs): ZkIdentitySemaph
     name,
     groups,
     nonce,
-    urlOrigin,
     isDeterministic,
     isImported,
   });

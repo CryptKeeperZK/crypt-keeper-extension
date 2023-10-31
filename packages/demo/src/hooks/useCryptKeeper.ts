@@ -24,6 +24,7 @@ import type {
   ConnectedIdentityMetadata,
   IVerifiablePresentation,
   IMerkleProof,
+  IIdentityConnection,
 } from "@cryptkeeperzk/types";
 
 interface IUseCryptKeeperData {
@@ -50,21 +51,14 @@ export const useCryptKeeper = (): IUseCryptKeeperData => {
   const [isLocked, setIsLocked] = useState(true);
   const [proof, setProof] = useState<ISemaphoreFullProof | IRLNFullProof | IMerkleProof>();
   const [connectedCommitment, setConnectedIdentityCommitment] = useState<string>();
-  const [connectedIdentityMetadata, setConnectedIdentityMetadata] = useState<ConnectedIdentityMetadata>();
+  const [connectedIdentityMetadata, setConnectedIdentityMetadata] = useState<IIdentityConnection>();
   const mockIdentityCommitments: string[] = genMockIdentityCommitments();
 
   const connect = useCallback(
     async (isChangeIdentity = false) => {
-      await client
-        ?.connect(isChangeIdentity)
-        .then(() => {
-          if (!connectedIdentityMetadata) {
-            toast(`CryptKeeper connected successfully!`, { type: "success" });
-          }
-        })
-        .catch((error: Error) => {
-          toast(error.message, { type: "error" });
-        });
+      await client?.connect(isChangeIdentity).catch((error: Error) => {
+        toast(error.message, { type: "error" });
+      });
     },
     [client],
   );
@@ -187,7 +181,7 @@ export const useCryptKeeper = (): IUseCryptKeeperData => {
       })
       .then((connectedIdentity) => {
         if (connectedIdentity) {
-          setConnectedIdentityMetadata(connectedIdentity as ConnectedIdentityMetadata);
+          setConnectedIdentityMetadata(connectedIdentity as IIdentityConnection);
           setIsLocked(false);
           toast(`Getting Identity Metadata Successfully!`, { type: "success" });
         }
@@ -232,18 +226,6 @@ export const useCryptKeeper = (): IUseCryptKeeperData => {
       },
     });
   }, [client]);
-
-  const onIdentityChanged = useCallback(
-    (payload: unknown) => {
-      const metadata = payload as ConnectedIdentityMetadata;
-      setConnectedIdentityMetadata(metadata);
-
-      toast(`Identity has changed! ${metadata.name}`, {
-        type: "success",
-      });
-    },
-    [setConnectedIdentityMetadata],
-  );
 
   const onLogout = useCallback(() => {
     setConnectedIdentityMetadata(undefined);
@@ -316,6 +298,19 @@ export const useCryptKeeper = (): IUseCryptKeeperData => {
     [setIsLocked, setConnectedIdentityMetadata, getConnectedIdentityMetadata],
   );
 
+  const onConnect = useCallback(
+    (payload: unknown) => {
+      setConnectedIdentityMetadata(payload as IIdentityConnection);
+      setIsLocked(false);
+    },
+    [setConnectedIdentityMetadata, setIsLocked],
+  );
+
+  const onDisconnect = useCallback(() => {
+    setConnectedIdentityMetadata(undefined);
+    setIsLocked(true);
+  }, [setIsLocked, setConnectedIdentityMetadata]);
+
   // Initialize Injected CryptKeeper Provider Client
   useEffect(() => {
     const cryptkeeperInjectedProvider = initializeCryptKeeper();
@@ -334,7 +329,6 @@ export const useCryptKeeper = (): IUseCryptKeeperData => {
     }
 
     client.on(EventName.LOGIN, onLogin);
-    client.on(EventName.IDENTITY_CHANGED, onIdentityChanged);
     client.on(EventName.LOGOUT, onLogout);
     client.on(EventName.APPROVAL, onApproval);
     client.on(EventName.ADD_VERIFIABLE_CREDENTIAL, onAddVerifiableCredential);
@@ -345,6 +339,8 @@ export const useCryptKeeper = (): IUseCryptKeeperData => {
     client.on(EventName.GROUP_MERKLE_PROOF, onGroupMerkleProof);
     client.on(EventName.IMPORT_IDENTITY, onImportIdentity);
     client.on(EventName.CREATE_IDENTITY, onCreateIdentity);
+    client.on(EventName.CONNECT, onConnect);
+    client.on(EventName.DISCONNECT, onDisconnect);
 
     getConnectedIdentityMetadata();
 
@@ -353,8 +349,8 @@ export const useCryptKeeper = (): IUseCryptKeeperData => {
     };
   }, [
     client,
+    getConnectedIdentityMetadata,
     onLogout,
-    onIdentityChanged,
     onAddVerifiableCredential,
     onReject,
     onRevealCommitment,
@@ -363,6 +359,8 @@ export const useCryptKeeper = (): IUseCryptKeeperData => {
     onImportIdentity,
     onCreateIdentity,
     onApproval,
+    onConnect,
+    onDisconnect,
   ]);
 
   return {

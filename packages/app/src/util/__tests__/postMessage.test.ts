@@ -26,6 +26,16 @@ describe("util/postMessage", () => {
     expect(result).toBeDefined();
   });
 
+  test("should post message without meta properly", async () => {
+    const result = await postMessage({
+      method: RPCInternalAction.DUMMY_REQUEST,
+      payload: {},
+      error: false,
+    });
+
+    expect(result).toBeDefined();
+  });
+
   test("should throw error if there is an error in response", async () => {
     (browser.runtime.sendMessage as jest.Mock).mockResolvedValue([new Error("error"), null]);
 

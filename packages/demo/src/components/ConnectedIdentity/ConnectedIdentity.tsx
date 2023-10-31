@@ -5,16 +5,11 @@ import Typography from "@mui/material/Typography";
 import { useGlobalStyles } from "@src/styles";
 
 interface IConnectedIdentityProps {
-  identityCommitment?: string;
-  identityName?: string;
-  identityHost?: string;
+  commitment?: string;
+  name?: string;
 }
 
-export const ConnectedIdentity = ({
-  identityCommitment = "",
-  identityName = "",
-  identityHost = "",
-}: IConnectedIdentityProps): JSX.Element => {
+export const ConnectedIdentity = ({ commitment = "", name = "" }: IConnectedIdentityProps): JSX.Element => {
   const classes = useGlobalStyles();
 
   return (
@@ -45,23 +40,15 @@ export const ConnectedIdentity = ({
           <Typography className="identity-name" color="text.primary" data-testid="connected-name">
             <strong>Name: </strong>
 
-            {identityName}
+            {name}
           </Typography>
         </Box>
 
-        {identityHost && (
-          <Typography className="identity-name" color="text.primary" data-testid="connected-urlOrigin">
-            <strong>Host: </strong>
-
-            {identityHost}
-          </Typography>
-        )}
-
-        {identityCommitment ? (
+        {commitment ? (
           <Typography className="identity-name" color="text.primary" data-testid="commitment">
             <strong>Commitment: </strong>
 
-            {identityCommitment}
+            {commitment}
           </Typography>
         ) : (
           <Typography className="identity-name" color="text.primary" data-testid="commitment">

@@ -7,6 +7,7 @@ import { Suspense } from "react";
 import { useNavigate } from "react-router-dom";
 
 import { defaultWalletHookData } from "@src/config/mock/wallet";
+import { mockDefaultConnection } from "@src/config/mock/zk";
 import { useCryptKeeperWallet, useEthWallet } from "@src/ui/hooks/wallet";
 
 import Home from "..";
@@ -36,6 +37,7 @@ describe("ui/pages/Home", () => {
   const defaultHookData: IUseHomeData = {
     identities: [],
     address: defaultWalletHookData.address,
+    connectedOrigins: { [mockDefaultConnection.commitment]: mockDefaultConnection.urlOrigin },
     refreshConnectionStatus: jest.fn().mockResolvedValue(true),
   };
 

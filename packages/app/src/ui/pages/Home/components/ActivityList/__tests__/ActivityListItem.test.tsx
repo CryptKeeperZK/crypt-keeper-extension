@@ -4,7 +4,7 @@
 
 import { act, fireEvent, render, screen } from "@testing-library/react";
 
-import { mockDefaultGroup, mockDefaultIdentity } from "@src/config/mock/zk";
+import { mockDefaultConnection, mockDefaultGroup, mockDefaultIdentity } from "@src/config/mock/zk";
 import { OperationType } from "@src/types";
 import { redirectToNewTab } from "@src/util/browser";
 import { getBandadaGroupUrl } from "@src/util/groups";
@@ -24,6 +24,7 @@ describe("ui/pages/Home/components/ActivityList/Item", () => {
       group: mockDefaultGroup,
       createdAt: new Date().toISOString(),
     },
+    urlOrigin: mockDefaultConnection.urlOrigin,
     onDelete: jest.fn(),
   };
 
@@ -55,18 +56,18 @@ describe("ui/pages/Home/components/ActivityList/Item", () => {
     expect(defaultProps.onDelete).toBeCalledWith("1");
   });
 
-  test("should go to connected urlOrigin properly", async () => {
+  test("should go to connected url origin properly", async () => {
     render(<ActivityItem {...defaultProps} />);
 
-    const urlOrigin = await screen.findByTestId("urlOrigin");
+    const urlOrigin = await screen.findByTestId("url-origin");
     await act(() => fireEvent.click(urlOrigin));
 
     expect(redirectToNewTab).toBeCalledTimes(1);
-    expect(redirectToNewTab).toBeCalledWith(defaultProps.operation.identity?.metadata.urlOrigin);
+    expect(redirectToNewTab).toBeCalledWith(defaultProps.urlOrigin);
   });
 
   test("should go to group properly", async () => {
-    render(<ActivityItem {...defaultProps} />);
+    render(<ActivityItem {...defaultProps} urlOrigin={undefined} />);
 
     const group = await screen.findByTestId("group");
     await act(() => fireEvent.click(group));

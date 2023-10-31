@@ -4,17 +4,19 @@ import { useNavigate } from "react-router-dom";
 
 import { Paths } from "@src/constants";
 import { closePopup } from "@src/ui/ducks/app";
+import { fetchConnections, revealConnectedIdentityCommitment, useConnection } from "@src/ui/ducks/connections";
 import { useAppDispatch } from "@src/ui/ducks/hooks";
-import { fetchIdentities, revealConnectedIdentityCommitment, useConnectedIdentity } from "@src/ui/ducks/identities";
+import { fetchIdentities } from "@src/ui/ducks/identities";
 import { rejectUserRequest } from "@src/ui/ducks/requests";
+import { useSearchParam } from "@src/ui/hooks/url";
 import { redirectToNewTab } from "@src/util/browser";
 
-import type { IIdentityData } from "@cryptkeeperzk/types";
+import type { IIdentityConnection } from "@cryptkeeperzk/types";
 
 export interface IUseRevealIdentityCommitmentData {
   isLoading: boolean;
   error: string;
-  connectedIdentity?: IIdentityData;
+  connection?: IIdentityConnection;
   onGoBack: () => void;
   onGoToHost: () => void;
   onReveal: () => void;
@@ -26,11 +28,12 @@ export const useRevealIdentityCommitment = (): IUseRevealIdentityCommitmentData 
 
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
-  const connectedIdentity = useConnectedIdentity();
+  const urlOrigin = useSearchParam("urlOrigin");
+  const connection = useConnection(urlOrigin);
 
   useEffect(() => {
     setLoading(true);
-    dispatch(fetchIdentities())
+    Promise.all([dispatch(fetchIdentities()), dispatch(fetchConnections())])
       .catch((err: Error) => {
         setError(err.message);
       })
@@ -40,19 +43,19 @@ export const useRevealIdentityCommitment = (): IUseRevealIdentityCommitmentData 
   }, [dispatch, setLoading, setError]);
 
   const onGoBack = useCallback(() => {
-    dispatch(rejectUserRequest({ type: EventName.REVEAL_COMMITMENT }, connectedIdentity?.metadata.urlOrigin))
+    dispatch(rejectUserRequest({ type: EventName.REVEAL_COMMITMENT }, connection?.urlOrigin))
       .then(() => dispatch(closePopup()))
       .then(() => {
         navigate(Paths.HOME);
       });
-  }, [connectedIdentity?.metadata.urlOrigin, dispatch, navigate]);
+  }, [connection?.urlOrigin, dispatch, navigate]);
 
   const onGoToHost = useCallback(() => {
-    redirectToNewTab(connectedIdentity!.metadata.urlOrigin!);
-  }, [connectedIdentity?.metadata.urlOrigin]);
+    redirectToNewTab(connection!.urlOrigin);
+  }, [connection?.urlOrigin]);
 
   const onReveal = useCallback(() => {
-    dispatch(revealConnectedIdentityCommitment())
+    dispatch(revealConnectedIdentityCommitment(connection!.urlOrigin))
       .then(() => dispatch(closePopup()))
       .then(() => {
         navigate(Paths.HOME);
@@ -60,12 +63,12 @@ export const useRevealIdentityCommitment = (): IUseRevealIdentityCommitmentData 
       .catch((err: Error) => {
         setError(err.message);
       });
-  }, [dispatch, navigate, setError]);
+  }, [connection?.urlOrigin, dispatch, navigate, setError]);
 
   return {
     isLoading,
     error,
-    connectedIdentity,
+    connection,
     onGoBack,
     onGoToHost,
     onReveal,

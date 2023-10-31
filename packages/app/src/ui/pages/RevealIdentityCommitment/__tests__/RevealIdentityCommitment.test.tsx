@@ -5,7 +5,7 @@
 import { render, waitFor } from "@testing-library/react";
 import { Suspense } from "react";
 
-import { mockDefaultIdentity } from "@src/config/mock/zk";
+import { mockDefaultConnection } from "@src/config/mock/zk";
 
 import RevealIdentityCommitment from "..";
 import { IUseRevealIdentityCommitmentData, useRevealIdentityCommitment } from "../useRevealIdentityCommitment";
@@ -18,7 +18,7 @@ describe("ui/pages/RevealIdentityCommitment", () => {
   const defaultHookData: IUseRevealIdentityCommitmentData = {
     isLoading: false,
     error: "",
-    connectedIdentity: mockDefaultIdentity,
+    connection: mockDefaultConnection,
     onGoBack: jest.fn(),
     onGoToHost: jest.fn(),
     onReveal: jest.fn(),
@@ -79,7 +79,7 @@ describe("ui/pages/RevealIdentityCommitment", () => {
   });
 
   test("should render empty state properly", async () => {
-    (useRevealIdentityCommitment as jest.Mock).mockReturnValue({ ...defaultHookData, connectedIdentity: undefined });
+    (useRevealIdentityCommitment as jest.Mock).mockReturnValue({ ...defaultHookData, connection: undefined });
 
     const { container, findByText } = render(
       <Suspense>
