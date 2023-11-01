@@ -88,7 +88,7 @@ export default class ApprovalService extends BaseService implements IBackupable 
 
   setPermission = async ({ urlOrigin, canSkipApprove }: IHostPermission): Promise<IHostPermission> => {
     this.allowedHosts.set(urlOrigin, { urlOrigin, canSkipApprove });
-    await this.saveApprovals();
+    await this.save();
 
     return { urlOrigin, canSkipApprove };
   };
@@ -99,7 +99,7 @@ export default class ApprovalService extends BaseService implements IBackupable 
     }
 
     this.allowedHosts.set(urlOrigin, { urlOrigin, canSkipApprove });
-    await this.saveApprovals();
+    await this.save();
 
     await this.browserController
       .pushEvent({ type: EventName.APPROVAL, payload: { isApproved: true, urlOrigin } }, { urlOrigin })
@@ -112,7 +112,7 @@ export default class ApprovalService extends BaseService implements IBackupable 
     }
 
     this.allowedHosts.delete(urlOrigin);
-    await this.saveApprovals();
+    await this.save();
 
     await this.browserController
       .pushEvent({ type: EventName.APPROVAL, payload: { isApproved: false, urlOrigin } }, { urlOrigin })
@@ -129,7 +129,7 @@ export default class ApprovalService extends BaseService implements IBackupable 
     await this.approvals.clear();
   };
 
-  private async saveApprovals(): Promise<void> {
+  private async save(): Promise<void> {
     const serializedApprovals = JSON.stringify(Array.from(this.allowedHosts.entries()));
     const newApprovals = this.cryptoService.encrypt(serializedApprovals, { mode: ECryptMode.MNEMONIC });
     await this.approvals.set(newApprovals);
@@ -178,6 +178,6 @@ export default class ApprovalService extends BaseService implements IBackupable 
     const backupAllowedHosts = new Map(JSON.parse(backup) as Iterable<[string, IHostPermission]>);
     this.allowedHosts = new Map([...this.allowedHosts, ...backupAllowedHosts]);
 
-    await this.saveApprovals();
+    await this.save();
   };
 }

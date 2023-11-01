@@ -94,7 +94,7 @@ describe("offscreen/offscreenController", () => {
 
     const result = await offscreenController.generateRlnProof(defaultRlnProofArgs);
 
-    expect(result).toBe(JSON.stringify(mockEmptyFullProof));
+    expect(result).toStrictEqual(mockEmptyFullProof);
   });
 
   test("should throw error while generating rnl proof if there is no serialized identity", async () => {

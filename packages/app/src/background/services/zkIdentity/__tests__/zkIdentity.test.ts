@@ -396,7 +396,7 @@ describe("background/services/zkIdentity", () => {
       expect(data).toStrictEqual(pick(mockDefaultIdentity.metadata, ["name", "urlOrigin"]));
     });
 
-    test("should no get connected identity data if urlOrigin is not the same properly", async () => {
+    test("should no get connected identity data if origin is not the same properly", async () => {
       const [identityStorage, connectedIdentityStorage] = (SimpleStorage as jest.Mock).mock.instances as [
         MockStorage,
         MockStorage,

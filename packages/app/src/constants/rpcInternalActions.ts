@@ -69,7 +69,6 @@ export enum RPCInternalAction {
   RLN_PROOF_RESULT = "rpc/proofs/rln-proof-result",
   PUSH_EVENT = "rpc/browser/tabs/pushEvent",
   JOIN_GROUP_REQUEST = "rpc/group/joinRequest",
-  GENERATE_GROUP_MERKLE_PROOF_REQUEST = "rpc/groups/generateGroupMerkleProofRequest",
   // DEV RPCS
   CLEAR_APPROVED_HOSTS = "rpc/hosts/clear",
   CLEAR_STORAGE = "rpc/browser/clear",

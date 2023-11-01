@@ -15,6 +15,7 @@ export default class Groups extends BasePage {
   async joinGroup(): Promise<void> {
     const cryptKeeper = await this.joinGroupRequest();
     await cryptKeeper.getByText("Accept", { exact: true }).click({ delay: 1000 });
+    await cryptKeeper.close();
   }
 
   async generateGroupMerkleProofRequest(): Promise<Page> {
