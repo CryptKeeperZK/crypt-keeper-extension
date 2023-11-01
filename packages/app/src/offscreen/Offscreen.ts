@@ -57,7 +57,7 @@ export class OffscreenController {
     }
 
     const identity = ZkIdentitySemaphore.genFromSerialized(identitySerialized);
-    const fullProof = await this.zkProofService.generateSemaphoreProof(identity, {
+    const proof = await this.zkProofService.generateSemaphoreProof(identity, {
       externalNullifier,
       signal,
       merkleProofArtifacts,
@@ -67,7 +67,7 @@ export class OffscreenController {
       zkeyFilePath,
     });
 
-    return fullProof;
+    return proof;
   };
 
   generateRlnProof = async ({
@@ -88,7 +88,7 @@ export class OffscreenController {
     }
 
     const identity = ZkIdentitySemaphore.genFromSerialized(identitySerialized);
-    const rlnFullProof = await this.zkProofService.generateRLNProof(identity, {
+    const proof = await this.zkProofService.generateRLNProof(identity, {
       rlnIdentifier,
       message,
       messageId,
@@ -101,6 +101,6 @@ export class OffscreenController {
       merkleProofProvided,
     });
 
-    return rlnFullProof;
+    return proof;
   };
 }
