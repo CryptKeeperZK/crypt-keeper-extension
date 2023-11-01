@@ -1,9 +1,8 @@
-/* eslint-disable */
 import { initializeCryptKeeper, RPCExternalAction } from "@cryptkeeperzk/providers";
 
 import { MerkleProofType } from "@src/types";
 
-import type { IMerkleProofArtifacts, IRLNFullProof } from "@cryptkeeperzk/types";
+import type { IMerkleProofArtifacts } from "@cryptkeeperzk/types";
 
 const client = initializeCryptKeeper();
 
@@ -24,7 +23,6 @@ const genRLNProof = async ({
   messageId = 0, // Example
   epoch = Date.now().toString(), // Example
 }: IGenerateRLNProofParams): Promise<void> => {
-  let generatedProof: IRLNFullProof;
   let merkleProofSource: string | IMerkleProofArtifacts = `<HTTP/S_LINK>`;
 
   if (proofType === MerkleProofType.ARTIFACTS) {
@@ -41,7 +39,7 @@ const genRLNProof = async ({
     };
   }
 
-  await client
+  const generatedProof = await client
     ?.request({
       method: RPCExternalAction.GENERATE_RLN_PROOF,
       payload: {
@@ -52,14 +50,6 @@ const genRLNProof = async ({
         epoch,
         merkleProofSource,
       },
-    })
-
-    .then((proof) => {
-      // SOME CODE
-    })
-
-    .catch((error) => {
-      // THROW ERROR
     });
 };
 

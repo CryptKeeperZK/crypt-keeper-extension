@@ -4,7 +4,7 @@ import Typography from "@mui/material/Typography";
 import { useCodeExample } from "@src/hooks/useCodeExample";
 import { useGlobalStyles } from "@src/styles";
 
-import { ActionBox } from "../ActionBox/ActionBox";
+import ActionBox from "../ActionBox";
 
 interface IGetCommitmentProps {
   revealConnectedIdentityCommitment: () => Promise<void>;
@@ -21,9 +21,8 @@ export const GetCommitment = ({ revealConnectedIdentityCommitment }: IGetCommitm
     >
       <Typography variant="h6">Reveal connected identity Commitment</Typography>
 
-      <ActionBox<undefined, void>
+      <ActionBox
         code={code}
-        option={undefined}
         testId="reveal-connected-identity-commitment"
         title="Reveal"
         onClick={revealConnectedIdentityCommitment}

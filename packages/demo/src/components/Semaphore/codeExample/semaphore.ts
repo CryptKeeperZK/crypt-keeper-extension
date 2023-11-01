@@ -1,10 +1,9 @@
-/* eslint-disable */
 import { RPCExternalAction, initializeCryptKeeper } from "@cryptkeeperzk/providers";
 import { encodeBytes32String } from "ethers";
 
 import { MerkleProofType } from "@src/types";
 
-import type { IMerkleProofArtifacts, ISemaphoreFullProof } from "@cryptkeeperzk/types";
+import type { IMerkleProofArtifacts } from "@cryptkeeperzk/types";
 
 const client = initializeCryptKeeper();
 
@@ -19,7 +18,6 @@ const genSemaphoreProof = async ({
   externalNullifier = encodeBytes32String("voting-1"), // Example,
   signal = encodeBytes32String("hello-world"), // Example
 }: IGenerateSemaphoreProofParams): Promise<void> => {
-  let generatedProof: ISemaphoreFullProof;
   let merkleProofSource: string | IMerkleProofArtifacts = `<HTTP/S_LINK>`;
 
   if (proofType === MerkleProofType.ARTIFACTS) {
@@ -29,28 +27,22 @@ const genSemaphoreProof = async ({
       "6096293672069786665857538772479257078181838217364432218857495446476026762057",
     ]; // Example
 
-    merkleProofSource = merkleProofSource = {
+    merkleProofSource = {
       leaves: exampleGroupIdentityCommitments,
       depth: 20,
       leavesPerNode: 2,
     };
   }
 
-  await client
-    ?.request({
-      method: RPCExternalAction.GENERATE_SEMAPHORE_PROOF,
-      payload: {
-        externalNullifier,
-        signal,
-        merkleProofSource,
-      },
-    })
-    .then((proof) => {
-      // SOME CODE
-    })
-    .catch((error) => {
-      // THROW ERROR
-    });
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const generatedProof = await client?.request({
+    method: RPCExternalAction.GENERATE_SEMAPHORE_PROOF,
+    payload: {
+      externalNullifier,
+      signal,
+      merkleProofSource,
+    },
+  });
 };
 
 export { genSemaphoreProof };

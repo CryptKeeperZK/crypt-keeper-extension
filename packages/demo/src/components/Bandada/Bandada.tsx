@@ -24,14 +24,13 @@ export const Bandada = ({ joinGroup, generateGroupMerkleProof }: IBandadaProps):
     >
       <Typography variant="h6">Integration with Bandada service</Typography>
 
-      <ActionBox<null, void>
+      <ActionBox
         code={generateGroupMerkleProofCode}
-        option={null}
         title="Generate Group Merkle Proof"
         onClick={generateGroupMerkleProof}
       />
 
-      <ActionBox<null, void> code={joinGroupCode} option={null} title="Join test group" onClick={joinGroup} />
+      <ActionBox code={joinGroupCode} title="Join test group" onClick={joinGroup} />
     </Box>
   );
 };

@@ -4,7 +4,7 @@ import Typography from "@mui/material/Typography";
 import { useCodeExample } from "@src/hooks/useCodeExample";
 import { useGlobalStyles } from "@src/styles";
 
-import { ActionBox } from "../ActionBox/ActionBox";
+import ActionBox from "../ActionBox";
 
 interface IVerifiableCredentialsProps {
   addVerifiableCredentialRequest: (credentialType: string) => Promise<void>;
@@ -43,7 +43,7 @@ export const VerifiableCredentials = ({
         onClick={addVerifiableCredentialRequest}
       />
 
-      <ActionBox<undefined, void>
+      <ActionBox
         code={generateVP}
         option={undefined}
         testId="add-verifiable-credential"

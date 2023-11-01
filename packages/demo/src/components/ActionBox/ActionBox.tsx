@@ -9,15 +9,21 @@ import { useGlobalStyles } from "@src/styles";
 type actionFnRequiredOption<T = unknown, U = unknown> = (option: T) => U;
 type actionFnOptionalOption<T = unknown, U = unknown> = (option?: T) => U;
 
-interface IActionBox<T = unknown, U = unknown> {
+interface IActionBox<T = unknown, U = void> {
   title: string;
-  option: T;
   code: string;
+  option?: T;
   testId?: string;
   onClick: actionFnOptionalOption<T, U> | actionFnRequiredOption<T, U>;
 }
 
-export const ActionBox = <T, U>({ title, option, code, testId = "", onClick }: IActionBox<T, U>): JSX.Element => {
+export const ActionBox = <T, U>({
+  title,
+  option = undefined,
+  code,
+  testId = "",
+  onClick,
+}: IActionBox<T, U>): JSX.Element => {
   const theme = useTheme();
   const classes = useGlobalStyles(theme);
 
@@ -29,7 +35,7 @@ export const ActionBox = <T, U>({ title, option, code, testId = "", onClick }: I
           sx={{ textTransform: "none", mb: 1 }}
           type="submit"
           variant="contained"
-          onClick={() => onClick(option)}
+          onClick={() => onClick(option as T)}
         >
           {title}
         </Button>

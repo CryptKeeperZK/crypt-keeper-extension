@@ -4,7 +4,7 @@ import Typography from "@mui/material/Typography";
 import { useCodeExample } from "@src/hooks/useCodeExample";
 import { useGlobalStyles } from "@src/styles";
 
-import { ActionBox } from "../ActionBox/ActionBox";
+import ActionBox from "../ActionBox";
 
 interface IConnectProps {
   title: string;

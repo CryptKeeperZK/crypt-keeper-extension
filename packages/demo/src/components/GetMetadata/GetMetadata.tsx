@@ -20,12 +20,7 @@ export const GetMetadata = ({ getConnectedIdentityMetadata }: IGetMetadataProps)
     >
       <Typography variant="h6">Get Connected Identity Metadata</Typography>
 
-      <ActionBox<undefined, void>
-        code={code}
-        option={undefined}
-        title="Get Connected Identity"
-        onClick={getConnectedIdentityMetadata}
-      />
+      <ActionBox code={code} title="Get Connected Identity" onClick={getConnectedIdentityMetadata} />
     </Box>
   );
 };

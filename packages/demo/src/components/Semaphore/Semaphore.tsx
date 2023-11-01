@@ -5,7 +5,7 @@ import { useCodeExample } from "@src/hooks/useCodeExample";
 import { useGlobalStyles } from "@src/styles";
 import { MerkleProofType } from "@src/types";
 
-import { ActionBox } from "../ActionBox/ActionBox";
+import ActionBox from "../ActionBox";
 
 interface ISemaphoreProps {
   genSemaphoreProof: (proofType: MerkleProofType) => void;

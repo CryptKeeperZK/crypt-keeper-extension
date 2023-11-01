@@ -5,7 +5,7 @@ import Typography from "@mui/material/Typography";
 import { useCodeExample } from "@src/hooks/useCodeExample";
 import { useGlobalStyles } from "@src/styles";
 
-import { ActionBox } from "../ActionBox/ActionBox";
+import ActionBox from "../ActionBox";
 
 interface IImportIdentityProps {
   importIdentity: () => Promise<void>;
@@ -32,13 +32,7 @@ export const ImportIdentity = ({ importIdentity }: IImportIdentityProps): JSX.El
 
       <TextField id="nullifier" label="Nullifier" variant="filled" />
 
-      <ActionBox<undefined, void>
-        code={code}
-        option={undefined}
-        testId="import-identity"
-        title="Import identity"
-        onClick={importIdentity}
-      />
+      <ActionBox code={code} testId="import-identity" title="Import identity" onClick={importIdentity} />
     </Box>
   );
 };

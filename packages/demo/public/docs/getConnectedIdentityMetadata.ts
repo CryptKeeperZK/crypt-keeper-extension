@@ -3,18 +3,9 @@ import { RPCExternalAction, initializeCryptKeeper } from "@cryptkeeperzk/provide
 const client = initializeCryptKeeper();
 
 const getConnectedIdentityMetadata = async (): Promise<void> => {
-  await client
-    ?.request({
-      method: RPCExternalAction.GET_CONNECTED_IDENTITY_DATA,
-    })
-    .then((connectedIdentity) => {
-      if (connectedIdentity) {
-        // SOME CODE
-      }
-    })
-    .catch(() => {
-      // THROW ERROR
-    });
+  await client?.request({
+    method: RPCExternalAction.GET_CONNECTED_IDENTITY_DATA,
+  });
 };
 
 export { getConnectedIdentityMetadata };
