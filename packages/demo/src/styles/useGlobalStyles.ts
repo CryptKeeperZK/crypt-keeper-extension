@@ -1,20 +1,20 @@
 import { Theme } from "@mui/material";
-import grey from "@mui/material/colors/grey";
 import makeStyles from "@mui/styles/makeStyles";
 
 const basePopupStyle = {
   width: "50rem",
   height: "auto",
-  border: `1px solid ${grey[700]}`,
   margin: "2rem auto",
 };
 
 export const useGlobalStyles = makeStyles((theme: Theme) => ({
   popup: {
     ...basePopupStyle,
+    border: `1px solid ${theme.palette.grey[700]}`,
   },
   popupProof: {
     ...basePopupStyle,
+    border: `1px solid ${theme.palette.grey[700]}`,
     width: "70rem",
   },
 
@@ -23,25 +23,29 @@ export const useGlobalStyles = makeStyles((theme: Theme) => ({
     overflowY: "auto",
     border: `1px solid ${theme.palette.common.black}`,
     borderRadius: "4px",
-    transition: "overflow-y 0.3s", // Add a smooth transition for overflow-y property
+    transition: "overflow-y 0.3s",
+
     "&:hover": {
-      overflowY: "auto", // Show the scrollbar on hover
+      overflowY: "auto",
     },
+
     "&::-webkit-scrollbar": {
-      width: "8px", // Set the width of the scrollbar
+      width: "8px",
     },
+
     "&::-webkit-scrollbar-thumb": {
-      backgroundColor: "#888", // Set the color of the scrollbar thumb
-      borderRadius: "4px", // Optional: Round the corners of the scrollbar thumb
+      backgroundColor: theme.palette.grey[500],
+      borderRadius: "4px",
     },
+
     "&::-webkit-scrollbar-thumb:hover": {
-      backgroundColor: "#555", // Set the color of the scrollbar thumb on hover
+      backgroundColor: theme.palette.grey[600],
     },
 
     "&::-webkit-scrollbar-track": {
-      backgroundColor: "#1e1e1e",
+      backgroundColor: theme.palette.grey[900],
     },
 
-    scrollbarWidth: "thin", // For Firefox: Set the width of the scrollbar
+    scrollbarWidth: "thin",
   },
 }));
