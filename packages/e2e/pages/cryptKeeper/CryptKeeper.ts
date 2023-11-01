@@ -68,7 +68,7 @@ export default class CryptKeeper extends BasePage {
     await this.page.getByText("Continue", { exact: true }).click();
 
     if (!mnemonic) {
-      await this.page.getByText("Copy").click();
+      await this.page.getByRole("button", { name: "Copy" }).click();
     }
 
     if (mnemonic) {
