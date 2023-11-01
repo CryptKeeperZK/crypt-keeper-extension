@@ -1,17 +1,32 @@
+import Box from "@mui/material/Box";
+import Typography from "@mui/material/Typography";
+
+import { useCodeExample } from "@src/hooks/useCodeExample";
+import { useGlobalStyles } from "@src/styles";
+
+import ActionBox from "../ActionBox";
+
 interface IGetCommitmentProps {
   revealConnectedIdentityCommitment: () => Promise<void>;
 }
 
-export const GetCommitment = ({ revealConnectedIdentityCommitment }: IGetCommitmentProps): JSX.Element => (
-  <div>
-    <h2>Reveal connected identity Commitment</h2>
+export const GetCommitment = ({ revealConnectedIdentityCommitment }: IGetCommitmentProps): JSX.Element => {
+  const classes = useGlobalStyles();
+  const { code } = useCodeExample("revealIdentityCommitment.ts");
 
-    <button
-      data-testid="reveal-connected-identity-commitment"
-      type="button"
-      onClick={revealConnectedIdentityCommitment}
+  return (
+    <Box
+      className={classes.popup}
+      sx={{ p: 3, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}
     >
-      Reveal
-    </button>
-  </div>
-);
+      <Typography variant="h6">Reveal connected identity Commitment</Typography>
+
+      <ActionBox
+        code={code}
+        testId="reveal-connected-identity-commitment"
+        title="Reveal"
+        onClick={revealConnectedIdentityCommitment}
+      />
+    </Box>
+  );
+};

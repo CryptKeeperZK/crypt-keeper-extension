@@ -57,8 +57,8 @@ export async function unlockAccount({
 export async function connectCryptKeeper(app: Page): Promise<CryptKeeper> {
   await app.waitForLoadState();
   await expect(app).toHaveTitle(/CryptKeeper Extension demo/);
-  await expect(app.getByText(/Start the Authorization Process/)).toBeVisible();
-  await expect(app.getByText(/Please connect to CryptKeeper to continue./)).toBeVisible();
+  await expect(app.getByText(/Welcome to CryptKeeper Demo!/)).toBeVisible();
+  await expect(app.getByText(/To continue, please connect to your CryptKeeper to continue./)).toBeVisible();
 
   const [popup] = await Promise.all([
     app.context().waitForEvent("page"),

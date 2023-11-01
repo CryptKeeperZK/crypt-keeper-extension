@@ -1,33 +1,41 @@
+import Box from "@mui/material/Box";
+import Typography from "@mui/material/Typography";
+
+import { useCodeExample } from "@src/hooks/useCodeExample";
+import { useGlobalStyles } from "@src/styles";
 import { MerkleProofType } from "@src/types";
+
+import ActionBox from "../ActionBox";
 
 interface ISemaphoreProps {
   genSemaphoreProof: (proofType: MerkleProofType) => void;
 }
 
-export const Semaphore = ({ genSemaphoreProof }: ISemaphoreProps): JSX.Element => (
-  <div>
-    <h2>Semaphore</h2>
+export const Semaphore = ({ genSemaphoreProof }: ISemaphoreProps): JSX.Element => {
+  const classes = useGlobalStyles();
 
-    <button
-      type="button"
-      onClick={() => {
-        genSemaphoreProof(MerkleProofType.STORAGE_ADDRESS);
-      }}
+  const { code } = useCodeExample("semaphore.ts");
+
+  return (
+    <Box
+      className={classes.popup}
+      sx={{ p: 3, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}
     >
-      Generate proof from Merkle proof storage address
-    </button>
+      <Typography variant="h6">Integration with Semaphore</Typography>
 
-    <br />
+      <ActionBox<MerkleProofType, void>
+        code={code}
+        option={MerkleProofType.STORAGE_ADDRESS}
+        title="Generate proof from Merkle proof storage address"
+        onClick={genSemaphoreProof}
+      />
 
-    <br />
-
-    <button
-      type="button"
-      onClick={() => {
-        genSemaphoreProof(MerkleProofType.ARTIFACTS);
-      }}
-    >
-      Generate proof from Merkle proof artifacts
-    </button>
-  </div>
-);
+      <ActionBox<MerkleProofType, void>
+        code={code}
+        option={MerkleProofType.ARTIFACTS}
+        title="Generate proof from Merkle proof artifacts"
+        onClick={genSemaphoreProof}
+      />
+    </Box>
+  );
+};

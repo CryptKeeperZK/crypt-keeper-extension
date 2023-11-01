@@ -1,3 +1,11 @@
+import Box from "@mui/material/Box";
+import Typography from "@mui/material/Typography";
+
+import { useCodeExample } from "@src/hooks/useCodeExample";
+import { useGlobalStyles } from "@src/styles";
+
+import ActionBox from "../ActionBox";
+
 interface IVerifiableCredentialsProps {
   addVerifiableCredentialRequest: (credentialType: string) => Promise<void>;
   generateVerifiablePresentationRequest: () => Promise<void>;
@@ -6,36 +14,42 @@ interface IVerifiableCredentialsProps {
 export const VerifiableCredentials = ({
   addVerifiableCredentialRequest,
   generateVerifiablePresentationRequest,
-}: IVerifiableCredentialsProps): JSX.Element => (
-  <div>
-    <h2>Verifiable Credentials</h2>
+}: IVerifiableCredentialsProps): JSX.Element => {
+  const classes = useGlobalStyles();
 
-    <button
-      data-testid="add-verifiable-credential"
-      type="button"
-      onClick={() => addVerifiableCredentialRequest("UniversityDegreeCredential")}
+  const { code: addVC } = useCodeExample("addVC.ts");
+  const { code: generateVP } = useCodeExample("generateVP.ts");
+
+  return (
+    <Box
+      className={classes.popup}
+      sx={{ p: 3, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}
     >
-      Add a University Degree Verifiable Credential
-    </button>
+      <Typography variant="h6">Accepting Verifiable Credentials</Typography>
 
-    <br />
+      <ActionBox<string, void>
+        code={addVC}
+        option="UniversityDegreeCredential"
+        testId="add-verifiable-credential"
+        title="Add a University Degree Verifiable Credential"
+        onClick={addVerifiableCredentialRequest}
+      />
 
-    <br />
+      <ActionBox<string, void>
+        code={generateVP}
+        option="DriversLicenseCredential"
+        testId="add-verifiable-credential"
+        title="Add a Drivers License Verifiable Credential"
+        onClick={addVerifiableCredentialRequest}
+      />
 
-    <button
-      data-testid="add-verifiable-credential"
-      type="button"
-      onClick={() => addVerifiableCredentialRequest("DriversLicenseCredential")}
-    >
-      Add a Drivers License Verifiable Credential
-    </button>
-
-    <br />
-
-    <br />
-
-    <button data-testid="add-verifiable-credential" type="button" onClick={generateVerifiablePresentationRequest}>
-      Generate a Verifiable Presentation
-    </button>
-  </div>
-);
+      <ActionBox
+        code={generateVP}
+        option={undefined}
+        testId="add-verifiable-credential"
+        title="Generate a Verifiable Presentation"
+        onClick={generateVerifiablePresentationRequest}
+      />
+    </Box>
+  );
+};
