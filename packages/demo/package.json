@@ -3,10 +3,9 @@
   "private": true,
   "version": "0.4.3",
   "scripts": {
-    "prebuild": "./scripts/preBuild.sh",
-    "start": "pnpm run prebuild && parcel serve --no-cache public/index.html",
-    "build": "pnpm run prebuild && parcel build public/index.html",
-    "build:e2e": "pnpm run prebuild && pnpm run build",
+    "start": "parcel serve --no-cache public/index.html",
+    "build": "parcel build public/index.html",
+    "build:e2e": "pnpm run build",
     "dev": "pnpm run build",
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
     "lint:fix": "pnpm run lint --fix",
