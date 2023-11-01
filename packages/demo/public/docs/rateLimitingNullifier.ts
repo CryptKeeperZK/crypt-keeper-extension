@@ -39,18 +39,17 @@ const genRLNProof = async ({
     };
   }
 
-  const generatedProof = await client
-    ?.request({
-      method: RPCExternalAction.GENERATE_RLN_PROOF,
-      payload: {
-        rlnIdentifier,
-        message,
-        messageId,
-        messageLimit,
-        epoch,
-        merkleProofSource,
-      },
-    });
+  const generatedProof = await client?.request({
+    method: RPCExternalAction.GENERATE_RLN_PROOF,
+    payload: {
+      rlnIdentifier,
+      message,
+      messageId,
+      messageLimit,
+      epoch,
+      merkleProofSource,
+    },
+  });
 };
 
 export { genRLNProof };

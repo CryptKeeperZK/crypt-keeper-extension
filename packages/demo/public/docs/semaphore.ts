@@ -34,15 +34,14 @@ const genSemaphoreProof = async ({
     };
   }
 
-  const generatedProof = await client
-    ?.request({
-      method: RPCExternalAction.GENERATE_SEMAPHORE_PROOF,
-      payload: {
-        externalNullifier,
-        signal,
-        merkleProofSource,
-      },
-    });
+  const generatedProof = await client?.request({
+    method: RPCExternalAction.GENERATE_SEMAPHORE_PROOF,
+    payload: {
+      externalNullifier,
+      signal,
+      merkleProofSource,
+    },
+  });
 };
 
 export { genSemaphoreProof };
