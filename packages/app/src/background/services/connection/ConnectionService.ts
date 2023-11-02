@@ -18,7 +18,6 @@ import type {
   IIdentityConnection,
   IZkMetadata,
   IConnectArgs,
-  IIdentityMetadata,
   IRevealConnectedIdentityCommitmentArgs,
   IDeleteIdentityArgs,
 } from "@cryptkeeperzk/types";
@@ -90,7 +89,7 @@ export default class ConnectionService extends BaseService implements IBackupabl
       throw new Error("CryptKeeper: identity is not found");
     }
 
-    const connection = this.getIdentityConnection(commitment, identity.metadata, urlOrigin);
+    const connection = { ...pick(identity.metadata, ["name"]), commitment, urlOrigin };
     this.connections.set(urlOrigin, connection);
     await this.save();
 
@@ -238,18 +237,6 @@ export default class ConnectionService extends BaseService implements IBackupabl
 
     await this.save();
   };
-
-  private getIdentityConnection(
-    commitment: string,
-    metadata: IIdentityMetadata,
-    urlOrigin: string,
-  ): IIdentityConnection {
-    return {
-      ...pick(metadata, ["name"]),
-      commitment,
-      urlOrigin,
-    };
-  }
 
   private async save(): Promise<void> {
     const serialized = JSON.stringify(Array.from(this.connections.entries()));
