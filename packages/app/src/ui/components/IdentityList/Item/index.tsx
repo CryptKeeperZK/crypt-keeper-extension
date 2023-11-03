@@ -3,6 +3,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import classNames from "classnames";
+import Jazzicon, { jsNumberForAddress } from "react-jazzicon";
 
 import { Icon } from "@src/ui/components/Icon";
 import { Input } from "@src/ui/components/Input";
@@ -78,7 +79,7 @@ export const IdentityItem = ({
         },
       }}
     >
-      {Boolean(onSelectIdentity) && (
+      {onSelectIdentity ? (
         <Icon
           className={classNames("identity-row__select-icon", {
             "identity-row__select-icon--selected": selected === commitment,
@@ -88,6 +89,8 @@ export const IdentityItem = ({
           fontAwesome="fas fa-check"
           onClick={onSelect}
         />
+      ) : (
+        <Jazzicon diameter={32} paperStyles={{ marginRight: "1rem" }} seed={jsNumberForAddress(commitment)} />
       )}
 
       <Box sx={{ display: "flex", flexDirection: "column", flexGrow: 1 }}>
