@@ -5,7 +5,11 @@
   "description": "Crypt-Keeper Extension, zero knowledge identity management and proof generation tool",
   "main": "index.js",
   "pnpm": {
-    "packageManager": "pnpm"
+    "packageManager": "pnpm",
+    "overrides": {
+      "ejs": "^3.1.9",
+      "ffjavascript": "^0.2.60"
+    }
   },
   "scripts": {
     "demo:start": "pnpm exec nx run-many --target=start --output-style=stream",

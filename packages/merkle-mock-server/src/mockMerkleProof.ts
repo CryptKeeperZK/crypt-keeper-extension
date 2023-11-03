@@ -1,6 +1,6 @@
-import { BigNumberish } from "@cryptkeeperzk/semaphore-group";
-import { Identity } from "@cryptkeeperzk/semaphore-identity";
 import { generateMerkleProof } from "@cryptkeeperzk/zk";
+import { BigNumberish } from "@semaphore-protocol/group";
+import { Identity } from "@semaphore-protocol/identity";
 import { MerkleProof } from "@zk-kit/incremental-merkle-tree";
 import { bigintToHex, hexToBigint } from "bigint-conversion";
 import cors from "cors";

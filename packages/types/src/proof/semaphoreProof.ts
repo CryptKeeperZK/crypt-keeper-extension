@@ -1,6 +1,6 @@
 import { IZkMetadata, IZkCircuit, IMerkleProofInputs } from "./zkProof";
 
-export type { FullProof as ISemaphoreFullProof } from "@cryptkeeperzk/semaphore-proof";
+export type { SemaphoreProof as ISemaphoreFullProof } from "@semaphore-protocol/proof";
 
 /**
  * Represents the arguments required for generating a Semaphore proof.

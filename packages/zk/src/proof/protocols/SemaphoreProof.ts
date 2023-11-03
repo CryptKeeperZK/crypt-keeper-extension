@@ -1,4 +1,4 @@
-import { generateProof } from "@cryptkeeperzk/semaphore-proof";
+import { generateProof } from "@semaphore-protocol/proof";
 
 import { ZkIdentitySemaphore } from "@src/identity";
 

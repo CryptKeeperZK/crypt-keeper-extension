@@ -88,8 +88,6 @@
   },
   "dependencies": {
     "@cryptkeeperzk/providers": "workspace:^",
-    "@cryptkeeperzk/rlnjs": "^3.2.1",
-    "@cryptkeeperzk/semaphore-proof": "^3.10.3",
     "@cryptkeeperzk/types": "workspace:^",
     "@cryptkeeperzk/zk": "workspace:^",
     "@emotion/styled": "^11.11.0",
@@ -118,6 +116,7 @@
     "eventemitter2": "^6.4.9",
     "extension-port-stream": "^3.0.0",
     "fast-deep-equal": "^3.1.3",
+    "idc-nullifier": "^0.0.4",
     "json-stable-stringify": "^1.0.2",
     "link-preview-js": "^3.0.5",
     "lodash": "^4.17.21",

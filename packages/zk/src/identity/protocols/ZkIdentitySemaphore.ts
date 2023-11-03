@@ -1,4 +1,4 @@
-import { Identity } from "@cryptkeeperzk/semaphore-identity";
+import { Identity } from "@semaphore-protocol/identity";
 
 import type { ISerializedIdentity, IIdentityMetadata } from "@cryptkeeperzk/types";
 

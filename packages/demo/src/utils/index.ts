@@ -1,4 +1,4 @@
-import { Identity } from "@cryptkeeperzk/semaphore-identity";
+import { Identity } from "@semaphore-protocol/identity";
 import { bigintToHex } from "bigint-conversion";
 
 import type { IVerifiableCredential, IVerifiablePresentationRequest } from "@cryptkeeperzk/types";

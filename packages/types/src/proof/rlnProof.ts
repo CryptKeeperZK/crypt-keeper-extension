@@ -1,8 +1,8 @@
-import type { MerkleProof } from "@cryptkeeperzk/rlnjs";
+import type { MerkleProof } from "rlnjs";
 
 import { IZkMetadata, IZkCircuit, IMerkleProofInputs } from "./zkProof";
 
-export type { VerificationKey as IRLNVerificationKey, RLNSNARKProof as IRLNFullProof } from "@cryptkeeperzk/rlnjs";
+export type { VerificationKey as IRLNVerificationKey, RLNSNARKProof as IRLNFullProof } from "rlnjs";
 
 /**
  * Represents the arguments required for generating an RLN proof.

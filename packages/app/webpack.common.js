@@ -90,6 +90,12 @@ module.exports = {
         },
       },
       {
+        test: /\.m?js$/,
+        resolve: {
+          fullySpecified: false,
+        },
+      },
+      {
         exclude: /node_modules/,
         test: /\.scss$/,
         use: [
