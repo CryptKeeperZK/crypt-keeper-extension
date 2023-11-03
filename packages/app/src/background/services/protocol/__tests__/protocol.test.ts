@@ -72,7 +72,7 @@ jest.mock("@src/background/services/approval", (): unknown => ({
   })),
 }));
 
-jest.mock("@src/background/services/zkIdentity", (): unknown => ({
+jest.mock("@src/background/services/connection", (): unknown => ({
   getInstance: jest.fn(() => ({
     getConnectedIdentity: mockGetConnectedIdentity,
   })),
@@ -111,7 +111,7 @@ describe("background/services/protocol", () => {
 
     mockGenerateRLNProof.mockResolvedValue(emptyFullProof);
 
-    mockGetConnectedIdentity.mockResolvedValue({ serialize: () => mockSerializedIdentity });
+    mockGetConnectedIdentity.mockReturnValue({ serialize: () => mockSerializedIdentity });
   });
 
   afterEach(() => {
@@ -136,7 +136,7 @@ describe("background/services/protocol", () => {
     });
 
     test("should throw error if there is no connected identity", async () => {
-      mockGetConnectedIdentity.mockResolvedValue(undefined);
+      mockGetConnectedIdentity.mockReturnValue(undefined);
 
       const service = ProtocolService.getInstance();
 
@@ -147,7 +147,7 @@ describe("background/services/protocol", () => {
     });
 
     test("should throw error there is no circuit and zkey files", async () => {
-      mockGetConnectedIdentity.mockResolvedValue({
+      mockGetConnectedIdentity.mockReturnValue({
         serialize: () => mockSerializedIdentity,
         genIdentityCommitment: () => "mockIdentityCommitment",
       });
@@ -161,7 +161,7 @@ describe("background/services/protocol", () => {
     });
 
     test("should throw error if user rejected semaphore approve request", async () => {
-      mockGetConnectedIdentity.mockResolvedValue({
+      mockGetConnectedIdentity.mockReturnValue({
         serialize: () => mockSerializedIdentity,
         genIdentityCommitment: () => "mockIdentityCommitment",
       });
@@ -173,7 +173,7 @@ describe("background/services/protocol", () => {
     });
 
     test("should generate semaphore proof properly on firefox platform browsers", async () => {
-      mockGetConnectedIdentity.mockResolvedValue({
+      mockGetConnectedIdentity.mockReturnValue({
         serialize: () => mockSerializedIdentity,
         genIdentityCommitment: () => "mockIdentityCommitment",
       });
@@ -336,7 +336,7 @@ describe("background/services/protocol", () => {
     });
 
     test("should throw error if there is no connected identity", async () => {
-      mockGetConnectedIdentity.mockResolvedValue(undefined);
+      mockGetConnectedIdentity.mockReturnValue(undefined);
 
       const service = ProtocolService.getInstance();
 
@@ -347,7 +347,7 @@ describe("background/services/protocol", () => {
     });
 
     test("should throw error if user rejected semaphore approve request", async () => {
-      mockGetConnectedIdentity.mockResolvedValue({
+      mockGetConnectedIdentity.mockReturnValue({
         serialize: () => mockSerializedIdentity,
         genIdentityCommitment: () => "mockIdentityCommitment",
       });
@@ -382,7 +382,7 @@ describe("background/services/protocol", () => {
     });
 
     test("should throw error there is no circuit and zkey files", async () => {
-      mockGetConnectedIdentity.mockResolvedValue({
+      mockGetConnectedIdentity.mockReturnValue({
         serialize: () => mockSerializedIdentity,
         genIdentityCommitment: () => "mockIdentityCommitment",
       });

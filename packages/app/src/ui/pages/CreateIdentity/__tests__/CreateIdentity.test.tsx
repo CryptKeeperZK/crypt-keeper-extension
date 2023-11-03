@@ -106,7 +106,7 @@ describe("ui/pages/CreateIdentity", () => {
     (useSignatureOptions as jest.Mock).mockReturnValue({
       ...mockSignatureOptions,
       options: [
-        ...mockSignatureOptions.options.filter(({ id }) => id === "eth"),
+        ...mockSignatureOptions.options.filter(({ id }) => id !== "eth"),
         {
           id: "eth",
           title: "Connect to MetaMask",

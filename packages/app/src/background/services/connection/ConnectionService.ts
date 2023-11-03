@@ -1,4 +1,6 @@
 import { EventName } from "@cryptkeeperzk/providers";
+import { ZkIdentitySemaphore } from "@cryptkeeperzk/zk";
+import { bigintToHex } from "bigint-conversion";
 import omit from "lodash/omit";
 import pick from "lodash/pick";
 
@@ -6,17 +8,26 @@ import BrowserUtils from "@src/background/controllers/browserUtils";
 import { type BackupData, IBackupable } from "@src/background/services/backup";
 import BaseService from "@src/background/services/base";
 import CryptoService, { ECryptMode } from "@src/background/services/crypto";
+import HistoryService from "@src/background/services/history";
 import SimpleStorage from "@src/background/services/storage";
 import ZkIdentityService from "@src/background/services/zkIdentity";
+import { Paths } from "@src/constants";
+import { OperationType } from "@src/types";
 
-import type { IIdenityConnection, IZkMetadata, IConnectArgs, IIdentityMetadata } from "@cryptkeeperzk/types";
+import type {
+  IIdentityConnection,
+  IZkMetadata,
+  IConnectArgs,
+  IRevealConnectedIdentityCommitmentArgs,
+  IDeleteIdentityArgs,
+} from "@cryptkeeperzk/types";
 
 const CONNECTIONS_STORAGE_KEY = "@@CONNECTIONS@@";
 
 export default class ConnectionService extends BaseService implements IBackupable {
   private static INSTANCE?: ConnectionService;
 
-  private connections: Map<string, IIdenityConnection>;
+  private connections: Map<string, IIdentityConnection>;
 
   private readonly connectionsStorage: SimpleStorage;
 
@@ -26,6 +37,8 @@ export default class ConnectionService extends BaseService implements IBackupabl
 
   private readonly zkIdenityService: ZkIdentityService;
 
+  private readonly historyService: HistoryService;
+
   private constructor() {
     super();
     this.connections = new Map();
@@ -33,6 +46,7 @@ export default class ConnectionService extends BaseService implements IBackupabl
     this.cryptoService = CryptoService.getInstance();
     this.browserController = BrowserUtils.getInstance();
     this.zkIdenityService = ZkIdentityService.getInstance();
+    this.historyService = HistoryService.getInstance();
   }
 
   static getInstance = (): ConnectionService => {
@@ -55,7 +69,7 @@ export default class ConnectionService extends BaseService implements IBackupabl
 
     if (encryped) {
       const decrypted = this.cryptoService.decrypt(encryped, { mode: ECryptMode.MNEMONIC });
-      this.connections = new Map(JSON.parse(decrypted) as Iterable<[string, IIdenityConnection]>);
+      this.connections = new Map(JSON.parse(decrypted) as Iterable<[string, IIdentityConnection]>);
     }
 
     this.isUnlocked = true;
@@ -75,25 +89,51 @@ export default class ConnectionService extends BaseService implements IBackupabl
       throw new Error("CryptKeeper: identity is not found");
     }
 
-    const connection = this.getIdentityConnection(commitment, identity.metadata);
+    const connection = { ...pick(identity.metadata, ["name"]), commitment, urlOrigin };
     this.connections.set(urlOrigin, connection);
     await this.save();
 
     await this.browserController.pushEvent(
-      { type: EventName.CONNECT_IDENTITY, payload: omit(connection, ["commitment"]) },
+      { type: EventName.CONNECT, payload: omit(connection, ["commitment"]) },
       { urlOrigin },
     );
   };
 
-  disconnect = async (payload: unknown, { urlOrigin }: IZkMetadata): Promise<void> => {
-    await this.isOriginConnected(payload, { urlOrigin });
-    this.connections.delete(urlOrigin!);
+  disconnect = async (
+    payload: Partial<IDeleteIdentityArgs> | undefined,
+    { urlOrigin }: IZkMetadata,
+  ): Promise<boolean> => {
+    const connection =
+      this.connections.get(urlOrigin!) ||
+      [...this.connections.values()].find(({ commitment }) => commitment === payload?.identityCommitment);
+    const connectionOrigin = connection?.urlOrigin;
+
+    if (!connectionOrigin) {
+      return false;
+    }
+
+    await this.isOriginConnected(payload, { urlOrigin: connectionOrigin });
+
+    this.connections.delete(connectionOrigin);
     await this.save();
 
     await this.browserController.pushEvent(
-      { type: EventName.DISCONNECT_IDENTITY, payload: { urlOrigin } },
-      { urlOrigin },
+      { type: EventName.DISCONNECT, payload: { urlOrigin: connectionOrigin } },
+      { urlOrigin: connectionOrigin },
     );
+
+    return true;
+  };
+
+  clear = async (): Promise<void> => {
+    await Promise.all(
+      [...this.connections.keys()].map((urlOrigin) =>
+        this.browserController.pushEvent({ type: EventName.DISCONNECT, payload: { urlOrigin } }, { urlOrigin }),
+      ),
+    );
+
+    this.connections.clear();
+    await this.connectionsStorage.clear();
   };
 
   isOriginConnected = (payload: unknown, { urlOrigin }: IZkMetadata): unknown => {
@@ -110,7 +150,50 @@ export default class ConnectionService extends BaseService implements IBackupabl
     return payload;
   };
 
-  getConnections = (): Map<string, IIdenityConnection> => this.connections;
+  getConnections = (): Record<string, IIdentityConnection> => Object.fromEntries(this.connections.entries());
+
+  connectRequest = async (_: unknown, { urlOrigin }: IZkMetadata): Promise<void> => {
+    await this.browserController.openPopup({ params: { redirect: Paths.CONNECT_IDENTITY, urlOrigin } });
+  };
+
+  getConnectedIdentity = (urlOrigin: string): ZkIdentitySemaphore | undefined => {
+    const connection = this.connections.get(urlOrigin);
+
+    if (!connection) {
+      return undefined;
+    }
+
+    return this.zkIdenityService.getIdentity(connection.commitment);
+  };
+
+  revealConnectedIdentityCommitmentRequest = async (_: unknown, { urlOrigin }: IZkMetadata): Promise<void> => {
+    await this.browserController.openPopup({
+      params: { redirect: Paths.REVEAL_IDENTITY_COMMITMENT, urlOrigin },
+    });
+  };
+
+  revealConnectedIdentityCommitment = async (
+    { url }: IRevealConnectedIdentityCommitmentArgs,
+    { urlOrigin }: IZkMetadata,
+  ): Promise<void> => {
+    const appOrigin = url || urlOrigin;
+    const connectedIdentity = this.getConnectedIdentity(appOrigin!);
+
+    if (!connectedIdentity) {
+      throw new Error("CryptKeeper: No connected identity found");
+    }
+
+    const commitment = bigintToHex(connectedIdentity.genIdentityCommitment());
+
+    await this.browserController.pushEvent(
+      { type: EventName.REVEAL_COMMITMENT, payload: { commitment } },
+      { urlOrigin: appOrigin },
+    );
+
+    await this.historyService.trackOperation(OperationType.REVEAL_IDENTITY_COMMITMENT, {
+      identity: { commitment, metadata: connectedIdentity.metadata },
+    });
+  };
 
   downloadStorage = (): Promise<string | null> => this.connectionsStorage.get<string>();
 
@@ -149,18 +232,11 @@ export default class ConnectionService extends BaseService implements IBackupabl
     const backup = this.cryptoService.decrypt(encryptedBackup, { secret: backupPassword });
     await this.unlock();
 
-    const backupAllowedHosts = new Map(JSON.parse(backup) as Iterable<[string, IIdenityConnection]>);
+    const backupAllowedHosts = new Map(JSON.parse(backup) as Iterable<[string, IIdentityConnection]>);
     this.connections = new Map([...this.connections, ...backupAllowedHosts]);
 
     await this.save();
   };
-
-  private getIdentityConnection(commitment: string, metadata: IIdentityMetadata): IIdenityConnection {
-    return {
-      ...pick(metadata, ["name", "urlOrigin"]),
-      commitment,
-    };
-  }
 
   private async save(): Promise<void> {
     const serialized = JSON.stringify(Array.from(this.connections.entries()));

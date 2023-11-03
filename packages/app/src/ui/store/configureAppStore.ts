@@ -4,6 +4,7 @@ import thunk from "redux-thunk";
 
 import { isDebugMode } from "@src/config/env";
 import app from "@src/ui/ducks/app";
+import connections from "@src/ui/ducks/connections";
 import identities from "@src/ui/ducks/identities";
 import permissions from "@src/ui/ducks/permissions";
 import requests from "@src/ui/ducks/requests";
@@ -15,6 +16,7 @@ const rootReducer = {
   app,
   permissions,
   verifiableCredentials,
+  connections,
 };
 
 const middlewares = isDebugMode() ? [thunk, createLogger({ collapsed: true })] : [thunk];

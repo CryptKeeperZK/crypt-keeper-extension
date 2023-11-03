@@ -5,7 +5,7 @@
 import { act, render, screen, fireEvent } from "@testing-library/react";
 import { useNavigate } from "react-router-dom";
 
-import { mockDefaultIdentity } from "@src/config/mock/zk";
+import { mockDefaultConnection, mockDefaultIdentity } from "@src/config/mock/zk";
 import { Paths } from "@src/constants";
 import { redirectToNewTab, replaceUrlParams } from "@src/util/browser";
 
@@ -20,6 +20,7 @@ describe("ui/components/IdentityList/Item", () => {
     isShowMenu: true,
     commitment: "1",
     selected: "0",
+    connectedOrigin: mockDefaultConnection.urlOrigin,
     metadata: mockDefaultIdentity.metadata,
     onDeleteIdentity: jest.fn(),
     onSelectIdentity: jest.fn(),
@@ -154,6 +155,6 @@ describe("ui/components/IdentityList/Item", () => {
     await act(() => Promise.resolve(icon.click()));
 
     expect(redirectToNewTab).toBeCalledTimes(1);
-    expect(redirectToNewTab).toBeCalledWith(defaultProps.metadata.urlOrigin);
+    expect(redirectToNewTab).toBeCalledWith(mockDefaultConnection.urlOrigin);
   });
 });

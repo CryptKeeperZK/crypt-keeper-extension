@@ -3,6 +3,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import classNames from "classnames";
+import Jazzicon, { jsNumberForAddress } from "react-jazzicon";
 
 import { Icon } from "@src/ui/components/Icon";
 import { Input } from "@src/ui/components/Input";
@@ -16,6 +17,7 @@ export interface IdentityItemProps {
   commitment: string;
   metadata: IIdentityMetadata;
   isShowMenu: boolean;
+  connectedOrigin?: string;
   selected?: string;
   onDeleteIdentity: (commitment: string) => Promise<void>;
   onUpdateIdentityName: (commitment: string, name: string) => Promise<void>;
@@ -27,6 +29,7 @@ export const IdentityItem = ({
   isShowMenu,
   selected = "",
   metadata,
+  connectedOrigin = "",
   onDeleteIdentity,
   onUpdateIdentityName,
   onSelectIdentity = undefined,
@@ -44,6 +47,7 @@ export const IdentityItem = ({
   } = useIdentityItem({
     commitment,
     metadata,
+    connectedOrigin,
     onDelete: onDeleteIdentity,
     onUpdate: onUpdateIdentityName,
     onSelect: onSelectIdentity,
@@ -75,15 +79,19 @@ export const IdentityItem = ({
         },
       }}
     >
-      <Icon
-        className={classNames("identity-row__select-icon", {
-          "identity-row__select-icon--selected": selected === commitment,
-          "identity-row__select-icon--selectable": Boolean(onSelectIdentity),
-        })}
-        data-testid={`identity-select-${commitment}`}
-        fontAwesome="fas fa-check"
-        onClick={onSelect}
-      />
+      {onSelectIdentity ? (
+        <Icon
+          className={classNames("identity-row__select-icon", {
+            "identity-row__select-icon--selected": selected === commitment,
+            "identity-row__select-icon--selectable": true,
+          })}
+          data-testid={`identity-select-${commitment}`}
+          fontAwesome="fas fa-check"
+          onClick={onSelect}
+        />
+      ) : (
+        <Jazzicon diameter={32} paperStyles={{ marginRight: "1rem" }} seed={jsNumberForAddress(commitment)} />
+      )}
 
       <Box sx={{ display: "flex", flexDirection: "column", flexGrow: 1 }}>
         {isRenaming ? (
@@ -129,7 +137,7 @@ export const IdentityItem = ({
           >
             {metadata.name}
 
-            {metadata.urlOrigin && (
+            {connectedOrigin && (
               <Box
                 data-testid="urlOrigin-icon"
                 sx={{
@@ -146,7 +154,7 @@ export const IdentityItem = ({
                 }}
                 onClick={onGoToHost}
               >
-                <FontAwesomeIcon icon="link" title={metadata.urlOrigin} />
+                <FontAwesomeIcon icon="link" title={connectedOrigin} />
               </Box>
             )}
           </Box>
@@ -168,7 +176,7 @@ export const IdentityItem = ({
       </Box>
 
       {isShowMenu && (
-        <Menu className="flex user-menu" items={selected !== commitment ? menuItems : [menuItems[0], menuItems[1]]}>
+        <Menu className="flex user-menu" items={menuItems}>
           <Icon className="identity-row__menu-icon" fontAwesome="fas fa-ellipsis-h" />
         </Menu>
       )}

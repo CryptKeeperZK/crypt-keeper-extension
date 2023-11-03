@@ -6,7 +6,7 @@ import { render, waitFor } from "@testing-library/react";
 import { Suspense } from "react";
 
 import { mockSignatureOptions } from "@src/config/mock/wallet";
-import { mockDefaultIdentity, mockDefaultIdentityCommitment, mockDefaultIdentitySecret } from "@src/config/mock/zk";
+import { mockDefaultConnection, mockDefaultIdentityCommitment, mockDefaultIdentitySecret } from "@src/config/mock/zk";
 import { useSignatureOptions } from "@src/ui/hooks/wallet";
 
 import ImportIdentity from "..";
@@ -28,7 +28,7 @@ describe("ui/pages/ImportIdentity", () => {
   const defaultHookData: IUseImportIdentityData = {
     isLoading: false,
     errors: {},
-    urlOrigin: mockDefaultIdentity.metadata.urlOrigin,
+    urlOrigin: mockDefaultConnection.urlOrigin,
     trapdoor: mockDefaultIdentitySecret,
     nullifier: mockDefaultIdentitySecret,
     secret: mockDefaultIdentitySecret,

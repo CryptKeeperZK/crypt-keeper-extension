@@ -7,12 +7,13 @@ import { getLinkPreview } from "link-preview-js";
 import { useNavigate } from "react-router-dom";
 
 import { getBandadaUrl } from "@src/config/env";
-import { mockDefaultIdentity } from "@src/config/mock/zk";
+import { mockDefaultConnection } from "@src/config/mock/zk";
 import { Paths } from "@src/constants";
 import { closePopup } from "@src/ui/ducks/app";
+import { fetchConnections, useConnection } from "@src/ui/ducks/connections";
 import { checkGroupMembership, generateGroupMerkleProof } from "@src/ui/ducks/groups";
 import { useAppDispatch } from "@src/ui/ducks/hooks";
-import { fetchIdentities, useConnectedIdentity } from "@src/ui/ducks/identities";
+import { fetchIdentities } from "@src/ui/ducks/identities";
 import { rejectUserRequest } from "@src/ui/ducks/requests";
 import { useSearchParam } from "@src/ui/hooks/url";
 import { redirectToNewTab } from "@src/util/browser";
@@ -55,11 +56,15 @@ jest.mock("@src/ui/ducks/hooks", (): unknown => ({
 
 jest.mock("@src/ui/ducks/identities", (): unknown => ({
   fetchIdentities: jest.fn(),
-  useConnectedIdentity: jest.fn(),
+}));
+
+jest.mock("@src/ui/ducks/connections", (): unknown => ({
+  fetchConnections: jest.fn(),
+  useConnection: jest.fn(),
 }));
 
 describe("ui/pages/GroupMerkleProof/useGroupMerkleProof", () => {
-  const defaultFaviconsData = { favicons: [`${mockDefaultIdentity.metadata.urlOrigin}/favicon.ico`] };
+  const defaultFaviconsData = { favicons: [`${mockDefaultConnection.urlOrigin}/favicon.ico`] };
 
   const mockNavigate = jest.fn();
   const mockDispatch = jest.fn(() => Promise.resolve(false));
@@ -67,7 +72,7 @@ describe("ui/pages/GroupMerkleProof/useGroupMerkleProof", () => {
   beforeEach(() => {
     (getLinkPreview as jest.Mock).mockResolvedValue(defaultFaviconsData);
 
-    (useConnectedIdentity as jest.Mock).mockReturnValue(mockDefaultIdentity);
+    (useConnection as jest.Mock).mockReturnValue(mockDefaultConnection);
 
     (useNavigate as jest.Mock).mockReturnValue(mockNavigate);
 
@@ -94,7 +99,7 @@ describe("ui/pages/GroupMerkleProof/useGroupMerkleProof", () => {
     expect(result.current.error).toBe("");
     expect(result.current.faviconUrl).toBe(defaultFaviconsData.favicons[0]);
     expect(result.current.groupId).toBe("groupId");
-    expect(result.current.connectedIdentity).toStrictEqual(mockDefaultIdentity);
+    expect(result.current.connection).toStrictEqual(mockDefaultConnection);
   });
 
   test("should go back properly", async () => {
@@ -105,8 +110,9 @@ describe("ui/pages/GroupMerkleProof/useGroupMerkleProof", () => {
 
     expect(mockNavigate).toBeCalledTimes(1);
     expect(mockNavigate).toBeCalledWith(Paths.HOME);
-    expect(mockDispatch).toBeCalledTimes(4);
+    expect(mockDispatch).toBeCalledTimes(5);
     expect(fetchIdentities).toBeCalledTimes(1);
+    expect(fetchConnections).toBeCalledTimes(1);
     expect(checkGroupMembership).toBeCalledTimes(1);
     expect(rejectUserRequest).toBeCalledTimes(1);
     expect(closePopup).toBeCalledTimes(1);
@@ -126,13 +132,13 @@ describe("ui/pages/GroupMerkleProof/useGroupMerkleProof", () => {
   });
 
   test("should handle empty connected identity properly", async () => {
-    (useConnectedIdentity as jest.Mock).mockReturnValue(undefined);
+    (useConnection as jest.Mock).mockReturnValue(undefined);
 
     const { result } = renderHook(() => useGroupMerkleProof());
     await waitForData(result.current);
 
     expect(result.current.isLoading).toBe(false);
-    expect(result.current.connectedIdentity).toBeUndefined();
+    expect(result.current.connection).toBeUndefined();
   });
 
   test("should go to host properly", async () => {
@@ -142,7 +148,7 @@ describe("ui/pages/GroupMerkleProof/useGroupMerkleProof", () => {
     await act(() => Promise.resolve(result.current.onGoToHost()));
 
     expect(redirectToNewTab).toBeCalledTimes(1);
-    expect(redirectToNewTab).toBeCalledWith(mockDefaultIdentity.metadata.urlOrigin);
+    expect(redirectToNewTab).toBeCalledWith(mockDefaultConnection.urlOrigin);
   });
 
   test("should go to group properly", async () => {
@@ -162,8 +168,9 @@ describe("ui/pages/GroupMerkleProof/useGroupMerkleProof", () => {
     await act(() => Promise.resolve(result.current.onGenerateMerkleProof()));
     await waitFor(() => !result.current.isSubmitting);
 
-    expect(mockDispatch).toBeCalledTimes(4);
+    expect(mockDispatch).toBeCalledTimes(5);
     expect(fetchIdentities).toBeCalledTimes(1);
+    expect(fetchConnections).toBeCalledTimes(1);
     expect(checkGroupMembership).toBeCalledTimes(1);
     expect(generateGroupMerkleProof).toBeCalledTimes(1);
     expect(closePopup).toBeCalledTimes(1);

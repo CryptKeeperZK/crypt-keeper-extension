@@ -17,7 +17,7 @@ import {
 } from "@src/config/mock/file";
 import { defaultWalletHookData } from "@src/config/mock/wallet";
 import {
-  mockDefaultIdentity,
+  mockDefaultConnection,
   mockDefaultIdentityCommitment,
   mockDefaultIdentitySecret,
   mockDefaultNullifier,
@@ -88,9 +88,9 @@ jest.mock("@src/ui/hooks/validation", (): unknown => ({
 }));
 
 describe("ui/pages/ImportIdentity/useImportIdentity", () => {
-  const defaultFaviconsData = { favicons: [`${mockDefaultIdentity.metadata.urlOrigin}/favicon.ico`] };
+  const defaultFaviconsData = { favicons: [`${mockDefaultConnection.urlOrigin}/favicon.ico`] };
   const defaultUrlParams = {
-    urlOrigin: mockDefaultIdentity.metadata.urlOrigin,
+    urlOrigin: mockDefaultConnection.urlOrigin,
     trapdoor: mockDefaultTrapdoor,
     nullifier: mockDefaultNullifier,
   };
@@ -176,7 +176,7 @@ describe("ui/pages/ImportIdentity/useImportIdentity", () => {
     await act(() => Promise.resolve(result.current.onGoToHost()));
 
     expect(redirectToNewTab).toBeCalledTimes(1);
-    expect(redirectToNewTab).toBeCalledWith(mockDefaultIdentity.metadata.urlOrigin);
+    expect(redirectToNewTab).toBeCalledWith(mockDefaultConnection.urlOrigin);
   });
 
   test("should drop object file properly", async () => {
@@ -314,7 +314,7 @@ describe("ui/pages/ImportIdentity/useImportIdentity", () => {
 
   test("should submit and go back properly", async () => {
     (useSearchParam as jest.Mock).mockImplementation((arg: string) =>
-      arg === "urlOrigin" ? mockDefaultIdentity.metadata.urlOrigin : Paths.CONNECT_IDENTITY,
+      arg === "urlOrigin" ? mockDefaultConnection.urlOrigin : Paths.CONNECT_IDENTITY,
     );
 
     const { result } = renderHook(() => useImportIdentity());
@@ -326,13 +326,13 @@ describe("ui/pages/ImportIdentity/useImportIdentity", () => {
     expect(importIdentity).toBeCalledTimes(1);
     expect(mockNavigate).toBeCalledTimes(1);
     expect(mockNavigate).toBeCalledWith(
-      `${Paths.CONNECT_IDENTITY}?urlOrigin=${mockDefaultIdentity.metadata.urlOrigin}&back=${Paths.CONNECT_IDENTITY}`,
+      `${Paths.CONNECT_IDENTITY}?urlOrigin=${mockDefaultConnection.urlOrigin}&back=${Paths.CONNECT_IDENTITY}`,
     );
   });
 
   test("should submit and go home properly", async () => {
     (useSearchParam as jest.Mock).mockImplementation((arg: string) =>
-      arg === "urlOrigin" ? mockDefaultIdentity.metadata.urlOrigin : Paths.CREATE_IDENTITY,
+      arg === "urlOrigin" ? mockDefaultConnection.urlOrigin : Paths.CREATE_IDENTITY,
     );
 
     const { result } = renderHook(() => useImportIdentity());

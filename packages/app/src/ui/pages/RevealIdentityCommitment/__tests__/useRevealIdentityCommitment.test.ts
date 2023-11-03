@@ -5,12 +5,14 @@
 import { act, renderHook, waitFor } from "@testing-library/react";
 import { useNavigate } from "react-router-dom";
 
-import { mockDefaultIdentity } from "@src/config/mock/zk";
+import { mockDefaultConnection } from "@src/config/mock/zk";
 import { Paths } from "@src/constants";
 import { closePopup } from "@src/ui/ducks/app";
+import { fetchConnections, revealConnectedIdentityCommitment, useConnection } from "@src/ui/ducks/connections";
 import { useAppDispatch } from "@src/ui/ducks/hooks";
-import { fetchIdentities, revealConnectedIdentityCommitment, useConnectedIdentity } from "@src/ui/ducks/identities";
+import { fetchIdentities } from "@src/ui/ducks/identities";
 import { rejectUserRequest } from "@src/ui/ducks/requests";
+import { useSearchParam } from "@src/ui/hooks/url";
 import { redirectToNewTab } from "@src/util/browser";
 
 import { IUseRevealIdentityCommitmentData, useRevealIdentityCommitment } from "../useRevealIdentityCommitment";
@@ -23,6 +25,10 @@ jest.mock("@src/util/browser", (): unknown => ({
   redirectToNewTab: jest.fn(),
 }));
 
+jest.mock("@src/ui/hooks/url", (): unknown => ({
+  useSearchParam: jest.fn(),
+}));
+
 jest.mock("@src/ui/ducks/app", (): unknown => ({
   closePopup: jest.fn(),
 }));
@@ -33,8 +39,12 @@ jest.mock("@src/ui/ducks/hooks", (): unknown => ({
 
 jest.mock("@src/ui/ducks/identities", (): unknown => ({
   fetchIdentities: jest.fn(),
+}));
+
+jest.mock("@src/ui/ducks/connections", (): unknown => ({
   revealConnectedIdentityCommitment: jest.fn(),
-  useConnectedIdentity: jest.fn(),
+  fetchConnections: jest.fn(),
+  useConnection: jest.fn(),
 }));
 
 jest.mock("@src/ui/ducks/requests", (): unknown => ({
@@ -46,11 +56,13 @@ describe("ui/pages/RevealIdentityCommitment/useRevealIdentityCommitment", () => 
   const mockDispatch = jest.fn(() => Promise.resolve());
 
   beforeEach(() => {
-    (useConnectedIdentity as jest.Mock).mockReturnValue(mockDefaultIdentity);
+    (useConnection as jest.Mock).mockReturnValue(mockDefaultConnection);
 
     (useNavigate as jest.Mock).mockReturnValue(mockNavigate);
 
     (useAppDispatch as jest.Mock).mockReturnValue(mockDispatch);
+
+    (useSearchParam as jest.Mock).mockReturnValue(mockDefaultConnection.urlOrigin);
   });
 
   afterEach(() => {
@@ -68,7 +80,7 @@ describe("ui/pages/RevealIdentityCommitment/useRevealIdentityCommitment", () => 
 
     expect(result.current.isLoading).toBe(false);
     expect(result.current.error).toBe("");
-    expect(result.current.connectedIdentity).toStrictEqual(mockDefaultIdentity);
+    expect(result.current.connection).toStrictEqual(mockDefaultConnection);
   });
 
   test("should go back properly", async () => {
@@ -79,8 +91,9 @@ describe("ui/pages/RevealIdentityCommitment/useRevealIdentityCommitment", () => 
 
     expect(mockNavigate).toBeCalledTimes(1);
     expect(mockNavigate).toBeCalledWith(Paths.HOME);
-    expect(mockDispatch).toBeCalledTimes(3);
+    expect(mockDispatch).toBeCalledTimes(4);
     expect(fetchIdentities).toBeCalledTimes(1);
+    expect(fetchConnections).toBeCalledTimes(1);
     expect(rejectUserRequest).toBeCalledTimes(1);
     expect(closePopup).toBeCalledTimes(1);
   });
@@ -103,7 +116,7 @@ describe("ui/pages/RevealIdentityCommitment/useRevealIdentityCommitment", () => 
     await act(() => Promise.resolve(result.current.onGoToHost()));
 
     expect(redirectToNewTab).toBeCalledTimes(1);
-    expect(redirectToNewTab).toBeCalledWith(mockDefaultIdentity.metadata.urlOrigin);
+    expect(redirectToNewTab).toBeCalledWith(mockDefaultConnection.urlOrigin);
   });
 
   test("should reveal connected identity commitment properly", async () => {
@@ -112,8 +125,9 @@ describe("ui/pages/RevealIdentityCommitment/useRevealIdentityCommitment", () => 
 
     await act(() => Promise.resolve(result.current.onReveal()));
 
-    expect(mockDispatch).toBeCalledTimes(3);
+    expect(mockDispatch).toBeCalledTimes(4);
     expect(fetchIdentities).toBeCalledTimes(1);
+    expect(fetchConnections).toBeCalledTimes(1);
     expect(revealConnectedIdentityCommitment).toBeCalledTimes(1);
     expect(closePopup).toBeCalledTimes(1);
     expect(mockNavigate).toBeCalledTimes(1);

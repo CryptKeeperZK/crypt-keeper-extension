@@ -6,22 +6,23 @@ export default class Groups extends BasePage {
   async joinGroupRequest(): Promise<Page> {
     const [popup] = await Promise.all([
       this.page.context().waitForEvent("page"),
-      this.page.getByText("Join test group").click({ delay: 1000 }),
+      this.page.getByText("Join test group").click(),
     ]);
 
     return popup;
   }
 
-  async joinGroup(): Promise<void> {
+  async joinGroup(): Promise<Page> {
     const cryptKeeper = await this.joinGroupRequest();
-    await cryptKeeper.getByText("Accept", { exact: true }).click({ delay: 1000 });
-    await cryptKeeper.close();
+    await cryptKeeper.getByText("Accept", { exact: true }).click();
+
+    return cryptKeeper;
   }
 
   async generateGroupMerkleProofRequest(): Promise<Page> {
     const [popup] = await Promise.all([
       this.page.context().waitForEvent("page"),
-      this.page.getByText("Generate Group Merkle Proof").click({ delay: 1000 }),
+      this.page.getByText("Generate Group Merkle Proof").click(),
     ]);
 
     return popup;
@@ -30,6 +31,6 @@ export default class Groups extends BasePage {
   async generateGroupMerkleProof(): Promise<void> {
     const cryptKeeper = await this.generateGroupMerkleProofRequest();
 
-    await cryptKeeper.getByText("Accept", { exact: true }).click({ delay: 1000 });
+    await cryptKeeper.getByText("Accept", { exact: true }).click();
   }
 }

@@ -74,7 +74,7 @@ describe("background/services/locker", () => {
     await lockService.lock();
 
     (browser.tabs.sendMessage as jest.Mock).mockClear();
-    (pushMessage as jest.Mock).mockReset();
+    (pushMessage as jest.Mock).mockClear();
     (browser.tabs.sendMessage as jest.Mock).mockRejectedValueOnce(false).mockResolvedValue(true);
 
     (SimpleStorage as jest.Mock).mock.instances.forEach((instance: MockStorage) => {

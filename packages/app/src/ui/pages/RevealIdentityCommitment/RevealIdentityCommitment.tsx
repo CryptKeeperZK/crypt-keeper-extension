@@ -10,7 +10,7 @@ import { ellipsify } from "@src/util/account";
 import { useRevealIdentityCommitment } from "./useRevealIdentityCommitment";
 
 const RevealIdentityCommitment = (): JSX.Element => {
-  const { isLoading, error, connectedIdentity, onGoBack, onGoToHost, onReveal } = useRevealIdentityCommitment();
+  const { isLoading, error, connection, onGoBack, onGoToHost, onReveal } = useRevealIdentityCommitment();
 
   const renderRow = useCallback(
     (key: string, value?: ReactNode) => (
@@ -54,7 +54,7 @@ const RevealIdentityCommitment = (): JSX.Element => {
       <FullModalHeader onClose={onGoBack}>Reveal identity commitment</FullModalHeader>
 
       <FullModalContent>
-        {!connectedIdentity && (
+        {!connection && (
           <Box
             sx={{
               display: "flex",
@@ -70,7 +70,7 @@ const RevealIdentityCommitment = (): JSX.Element => {
         )}
 
         <Box>
-          {connectedIdentity && (
+          {connection && (
             <Box>
               <Typography component="div" fontWeight="bold" variant="h6">
                 Reveal identity commitment to
@@ -81,7 +81,7 @@ const RevealIdentityCommitment = (): JSX.Element => {
                   variant="h6"
                   onClick={onGoToHost}
                 >
-                  {connectedIdentity.metadata.urlOrigin}
+                  {connection.urlOrigin}
                 </Typography>
               </Typography>
 
@@ -90,32 +90,14 @@ const RevealIdentityCommitment = (): JSX.Element => {
               <Box>
                 {renderRow(
                   "Commitment",
-                  <Tooltip title={connectedIdentity.commitment}>
+                  <Tooltip title={connection.commitment}>
                     <Typography component="span" variant="h6">
-                      {ellipsify(connectedIdentity.commitment)}
+                      {ellipsify(connection.commitment)}
                     </Typography>
                   </Tooltip>,
                 )}
 
-                {renderRow("Name", connectedIdentity.metadata.name)}
-
-                {connectedIdentity.metadata.account &&
-                  renderRow(
-                    "Owner account",
-                    <Tooltip title={connectedIdentity.metadata.account}>
-                      <Typography component="span" variant="h6">
-                        {ellipsify(connectedIdentity.metadata.account)}
-                      </Typography>
-                    </Tooltip>,
-                  )}
-
-                {connectedIdentity.metadata.isImported &&
-                  renderRow(
-                    "Imported",
-                    <Typography component="span" variant="h6">
-                      Yes
-                    </Typography>,
-                  )}
+                {renderRow("Name", connection.name)}
               </Box>
 
               <Box component="hr" sx={{ my: 2 }} />
@@ -143,7 +125,7 @@ const RevealIdentityCommitment = (): JSX.Element => {
         <Button
           color="error"
           data-testid="reveal-identity-commitment"
-          disabled={!connectedIdentity}
+          disabled={!connection}
           sx={{ ml: 1, width: "100%" }}
           variant="contained"
           onClick={onReveal}

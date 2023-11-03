@@ -87,7 +87,7 @@ describe("ui/components/ConnectionModal/useConnectionModal", () => {
     });
   });
 
-  test("should remove urlOrigin properly", async () => {
+  test("should remove url origin properly", async () => {
     const { result } = renderHook(() => usePermissionModal(defaultArgs));
     await waitForData(result.current);
 

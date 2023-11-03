@@ -9,6 +9,7 @@ import { redirectToNewTab, replaceUrlParams } from "@src/util/browser";
 export interface IUseIdentityItemArgs {
   commitment: string;
   metadata: IIdentityMetadata;
+  connectedOrigin?: string;
   onDelete: (commitment: string) => Promise<void>;
   onUpdate: (commitment: string, name: string) => Promise<void>;
   onSelect?: (commitment: string) => void;
@@ -33,6 +34,7 @@ interface IdentityFormFields {
 export const useIdentityItem = ({
   metadata,
   commitment,
+  connectedOrigin,
   onDelete,
   onUpdate,
   onSelect,
@@ -77,8 +79,8 @@ export const useIdentityItem = ({
   );
 
   const onGoToHost = useCallback(() => {
-    redirectToNewTab(metadata.urlOrigin!);
-  }, [metadata.urlOrigin]);
+    redirectToNewTab(connectedOrigin!);
+  }, [connectedOrigin]);
 
   const onGoToIdentity = useCallback(() => {
     navigate(replaceUrlParams(Paths.IDENTITY, { id: commitment }));

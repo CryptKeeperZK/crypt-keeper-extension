@@ -14,6 +14,7 @@ import "./activityListItemStyles.scss";
 
 export interface IActivityItemProps {
   operation: Operation;
+  urlOrigin?: string;
   onDelete: (id: string) => void;
 }
 
@@ -36,16 +37,14 @@ const OPERATIONS: Record<OperationType, string> = {
   [OperationType.JOIN_GROUP]: "Joined group",
 };
 
-export const ActivityItem = ({ operation, onDelete }: IActivityItemProps): JSX.Element => {
-  const metadata = operation.identity?.metadata;
-
+export const ActivityItem = ({ operation, urlOrigin = "", onDelete }: IActivityItemProps): JSX.Element => {
   const handleDelete = useCallback(() => {
     onDelete(operation.id);
   }, [operation.id, onDelete]);
 
   const onGoToHost = useCallback(() => {
-    redirectToNewTab(metadata!.urlOrigin!);
-  }, [metadata?.urlOrigin]);
+    redirectToNewTab(urlOrigin);
+  }, [urlOrigin]);
 
   const onGoToGroup = useCallback(() => {
     redirectToNewTab(getBandadaGroupUrl(operation.group!.id!));
@@ -57,11 +56,11 @@ export const ActivityItem = ({ operation, onDelete }: IActivityItemProps): JSX.E
         <div className="flex flex-row items-center text-lg font-semibold">
           {OPERATIONS[operation.type]}
 
-          {metadata?.urlOrigin && (
+          {urlOrigin && (
             <span className="text-xs py-1 px-2 ml-2 rounded-full bg-gray-500 text-gray-800">
-              <Tooltip title={metadata.urlOrigin}>
+              <Tooltip title={urlOrigin}>
                 <FontAwesomeIcon
-                  data-testid="urlOrigin"
+                  data-testid="url-origin"
                   icon="link"
                   style={{ cursor: "pointer" }}
                   onClick={onGoToHost}

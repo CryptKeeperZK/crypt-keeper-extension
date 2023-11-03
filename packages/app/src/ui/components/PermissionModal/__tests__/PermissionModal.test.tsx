@@ -58,7 +58,7 @@ describe("ui/components/ConnectionModal/ConnectionModal", () => {
     expect(title).toBeInTheDocument();
   });
 
-  test("should remove urlOrigin properly", async () => {
+  test("should remove url origin properly", async () => {
     render(<PermissionModal {...defaultProps} />);
 
     const button = await screen.findByText("Disconnect");

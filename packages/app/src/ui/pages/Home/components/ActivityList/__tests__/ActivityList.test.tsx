@@ -4,7 +4,7 @@
 
 import { act, render, screen } from "@testing-library/react";
 
-import { mockDefaultIdentity } from "@src/config/mock/zk";
+import { mockDefaultConnection, mockDefaultIdentity } from "@src/config/mock/zk";
 import { Operation, OperationType } from "@src/types";
 
 import { ActivityList } from "..";
@@ -32,6 +32,7 @@ describe("ui/pages/Home/components/ActivityList", () => {
 
   const defaultHookData: IUseActivityListData = {
     isLoading: false,
+    connectedOrigins: { [mockDefaultIdentity.commitment]: mockDefaultConnection.urlOrigin },
     operations: defaultIdentityOperations,
     onDeleteHistoryOperation: jest.fn(),
   };

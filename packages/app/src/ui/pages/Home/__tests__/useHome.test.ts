@@ -7,8 +7,10 @@ import { act, renderHook } from "@testing-library/react";
 import { useRef } from "react";
 
 import { defaultWalletHookData } from "@src/config/mock/wallet";
+import { mockDefaultConnection } from "@src/config/mock/zk";
+import { fetchConnections, useConnectedOrigins } from "@src/ui/ducks/connections";
 import { useAppDispatch } from "@src/ui/ducks/hooks";
-import { useIdentities, fetchIdentities, fetchHistory, useConnectedIdentity } from "@src/ui/ducks/identities";
+import { useIdentities, fetchIdentities, fetchHistory } from "@src/ui/ducks/identities";
 import { checkHostApproval } from "@src/ui/ducks/permissions";
 import { useEthWallet } from "@src/ui/hooks/wallet";
 import { getLastActiveTabUrl } from "@src/util/browser";
@@ -32,7 +34,11 @@ jest.mock("@src/ui/ducks/identities", (): unknown => ({
   fetchIdentities: jest.fn(),
   fetchHistory: jest.fn(),
   useIdentities: jest.fn(),
-  useConnectedIdentity: jest.fn(),
+}));
+
+jest.mock("@src/ui/ducks/connections", (): unknown => ({
+  fetchConnections: jest.fn(),
+  useConnectedOrigins: jest.fn(),
 }));
 
 jest.mock("@src/ui/ducks/permissions", (): unknown => ({
@@ -53,7 +59,6 @@ describe("ui/pages/Home/useHome", () => {
         account: defaultWalletHookData.address!,
         name: "Account #1",
         groups: [],
-        urlOrigin: "http://localhost:3000",
         isDeterministic: true,
         isImported: false,
       },
@@ -64,12 +69,15 @@ describe("ui/pages/Home/useHome", () => {
         account: defaultWalletHookData.address!,
         name: "Account #2",
         groups: [],
-        urlOrigin: "http://localhost:3000",
         isDeterministic: true,
         isImported: false,
       },
     },
   ];
+
+  const defaultConnectedOrigins = {
+    1: mockDefaultConnection.urlOrigin,
+  };
 
   const defaultUrl = new URL("http://localhost:3000");
 
@@ -84,7 +92,7 @@ describe("ui/pages/Home/useHome", () => {
 
     (useIdentities as jest.Mock).mockReturnValue(defaultIdentities);
 
-    (useConnectedIdentity as jest.Mock).mockReturnValue(defaultIdentities[0]);
+    (useConnectedOrigins as jest.Mock).mockReturnValue(defaultConnectedOrigins);
 
     (checkHostApproval as jest.Mock).mockReturnValue(true);
   });
@@ -99,8 +107,9 @@ describe("ui/pages/Home/useHome", () => {
     expect(result.current.address).toBe(defaultWalletHookData.address);
     expect(result.current.identities).toStrictEqual(defaultIdentities);
     expect(fetchIdentities).toBeCalledTimes(1);
+    expect(fetchConnections).toBeCalledTimes(1);
     expect(fetchHistory).toBeCalledTimes(1);
-    expect(mockDispatch).toBeCalledTimes(2);
+    expect(mockDispatch).toBeCalledTimes(3);
   });
 
   test("should refresh connection status properly", async () => {

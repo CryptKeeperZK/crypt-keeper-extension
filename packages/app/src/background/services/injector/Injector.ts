@@ -4,17 +4,39 @@ import {
   type ConnectedIdentityMetadata,
   type IHostPermission,
   type IConnectionOptions,
+  type IConnectionData,
 } from "@cryptkeeperzk/types";
+import pick from "lodash/pick";
 
-import { InjectorHandler } from "./InjectorHandler";
+import BrowserUtils from "@src/background/controllers/browserUtils";
+import RequestManager from "@src/background/controllers/requestManager";
+import ApprovalService from "@src/background/services/approval";
+import ConnectionService from "@src/background/services/connection";
+import LockerService from "@src/background/services/lock";
+import ZkIdentityService from "@src/background/services/zkIdentity";
 
 export class InjectorService {
   private static INSTANCE?: InjectorService;
 
-  private injectorHandler: InjectorHandler;
+  private readonly lockerService: LockerService;
 
-  private constructor() {
-    this.injectorHandler = new InjectorHandler();
+  private readonly approvalService: ApprovalService;
+
+  private readonly browserService: BrowserUtils;
+
+  private readonly requestManager: RequestManager;
+
+  private readonly connectionService: ConnectionService;
+
+  private readonly zkIdentityService: ZkIdentityService;
+
+  constructor() {
+    this.approvalService = ApprovalService.getInstance();
+    this.browserService = BrowserUtils.getInstance();
+    this.lockerService = LockerService.getInstance();
+    this.requestManager = RequestManager.getInstance();
+    this.connectionService = ConnectionService.getInstance();
+    this.zkIdentityService = ZkIdentityService.getInstance();
   }
 
   static getInstance(): InjectorService {
@@ -25,49 +47,72 @@ export class InjectorService {
     return InjectorService.INSTANCE;
   }
 
-  isConnected = async (payload: unknown, { urlOrigin }: IZkMetadata): Promise<unknown> => {
-    await this.injectorHandler.getConnectedIdentityMetadata({}, { urlOrigin });
-
-    return payload;
-  };
-
-  getConnectedIdentityMetadata = async (
-    _: unknown,
-    { urlOrigin }: IZkMetadata,
-  ): Promise<ConnectedIdentityMetadata | undefined> => {
-    const { isApproved } = this.injectorHandler.getConnectionApprovalData({ urlOrigin });
-
-    if (!isApproved) {
-      return undefined;
-    }
-
-    return this.injectorHandler.getConnectedIdentityMetadata({}, { urlOrigin });
-  };
-
   connect = async ({ isChangeIdentity }: IConnectionOptions, { urlOrigin }: IZkMetadata): Promise<void> => {
-    const { isApproved, canSkipApprove } = await this.injectorHandler.checkApproval({ urlOrigin });
+    await this.checkUnlockStatus();
 
     try {
-      if (isApproved) {
-        await this.injectorHandler.getApprovalService().add({ urlOrigin: urlOrigin!, canSkipApprove });
-      } else {
-        const hostPermission = (await this.injectorHandler.newRequest(PendingRequestType.APPROVE, {
-          urlOrigin,
-        })) as IHostPermission;
+      const { isApproved, canSkipApprove, isConnected } = this.getConnectionData({ urlOrigin });
 
-        await this.injectorHandler.getApprovalService().add({
-          urlOrigin: hostPermission.urlOrigin,
-          canSkipApprove: hostPermission.canSkipApprove,
+      if (!isApproved) {
+        const { canSkipApprove: skipApprove } = await this.newRequest<IHostPermission>(PendingRequestType.APPROVE, {
+          urlOrigin,
         });
+        await this.approvalService.add({ urlOrigin: urlOrigin!, canSkipApprove: skipApprove });
+      } else {
+        await this.approvalService.add({ urlOrigin: urlOrigin!, canSkipApprove });
       }
 
-      const connectedIdentity = await this.injectorHandler.getZkIdentityService().getConnectedIdentity();
-
-      if (connectedIdentity?.metadata.urlOrigin !== urlOrigin || isChangeIdentity) {
-        await this.injectorHandler.getZkIdentityService().connectIdentityRequest({ urlOrigin: urlOrigin! });
+      if (!isConnected || isChangeIdentity) {
+        await this.connectionService.connectRequest({}, { urlOrigin: urlOrigin! });
       }
     } catch (error) {
       throw new Error(`CryptKeeper: error in the connect request, ${(error as Error).message}`);
+    }
+  };
+
+  getConnectedIdentityMetadata = (_: unknown, { urlOrigin }: IZkMetadata): ConnectedIdentityMetadata | undefined => {
+    const { isApproved, isConnected } = this.getConnectionData({ urlOrigin });
+
+    if (!isApproved || !isConnected) {
+      return undefined;
+    }
+
+    const connectedIdentity = this.connectionService.getConnectedIdentity(urlOrigin!);
+    return pick(connectedIdentity?.metadata, ["name"]) as ConnectedIdentityMetadata | undefined;
+  };
+
+  private newRequest = async <T>(type: PendingRequestType, payload: unknown): Promise<T> => {
+    const response = await this.requestManager.newRequest(type, payload);
+    await this.browserService.closePopup();
+
+    return response as T;
+  };
+
+  private getConnectionData = ({ urlOrigin }: IZkMetadata): IConnectionData => {
+    if (!urlOrigin) {
+      throw new Error("CryptKeeper: Origin is not set");
+    }
+
+    const isApproved = this.approvalService.isApproved(urlOrigin);
+    const canSkipApprove = this.approvalService.canSkipApprove(urlOrigin);
+    const identity = this.connectionService.getConnectedIdentity(urlOrigin);
+
+    return { isApproved, isConnected: Boolean(identity), canSkipApprove };
+  };
+
+  private checkUnlockStatus = async () => {
+    const { isUnlocked, isInitialized } = await this.lockerService.getStatus();
+
+    if (!isUnlocked) {
+      await this.browserService.openPopup();
+      await this.lockerService.awaitUnlock();
+
+      if (isInitialized) {
+        await this.approvalService.awaitUnlock();
+        await this.zkIdentityService.awaitUnlock();
+        await this.connectionService.awaitUnlock();
+        await this.browserService.closePopup();
+      }
     }
   };
 }

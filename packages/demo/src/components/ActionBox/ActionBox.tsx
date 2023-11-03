@@ -33,7 +33,6 @@ export const ActionBox = <T, U>({
         <Button
           data-testid={testId}
           sx={{ textTransform: "none", mb: 1 }}
-          type="submit"
           variant="contained"
           onClick={() => onClick(option as T)}
         >

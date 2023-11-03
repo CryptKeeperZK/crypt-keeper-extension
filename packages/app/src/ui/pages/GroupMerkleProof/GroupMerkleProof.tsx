@@ -15,7 +15,7 @@ const GroupMerkleProof = (): JSX.Element => {
     isJoined,
     error,
     faviconUrl,
-    connectedIdentity,
+    connection,
     groupId,
     onGoBack,
     onGoToHost,
@@ -23,7 +23,7 @@ const GroupMerkleProof = (): JSX.Element => {
     onGenerateMerkleProof,
   } = useGroupMerkleProof();
 
-  const isShowContent = isJoined && Boolean(connectedIdentity && groupId);
+  const isShowContent = isJoined && Boolean(connection && groupId);
 
   if (isLoading) {
     return (
@@ -51,7 +51,7 @@ const GroupMerkleProof = (): JSX.Element => {
           <Icon size={8} url={faviconUrl || logoSVG} />
         </Box>
 
-        {!connectedIdentity && (
+        {!connection && (
           <Box
             sx={{
               display: "flex",
@@ -120,7 +120,7 @@ const GroupMerkleProof = (): JSX.Element => {
                   variant="h6"
                   onClick={onGoToHost}
                 >
-                  {connectedIdentity!.metadata.urlOrigin}
+                  {connection!.urlOrigin}
                 </Typography>
 
                 <Typography fontWeight="bold" sx={{ display: "inline" }} variant="h6">
@@ -159,7 +159,7 @@ const GroupMerkleProof = (): JSX.Element => {
 
         <Button
           data-testid="generate-merkle-proof"
-          disabled={!connectedIdentity || isSubmitting || !isJoined || !groupId}
+          disabled={!connection || isSubmitting || !isJoined || !groupId}
           sx={{ ml: 1, width: "100%" }}
           variant="contained"
           onClick={onGenerateMerkleProof}

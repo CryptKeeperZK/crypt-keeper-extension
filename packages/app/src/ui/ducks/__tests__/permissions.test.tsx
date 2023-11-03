@@ -29,7 +29,7 @@ describe("ui/ducks/permissions", () => {
     jest.clearAllMocks();
   });
 
-  test("should fetch urlOrigin permissions properly", async () => {
+  test("should fetch url origin permissions properly", async () => {
     (postMessage as jest.Mock).mockResolvedValue(defaultPermission);
 
     await Promise.resolve(store.dispatch(fetchHostPermissions(defaultHost)));
@@ -49,7 +49,7 @@ describe("ui/ducks/permissions", () => {
     });
   });
 
-  test("should set urlOrigin permission properly", async () => {
+  test("should set url origin permission properly", async () => {
     (postMessage as jest.Mock).mockResolvedValue({ ...defaultPermission, canSkipApprove: false });
 
     await Promise.resolve(store.dispatch(setHostPermissions({ urlOrigin: defaultHost, canSkipApprove: false })));
@@ -72,7 +72,7 @@ describe("ui/ducks/permissions", () => {
     });
   });
 
-  test("should remove urlOrigin properly", async () => {
+  test("should remove url origin properly", async () => {
     await Promise.resolve(store.dispatch(removeHost(defaultHost)));
     const { permissions } = store.getState();
     const { result } = renderHook(() => useHostPermission(defaultHost), {
@@ -90,7 +90,7 @@ describe("ui/ducks/permissions", () => {
     });
   });
 
-  test("should check urlOrigin approval properly", async () => {
+  test("should check url origin approval properly", async () => {
     (postMessage as jest.Mock).mockResolvedValue(true);
 
     const result = await store.dispatch(checkHostApproval(defaultHost));

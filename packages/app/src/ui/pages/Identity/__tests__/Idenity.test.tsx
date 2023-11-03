@@ -6,7 +6,7 @@ import { act, render, waitFor } from "@testing-library/react";
 import { Suspense } from "react";
 
 import { defaultWalletHookData } from "@src/config/mock/wallet";
-import { mockDefaultIdentity } from "@src/config/mock/zk";
+import { mockDefaultConnection, mockDefaultIdentity } from "@src/config/mock/zk";
 import { useCryptKeeperWallet, useEthWallet } from "@src/ui/hooks/wallet";
 
 import Identity from "..";
@@ -28,7 +28,6 @@ jest.mock("../useIdentityPage", (): unknown => ({
 describe("ui/pages/Identity", () => {
   const defaultHookData: IUseIdentityPageData = {
     isLoading: false,
-    isConnectedIdentity: false,
     isConfirmModalOpen: false,
     isUpdating: false,
     errors: {},
@@ -37,6 +36,7 @@ describe("ui/pages/Identity", () => {
       ...mockDefaultIdentity.metadata,
       groups: [{ id: "1", name: "Group #1", description: "Description #1" }],
     },
+    urlOrigin: mockDefaultConnection.urlOrigin,
     register: jest.fn(),
     onGoBack: jest.fn(),
     onConfirmDeleteIdentity: jest.fn(),
@@ -124,10 +124,11 @@ describe("ui/pages/Identity", () => {
     expect(error).toBeNull();
   });
 
-  test("should render properly without urlOrigin and groups", async () => {
+  test("should render properly without url origin and groups", async () => {
     (useIdentityPage as jest.Mock).mockReturnValue({
       ...defaultHookData,
-      metadata: { ...defaultHookData.metadata, groups: [], urlOrigin: undefined },
+      urlOrigin: undefined,
+      metadata: { ...defaultHookData.metadata, groups: [] },
     });
 
     const { container, findByText } = render(

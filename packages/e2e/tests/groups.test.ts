@@ -21,8 +21,9 @@ test.describe("groups", () => {
     const extension = new CryptKeeper(page);
     await extension.focus();
 
-    await extension.groups.joinGroup();
+    const popup = await extension.groups.joinGroup();
     await expect(page.getByText(/User has joined the group./)).toBeVisible();
+    await popup.close();
 
     await extension.groups.generateGroupMerkleProof();
     await expect(page.getByText("Group Merkle Proof has been successfully generated!")).toBeVisible();
@@ -39,7 +40,8 @@ test.describe("groups", () => {
     const extension = new CryptKeeper(page);
     await extension.focus();
 
-    await extension.groups.joinGroup();
+    const cryptKeeper = await extension.groups.joinGroup();
+    await cryptKeeper.close();
     const popup = await extension.groups.joinGroupRequest();
     await expect(popup.getByTestId("joined-text")).toBeVisible();
 

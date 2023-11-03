@@ -1,18 +1,21 @@
+/* eslint-disable @typescript-eslint/unbound-method */
+import { EventName } from "@cryptkeeperzk/providers";
+import browser from "webextension-polyfill";
+
 import SimpleStorage from "@src/background/services/storage";
-import { mockDefaultIdentity } from "@src/config/mock/zk";
+import { mockDefaultConnection, mockDefaultIdentity } from "@src/config/mock/zk";
 
 import type { IConnectArgs, IZkMetadata } from "@cryptkeeperzk/types";
 
 import ConnectionService from "..";
 
-const mockDefaultHosts = [mockDefaultIdentity.metadata.urlOrigin];
 const mockSerializedConnections = JSON.stringify([
   [
-    mockDefaultHosts[0],
+    "http://localhost:3000",
     {
       name: mockDefaultIdentity.metadata.name,
-      urlOrigin: mockDefaultHosts[0],
       commitment: mockDefaultIdentity.commitment,
+      urlOrigin: "http://localhost:3000",
     },
   ],
 ]);
@@ -44,10 +47,18 @@ interface MockStorage {
 describe("background/services/connection", () => {
   const connectionService = ConnectionService.getInstance();
 
-  const defaultMetadata: IZkMetadata = { urlOrigin: mockDefaultHosts[0] };
+  const defaultMetadata: IZkMetadata = { urlOrigin: "http://localhost:3000" };
+
+  const defaultTabs = [{ id: 1, url: defaultMetadata.urlOrigin }, { id: 2, url: defaultMetadata.urlOrigin }, { id: 3 }];
+
+  const defaultPopupTab = { id: 3, active: true, highlighted: true };
 
   beforeEach(() => {
     process.env.NODE_ENV = "test";
+
+    (browser.tabs.create as jest.Mock).mockResolvedValue(defaultPopupTab);
+
+    (browser.tabs.query as jest.Mock).mockResolvedValue(defaultTabs);
 
     (SimpleStorage as jest.Mock).mock.instances.forEach((instance: MockStorage) => {
       instance.get.mockResolvedValue(mockSerializedConnections);
@@ -65,6 +76,14 @@ describe("background/services/connection", () => {
       instance.set.mockClear();
       instance.clear.mockClear();
     });
+
+    (browser.tabs.create as jest.Mock).mockClear();
+
+    (browser.tabs.query as jest.Mock).mockClear();
+
+    (browser.tabs.sendMessage as jest.Mock).mockClear();
+
+    (browser.windows.create as jest.Mock).mockClear();
   });
 
   describe("unlock", () => {
@@ -112,15 +131,33 @@ describe("background/services/connection", () => {
       await connectionService.unlock();
     });
 
-    test("should connect identity properly", async () => {
+    test("should request connection properly", async () => {
+      await connectionService.connectRequest({}, defaultMetadata);
+
+      const defaultOptions = {
+        tabId: defaultPopupTab.id,
+        type: "popup",
+        focused: true,
+        width: 385,
+        height: 610,
+      };
+
+      expect(browser.tabs.query).toBeCalledWith({ lastFocusedWindow: true });
+      expect(browser.windows.create).toBeCalledTimes(1);
+      expect(browser.windows.create).toBeCalledWith(defaultOptions);
+    });
+
+    test("should connect properly", async () => {
       const [storage] = (SimpleStorage as jest.Mock).mock.instances as [MockStorage];
 
       await connectionService.connect(defaultArgs, defaultMetadata);
       const connections = connectionService.getConnections();
+      const identity = connectionService.getConnectedIdentity(defaultMetadata.urlOrigin!);
 
       expect(storage.set).toBeCalledTimes(1);
       expect(storage.set).toBeCalledWith(mockSerializedConnections);
-      expect(connections.size).toBe(1);
+      expect(Object.entries(connections)).toHaveLength(1);
+      expect(identity?.metadata.name).toBe(mockDefaultIdentity.metadata.name);
     });
 
     test("should throw error if there is no url origin", async () => {
@@ -141,26 +178,91 @@ describe("background/services/connection", () => {
       await connectionService.unlock();
     });
 
-    test("should disconnect identity properly", async () => {
+    test("should disconnect properly", async () => {
       const [storage] = (SimpleStorage as jest.Mock).mock.instances as [MockStorage];
 
       await connectionService.disconnect({}, defaultMetadata);
       const connections = connectionService.getConnections();
+      const identity = connectionService.getConnectedIdentity(defaultMetadata.urlOrigin!);
 
       expect(storage.set).toBeCalledTimes(1);
       expect(storage.set).toBeCalledWith(JSON.stringify([]));
-      expect(connections.size).toBe(0);
+      expect(Object.entries(connections)).toHaveLength(0);
+      expect(identity).toBeUndefined();
     });
 
-    test("should throw error if there is no url origin", async () => {
-      await expect(connectionService.disconnect({}, { urlOrigin: "" })).rejects.toThrowError(
-        "CryptKeeper: origin is not provided",
+    test("should disconnect with commitment properly", async () => {
+      const [storage] = (SimpleStorage as jest.Mock).mock.instances as [MockStorage];
+
+      await connectionService.disconnect(
+        { identityCommitment: mockDefaultConnection.commitment },
+        { urlOrigin: undefined },
       );
+      const connections = connectionService.getConnections();
+      const identity = connectionService.getConnectedIdentity(defaultMetadata.urlOrigin!);
+
+      expect(storage.set).toBeCalledTimes(1);
+      expect(storage.set).toBeCalledWith(JSON.stringify([]));
+      expect(Object.entries(connections)).toHaveLength(0);
+      expect(identity).toBeUndefined();
     });
 
-    test("should throw error if origin is not connected", async () => {
-      await expect(connectionService.disconnect({}, { urlOrigin: "unknown" })).rejects.toThrowError(
-        "CryptKeeper: origin is not connected",
+    test("should return false if there is no url origin", async () => {
+      await expect(connectionService.disconnect({}, { urlOrigin: "" })).resolves.toBe(false);
+    });
+  });
+
+  describe("clear", () => {
+    beforeEach(async () => {
+      await connectionService.unlock();
+    });
+
+    test("should clear storage properly", async () => {
+      await connectionService.clear();
+      const connections = connectionService.getConnections();
+
+      expect(Object.entries(connections)).toHaveLength(0);
+    });
+  });
+
+  describe("reveal commitment", () => {
+    beforeEach(async () => {
+      await connectionService.unlock();
+    });
+
+    test("should request reveal connected identity commitment", async () => {
+      await connectionService.revealConnectedIdentityCommitmentRequest({}, defaultMetadata);
+
+      const defaultOptions = {
+        tabId: defaultPopupTab.id,
+        type: "popup",
+        focused: true,
+        width: 385,
+        height: 610,
+      };
+
+      expect(browser.tabs.query).toBeCalledWith({ lastFocusedWindow: true });
+      expect(browser.windows.create).toBeCalledWith(defaultOptions);
+    });
+
+    test("should reveal connected identity commitment", async () => {
+      await connectionService.revealConnectedIdentityCommitment({}, defaultMetadata);
+
+      expect(browser.tabs.query).toBeCalledWith({});
+      expect(browser.tabs.sendMessage).toBeCalledTimes(2);
+      expect(browser.tabs.sendMessage).toHaveBeenNthCalledWith(1, defaultTabs[0].id, {
+        type: EventName.REVEAL_COMMITMENT,
+        payload: { commitment: mockDefaultConnection.commitment },
+      });
+      expect(browser.tabs.sendMessage).toHaveBeenNthCalledWith(2, defaultTabs[1].id, {
+        type: EventName.REVEAL_COMMITMENT,
+        payload: { commitment: mockDefaultConnection.commitment },
+      });
+    });
+
+    test("should not reveal identity commitment if there is not connection", async () => {
+      await expect(connectionService.revealConnectedIdentityCommitment({}, { urlOrigin: "unknown" })).rejects.toThrow(
+        "CryptKeeper: No connected identity found",
       );
     });
   });
@@ -207,11 +309,11 @@ describe("background/services/connection", () => {
     });
 
     test("should upload encrypted connections", async () => {
+      const [storage] = (SimpleStorage as jest.Mock).mock.instances as [MockStorage];
+
       await connectionService.uploadEncryptedStorage("encrypted", "password");
 
-      (SimpleStorage as jest.Mock).mock.instances.forEach((instance: MockStorage) => {
-        expect(instance.set).toBeCalledTimes(1);
-      });
+      expect(storage.set).toBeCalledTimes(1);
     });
 
     test("should not upload encrypted connections if there is no data", async () => {

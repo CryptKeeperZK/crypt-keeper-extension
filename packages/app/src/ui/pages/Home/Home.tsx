@@ -9,7 +9,7 @@ import "./home.scss";
 import { useHome } from "./useHome";
 
 const Home = (): JSX.Element => {
-  const { identities, connectedIdentity, refreshConnectionStatus } = useHome();
+  const { identities, connectedOrigins, refreshConnectionStatus } = useHome();
 
   return (
     <div className="w-full h-full flex flex-col home" data-testid="home-page">
@@ -19,12 +19,7 @@ const Home = (): JSX.Element => {
         <Info refreshConnectionStatus={refreshConnectionStatus} />
 
         <TabList>
-          <IdentityList
-            isShowAddNew
-            isShowMenu
-            identities={identities}
-            selectedCommitment={connectedIdentity?.commitment}
-          />
+          <IdentityList isShowAddNew isShowMenu connectedOrigins={connectedOrigins} identities={identities} />
 
           <ActivityList />
 

@@ -75,11 +75,7 @@ export const Main = (): JSX.Element => {
     <div>
       <hr />
 
-      <ConnectedIdentity
-        identityCommitment={connectedCommitment}
-        identityHost={connectedIdentityMetadata?.urlOrigin}
-        identityName={connectedIdentityMetadata?.name}
-      />
+      <ConnectedIdentity commitment={connectedCommitment} name={connectedIdentityMetadata?.name} />
 
       <Connect isChangeIdentity connect={connect} title="Connect identity" />
 

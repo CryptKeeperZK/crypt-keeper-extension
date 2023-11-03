@@ -5,15 +5,16 @@ import { useNavigate } from "react-router-dom";
 
 import { Paths } from "@src/constants";
 import { closePopup } from "@src/ui/ducks/app";
+import { fetchConnections, useConnection } from "@src/ui/ducks/connections";
 import { checkGroupMembership, generateGroupMerkleProof } from "@src/ui/ducks/groups";
 import { useAppDispatch } from "@src/ui/ducks/hooks";
-import { fetchIdentities, useConnectedIdentity } from "@src/ui/ducks/identities";
+import { fetchIdentities } from "@src/ui/ducks/identities";
 import { rejectUserRequest } from "@src/ui/ducks/requests";
 import { useSearchParam } from "@src/ui/hooks/url";
 import { redirectToNewTab } from "@src/util/browser";
 import { getBandadaGroupUrl } from "@src/util/groups";
 
-import type { IIdentityData } from "@cryptkeeperzk/types";
+import type { IIdentityConnection } from "@cryptkeeperzk/types";
 
 export interface IUseGroupMerkleProofData {
   isLoading: boolean;
@@ -22,7 +23,7 @@ export interface IUseGroupMerkleProofData {
   error: string;
   faviconUrl: string;
   groupId?: string;
-  connectedIdentity?: IIdentityData;
+  connection?: IIdentityConnection;
   onGoBack: () => void;
   onGoToHost: () => void;
   onGoToGroup: () => void;
@@ -40,13 +41,29 @@ export const useGroupMerkleProof = (): IUseGroupMerkleProofData => {
   const navigate = useNavigate();
 
   const groupId = useSearchParam("groupId");
+  const urlOrigin = useSearchParam("urlOrigin");
 
-  const connectedIdentity = useConnectedIdentity();
+  const connection = useConnection(urlOrigin);
 
   useEffect(() => {
     setLoading(true);
-    Promise.all([dispatch(fetchIdentities()), dispatch(checkGroupMembership({ groupId: groupId! }))])
-      .then(([, isJoinedToGroup]) => {
+    Promise.all([dispatch(fetchIdentities()), dispatch(fetchConnections())])
+      .catch((err: Error) => {
+        setError(err.message);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  }, [dispatch, setLoading, setError]);
+
+  useEffect(() => {
+    if (!connection?.urlOrigin) {
+      return;
+    }
+
+    setLoading(true);
+    dispatch(checkGroupMembership({ groupId: groupId! }, connection.urlOrigin))
+      .then((isJoinedToGroup) => {
         setJoined(isJoinedToGroup);
       })
       .catch((err: Error) => {
@@ -55,38 +72,27 @@ export const useGroupMerkleProof = (): IUseGroupMerkleProofData => {
       .finally(() => {
         setLoading(false);
       });
-  }, [groupId, dispatch, setLoading, setError]);
 
-  useEffect(() => {
-    if (!connectedIdentity?.metadata.urlOrigin) {
-      return;
-    }
-
-    getLinkPreview(connectedIdentity.metadata.urlOrigin)
+    getLinkPreview(connection.urlOrigin)
       .then((data) => {
         setFaviconUrl(data.favicons[0]);
       })
       .catch(() => {
         setFaviconUrl("");
       });
-  }, [connectedIdentity?.metadata.urlOrigin, setFaviconUrl]);
+  }, [groupId, connection?.urlOrigin, setJoined, setError, setLoading, dispatch, setFaviconUrl]);
 
   const onGoBack = useCallback(() => {
-    dispatch(
-      rejectUserRequest(
-        { type: EventName.GROUP_MERKLE_PROOF, payload: { groupId } },
-        connectedIdentity?.metadata.urlOrigin,
-      ),
-    )
+    dispatch(rejectUserRequest({ type: EventName.GROUP_MERKLE_PROOF, payload: { groupId } }, connection?.urlOrigin))
       .then(() => dispatch(closePopup()))
       .then(() => {
         navigate(Paths.HOME);
       });
-  }, [groupId, connectedIdentity?.metadata.urlOrigin, dispatch, navigate]);
+  }, [groupId, connection?.urlOrigin, dispatch, navigate]);
 
   const onGoToHost = useCallback(() => {
-    redirectToNewTab(connectedIdentity!.metadata.urlOrigin!);
-  }, [connectedIdentity?.metadata.urlOrigin]);
+    redirectToNewTab(connection!.urlOrigin);
+  }, [connection?.urlOrigin]);
 
   const onGoToGroup = useCallback(() => {
     redirectToNewTab(getBandadaGroupUrl(groupId!));
@@ -94,7 +100,7 @@ export const useGroupMerkleProof = (): IUseGroupMerkleProofData => {
 
   const onGenerateMerkleProof = useCallback(() => {
     setSubmitting(true);
-    dispatch(generateGroupMerkleProof({ groupId: groupId! }))
+    dispatch(generateGroupMerkleProof({ groupId: groupId! }, connection!.urlOrigin))
       .then(() => dispatch(closePopup()))
       .then(() => {
         navigate(Paths.HOME);
@@ -105,7 +111,7 @@ export const useGroupMerkleProof = (): IUseGroupMerkleProofData => {
       .finally(() => {
         setSubmitting(false);
       });
-  }, [groupId, dispatch, navigate, setError, setSubmitting]);
+  }, [groupId, connection?.urlOrigin, dispatch, navigate, setError, setSubmitting]);
 
   return {
     isLoading,
@@ -113,7 +119,7 @@ export const useGroupMerkleProof = (): IUseGroupMerkleProofData => {
     isJoined,
     error,
     faviconUrl,
-    connectedIdentity,
+    connection,
     groupId,
     onGoBack,
     onGoToHost,
