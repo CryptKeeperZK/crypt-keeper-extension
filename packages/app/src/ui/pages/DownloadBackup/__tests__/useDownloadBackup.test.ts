@@ -70,11 +70,11 @@ describe("ui/pages/DownloadBackup/useDownloadBackup", () => {
     await waitFor(() => !result.current.isLoading);
 
     expect(result.current.isLoading).toBe(false);
-    expect(mockDispatch).toBeCalledTimes(1);
-    expect(downloadBackup).toBeCalledTimes(1);
-    expect(downloadFile).toBeCalledTimes(1);
-    expect(mockNavigate).toBeCalledTimes(1);
-    expect(mockNavigate).toBeCalledWith(Paths.SETTINGS);
+    expect(mockDispatch).toHaveBeenCalledTimes(1);
+    expect(downloadBackup).toHaveBeenCalledTimes(1);
+    expect(downloadFile).toHaveBeenCalledTimes(1);
+    expect(mockNavigate).toHaveBeenCalledTimes(1);
+    expect(mockNavigate).toHaveBeenCalledWith(Paths.SETTINGS);
   });
 
   test("should handle submit error", async () => {

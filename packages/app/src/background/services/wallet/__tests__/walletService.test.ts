@@ -101,7 +101,7 @@ describe("background/services/wallet", () => {
 
       await walletService.generateKeyPair();
 
-      expect(keyStorage.set).toBeCalledTimes(1);
+      expect(keyStorage.set).toHaveBeenCalledTimes(1);
     });
 
     test("should generate key pair properly", async () => {
@@ -109,8 +109,8 @@ describe("background/services/wallet", () => {
 
       const [keyStorage, mnemonicStorage] = (SimpleStorage as jest.Mock).mock.instances as [MockStorage, MockStorage];
 
-      expect(keyStorage.set).toBeCalledTimes(1);
-      expect(mnemonicStorage.get).toBeCalledTimes(1);
+      expect(keyStorage.set).toHaveBeenCalledTimes(1);
+      expect(mnemonicStorage.get).toHaveBeenCalledTimes(1);
     });
 
     test("should not generate key pair if there is no mnemonic", async () => {
@@ -249,7 +249,7 @@ describe("background/services/wallet", () => {
 
       await walletService.changeMnemonicPassword({ mnemonic: defaultMnemonic, password: "password" });
 
-      expect(mnemonicStorage.set).toBeCalledTimes(1);
+      expect(mnemonicStorage.set).toHaveBeenCalledTimes(1);
     });
   });
 
@@ -289,9 +289,9 @@ describe("background/services/wallet", () => {
       const selected = await walletService.selectAccount(ZERO_ADDRESS);
 
       expect(selected).toBe(ZERO_ADDRESS);
-      expect(selectedAccountStorage.set).toBeCalledTimes(1);
-      expect(pushMessage).toBeCalledTimes(1);
-      expect(pushMessage).toBeCalledWith(setSelectedAccount(ZERO_ADDRESS));
+      expect(selectedAccountStorage.set).toHaveBeenCalledTimes(1);
+      expect(pushMessage).toHaveBeenCalledTimes(1);
+      expect(pushMessage).toHaveBeenCalledWith(setSelectedAccount(ZERO_ADDRESS));
     });
 
     test("should get selected account", async () => {
@@ -350,9 +350,9 @@ describe("background/services/wallet", () => {
 
       await walletService.uploadEncryptedStorage(mockBackup, "password");
 
-      expect(accountStorage.set).toBeCalledTimes(1);
-      expect(accountStorage.set).toBeCalledWith(mockSerializedAccounts);
-      expect(mnemonicStorage.set).toBeCalledTimes(0);
+      expect(accountStorage.set).toHaveBeenCalledTimes(1);
+      expect(accountStorage.set).toHaveBeenCalledWith(mockSerializedAccounts);
+      expect(mnemonicStorage.set).toHaveBeenCalledTimes(0);
     });
 
     test("should upload encrypted data with empty storage", async () => {
@@ -365,17 +365,17 @@ describe("background/services/wallet", () => {
 
       await walletService.uploadEncryptedStorage(mockBackup, "password");
 
-      expect(accountStorage.set).toBeCalledTimes(1);
-      expect(accountStorage.set).toBeCalledWith(mockSerializedAccounts);
-      expect(mnemonicStorage.set).toBeCalledTimes(1);
-      expect(mnemonicStorage.set).toBeCalledWith(defaultMnemonic);
+      expect(accountStorage.set).toHaveBeenCalledTimes(1);
+      expect(accountStorage.set).toHaveBeenCalledWith(mockSerializedAccounts);
+      expect(mnemonicStorage.set).toHaveBeenCalledTimes(1);
+      expect(mnemonicStorage.set).toHaveBeenCalledWith(defaultMnemonic);
     });
 
     test("should not upload encrypted keys if there is no data", async () => {
       await walletService.uploadEncryptedStorage("", "");
 
       (SimpleStorage as jest.Mock).mock.instances.forEach((instance: MockStorage) => {
-        expect(instance.set).toBeCalledTimes(0);
+        expect(instance.set).toHaveBeenCalledTimes(0);
       });
     });
 
@@ -393,8 +393,8 @@ describe("background/services/wallet", () => {
 
       await walletService.downloadStorage();
 
-      expect(accountsStorage.get).toBeCalledTimes(1);
-      expect(mnemonicStorage.get).toBeCalledTimes(1);
+      expect(accountsStorage.get).toHaveBeenCalledTimes(1);
+      expect(mnemonicStorage.get).toHaveBeenCalledTimes(1);
     });
 
     test("should return null if storage is empty", async () => {
@@ -418,10 +418,10 @@ describe("background/services/wallet", () => {
 
       await walletService.restoreStorage({ accounts: "accounts", mnemonic: "mnemonic" });
 
-      expect(mnemonicStorage.set).toBeCalledTimes(1);
-      expect(mnemonicStorage.set).toBeCalledWith("mnemonic");
-      expect(accountStorage.set).toBeCalledTimes(1);
-      expect(accountStorage.set).toBeCalledWith("accounts");
+      expect(mnemonicStorage.set).toHaveBeenCalledTimes(1);
+      expect(mnemonicStorage.set).toHaveBeenCalledWith("mnemonic");
+      expect(accountStorage.set).toHaveBeenCalledTimes(1);
+      expect(accountStorage.set).toHaveBeenCalledWith("accounts");
     });
 
     test("should restore empty storage properly", async () => {
@@ -432,10 +432,10 @@ describe("background/services/wallet", () => {
 
       await walletService.restoreStorage(null);
 
-      expect(mnemonicStorage.set).toBeCalledTimes(1);
-      expect(mnemonicStorage.set).toBeCalledWith(null);
-      expect(accountStorage.set).toBeCalledTimes(1);
-      expect(accountStorage.set).toBeCalledWith(null);
+      expect(mnemonicStorage.set).toHaveBeenCalledTimes(1);
+      expect(mnemonicStorage.set).toHaveBeenCalledWith(null);
+      expect(accountStorage.set).toHaveBeenCalledTimes(1);
+      expect(accountStorage.set).toHaveBeenCalledWith(null);
     });
 
     test("should throw error when trying to restore incorrect data", async () => {

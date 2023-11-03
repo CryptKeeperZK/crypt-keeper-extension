@@ -60,8 +60,8 @@ describe("Semaphore proof", () => {
       defaultGenerateArgs.payload,
     );
 
-    expect(semaphoreServiceInstance.genProof).toBeCalledTimes(1);
-    expect(semaphoreServiceInstance.genProof).toBeCalledWith("serialized", defaultGenerateArgs.payload);
+    expect(semaphoreServiceInstance.genProof).toHaveBeenCalledTimes(1);
+    expect(semaphoreServiceInstance.genProof).toHaveBeenCalledWith("serialized", defaultGenerateArgs.payload);
     expect(result).toStrictEqual(emptyFullProof);
   });
 });

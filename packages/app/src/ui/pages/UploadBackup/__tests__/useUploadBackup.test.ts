@@ -92,10 +92,10 @@ describe("ui/pages/UploadBackup/useUploadBackup", () => {
       result.current.onGoBack();
     });
 
-    expect(mockDispatch).toBeCalledTimes(1);
-    expect(closePopup).toBeCalledTimes(1);
-    expect(mockNavigate).toBeCalledTimes(1);
-    expect(mockNavigate).toBeCalledWith(Paths.SETTINGS);
+    expect(mockDispatch).toHaveBeenCalledTimes(1);
+    expect(closePopup).toHaveBeenCalledTimes(1);
+    expect(mockNavigate).toHaveBeenCalledTimes(1);
+    expect(mockNavigate).toHaveBeenCalledWith(Paths.SETTINGS);
   });
 
   test("should drop files properly", () => {
@@ -137,12 +137,12 @@ describe("ui/pages/UploadBackup/useUploadBackup", () => {
 
     await act(() => Promise.resolve(result.current.onSubmit()));
 
-    expect(mockDispatch).toBeCalledTimes(2);
-    expect(uploadBackup).toBeCalledTimes(1);
-    expect(defaultWalletHookData.onConnect).toBeCalledTimes(1);
-    expect(closePopup).toBeCalledTimes(1);
-    expect(mockNavigate).toBeCalledTimes(1);
-    expect(mockNavigate).toBeCalledWith(Paths.HOME);
+    expect(mockDispatch).toHaveBeenCalledTimes(2);
+    expect(uploadBackup).toHaveBeenCalledTimes(1);
+    expect(defaultWalletHookData.onConnect).toHaveBeenCalledTimes(1);
+    expect(closePopup).toHaveBeenCalledTimes(1);
+    expect(mockNavigate).toHaveBeenCalledTimes(1);
+    expect(mockNavigate).toHaveBeenCalledWith(Paths.HOME);
   });
 
   test("should handle submit error properly", async () => {

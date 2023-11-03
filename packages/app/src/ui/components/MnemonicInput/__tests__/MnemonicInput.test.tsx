@@ -52,7 +52,7 @@ describe("ui/components/MnemonicInput", () => {
     const showButton = await findByText("Show");
     await act(() => Promise.resolve(showButton.click()));
 
-    expect(defaultHookData.onShowMnemonic).toBeCalledTimes(1);
+    expect(defaultHookData.onShowMnemonic).toHaveBeenCalledTimes(1);
   });
 
   test("should hide mnemonic properly", async () => {
@@ -63,7 +63,7 @@ describe("ui/components/MnemonicInput", () => {
     const hideButton = await findByText("Hide");
     await act(() => Promise.resolve(hideButton.click()));
 
-    expect(defaultHookData.onShowMnemonic).toBeCalledTimes(1);
+    expect(defaultHookData.onShowMnemonic).toHaveBeenCalledTimes(1);
   });
 
   test("should render operation pending labels", async () => {
@@ -87,7 +87,7 @@ describe("ui/components/MnemonicInput", () => {
     await act(() => Promise.resolve(copyButton.click()));
     await act(() => Promise.resolve(downloadButton.click()));
 
-    expect(defaultHookData.onCopy).toBeCalledTimes(1);
-    expect(defaultHookData.onDownload).toBeCalledTimes(1);
+    expect(defaultHookData.onCopy).toHaveBeenCalledTimes(1);
+    expect(defaultHookData.onDownload).toHaveBeenCalledTimes(1);
   });
 });

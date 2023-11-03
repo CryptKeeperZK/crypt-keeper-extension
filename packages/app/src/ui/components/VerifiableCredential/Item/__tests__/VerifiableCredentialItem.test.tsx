@@ -113,8 +113,8 @@ describe("ui/components/VerifiableCredential/Item", () => {
     const submitRenameIcon = await screen.findByTestId("verifiable-credential-row-submit-rename");
     await act(async () => Promise.resolve(submitRenameIcon.click()));
 
-    expect(defaultProps.onRenameVerifiableCredential).toBeCalledTimes(1);
-    expect(defaultProps.onRenameVerifiableCredential).toBeCalledWith("0x123", "My Favorite Credential");
+    expect(defaultProps.onRenameVerifiableCredential).toHaveBeenCalledTimes(1);
+    expect(defaultProps.onRenameVerifiableCredential).toHaveBeenCalledWith("0x123", "My Favorite Credential");
   });
 
   test("should accept to delete verifiable credential properly", async () => {
@@ -133,8 +133,8 @@ describe("ui/components/VerifiableCredential/Item", () => {
     const dangerModalAccept = await screen.findByTestId("danger-modal-accept");
     await act(async () => Promise.resolve(dangerModalAccept.click()));
 
-    expect(defaultProps.onDeleteVerifiableCredential).toBeCalledTimes(1);
-    expect(defaultProps.onDeleteVerifiableCredential).toBeCalledWith(defaultProps.metadata.hash);
+    expect(defaultProps.onDeleteVerifiableCredential).toHaveBeenCalledTimes(1);
+    expect(defaultProps.onDeleteVerifiableCredential).toHaveBeenCalledWith(defaultProps.metadata.hash);
     expect(dangerModal).not.toBeInTheDocument();
   });
 
@@ -154,7 +154,7 @@ describe("ui/components/VerifiableCredential/Item", () => {
     const dangerModalReject = await screen.findByTestId("danger-modal-reject");
     await act(async () => Promise.resolve(dangerModalReject.click()));
 
-    expect(defaultProps.onDeleteVerifiableCredential).toBeCalledTimes(0);
+    expect(defaultProps.onDeleteVerifiableCredential).toHaveBeenCalledTimes(0);
     expect(dangerModal).not.toBeInTheDocument();
   });
 });

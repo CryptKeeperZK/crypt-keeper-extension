@@ -64,14 +64,14 @@ describe("ui/components/ConfirmRequestModal/useConfirmRequestModal", () => {
     await act(async () => Promise.resolve(result.current.accept()));
     await waitFor(() => !result.current.loading);
 
-    expect(finalizeRequest).toBeCalledTimes(1);
-    expect(finalizeRequest).toBeCalledWith({
+    expect(finalizeRequest).toHaveBeenCalledTimes(1);
+    expect(finalizeRequest).toHaveBeenCalledWith({
       id: "1",
       status: RequestResolutionStatus.ACCEPT,
       data: undefined,
     });
-    expect(fetchPendingRequests).toBeCalledTimes(1);
-    expect(closePopup).toBeCalledTimes(1);
+    expect(fetchPendingRequests).toHaveBeenCalledTimes(1);
+    expect(closePopup).toHaveBeenCalledTimes(1);
   });
 
   test("should handle accept error", async () => {
@@ -93,14 +93,14 @@ describe("ui/components/ConfirmRequestModal/useConfirmRequestModal", () => {
     await act(async () => Promise.resolve(result.current.reject()));
     await waitFor(() => !result.current.loading);
 
-    expect(finalizeRequest).toBeCalledTimes(1);
-    expect(finalizeRequest).toBeCalledWith({
+    expect(finalizeRequest).toHaveBeenCalledTimes(1);
+    expect(finalizeRequest).toHaveBeenCalledWith({
       id: "1",
       status: "reject",
       data: undefined,
     });
-    expect(fetchPendingRequests).toBeCalledTimes(1);
-    expect(closePopup).toBeCalledTimes(1);
+    expect(fetchPendingRequests).toHaveBeenCalledTimes(1);
+    expect(closePopup).toHaveBeenCalledTimes(1);
   });
 
   test("should close popup if trying to reject empty request", async () => {
@@ -111,9 +111,9 @@ describe("ui/components/ConfirmRequestModal/useConfirmRequestModal", () => {
     await act(async () => Promise.resolve(result.current.reject()));
     await waitFor(() => !result.current.loading);
 
-    expect(finalizeRequest).toBeCalledTimes(0);
-    expect(fetchPendingRequests).toBeCalledTimes(0);
-    expect(closePopup).toBeCalledTimes(1);
+    expect(finalizeRequest).toHaveBeenCalledTimes(0);
+    expect(fetchPendingRequests).toHaveBeenCalledTimes(0);
+    expect(closePopup).toHaveBeenCalledTimes(1);
   });
 
   test("should handle reject error", async () => {

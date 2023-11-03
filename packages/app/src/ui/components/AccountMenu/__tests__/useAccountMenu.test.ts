@@ -81,8 +81,8 @@ describe("ui/components/AccountMenu/useAccountMenu", () => {
 
     await act(() => Promise.resolve(result.current.onGoToMetamaskPage()));
 
-    expect(redirectToNewTab).toBeCalledTimes(1);
-    expect(redirectToNewTab).toBeCalledWith("https://metamask.io/");
+    expect(redirectToNewTab).toHaveBeenCalledTimes(1);
+    expect(redirectToNewTab).toHaveBeenCalledWith("https://metamask.io/");
   });
 
   test("should go to settings page", async () => {
@@ -90,8 +90,8 @@ describe("ui/components/AccountMenu/useAccountMenu", () => {
 
     await act(async () => Promise.resolve(result.current.onGoToSettings()));
 
-    expect(mockNavigate).toBeCalledTimes(1);
-    expect(mockNavigate).toBeCalledWith(Paths.SETTINGS);
+    expect(mockNavigate).toHaveBeenCalledTimes(1);
+    expect(mockNavigate).toHaveBeenCalledWith(Paths.SETTINGS);
   });
 
   test("should open and close menu properly", async () => {
@@ -117,7 +117,7 @@ describe("ui/components/AccountMenu/useAccountMenu", () => {
 
     await act(async () => Promise.resolve(result.current.onLock()));
 
-    expect(defaultWalletHookData.onLock).toBeCalledTimes(1);
+    expect(defaultWalletHookData.onLock).toHaveBeenCalledTimes(1);
   });
 
   test("should connect properly", async () => {
@@ -125,7 +125,7 @@ describe("ui/components/AccountMenu/useAccountMenu", () => {
 
     await act(async () => Promise.resolve(result.current.onConnect()));
 
-    expect(defaultWalletHookData.onConnect).toBeCalledTimes(1);
+    expect(defaultWalletHookData.onConnect).toHaveBeenCalledTimes(1);
   });
 
   test("should disconnect properly", async () => {
@@ -133,7 +133,7 @@ describe("ui/components/AccountMenu/useAccountMenu", () => {
 
     await act(async () => Promise.resolve(result.current.onDisconnect()));
 
-    expect(defaultWalletHookData.onDisconnect).toBeCalledTimes(1);
+    expect(defaultWalletHookData.onDisconnect).toHaveBeenCalledTimes(1);
   });
 
   test("should select account properly", async () => {
@@ -141,9 +141,9 @@ describe("ui/components/AccountMenu/useAccountMenu", () => {
 
     await act(async () => Promise.resolve(result.current.onSelectAccount(ZERO_ADDRESS)));
 
-    expect(mockDispatch).toBeCalledTimes(1);
-    expect(selectAccount).toBeCalledTimes(1);
-    expect(selectAccount).toBeCalledWith(ZERO_ADDRESS);
+    expect(mockDispatch).toHaveBeenCalledTimes(1);
+    expect(selectAccount).toHaveBeenCalledTimes(1);
+    expect(selectAccount).toHaveBeenCalledWith(ZERO_ADDRESS);
   });
 
   test("should open extension in new tab properly", async () => {
@@ -151,7 +151,7 @@ describe("ui/components/AccountMenu/useAccountMenu", () => {
 
     await act(async () => Promise.resolve(result.current.onOpenInNewTab()));
 
-    expect(redirectToNewTab).toBeCalledTimes(1);
-    expect(redirectToNewTab).toBeCalledWith(`${window.location.pathname}${window.location.hash}`);
+    expect(redirectToNewTab).toHaveBeenCalledTimes(1);
+    expect(redirectToNewTab).toHaveBeenCalledWith(`${window.location.pathname}${window.location.hash}`);
   });
 });

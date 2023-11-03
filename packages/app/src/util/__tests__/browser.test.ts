@@ -61,15 +61,15 @@ describe("util/browser", () => {
   test("should redirect to new tab properly", async () => {
     await redirectToNewTab("url");
 
-    expect(browser.tabs.create).toBeCalledTimes(1);
-    expect(browser.tabs.create).toBeCalledWith({ url: "url" });
+    expect(browser.tabs.create).toHaveBeenCalledTimes(1);
+    expect(browser.tabs.create).toHaveBeenCalledWith({ url: "url" });
   });
 
   test("should redirect to new tab properly", () => {
     getExtensionUrl("url");
 
-    expect(browser.runtime.getURL).toBeCalledTimes(1);
-    expect(browser.runtime.getURL).toBeCalledWith("url");
+    expect(browser.runtime.getURL).toHaveBeenCalledTimes(1);
+    expect(browser.runtime.getURL).toHaveBeenCalledWith("url");
   });
 
   test("should download file properly", async () => {
@@ -80,8 +80,8 @@ describe("util/browser", () => {
 
     await downloadFile("content", "filename");
 
-    expect(spyCreateElement).toBeCalledTimes(1);
-    expect(element.click).toBeCalledTimes(1);
+    expect(spyCreateElement).toHaveBeenCalledTimes(1);
+    expect(element.click).toHaveBeenCalledTimes(1);
   });
 
   test("should copy to clipboard properly", async () => {
@@ -89,8 +89,8 @@ describe("util/browser", () => {
 
     await copyToClipboard("content");
 
-    expect(spyCopy).toBeCalledTimes(1);
-    expect(spyCopy).toBeCalledWith("content");
+    expect(spyCopy).toHaveBeenCalledTimes(1);
+    expect(spyCopy).toHaveBeenCalledWith("content");
   });
 
   test("should get url origin properly", () => {
@@ -108,6 +108,6 @@ describe("util/browser", () => {
     const result = isExtensionPopupOpen();
 
     expect(result).toBe(false);
-    expect(browser.extension.getViews).toBeCalledTimes(1);
+    expect(browser.extension.getViews).toHaveBeenCalledTimes(1);
   });
 });

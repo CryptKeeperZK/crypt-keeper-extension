@@ -103,8 +103,8 @@ describe("ui/pages/AddVerifiableCredential/useAddVerifiableCredential", () => {
       result.current.onCloseModal();
     });
 
-    expect(closePopup).toBeCalledTimes(1);
-    expect(mockDispatch).toBeCalledTimes(1);
+    expect(closePopup).toHaveBeenCalledTimes(1);
+    expect(mockDispatch).toHaveBeenCalledTimes(1);
   });
 
   test("should toggle renaming properly", async () => {
@@ -132,7 +132,7 @@ describe("ui/pages/AddVerifiableCredential/useAddVerifiableCredential", () => {
 
     await act(async () => result.current.onApproveVerifiableCredential());
 
-    expect(addVerifiableCredential).toBeCalledTimes(1);
+    expect(addVerifiableCredential).toHaveBeenCalledTimes(1);
   });
 
   test("should reject the verifiable credential properly", async () => {
@@ -144,8 +144,8 @@ describe("ui/pages/AddVerifiableCredential/useAddVerifiableCredential", () => {
 
     await act(async () => Promise.resolve(result.current.onRejectVerifiableCredential()));
 
-    expect(rejectVerifiableCredentialRequest).toBeCalledTimes(1);
-    expect(mockDispatch).toBeCalledTimes(2);
+    expect(rejectVerifiableCredentialRequest).toHaveBeenCalledTimes(1);
+    expect(mockDispatch).toHaveBeenCalledTimes(2);
   });
 
   test("should handle an error properly", async () => {

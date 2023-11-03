@@ -20,8 +20,8 @@ describe("ui/services/identity", () => {
       signer: mockSigner as unknown as JsonRpcSigner,
     });
 
-    expect(mockSigner.signMessage).toBeCalledTimes(1);
-    expect(mockSigner.signMessage).toBeCalledWith(
+    expect(mockSigner.signMessage).toHaveBeenCalledTimes(1);
+    expect(mockSigner.signMessage).toHaveBeenCalledWith(
       `Sign this message with account ${ZERO_ADDRESS} to generate your Semaphore identity with key nonce: 0`,
     );
     expect(result).toBe("signed");
@@ -42,8 +42,8 @@ describe("ui/services/identity", () => {
       signer: mockSigner as unknown as JsonRpcSigner,
     });
 
-    expect(mockSigner.signMessage).toBeCalledTimes(1);
-    expect(mockSigner.signMessage).toBeCalledWith(
+    expect(mockSigner.signMessage).toHaveBeenCalledTimes(1);
+    expect(mockSigner.signMessage).toHaveBeenCalledWith(
       `Sign this message with account ${ZERO_ADDRESS} to import your Semaphore identity with trapdoor: ${mockDefaultTrapdoor}, nullifier: ${mockDefaultNullifier}`,
     );
     expect(result).toBe("signed");

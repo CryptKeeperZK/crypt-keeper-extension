@@ -61,8 +61,8 @@ describe("RLN proof", () => {
       defaultGenerateArgs.payload,
     );
 
-    expect(rlnServiceInstance.genProof).toBeCalledTimes(1);
-    expect(rlnServiceInstance.genProof).toBeCalledWith("serialized", defaultGenerateArgs.payload);
+    expect(rlnServiceInstance.genProof).toHaveBeenCalledTimes(1);
+    expect(rlnServiceInstance.genProof).toHaveBeenCalledWith("serialized", defaultGenerateArgs.payload);
     expect(result).toStrictEqual(emptyFullProof);
   });
 });

@@ -88,9 +88,9 @@ describe("ui/pages/Home/components/ActivityList/useActivityList", () => {
 
     await act(async () => Promise.resolve(result.current.onDeleteHistoryOperation("1")));
 
-    expect(mockDispatch).toBeCalledTimes(2);
-    expect(fetchHistory).toBeCalledTimes(1);
-    expect(deleteHistoryOperation).toBeCalledTimes(1);
-    expect(deleteHistoryOperation).toBeCalledWith("1");
+    expect(mockDispatch).toHaveBeenCalledTimes(2);
+    expect(fetchHistory).toHaveBeenCalledTimes(1);
+    expect(deleteHistoryOperation).toHaveBeenCalledTimes(1);
+    expect(deleteHistoryOperation).toHaveBeenCalledWith("1");
   });
 });

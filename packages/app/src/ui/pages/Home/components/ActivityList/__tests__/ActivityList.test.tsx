@@ -87,7 +87,7 @@ describe("ui/pages/Home/components/ActivityList", () => {
     const yesButton = await screen.findByText("Yes");
     await act(async () => Promise.resolve(yesButton.click()));
 
-    expect(defaultHookData.onDeleteHistoryOperation).toBeCalledTimes(1);
-    expect(defaultHookData.onDeleteHistoryOperation).toBeCalledWith("1");
+    expect(defaultHookData.onDeleteHistoryOperation).toHaveBeenCalledTimes(1);
+    expect(defaultHookData.onDeleteHistoryOperation).toHaveBeenCalledWith("1");
   });
 });

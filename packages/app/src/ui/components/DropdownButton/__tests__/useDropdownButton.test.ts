@@ -74,7 +74,7 @@ describe("ui/components/DropdownButton/useDropdownButton", () => {
     expect(result.current.selectedIndex).toBe(1);
 
     act(() => result.current.onSubmit());
-    expect(defaultArgs.onClick).toBeCalledTimes(1);
-    expect(defaultArgs.onClick).toBeCalledWith(1);
+    expect(defaultArgs.onClick).toHaveBeenCalledTimes(1);
+    expect(defaultArgs.onClick).toHaveBeenCalledWith(1);
   });
 });

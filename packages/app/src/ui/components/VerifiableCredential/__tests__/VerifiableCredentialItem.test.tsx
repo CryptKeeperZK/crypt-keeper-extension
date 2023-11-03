@@ -79,8 +79,8 @@ describe("ui/components/VerifiableCredential/Item", () => {
     const dangerModalAccept = await screen.findByTestId("danger-modal-accept");
     await act(async () => Promise.resolve(dangerModalAccept.click()));
 
-    expect(defaultProps.onDeleteVerifiableCredential).toBeCalledTimes(1);
-    expect(defaultProps.onDeleteVerifiableCredential).toBeCalledWith(defaultProps.metadata.hash);
+    expect(defaultProps.onDeleteVerifiableCredential).toHaveBeenCalledTimes(1);
+    expect(defaultProps.onDeleteVerifiableCredential).toHaveBeenCalledWith(defaultProps.metadata.hash);
     expect(dangerModal).not.toBeInTheDocument();
   });
 
@@ -104,7 +104,7 @@ describe("ui/components/VerifiableCredential/Item", () => {
     const dangerModalreject = await screen.findByTestId("danger-modal-reject");
     await act(async () => Promise.resolve(dangerModalreject.click()));
 
-    expect(defaultProps.onDeleteVerifiableCredential).toBeCalledTimes(0);
+    expect(defaultProps.onDeleteVerifiableCredential).toHaveBeenCalledTimes(0);
     expect(dangerModal).not.toBeInTheDocument();
   });
 });

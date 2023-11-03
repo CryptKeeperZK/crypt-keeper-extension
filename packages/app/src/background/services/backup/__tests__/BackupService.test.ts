@@ -156,8 +156,8 @@ describe("background/services/backup/BackupService", () => {
     );
 
     backupService.getBackupables().forEach((service) => {
-      expect(service.downloadStorage).toBeCalledTimes(0);
-      expect(service.restoreStorage).toBeCalledTimes(0);
+      expect(service.downloadStorage).toHaveBeenCalledTimes(0);
+      expect(service.restoreStorage).toHaveBeenCalledTimes(0);
     });
 
     backupService
@@ -191,8 +191,8 @@ describe("background/services/backup/BackupService", () => {
     await expect(backupService.upload({ content: fileContent, ...defaultPasswords })).rejects.toThrow("error");
 
     backupService.getBackupables().forEach((service) => {
-      expect(service.downloadStorage).toBeCalledTimes(1);
-      expect(service.restoreStorage).toBeCalledTimes(1);
+      expect(service.downloadStorage).toHaveBeenCalledTimes(1);
+      expect(service.restoreStorage).toHaveBeenCalledTimes(1);
     });
   });
 });

@@ -22,8 +22,8 @@ describe("ui/ducks/groups", () => {
 
     const result = await Promise.resolve(store.dispatch(joinGroup(args, "urlOrigin")));
 
-    expect(postMessage).toBeCalledTimes(1);
-    expect(postMessage).toBeCalledWith({
+    expect(postMessage).toHaveBeenCalledTimes(1);
+    expect(postMessage).toHaveBeenCalledWith({
       method: RPCInternalAction.JOIN_GROUP,
       payload: args,
       meta: { urlOrigin: "urlOrigin" },
@@ -37,8 +37,8 @@ describe("ui/ducks/groups", () => {
 
     const result = await Promise.resolve(store.dispatch(generateGroupMerkleProof(args, "urlOrigin")));
 
-    expect(postMessage).toBeCalledTimes(1);
-    expect(postMessage).toBeCalledWith({
+    expect(postMessage).toHaveBeenCalledTimes(1);
+    expect(postMessage).toHaveBeenCalledWith({
       method: RPCInternalAction.GENERATE_GROUP_MERKLE_PROOF,
       payload: args,
       meta: { urlOrigin: "urlOrigin" },
@@ -52,8 +52,8 @@ describe("ui/ducks/groups", () => {
 
     const result = await Promise.resolve(store.dispatch(checkGroupMembership(args, "urlOrigin")));
 
-    expect(postMessage).toBeCalledTimes(1);
-    expect(postMessage).toBeCalledWith({
+    expect(postMessage).toHaveBeenCalledTimes(1);
+    expect(postMessage).toHaveBeenCalledWith({
       method: RPCInternalAction.CHECK_GROUP_MEMBERSHIP,
       payload: args,
       meta: { urlOrigin: "urlOrigin" },

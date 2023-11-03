@@ -168,4 +168,15 @@ test.describe("identity", () => {
 
     await expect(extension.getByText("My new account")).toBeHidden();
   });
+
+  test("should disconnect identity properly [health-check]", async ({ page }) => {
+    const extension = new CryptKeeper(page);
+    await extension.focus();
+
+    await extension.identities.disconnect();
+
+    await page.goto("/");
+
+    await expect(page.getByText(/To continue, please connect to your CryptKeeper to continue./)).toBeVisible();
+  });
 });

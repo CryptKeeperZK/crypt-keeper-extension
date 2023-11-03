@@ -52,8 +52,8 @@ describe("ui/pages/Home/components/ActivityList/Item", () => {
     const yesButton = await screen.findByText("Yes");
     await act(async () => Promise.resolve(yesButton.click()));
 
-    expect(defaultProps.onDelete).toBeCalledTimes(1);
-    expect(defaultProps.onDelete).toBeCalledWith("1");
+    expect(defaultProps.onDelete).toHaveBeenCalledTimes(1);
+    expect(defaultProps.onDelete).toHaveBeenCalledWith("1");
   });
 
   test("should go to connected url origin properly", async () => {
@@ -62,8 +62,8 @@ describe("ui/pages/Home/components/ActivityList/Item", () => {
     const urlOrigin = await screen.findByTestId("url-origin");
     await act(() => fireEvent.click(urlOrigin));
 
-    expect(redirectToNewTab).toBeCalledTimes(1);
-    expect(redirectToNewTab).toBeCalledWith(defaultProps.urlOrigin);
+    expect(redirectToNewTab).toHaveBeenCalledTimes(1);
+    expect(redirectToNewTab).toHaveBeenCalledWith(defaultProps.urlOrigin);
   });
 
   test("should go to group properly", async () => {
@@ -72,7 +72,7 @@ describe("ui/pages/Home/components/ActivityList/Item", () => {
     const group = await screen.findByTestId("group");
     await act(() => fireEvent.click(group));
 
-    expect(redirectToNewTab).toBeCalledTimes(1);
-    expect(redirectToNewTab).toBeCalledWith(getBandadaGroupUrl(defaultProps.operation.group!.id!));
+    expect(redirectToNewTab).toHaveBeenCalledTimes(1);
+    expect(redirectToNewTab).toHaveBeenCalledWith(getBandadaGroupUrl(defaultProps.operation.group!.id!));
   });
 });

@@ -65,7 +65,7 @@ describe("background/services/protocols/utils", () => {
       merkleStorageUrl: "http://localhost:3000/merkle",
     });
 
-    expect(fetchSpy).toBeCalledTimes(1);
+    expect(fetchSpy).toHaveBeenCalledTimes(1);
     expect(result).toStrictEqual(defaultMerkleProof);
   });
 
@@ -83,7 +83,7 @@ describe("background/services/protocols/utils", () => {
         merkleStorageUrl: "http://localhost:3000/merkle",
       }),
     ).rejects.toThrowError(`Error in fetching Mock Merkle Proof ${error.message}`);
-    expect(fetchSpy).toBeCalledTimes(1);
+    expect(fetchSpy).toHaveBeenCalledTimes(1);
   });
 
   test("should get merkle proof from artifact properly", async () => {
@@ -114,7 +114,7 @@ describe("background/services/protocols/utils", () => {
 
     const result = await getRlnVerificationKeyJson("path");
 
-    expect(fetchSpy).toBeCalledTimes(1);
+    expect(fetchSpy).toHaveBeenCalledTimes(1);
     expect(result).toStrictEqual({ data: {} });
   });
 

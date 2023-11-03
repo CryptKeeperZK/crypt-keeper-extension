@@ -62,8 +62,8 @@ describe("ui/pages/ResetPassword/useResetPassword", () => {
     await waitFor(() => !result.current.isLoading);
 
     expect(result.current.isLoading).toBe(false);
-    expect(mockNavigate).toBeCalledTimes(1);
-    expect(mockNavigate).toBeCalledWith(Paths.HOME);
+    expect(mockNavigate).toHaveBeenCalledTimes(1);
+    expect(mockNavigate).toHaveBeenCalledWith(Paths.HOME);
   });
 
   test("should submit form properly", async () => {
@@ -81,10 +81,10 @@ describe("ui/pages/ResetPassword/useResetPassword", () => {
     await waitFor(() => !result.current.isLoading);
 
     expect(result.current.isLoading).toBe(false);
-    expect(mockDispatch).toBeCalledTimes(1);
-    expect(resetPassword).toBeCalledTimes(1);
-    expect(mockNavigate).toBeCalledTimes(1);
-    expect(mockNavigate).toBeCalledWith(Paths.HOME);
+    expect(mockDispatch).toHaveBeenCalledTimes(1);
+    expect(resetPassword).toHaveBeenCalledTimes(1);
+    expect(mockNavigate).toHaveBeenCalledTimes(1);
+    expect(mockNavigate).toHaveBeenCalledWith(Paths.HOME);
   });
 
   test("should handle submit error properly", async () => {
@@ -128,7 +128,7 @@ describe("ui/pages/ResetPassword/useResetPassword", () => {
 
     await act(async () => Promise.resolve(result.current.onClose()));
 
-    expect(mockNavigate).toBeCalledTimes(1);
-    expect(mockNavigate).toBeCalledWith(Paths.RECOVER);
+    expect(mockNavigate).toHaveBeenCalledTimes(1);
+    expect(mockNavigate).toHaveBeenCalledWith(Paths.RECOVER);
   });
 });

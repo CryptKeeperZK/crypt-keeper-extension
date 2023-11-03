@@ -53,7 +53,7 @@ describe("ui/pages/GenerateMnemonic", () => {
     const button = await findByTestId("change-mode-button");
     await act(() => Promise.resolve(button.click()));
 
-    expect(defaultHookData.onChooseInputMode).toBeCalledTimes(1);
+    expect(defaultHookData.onChooseInputMode).toHaveBeenCalledTimes(1);
   });
 
   test("should change to generate mode properly", async () => {
@@ -65,7 +65,7 @@ describe("ui/pages/GenerateMnemonic", () => {
     const button = await findByTestId("change-mode-button");
     await act(() => Promise.resolve(button.click()));
 
-    expect(defaultHookData.onChooseGenerateMode).toBeCalledTimes(1);
+    expect(defaultHookData.onChooseGenerateMode).toHaveBeenCalledTimes(1);
   });
 
   test("should render error properly", async () => {
@@ -89,6 +89,6 @@ describe("ui/pages/GenerateMnemonic", () => {
     const button = await findByTestId("submit-button");
     await act(() => fireEvent.submit(button));
 
-    expect(defaultHookData.onSaveMnemonic).toBeCalledTimes(1);
+    expect(defaultHookData.onSaveMnemonic).toHaveBeenCalledTimes(1);
   });
 });

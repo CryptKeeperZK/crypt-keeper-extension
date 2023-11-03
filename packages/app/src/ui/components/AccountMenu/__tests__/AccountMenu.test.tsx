@@ -66,7 +66,7 @@ describe("ui/components/Header", () => {
     const item = await findByText("Connect MetaMask");
     await act(async () => Promise.resolve(item.click()));
 
-    expect(defaultHookData.onConnect).toBeCalledTimes(1);
+    expect(defaultHookData.onConnect).toHaveBeenCalledTimes(1);
   });
 
   test("should render properly activating state", async () => {
@@ -90,7 +90,7 @@ describe("ui/components/Header", () => {
     const metamaskInstall = await findByText("Install MetaMask");
     await act(async () => Promise.resolve(metamaskInstall.click()));
 
-    expect(defaultHookData.onGoToMetamaskPage).toBeCalledTimes(1);
+    expect(defaultHookData.onGoToMetamaskPage).toHaveBeenCalledTimes(1);
   });
 
   test("should go to settings page", async () => {
@@ -99,7 +99,7 @@ describe("ui/components/Header", () => {
     const settings = await findByText("Settings");
     await act(async () => Promise.resolve(settings.click()));
 
-    expect(defaultHookData.onGoToSettings).toBeCalledTimes(1);
+    expect(defaultHookData.onGoToSettings).toHaveBeenCalledTimes(1);
   });
 
   test("should lock app properly", async () => {
@@ -108,7 +108,7 @@ describe("ui/components/Header", () => {
     const lock = await findByText("Lock");
     await act(async () => Promise.resolve(lock.click()));
 
-    expect(defaultHookData.onLock).toBeCalledTimes(1);
+    expect(defaultHookData.onLock).toHaveBeenCalledTimes(1);
   });
 
   test("should disconnect metamask properly", async () => {
@@ -119,7 +119,7 @@ describe("ui/components/Header", () => {
     const disconnect = await findByText("Disconnect MetaMask");
     await act(async () => Promise.resolve(disconnect.click()));
 
-    expect(defaultHookData.onDisconnect).toBeCalledTimes(1);
+    expect(defaultHookData.onDisconnect).toHaveBeenCalledTimes(1);
   });
 
   test("should select account properly", async () => {
@@ -129,7 +129,7 @@ describe("ui/components/Header", () => {
     const account = await findByTestId(`${cryptKeeperAccount.type}-${cryptKeeperAccount.address}`);
     await act(async () => Promise.resolve(account.click()));
 
-    expect(defaultHookData.onSelectAccount).toBeCalledTimes(1);
-    expect(defaultHookData.onSelectAccount).toBeCalledWith(cryptKeeperAccount.address);
+    expect(defaultHookData.onSelectAccount).toHaveBeenCalledTimes(1);
+    expect(defaultHookData.onSelectAccount).toHaveBeenCalledWith(cryptKeeperAccount.address);
   });
 });

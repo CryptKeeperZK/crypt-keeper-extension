@@ -135,8 +135,8 @@ describe("background/services/approval", () => {
       expect(canSkipApprove).toBe(true);
 
       (SimpleStorage as jest.Mock).mock.instances.forEach((instance: MockStorage) => {
-        expect(instance.set).toBeCalledTimes(1);
-        expect(instance.set).toBeCalledWith(mockSerializedApprovals);
+        expect(instance.set).toHaveBeenCalledTimes(1);
+        expect(instance.set).toHaveBeenCalledWith(mockSerializedApprovals);
       });
     });
 
@@ -146,7 +146,7 @@ describe("background/services/approval", () => {
       expect(result).toStrictEqual({ urlOrigin: "unknown", canSkipApprove: false });
 
       (SimpleStorage as jest.Mock).mock.instances.forEach((instance: MockStorage) => {
-        expect(instance.set).toBeCalledTimes(1);
+        expect(instance.set).toHaveBeenCalledTimes(1);
       });
     });
   });
@@ -159,8 +159,8 @@ describe("background/services/approval", () => {
       expect(hosts).toStrictEqual(mockDefaultHosts);
 
       (SimpleStorage as jest.Mock).mock.instances.forEach((instance: MockStorage) => {
-        expect(instance.set).toBeCalledTimes(1);
-        expect(instance.set).toBeCalledWith(mockSerializedApprovals);
+        expect(instance.set).toHaveBeenCalledTimes(1);
+        expect(instance.set).toHaveBeenCalledWith(mockSerializedApprovals);
       });
     });
 
@@ -184,7 +184,7 @@ describe("background/services/approval", () => {
       expect(hosts).toHaveLength(0);
 
       (SimpleStorage as jest.Mock).mock.instances.forEach((instance: MockStorage) => {
-        expect(instance.set).toBeCalledTimes(1);
+        expect(instance.set).toHaveBeenCalledTimes(1);
       });
     });
 
@@ -246,7 +246,7 @@ describe("background/services/approval", () => {
       await approvalService.uploadEncryptedStorage("encrypted", "password");
 
       (SimpleStorage as jest.Mock).mock.instances.forEach((instance: MockStorage) => {
-        expect(instance.set).toBeCalledTimes(1);
+        expect(instance.set).toHaveBeenCalledTimes(1);
       });
     });
 
@@ -254,7 +254,7 @@ describe("background/services/approval", () => {
       await approvalService.uploadEncryptedStorage("", "");
 
       (SimpleStorage as jest.Mock).mock.instances.forEach((instance: MockStorage) => {
-        expect(instance.set).toBeCalledTimes(0);
+        expect(instance.set).toHaveBeenCalledTimes(0);
       });
     });
 
@@ -269,7 +269,7 @@ describe("background/services/approval", () => {
 
       await approvalService.downloadStorage();
 
-      expect(storage.get).toBeCalledTimes(1);
+      expect(storage.get).toHaveBeenCalledTimes(1);
     });
 
     test("should restore storage properly", async () => {
@@ -277,8 +277,8 @@ describe("background/services/approval", () => {
 
       await approvalService.restoreStorage("storage");
 
-      expect(storage.set).toBeCalledTimes(1);
-      expect(storage.set).toBeCalledWith("storage");
+      expect(storage.set).toHaveBeenCalledTimes(1);
+      expect(storage.set).toHaveBeenCalledWith("storage");
     });
 
     test("should throw error when trying to restore incorrect data", async () => {

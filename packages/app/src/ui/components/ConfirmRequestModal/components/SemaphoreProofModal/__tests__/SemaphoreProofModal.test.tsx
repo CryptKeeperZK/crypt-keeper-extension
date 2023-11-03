@@ -81,7 +81,7 @@ describe("ui/components/ConfirmRequestModal/components/ProofModal", () => {
       button.click();
     });
 
-    expect(defaultHookData.onAccept).toBeCalledTimes(1);
+    expect(defaultHookData.onAccept).toHaveBeenCalledTimes(1);
   });
 
   test("should reject proof generation properly", async () => {
@@ -92,7 +92,7 @@ describe("ui/components/ConfirmRequestModal/components/ProofModal", () => {
       button.click();
     });
 
-    expect(defaultHookData.onReject).toBeCalledTimes(1);
+    expect(defaultHookData.onReject).toHaveBeenCalledTimes(1);
   });
 
   test("should open circuit file properly", async () => {
@@ -103,7 +103,7 @@ describe("ui/components/ConfirmRequestModal/components/ProofModal", () => {
       link.click();
     });
 
-    expect(defaultHookData.onOpenCircuitFile).toBeCalledTimes(1);
+    expect(defaultHookData.onOpenCircuitFile).toHaveBeenCalledTimes(1);
   });
 
   test("should open zkey file properly", async () => {
@@ -114,7 +114,7 @@ describe("ui/components/ConfirmRequestModal/components/ProofModal", () => {
       link.click();
     });
 
-    expect(defaultHookData.onOpenZkeyFile).toBeCalledTimes(1);
+    expect(defaultHookData.onOpenZkeyFile).toHaveBeenCalledTimes(1);
   });
 
   test("should open verification key file properly", async () => {
@@ -125,6 +125,6 @@ describe("ui/components/ConfirmRequestModal/components/ProofModal", () => {
       link.click();
     });
 
-    expect(defaultHookData.onOpenVerificationKeyFile).toBeCalledTimes(1);
+    expect(defaultHookData.onOpenVerificationKeyFile).toHaveBeenCalledTimes(1);
   });
 });

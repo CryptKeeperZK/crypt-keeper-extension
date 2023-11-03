@@ -159,8 +159,8 @@ describe("ui/pages/PresentVerifiableCredential/usePresentVerifiableCredential", 
 
       act(() => result.current.onCloseModal());
 
-      expect(closePopup).toBeCalledTimes(1);
-      expect(mockDispatch).toBeCalledTimes(2);
+      expect(closePopup).toHaveBeenCalledTimes(1);
+      expect(mockDispatch).toHaveBeenCalledTimes(2);
     });
 
     test("should check if menu item is disabled", async () => {
@@ -185,9 +185,9 @@ describe("ui/pages/PresentVerifiableCredential/usePresentVerifiableCredential", 
 
       await act(async () => Promise.resolve(result.current.onRejectRequest()));
 
-      expect(rejectVerifiablePresentationRequest).toBeCalledTimes(1);
-      expect(closePopup).toBeCalledTimes(1);
-      expect(mockDispatch).toBeCalledTimes(3);
+      expect(rejectVerifiablePresentationRequest).toHaveBeenCalledTimes(1);
+      expect(closePopup).toHaveBeenCalledTimes(1);
+      expect(mockDispatch).toHaveBeenCalledTimes(3);
     });
 
     test("should toggle selecting a verifiable credential", async () => {
@@ -236,9 +236,9 @@ describe("ui/pages/PresentVerifiableCredential/usePresentVerifiableCredential", 
       act(() => result.current.onToggleSelection(hash));
       await act(() => result.current.onSubmitVerifiablePresentation(MenuItems.WITHOUT_SIGNATURE));
 
-      expect(generateVerifiablePresentation).toBeCalledTimes(1);
-      expect(closePopup).toBeCalledTimes(1);
-      expect(mockDispatch).toBeCalledTimes(3);
+      expect(generateVerifiablePresentation).toHaveBeenCalledTimes(1);
+      expect(closePopup).toHaveBeenCalledTimes(1);
+      expect(mockDispatch).toHaveBeenCalledTimes(3);
     });
 
     test("should fail to submit an empty verifiable presentation", async () => {
@@ -250,7 +250,7 @@ describe("ui/pages/PresentVerifiableCredential/usePresentVerifiableCredential", 
 
       await act(() => result.current.onSubmitVerifiablePresentation(MenuItems.WITHOUT_SIGNATURE));
 
-      expect(generateVerifiablePresentation).toBeCalledTimes(0);
+      expect(generateVerifiablePresentation).toHaveBeenCalledTimes(0);
       expect(result.current.error).toBe("Please select at least one credential.");
     });
 
@@ -266,9 +266,9 @@ describe("ui/pages/PresentVerifiableCredential/usePresentVerifiableCredential", 
       act(() => result.current.onToggleSelection(hash));
       await act(() => result.current.onSubmitVerifiablePresentation(MenuItems.CRYPTKEEPER));
 
-      expect(generateVerifiablePresentationWithCryptkeeper).toBeCalledTimes(1);
-      expect(closePopup).toBeCalledTimes(1);
-      expect(mockDispatch).toBeCalledTimes(3);
+      expect(generateVerifiablePresentationWithCryptkeeper).toHaveBeenCalledTimes(1);
+      expect(closePopup).toHaveBeenCalledTimes(1);
+      expect(mockDispatch).toHaveBeenCalledTimes(3);
     });
 
     test("should fail to submit an empty verifiable presentation with cryptkeeper", async () => {
@@ -280,7 +280,7 @@ describe("ui/pages/PresentVerifiableCredential/usePresentVerifiableCredential", 
 
       await act(() => result.current.onSubmitVerifiablePresentation(MenuItems.CRYPTKEEPER));
 
-      expect(generateVerifiablePresentationWithCryptkeeper).toBeCalledTimes(0);
+      expect(generateVerifiablePresentationWithCryptkeeper).toHaveBeenCalledTimes(0);
       expect(result.current.error).toBe("Please select at least one credential.");
     });
 
@@ -296,9 +296,9 @@ describe("ui/pages/PresentVerifiableCredential/usePresentVerifiableCredential", 
       act(() => result.current.onToggleSelection(hash));
       await act(() => result.current.onSubmitVerifiablePresentation(MenuItems.METAMASK));
 
-      expect(generateVerifiablePresentation).toBeCalledTimes(1);
-      expect(closePopup).toBeCalledTimes(1);
-      expect(mockDispatch).toBeCalledTimes(3);
+      expect(generateVerifiablePresentation).toHaveBeenCalledTimes(1);
+      expect(closePopup).toHaveBeenCalledTimes(1);
+      expect(mockDispatch).toHaveBeenCalledTimes(3);
     });
 
     test("should fail to submit an empty verifiable presentation with metamask", async () => {
@@ -310,7 +310,7 @@ describe("ui/pages/PresentVerifiableCredential/usePresentVerifiableCredential", 
 
       await act(() => result.current.onSubmitVerifiablePresentation(MenuItems.METAMASK));
 
-      expect(generateVerifiablePresentationWithCryptkeeper).toBeCalledTimes(0);
+      expect(generateVerifiablePresentationWithCryptkeeper).toHaveBeenCalledTimes(0);
       expect(result.current.error).toBe("Please select at least one credential.");
     });
 
@@ -323,8 +323,8 @@ describe("ui/pages/PresentVerifiableCredential/usePresentVerifiableCredential", 
 
       await act(() => result.current.onSubmitVerifiablePresentation(3));
 
-      expect(generateVerifiablePresentation).toBeCalledTimes(0);
-      expect(generateVerifiablePresentationWithCryptkeeper).toBeCalledTimes(0);
+      expect(generateVerifiablePresentation).toHaveBeenCalledTimes(0);
+      expect(generateVerifiablePresentationWithCryptkeeper).toHaveBeenCalledTimes(0);
       expect(result.current.error).toBe("Invalid menu index.");
     });
   });

@@ -98,8 +98,8 @@ describe("ui/ducks/app", () => {
     const { app } = store.getState();
 
     expect(app).toStrictEqual(expectedState);
-    expect(postMessage).toBeCalledTimes(1);
-    expect(postMessage).toBeCalledWith({
+    expect(postMessage).toHaveBeenCalledTimes(1);
+    expect(postMessage).toHaveBeenCalledWith({
       method: RPCInternalAction.SET_CONNECT_WALLET,
       payload: { isDisconnectedPermanently: true },
     });
@@ -120,8 +120,8 @@ describe("ui/ducks/app", () => {
     const { app } = store.getState();
 
     expect(app).toStrictEqual(expectedState);
-    expect(postMessage).toBeCalledTimes(1);
-    expect(postMessage).toBeCalledWith({
+    expect(postMessage).toHaveBeenCalledTimes(1);
+    expect(postMessage).toHaveBeenCalledWith({
       method: RPCInternalAction.GET_CONNECT_WALLET,
     });
   });
@@ -129,43 +129,43 @@ describe("ui/ducks/app", () => {
   test("should call close popup action properly", async () => {
     await Promise.resolve(store.dispatch(closePopup()));
 
-    expect(postMessage).toBeCalledTimes(1);
-    expect(postMessage).toBeCalledWith({ method: RPCInternalAction.CLOSE_POPUP });
+    expect(postMessage).toHaveBeenCalledTimes(1);
+    expect(postMessage).toHaveBeenCalledWith({ method: RPCInternalAction.CLOSE_POPUP });
   });
 
   test("should call lock action properly", async () => {
     await Promise.resolve(store.dispatch(lock()));
 
-    expect(postMessage).toBeCalledTimes(1);
-    expect(postMessage).toBeCalledWith({ method: RPCInternalAction.LOCK });
+    expect(postMessage).toHaveBeenCalledTimes(1);
+    expect(postMessage).toHaveBeenCalledWith({ method: RPCInternalAction.LOCK });
   });
 
   test("should call unlock action properly", async () => {
     await Promise.resolve(store.dispatch(unlock("password")));
 
-    expect(postMessage).toBeCalledTimes(1);
-    expect(postMessage).toBeCalledWith({ method: RPCInternalAction.UNLOCK, payload: "password" });
+    expect(postMessage).toHaveBeenCalledTimes(1);
+    expect(postMessage).toHaveBeenCalledWith({ method: RPCInternalAction.UNLOCK, payload: "password" });
   });
 
   test("should call storage clear action properly", async () => {
     await Promise.resolve(store.dispatch(deleteStorage()));
 
-    expect(postMessage).toBeCalledTimes(1);
-    expect(postMessage).toBeCalledWith({ method: RPCInternalAction.CLEAR_STORAGE });
+    expect(postMessage).toHaveBeenCalledTimes(1);
+    expect(postMessage).toHaveBeenCalledWith({ method: RPCInternalAction.CLEAR_STORAGE });
   });
 
   test("should call setup password action properly", async () => {
     await Promise.resolve(store.dispatch(setupPassword("password")));
 
-    expect(postMessage).toBeCalledTimes(1);
-    expect(postMessage).toBeCalledWith({ method: RPCInternalAction.SETUP_PASSWORD, payload: "password" });
+    expect(postMessage).toHaveBeenCalledTimes(1);
+    expect(postMessage).toHaveBeenCalledWith({ method: RPCInternalAction.SETUP_PASSWORD, payload: "password" });
   });
 
   test("should call reset password action properly", async () => {
     await Promise.resolve(store.dispatch(resetPassword({ password: "password", mnemonic: defaultMnemonic })));
 
-    expect(postMessage).toBeCalledTimes(1);
-    expect(postMessage).toBeCalledWith({
+    expect(postMessage).toHaveBeenCalledTimes(1);
+    expect(postMessage).toHaveBeenCalledWith({
       method: RPCInternalAction.RESET_PASSWORD,
       payload: { password: "password", mnemonic: defaultMnemonic },
     });
@@ -182,8 +182,8 @@ describe("ui/ducks/app", () => {
       isDisconnectedPermanently: true,
       mnemonic: "",
     });
-    expect(postMessage).toBeCalledTimes(1);
-    expect(postMessage).toBeCalledWith({ method: RPCInternalAction.SAVE_MNEMONIC });
+    expect(postMessage).toHaveBeenCalledTimes(1);
+    expect(postMessage).toHaveBeenCalledWith({ method: RPCInternalAction.SAVE_MNEMONIC });
   });
 
   test("should select account properly", async () => {
@@ -199,8 +199,8 @@ describe("ui/ducks/app", () => {
       selectedAccount: ZERO_ADDRESS,
     });
 
-    expect(postMessage).toBeCalledTimes(1);
-    expect(postMessage).toBeCalledWith({ method: RPCInternalAction.SELECT_ACCOUNT, payload: ZERO_ADDRESS });
+    expect(postMessage).toHaveBeenCalledTimes(1);
+    expect(postMessage).toHaveBeenCalledWith({ method: RPCInternalAction.SELECT_ACCOUNT, payload: ZERO_ADDRESS });
   });
 
   test("should get selected account properly", async () => {
@@ -218,8 +218,8 @@ describe("ui/ducks/app", () => {
       selectedAccount: ZERO_ADDRESS,
     });
 
-    expect(postMessage).toBeCalledTimes(1);
-    expect(postMessage).toBeCalledWith({ method: RPCInternalAction.GET_SELECTED_ACCOUNT });
+    expect(postMessage).toHaveBeenCalledTimes(1);
+    expect(postMessage).toHaveBeenCalledWith({ method: RPCInternalAction.GET_SELECTED_ACCOUNT });
   });
 
   test("should generate mnemonic properly", async () => {
@@ -245,8 +245,8 @@ describe("ui/ducks/app", () => {
   test("should check mnemonic properly", async () => {
     await Promise.resolve(store.dispatch(checkMnemonic(defaultMnemonic)));
 
-    expect(postMessage).toBeCalledTimes(1);
-    expect(postMessage).toBeCalledWith({
+    expect(postMessage).toHaveBeenCalledTimes(1);
+    expect(postMessage).toHaveBeenCalledWith({
       method: RPCInternalAction.CHECK_MNEMONIC,
       payload: { mnemonic: defaultMnemonic, strict: true },
     });
@@ -258,8 +258,8 @@ describe("ui/ducks/app", () => {
     const mnemonic = await Promise.resolve(store.dispatch(getMnemonic()));
 
     expect(mnemonic).toBe(defaultMnemonic);
-    expect(postMessage).toBeCalledTimes(1);
-    expect(postMessage).toBeCalledWith({
+    expect(postMessage).toHaveBeenCalledTimes(1);
+    expect(postMessage).toHaveBeenCalledWith({
       method: RPCInternalAction.GET_MNEMONIC,
     });
   });
@@ -270,8 +270,8 @@ describe("ui/ducks/app", () => {
     const result = await Promise.resolve(store.dispatch(checkPassword("password")));
 
     expect(result).toBe(true);
-    expect(postMessage).toBeCalledTimes(1);
-    expect(postMessage).toBeCalledWith({
+    expect(postMessage).toHaveBeenCalledTimes(1);
+    expect(postMessage).toHaveBeenCalledWith({
       method: RPCInternalAction.CHECK_PASSWORD,
       payload: {
         password: "password",

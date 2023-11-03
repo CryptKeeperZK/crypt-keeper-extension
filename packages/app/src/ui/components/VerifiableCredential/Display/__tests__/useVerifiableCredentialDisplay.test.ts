@@ -66,7 +66,7 @@ describe("ui/components/VerifiableCredential/Display/useVerifiableCredentialDisp
       result.current.onSubmit(mockEvent);
     });
 
-    expect(useVerifiableCredentialDisplayArgs.onRename).toBeCalledTimes(1);
+    expect(useVerifiableCredentialDisplayArgs.onRename).toHaveBeenCalledTimes(1);
     expect(result.current.isRenaming).toBe(false);
   });
 });

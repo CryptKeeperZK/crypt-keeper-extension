@@ -102,10 +102,10 @@ describe("ui/pages/OnboardingBackup/useOnboardingBackup", () => {
       result.current.onGoBack();
     });
 
-    expect(mockDispatch).toBeCalledTimes(1);
-    expect(closePopup).toBeCalledTimes(1);
-    expect(mockNavigate).toBeCalledTimes(1);
-    expect(mockNavigate).toBeCalledWith(Paths.ONBOARDING);
+    expect(mockDispatch).toHaveBeenCalledTimes(1);
+    expect(closePopup).toHaveBeenCalledTimes(1);
+    expect(mockNavigate).toHaveBeenCalledTimes(1);
+    expect(mockNavigate).toHaveBeenCalledWith(Paths.ONBOARDING);
   });
 
   test("should drop files properly", () => {
@@ -143,12 +143,12 @@ describe("ui/pages/OnboardingBackup/useOnboardingBackup", () => {
 
     await act(() => Promise.resolve(result.current.onSubmit()));
 
-    expect(uploadBackup).toBeCalledTimes(1);
-    expect(fetchStatus).toBeCalledTimes(1);
-    expect(defaultWalletHookData.onConnect).toBeCalledTimes(1);
-    expect(closePopup).toBeCalledTimes(1);
-    expect(mockNavigate).toBeCalledTimes(1);
-    expect(mockNavigate).toBeCalledWith(Paths.HOME);
+    expect(uploadBackup).toHaveBeenCalledTimes(1);
+    expect(fetchStatus).toHaveBeenCalledTimes(1);
+    expect(defaultWalletHookData.onConnect).toHaveBeenCalledTimes(1);
+    expect(closePopup).toHaveBeenCalledTimes(1);
+    expect(mockNavigate).toHaveBeenCalledTimes(1);
+    expect(mockNavigate).toHaveBeenCalledWith(Paths.HOME);
   });
 
   test("should submit properly and keep popup open", async () => {
@@ -164,13 +164,13 @@ describe("ui/pages/OnboardingBackup/useOnboardingBackup", () => {
 
     await act(() => Promise.resolve(result.current.onSubmit()));
 
-    expect(uploadBackup).toBeCalledTimes(1);
-    expect(fetchStatus).toBeCalledTimes(1);
-    expect(fetchPendingRequests).toBeCalledTimes(1);
-    expect(defaultWalletHookData.onConnect).toBeCalledTimes(1);
-    expect(closePopup).toBeCalledTimes(0);
-    expect(mockNavigate).toBeCalledTimes(1);
-    expect(mockNavigate).toBeCalledWith(Paths.HOME);
+    expect(uploadBackup).toHaveBeenCalledTimes(1);
+    expect(fetchStatus).toHaveBeenCalledTimes(1);
+    expect(fetchPendingRequests).toHaveBeenCalledTimes(1);
+    expect(defaultWalletHookData.onConnect).toHaveBeenCalledTimes(1);
+    expect(closePopup).toHaveBeenCalledTimes(0);
+    expect(mockNavigate).toHaveBeenCalledTimes(1);
+    expect(mockNavigate).toHaveBeenCalledWith(Paths.HOME);
   });
 
   test("should handle submit error properly", async () => {

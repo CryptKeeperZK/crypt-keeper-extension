@@ -78,10 +78,10 @@ describe("ui/components/ConnectionModal/useConnectionModal", () => {
       Promise.resolve(result.current.onSetApproval({ target: { checked: true } } as ChangeEvent<HTMLInputElement>)),
     );
 
-    expect(fetchHostPermissions).toBeCalledTimes(1);
-    expect(fetchHostPermissions).toBeCalledWith(result.current.url?.origin);
-    expect(setHostPermissions).toBeCalledTimes(1);
-    expect(setHostPermissions).toBeCalledWith({
+    expect(fetchHostPermissions).toHaveBeenCalledTimes(1);
+    expect(fetchHostPermissions).toHaveBeenCalledWith(result.current.url?.origin);
+    expect(setHostPermissions).toHaveBeenCalledTimes(1);
+    expect(setHostPermissions).toHaveBeenCalledWith({
       urlOrigin: result.current.url?.origin,
       canSkipApprove: true,
     });
@@ -93,11 +93,11 @@ describe("ui/components/ConnectionModal/useConnectionModal", () => {
 
     await act(async () => Promise.resolve(result.current.onRemoveHost()));
 
-    expect(fetchHostPermissions).toBeCalledTimes(1);
-    expect(fetchHostPermissions).toBeCalledWith(result.current.url?.origin);
-    expect(removeHost).toBeCalledTimes(1);
-    expect(removeHost).toBeCalledWith(result.current.url?.origin);
-    expect(defaultArgs.refreshConnectionStatus).toBeCalledTimes(1);
-    expect(defaultArgs.onClose).toBeCalledTimes(1);
+    expect(fetchHostPermissions).toHaveBeenCalledTimes(1);
+    expect(fetchHostPermissions).toHaveBeenCalledWith(result.current.url?.origin);
+    expect(removeHost).toHaveBeenCalledTimes(1);
+    expect(removeHost).toHaveBeenCalledWith(result.current.url?.origin);
+    expect(defaultArgs.refreshConnectionStatus).toHaveBeenCalledTimes(1);
+    expect(defaultArgs.onClose).toHaveBeenCalledTimes(1);
   });
 });

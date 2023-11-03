@@ -9,6 +9,7 @@ import { useNavigate } from "react-router-dom";
 import { ZERO_ADDRESS } from "@src/config/const";
 import { mockDefaultConnection } from "@src/config/mock/zk";
 import { Paths } from "@src/constants";
+import { disconnect } from "@src/ui/ducks/connections";
 import { useAppDispatch } from "@src/ui/ducks/hooks";
 import { deleteIdentity, setIdentityName, useIdentities } from "@src/ui/ducks/identities";
 import { isExtensionPopupOpen } from "@src/util/browser";
@@ -28,6 +29,10 @@ jest.mock("@src/ui/ducks/identities", (): unknown => ({
   setIdentityName: jest.fn(),
   useIdentities: jest.fn(),
   createIdentityRequest: jest.fn(),
+}));
+
+jest.mock("@src/ui/ducks/connections", (): unknown => ({
+  disconnect: jest.fn(),
 }));
 
 describe("ui/components/IdentityList", () => {
@@ -107,7 +112,7 @@ describe("ui/components/IdentityList", () => {
       selectIcon.click();
     });
 
-    expect(defaultProps.onSelect).toBeCalledTimes(1);
+    expect(defaultProps.onSelect).toHaveBeenCalledTimes(1);
   });
 
   test("should rename identity properly", async () => {
@@ -129,9 +134,9 @@ describe("ui/components/IdentityList", () => {
     const renameIcon = await screen.findByTestId(`identity-rename-${defaultIdentities[0].commitment}`);
     await act(async () => Promise.resolve(renameIcon.click()));
 
-    expect(setIdentityName).toBeCalledTimes(1);
-    expect(setIdentityName).toBeCalledWith(defaultIdentities[0].commitment, "New name");
-    expect(mockDispatch).toBeCalledTimes(1);
+    expect(setIdentityName).toHaveBeenCalledTimes(1);
+    expect(setIdentityName).toHaveBeenCalledWith(defaultIdentities[0].commitment, "New name");
+    expect(mockDispatch).toHaveBeenCalledTimes(1);
   });
 
   test("should handle rename error properly", async () => {
@@ -181,9 +186,9 @@ describe("ui/components/IdentityList", () => {
     const dangerModalAccept = await screen.findByTestId("danger-modal-accept");
     await act(async () => Promise.resolve(dangerModalAccept.click()));
 
-    expect(deleteIdentity).toBeCalledTimes(1);
-    expect(deleteIdentity).toBeCalledWith(defaultIdentities[0].commitment);
-    expect(mockDispatch).toBeCalledTimes(1);
+    expect(deleteIdentity).toHaveBeenCalledTimes(1);
+    expect(deleteIdentity).toHaveBeenCalledWith(defaultIdentities[0].commitment);
+    expect(mockDispatch).toHaveBeenCalledTimes(1);
     expect(dangerModal).not.toBeInTheDocument();
   });
 
@@ -207,8 +212,59 @@ describe("ui/components/IdentityList", () => {
     const dangerModalReject = await screen.findByTestId("danger-modal-reject");
     await act(async () => Promise.resolve(dangerModalReject.click()));
 
-    expect(deleteIdentity).toBeCalledTimes(0);
-    expect(mockDispatch).toBeCalledTimes(0);
+    expect(deleteIdentity).toHaveBeenCalledTimes(0);
+    expect(mockDispatch).toHaveBeenCalledTimes(0);
+    expect(dangerModal).not.toBeInTheDocument();
+  });
+
+  test("should accept to disconnect identity properly", async () => {
+    render(<IdentityList {...defaultProps} selectedCommitment={undefined} />);
+
+    const [menuIcon] = await screen.findAllByTestId("menu");
+    act(() => {
+      menuIcon.click();
+    });
+
+    const disconnectButton = await screen.findByText("Disconnect");
+    act(() => {
+      disconnectButton.click();
+    });
+
+    const dangerModal = await screen.findByTestId("danger-modal");
+
+    expect(dangerModal).toBeInTheDocument();
+
+    const dangerModalAccept = await screen.findByTestId("danger-modal-accept");
+    await act(async () => Promise.resolve(dangerModalAccept.click()));
+
+    expect(disconnect).toHaveBeenCalledTimes(1);
+    expect(disconnect).toHaveBeenCalledWith(defaultIdentities[0].commitment);
+    expect(mockDispatch).toHaveBeenCalledTimes(1);
+    expect(dangerModal).not.toBeInTheDocument();
+  });
+
+  test("should reject to disconnect identity properly", async () => {
+    render(<IdentityList {...defaultProps} selectedCommitment={undefined} />);
+
+    const [menuIcon] = await screen.findAllByTestId("menu");
+    act(() => {
+      menuIcon.click();
+    });
+
+    const disconnectButton = await screen.findByText("Disconnect");
+    act(() => {
+      disconnectButton.click();
+    });
+
+    const dangerModal = await screen.findByTestId("danger-modal");
+
+    expect(dangerModal).toBeInTheDocument();
+
+    const dangerModalReject = await screen.findByTestId("danger-modal-reject");
+    await act(async () => Promise.resolve(dangerModalReject.click()));
+
+    expect(disconnect).toHaveBeenCalledTimes(0);
+    expect(mockDispatch).toHaveBeenCalledTimes(0);
     expect(dangerModal).not.toBeInTheDocument();
   });
 
@@ -218,7 +274,7 @@ describe("ui/components/IdentityList", () => {
     const createIdentityButton = await screen.findByTestId("create-new-identity");
     await act(async () => Promise.resolve(createIdentityButton.click()));
 
-    expect(mockDispatch).toBeCalledTimes(1);
+    expect(mockDispatch).toHaveBeenCalledTimes(1);
   });
 
   test("should redirect to create identity page properly", async () => {
@@ -229,7 +285,7 @@ describe("ui/components/IdentityList", () => {
     const createIdentityButton = await screen.findByTestId("create-new-identity");
     await act(async () => Promise.resolve(createIdentityButton.click()));
 
-    expect(mockNavigate).toBeCalledTimes(1);
-    expect(mockNavigate).toBeCalledWith(Paths.CREATE_IDENTITY);
+    expect(mockNavigate).toHaveBeenCalledTimes(1);
+    expect(mockNavigate).toHaveBeenCalledWith(Paths.CREATE_IDENTITY);
   });
 });

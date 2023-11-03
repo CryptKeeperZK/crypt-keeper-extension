@@ -99,8 +99,8 @@ describe("background/shared/utils", () => {
   test("should create a chrome offscreen properly", async () => {
     await createChromeOffscreen();
 
-    expect(global.chrome.offscreen.hasDocument).toBeCalledTimes(1);
-    expect(global.chrome.offscreen.createDocument).toBeCalledTimes(1);
+    expect(global.chrome.offscreen.hasDocument).toHaveBeenCalledTimes(1);
+    expect(global.chrome.offscreen.createDocument).toHaveBeenCalledTimes(1);
     expect(global.chrome.offscreen.createDocument).toHaveBeenCalledWith({
       url: "offscreen.html",
       reasons: [global.chrome.offscreen.Reason.DOM_SCRAPING],
@@ -112,8 +112,8 @@ describe("background/shared/utils", () => {
     (global.chrome.offscreen.hasDocument as jest.Mock).mockReturnValueOnce(true);
     await createChromeOffscreen();
 
-    expect(global.chrome.offscreen.hasDocument).toBeCalledTimes(1);
-    expect(global.chrome.offscreen.createDocument).toBeCalledTimes(0);
+    expect(global.chrome.offscreen.hasDocument).toHaveBeenCalledTimes(1);
+    expect(global.chrome.offscreen.createDocument).toHaveBeenCalledTimes(0);
   });
 
   test("should throw an error if it's not possible to create offscreen", async () => {

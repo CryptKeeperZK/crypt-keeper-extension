@@ -30,7 +30,7 @@ describe("ui/pages/Settings/components/Security", () => {
     const button = await findByTestId("change-password");
     await act(() => Promise.resolve(button.click()));
 
-    expect(defaultProps.onGoToResetPassword).toBeCalledTimes(1);
+    expect(defaultProps.onGoToResetPassword).toHaveBeenCalledTimes(1);
   });
 
   test("should go to reveal mnemonic page properly", async () => {
@@ -45,7 +45,7 @@ describe("ui/pages/Settings/components/Security", () => {
     const button = await findByTestId("reveal-mnemonic");
     await act(() => Promise.resolve(button.click()));
 
-    expect(defaultProps.onGoRevealMnemonic).toBeCalledTimes(1);
+    expect(defaultProps.onGoRevealMnemonic).toHaveBeenCalledTimes(1);
   });
 
   test("should render loading state properly", async () => {

@@ -105,8 +105,8 @@ describe("ui/ducks/verifiableCredentials", () => {
 
     await Promise.resolve(store.dispatch(addVerifiableCredential(mockSerializedVerifiableCredential, mockName)));
 
-    expect(postMessage).toBeCalledTimes(1);
-    expect(postMessage).toBeCalledWith({
+    expect(postMessage).toHaveBeenCalledTimes(1);
+    expect(postMessage).toHaveBeenCalledWith({
       method: RPCInternalAction.ADD_VERIFIABLE_CREDENTIAL,
       payload: {
         serializedVerifiableCredential: mockSerializedVerifiableCredential,
@@ -118,8 +118,8 @@ describe("ui/ducks/verifiableCredentials", () => {
   test("should reject verifiable credential request properly", async () => {
     await Promise.resolve(store.dispatch(rejectVerifiableCredentialRequest()));
 
-    expect(postMessage).toBeCalledTimes(1);
-    expect(postMessage).toBeCalledWith({
+    expect(postMessage).toHaveBeenCalledTimes(1);
+    expect(postMessage).toHaveBeenCalledWith({
       method: RPCInternalAction.REJECT_VERIFIABLE_CREDENTIAL_REQUEST,
     });
   });
@@ -129,8 +129,8 @@ describe("ui/ducks/verifiableCredentials", () => {
 
     await Promise.resolve(store.dispatch(renameVerifiableCredential(mockPayload)));
 
-    expect(postMessage).toBeCalledTimes(1);
-    expect(postMessage).toBeCalledWith({
+    expect(postMessage).toHaveBeenCalledTimes(1);
+    expect(postMessage).toHaveBeenCalledWith({
       method: RPCInternalAction.RENAME_VERIFIABLE_CREDENTIAL,
       payload: mockPayload,
     });
@@ -141,8 +141,8 @@ describe("ui/ducks/verifiableCredentials", () => {
 
     await Promise.resolve(store.dispatch(deleteVerifiableCredential(mockHash)));
 
-    expect(postMessage).toBeCalledTimes(1);
-    expect(postMessage).toBeCalledWith({
+    expect(postMessage).toHaveBeenCalledTimes(1);
+    expect(postMessage).toHaveBeenCalledWith({
       method: RPCInternalAction.DELETE_VERIFIABLE_CREDENTIAL,
       payload: mockHash,
     });
@@ -151,8 +151,8 @@ describe("ui/ducks/verifiableCredentials", () => {
   test("should generate verfifiable presentation properly", async () => {
     await Promise.resolve(store.dispatch(generateVerifiablePresentation(mockVerifiablePresentation)));
 
-    expect(postMessage).toBeCalledTimes(1);
-    expect(postMessage).toBeCalledWith({
+    expect(postMessage).toHaveBeenCalledTimes(1);
+    expect(postMessage).toHaveBeenCalledWith({
       method: RPCInternalAction.GENERATE_VERIFIABLE_PRESENTATION,
       payload: mockVerifiablePresentation,
     });
@@ -169,8 +169,8 @@ describe("ui/ducks/verifiableCredentials", () => {
       ),
     );
 
-    expect(postMessage).toBeCalledTimes(1);
-    expect(postMessage).toBeCalledWith({
+    expect(postMessage).toHaveBeenCalledTimes(1);
+    expect(postMessage).toHaveBeenCalledWith({
       method: RPCInternalAction.GENERATE_VERIFIABLE_PRESENTATION_WITH_CRYPTKEEPER,
       payload: { verifiablePresentation: mockVerifiablePresentation, address: mockAddress },
     });
@@ -179,8 +179,8 @@ describe("ui/ducks/verifiableCredentials", () => {
   test("should reject a verfifiable presentation request properly", async () => {
     await Promise.resolve(store.dispatch(rejectVerifiablePresentationRequest()));
 
-    expect(postMessage).toBeCalledTimes(1);
-    expect(postMessage).toBeCalledWith({
+    expect(postMessage).toHaveBeenCalledTimes(1);
+    expect(postMessage).toHaveBeenCalledWith({
       method: RPCInternalAction.REJECT_VERIFIABLE_PRESENTATION_REQUEST,
     });
   });

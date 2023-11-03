@@ -55,7 +55,7 @@ describe("ui/pages/RevealMnemonic", () => {
     const button = await findByTestId("unlock-button");
     await act(async () => Promise.resolve(fireEvent.submit(button)));
 
-    expect(defaultHookData.onSubmit).toBeCalledTimes(1);
+    expect(defaultHookData.onSubmit).toHaveBeenCalledTimes(1);
   });
 
   test("should render error properly", async () => {
@@ -82,6 +82,6 @@ describe("ui/pages/RevealMnemonic", () => {
     const icon = await findByTestId("close-icon");
     await act(() => Promise.resolve(icon.click()));
 
-    expect(defaultHookData.onGoBack).toBeCalledTimes(1);
+    expect(defaultHookData.onGoBack).toHaveBeenCalledTimes(1);
   });
 });

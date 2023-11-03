@@ -94,9 +94,9 @@ describe("ui/pages/Settings/useSettings", () => {
 
     await waitFor(() => !result.current.isConfirmModalOpen);
 
-    expect(mockDispatch).toBeCalledTimes(2);
-    expect(fetchHistory).toBeCalledTimes(1);
-    expect(clearHistory).toBeCalledTimes(1);
+    expect(mockDispatch).toHaveBeenCalledTimes(2);
+    expect(fetchHistory).toHaveBeenCalledTimes(1);
+    expect(clearHistory).toHaveBeenCalledTimes(1);
   });
 
   test("should show confirm storage clear modal", async () => {
@@ -111,10 +111,10 @@ describe("ui/pages/Settings/useSettings", () => {
 
     await waitFor(() => !result.current.isConfirmStorageDelete);
 
-    expect(mockDispatch).toBeCalledTimes(3);
-    expect(fetchHistory).toBeCalledTimes(1);
-    expect(deleteStorage).toBeCalledTimes(1);
-    expect(lock).toBeCalledTimes(1);
+    expect(mockDispatch).toHaveBeenCalledTimes(3);
+    expect(fetchHistory).toHaveBeenCalledTimes(1);
+    expect(deleteStorage).toHaveBeenCalledTimes(1);
+    expect(lock).toHaveBeenCalledTimes(1);
   });
 
   test("should delete all history properly", async () => {
@@ -124,9 +124,9 @@ describe("ui/pages/Settings/useSettings", () => {
 
     await act(async () => Promise.resolve(result.current.onDeleteAllHistory()));
 
-    expect(mockDispatch).toBeCalledTimes(2);
-    expect(fetchHistory).toBeCalledTimes(1);
-    expect(clearHistory).toBeCalledTimes(1);
+    expect(mockDispatch).toHaveBeenCalledTimes(2);
+    expect(fetchHistory).toHaveBeenCalledTimes(1);
+    expect(clearHistory).toHaveBeenCalledTimes(1);
   });
 
   test("should delete history operation properly", async () => {
@@ -136,10 +136,10 @@ describe("ui/pages/Settings/useSettings", () => {
 
     await act(async () => Promise.resolve(result.current.onEnableHistory()));
 
-    expect(mockDispatch).toBeCalledTimes(2);
-    expect(fetchHistory).toBeCalledTimes(1);
-    expect(enableHistory).toBeCalledTimes(1);
-    expect(enableHistory).toBeCalledWith(!defaultHistorySettings.isEnabled);
+    expect(mockDispatch).toHaveBeenCalledTimes(2);
+    expect(fetchHistory).toHaveBeenCalledTimes(1);
+    expect(enableHistory).toHaveBeenCalledTimes(1);
+    expect(enableHistory).toHaveBeenCalledWith(!defaultHistorySettings.isEnabled);
   });
 
   test("should change tab properly", async () => {
@@ -159,8 +159,8 @@ describe("ui/pages/Settings/useSettings", () => {
 
     await act(async () => Promise.resolve(result.current.onGoBack()));
 
-    expect(mockNavigate).toBeCalledTimes(1);
-    expect(mockNavigate).toBeCalledWith(Paths.HOME);
+    expect(mockNavigate).toHaveBeenCalledTimes(1);
+    expect(mockNavigate).toHaveBeenCalledWith(Paths.HOME);
   });
 
   test("should go to download backup page properly", async () => {
@@ -170,8 +170,8 @@ describe("ui/pages/Settings/useSettings", () => {
 
     await act(async () => Promise.resolve(result.current.onGoToBackup()));
 
-    expect(mockNavigate).toBeCalledTimes(1);
-    expect(mockNavigate).toBeCalledWith(Paths.DOWNLOAD_BACKUP);
+    expect(mockNavigate).toHaveBeenCalledTimes(1);
+    expect(mockNavigate).toHaveBeenCalledWith(Paths.DOWNLOAD_BACKUP);
   });
 
   test("should open upload backup modal properly", async () => {
@@ -181,9 +181,9 @@ describe("ui/pages/Settings/useSettings", () => {
 
     await act(async () => Promise.resolve(result.current.onGoToUploadBackup()));
 
-    expect(mockDispatch).toBeCalledTimes(2);
-    expect(fetchHistory).toBeCalledTimes(1);
-    expect(createUploadBackupRequest).toBeCalledTimes(1);
+    expect(mockDispatch).toHaveBeenCalledTimes(2);
+    expect(fetchHistory).toHaveBeenCalledTimes(1);
+    expect(createUploadBackupRequest).toHaveBeenCalledTimes(1);
   });
 
   test("should go to upload backup page properly", async () => {
@@ -194,8 +194,8 @@ describe("ui/pages/Settings/useSettings", () => {
 
     await act(async () => Promise.resolve(result.current.onGoToUploadBackup()));
 
-    expect(mockNavigate).toBeCalledTimes(1);
-    expect(mockNavigate).toBeCalledWith(Paths.UPLOAD_BACKUP);
+    expect(mockNavigate).toHaveBeenCalledTimes(1);
+    expect(mockNavigate).toHaveBeenCalledWith(Paths.UPLOAD_BACKUP);
   });
 
   test("should go to reset password page properly", async () => {
@@ -205,8 +205,8 @@ describe("ui/pages/Settings/useSettings", () => {
 
     await act(async () => Promise.resolve(result.current.onGoToResetPassword()));
 
-    expect(mockNavigate).toBeCalledTimes(1);
-    expect(mockNavigate).toBeCalledWith(Paths.RECOVER);
+    expect(mockNavigate).toHaveBeenCalledTimes(1);
+    expect(mockNavigate).toHaveBeenCalledWith(Paths.RECOVER);
   });
 
   test("should delete all identities properly", async () => {
@@ -216,9 +216,9 @@ describe("ui/pages/Settings/useSettings", () => {
 
     await act(async () => Promise.resolve(result.current.onDeleteAllIdentities()));
 
-    expect(mockDispatch).toBeCalledTimes(2);
-    expect(fetchHistory).toBeCalledTimes(1);
-    expect(deleteAllIdentities).toBeCalledTimes(1);
+    expect(mockDispatch).toHaveBeenCalledTimes(2);
+    expect(fetchHistory).toHaveBeenCalledTimes(1);
+    expect(deleteAllIdentities).toHaveBeenCalledTimes(1);
   });
 
   test("should go to reveal mnemonic page properly", async () => {
@@ -228,7 +228,7 @@ describe("ui/pages/Settings/useSettings", () => {
 
     await act(async () => Promise.resolve(result.current.onGoRevealMnemonic()));
 
-    expect(mockNavigate).toBeCalledTimes(1);
-    expect(mockNavigate).toBeCalledWith(Paths.REVEAL_MNEMONIC);
+    expect(mockNavigate).toHaveBeenCalledTimes(1);
+    expect(mockNavigate).toHaveBeenCalledWith(Paths.REVEAL_MNEMONIC);
   });
 });

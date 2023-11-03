@@ -69,7 +69,7 @@ describe("ui/pages/Identity/useIdentityPage", () => {
   const waitForData = async (data: IUseIdentityPageData): Promise<void> => {
     await waitFor(() => !data.isLoading);
     await waitFor(() => {
-      expect(fetchIdentities).toBeCalledTimes(1);
+      expect(fetchIdentities).toHaveBeenCalledTimes(1);
     });
   };
 
@@ -90,8 +90,8 @@ describe("ui/pages/Identity/useIdentityPage", () => {
 
     await act(() => Promise.resolve(result.current.onGoBack()));
 
-    expect(mockNavigate).toBeCalledTimes(1);
-    expect(mockNavigate).toBeCalledWith(Paths.HOME);
+    expect(mockNavigate).toHaveBeenCalledTimes(1);
+    expect(mockNavigate).toHaveBeenCalledWith(Paths.HOME);
   });
 
   test("should handle error properly", async () => {
@@ -114,13 +114,13 @@ describe("ui/pages/Identity/useIdentityPage", () => {
 
     await act(() => Promise.resolve(result.current.onDeleteIdentity()));
 
-    expect(mockDispatch).toBeCalledTimes(3);
-    expect(fetchIdentities).toBeCalledTimes(1);
-    expect(fetchConnections).toBeCalledTimes(1);
-    expect(deleteIdentity).toBeCalledTimes(1);
-    expect(deleteIdentity).toBeCalledWith(result.current.commitment);
-    expect(mockNavigate).toBeCalledTimes(1);
-    expect(mockNavigate).toBeCalledWith(Paths.HOME);
+    expect(mockDispatch).toHaveBeenCalledTimes(3);
+    expect(fetchIdentities).toHaveBeenCalledTimes(1);
+    expect(fetchConnections).toHaveBeenCalledTimes(1);
+    expect(deleteIdentity).toHaveBeenCalledTimes(1);
+    expect(deleteIdentity).toHaveBeenCalledWith(result.current.commitment);
+    expect(mockNavigate).toHaveBeenCalledTimes(1);
+    expect(mockNavigate).toHaveBeenCalledWith(Paths.HOME);
   });
 
   test("should handle delete identity error properly", async () => {
@@ -154,10 +154,10 @@ describe("ui/pages/Identity/useIdentityPage", () => {
     await act(() => Promise.resolve(result.current.onConfirmUpdate()));
 
     expect(result.current.isUpdating).toBe(false);
-    expect(mockDispatch).toBeCalledTimes(3);
-    expect(fetchIdentities).toBeCalledTimes(1);
-    expect(fetchConnections).toBeCalledTimes(1);
-    expect(setIdentityName).toBeCalledTimes(1);
+    expect(mockDispatch).toHaveBeenCalledTimes(3);
+    expect(fetchIdentities).toHaveBeenCalledTimes(1);
+    expect(fetchConnections).toHaveBeenCalledTimes(1);
+    expect(setIdentityName).toHaveBeenCalledTimes(1);
   });
 
   test("should handle confirm update error properly", async () => {
@@ -190,7 +190,7 @@ describe("ui/pages/Identity/useIdentityPage", () => {
 
     await act(() => Promise.resolve(result.current.onGoToHost()));
 
-    expect(redirectToNewTab).toBeCalledTimes(1);
-    expect(redirectToNewTab).toBeCalledWith(mockDefaultConnection.urlOrigin);
+    expect(redirectToNewTab).toHaveBeenCalledTimes(1);
+    expect(redirectToNewTab).toHaveBeenCalledWith(mockDefaultConnection.urlOrigin);
   });
 });

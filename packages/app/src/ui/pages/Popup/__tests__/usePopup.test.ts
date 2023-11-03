@@ -54,7 +54,7 @@ describe("ui/pages/Popup/usePopup", () => {
   const waitForData = async (current: IUsePopupData) => {
     await waitFor(() => current.isLoading);
     await waitFor(() => {
-      expect(mockDispatch).toBeCalledTimes(current.isUnlocked && current.isMnemonicGenerated ? 3 : 2);
+      expect(mockDispatch).toHaveBeenCalledTimes(current.isUnlocked && current.isMnemonicGenerated ? 3 : 2);
     });
     await waitFor(() => !current.isLoading);
   };
@@ -104,10 +104,10 @@ describe("ui/pages/Popup/usePopup", () => {
     await waitForData(result.current);
 
     expect(result.current.isLoading).toBe(false);
-    expect(mockDispatch).toBeCalledTimes(2);
-    expect(fetchStatus).toBeCalledTimes(1);
-    expect(fetchPendingRequests).toBeCalledTimes(1);
-    expect(defaultWalletHookData.onConnectEagerly).toBeCalledTimes(2);
+    expect(mockDispatch).toHaveBeenCalledTimes(2);
+    expect(fetchStatus).toHaveBeenCalledTimes(1);
+    expect(fetchPendingRequests).toHaveBeenCalledTimes(1);
+    expect(defaultWalletHookData.onConnectEagerly).toHaveBeenCalledTimes(2);
   });
 
   test("should get selected account properly when mnemonic generated", async () => {
@@ -117,15 +117,15 @@ describe("ui/pages/Popup/usePopup", () => {
 
     await waitFor(() => result.current.isLoading);
     await waitFor(() => {
-      expect(mockDispatch).toBeCalledTimes(3);
+      expect(mockDispatch).toHaveBeenCalledTimes(3);
     });
     await waitFor(() => !result.current.isLoading);
 
     expect(result.current.isLoading).toBe(false);
-    expect(mockDispatch).toBeCalledTimes(3);
-    expect(fetchStatus).toBeCalledTimes(1);
-    expect(fetchPendingRequests).toBeCalledTimes(1);
-    expect(getSelectedAccount).toBeCalledTimes(1);
+    expect(mockDispatch).toHaveBeenCalledTimes(3);
+    expect(fetchStatus).toHaveBeenCalledTimes(1);
+    expect(fetchPendingRequests).toHaveBeenCalledTimes(1);
+    expect(getSelectedAccount).toHaveBeenCalledTimes(1);
   });
 
   test("should get selected account properly when mnemonic generated", async () => {
@@ -135,15 +135,15 @@ describe("ui/pages/Popup/usePopup", () => {
 
     await waitFor(() => result.current.isLoading);
     await waitFor(() => {
-      expect(mockDispatch).toBeCalledTimes(3);
+      expect(mockDispatch).toHaveBeenCalledTimes(3);
     });
     await waitFor(() => !result.current.isLoading);
 
     expect(result.current.isLoading).toBe(false);
-    expect(mockDispatch).toBeCalledTimes(3);
-    expect(fetchStatus).toBeCalledTimes(1);
-    expect(fetchPendingRequests).toBeCalledTimes(1);
-    expect(getSelectedAccount).toBeCalledTimes(1);
+    expect(mockDispatch).toHaveBeenCalledTimes(3);
+    expect(fetchStatus).toHaveBeenCalledTimes(1);
+    expect(fetchPendingRequests).toHaveBeenCalledTimes(1);
+    expect(getSelectedAccount).toHaveBeenCalledTimes(1);
   });
 
   test("should handle load data error", async () => {
@@ -152,14 +152,14 @@ describe("ui/pages/Popup/usePopup", () => {
 
     const { result } = renderHook(() => usePopup());
     await waitFor(() => {
-      expect(mockDispatch).toBeCalledTimes(0);
+      expect(mockDispatch).toHaveBeenCalledTimes(0);
       expect(result.current.isLoading).toBe(false);
     });
 
     // eslint-disable-next-line @typescript-eslint/unbound-method
-    expect(log.error).toBeCalledTimes(1);
+    expect(log.error).toHaveBeenCalledTimes(1);
     // eslint-disable-next-line @typescript-eslint/unbound-method
-    expect(log.error).toBeCalledWith(err);
+    expect(log.error).toHaveBeenCalledWith(err);
   });
 
   test("should redirect to create identity page", async () => {
@@ -173,8 +173,8 @@ describe("ui/pages/Popup/usePopup", () => {
 
     expect(result.current.isUnlocked).toBe(true);
     expect(result.current.isMnemonicGenerated).toBe(true);
-    expect(mockNavigate).toBeCalledTimes(1);
-    expect(mockNavigate).toBeCalledWith(
+    expect(mockNavigate).toHaveBeenCalledTimes(1);
+    expect(mockNavigate).toHaveBeenCalledWith(
       `${Paths.CREATE_IDENTITY}?urlOrigin=${encodeURIComponent("http://localhost:3000")}`,
     );
   });
@@ -185,8 +185,8 @@ describe("ui/pages/Popup/usePopup", () => {
     const { result } = renderHook(() => usePopup());
     await waitForData(result.current);
 
-    expect(mockNavigate).toBeCalledTimes(1);
-    expect(mockNavigate).toBeCalledWith(Paths.LOGIN);
+    expect(mockNavigate).toHaveBeenCalledTimes(1);
+    expect(mockNavigate).toHaveBeenCalledWith(Paths.LOGIN);
   });
 
   test("should bypass redirection if location is referenced to common path", async () => {
@@ -196,7 +196,7 @@ describe("ui/pages/Popup/usePopup", () => {
     const { result } = renderHook(() => usePopup());
     await waitForData(result.current);
 
-    expect(mockNavigate).toBeCalledTimes(0);
+    expect(mockNavigate).toHaveBeenCalledTimes(0);
   });
 
   test("should redirect to onboarding page", async () => {
@@ -209,8 +209,8 @@ describe("ui/pages/Popup/usePopup", () => {
     const { result } = renderHook(() => usePopup());
     await waitForData(result.current);
 
-    expect(mockNavigate).toBeCalledTimes(1);
-    expect(mockNavigate).toBeCalledWith(Paths.ONBOARDING);
+    expect(mockNavigate).toHaveBeenCalledTimes(1);
+    expect(mockNavigate).toHaveBeenCalledWith(Paths.ONBOARDING);
   });
 
   test("should redirect to mnemonic page", async () => {
@@ -223,8 +223,8 @@ describe("ui/pages/Popup/usePopup", () => {
     const { result } = renderHook(() => usePopup());
     await waitForData(result.current);
 
-    expect(mockNavigate).toBeCalledTimes(1);
-    expect(mockNavigate).toBeCalledWith(Paths.GENERATE_MNEMONIC);
+    expect(mockNavigate).toHaveBeenCalledTimes(1);
+    expect(mockNavigate).toHaveBeenCalledWith(Paths.GENERATE_MNEMONIC);
   });
 
   test("should redirect to pending requests page", async () => {
@@ -236,7 +236,7 @@ describe("ui/pages/Popup/usePopup", () => {
 
     expect(result.current.isUnlocked).toBe(true);
     expect(result.current.isMnemonicGenerated).toBe(true);
-    expect(mockNavigate).toBeCalledTimes(1);
-    expect(mockNavigate).toBeCalledWith(Paths.REQUESTS);
+    expect(mockNavigate).toHaveBeenCalledTimes(1);
+    expect(mockNavigate).toHaveBeenCalledWith(Paths.REQUESTS);
   });
 });

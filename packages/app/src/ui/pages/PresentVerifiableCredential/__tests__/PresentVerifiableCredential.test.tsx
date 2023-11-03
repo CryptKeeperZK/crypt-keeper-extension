@@ -142,7 +142,7 @@ describe("ui/pages/PresentVerifiableCredential", () => {
     const button = await findByTestId("reject-verifiable-presentation-request");
     fireEvent.click(button);
 
-    expect(defaultHookData.onRejectRequest).toBeCalledTimes(1);
+    expect(defaultHookData.onRejectRequest).toHaveBeenCalledTimes(1);
   });
 
   test("should sign with metamask", async () => {
@@ -157,6 +157,6 @@ describe("ui/pages/PresentVerifiableCredential", () => {
     const button = await findByTestId("dropdown-button");
     fireEvent.click(button);
 
-    expect(defaultHookData.onSubmitVerifiablePresentation).toBeCalledTimes(1);
+    expect(defaultHookData.onSubmitVerifiablePresentation).toHaveBeenCalledTimes(1);
   });
 });

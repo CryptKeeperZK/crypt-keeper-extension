@@ -3,6 +3,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import classNames from "classnames";
+import compact from "lodash/compact";
 import Jazzicon, { jsNumberForAddress } from "react-jazzicon";
 
 import { Icon } from "@src/ui/components/Icon";
@@ -21,6 +22,7 @@ export interface IdentityItemProps {
   selected?: string;
   onDeleteIdentity: (commitment: string) => Promise<void>;
   onUpdateIdentityName: (commitment: string, name: string) => Promise<void>;
+  onDisconnectIdentity: (commitment: string) => Promise<void>;
   onSelectIdentity?: (commitment: string) => void;
 }
 
@@ -32,6 +34,7 @@ export const IdentityItem = ({
   connectedOrigin = "",
   onDeleteIdentity,
   onUpdateIdentityName,
+  onDisconnectIdentity,
   onSelectIdentity = undefined,
 }: IdentityItemProps): JSX.Element => {
   const {
@@ -44,6 +47,7 @@ export const IdentityItem = ({
     onToggleRenaming,
     onDeleteIdentity: onDelete,
     onSelectIdentity: onSelect,
+    onDisconnectIdentity: onDisconnect,
   } = useIdentityItem({
     commitment,
     metadata,
@@ -51,13 +55,15 @@ export const IdentityItem = ({
     onDelete: onDeleteIdentity,
     onUpdate: onUpdateIdentityName,
     onSelect: onSelectIdentity,
+    onDisconnect: onDisconnectIdentity,
   });
 
-  const menuItems = [
+  const menuItems = compact([
     { label: "View", isDangerItem: false, onClick: onGoToIdentity },
     { label: "Rename", isDangerItem: false, onClick: onToggleRenaming },
+    connectedOrigin && { label: "Disconnect", isDangerItem: true, onClick: onDisconnect },
     { label: "Delete", isDangerItem: true, onClick: onDelete },
-  ];
+  ]);
 
   return (
     <Box

@@ -67,7 +67,7 @@ describe("ui/components/VerifiableCredential/Item/useVerifiableCredentialItem", 
     await act(async () => Promise.resolve(result.current.onToggleRenaming()));
     await act(async () => Promise.resolve(result.current.onSubmit(mockEvent)));
 
-    expect(defaultHookArgs.onRename).toBeCalledTimes(1);
+    expect(defaultHookArgs.onRename).toHaveBeenCalledTimes(1);
     expect(result.current.isRenaming).toBe(false);
   });
 
@@ -76,8 +76,8 @@ describe("ui/components/VerifiableCredential/Item/useVerifiableCredentialItem", 
 
     await act(async () => result.current.onDelete());
 
-    expect(defaultHookArgs.onDelete).toBeCalledTimes(1);
-    expect(defaultHookArgs.onDelete).toBeCalledWith(defaultHookArgs.metadata.hash);
+    expect(defaultHookArgs.onDelete).toHaveBeenCalledTimes(1);
+    expect(defaultHookArgs.onDelete).toHaveBeenCalledWith(defaultHookArgs.metadata.hash);
   });
 
   test("should handle selection properly", () => {
@@ -85,7 +85,7 @@ describe("ui/components/VerifiableCredential/Item/useVerifiableCredentialItem", 
 
     act(() => result.current.onToggleSelect());
 
-    expect(defaultHookArgs.onSelect).toBeCalledTimes(1);
-    expect(defaultHookArgs.onSelect).toBeCalledWith(defaultHookArgs.metadata.hash);
+    expect(defaultHookArgs.onSelect).toHaveBeenCalledTimes(1);
+    expect(defaultHookArgs.onSelect).toHaveBeenCalledWith(defaultHookArgs.metadata.hash);
   });
 });

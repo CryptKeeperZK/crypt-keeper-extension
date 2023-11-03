@@ -63,7 +63,7 @@ describe("background/services/bandada/BandadaService", () => {
 
     const result = await service.addMember(defaultAddMemberArgs);
 
-    expect(fetchSpy).toBeCalledTimes(1);
+    expect(fetchSpy).toHaveBeenCalledTimes(1);
     expect(result).toBe(true);
   });
 
@@ -76,7 +76,7 @@ describe("background/services/bandada/BandadaService", () => {
 
     const result = await service.addMember({ ...defaultAddMemberArgs, apiKey: undefined, inviteCode: "code" });
 
-    expect(fetchSpy).toBeCalledTimes(1);
+    expect(fetchSpy).toHaveBeenCalledTimes(1);
     expect(result).toBe(true);
   });
 
@@ -88,7 +88,7 @@ describe("background/services/bandada/BandadaService", () => {
     const service = BandadaService.getInstance();
 
     await expect(service.addMember(defaultAddMemberArgs)).rejects.toThrowError("Error 1,Error 2");
-    expect(fetchSpy).toBeCalledTimes(1);
+    expect(fetchSpy).toHaveBeenCalledTimes(1);
   });
 
   test("should throw error if add member is called without required params", async () => {
@@ -114,7 +114,7 @@ describe("background/services/bandada/BandadaService", () => {
 
     const proof = await service.generateMerkleProof(defaultGenerateProofArgs);
 
-    expect(fetchSpy).toBeCalledTimes(1);
+    expect(fetchSpy).toHaveBeenCalledTimes(1);
     expect(proof).toStrictEqual(defaultMerkleProof);
   });
 
@@ -126,7 +126,7 @@ describe("background/services/bandada/BandadaService", () => {
     const service = BandadaService.getInstance();
 
     await expect(service.generateMerkleProof(defaultGenerateProofArgs)).rejects.toThrowError("Error");
-    expect(fetchSpy).toBeCalledTimes(1);
+    expect(fetchSpy).toHaveBeenCalledTimes(1);
   });
 
   test("should check membership properly", async () => {
@@ -138,7 +138,7 @@ describe("background/services/bandada/BandadaService", () => {
 
     const result = await service.checkGroupMembership(defaultCheckMembershipArgs);
 
-    expect(fetchSpy).toBeCalledTimes(1);
+    expect(fetchSpy).toHaveBeenCalledTimes(1);
     expect(result).toBe(true);
   });
 
@@ -151,7 +151,7 @@ describe("background/services/bandada/BandadaService", () => {
 
     const result = await service.checkGroupMembership(defaultCheckMembershipArgs);
 
-    expect(fetchSpy).toBeCalledTimes(1);
+    expect(fetchSpy).toHaveBeenCalledTimes(1);
     expect(result).toBe(false);
   });
 
@@ -163,6 +163,6 @@ describe("background/services/bandada/BandadaService", () => {
     const service = BandadaService.getInstance();
 
     await expect(service.checkGroupMembership(defaultCheckMembershipArgs)).rejects.toThrowError("Error");
-    expect(fetchSpy).toBeCalledTimes(1);
+    expect(fetchSpy).toHaveBeenCalledTimes(1);
   });
 });

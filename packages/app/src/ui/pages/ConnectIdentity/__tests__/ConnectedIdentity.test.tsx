@@ -97,7 +97,7 @@ describe("ui/pages/ConnectIdentity", () => {
     const button = await findByText("Connect");
     await act(() => Promise.resolve(button.click()));
 
-    expect(defaultHookData.onConnect).toBeCalledTimes(1);
+    expect(defaultHookData.onConnect).toHaveBeenCalledTimes(1);
   });
 
   test("should reject connection properly", async () => {
@@ -112,6 +112,6 @@ describe("ui/pages/ConnectIdentity", () => {
     const button = await findByText("Reject");
     await act(() => Promise.resolve(button.click()));
 
-    expect(defaultHookData.onReject).toBeCalledTimes(1);
+    expect(defaultHookData.onReject).toHaveBeenCalledTimes(1);
   });
 });

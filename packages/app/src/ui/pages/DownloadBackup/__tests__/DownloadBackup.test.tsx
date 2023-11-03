@@ -110,6 +110,6 @@ describe("ui/pages/DownloadBackup", () => {
     const button = await screen.findByTestId("download-button");
     await act(async () => Promise.resolve(fireEvent.submit(button)));
 
-    expect(mockDispatch).toBeCalledTimes(1);
+    expect(mockDispatch).toHaveBeenCalledTimes(1);
   });
 });

@@ -96,11 +96,11 @@ describe("ui/pages/CreateIdentity/useCreateIdentity", () => {
     await act(async () => Promise.resolve(result.current.onSign(SignatureOptions.ETH_WALLET)));
 
     expect(result.current.isLoading).toBe(false);
-    expect(signWithSigner).toBeCalledTimes(1);
-    expect(mockDispatch).toBeCalledTimes(2);
-    expect(closePopup).toBeCalledTimes(1);
-    expect(createIdentity).toBeCalledTimes(1);
-    expect(createIdentity).toBeCalledWith({
+    expect(signWithSigner).toHaveBeenCalledTimes(1);
+    expect(mockDispatch).toHaveBeenCalledTimes(2);
+    expect(closePopup).toHaveBeenCalledTimes(1);
+    expect(createIdentity).toHaveBeenCalledTimes(1);
+    expect(createIdentity).toHaveBeenCalledWith({
       groups: [],
       messageSignature: mockSignedMessage,
       urlOrigin: undefined,
@@ -108,8 +108,8 @@ describe("ui/pages/CreateIdentity/useCreateIdentity", () => {
       options: { account: ZERO_ADDRESS, message: mockMessage, nonce: 0 },
       walletType: EWallet.ETH_WALLET,
     });
-    expect(mockNavigate).toBeCalledTimes(1);
-    expect(mockNavigate).toBeCalledWith(Paths.HOME);
+    expect(mockNavigate).toHaveBeenCalledTimes(1);
+    expect(mockNavigate).toHaveBeenCalledWith(Paths.HOME);
   });
 
   test("should create identity properly and go back", async () => {
@@ -120,10 +120,10 @@ describe("ui/pages/CreateIdentity/useCreateIdentity", () => {
     await act(async () => Promise.resolve(result.current.onSign(SignatureOptions.ETH_WALLET)));
 
     expect(result.current.isLoading).toBe(false);
-    expect(signWithSigner).toBeCalledTimes(1);
-    expect(mockDispatch).toBeCalledTimes(1);
-    expect(createIdentity).toBeCalledTimes(1);
-    expect(createIdentity).toBeCalledWith({
+    expect(signWithSigner).toHaveBeenCalledTimes(1);
+    expect(mockDispatch).toHaveBeenCalledTimes(1);
+    expect(createIdentity).toHaveBeenCalledTimes(1);
+    expect(createIdentity).toHaveBeenCalledWith({
       groups: [],
       urlOrigin: "http://localhost:3000",
       messageSignature: mockSignedMessage,
@@ -131,8 +131,8 @@ describe("ui/pages/CreateIdentity/useCreateIdentity", () => {
       options: { account: ZERO_ADDRESS, message: mockMessage, nonce: 0 },
       walletType: EWallet.ETH_WALLET,
     });
-    expect(mockNavigate).toBeCalledTimes(1);
-    expect(mockNavigate).toBeCalledWith(
+    expect(mockNavigate).toHaveBeenCalledTimes(1);
+    expect(mockNavigate).toHaveBeenCalledWith(
       `${Paths.CONNECT_IDENTITY}?urlOrigin=http://localhost:3000&back=${Paths.CONNECT_IDENTITY}`,
     );
   });
@@ -144,7 +144,7 @@ describe("ui/pages/CreateIdentity/useCreateIdentity", () => {
     await act(async () => Promise.resolve(result.current.onSign(SignatureOptions.ETH_WALLET)));
 
     expect(result.current.isLoading).toBe(false);
-    expect(defaultWalletHookData.onConnect).toBeCalledTimes(1);
+    expect(defaultWalletHookData.onConnect).toHaveBeenCalledTimes(1);
   });
 
   test("should handle error when trying to connect with eth wallet", async () => {
@@ -168,11 +168,11 @@ describe("ui/pages/CreateIdentity/useCreateIdentity", () => {
     await act(async () => Promise.resolve(result.current.onSign(SignatureOptions.CRYPTKEEPER_WALLET)));
 
     expect(result.current.isLoading).toBe(false);
-    expect(signWithSigner).toBeCalledTimes(0);
-    expect(mockDispatch).toBeCalledTimes(2);
-    expect(closePopup).toBeCalledTimes(1);
-    expect(createIdentity).toBeCalledTimes(1);
-    expect(createIdentity).toBeCalledWith({
+    expect(signWithSigner).toHaveBeenCalledTimes(0);
+    expect(mockDispatch).toHaveBeenCalledTimes(2);
+    expect(closePopup).toHaveBeenCalledTimes(1);
+    expect(createIdentity).toHaveBeenCalledTimes(1);
+    expect(createIdentity).toHaveBeenCalledWith({
       groups: [],
       messageSignature: undefined,
       urlOrigin: undefined,
@@ -180,8 +180,8 @@ describe("ui/pages/CreateIdentity/useCreateIdentity", () => {
       options: { account: defaultWalletHookData.address, message: mockMessage, nonce: 0 },
       walletType: EWallet.CRYPTKEEPER_WALLET,
     });
-    expect(mockNavigate).toBeCalledTimes(1);
-    expect(mockNavigate).toBeCalledWith(Paths.HOME);
+    expect(mockNavigate).toHaveBeenCalledTimes(1);
+    expect(mockNavigate).toHaveBeenCalledWith(Paths.HOME);
   });
 
   test("should close modal properly", async () => {
@@ -189,7 +189,7 @@ describe("ui/pages/CreateIdentity/useCreateIdentity", () => {
 
     await act(() => Promise.resolve(result.current.onCloseModal()));
 
-    expect(mockDispatch).toBeCalledTimes(1);
+    expect(mockDispatch).toHaveBeenCalledTimes(1);
   });
 
   test("should go back properly", async () => {
@@ -199,8 +199,8 @@ describe("ui/pages/CreateIdentity/useCreateIdentity", () => {
 
     await act(() => Promise.resolve(result.current.onCloseModal()));
 
-    expect(mockNavigate).toBeCalledTimes(1);
-    expect(mockNavigate).toBeCalledWith(-1);
+    expect(mockNavigate).toHaveBeenCalledTimes(1);
+    expect(mockNavigate).toHaveBeenCalledWith(-1);
   });
 
   test("should go to import identity properly", async () => {
@@ -210,8 +210,8 @@ describe("ui/pages/CreateIdentity/useCreateIdentity", () => {
 
     await act(() => Promise.resolve(result.current.onGoToImportIdentity()));
 
-    expect(mockNavigate).toBeCalledTimes(1);
-    expect(mockNavigate).toBeCalledWith(`${Paths.IMPORT_IDENTITY}?back=${Paths.CREATE_IDENTITY}&urlOrigin=`);
+    expect(mockNavigate).toHaveBeenCalledTimes(1);
+    expect(mockNavigate).toHaveBeenCalledWith(`${Paths.IMPORT_IDENTITY}?back=${Paths.CREATE_IDENTITY}&urlOrigin=`);
   });
 
   test("should go to import identity properly with redirect", async () => {
@@ -221,8 +221,8 @@ describe("ui/pages/CreateIdentity/useCreateIdentity", () => {
 
     await act(() => Promise.resolve(result.current.onGoToImportIdentity()));
 
-    expect(mockNavigate).toBeCalledTimes(1);
-    expect(mockNavigate).toBeCalledWith(`${Paths.IMPORT_IDENTITY}?back=${Paths.CONNECT_IDENTITY}&urlOrigin=`);
+    expect(mockNavigate).toHaveBeenCalledTimes(1);
+    expect(mockNavigate).toHaveBeenCalledWith(`${Paths.IMPORT_IDENTITY}?back=${Paths.CONNECT_IDENTITY}&urlOrigin=`);
   });
 
   test("should handle create identity error properly", async () => {
@@ -246,6 +246,6 @@ describe("ui/pages/CreateIdentity/useCreateIdentity", () => {
     await act(async () => Promise.resolve(result.current.onSign(9000)));
 
     expect(result.current.isLoading).toBe(false);
-    expect(mockDispatch).toBeCalledTimes(0);
+    expect(mockDispatch).toHaveBeenCalledTimes(0);
   });
 });
