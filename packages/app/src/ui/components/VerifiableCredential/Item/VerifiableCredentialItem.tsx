@@ -7,6 +7,7 @@ import Box from "@mui/material/Box";
 import IconButton from "@mui/material/IconButton";
 import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
+import Jazzicon, { jsNumberForAddress } from "react-jazzicon";
 
 import { IVerifiableCredentialMetadata } from "@src/types";
 import { Menu } from "@src/ui/components/Menu";
@@ -18,30 +19,30 @@ export interface VerifiableCredentialItemProps {
   verifiableCredential: IVerifiableCredential;
   metadata: IVerifiableCredentialMetadata;
   selected?: boolean;
-  onRenameVerifiableCredential?: (hash: string, name: string) => Promise<void>;
-  onDeleteVerifiableCredential?: (hash: string) => Promise<void>;
-  onToggleSelectVerifiableCredential?: (hash: string) => void;
+  onRename?: (hash: string, name: string) => Promise<void>;
+  onDelete?: (hash: string) => Promise<void>;
+  onSelect?: (hash: string) => void;
 }
 
 export const VerifiableCredentialItem = ({
   verifiableCredential,
   metadata,
   selected = undefined,
-  onRenameVerifiableCredential = undefined,
-  onDeleteVerifiableCredential = undefined,
-  onToggleSelectVerifiableCredential = undefined,
+  onRename = undefined,
+  onDelete = undefined,
+  onSelect = undefined,
 }: VerifiableCredentialItemProps): JSX.Element => {
-  const { isRenaming, name, register, onSubmit, onToggleRenaming, onDelete, onToggleSelect } =
+  const { isRenaming, name, register, onSubmit, onToggleRenaming, onRemove, onToggleSelect } =
     useVerifiableCredentialItem({
       metadata,
-      onRename: onRenameVerifiableCredential,
-      onDelete: onDeleteVerifiableCredential,
-      onSelect: onToggleSelectVerifiableCredential,
+      onRename,
+      onDelete,
+      onSelect,
     });
 
   const menuItems = [
     { label: "Rename", isDangerItem: false, onClick: onToggleRenaming },
-    { label: "Delete", isDangerItem: true, onClick: onDelete },
+    { label: "Delete", isDangerItem: true, onClick: onRemove },
   ];
 
   const issuer =
@@ -50,7 +51,7 @@ export const VerifiableCredentialItem = ({
 
   const isSelectorEnabled = selected !== undefined;
 
-  const isMenuEnabled = onRenameVerifiableCredential !== undefined && onDeleteVerifiableCredential !== undefined;
+  const isMenuEnabled = onRename !== undefined && onDelete !== undefined;
 
   return (
     <Box
@@ -94,6 +95,10 @@ export const VerifiableCredentialItem = ({
             <CheckCircleOutlineIcon color="disabled" fontSize="inherit" />
           </IconButton>
         ))}
+
+      {!isSelectorEnabled && (
+        <Jazzicon diameter={32} paperStyles={{ marginRight: "1rem" }} seed={jsNumberForAddress(metadata.hash)} />
+      )}
 
       <Box
         sx={{

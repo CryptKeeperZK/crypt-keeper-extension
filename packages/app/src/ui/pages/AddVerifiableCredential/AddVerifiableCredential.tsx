@@ -8,16 +8,9 @@ import { VerifiableCredentialDisplay } from "@src/ui/components/VerifiableCreden
 import { useAddVerifiableCredential } from "./useAddVerifiableCredential";
 
 const AddVerifiableCredential = (): JSX.Element => {
-  const {
-    cryptkeeperVerifiableCredential,
-    error,
-    onCloseModal,
-    onRenameVerifiableCredential,
-    onApproveVerifiableCredential,
-    onRejectVerifiableCredential,
-  } = useAddVerifiableCredential();
+  const { cryptkeeperVC, error, onCloseModal, onRename, onApprove, onReject } = useAddVerifiableCredential();
 
-  const isError = !cryptkeeperVerifiableCredential;
+  const isError = !cryptkeeperVC;
 
   return (
     <Box sx={{ width: "100%", overflowX: "hidden", overflowY: "auto" }}>
@@ -27,10 +20,10 @@ const AddVerifiableCredential = (): JSX.Element => {
         <FullModalContent>
           <Typography>You have received a request to add a Verifiable Credential to your wallet:</Typography>
 
-          {cryptkeeperVerifiableCredential ? (
+          {cryptkeeperVC ? (
             <VerifiableCredentialDisplay
-              cryptkeeperVerifiableCredential={cryptkeeperVerifiableCredential}
-              onRenameVerifiableCredential={onRenameVerifiableCredential}
+              cryptkeeperVerifiableCredential={cryptkeeperVC}
+              onRenameVerifiableCredential={onRename}
             />
           ) : (
             <Typography>There was an error retrieving the Verifiable Credential.</Typography>
@@ -51,7 +44,7 @@ const AddVerifiableCredential = (): JSX.Element => {
               sx={{ textTransform: "none" }}
               type="button"
               variant="outlined"
-              onClick={onRejectVerifiableCredential}
+              onClick={onReject}
             >
               Reject
             </Button>
@@ -62,7 +55,7 @@ const AddVerifiableCredential = (): JSX.Element => {
               sx={{ textTransform: "none" }}
               type="button"
               variant="contained"
-              onClick={onApproveVerifiableCredential}
+              onClick={onApprove}
             >
               Accept
             </Button>

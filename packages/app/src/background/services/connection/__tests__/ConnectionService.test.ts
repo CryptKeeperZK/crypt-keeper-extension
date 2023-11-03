@@ -161,13 +161,13 @@ describe("background/services/connection", () => {
     });
 
     test("should throw error if there is no url origin", async () => {
-      await expect(connectionService.connect(defaultArgs, { urlOrigin: "" })).rejects.toThrowError(
+      await expect(connectionService.connect(defaultArgs, { urlOrigin: "" })).rejects.toThrow(
         "CryptKeeper: origin is not provided",
       );
     });
 
     test("should throw error if there is no idenity found", async () => {
-      await expect(connectionService.connect({ commitment: "unknown" }, defaultMetadata)).rejects.toThrowError(
+      await expect(connectionService.connect({ commitment: "unknown" }, defaultMetadata)).rejects.toThrow(
         "CryptKeeper: identity is not found",
       );
     });
@@ -273,13 +273,13 @@ describe("background/services/connection", () => {
     });
 
     test("should throw error if there is no url origin", () => {
-      expect(() => connectionService.isOriginConnected({}, { urlOrigin: "" })).toThrowError(
+      expect(() => connectionService.isOriginConnected({}, { urlOrigin: "" })).toThrow(
         "CryptKeeper: origin is not provided",
       );
     });
 
     test("should throw error if there is no connection for url origin", () => {
-      expect(() => connectionService.isOriginConnected({}, { urlOrigin: "unknown" })).toThrowError(
+      expect(() => connectionService.isOriginConnected({}, { urlOrigin: "unknown" })).toThrow(
         "CryptKeeper: origin is not connected",
       );
     });

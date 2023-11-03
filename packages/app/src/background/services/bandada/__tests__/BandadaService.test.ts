@@ -87,7 +87,7 @@ describe("background/services/bandada/BandadaService", () => {
     } as Response);
     const service = BandadaService.getInstance();
 
-    await expect(service.addMember(defaultAddMemberArgs)).rejects.toThrowError("Error 1,Error 2");
+    await expect(service.addMember(defaultAddMemberArgs)).rejects.toThrow("Error 1,Error 2");
     expect(fetchSpy).toHaveBeenCalledTimes(1);
   });
 
@@ -95,14 +95,14 @@ describe("background/services/bandada/BandadaService", () => {
     const args = { ...defaultAddMemberArgs, apiKey: undefined, inviteCode: undefined };
     const service = BandadaService.getInstance();
 
-    await expect(service.addMember(args)).rejects.toThrowError("Provide api key or invide code");
+    await expect(service.addMember(args)).rejects.toThrow("Provide api key or invide code");
   });
 
   test("should throw error if add member is called with both required params", async () => {
     const args = { ...defaultAddMemberArgs, apiKey: "key", inviteCode: "code" };
     const service = BandadaService.getInstance();
 
-    await expect(service.addMember(args)).rejects.toThrowError("Don't provide both api key and invide code");
+    await expect(service.addMember(args)).rejects.toThrow("Don't provide both api key and invide code");
   });
 
   test("should generate merkle proof properly", async () => {
@@ -125,7 +125,7 @@ describe("background/services/bandada/BandadaService", () => {
     } as Response);
     const service = BandadaService.getInstance();
 
-    await expect(service.generateMerkleProof(defaultGenerateProofArgs)).rejects.toThrowError("Error");
+    await expect(service.generateMerkleProof(defaultGenerateProofArgs)).rejects.toThrow("Error");
     expect(fetchSpy).toHaveBeenCalledTimes(1);
   });
 
@@ -162,7 +162,7 @@ describe("background/services/bandada/BandadaService", () => {
     } as Response);
     const service = BandadaService.getInstance();
 
-    await expect(service.checkGroupMembership(defaultCheckMembershipArgs)).rejects.toThrowError("Error");
+    await expect(service.checkGroupMembership(defaultCheckMembershipArgs)).rejects.toThrow("Error");
     expect(fetchSpy).toHaveBeenCalledTimes(1);
   });
 });

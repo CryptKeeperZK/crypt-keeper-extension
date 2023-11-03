@@ -1,19 +1,14 @@
+import { EventName } from "@cryptkeeperzk/providers";
 import { useCallback, useEffect, useState } from "react";
 
 import { closePopup } from "@src/ui/ducks/app";
 import { useAppDispatch } from "@src/ui/ducks/hooks";
-import {
-  fetchVerifiableCredentials,
-  rejectVerifiablePresentationRequest,
-  generateVerifiablePresentation,
-  generateVerifiablePresentationWithCryptkeeper,
-} from "@src/ui/ducks/verifiableCredentials";
-import { useCryptkeeperVerifiableCredentials } from "@src/ui/hooks/verifiableCredentials";
+import { rejectUserRequest } from "@src/ui/ducks/requests";
+import { fetchVCs, generateVP, generateVPWithCryptkeeper } from "@src/ui/ducks/verifiableCredentials";
+import { useSearchParam } from "@src/ui/hooks/url";
+import { useCryptkeeperVCs } from "@src/ui/hooks/verifiableCredentials";
 import { useCryptKeeperWallet, useEthWallet } from "@src/ui/hooks/wallet";
-import {
-  generateVerifiablePresentationFromVerifiableCredentials,
-  serializeVerifiablePresentation,
-} from "@src/util/credentials";
+import { generateVPFromVCs, serializeVP } from "@src/util/credentials";
 
 import type { ICryptkeeperVerifiableCredential } from "@src/types";
 
@@ -29,86 +24,84 @@ export enum MenuItems {
 export interface IUsePresentVerifiableCredentialData {
   isWalletConnected: boolean;
   isWalletInstalled: boolean;
-  verifiablePresentationRequest?: string;
-  cryptkeeperVerifiableCredentials: ICryptkeeperVerifiableCredential[];
-  selectedVerifiableCredentialHashes: string[];
+  vpRequest?: string;
+  cryptkeeperVCs: ICryptkeeperVerifiableCredential[];
+  selectedVCHashes: string[];
   error?: string;
   checkDisabledItem: (index: number) => boolean;
   onCloseModal: () => void;
-  onRejectRequest: () => void;
-  onToggleSelection: (hash: string) => void;
-  onSubmitVerifiablePresentation: (index: number) => Promise<void>;
+  onReject: () => void;
+  onSelect: (hash: string) => void;
+  onSubmit: (index: number) => Promise<void>;
 }
 
 export const usePresentVerifiableCredential = (): IUsePresentVerifiableCredentialData => {
-  const [verifiablePresentationRequest, setVerifiablePresentationRequest] = useState<string>();
-  const cryptkeeperVerifiableCredentials = useCryptkeeperVerifiableCredentials();
-  const [selectedVerifiableCredentialHashes, setSelectedVerifiableCredentialHashes] = useState<string[]>([]);
+  const [vpRequest, setVPRequest] = useState<string>();
+  const cryptkeeperVCs = useCryptkeeperVCs();
+  const [selectedVCHashes, setSelectedVCHashes] = useState<string[]>([]);
   const [error, setError] = useState<string>();
 
   const ethWallet = useEthWallet();
   const cryptKeeperWallet = useCryptKeeperWallet();
   const dispatch = useAppDispatch();
   const isWalletConnected = ethWallet.isActive;
+  const request = useSearchParam("request");
+  const urlOrigin = useSearchParam("urlOrigin");
 
   useEffect(() => {
-    const { searchParams } = new URL(window.location.href.replace("#", ""));
-    const request = searchParams.get("request");
-
     if (!request) {
       return;
     }
 
-    dispatch(fetchVerifiableCredentials());
+    dispatch(fetchVCs());
 
-    setVerifiablePresentationRequest(request);
-  }, [setVerifiablePresentationRequest, fetchVerifiableCredentials, dispatch]);
+    setVPRequest(request);
+  }, [request, setVPRequest, dispatch]);
 
   const checkDisabledItem = useCallback(
     (index: number): boolean =>
-      selectedVerifiableCredentialHashes.length === 0 ||
-      (index === (MenuItems.METAMASK as number) && !ethWallet.isInjectedWallet),
-    [selectedVerifiableCredentialHashes.length, ethWallet.isInjectedWallet],
+      selectedVCHashes.length === 0 || (index === (MenuItems.METAMASK as number) && !ethWallet.isInjectedWallet),
+    [selectedVCHashes.length, ethWallet.isInjectedWallet],
   );
 
   const onCloseModal = useCallback(() => {
     dispatch(closePopup());
   }, [dispatch]);
 
-  const onRejectVerifiablePresentationRequest = useCallback(async () => {
-    await dispatch(rejectVerifiablePresentationRequest());
+  const onReject = useCallback(async () => {
+    await dispatch(rejectUserRequest({ type: EventName.VERIFIABLE_PRESENTATION_REQUEST, payload: {} }, urlOrigin));
     onCloseModal();
-  }, [rejectVerifiablePresentationRequest, dispatch, onCloseModal]);
+  }, [urlOrigin, dispatch, onCloseModal]);
 
-  const onToggleSelectVerifiableCredential = useCallback(
+  const onSelect = useCallback(
     (selectedHash: string) => {
       if (error) {
         setError(undefined);
       }
 
-      if (selectedVerifiableCredentialHashes.includes(selectedHash)) {
-        setSelectedVerifiableCredentialHashes((hashes) => hashes.filter((hash) => hash !== selectedHash));
+      if (selectedVCHashes.includes(selectedHash)) {
+        setSelectedVCHashes((hashes) => hashes.filter((hash) => hash !== selectedHash));
       } else {
-        setSelectedVerifiableCredentialHashes((hashes) => [...hashes, selectedHash]);
+        setSelectedVCHashes((hashes) => [...hashes, selectedHash]);
       }
     },
-    [selectedVerifiableCredentialHashes, setSelectedVerifiableCredentialHashes, error, setError],
+    [selectedVCHashes, error, setSelectedVCHashes, setError],
   );
 
-  const createVerifiablePresentationFromSelectedCredentials = useCallback(() => {
-    if (selectedVerifiableCredentialHashes.length === 0) {
+  const createVPFromVCs = useCallback(() => {
+    if (selectedVCHashes.length === 0) {
       setError("Please select at least one credential.");
       return undefined;
     }
 
-    const verifiableCredentials = cryptkeeperVerifiableCredentials
+    const verifiableCredentials = cryptkeeperVCs
       .filter((cryptkeeperVerifiableCredential) =>
-        selectedVerifiableCredentialHashes.includes(cryptkeeperVerifiableCredential.metadata.hash),
+        selectedVCHashes.includes(cryptkeeperVerifiableCredential.metadata.hash),
       )
       .map((cryptkeeperVerifiableCredential) => cryptkeeperVerifiableCredential.verifiableCredential);
 
-    return generateVerifiablePresentationFromVerifiableCredentials(verifiableCredentials);
-  }, [cryptkeeperVerifiableCredentials, selectedVerifiableCredentialHashes, setError]);
+    return generateVPFromVCs(verifiableCredentials);
+  }, [cryptkeeperVCs, selectedVCHashes, setError]);
 
   const onConnectWallet = useCallback(async () => {
     try {
@@ -118,10 +111,10 @@ export const usePresentVerifiableCredential = (): IUsePresentVerifiableCredentia
     }
   }, [setError, ethWallet.onConnect]);
 
-  const onSubmitVerifiablePresentationWithMetamask = useCallback(async () => {
-    const verifiablePresentation = createVerifiablePresentationFromSelectedCredentials();
+  const onSubmitVPWithMetamask = useCallback(async () => {
+    const vp = createVPFromVCs();
 
-    if (!verifiablePresentation) {
+    if (!vp) {
       return;
     }
 
@@ -134,40 +127,37 @@ export const usePresentVerifiableCredential = (): IUsePresentVerifiableCredentia
     }
 
     try {
-      const serializedVerifiablePresentation = serializeVerifiablePresentation(verifiablePresentation);
-      const signature = await signer.signMessage(serializedVerifiablePresentation);
+      const serialized = serializeVP(vp);
+      const signature = await signer.signMessage(serialized);
       const created = new Date();
-      const signedVerifiablePresentation = {
-        ...verifiablePresentation,
-        proof: [
-          {
-            type: [ETHEREUM_SIGNATURE_SPECIFICATION_TYPE],
-            proofPurpose: VERIFIABLE_CREDENTIAL_PROOF_PURPOSE,
-            verificationMethod: address,
-            created,
-            proofValue: signature,
-          },
-        ],
-      };
 
-      await dispatch(generateVerifiablePresentation(signedVerifiablePresentation));
+      await dispatch(
+        generateVP(
+          {
+            ...vp,
+            proof: [
+              {
+                type: [ETHEREUM_SIGNATURE_SPECIFICATION_TYPE],
+                proofPurpose: VERIFIABLE_CREDENTIAL_PROOF_PURPOSE,
+                verificationMethod: address,
+                created,
+                proofValue: signature,
+              },
+            ],
+          },
+          urlOrigin!,
+        ),
+      );
       onCloseModal();
     } catch (e) {
       setError("Failed to sign Verifiable Presentation.");
     }
-  }, [
-    ethWallet,
-    setError,
-    dispatch,
-    onCloseModal,
-    generateVerifiablePresentation,
-    createVerifiablePresentationFromSelectedCredentials,
-  ]);
+  }, [ethWallet, setError, dispatch, onCloseModal, generateVP, createVPFromVCs]);
 
-  const onSubmitVerifiablePresentationWithCryptkeeper = useCallback(async () => {
-    const verifiablePresentation = createVerifiablePresentationFromSelectedCredentials();
+  const onSubmitVPWithCryptkeeper = useCallback(async () => {
+    const vp = createVPFromVCs();
 
-    if (!verifiablePresentation) {
+    if (!vp) {
       return;
     }
 
@@ -178,70 +168,51 @@ export const usePresentVerifiableCredential = (): IUsePresentVerifiableCredentia
       return;
     }
 
-    await dispatch(generateVerifiablePresentationWithCryptkeeper({ verifiablePresentation, address }));
+    await dispatch(generateVPWithCryptkeeper({ verifiablePresentation: vp, address }, urlOrigin!));
     onCloseModal();
-  }, [
-    cryptKeeperWallet,
-    setError,
-    dispatch,
-    onCloseModal,
-    generateVerifiablePresentationWithCryptkeeper,
-    createVerifiablePresentationFromSelectedCredentials,
-  ]);
+  }, [cryptKeeperWallet, setError, dispatch, onCloseModal, createVPFromVCs]);
 
-  const onSubmitVerifiablePresentationWithoutSignature = useCallback(async () => {
-    const verifiablePresentation = createVerifiablePresentationFromSelectedCredentials();
+  const onSubmitVPWithoutSignature = useCallback(async () => {
+    const vp = createVPFromVCs();
 
-    if (!verifiablePresentation) {
+    if (!vp) {
       return;
     }
 
-    await dispatch(generateVerifiablePresentation(verifiablePresentation));
+    await dispatch(generateVP(vp, urlOrigin!));
     onCloseModal();
-  }, [
-    setError,
-    dispatch,
-    onCloseModal,
-    generateVerifiablePresentation,
-    createVerifiablePresentationFromSelectedCredentials,
-  ]);
+  }, [urlOrigin, setError, dispatch, onCloseModal, generateVP, createVPFromVCs]);
 
-  const onSubmitVerifiablePresentation = useCallback(
+  const onSubmit = useCallback(
     async (menuSelectedIndex: number) => {
       switch (true) {
         case menuSelectedIndex === (MenuItems.METAMASK as number) && !isWalletConnected:
           return onConnectWallet();
         case menuSelectedIndex === (MenuItems.METAMASK as number) && isWalletConnected:
-          return onSubmitVerifiablePresentationWithMetamask();
+          return onSubmitVPWithMetamask();
         case menuSelectedIndex === (MenuItems.CRYPTKEEPER as number):
-          return onSubmitVerifiablePresentationWithCryptkeeper();
+          return onSubmitVPWithCryptkeeper();
         case menuSelectedIndex === (MenuItems.WITHOUT_SIGNATURE as number):
-          return onSubmitVerifiablePresentationWithoutSignature();
+          return onSubmitVPWithoutSignature();
         default:
           setError("Invalid menu index.");
           return undefined;
       }
     },
-    [
-      isWalletConnected,
-      onConnectWallet,
-      onSubmitVerifiablePresentationWithMetamask,
-      onSubmitVerifiablePresentationWithCryptkeeper,
-      onSubmitVerifiablePresentationWithoutSignature,
-    ],
+    [isWalletConnected, onConnectWallet, onSubmitVPWithMetamask, onSubmitVPWithCryptkeeper, onSubmitVPWithoutSignature],
   );
 
   return {
     isWalletInstalled: ethWallet.isInjectedWallet,
     isWalletConnected,
-    verifiablePresentationRequest,
-    cryptkeeperVerifiableCredentials,
-    selectedVerifiableCredentialHashes,
+    vpRequest,
+    cryptkeeperVCs,
+    selectedVCHashes,
     error,
     checkDisabledItem,
     onCloseModal,
-    onRejectRequest: onRejectVerifiablePresentationRequest,
-    onToggleSelection: onToggleSelectVerifiableCredential,
-    onSubmitVerifiablePresentation,
+    onReject,
+    onSelect,
+    onSubmit,
   };
 };

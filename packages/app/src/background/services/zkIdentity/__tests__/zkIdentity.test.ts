@@ -221,7 +221,7 @@ describe("background/services/zkIdentity", () => {
 
       await expect(
         zkIdentityService.deleteIdentity({ identityCommitment: mockDefaultIdentityCommitment }),
-      ).rejects.toThrowError("CryptKeeper: no identity found");
+      ).rejects.toThrow("CryptKeeper: no identity found");
     });
   });
 

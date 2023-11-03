@@ -85,7 +85,7 @@ describe("background/services/group/GroupService", () => {
       mockGetConnectedIdentity.mockReturnValue(undefined as unknown as IIdentityData);
       const service = GroupService.getInstance();
 
-      await expect(service.joinGroup(defaultArgs, metadata)).rejects.toThrowError("No connected identity found");
+      await expect(service.joinGroup(defaultArgs, metadata)).rejects.toThrow("No connected identity found");
     });
   });
 
@@ -112,7 +112,7 @@ describe("background/services/group/GroupService", () => {
       mockGetConnectedIdentity.mockReturnValue(undefined as unknown as IIdentityData);
       const service = GroupService.getInstance();
 
-      await expect(service.generateGroupMerkleProof(defaultArgs, metadata)).rejects.toThrowError(
+      await expect(service.generateGroupMerkleProof(defaultArgs, metadata)).rejects.toThrow(
         "No connected identity found",
       );
     });
@@ -135,9 +135,7 @@ describe("background/services/group/GroupService", () => {
       mockGetConnectedIdentity.mockReturnValue(undefined as unknown as IIdentityData);
       const service = GroupService.getInstance();
 
-      await expect(service.checkGroupMembership(defaultArgs, metadata)).rejects.toThrowError(
-        "No connected identity found",
-      );
+      await expect(service.checkGroupMembership(defaultArgs, metadata)).rejects.toThrow("No connected identity found");
     });
   });
 });

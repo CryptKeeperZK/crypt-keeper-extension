@@ -7,19 +7,17 @@ import { Provider } from "react-redux";
 
 import { RPCInternalAction } from "@src/constants";
 import { store } from "@src/ui/store/configureAppStore";
-import { serializeCryptkeeperVerifiableCredential } from "@src/util/credentials";
+import { serializeCryptkeeperVC } from "@src/util/credentials";
 import postMessage from "@src/util/postMessage";
 
 import {
-  addVerifiableCredential,
-  rejectVerifiableCredentialRequest,
-  renameVerifiableCredential,
-  deleteVerifiableCredential,
-  useVerifiableCredentials,
-  fetchVerifiableCredentials,
-  generateVerifiablePresentation,
-  generateVerifiablePresentationWithCryptkeeper,
-  rejectVerifiablePresentationRequest,
+  addVC,
+  renameVC,
+  deleteVC,
+  useVCs,
+  fetchVCs,
+  generateVP,
+  generateVPWithCryptkeeper,
 } from "../verifiableCredentials";
 
 jest.unmock("@src/ui/ducks/hooks");
@@ -39,6 +37,7 @@ describe("ui/ducks/verifiableCredentials", () => {
       },
     },
   };
+
   const mockVerifiableCredentialTwo = {
     context: ["https://www.w3.org/2018/credentials/v1"],
     id: "http://example.edu/credentials/3733",
@@ -53,6 +52,7 @@ describe("ui/ducks/verifiableCredentials", () => {
       },
     },
   };
+
   const mockCryptkeeperVerifiableCredentials = [
     {
       verifiableCredential: mockVerifiableCredentialOne,
@@ -77,8 +77,8 @@ describe("ui/ducks/verifiableCredentials", () => {
   };
 
   const mockSerializedVerifiableCredentials = [
-    serializeCryptkeeperVerifiableCredential(mockCryptkeeperVerifiableCredentials[0]),
-    serializeCryptkeeperVerifiableCredential(mockCryptkeeperVerifiableCredentials[1]),
+    serializeCryptkeeperVC(mockCryptkeeperVerifiableCredentials[0]),
+    serializeCryptkeeperVC(mockCryptkeeperVerifiableCredentials[1]),
   ];
 
   afterEach(() => {
@@ -88,14 +88,14 @@ describe("ui/ducks/verifiableCredentials", () => {
   test("should fetch verifiable credentials properly", async () => {
     (postMessage as jest.Mock).mockResolvedValueOnce(mockCryptkeeperVerifiableCredentials);
 
-    await Promise.resolve(store.dispatch(fetchVerifiableCredentials()));
+    await Promise.resolve(store.dispatch(fetchVCs()));
     const { verifiableCredentials } = store.getState();
 
-    const serializedVerifiableCredentialHookData = renderHook(() => useVerifiableCredentials(), {
+    const serializedVerifiableCredentialHookData = renderHook(() => useVCs(), {
       wrapper: ({ children }) => <Provider store={store}>{children}</Provider>,
     });
 
-    expect(verifiableCredentials.serializedVerifiableCredentials).toStrictEqual(mockSerializedVerifiableCredentials);
+    expect(verifiableCredentials.serializedVCs).toStrictEqual(mockSerializedVerifiableCredentials);
     expect(serializedVerifiableCredentialHookData.result.current).toStrictEqual(mockSerializedVerifiableCredentials);
   });
 
@@ -103,31 +103,25 @@ describe("ui/ducks/verifiableCredentials", () => {
     const mockSerializedVerifiableCredential = "cred";
     const mockName = "name";
 
-    await Promise.resolve(store.dispatch(addVerifiableCredential(mockSerializedVerifiableCredential, mockName)));
+    await Promise.resolve(store.dispatch(addVC(mockSerializedVerifiableCredential, mockName, "urlOrigin")));
 
     expect(postMessage).toHaveBeenCalledTimes(1);
     expect(postMessage).toHaveBeenCalledWith({
       method: RPCInternalAction.ADD_VERIFIABLE_CREDENTIAL,
       payload: {
-        serializedVerifiableCredential: mockSerializedVerifiableCredential,
-        verifiableCredentialName: mockName,
+        serialized: mockSerializedVerifiableCredential,
+        name: mockName,
+      },
+      meta: {
+        urlOrigin: "urlOrigin",
       },
     });
   });
 
-  test("should reject verifiable credential request properly", async () => {
-    await Promise.resolve(store.dispatch(rejectVerifiableCredentialRequest()));
-
-    expect(postMessage).toHaveBeenCalledTimes(1);
-    expect(postMessage).toHaveBeenCalledWith({
-      method: RPCInternalAction.REJECT_VERIFIABLE_CREDENTIAL_REQUEST,
-    });
-  });
-
   test("should rename verifiable credential properly", async () => {
-    const mockPayload = { verifiableCredentialHash: "hash", newVerifiableCredentialName: "name" };
+    const mockPayload = { hash: "hash", name: "name" };
 
-    await Promise.resolve(store.dispatch(renameVerifiableCredential(mockPayload)));
+    await Promise.resolve(store.dispatch(renameVC(mockPayload)));
 
     expect(postMessage).toHaveBeenCalledTimes(1);
     expect(postMessage).toHaveBeenCalledWith({
@@ -139,7 +133,7 @@ describe("ui/ducks/verifiableCredentials", () => {
   test("should delete verifiable credential properly", async () => {
     const mockHash = "hash";
 
-    await Promise.resolve(store.dispatch(deleteVerifiableCredential(mockHash)));
+    await Promise.resolve(store.dispatch(deleteVC(mockHash)));
 
     expect(postMessage).toHaveBeenCalledTimes(1);
     expect(postMessage).toHaveBeenCalledWith({
@@ -149,12 +143,15 @@ describe("ui/ducks/verifiableCredentials", () => {
   });
 
   test("should generate verfifiable presentation properly", async () => {
-    await Promise.resolve(store.dispatch(generateVerifiablePresentation(mockVerifiablePresentation)));
+    await Promise.resolve(store.dispatch(generateVP(mockVerifiablePresentation, "urlOrigin")));
 
     expect(postMessage).toHaveBeenCalledTimes(1);
     expect(postMessage).toHaveBeenCalledWith({
       method: RPCInternalAction.GENERATE_VERIFIABLE_PRESENTATION,
       payload: mockVerifiablePresentation,
+      meta: {
+        urlOrigin: "urlOrigin",
+      },
     });
   });
 
@@ -162,10 +159,13 @@ describe("ui/ducks/verifiableCredentials", () => {
     const mockAddress = "0x123";
     await Promise.resolve(
       store.dispatch(
-        generateVerifiablePresentationWithCryptkeeper({
-          verifiablePresentation: mockVerifiablePresentation,
-          address: mockAddress,
-        }),
+        generateVPWithCryptkeeper(
+          {
+            verifiablePresentation: mockVerifiablePresentation,
+            address: mockAddress,
+          },
+          "urlOrigin",
+        ),
       ),
     );
 
@@ -173,15 +173,9 @@ describe("ui/ducks/verifiableCredentials", () => {
     expect(postMessage).toHaveBeenCalledWith({
       method: RPCInternalAction.GENERATE_VERIFIABLE_PRESENTATION_WITH_CRYPTKEEPER,
       payload: { verifiablePresentation: mockVerifiablePresentation, address: mockAddress },
-    });
-  });
-
-  test("should reject a verfifiable presentation request properly", async () => {
-    await Promise.resolve(store.dispatch(rejectVerifiablePresentationRequest()));
-
-    expect(postMessage).toHaveBeenCalledTimes(1);
-    expect(postMessage).toHaveBeenCalledWith({
-      method: RPCInternalAction.REJECT_VERIFIABLE_PRESENTATION_REQUEST,
+      meta: {
+        urlOrigin: "urlOrigin",
+      },
     });
   });
 });

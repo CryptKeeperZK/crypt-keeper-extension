@@ -8,19 +8,6 @@ import { useAppDispatch } from "@src/ui/ducks/hooks";
 
 import { VerifiableCredentialItem, VerifiableCredentialItemProps } from "..";
 
-jest.mock("@src/ui/ducks/hooks", (): unknown => ({
-  useAppDispatch: jest.fn(),
-}));
-
-jest.mock("@src/ui/ducks/verifiableCredentials", (): unknown => ({
-  addVerifiableCredential: jest.fn(),
-  rejectVerifiableCredentialRequest: jest.fn(),
-  renameVerifiableCredential: jest.fn(),
-  deleteVerifiableCredential: jest.fn(),
-  fetchVerifiableCredentials: jest.fn(),
-  useVerifiableCredentials: jest.fn(),
-}));
-
 describe("ui/components/VerifiableCredential/Item", () => {
   const defaultProps: VerifiableCredentialItemProps = {
     verifiableCredential: {
@@ -41,8 +28,8 @@ describe("ui/components/VerifiableCredential/Item", () => {
       hash: "0x123",
       name: "Credential #0",
     },
-    onRenameVerifiableCredential: jest.fn(),
-    onDeleteVerifiableCredential: jest.fn(),
+    onRename: jest.fn(),
+    onDelete: jest.fn(),
   };
 
   beforeEach(() => {
@@ -94,7 +81,7 @@ describe("ui/components/VerifiableCredential/Item", () => {
   });
 
   test("should rename identity properly", async () => {
-    (defaultProps.onRenameVerifiableCredential as jest.Mock).mockResolvedValue(true);
+    (defaultProps.onRename as jest.Mock).mockResolvedValue(true);
 
     render(<VerifiableCredentialItem {...defaultProps} />);
 
@@ -113,8 +100,8 @@ describe("ui/components/VerifiableCredential/Item", () => {
     const submitRenameIcon = await screen.findByTestId("verifiable-credential-row-submit-rename");
     await act(async () => Promise.resolve(submitRenameIcon.click()));
 
-    expect(defaultProps.onRenameVerifiableCredential).toHaveBeenCalledTimes(1);
-    expect(defaultProps.onRenameVerifiableCredential).toHaveBeenCalledWith("0x123", "My Favorite Credential");
+    expect(defaultProps.onRename).toHaveBeenCalledTimes(1);
+    expect(defaultProps.onRename).toHaveBeenCalledWith("0x123", "My Favorite Credential");
   });
 
   test("should accept to delete verifiable credential properly", async () => {
@@ -133,8 +120,8 @@ describe("ui/components/VerifiableCredential/Item", () => {
     const dangerModalAccept = await screen.findByTestId("danger-modal-accept");
     await act(async () => Promise.resolve(dangerModalAccept.click()));
 
-    expect(defaultProps.onDeleteVerifiableCredential).toHaveBeenCalledTimes(1);
-    expect(defaultProps.onDeleteVerifiableCredential).toHaveBeenCalledWith(defaultProps.metadata.hash);
+    expect(defaultProps.onDelete).toHaveBeenCalledTimes(1);
+    expect(defaultProps.onDelete).toHaveBeenCalledWith(defaultProps.metadata.hash);
     expect(dangerModal).not.toBeInTheDocument();
   });
 
@@ -154,7 +141,7 @@ describe("ui/components/VerifiableCredential/Item", () => {
     const dangerModalReject = await screen.findByTestId("danger-modal-reject");
     await act(async () => Promise.resolve(dangerModalReject.click()));
 
-    expect(defaultProps.onDeleteVerifiableCredential).toHaveBeenCalledTimes(0);
+    expect(defaultProps.onDelete).toHaveBeenCalledTimes(0);
     expect(dangerModal).not.toBeInTheDocument();
   });
 });

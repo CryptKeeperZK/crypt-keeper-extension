@@ -65,7 +65,7 @@ describe("offscreen/offscreenController", () => {
   test("should not handle unknown requests", async () => {
     const offscreenController = new OffscreenController();
 
-    await expect(offscreenController.handle({ method: "unknown" }, {})).rejects.toThrowError(
+    await expect(offscreenController.handle({ method: "unknown" }, {})).rejects.toThrow(
       "method: unknown is not detected",
     );
   });
@@ -85,7 +85,7 @@ describe("offscreen/offscreenController", () => {
 
     await expect(
       offscreenController.generateSemaphoreProof({ ...defaultSemaphoreProofArgs, identitySerialized: "" }),
-    ).rejects.toThrowError("Offscreen: Serialized Identity is not set");
+    ).rejects.toThrow("Offscreen: Serialized Identity is not set");
   });
 
   test("should generate rln proof properly", async () => {
@@ -103,6 +103,6 @@ describe("offscreen/offscreenController", () => {
 
     await expect(
       offscreenController.generateRlnProof({ ...defaultRlnProofArgs, identitySerialized: "" }),
-    ).rejects.toThrowError("Offscreen: Serialized Identity is not set");
+    ).rejects.toThrow("Offscreen: Serialized Identity is not set");
   });
 });

@@ -55,7 +55,7 @@ describe("ui/services/identity", () => {
     };
 
     const message = getMessageTemplate({ account: ZERO_ADDRESS, nonce: 0 });
-    await expect(signWithSigner({ message, signer: mockSigner as unknown as JsonRpcSigner })).rejects.toThrowError(
+    await expect(signWithSigner({ message, signer: mockSigner as unknown as JsonRpcSigner })).rejects.toThrow(
       "User rejected signing",
     );
   });
@@ -66,9 +66,7 @@ describe("ui/services/identity", () => {
     };
 
     const message = getMessageTemplate({ account: ZERO_ADDRESS, nonce: 0 });
-    await expect(signWithSigner({ message, signer: mockSigner as unknown as JsonRpcSigner })).rejects.toThrowError(
-      "error",
-    );
+    await expect(signWithSigner({ message, signer: mockSigner as unknown as JsonRpcSigner })).rejects.toThrow("error");
   });
 
   test("should return undefined if there is no signer", async () => {

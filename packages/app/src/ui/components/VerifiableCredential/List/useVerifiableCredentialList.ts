@@ -2,55 +2,49 @@ import { useCallback, useEffect } from "react";
 
 import { ICryptkeeperVerifiableCredential } from "@src/types";
 import { useAppDispatch } from "@src/ui/ducks/hooks";
-import {
-  deleteVerifiableCredential,
-  fetchVerifiableCredentials,
-  renameVerifiableCredential,
-} from "@src/ui/ducks/verifiableCredentials";
-import { useCryptkeeperVerifiableCredentials } from "@src/ui/hooks/verifiableCredentials";
+import { deleteVC, fetchVCs, renameVC } from "@src/ui/ducks/verifiableCredentials";
+import { useCryptkeeperVCs } from "@src/ui/hooks/verifiableCredentials";
 
 export interface IUseVerifiableCredentialListData {
-  cryptkeeperVerifiableCredentials: ICryptkeeperVerifiableCredential[];
-  onRenameVerifiableCredential: (
-    verifiableCredentialHash: string,
-    newVerifiableCredentialName: string,
-  ) => Promise<void>;
-  onDeleteVerifiableCredential: (verifiableCredentialHash: string) => Promise<void>;
+  cryptkeeperVCs: ICryptkeeperVerifiableCredential[];
+  onRename: (hash: string, name: string) => Promise<void>;
+  onDelete: (hash: string) => Promise<void>;
 }
 
 export const useVerifiableCredentialList = (): IUseVerifiableCredentialListData => {
   const dispatch = useAppDispatch();
 
   useEffect(() => {
-    dispatch(fetchVerifiableCredentials());
-  }, [dispatch, fetchVerifiableCredentials]);
+    dispatch(fetchVCs());
+  }, [dispatch, fetchVCs]);
 
-  const cryptkeeperVerifiableCredentials = useCryptkeeperVerifiableCredentials();
+  const cryptkeeperVCs = useCryptkeeperVCs();
 
-  const onRenameVerifiableCredential = useCallback(
-    async (verifiableCredentialHash: string, newVerifiableCredentialName: string) => {
+  const onRename = useCallback(
+    async (hash: string, name: string) => {
       await dispatch(
-        renameVerifiableCredential({
-          verifiableCredentialHash,
-          newVerifiableCredentialName,
+        renameVC({
+          hash,
+          name,
         }),
       );
-      dispatch(fetchVerifiableCredentials());
+
+      dispatch(fetchVCs());
     },
     [dispatch],
   );
 
-  const onDeleteVerifiableCredential = useCallback(
+  const onDelete = useCallback(
     async (verifiableCredentialHash: string) => {
-      await dispatch(deleteVerifiableCredential(verifiableCredentialHash));
-      dispatch(fetchVerifiableCredentials());
+      await dispatch(deleteVC(verifiableCredentialHash));
+      dispatch(fetchVCs());
     },
     [dispatch],
   );
 
   return {
-    cryptkeeperVerifiableCredentials,
-    onRenameVerifiableCredential,
-    onDeleteVerifiableCredential,
+    cryptkeeperVCs,
+    onRename,
+    onDelete,
   };
 };

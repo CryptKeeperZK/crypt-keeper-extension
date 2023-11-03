@@ -4,26 +4,9 @@
 
 import { act, renderHook } from "@testing-library/react";
 
-import { useAppDispatch } from "@src/ui/ducks/hooks";
-
 import { UseVerifiableCredentialItemArgs, useVerifiableCredentialItem } from "../useVerifiableCredentialItem";
 
-jest.mock("@src/ui/ducks/hooks", (): unknown => ({
-  useAppDispatch: jest.fn(),
-}));
-
-jest.mock("@src/ui/ducks/verifiableCredentials", (): unknown => ({
-  addVerifiableCredential: jest.fn(),
-  rejectVerifiableCredentialRequest: jest.fn(),
-  renameVerifiableCredential: jest.fn(),
-  deleteVerifiableCredential: jest.fn(),
-  fetchVerifiableCredentials: jest.fn(),
-  useVerifiableCredentials: jest.fn(),
-}));
-
 describe("ui/components/VerifiableCredential/Item/useVerifiableCredentialItem", () => {
-  const mockDispatch = jest.fn();
-
   const defaultHookArgs: UseVerifiableCredentialItemArgs = {
     metadata: {
       name: "My Credential",
@@ -33,10 +16,6 @@ describe("ui/components/VerifiableCredential/Item/useVerifiableCredentialItem", 
     onRename: jest.fn(),
     onDelete: jest.fn(),
   };
-
-  beforeEach(() => {
-    (useAppDispatch as jest.Mock).mockReturnValue(mockDispatch);
-  });
 
   afterEach(() => {
     jest.clearAllMocks();
@@ -74,7 +53,7 @@ describe("ui/components/VerifiableCredential/Item/useVerifiableCredentialItem", 
   test("should handle deletion properly", async () => {
     const { result } = renderHook(() => useVerifiableCredentialItem(defaultHookArgs));
 
-    await act(async () => result.current.onDelete());
+    await act(async () => result.current.onRemove());
 
     expect(defaultHookArgs.onDelete).toHaveBeenCalledTimes(1);
     expect(defaultHookArgs.onDelete).toHaveBeenCalledWith(defaultHookArgs.metadata.hash);

@@ -11,13 +11,13 @@ export interface ICryptkeeperVerifiableCredential {
 }
 
 export interface IAddVerifiableCredentialArgs {
-  serializedVerifiableCredential: string;
-  verifiableCredentialName: string;
+  serialized: string;
+  name: string;
 }
 
 export interface IRenameVerifiableCredentialArgs {
-  verifiableCredentialHash: string;
-  newVerifiableCredentialName: string;
+  hash: string;
+  name: string;
 }
 
 export interface IGenerateVerifiablePresentationWithCryptkeeperArgs {

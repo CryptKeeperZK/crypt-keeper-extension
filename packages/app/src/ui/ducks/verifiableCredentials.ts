@@ -2,7 +2,7 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 import { RPCInternalAction } from "@src/constants";
-import { serializeCryptkeeperVerifiableCredential } from "@src/util/credentials";
+import { serializeCryptkeeperVC } from "@src/util/credentials";
 import postMessage from "@src/util/postMessage";
 
 import type { IVerifiablePresentation } from "@cryptkeeperzk/types";
@@ -16,92 +16,82 @@ import type { TypedThunk } from "@src/ui/store/configureAppStore";
 import { useAppSelector } from "./hooks";
 
 export interface VerifiableCredentialState {
-  serializedVerifiableCredentials: string[];
+  serializedVCs: string[];
 }
 
 const initialState: VerifiableCredentialState = {
-  serializedVerifiableCredentials: [],
+  serializedVCs: [],
 };
 
 const verifiableCredentialsSlice = createSlice({
   name: "verifiableCredentials",
   initialState,
   reducers: {
-    setVerifiableCredentials: (state: VerifiableCredentialState, action: PayloadAction<string[]>) => {
-      state.serializedVerifiableCredentials = action.payload;
+    setVCs: (state: VerifiableCredentialState, action: PayloadAction<string[]>) => {
+      state.serializedVCs = action.payload;
     },
   },
 });
 
-export const { setVerifiableCredentials } = verifiableCredentialsSlice.actions;
+export const { setVCs } = verifiableCredentialsSlice.actions;
 
-export const addVerifiableCredential =
-  (serializedVerifiableCredential: string, verifiableCredentialName: string) => async (): Promise<void> =>
-    postMessage({
-      method: RPCInternalAction.ADD_VERIFIABLE_CREDENTIAL,
-      payload: {
-        serializedVerifiableCredential,
-        verifiableCredentialName,
-      },
-    });
+export const addVC = (serialized: string, name: string, urlOrigin: string) => async (): Promise<void> =>
+  postMessage({
+    method: RPCInternalAction.ADD_VERIFIABLE_CREDENTIAL,
+    payload: {
+      serialized,
+      name,
+    },
+    meta: {
+      urlOrigin,
+    },
+  });
 
-export const rejectVerifiableCredentialRequest = () => async (): Promise<void> => {
+export const renameVC = (payload: IRenameVerifiableCredentialArgs) => async (): Promise<void> => {
   await postMessage({
-    method: RPCInternalAction.REJECT_VERIFIABLE_CREDENTIAL_REQUEST,
+    method: RPCInternalAction.RENAME_VERIFIABLE_CREDENTIAL,
+    payload,
   });
 };
 
-export const renameVerifiableCredential =
-  (renameVerifiableCredentialArgs: IRenameVerifiableCredentialArgs) => async (): Promise<void> => {
-    await postMessage({
-      method: RPCInternalAction.RENAME_VERIFIABLE_CREDENTIAL,
-      payload: renameVerifiableCredentialArgs,
-    });
-  };
-
-export const deleteVerifiableCredential = (verifiableCredentialHash: string) => async (): Promise<void> => {
+export const deleteVC = (payload: string) => async (): Promise<void> => {
   await postMessage({
     method: RPCInternalAction.DELETE_VERIFIABLE_CREDENTIAL,
-    payload: verifiableCredentialHash,
+    payload,
   });
 };
 
-export const generateVerifiablePresentation =
-  (verifiablePresentation: IVerifiablePresentation) => async (): Promise<void> => {
-    await postMessage({
-      method: RPCInternalAction.GENERATE_VERIFIABLE_PRESENTATION,
-      payload: verifiablePresentation,
-    });
-  };
+export const generateVP = (payload: IVerifiablePresentation, urlOrigin: string) => async (): Promise<void> => {
+  await postMessage({
+    method: RPCInternalAction.GENERATE_VERIFIABLE_PRESENTATION,
+    payload,
+    meta: {
+      urlOrigin,
+    },
+  });
+};
 
-export const generateVerifiablePresentationWithCryptkeeper =
-  (generateVerifiablePresentationArgs: IGenerateVerifiablePresentationWithCryptkeeperArgs) =>
-  async (): Promise<void> => {
+export const generateVPWithCryptkeeper =
+  (payload: IGenerateVerifiablePresentationWithCryptkeeperArgs, urlOrigin: string) => async (): Promise<void> => {
     await postMessage({
       method: RPCInternalAction.GENERATE_VERIFIABLE_PRESENTATION_WITH_CRYPTKEEPER,
-      payload: generateVerifiablePresentationArgs,
+      payload,
+      meta: {
+        urlOrigin,
+      },
     });
   };
 
-export const rejectVerifiablePresentationRequest = () => async (): Promise<void> => {
-  await postMessage({
-    method: RPCInternalAction.REJECT_VERIFIABLE_PRESENTATION_REQUEST,
-  });
-};
-
-export const fetchVerifiableCredentials = (): TypedThunk => async (dispatch) => {
-  const cryptkeeperVerifiableCredentials = await postMessage<ICryptkeeperVerifiableCredential[]>({
+export const fetchVCs = (): TypedThunk => async (dispatch) => {
+  const cryptkeeperVCs = await postMessage<ICryptkeeperVerifiableCredential[]>({
     method: RPCInternalAction.GET_ALL_VERIFIABLE_CREDENTIALS,
   });
 
-  const serializedVerifiableCredentials = cryptkeeperVerifiableCredentials.map((cryptkeeperVerifiableCredential) =>
-    serializeCryptkeeperVerifiableCredential(cryptkeeperVerifiableCredential),
-  );
+  const serialized = cryptkeeperVCs.map((vc) => serializeCryptkeeperVC(vc));
 
-  dispatch(setVerifiableCredentials(serializedVerifiableCredentials));
+  dispatch(setVCs(serialized));
 };
 
-export const useVerifiableCredentials = (): string[] =>
-  useAppSelector((state) => state.verifiableCredentials.serializedVerifiableCredentials);
+export const useVCs = (): string[] => useAppSelector((state) => state.verifiableCredentials.serializedVCs);
 
 export default verifiableCredentialsSlice.reducer;

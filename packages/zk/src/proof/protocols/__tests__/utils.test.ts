@@ -82,7 +82,7 @@ describe("background/services/protocols/utils", () => {
         identityCommitment: identity.getCommitment(),
         merkleStorageUrl: "http://localhost:3000/merkle",
       }),
-    ).rejects.toThrowError(`Error in fetching Mock Merkle Proof ${error.message}`);
+    ).rejects.toThrow(`Error in fetching Mock Merkle Proof ${error.message}`);
     expect(fetchSpy).toHaveBeenCalledTimes(1);
   });
 
@@ -104,7 +104,7 @@ describe("background/services/protocols/utils", () => {
       getMerkleProof({
         identityCommitment: identity.getCommitment(),
       }),
-    ).rejects.toThrowError("ZK: Cannot get MerkleProof");
+    ).rejects.toThrow("ZK: Cannot get MerkleProof");
   });
 
   test("should get rln verification key proof from remote url origin properly", async () => {

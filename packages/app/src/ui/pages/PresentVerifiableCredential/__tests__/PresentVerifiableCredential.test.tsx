@@ -59,15 +59,15 @@ describe("ui/pages/PresentVerifiableCredential", () => {
   const defaultHookData: IUsePresentVerifiableCredentialData = {
     isWalletConnected: true,
     isWalletInstalled: true,
-    verifiablePresentationRequest: "example presentation request",
-    cryptkeeperVerifiableCredentials: mockCryptkeeperVerifiableCredentials,
-    selectedVerifiableCredentialHashes: ["0x123"],
+    vpRequest: "example presentation request",
+    cryptkeeperVCs: mockCryptkeeperVerifiableCredentials,
+    selectedVCHashes: ["0x123"],
     error: undefined,
     checkDisabledItem: jest.fn(() => false),
     onCloseModal: jest.fn(),
-    onRejectRequest: jest.fn(),
-    onToggleSelection: jest.fn(),
-    onSubmitVerifiablePresentation: jest.fn(),
+    onReject: jest.fn(),
+    onSelect: jest.fn(),
+    onSubmit: jest.fn(),
   };
 
   beforeEach(() => {
@@ -83,8 +83,8 @@ describe("ui/pages/PresentVerifiableCredential", () => {
 
     await waitFor(() => container.firstChild !== null);
 
-    const credentialOne = await findByText(defaultHookData.cryptkeeperVerifiableCredentials[0].metadata.name);
-    const credentialTwo = await findByText(defaultHookData.cryptkeeperVerifiableCredentials[1].metadata.name);
+    const credentialOne = await findByText(defaultHookData.cryptkeeperVCs[0].metadata.name);
+    const credentialTwo = await findByText(defaultHookData.cryptkeeperVCs[1].metadata.name);
 
     expect(credentialOne).toBeInTheDocument();
     expect(credentialTwo).toBeInTheDocument();
@@ -142,7 +142,7 @@ describe("ui/pages/PresentVerifiableCredential", () => {
     const button = await findByTestId("reject-verifiable-presentation-request");
     fireEvent.click(button);
 
-    expect(defaultHookData.onRejectRequest).toHaveBeenCalledTimes(1);
+    expect(defaultHookData.onReject).toHaveBeenCalledTimes(1);
   });
 
   test("should sign with metamask", async () => {
@@ -157,6 +157,6 @@ describe("ui/pages/PresentVerifiableCredential", () => {
     const button = await findByTestId("dropdown-button");
     fireEvent.click(button);
 
-    expect(defaultHookData.onSubmitVerifiablePresentation).toHaveBeenCalledTimes(1);
+    expect(defaultHookData.onSubmit).toHaveBeenCalledTimes(1);
   });
 });

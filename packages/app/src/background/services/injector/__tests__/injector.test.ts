@@ -166,7 +166,7 @@ describe("background/services/injector", () => {
 
       const service = InjectorService.getInstance();
 
-      await expect(service.connect({ isChangeIdentity: false }, defaultMetadata)).resolves.not.toThrowError();
+      await expect(service.connect({ isChangeIdentity: false }, defaultMetadata)).resolves.not.toThrow();
       expect(mockConnectRequest).toHaveBeenCalledTimes(1);
     });
 
@@ -175,7 +175,7 @@ describe("background/services/injector", () => {
 
       const service = InjectorService.getInstance();
 
-      await expect(service.connect({ isChangeIdentity: false }, defaultMetadata)).resolves.not.toThrowError();
+      await expect(service.connect({ isChangeIdentity: false }, defaultMetadata)).resolves.not.toThrow();
       expect(mockConnectRequest).toHaveBeenCalledTimes(0);
     });
 
@@ -184,7 +184,7 @@ describe("background/services/injector", () => {
 
       const service = InjectorService.getInstance();
 
-      await expect(service.connect({ isChangeIdentity: true }, defaultMetadata)).resolves.not.toThrowError();
+      await expect(service.connect({ isChangeIdentity: true }, defaultMetadata)).resolves.not.toThrow();
       expect(mockConnectRequest).toHaveBeenCalledTimes(1);
     });
 
@@ -201,9 +201,7 @@ describe("background/services/injector", () => {
 
       const service = InjectorService.getInstance();
 
-      await expect(
-        service.connect({ isChangeIdentity: false }, { urlOrigin: "new-urlOrigin" }),
-      ).resolves.not.toThrowError();
+      await expect(service.connect({ isChangeIdentity: false }, { urlOrigin: "new-urlOrigin" })).resolves.not.toThrow();
       expect(mockNewRequest).toHaveBeenCalledTimes(1);
     });
 

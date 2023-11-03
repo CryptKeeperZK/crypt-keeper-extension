@@ -119,7 +119,7 @@ describe("background/shared/utils", () => {
   test("should throw an error if it's not possible to create offscreen", async () => {
     (global.chrome.offscreen.createDocument as jest.Mock).mockRejectedValue(new Error());
 
-    await expect(createChromeOffscreen()).rejects.toThrowError("CryptKeeper could not create an Offscreen");
+    await expect(createChromeOffscreen()).rejects.toThrow("CryptKeeper could not create an Offscreen");
   });
 
   test("should close offscreen properly", async () => {

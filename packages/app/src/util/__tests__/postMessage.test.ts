@@ -46,6 +46,6 @@ describe("util/postMessage", () => {
       meta: {},
     });
 
-    await expect(result).rejects.toThrowError("Error: error");
+    await expect(result).rejects.toThrow("Error: error");
   });
 });

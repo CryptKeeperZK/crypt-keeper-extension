@@ -14,15 +14,15 @@ const PresentVerifiableCredential = (): JSX.Element => {
   const {
     isWalletConnected,
     isWalletInstalled,
-    verifiablePresentationRequest,
-    cryptkeeperVerifiableCredentials,
-    selectedVerifiableCredentialHashes,
+    vpRequest,
+    cryptkeeperVCs,
+    selectedVCHashes,
     error,
     checkDisabledItem,
     onCloseModal,
-    onRejectRequest,
-    onToggleSelection,
-    onSubmitVerifiablePresentation,
+    onReject,
+    onSelect,
+    onSubmit,
   } = usePresentVerifiableCredential();
 
   const ethTitle = isWalletConnected ? "Sign with MetaMask" : "Connect to MetaMask";
@@ -56,15 +56,15 @@ const PresentVerifiableCredential = (): JSX.Element => {
           You have received a request to present Verifiable Credentials:
         </Typography>
 
-        <Typography sx={{ textAlign: "center" }}>{verifiablePresentationRequest}</Typography>
+        <Typography sx={{ textAlign: "center" }}>{vpRequest}</Typography>
 
-        {cryptkeeperVerifiableCredentials.map(({ verifiableCredential, metadata }) => (
+        {cryptkeeperVCs.map(({ verifiableCredential, metadata }) => (
           <VerifiableCredentialItem
             key={metadata.hash}
             metadata={metadata}
-            selected={selectedVerifiableCredentialHashes.includes(metadata.hash)}
+            selected={selectedVCHashes.includes(metadata.hash)}
             verifiableCredential={verifiableCredential}
-            onToggleSelectVerifiableCredential={onToggleSelection}
+            onSelect={onSelect}
           />
         ))}
       </FullModalContent>
@@ -97,12 +97,12 @@ const PresentVerifiableCredential = (): JSX.Element => {
             sx={{ textTransform: "none", flex: 1, mr: 1, width: "30%" }}
             type="submit"
             variant="outlined"
-            onClick={onRejectRequest}
+            onClick={onReject}
           >
             Reject
           </Button>
 
-          <DropdownButton options={menuOptions} onClick={onSubmitVerifiablePresentation} />
+          <DropdownButton options={menuOptions} onClick={onSubmit} />
         </Box>
       </FullModalFooter>
     </Box>

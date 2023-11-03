@@ -4,22 +4,7 @@
 
 import { fireEvent, render, screen } from "@testing-library/react";
 
-import { useAppDispatch } from "@src/ui/ducks/hooks";
-
 import { VerifiableCredentialDisplay, VerifiableCredentialDisplayProps } from "..";
-
-jest.mock("@src/ui/ducks/hooks", (): unknown => ({
-  useAppDispatch: jest.fn(),
-}));
-
-jest.mock("@src/ui/ducks/verifiableCredentials", (): unknown => ({
-  addVerifiableCredential: jest.fn(),
-  rejectVerifiableCredentialRequest: jest.fn(),
-  renameVerifiableCredential: jest.fn(),
-  deleteVerifiableCredential: jest.fn(),
-  fetchVerifiableCredentials: jest.fn(),
-  useVerifiableCredentials: jest.fn(),
-}));
 
 describe("ui/components/VerifiableCredential/Display", () => {
   const defaultProps: VerifiableCredentialDisplayProps = {
@@ -45,10 +30,6 @@ describe("ui/components/VerifiableCredential/Display", () => {
     },
     onRenameVerifiableCredential: jest.fn(),
   };
-
-  beforeEach(() => {
-    (useAppDispatch as jest.Mock).mockReturnValue(jest.fn());
-  });
 
   afterEach(() => {
     jest.clearAllMocks();

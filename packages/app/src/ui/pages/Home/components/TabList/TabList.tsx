@@ -43,7 +43,7 @@ export const TabList = ({ children }: ITabListProps): JSX.Element => {
 
         <Tab data-testid="tab-activity" label="Activity" />
 
-        {features.VERIFIABLE_CREDENTIALS && <Tab data-testid="tab-credentials" label="Verifiable Credentials" />}
+        {features.VERIFIABLE_CREDENTIALS && <Tab data-testid="tab-credentials" label="Credentials" />}
       </Tabs>
 
       {selectedContent}
