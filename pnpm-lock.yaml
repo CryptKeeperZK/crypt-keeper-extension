@@ -225,8 +225,8 @@ importers:
         specifier: ^6.18.0
         version: 6.18.0(react-dom@18.2.0)(react@18.2.0)
       react-select:
-        specifier: ^5.7.7
-        version: 5.7.7(@types/react@18.2.34)(react-dom@18.2.0)(react@18.2.0)
+        specifier: ^5.8.0
+        version: 5.8.0(@types/react@18.2.34)(react-dom@18.2.0)(react@18.2.0)
       redux-logger:
         specifier: ^3.0.6
         version: 3.0.6
@@ -5410,12 +5410,6 @@ packages:
       '@types/history': 4.7.11
       '@types/react': 18.2.34
     dev: true
-
-  /@types/react-transition-group@4.4.6:
-    resolution: {integrity: sha512-VnCdSxfcm08KjsJVQcfBmhEQAPnLB8G08hAxn39azX1qYBQ/5RVQuoHuKIcfKOdncuaUvEpFKFzEvbtIMsfVew==}
-    dependencies:
-      '@types/react': 18.2.34
-    dev: false
 
   /@types/react-transition-group@4.4.8:
     resolution: {integrity: sha512-QmQ22q+Pb+HQSn04NL3HtrqHwYMf4h3QKArOy5F8U5nEVMaihBs3SR10WiOM1iwPz5jIo8x/u11al+iEGZZrvg==}
@@ -14615,17 +14609,17 @@ packages:
       '@testing-library/dom': 9.3.1
     dev: true
 
-  /react-select@5.7.7(@types/react@18.2.34)(react-dom@18.2.0)(react@18.2.0):
-    resolution: {integrity: sha512-HhashZZJDRlfF/AKj0a0Lnfs3sRdw/46VJIRd8IbB9/Ovr74+ZIwkAdSBjSPXsFMG+u72c5xShqwLSKIJllzqw==}
+  /react-select@5.8.0(@types/react@18.2.34)(react-dom@18.2.0)(react@18.2.0):
+    resolution: {integrity: sha512-TfjLDo58XrhP6VG5M/Mi56Us0Yt8X7xD6cDybC7yoRMUNm7BGO7qk8J0TLQOua/prb8vUOtsfnXZwfm30HGsAA==}
     peerDependencies:
       react: ^16.8.0 || ^17.0.0 || ^18.0.0
       react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0
     dependencies:
-      '@babel/runtime': 7.22.15
+      '@babel/runtime': 7.23.2
       '@emotion/cache': 11.11.0
       '@emotion/react': 11.11.1(@types/react@18.2.34)(react@18.2.0)
       '@floating-ui/dom': 1.5.2
-      '@types/react-transition-group': 4.4.6
+      '@types/react-transition-group': 4.4.8
       memoize-one: 6.0.0
       prop-types: 15.8.1
       react: 18.2.0
