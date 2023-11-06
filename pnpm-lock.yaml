@@ -213,8 +213,8 @@ importers:
         specifier: ^14.2.3
         version: 14.2.3(react@18.2.0)
       react-hook-form:
-        specifier: ^7.47.0
-        version: 7.47.0(react@18.2.0)
+        specifier: ^7.48.2
+        version: 7.48.2(react@18.2.0)
       react-jazzicon:
         specifier: ^1.0.4
         version: 1.0.4(react-dom@18.2.0)(react@18.2.0)
@@ -14502,8 +14502,8 @@ packages:
     resolution: {integrity: sha512-nQTTcUu+ATDbrSD1BZHr5kgSD4oF8OFjxun8uAaL8RwPBacGBNPf/yAuVVdx17N8XNzRDMrZ9XcKZHCjPW+9ew==}
     dev: true
 
-  /react-hook-form@7.47.0(react@18.2.0):
-    resolution: {integrity: sha512-F/TroLjTICipmHeFlMrLtNLceO2xr1jU3CyiNla5zdwsGUGu2UOxxR4UyJgLlhMwLW/Wzp4cpJ7CPfgJIeKdSg==}
+  /react-hook-form@7.48.2(react@18.2.0):
+    resolution: {integrity: sha512-H0T2InFQb1hX7qKtDIZmvpU1Xfn/bdahWBN1fH19gSe4bBEqTfmlr7H3XWTaVtiK4/tpPaI1F3355GPMZYge+A==}
     engines: {node: '>=12.22.0'}
     peerDependencies:
       react: ^16.8.0 || ^17 || ^18
