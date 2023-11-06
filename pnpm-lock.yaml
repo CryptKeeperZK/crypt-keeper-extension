@@ -19,7 +19,7 @@ importers:
         version: link:packages/manifest-bump
       '@jscutlery/semver':
         specifier: ^4.0.0
-        version: 4.0.0(@nx/devkit@17.0.2)
+        version: 4.0.0(@nx/devkit@17.0.3)
       '@nx/js':
         specifier: ^17.0.2
         version: 17.0.2(@swc/core@1.3.95)(@types/node@20.8.10)(nx@17.0.2)(typescript@5.2.2)
@@ -577,8 +577,8 @@ importers:
   packages/manifest-bump:
     dependencies:
       '@nx/devkit':
-        specifier: 17.0.2
-        version: 17.0.2(nx@17.0.2)
+        specifier: 17.0.3
+        version: 17.0.3(nx@17.0.2)
       tslib:
         specifier: ^2.6.2
         version: 2.6.2
@@ -3303,12 +3303,12 @@ packages:
       '@jridgewell/sourcemap-codec': 1.4.15
     dev: true
 
-  /@jscutlery/semver@4.0.0(@nx/devkit@17.0.2):
+  /@jscutlery/semver@4.0.0(@nx/devkit@17.0.3):
     resolution: {integrity: sha512-ePISUjqHYp4ywOX7hEtkYj3F1zFhnARBtpuTacioXEgVArKEWrSuJmm9ISnQUyh+qBjxgtQcU6GHSolDbKfZDg==}
     peerDependencies:
       '@nx/devkit': ^17.0.0
     dependencies:
-      '@nx/devkit': 17.0.2(nx@17.0.2)
+      '@nx/devkit': 17.0.3(nx@17.0.2)
       chalk: 4.1.2
       conventional-changelog: 4.0.0
       conventional-recommended-bump: 7.0.1
@@ -3781,6 +3781,14 @@ packages:
       '@nx/devkit': 17.0.2(nx@17.0.2)
     transitivePeerDependencies:
       - nx
+    dev: true
+
+  /@nrwl/devkit@17.0.3(nx@17.0.2):
+    resolution: {integrity: sha512-k1o0tvmGcg2/Kw2d56ULixqngCj5zTfp3mn6yS0ytIJrTQnJVkI8GcFCtpnqbzQjD8nKHhvTIcOMsj2BzLos9A==}
+    dependencies:
+      '@nx/devkit': 17.0.3(nx@17.0.2)
+    transitivePeerDependencies:
+      - nx
 
   /@nrwl/js@17.0.2(@swc/core@1.3.95)(@types/node@20.8.10)(nx@17.0.2)(typescript@5.2.2):
     resolution: {integrity: sha512-qHqZ6V6IP3piyzb9s7HUlcV3X2O/BDmqikg0yoZGitRpyugY5K1BNZITGRmFEzLklfHxVUqI1qsURnClgax+pA==}
@@ -3826,6 +3834,21 @@ packages:
       nx: '>= 16 <= 18'
     dependencies:
       '@nrwl/devkit': 17.0.2(nx@17.0.2)
+      ejs: 3.1.9
+      enquirer: 2.3.6
+      ignore: 5.2.4
+      nx: 17.0.2(@swc/core@1.3.95)
+      semver: 7.5.3
+      tmp: 0.2.1
+      tslib: 2.6.2
+    dev: true
+
+  /@nx/devkit@17.0.3(nx@17.0.2):
+    resolution: {integrity: sha512-gW9aVc2BJBQ6PME07lsiaHg2Tjm9FN/qFjzxeSQYe2cR/s4hXqCBUfgKEqjgzMq+ykDR2Japkd8Vg8BN0uWnpA==}
+    peerDependencies:
+      nx: '>= 16 <= 18'
+    dependencies:
+      '@nrwl/devkit': 17.0.3(nx@17.0.2)
       ejs: 3.1.9
       enquirer: 2.3.6
       ignore: 5.2.4
