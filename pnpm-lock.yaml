@@ -253,8 +253,8 @@ importers:
         specifier: ^14.0.0
         version: 14.0.0(react-dom@18.2.0)(react@18.2.0)
       '@types/chrome':
-        specifier: ^0.0.249
-        version: 0.0.249
+        specifier: ^0.0.250
+        version: 0.0.250
       '@types/crypto-js':
         specifier: ^4.1.3
         version: 4.1.3
@@ -5281,8 +5281,8 @@ packages:
       '@types/node': 20.8.10
     dev: true
 
-  /@types/chrome@0.0.249:
-    resolution: {integrity: sha512-cCtSwbf7NcfbJWvVnm5RBl/G0hsbiqQz+6ENHDMvbg+UvC8naYOQrzzGWt6IczWrtxKlbdnKYi93eiS1C5lbVw==}
+  /@types/chrome@0.0.250:
+    resolution: {integrity: sha512-bg6UC+cXS5blsaJaVOg0TQfu6FG64og/4o+65IuaVvlTKBzNUiazLabPde+gRpk8DSrqpGBPk0xME+tbU3KlKg==}
     dependencies:
       '@types/filesystem': 0.0.32
       '@types/har-format': 1.2.11
