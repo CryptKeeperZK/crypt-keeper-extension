@@ -2,6 +2,26 @@ import type { EventHandler, EventName } from "../services";
 import type { IInjectedMessageData, IInjectedProviderRequest } from "@cryptkeeperzk/types";
 
 /**
+ * Extends the global Window interface to include CryptKeeper-related properties.
+ */
+declare global {
+  /**
+   * Represents the CryptKeeperInjectedProvider instance.
+   */
+  interface Window {
+    /**
+     * The CryptKeeperInjectedProvider instance.
+     */
+    cryptkeeper: ICryptKeeperInjectedProvider;
+
+    /**
+     * Indicates whether CryptKeeper is injected.
+     */
+    isCryptkeeperInjected?: boolean;
+  }
+}
+
+/**
  * Represents the CryptKeeper provider that is injected into the application.
  * This class is responsible for handling interactions with the CryptKeeper extension.
  *

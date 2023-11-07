@@ -1,6 +1,7 @@
 /**
  * @jest-environment jsdom
  */
+/* eslint-disable @typescript-eslint/unbound-method */
 import { RPCExternalAction } from "@src/constants";
 
 import type { IInjectedMessageData } from "@cryptkeeperzk/types";
@@ -12,11 +13,6 @@ jest.mock("nanoevents", (): unknown => ({
   createNanoEvents: jest.fn(),
 }));
 
-jest.mock("../../services", (): unknown => ({
-  ...jest.requireActual("../../services"),
-  Handler: jest.fn(),
-}));
-
 describe("sdk/CryptKeeperInjectedProvider", () => {
   const defaultHandler = {
     request: jest.fn(),
@@ -25,18 +21,14 @@ describe("sdk/CryptKeeperInjectedProvider", () => {
     emit: jest.fn(),
     cleanListeners: jest.fn(),
     getConnectedOrigin: jest.fn(),
-  };
-
-  beforeEach(() => {
-    (Handler as jest.Mock).mockReturnValue(defaultHandler);
-  });
+  } as unknown as Handler;
 
   afterEach(() => {
     jest.clearAllMocks();
   });
 
   test("should connect properly", async () => {
-    const provider = new CryptKeeperInjectedProvider();
+    const provider = new CryptKeeperInjectedProvider(defaultHandler);
 
     await provider.connect();
 
@@ -51,7 +43,7 @@ describe("sdk/CryptKeeperInjectedProvider", () => {
   });
 
   test("should request rpc properly", async () => {
-    const provider = new CryptKeeperInjectedProvider();
+    const provider = new CryptKeeperInjectedProvider(defaultHandler);
 
     await provider.request({ method: RPCExternalAction.GET_CONNECTED_IDENTITY_DATA });
 
@@ -62,7 +54,7 @@ describe("sdk/CryptKeeperInjectedProvider", () => {
   });
 
   test("should handle events properly", () => {
-    const provider = new CryptKeeperInjectedProvider();
+    const provider = new CryptKeeperInjectedProvider(defaultHandler);
 
     provider.eventResponser({} as MessageEvent<IInjectedMessageData>);
     provider.on(EventName.CONNECT, jest.fn());

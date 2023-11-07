@@ -1,26 +1,8 @@
 import type { ICryptKeeperInjectedProvider } from "./interface";
 
+import { Handler } from "../services";
+
 import { CryptKeeperInjectedProvider } from "./CryptKeeperInjectedProvider";
-
-/**
- * Extends the global Window interface to include CryptKeeper-related properties.
- */
-declare global {
-  /**
-   * Represents the CryptKeeperInjectedProvider instance.
-   */
-  interface Window {
-    /**
-     * The CryptKeeperInjectedProvider instance.
-     */
-    cryptkeeper: CryptKeeperInjectedProvider;
-
-    /**
-     * Indicates whether CryptKeeper is injected.
-     */
-    isCryptkeeperInjected?: boolean;
-  }
-}
 
 /**
  * Initializes the CryptKeeper provider within the CryptKeeper extension.
@@ -28,7 +10,8 @@ declare global {
  * @returns {CryptKeeperInjectedProvider | undefined} The initialized CryptKeeperInjectedProvider instance or undefined.
  */
 export function initializeCryptKeeperProvider(connectedOrigin?: string): ICryptKeeperInjectedProvider {
-  const cryptkeeperInjectedProvider = new CryptKeeperInjectedProvider(connectedOrigin);
+  const handler = new Handler(connectedOrigin);
+  const cryptkeeperInjectedProvider = new CryptKeeperInjectedProvider(handler);
   window.cryptkeeper = cryptkeeperInjectedProvider;
   window.dispatchEvent(new Event(`cryptkeeper#initialized`));
   window.addEventListener("message", cryptkeeperInjectedProvider.eventResponser);

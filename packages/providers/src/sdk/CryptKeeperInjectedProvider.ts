@@ -2,7 +2,7 @@ import type { ICryptKeeperInjectedProvider } from "./interface";
 import type { IInjectedMessageData, IInjectedProviderRequest } from "@cryptkeeperzk/types";
 
 import { RPCExternalAction } from "../constants";
-import { type EventHandler, type EventName, type IHandler, Handler } from "../services";
+import { type EventHandler, type EventName, type IHandler } from "../services";
 
 /**
  * Represents the CryptKeeper provider that is injected into the application.
@@ -26,8 +26,8 @@ export class CryptKeeperInjectedProvider implements ICryptKeeperInjectedProvider
    *
    * @constructor
    */
-  constructor(connectedOrigin?: string) {
-    this.handler = new Handler(connectedOrigin);
+  constructor(handler: IHandler) {
+    this.handler = handler;
   }
 
   /**
