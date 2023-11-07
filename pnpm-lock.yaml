@@ -642,8 +642,8 @@ importers:
         specifier: workspace:^
         version: link:../eslint-config-base
       '@types/cors':
-        specifier: ^2.8.15
-        version: 2.8.15
+        specifier: ^2.8.16
+        version: 2.8.16
       '@types/express':
         specifier: ^4.17.20
         version: 4.17.20
@@ -5301,8 +5301,8 @@ packages:
       '@types/node': 20.8.10
     dev: true
 
-  /@types/cors@2.8.15:
-    resolution: {integrity: sha512-n91JxbNLD8eQIuXDIChAN1tCKNWCEgpceU9b7ZMbFA+P+Q4yIeh80jizFLEvolRPc1ES0VdwFlGv+kJTSirogw==}
+  /@types/cors@2.8.16:
+    resolution: {integrity: sha512-Trx5or1Nyg1Fq138PCuWqoApzvoSLWzZ25ORBiHMbbUT42g578lH1GT4TwYDbiUOLFuDsCkfLneT2105fsFWGg==}
     dependencies:
       '@types/node': 20.8.10
     dev: true
