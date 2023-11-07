@@ -30,10 +30,13 @@
     "publish:package": "pnpm publish --access=public --no-git-checks",
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
     "lint:fix": "pnpm run lint --fix",
+    "test": "jest",
+    "test:coverage": "pnpm run test --coverage",
     "prettier": "prettier -c . --ignore-path ../../.prettierignore",
     "prettier:fix": "prettier -w . --ignore-path ../../.prettierignore",
     "types": "tsc -p tsconfig.json --noEmit",
-    "githook:precommit": "lint-staged && pnpm run types"
+    "githook:precommit": "lint-staged && pnpm run types",
+    "githook:prepush": "pnpm run test:coverage"
   },
   "dependencies": {
     "@cryptkeeperzk/types": "workspace:^",

@@ -1,6 +1,6 @@
-import { Emitter, createNanoEvents } from "nanoevents";
+import { type Emitter, createNanoEvents } from "nanoevents";
 
-import { Events, EventHandler, EventName } from "./types";
+import type { Events, EventHandler, EventName } from "./types";
 
 /**
  * Event emitter class that allows subscribing to and emitting events.
@@ -29,9 +29,9 @@ export class EventEmitter {
    * @param {EventHandler} cb - The event handler callback function.
    * @returns {void}
    */
-  on(eventName: EventName, cb: EventHandler): void {
+  on = (eventName: EventName, cb: EventHandler): void => {
     this.emitter.on(eventName, cb);
-  }
+  };
 
   /**
    * Emits an event.
@@ -49,7 +49,7 @@ export class EventEmitter {
    *
    * @returns {void}
    */
-  cleanListeners(): void {
+  cleanListeners = (): void => {
     this.emitter.events = {};
-  }
+  };
 }
