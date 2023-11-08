@@ -44,7 +44,7 @@
     "@types/chrome": "^0.0.250",
     "@types/crypto-js": "^4.2.1",
     "@types/jest": "^29.5.8",
-    "@types/lodash": "^4.14.200",
+    "@types/lodash": "^4.14.201",
     "@types/react": "^18.2.37",
     "@types/react-dom": "^18.2.14",
     "@types/react-router-dom": "^5.3.3",
