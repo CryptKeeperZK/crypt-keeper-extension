@@ -156,8 +156,8 @@ importers:
         specifier: ^1.1.0
         version: 1.1.0
       bigint-conversion:
-        specifier: ^2.4.2
-        version: 2.4.2
+        specifier: ^2.4.3
+        version: 2.4.3
       bignumber.js:
         specifier: ^9.1.2
         version: 9.1.2
@@ -406,8 +406,8 @@ importers:
         specifier: ^5.14.17
         version: 5.14.17(@types/react@18.2.37)(react@18.2.0)
       bigint-conversion:
-        specifier: ^2.4.2
-        version: 2.4.2
+        specifier: ^2.4.3
+        version: 2.4.3
       classnames:
         specifier: ^2.3.2
         version: 2.3.2
@@ -626,8 +626,8 @@ importers:
         specifier: ^1.1.0
         version: 1.1.0
       bigint-conversion:
-        specifier: ^2.4.2
-        version: 2.4.2
+        specifier: ^2.4.3
+        version: 2.4.3
       cors:
         specifier: ^2.8.5
         version: 2.8.5
@@ -681,8 +681,8 @@ importers:
         specifier: ^1.1.0
         version: 1.1.0
       bigint-conversion:
-        specifier: ^2.4.2
-        version: 2.4.2
+        specifier: ^2.4.3
+        version: 2.4.3
       lodash:
         specifier: ^4.17.21
         version: 4.17.21
@@ -770,8 +770,8 @@ importers:
         specifier: ^1.1.0
         version: 1.1.0
       bigint-conversion:
-        specifier: ^2.4.2
-        version: 2.4.2
+        specifier: ^2.4.3
+        version: 2.4.3
       lodash:
         specifier: ^4.17.21
         version: 4.17.21
@@ -6931,8 +6931,8 @@ packages:
     resolution: {integrity: sha512-vyL2OymJxmarO8gxMr0mhChsO9QGwhynfuu4+MHTAW6czfq9humCB7rKpUjDd9YUiDPU4mzpyupFSvOClAwbmQ==}
     dev: true
 
-  /bigint-conversion@2.4.2:
-    resolution: {integrity: sha512-2s3aRYaQtYGqY1w6x2PQqYbHUjktOWX0S0dkv7c+FjRnkKspictZ4IaEKmGEtZJjT2ccR29ufPB7QPEDfSs4bg==}
+  /bigint-conversion@2.4.3:
+    resolution: {integrity: sha512-eM76IXlhXQD6HAoE6A7QLQ3jdC04EJdjH3zrlU1Jtt4/jj+O/pMGjGR5FY8/55FOIBsK25kly0RoG4GA4iKdvg==}
     dependencies:
       '@juanelas/base64': 1.1.2
     dev: false
