@@ -17,6 +17,7 @@ import {
   useConnection,
   revealConnectedIdentityCommitment,
   connect,
+  disconnect,
   useConnectedOrigins,
 } from "../connections";
 
@@ -68,8 +69,8 @@ describe("ui/ducks/identities", () => {
       ),
     );
 
-    expect(postMessage).toBeCalledTimes(1);
-    expect(postMessage).toBeCalledWith({
+    expect(postMessage).toHaveBeenCalledTimes(1);
+    expect(postMessage).toHaveBeenCalledWith({
       method: RPCInternalAction.CONNECT,
       payload: {
         commitment: mockDefaultConnection.commitment,
@@ -80,13 +81,31 @@ describe("ui/ducks/identities", () => {
     });
   });
 
+  test("should disconnect properly", async () => {
+    (postMessage as jest.Mock).mockResolvedValue(true);
+
+    await Promise.resolve(store.dispatch(disconnect(mockDefaultConnection.commitment)));
+
+    expect(postMessage).toHaveBeenCalledTimes(2);
+    expect(postMessage).toHaveBeenNthCalledWith(1, {
+      method: RPCInternalAction.DISCONNECT,
+      payload: {
+        identityCommitment: mockDefaultConnection.commitment,
+      },
+    });
+    expect(postMessage).toHaveBeenNthCalledWith(2, {
+      method: RPCInternalAction.GET_CONNECTIONS,
+      payload: {},
+    });
+  });
+
   test("should reveal connected identity commitment properly", async () => {
     (postMessage as jest.Mock).mockResolvedValue(mockDefaultConnection.commitment);
 
     await Promise.resolve(store.dispatch(revealConnectedIdentityCommitment(mockDefaultConnection.urlOrigin)));
 
-    expect(postMessage).toBeCalledTimes(1);
-    expect(postMessage).toBeCalledWith({
+    expect(postMessage).toHaveBeenCalledTimes(1);
+    expect(postMessage).toHaveBeenCalledWith({
       method: RPCInternalAction.REVEAL_CONNECTED_IDENTITY_COMMITMENT,
       payload: {},
       meta: { urlOrigin: mockDefaultConnection.urlOrigin },

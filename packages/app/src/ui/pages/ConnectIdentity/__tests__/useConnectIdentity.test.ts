@@ -103,9 +103,9 @@ describe("ui/pages/ConnectIdentity/useConnectIdentity", () => {
   const waitForData = async (current: IUseConnectIdentityData) => {
     await waitFor(() => current.faviconUrl !== "");
     await waitFor(() => {
-      expect(mockDispatch).toBeCalledTimes(2);
-      expect(fetchIdentities).toBeCalledTimes(1);
-      expect(fetchConnections).toBeCalledTimes(1);
+      expect(mockDispatch).toHaveBeenCalledTimes(2);
+      expect(fetchIdentities).toHaveBeenCalledTimes(1);
+      expect(fetchConnections).toHaveBeenCalledTimes(1);
     });
   };
 
@@ -134,12 +134,12 @@ describe("ui/pages/ConnectIdentity/useConnectIdentity", () => {
 
     await act(() => Promise.resolve(result.current.onReject()));
 
-    expect(mockDispatch).toBeCalledTimes(3);
-    expect(fetchIdentities).toBeCalledTimes(1);
-    expect(fetchConnections).toBeCalledTimes(1);
-    expect(closePopup).toBeCalledTimes(1);
-    expect(mockNavigate).toBeCalledTimes(1);
-    expect(mockNavigate).toBeCalledWith(Paths.HOME);
+    expect(mockDispatch).toHaveBeenCalledTimes(3);
+    expect(fetchIdentities).toHaveBeenCalledTimes(1);
+    expect(fetchConnections).toHaveBeenCalledTimes(1);
+    expect(closePopup).toHaveBeenCalledTimes(1);
+    expect(mockNavigate).toHaveBeenCalledTimes(1);
+    expect(mockNavigate).toHaveBeenCalledWith(Paths.HOME);
   });
 
   test("should connect properly", async () => {
@@ -149,14 +149,14 @@ describe("ui/pages/ConnectIdentity/useConnectIdentity", () => {
     await waitFor(() => result.current.selectedIdentityCommitment === "1");
     await act(() => Promise.resolve(result.current.onConnect()));
 
-    expect(mockDispatch).toBeCalledTimes(4);
-    expect(fetchIdentities).toBeCalledTimes(1);
-    expect(fetchConnections).toBeCalledTimes(1);
-    expect(connect).toBeCalledTimes(1);
-    expect(connect).toBeCalledWith({ commitment: "1", urlOrigin: "http://localhost:3000" });
-    expect(closePopup).toBeCalledTimes(1);
-    expect(mockNavigate).toBeCalledTimes(1);
-    expect(mockNavigate).toBeCalledWith(Paths.HOME);
+    expect(mockDispatch).toHaveBeenCalledTimes(4);
+    expect(fetchIdentities).toHaveBeenCalledTimes(1);
+    expect(fetchConnections).toHaveBeenCalledTimes(1);
+    expect(connect).toHaveBeenCalledTimes(1);
+    expect(connect).toHaveBeenCalledWith({ commitment: "1", urlOrigin: "http://localhost:3000" });
+    expect(closePopup).toHaveBeenCalledTimes(1);
+    expect(mockNavigate).toHaveBeenCalledTimes(1);
+    expect(mockNavigate).toHaveBeenCalledWith(Paths.HOME);
   });
 
   test("should change tab properly", async () => {

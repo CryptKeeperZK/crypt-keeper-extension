@@ -51,8 +51,8 @@ describe("ui/ducks/requests", () => {
       ),
     );
 
-    expect(postMessage).toBeCalledTimes(1);
-    expect(postMessage).toBeCalledWith({
+    expect(postMessage).toHaveBeenCalledTimes(1);
+    expect(postMessage).toHaveBeenCalledWith({
       method: RPCInternalAction.FINALIZE_REQUEST,
       payload: {
         id: "1",
@@ -64,8 +64,8 @@ describe("ui/ducks/requests", () => {
   test("should reject user request properly", async () => {
     await Promise.resolve(store.dispatch(rejectUserRequest({ type: "request" }, "urlOrigin")));
 
-    expect(postMessage).toBeCalledTimes(1);
-    expect(postMessage).toBeCalledWith({
+    expect(postMessage).toHaveBeenCalledTimes(1);
+    expect(postMessage).toHaveBeenCalledWith({
       method: RPCInternalAction.PUSH_EVENT,
       payload: {
         type: EventName.USER_REJECT,

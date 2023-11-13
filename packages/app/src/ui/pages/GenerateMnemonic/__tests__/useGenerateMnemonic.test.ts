@@ -72,8 +72,8 @@ describe("ui/pages/GenerateMnemonic/useGenerateMnemonic", () => {
     renderHook(() => useGenerateMnemonic());
 
     await waitFor(() => {
-      expect(mockNavigate).toBeCalledTimes(1);
-      expect(mockNavigate).toBeCalledWith(Paths.HOME);
+      expect(mockNavigate).toHaveBeenCalledTimes(1);
+      expect(mockNavigate).toHaveBeenCalledWith(Paths.HOME);
     });
   });
 
@@ -83,7 +83,7 @@ describe("ui/pages/GenerateMnemonic/useGenerateMnemonic", () => {
     renderHook(() => useGenerateMnemonic());
 
     await waitFor(() => {
-      expect(generateMnemonic).toBeCalledTimes(1);
+      expect(generateMnemonic).toHaveBeenCalledTimes(1);
     });
   });
 
@@ -92,10 +92,10 @@ describe("ui/pages/GenerateMnemonic/useGenerateMnemonic", () => {
 
     await act(() => Promise.resolve(result.current.onSaveMnemonic()));
 
-    expect(mockDispatch).toBeCalledTimes(1);
-    expect(saveMnemonic).toBeCalledTimes(1);
-    expect(mockNavigate).toBeCalledTimes(1);
-    expect(mockNavigate).toBeCalledWith(Paths.HOME);
+    expect(mockDispatch).toHaveBeenCalledTimes(1);
+    expect(saveMnemonic).toHaveBeenCalledTimes(1);
+    expect(mockNavigate).toHaveBeenCalledTimes(1);
+    expect(mockNavigate).toHaveBeenCalledWith(Paths.HOME);
   });
 
   test("should save user mnemonic and go home properly", async () => {
@@ -104,11 +104,11 @@ describe("ui/pages/GenerateMnemonic/useGenerateMnemonic", () => {
     await act(() => Promise.resolve(result.current.onChooseInputMode()));
     await act(() => Promise.resolve(result.current.onSaveMnemonic()));
 
-    expect(mockDispatch).toBeCalledTimes(2);
-    expect(generateMnemonic).toBeCalledTimes(1);
-    expect(saveMnemonic).toBeCalledTimes(1);
-    expect(mockNavigate).toBeCalledTimes(1);
-    expect(mockNavigate).toBeCalledWith(Paths.HOME);
+    expect(mockDispatch).toHaveBeenCalledTimes(2);
+    expect(generateMnemonic).toHaveBeenCalledTimes(1);
+    expect(saveMnemonic).toHaveBeenCalledTimes(1);
+    expect(mockNavigate).toHaveBeenCalledTimes(1);
+    expect(mockNavigate).toHaveBeenCalledWith(Paths.HOME);
   });
 
   test("should set error if generate mnemonic is not successful", async () => {
@@ -121,7 +121,7 @@ describe("ui/pages/GenerateMnemonic/useGenerateMnemonic", () => {
     await act(() => Promise.resolve(result.current.onSaveMnemonic()));
 
     expect(result.current.errors.mnemonic).toBe(error.message);
-    expect(mockNavigate).toBeCalledTimes(0);
+    expect(mockNavigate).toHaveBeenCalledTimes(0);
   });
 
   test("should set error if save mnemonic is not successful", async () => {
@@ -133,7 +133,7 @@ describe("ui/pages/GenerateMnemonic/useGenerateMnemonic", () => {
     await act(() => Promise.resolve(result.current.onSaveMnemonic()));
 
     expect(result.current.errors.mnemonic).toBe(error.message);
-    expect(mockNavigate).toBeCalledTimes(0);
+    expect(mockNavigate).toHaveBeenCalledTimes(0);
   });
 
   test("should change modes properly", async () => {

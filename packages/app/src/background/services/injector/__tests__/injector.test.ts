@@ -123,9 +123,9 @@ describe("background/services/injector", () => {
 
       const result = service.getConnectedIdentityMetadata({}, { urlOrigin: mockDefaultUrlOrigin });
       expect(result).toStrictEqual(mockConnectedIdentity);
-      expect(mockIsApproved).toBeCalledTimes(1);
-      expect(mockCanSkip).toBeCalledTimes(1);
-      expect(mockAwaitLockServiceUnlock).toBeCalledTimes(0);
+      expect(mockIsApproved).toHaveBeenCalledTimes(1);
+      expect(mockCanSkip).toHaveBeenCalledTimes(1);
+      expect(mockAwaitLockServiceUnlock).toHaveBeenCalledTimes(0);
     });
 
     test("should throw error if there is no url origin", () => {

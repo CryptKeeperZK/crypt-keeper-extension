@@ -42,8 +42,8 @@ describe("ui/ducks/permissions", () => {
       [defaultHost]: { urlOrigin: defaultHost, ...defaultPermission },
     });
     expect(result.current).toStrictEqual({ urlOrigin: defaultHost, ...defaultPermission });
-    expect(postMessage).toBeCalledTimes(1);
-    expect(postMessage).toBeCalledWith({
+    expect(postMessage).toHaveBeenCalledTimes(1);
+    expect(postMessage).toHaveBeenCalledWith({
       method: RPCInternalAction.GET_HOST_PERMISSIONS,
       payload: defaultHost,
     });
@@ -62,8 +62,8 @@ describe("ui/ducks/permissions", () => {
       [defaultHost]: { urlOrigin: defaultHost, canSkipApprove: false },
     });
     expect(result.current).toStrictEqual({ urlOrigin: defaultHost, canSkipApprove: false });
-    expect(postMessage).toBeCalledTimes(1);
-    expect(postMessage).toBeCalledWith({
+    expect(postMessage).toHaveBeenCalledTimes(1);
+    expect(postMessage).toHaveBeenCalledWith({
       method: RPCInternalAction.SET_HOST_PERMISSIONS,
       payload: {
         urlOrigin: defaultHost,
@@ -81,8 +81,8 @@ describe("ui/ducks/permissions", () => {
 
     expect(permissions.canSkipApprovals).toStrictEqual({});
     expect(result.current).toBeUndefined();
-    expect(postMessage).toBeCalledTimes(1);
-    expect(postMessage).toBeCalledWith({
+    expect(postMessage).toHaveBeenCalledTimes(1);
+    expect(postMessage).toHaveBeenCalledWith({
       method: RPCInternalAction.REMOVE_HOST,
       payload: {
         urlOrigin: defaultHost,
@@ -96,8 +96,8 @@ describe("ui/ducks/permissions", () => {
     const result = await store.dispatch(checkHostApproval(defaultHost));
 
     expect(result).toBe(true);
-    expect(postMessage).toBeCalledTimes(1);
-    expect(postMessage).toBeCalledWith({
+    expect(postMessage).toHaveBeenCalledTimes(1);
+    expect(postMessage).toHaveBeenCalledWith({
       method: RPCInternalAction.IS_HOST_APPROVED,
       payload: defaultHost,
     });

@@ -87,7 +87,7 @@ describe("ui/hooks/useCryptKeeperWallet", () => {
 
     await act(async () => result.current.onConnect());
 
-    expect(activateSpy).toBeCalledTimes(1);
+    expect(activateSpy).toHaveBeenCalledTimes(1);
   });
 
   test("should connect eagerly properly", async () => {
@@ -96,7 +96,7 @@ describe("ui/hooks/useCryptKeeperWallet", () => {
 
     await act(async () => result.current.onConnectEagerly());
 
-    expect(connectEagerlySpy).toBeCalledTimes(1);
+    expect(connectEagerlySpy).toHaveBeenCalledTimes(1);
   });
 
   test("should disconnect properly", async () => {
@@ -105,7 +105,7 @@ describe("ui/hooks/useCryptKeeperWallet", () => {
 
     await act(async () => result.current.onDisconnect());
 
-    expect(resetStateSpy).toBeCalledTimes(1);
+    expect(resetStateSpy).toHaveBeenCalledTimes(1);
   });
 
   test("should lock properly", async () => {
@@ -113,6 +113,6 @@ describe("ui/hooks/useCryptKeeperWallet", () => {
 
     await act(async () => Promise.resolve(result.current.onLock()));
 
-    expect(lock).toBeCalledTimes(1);
+    expect(lock).toHaveBeenCalledTimes(1);
   });
 });

@@ -7,6 +7,7 @@ import { useNavigate } from "react-router-dom";
 
 import { Paths } from "@src/constants";
 import { Icon } from "@src/ui/components/Icon";
+import { disconnect } from "@src/ui/ducks/connections";
 import { useAppDispatch } from "@src/ui/ducks/hooks";
 import { createIdentityRequest, deleteIdentity, setIdentityName } from "@src/ui/ducks/identities";
 import { isExtensionPopupOpen } from "@src/util/browser";
@@ -49,6 +50,13 @@ export const IdentityList = ({
     [dispatch],
   );
 
+  const onDisconnectIdentity = useCallback(
+    async (identityCommitment: string) => {
+      await dispatch(disconnect(identityCommitment));
+    },
+    [dispatch],
+  );
+
   const onCreateIdentityRequest = useCallback(() => {
     if (isExtensionPopupOpen()) {
       dispatch(createIdentityRequest({ urlOrigin: "" }));
@@ -87,6 +95,7 @@ export const IdentityList = ({
             metadata={metadata}
             selected={selectedCommitment}
             onDeleteIdentity={onDeleteIdentity}
+            onDisconnectIdentity={onDisconnectIdentity}
             onSelectIdentity={onSelect}
             onUpdateIdentityName={onUpdateIdentityName}
           />

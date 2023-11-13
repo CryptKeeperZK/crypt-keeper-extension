@@ -125,7 +125,7 @@ describe("ui/components/VerifiableCredential/Display", () => {
     const submitRenameIcon = await screen.findByTestId("verifiable-credential-display-submit-rename");
     fireEvent.click(submitRenameIcon);
 
-    expect(defaultProps.onRenameVerifiableCredential).toBeCalledTimes(1);
-    expect(defaultProps.onRenameVerifiableCredential).toBeCalledWith("My Favorite Credential");
+    expect(defaultProps.onRenameVerifiableCredential).toHaveBeenCalledTimes(1);
+    expect(defaultProps.onRenameVerifiableCredential).toHaveBeenCalledWith("My Favorite Credential");
   });
 });

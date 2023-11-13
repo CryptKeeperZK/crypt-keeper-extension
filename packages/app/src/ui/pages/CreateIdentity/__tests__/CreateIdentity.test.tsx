@@ -133,7 +133,7 @@ describe("ui/pages/CreateIdentity", () => {
 
     await act(async () => Promise.resolve(fireEvent.click(metamaskButton)));
 
-    expect(defaultWalletHookData.onConnect).toBeCalledTimes(1);
+    expect(defaultWalletHookData.onConnect).toHaveBeenCalledTimes(1);
   });
 
   test("should render warning message for non-deterministic identity properly", async () => {
@@ -164,13 +164,13 @@ describe("ui/pages/CreateIdentity", () => {
     const button = await screen.findByText("Sign with CryptKeeper");
     await act(async () => Promise.resolve(fireEvent.click(button)));
 
-    expect(signWithSigner).toBeCalledTimes(0);
-    expect(mockDispatch).toBeCalledTimes(2);
-    expect(mockNavigate).toBeCalledTimes(1);
-    expect(mockNavigate).toBeCalledWith(Paths.HOME);
-    expect(closePopup).toBeCalledTimes(1);
-    expect(createIdentity).toBeCalledTimes(1);
-    expect(createIdentity).toBeCalledWith({
+    expect(signWithSigner).toHaveBeenCalledTimes(0);
+    expect(mockDispatch).toHaveBeenCalledTimes(2);
+    expect(mockNavigate).toHaveBeenCalledTimes(1);
+    expect(mockNavigate).toHaveBeenCalledWith(Paths.HOME);
+    expect(closePopup).toHaveBeenCalledTimes(1);
+    expect(createIdentity).toHaveBeenCalledTimes(1);
+    expect(createIdentity).toHaveBeenCalledWith({
       groups: [],
       messageSignature: undefined,
       urlOrigin: undefined,

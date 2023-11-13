@@ -52,8 +52,8 @@ describe("ui/components/MnemonicInput/useMnemonicInput", () => {
 
     await act(() => Promise.resolve(result.current.onCopy()));
 
-    expect(defaultTimeoutHookData.setActive).toBeCalledTimes(1);
-    expect(copyToClipboard).toBeCalledTimes(1);
+    expect(defaultTimeoutHookData.setActive).toHaveBeenCalledTimes(1);
+    expect(copyToClipboard).toHaveBeenCalledTimes(1);
   });
 
   test("should download mnemonic properly", async () => {
@@ -61,8 +61,8 @@ describe("ui/components/MnemonicInput/useMnemonicInput", () => {
 
     await act(() => Promise.resolve(result.current.onDownload()));
 
-    expect(defaultTimeoutHookData.setActive).toBeCalledTimes(1);
-    expect(downloadFile).toBeCalledTimes(1);
+    expect(defaultTimeoutHookData.setActive).toHaveBeenCalledTimes(1);
+    expect(downloadFile).toHaveBeenCalledTimes(1);
   });
 
   test("should toggle mnemonic show properly", async () => {

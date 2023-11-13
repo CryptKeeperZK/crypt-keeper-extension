@@ -175,8 +175,8 @@ describe("ui/ducks/identities", () => {
   test("should call create identity request action properly", async () => {
     await Promise.resolve(store.dispatch(createIdentityRequest({ urlOrigin: "http://localhost:3000" })));
 
-    expect(postMessage).toBeCalledTimes(1);
-    expect(postMessage).toBeCalledWith({
+    expect(postMessage).toHaveBeenCalledTimes(1);
+    expect(postMessage).toHaveBeenCalledWith({
       method: RPCInternalAction.CREATE_IDENTITY_REQUEST,
       payload: { urlOrigin: "http://localhost:3000" },
     });
@@ -196,8 +196,8 @@ describe("ui/ducks/identities", () => {
       ),
     );
 
-    expect(postMessage).toBeCalledTimes(1);
-    expect(postMessage).toBeCalledWith({
+    expect(postMessage).toHaveBeenCalledTimes(1);
+    expect(postMessage).toHaveBeenCalledWith({
       method: RPCInternalAction.CREATE_IDENTITY,
       payload: {
         messageSignature: "signature",
@@ -221,8 +221,8 @@ describe("ui/ducks/identities", () => {
 
     await Promise.resolve(store.dispatch(importIdentity(args)));
 
-    expect(postMessage).toBeCalledTimes(1);
-    expect(postMessage).toBeCalledWith({
+    expect(postMessage).toHaveBeenCalledTimes(1);
+    expect(postMessage).toHaveBeenCalledWith({
       method: RPCInternalAction.IMPORT_IDENTITY,
       payload: args,
     });
@@ -231,8 +231,8 @@ describe("ui/ducks/identities", () => {
   test("should call set identity name action properly", async () => {
     await Promise.resolve(store.dispatch(setIdentityName("1", "name")));
 
-    expect(postMessage).toBeCalledTimes(1);
-    expect(postMessage).toBeCalledWith({
+    expect(postMessage).toHaveBeenCalledTimes(1);
+    expect(postMessage).toHaveBeenCalledWith({
       method: RPCInternalAction.SET_IDENTITY_NAME,
       payload: {
         identityCommitment: "1",
@@ -244,8 +244,8 @@ describe("ui/ducks/identities", () => {
   test("should call delete identity action properly", async () => {
     await Promise.resolve(store.dispatch(deleteIdentity("1")));
 
-    expect(postMessage).toBeCalledTimes(1);
-    expect(postMessage).toBeCalledWith({
+    expect(postMessage).toHaveBeenCalledTimes(1);
+    expect(postMessage).toHaveBeenCalledWith({
       method: RPCInternalAction.DELETE_IDENTITY,
       payload: {
         identityCommitment: "1",
@@ -274,8 +274,8 @@ describe("ui/ducks/identities", () => {
   test("should call delete all identities action properly", async () => {
     await Promise.resolve(store.dispatch(deleteAllIdentities()));
 
-    expect(postMessage).toBeCalledTimes(1);
-    expect(postMessage).toBeCalledWith({
+    expect(postMessage).toHaveBeenCalledTimes(1);
+    expect(postMessage).toHaveBeenCalledWith({
       method: RPCInternalAction.DELETE_ALL_IDENTITIES,
     });
   });

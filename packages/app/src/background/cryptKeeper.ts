@@ -182,6 +182,7 @@ export default class CryptKeeperController {
 
     // Connections
     this.handler.add(RPCInternalAction.CONNECT, this.lockService.ensure, this.connectionService.connect);
+    this.handler.add(RPCInternalAction.DISCONNECT, this.lockService.ensure, this.connectionService.disconnect);
     this.handler.add(
       RPCInternalAction.REVEAL_CONNECTED_IDENTITY_COMMITMENT,
       this.lockService.ensure,

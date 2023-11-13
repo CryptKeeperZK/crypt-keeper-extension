@@ -144,8 +144,8 @@ describe("ui/pages/Onboarding", () => {
     const button = await screen.findByTestId("submit-button");
     await act(async () => Promise.resolve(fireEvent.submit(button)));
 
-    expect(mockDispatch).toBeCalledTimes(1);
-    expect(setupPassword).toBeCalledTimes(1);
-    expect(setupPassword).toBeCalledWith("Password123@");
+    expect(mockDispatch).toHaveBeenCalledTimes(1);
+    expect(setupPassword).toHaveBeenCalledTimes(1);
+    expect(setupPassword).toHaveBeenCalledWith("Password123@");
   });
 });

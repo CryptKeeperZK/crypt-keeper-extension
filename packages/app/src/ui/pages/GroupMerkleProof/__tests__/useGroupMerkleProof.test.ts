@@ -87,7 +87,7 @@ describe("ui/pages/GroupMerkleProof/useGroupMerkleProof", () => {
 
   const waitForData = async (data: IUseGroupMerkleProofData): Promise<void> => {
     await waitFor(() => !data.isLoading);
-    await waitFor(() => expect(fetchIdentities).toBeCalledTimes(1));
+    await waitFor(() => expect(fetchIdentities).toHaveBeenCalledTimes(1));
   };
 
   test("should return initial data", async () => {
@@ -108,14 +108,14 @@ describe("ui/pages/GroupMerkleProof/useGroupMerkleProof", () => {
 
     await act(() => Promise.resolve(result.current.onGoBack()));
 
-    expect(mockNavigate).toBeCalledTimes(1);
-    expect(mockNavigate).toBeCalledWith(Paths.HOME);
-    expect(mockDispatch).toBeCalledTimes(5);
-    expect(fetchIdentities).toBeCalledTimes(1);
-    expect(fetchConnections).toBeCalledTimes(1);
-    expect(checkGroupMembership).toBeCalledTimes(1);
-    expect(rejectUserRequest).toBeCalledTimes(1);
-    expect(closePopup).toBeCalledTimes(1);
+    expect(mockNavigate).toHaveBeenCalledTimes(1);
+    expect(mockNavigate).toHaveBeenCalledWith(Paths.HOME);
+    expect(mockDispatch).toHaveBeenCalledTimes(5);
+    expect(fetchIdentities).toHaveBeenCalledTimes(1);
+    expect(fetchConnections).toHaveBeenCalledTimes(1);
+    expect(checkGroupMembership).toHaveBeenCalledTimes(1);
+    expect(rejectUserRequest).toHaveBeenCalledTimes(1);
+    expect(closePopup).toHaveBeenCalledTimes(1);
   });
 
   test("should handle error properly", async () => {
@@ -147,8 +147,8 @@ describe("ui/pages/GroupMerkleProof/useGroupMerkleProof", () => {
 
     await act(() => Promise.resolve(result.current.onGoToHost()));
 
-    expect(redirectToNewTab).toBeCalledTimes(1);
-    expect(redirectToNewTab).toBeCalledWith(mockDefaultConnection.urlOrigin);
+    expect(redirectToNewTab).toHaveBeenCalledTimes(1);
+    expect(redirectToNewTab).toHaveBeenCalledWith(mockDefaultConnection.urlOrigin);
   });
 
   test("should go to group properly", async () => {
@@ -157,8 +157,8 @@ describe("ui/pages/GroupMerkleProof/useGroupMerkleProof", () => {
 
     await act(() => Promise.resolve(result.current.onGoToGroup()));
 
-    expect(redirectToNewTab).toBeCalledTimes(1);
-    expect(redirectToNewTab).toBeCalledWith(`${getBandadaUrl()}/groups/off-chain/groupId`);
+    expect(redirectToNewTab).toHaveBeenCalledTimes(1);
+    expect(redirectToNewTab).toHaveBeenCalledWith(`${getBandadaUrl()}/groups/off-chain/groupId`);
   });
 
   test("should generate group merkle proof properly", async () => {
@@ -168,14 +168,14 @@ describe("ui/pages/GroupMerkleProof/useGroupMerkleProof", () => {
     await act(() => Promise.resolve(result.current.onGenerateMerkleProof()));
     await waitFor(() => !result.current.isSubmitting);
 
-    expect(mockDispatch).toBeCalledTimes(5);
-    expect(fetchIdentities).toBeCalledTimes(1);
-    expect(fetchConnections).toBeCalledTimes(1);
-    expect(checkGroupMembership).toBeCalledTimes(1);
-    expect(generateGroupMerkleProof).toBeCalledTimes(1);
-    expect(closePopup).toBeCalledTimes(1);
-    expect(mockNavigate).toBeCalledTimes(1);
-    expect(mockNavigate).toBeCalledWith(Paths.HOME);
+    expect(mockDispatch).toHaveBeenCalledTimes(5);
+    expect(fetchIdentities).toHaveBeenCalledTimes(1);
+    expect(fetchConnections).toHaveBeenCalledTimes(1);
+    expect(checkGroupMembership).toHaveBeenCalledTimes(1);
+    expect(generateGroupMerkleProof).toHaveBeenCalledTimes(1);
+    expect(closePopup).toHaveBeenCalledTimes(1);
+    expect(mockNavigate).toHaveBeenCalledTimes(1);
+    expect(mockNavigate).toHaveBeenCalledWith(Paths.HOME);
   });
 
   test("should handle generate group merkle proof error properly", async () => {

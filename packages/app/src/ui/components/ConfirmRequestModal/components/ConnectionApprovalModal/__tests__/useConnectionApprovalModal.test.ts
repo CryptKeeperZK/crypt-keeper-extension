@@ -84,7 +84,7 @@ describe("ui/components/ConfirmRequestModal/components/ConnectionApprovalModal/u
       result.current.onAccept();
     });
 
-    expect(defaultArgs.accept).toBeCalledTimes(1);
+    expect(defaultArgs.accept).toHaveBeenCalledTimes(1);
   });
 
   test("should reject approval properly", async () => {
@@ -95,7 +95,7 @@ describe("ui/components/ConfirmRequestModal/components/ConnectionApprovalModal/u
       result.current.onReject();
     });
 
-    expect(defaultArgs.reject).toBeCalledTimes(1);
+    expect(defaultArgs.reject).toHaveBeenCalledTimes(1);
   });
 
   test("should set approval properly", async () => {
@@ -108,10 +108,10 @@ describe("ui/components/ConfirmRequestModal/components/ConnectionApprovalModal/u
     });
     await waitFor(() => !result.current.checked);
 
-    expect(fetchHostPermissions).toBeCalledTimes(1);
-    expect(fetchHostPermissions).toBeCalledWith(defaultArgs.pendingRequest.payload?.urlOrigin);
-    expect(setHostPermissions).toBeCalledTimes(1);
-    expect(setHostPermissions).toBeCalledWith({
+    expect(fetchHostPermissions).toHaveBeenCalledTimes(1);
+    expect(fetchHostPermissions).toHaveBeenCalledWith(defaultArgs.pendingRequest.payload?.urlOrigin);
+    expect(setHostPermissions).toHaveBeenCalledTimes(1);
+    expect(setHostPermissions).toHaveBeenCalledWith({
       urlOrigin: defaultArgs.pendingRequest.payload?.urlOrigin,
       canSkipApprove: false,
     });

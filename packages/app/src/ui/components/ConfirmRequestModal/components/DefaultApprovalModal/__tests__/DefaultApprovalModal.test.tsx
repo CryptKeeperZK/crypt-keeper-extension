@@ -65,6 +65,6 @@ describe("ui/components/ConfirmRequestModal/components/DefaultApprovalModal", ()
       button.click();
     });
 
-    expect(defaultProps.reject).toBeCalledTimes(1);
+    expect(defaultProps.reject).toHaveBeenCalledTimes(1);
   });
 });

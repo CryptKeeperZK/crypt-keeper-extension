@@ -12,6 +12,7 @@ export interface IUseIdentityItemArgs {
   connectedOrigin?: string;
   onDelete: (commitment: string) => Promise<void>;
   onUpdate: (commitment: string, name: string) => Promise<void>;
+  onDisconnect: (commitment: string) => Promise<void>;
   onSelect?: (commitment: string) => void;
 }
 
@@ -22,6 +23,7 @@ export interface IUseIdentityItemData {
   onDeleteIdentity: () => void;
   onSelectIdentity: () => void;
   onToggleRenaming: () => void;
+  onDisconnectIdentity: () => void;
   onGoToHost: () => void;
   onGoToIdentity: () => void;
   onUpdateName: (event: FormEvent | ReactMouseEvent) => void;
@@ -38,6 +40,7 @@ export const useIdentityItem = ({
   onDelete,
   onUpdate,
   onSelect,
+  onDisconnect,
 }: IUseIdentityItemArgs): IUseIdentityItemData => {
   const [isRenaming, setIsRenaming] = useState(false);
   const navigate = useNavigate();
@@ -56,6 +59,10 @@ export const useIdentityItem = ({
   const onDeleteIdentity = useCallback(() => {
     onDelete(commitment);
   }, [commitment, onDelete]);
+
+  const onDisconnectIdentity = useCallback(() => {
+    onDisconnect(commitment);
+  }, [commitment, onDisconnect]);
 
   const onSelectIdentity = useCallback(() => {
     onSelect?.(commitment);
@@ -94,6 +101,7 @@ export const useIdentityItem = ({
     },
     register,
     onDeleteIdentity,
+    onDisconnectIdentity,
     onSelectIdentity,
     onToggleRenaming,
     onGoToHost,

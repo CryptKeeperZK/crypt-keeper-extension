@@ -32,6 +32,6 @@ describe("ui/components/UploadButton/useUploadButton", () => {
 
     await act(() => fireEvent.drop(container.querySelector("div")!, data));
 
-    expect(defaultHookArgs.onDrop).toBeCalledTimes(1);
+    expect(defaultHookArgs.onDrop).toHaveBeenCalledTimes(1);
   });
 });

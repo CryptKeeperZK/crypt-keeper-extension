@@ -71,7 +71,7 @@ describe("ui/components/ConfirmRequestModal/components/ConnectionApprovalModal",
       button.click();
     });
 
-    expect(defaultHookData.onAccept).toBeCalledTimes(1);
+    expect(defaultHookData.onAccept).toHaveBeenCalledTimes(1);
   });
 
   test("should reject approval properly", async () => {
@@ -82,7 +82,7 @@ describe("ui/components/ConfirmRequestModal/components/ConnectionApprovalModal",
       button.click();
     });
 
-    expect(defaultHookData.onReject).toBeCalledTimes(1);
+    expect(defaultHookData.onReject).toHaveBeenCalledTimes(1);
   });
 
   test("should select permanent approval properly", async () => {
@@ -93,6 +93,6 @@ describe("ui/components/ConfirmRequestModal/components/ConnectionApprovalModal",
       label.click();
     });
 
-    expect(defaultHookData.onSetApproval).toBeCalledTimes(1);
+    expect(defaultHookData.onSetApproval).toHaveBeenCalledTimes(1);
   });
 });

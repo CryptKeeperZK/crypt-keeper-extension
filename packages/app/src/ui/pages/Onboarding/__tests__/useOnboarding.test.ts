@@ -75,9 +75,9 @@ describe("ui/pages/Onboarding/useOnboarding", () => {
     await waitFor(() => !result.current.isLoading);
 
     expect(result.current.isLoading).toBe(false);
-    expect(mockDispatch).toBeCalledTimes(1);
-    expect(mockNavigate).toBeCalledTimes(1);
-    expect(mockNavigate).toBeCalledWith(Paths.GENERATE_MNEMONIC);
+    expect(mockDispatch).toHaveBeenCalledTimes(1);
+    expect(mockNavigate).toHaveBeenCalledTimes(1);
+    expect(mockNavigate).toHaveBeenCalledWith(Paths.GENERATE_MNEMONIC);
   });
 
   test("should handle submit error", async () => {
@@ -129,7 +129,7 @@ describe("ui/pages/Onboarding/useOnboarding", () => {
       result.current.onGoToOnboardingBackup();
     });
 
-    expect(mockDispatch).toBeCalledTimes(1);
-    expect(createOnboardingBackupRequest).toBeCalledTimes(1);
+    expect(mockDispatch).toHaveBeenCalledTimes(1);
+    expect(createOnboardingBackupRequest).toHaveBeenCalledTimes(1);
   });
 });

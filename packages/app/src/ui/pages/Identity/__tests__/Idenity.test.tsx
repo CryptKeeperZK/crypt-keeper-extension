@@ -158,7 +158,7 @@ describe("ui/pages/Identity", () => {
     const button = await findByText("Delete");
     await act(() => Promise.resolve(button.click()));
 
-    expect(defaultHookData.onConfirmDeleteIdentity).toBeCalledTimes(1);
+    expect(defaultHookData.onConfirmDeleteIdentity).toHaveBeenCalledTimes(1);
   });
 
   test("should delete identity properly", async () => {
@@ -177,11 +177,11 @@ describe("ui/pages/Identity", () => {
 
     const noButton = await findByTestId("danger-modal-reject");
     await act(() => Promise.resolve(noButton.click()));
-    expect(defaultHookData.onConfirmDeleteIdentity).toBeCalledTimes(1);
+    expect(defaultHookData.onConfirmDeleteIdentity).toHaveBeenCalledTimes(1);
 
     const yesButton = await findByTestId("danger-modal-accept");
     await act(() => Promise.resolve(yesButton.click()));
-    expect(defaultHookData.onDeleteIdentity).toBeCalledTimes(1);
+    expect(defaultHookData.onDeleteIdentity).toHaveBeenCalledTimes(1);
   });
 
   test("should render update form properly", async () => {
@@ -201,6 +201,6 @@ describe("ui/pages/Identity", () => {
     const confirmButton = await findByText("Confirm");
     await act(() => Promise.resolve(confirmButton.click()));
 
-    expect(defaultHookData.onConfirmUpdate).toBeCalledTimes(1);
+    expect(defaultHookData.onConfirmUpdate).toHaveBeenCalledTimes(1);
   });
 });

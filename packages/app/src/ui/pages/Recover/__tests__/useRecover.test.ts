@@ -57,8 +57,8 @@ describe("ui/pages/Recover/useRecover", () => {
 
     await act(async () => Promise.resolve(result.current.onClose()));
 
-    expect(mockNavigate).toBeCalledTimes(1);
-    expect(mockNavigate).toBeCalledWith(Paths.SETTINGS);
+    expect(mockNavigate).toHaveBeenCalledTimes(1);
+    expect(mockNavigate).toHaveBeenCalledWith(Paths.SETTINGS);
   });
 
   test("should submit form properly", async () => {
@@ -78,10 +78,10 @@ describe("ui/pages/Recover/useRecover", () => {
     await waitFor(() => !result.current.isLoading);
 
     expect(result.current.isLoading).toBe(false);
-    expect(mockDispatch).toBeCalledTimes(1);
-    expect(checkMnemonic).toBeCalledTimes(1);
-    expect(mockNavigate).toBeCalledTimes(1);
-    expect(mockNavigate).toBeCalledWith(`${Paths.RESET_PASSWORD}?mnemonic=${defaultMnemonic}`);
+    expect(mockDispatch).toHaveBeenCalledTimes(1);
+    expect(checkMnemonic).toHaveBeenCalledTimes(1);
+    expect(mockNavigate).toHaveBeenCalledTimes(1);
+    expect(mockNavigate).toHaveBeenCalledWith(`${Paths.RESET_PASSWORD}?mnemonic=${defaultMnemonic}`);
   });
 
   test("should handle submit error", async () => {

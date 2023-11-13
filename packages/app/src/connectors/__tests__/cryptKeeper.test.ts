@@ -55,8 +55,8 @@ describe("connectors/cryptKeeper", () => {
 
     await connector.activate();
 
-    expect(mockActions.update).toBeCalledTimes(1);
-    expect(mockActions.update).toBeCalledWith({ accounts: mockAddresses });
+    expect(mockActions.update).toHaveBeenCalledTimes(1);
+    expect(mockActions.update).toHaveBeenCalledWith({ accounts: mockAddresses });
   });
 
   test("should activate connector twice properly", async () => {
@@ -65,7 +65,7 @@ describe("connectors/cryptKeeper", () => {
     await connector.activate();
     await connector.activate();
 
-    expect(mockActions.update).toBeCalledTimes(2);
+    expect(mockActions.update).toHaveBeenCalledTimes(2);
   });
 
   test("should start activation properly", async () => {
@@ -78,7 +78,7 @@ describe("connectors/cryptKeeper", () => {
 
     await connector.activate();
 
-    expect(mockActions.startActivation).toBeCalledTimes(1);
+    expect(mockActions.startActivation).toHaveBeenCalledTimes(1);
   });
 
   test("should throw error if there is no provider", async () => {
@@ -87,8 +87,8 @@ describe("connectors/cryptKeeper", () => {
     const connector = new CryptkeeperConnector(mockActions);
 
     await expect(connector.activate()).rejects.toThrow("No CryptKeeper extension installed");
-    expect(mockActions.startActivation).toBeCalledTimes(1);
-    expect(cancelActivation).toBeCalledTimes(1);
+    expect(mockActions.startActivation).toHaveBeenCalledTimes(1);
+    expect(cancelActivation).toHaveBeenCalledTimes(1);
   });
 
   test("should handle incomming events properly", async () => {
@@ -97,12 +97,12 @@ describe("connectors/cryptKeeper", () => {
     const connector = new CryptkeeperConnector(mockActions);
 
     await connector.activate();
-    await waitFor(() => expect(mockActions.update).toBeCalledTimes(1));
-    await waitFor(() => expect(mockActions.update).toBeCalledWith({ accounts: mockAddresses }));
+    await waitFor(() => expect(mockActions.update).toHaveBeenCalledTimes(1));
+    await waitFor(() => expect(mockActions.update).toHaveBeenCalledWith({ accounts: mockAddresses }));
 
     await Promise.resolve(mockProvider.emit(EventName.LOGOUT));
 
-    expect(mockActions.resetState).toBeCalledTimes(1);
+    expect(mockActions.resetState).toHaveBeenCalledTimes(1);
   });
 
   test("should not connect eagerly if there is no provider", async () => {
@@ -111,8 +111,8 @@ describe("connectors/cryptKeeper", () => {
 
     await connector.connectEagerly();
 
-    expect(mockActions.startActivation).toBeCalledTimes(1);
-    expect(cancelActivation).toBeCalledTimes(1);
+    expect(mockActions.startActivation).toHaveBeenCalledTimes(1);
+    expect(cancelActivation).toHaveBeenCalledTimes(1);
   });
 
   test("should reset state when connecting eagerly throws an error", async () => {
@@ -123,9 +123,9 @@ describe("connectors/cryptKeeper", () => {
 
     await connector.connectEagerly();
 
-    expect(mockActions.startActivation).toBeCalledTimes(1);
-    expect(mockActions.resetState).toBeCalledTimes(1);
-    expect(cancelActivation).toBeCalledTimes(1);
+    expect(mockActions.startActivation).toHaveBeenCalledTimes(1);
+    expect(mockActions.resetState).toHaveBeenCalledTimes(1);
+    expect(cancelActivation).toHaveBeenCalledTimes(1);
   });
 
   test("should connect eagerly and set accounts properly", async () => {
@@ -135,8 +135,8 @@ describe("connectors/cryptKeeper", () => {
 
     await connector.connectEagerly();
 
-    expect(mockActions.startActivation).toBeCalledTimes(1);
-    expect(mockActions.update).toBeCalledTimes(1);
-    expect(mockActions.update).toBeCalledWith({ accounts: mockAddresses });
+    expect(mockActions.startActivation).toHaveBeenCalledTimes(1);
+    expect(mockActions.update).toHaveBeenCalledTimes(1);
+    expect(mockActions.update).toHaveBeenCalledWith({ accounts: mockAddresses });
   });
 });

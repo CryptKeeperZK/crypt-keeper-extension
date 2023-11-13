@@ -134,9 +134,9 @@ describe("ui/hooks/useEthWallet", () => {
 
     await act(async () => result.current.onConnect());
 
-    expect(activateSpy).toBeCalledTimes(1);
-    expect(setWalletConnection).toBeCalledTimes(1);
-    expect(setWalletConnection).toBeCalledWith(false);
+    expect(activateSpy).toHaveBeenCalledTimes(1);
+    expect(setWalletConnection).toHaveBeenCalledTimes(1);
+    expect(setWalletConnection).toHaveBeenCalledWith(false);
   });
 
   test("should connect eagerly properly", async () => {
@@ -146,8 +146,8 @@ describe("ui/hooks/useEthWallet", () => {
 
     await act(async () => result.current.onConnectEagerly());
 
-    expect(connectEagerlySpy).toBeCalledTimes(1);
-    expect(getWalletConnection).toBeCalledTimes(1);
+    expect(connectEagerlySpy).toHaveBeenCalledTimes(1);
+    expect(getWalletConnection).toHaveBeenCalledTimes(1);
   });
 
   test("should disconnect properly", async () => {
@@ -156,9 +156,9 @@ describe("ui/hooks/useEthWallet", () => {
 
     await act(async () => result.current.onDisconnect());
 
-    expect(resetStateSpy).toBeCalledTimes(1);
-    expect(setWalletConnection).toBeCalledTimes(1);
-    expect(setWalletConnection).toBeCalledWith(true);
+    expect(resetStateSpy).toHaveBeenCalledTimes(1);
+    expect(setWalletConnection).toHaveBeenCalledTimes(1);
+    expect(setWalletConnection).toHaveBeenCalledWith(true);
   });
 
   test("should lock properly", async () => {
@@ -166,6 +166,6 @@ describe("ui/hooks/useEthWallet", () => {
 
     await act(async () => Promise.resolve(result.current.onLock()));
 
-    expect(lock).toBeCalledTimes(1);
+    expect(lock).toHaveBeenCalledTimes(1);
   });
 });

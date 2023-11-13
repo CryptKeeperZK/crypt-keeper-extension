@@ -133,11 +133,11 @@ describe("ui/pages/Login", () => {
     const button = await screen.findByTestId("unlock-button");
     await act(async () => Promise.resolve(fireEvent.submit(button)));
 
-    expect(mockDispatch).toBeCalledTimes(2);
-    expect(unlock).toBeCalledTimes(1);
-    expect(unlock).toBeCalledWith("password");
-    expect(closePopup).toBeCalledTimes(1);
-    expect(mockNavigate).toBeCalledTimes(1);
-    expect(mockNavigate).toBeCalledWith(Paths.HOME);
+    expect(mockDispatch).toHaveBeenCalledTimes(2);
+    expect(unlock).toHaveBeenCalledTimes(1);
+    expect(unlock).toHaveBeenCalledWith("password");
+    expect(closePopup).toHaveBeenCalledTimes(1);
+    expect(mockNavigate).toHaveBeenCalledTimes(1);
+    expect(mockNavigate).toHaveBeenCalledWith(Paths.HOME);
   });
 });

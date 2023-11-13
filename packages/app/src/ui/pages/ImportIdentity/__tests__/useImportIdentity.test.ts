@@ -149,11 +149,11 @@ describe("ui/pages/ImportIdentity/useImportIdentity", () => {
 
     await act(() => Promise.resolve(result.current.onGoBack()));
 
-    expect(mockNavigate).toBeCalledTimes(1);
-    expect(mockNavigate).toBeCalledWith(Paths.HOME);
-    expect(mockDispatch).toBeCalledTimes(2);
-    expect(rejectUserRequest).toBeCalledTimes(1);
-    expect(closePopup).toBeCalledTimes(1);
+    expect(mockNavigate).toHaveBeenCalledTimes(1);
+    expect(mockNavigate).toHaveBeenCalledWith(Paths.HOME);
+    expect(mockDispatch).toHaveBeenCalledTimes(2);
+    expect(rejectUserRequest).toHaveBeenCalledTimes(1);
+    expect(closePopup).toHaveBeenCalledTimes(1);
   });
 
   test("should go back properly without closing popup", async () => {
@@ -163,11 +163,11 @@ describe("ui/pages/ImportIdentity/useImportIdentity", () => {
 
     await act(() => Promise.resolve(result.current.onGoBack()));
 
-    expect(mockNavigate).toBeCalledTimes(1);
-    expect(mockNavigate).toBeCalledWith(-1);
-    expect(mockDispatch).toBeCalledTimes(1);
-    expect(rejectUserRequest).toBeCalledTimes(1);
-    expect(closePopup).toBeCalledTimes(0);
+    expect(mockNavigate).toHaveBeenCalledTimes(1);
+    expect(mockNavigate).toHaveBeenCalledWith(-1);
+    expect(mockDispatch).toHaveBeenCalledTimes(1);
+    expect(rejectUserRequest).toHaveBeenCalledTimes(1);
+    expect(closePopup).toHaveBeenCalledTimes(0);
   });
 
   test("should go to host properly", async () => {
@@ -175,8 +175,8 @@ describe("ui/pages/ImportIdentity/useImportIdentity", () => {
 
     await act(() => Promise.resolve(result.current.onGoToHost()));
 
-    expect(redirectToNewTab).toBeCalledTimes(1);
-    expect(redirectToNewTab).toBeCalledWith(mockDefaultConnection.urlOrigin);
+    expect(redirectToNewTab).toHaveBeenCalledTimes(1);
+    expect(redirectToNewTab).toHaveBeenCalledWith(mockDefaultConnection.urlOrigin);
   });
 
   test("should drop object file properly", async () => {
@@ -253,12 +253,12 @@ describe("ui/pages/ImportIdentity/useImportIdentity", () => {
     await act(() => result.current.register("name").onChange({ target: { value: "name" } }));
     await act(() => Promise.resolve(result.current.onSubmit(EWallet.CRYPTKEEPER_WALLET)));
 
-    expect(signWithSigner).toBeCalledTimes(0);
-    expect(mockDispatch).toBeCalledTimes(2);
-    expect(importIdentity).toBeCalledTimes(1);
-    expect(closePopup).toBeCalledTimes(1);
-    expect(mockNavigate).toBeCalledTimes(1);
-    expect(mockNavigate).toBeCalledWith(Paths.HOME);
+    expect(signWithSigner).toHaveBeenCalledTimes(0);
+    expect(mockDispatch).toHaveBeenCalledTimes(2);
+    expect(importIdentity).toHaveBeenCalledTimes(1);
+    expect(closePopup).toHaveBeenCalledTimes(1);
+    expect(mockNavigate).toHaveBeenCalledTimes(1);
+    expect(mockNavigate).toHaveBeenCalledWith(Paths.HOME);
   });
 
   test("should connect eth wallet properly", async () => {
@@ -268,7 +268,7 @@ describe("ui/pages/ImportIdentity/useImportIdentity", () => {
     await act(async () => Promise.resolve(result.current.onSubmit(EWallet.ETH_WALLET)));
 
     expect(result.current.isLoading).toBe(false);
-    expect(defaultWalletHookData.onConnect).toBeCalledTimes(1);
+    expect(defaultWalletHookData.onConnect).toHaveBeenCalledTimes(1);
   });
 
   test("should handle error when trying to connect with eth wallet", async () => {
@@ -294,7 +294,7 @@ describe("ui/pages/ImportIdentity/useImportIdentity", () => {
 
     await act(async () => Promise.resolve(result.current.onSubmit(EWallet.ETH_WALLET)));
 
-    expect(mockDispatch).toBeCalledTimes(0);
+    expect(mockDispatch).toHaveBeenCalledTimes(0);
     expect(result.current.isLoading).toBe(false);
     expect(result.current.errors.root).toBe(error.message);
   });
@@ -305,11 +305,11 @@ describe("ui/pages/ImportIdentity/useImportIdentity", () => {
     await act(() => result.current.register("name").onChange({ target: { value: "name" } }));
     await act(() => Promise.resolve(result.current.onSubmit(EWallet.ETH_WALLET)));
 
-    expect(mockDispatch).toBeCalledTimes(2);
-    expect(importIdentity).toBeCalledTimes(1);
-    expect(closePopup).toBeCalledTimes(1);
-    expect(mockNavigate).toBeCalledTimes(1);
-    expect(mockNavigate).toBeCalledWith(Paths.HOME);
+    expect(mockDispatch).toHaveBeenCalledTimes(2);
+    expect(importIdentity).toHaveBeenCalledTimes(1);
+    expect(closePopup).toHaveBeenCalledTimes(1);
+    expect(mockNavigate).toHaveBeenCalledTimes(1);
+    expect(mockNavigate).toHaveBeenCalledWith(Paths.HOME);
   });
 
   test("should submit and go back properly", async () => {
@@ -322,10 +322,10 @@ describe("ui/pages/ImportIdentity/useImportIdentity", () => {
     await act(() => result.current.register("name").onChange({ target: { value: "name" } }));
     await act(() => Promise.resolve(result.current.onSubmit(EWallet.CRYPTKEEPER_WALLET)));
 
-    expect(mockDispatch).toBeCalledTimes(1);
-    expect(importIdentity).toBeCalledTimes(1);
-    expect(mockNavigate).toBeCalledTimes(1);
-    expect(mockNavigate).toBeCalledWith(
+    expect(mockDispatch).toHaveBeenCalledTimes(1);
+    expect(importIdentity).toHaveBeenCalledTimes(1);
+    expect(mockNavigate).toHaveBeenCalledTimes(1);
+    expect(mockNavigate).toHaveBeenCalledWith(
       `${Paths.CONNECT_IDENTITY}?urlOrigin=${mockDefaultConnection.urlOrigin}&back=${Paths.CONNECT_IDENTITY}`,
     );
   });
@@ -340,10 +340,10 @@ describe("ui/pages/ImportIdentity/useImportIdentity", () => {
     await act(() => result.current.register("name").onChange({ target: { value: "name" } }));
     await act(() => Promise.resolve(result.current.onSubmit(EWallet.CRYPTKEEPER_WALLET)));
 
-    expect(mockDispatch).toBeCalledTimes(1);
-    expect(importIdentity).toBeCalledTimes(1);
-    expect(mockNavigate).toBeCalledTimes(1);
-    expect(mockNavigate).toBeCalledWith(Paths.HOME);
+    expect(mockDispatch).toHaveBeenCalledTimes(1);
+    expect(importIdentity).toHaveBeenCalledTimes(1);
+    expect(mockNavigate).toHaveBeenCalledTimes(1);
+    expect(mockNavigate).toHaveBeenCalledWith(Paths.HOME);
   });
 
   test("should handle submit error properly", async () => {
@@ -364,6 +364,6 @@ describe("ui/pages/ImportIdentity/useImportIdentity", () => {
     await act(async () => Promise.resolve(result.current.onSubmit(9000)));
 
     expect(result.current.isLoading).toBe(false);
-    expect(mockDispatch).toBeCalledTimes(0);
+    expect(mockDispatch).toHaveBeenCalledTimes(0);
   });
 });

@@ -56,8 +56,8 @@ describe("background/controllers/browserUtils", () => {
     browserUtils.addRemoveWindowListener(callback);
     browserUtils.removeRemoveWindowListener(callback);
 
-    expect(browser.windows.onRemoved.addListener).toBeCalledTimes(1);
-    expect(browser.windows.onRemoved.removeListener).toBeCalledTimes(1);
+    expect(browser.windows.onRemoved.addListener).toHaveBeenCalledTimes(1);
+    expect(browser.windows.onRemoved.removeListener).toHaveBeenCalledTimes(1);
   });
 
   test("should clear storage properly", async () => {
@@ -65,7 +65,7 @@ describe("background/controllers/browserUtils", () => {
 
     await browserUtils.clearStorage();
 
-    expect(browser.storage.sync.clear).toBeCalledTimes(1);
+    expect(browser.storage.sync.clear).toHaveBeenCalledTimes(1);
   });
 
   test("should push event properly", async () => {
@@ -73,6 +73,6 @@ describe("background/controllers/browserUtils", () => {
 
     await browserUtils.pushEvent({ type: "type" }, { urlOrigin: "http://localhost:3000" });
 
-    expect(browser.tabs.sendMessage).toBeCalledTimes(2);
+    expect(browser.tabs.sendMessage).toHaveBeenCalledTimes(2);
   });
 });

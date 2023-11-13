@@ -84,7 +84,7 @@ describe("background/services/protocols", () => {
 
       await rln.genProof(identityDecorator, { ...proofRequest, merkleStorageUrl: "http://localhost:3000/merkle" });
 
-      expect(mockRlnGenerateProof).toBeCalledTimes(1);
+      expect(mockRlnGenerateProof).toHaveBeenCalledTimes(1);
     });
 
     test("should generate rln proof properly with remote merkle proof but with string epoch", async () => {
@@ -109,7 +109,7 @@ describe("background/services/protocols", () => {
         merkleStorageUrl: "http://localhost:3000/merkle",
       });
 
-      expect(mockRlnGenerateProof).toBeCalledTimes(1);
+      expect(mockRlnGenerateProof).toHaveBeenCalledTimes(1);
     });
 
     test("should handle error properly when getting undefined zkey file paths", async () => {
@@ -207,8 +207,8 @@ describe("background/services/protocols", () => {
         merkleStorageUrl: "http://localhost:3000/merkle",
       });
 
-      expect(generateProof).toBeCalledTimes(1);
-      expect(generateProof).toBeCalledWith(
+      expect(generateProof).toHaveBeenCalledTimes(1);
+      expect(generateProof).toHaveBeenCalledWith(
         identityDecorator.zkIdentity,
         defaultMerkleProof,
         proofRequest.externalNullifier,

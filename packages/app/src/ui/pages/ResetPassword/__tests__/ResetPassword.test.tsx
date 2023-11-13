@@ -124,8 +124,8 @@ describe("ui/pages/ResetPassword", () => {
     const button = await screen.findByTestId("submit-button");
     await act(async () => Promise.resolve(fireEvent.submit(button)));
 
-    expect(mockNavigate).toBeCalledTimes(1);
-    expect(mockNavigate).toBeCalledWith(Paths.HOME);
+    expect(mockNavigate).toHaveBeenCalledTimes(1);
+    expect(mockNavigate).toHaveBeenCalledWith(Paths.HOME);
   });
 
   test("should handle submit error properly", async () => {

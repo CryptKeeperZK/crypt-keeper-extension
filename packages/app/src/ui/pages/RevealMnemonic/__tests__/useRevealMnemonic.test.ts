@@ -65,8 +65,8 @@ describe("ui/pages/RevealMnemonic/useRevealMnemonic", () => {
 
     await act(() => Promise.resolve(result.current.onGoBack()));
 
-    expect(mockNavigate).toBeCalledTimes(1);
-    expect(mockNavigate).toBeCalledWith(Paths.SETTINGS);
+    expect(mockNavigate).toHaveBeenCalledTimes(1);
+    expect(mockNavigate).toHaveBeenCalledWith(Paths.SETTINGS);
   });
 
   test("should handle submit error properly", async () => {
@@ -95,9 +95,9 @@ describe("ui/pages/RevealMnemonic/useRevealMnemonic", () => {
     await waitFor(() => !result.current.isLoading);
 
     expect(result.current.mnemonic).toBe(defaultMnemonic);
-    expect(mockDispatch).toBeCalledTimes(2);
-    expect(checkPassword).toBeCalledTimes(1);
-    expect(getMnemonic).toBeCalledTimes(1);
+    expect(mockDispatch).toHaveBeenCalledTimes(2);
+    expect(checkPassword).toHaveBeenCalledTimes(1);
+    expect(getMnemonic).toHaveBeenCalledTimes(1);
   });
 
   test("should toggle password visibility properly", () => {

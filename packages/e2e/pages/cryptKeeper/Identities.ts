@@ -103,6 +103,14 @@ export default class Identities extends BasePage {
     await this.page.getByText("Yes").click();
   }
 
+  async disconnect(index = 0): Promise<void> {
+    const identities = await this.page.locator(`[data-testid="identity-row"]`).all();
+    await identities[index].getByTestId("menu").click();
+
+    await this.page.getByText("Disconnect").click();
+    await this.page.getByText("Yes").click();
+  }
+
   async goToImportIdentity(): Promise<void> {
     await this.page.getByTestId("create-new-identity").click();
     await this.page.getByTestId("import-identity").click();

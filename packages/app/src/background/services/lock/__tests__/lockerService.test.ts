@@ -123,7 +123,7 @@ describe("background/services/locker", () => {
       await lockService.resetPassword({ mnemonic: defaultMnemonic, password: defaultPassword });
       const status = await lockService.getStatus();
 
-      expect(passwordStorage.set).toBeCalledTimes(1);
+      expect(passwordStorage.set).toHaveBeenCalledTimes(1);
       expect(status).toStrictEqual({
         isInitialized: true,
         isMnemonicGenerated: true,
@@ -148,9 +148,9 @@ describe("background/services/locker", () => {
         isMnemonicGenerated: true,
       });
 
-      expect(pushMessage).toBeCalledTimes(1);
-      expect(pushMessage).toBeCalledWith(setStatus(status));
-      expect(browser.tabs.sendMessage).toBeCalledTimes(defaultTabs.length);
+      expect(pushMessage).toHaveBeenCalledTimes(1);
+      expect(pushMessage).toHaveBeenCalledWith(setStatus(status));
+      expect(browser.tabs.sendMessage).toHaveBeenCalledTimes(defaultTabs.length);
 
       for (let index = 0; index < defaultTabs.length; index += 1) {
         expect(browser.tabs.sendMessage).toHaveBeenNthCalledWith(index + 1, defaultTabs[index].id, setStatus(status));
@@ -206,7 +206,7 @@ describe("background/services/locker", () => {
 
       expect(result).toBeDefined();
 
-      expect(mockGet).toBeCalledTimes(1);
+      expect(mockGet).toHaveBeenCalledTimes(1);
     });
 
     test("should not download encrypted password storage if storage is empty", async () => {
@@ -225,7 +225,7 @@ describe("background/services/locker", () => {
 
       await lockService.uploadEncryptedStorage("encrypted", defaultPassword);
 
-      expect(mockSet).toBeCalledTimes(0);
+      expect(mockSet).toHaveBeenCalledTimes(0);
     });
 
     test("should upload encrypted password storage if new user", async () => {
@@ -241,7 +241,7 @@ describe("background/services/locker", () => {
 
       await lockService.uploadEncryptedStorage("encrypted", defaultPassword);
 
-      expect(mockSet).toBeCalledTimes(1);
+      expect(mockSet).toHaveBeenCalledTimes(1);
     });
 
     test("should throw error when trying upload incorrect backup", async () => {
@@ -260,7 +260,7 @@ describe("background/services/locker", () => {
 
       await lockService.downloadStorage();
 
-      expect(storage.get).toBeCalledTimes(1);
+      expect(storage.get).toHaveBeenCalledTimes(1);
     });
 
     test("should restore storage properly", async () => {
@@ -269,8 +269,8 @@ describe("background/services/locker", () => {
 
       await lockService.restoreStorage("storage");
 
-      expect(storage.set).toBeCalledTimes(1);
-      expect(storage.set).toBeCalledWith("storage");
+      expect(storage.set).toHaveBeenCalledTimes(1);
+      expect(storage.set).toHaveBeenCalledWith("storage");
     });
 
     test("should throw error when trying to restore incorrect data", async () => {

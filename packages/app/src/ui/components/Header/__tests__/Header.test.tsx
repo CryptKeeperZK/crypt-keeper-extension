@@ -97,8 +97,8 @@ describe("ui/components/Header", () => {
     const metamaskInstall = await findByText("Install MetaMask");
     await act(async () => Promise.resolve(metamaskInstall.click()));
 
-    expect(redirectToNewTab).toBeCalledTimes(1);
-    expect(redirectToNewTab).toBeCalledWith("https://metamask.io/");
+    expect(redirectToNewTab).toHaveBeenCalledTimes(1);
+    expect(redirectToNewTab).toHaveBeenCalledWith("https://metamask.io/");
   });
 
   test("should redirect to options page", async () => {
@@ -110,8 +110,8 @@ describe("ui/components/Header", () => {
     const options = await findByText("Settings");
     await act(async () => Promise.resolve(options.click()));
 
-    expect(mockNavigate).toBeCalledTimes(1);
-    expect(mockNavigate).toBeCalledWith(Paths.SETTINGS);
+    expect(mockNavigate).toHaveBeenCalledTimes(1);
+    expect(mockNavigate).toHaveBeenCalledWith(Paths.SETTINGS);
   });
 
   test("should redirect to home page", async () => {
@@ -120,7 +120,7 @@ describe("ui/components/Header", () => {
     const logo = await findByTestId("logo");
     await act(async () => Promise.resolve(logo.click()));
 
-    expect(mockNavigate).toBeCalledTimes(1);
-    expect(mockNavigate).toBeCalledWith(Paths.HOME);
+    expect(mockNavigate).toHaveBeenCalledTimes(1);
+    expect(mockNavigate).toHaveBeenCalledWith(Paths.HOME);
   });
 });

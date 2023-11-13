@@ -106,10 +106,10 @@ describe("ui/pages/Home/useHome", () => {
 
     expect(result.current.address).toBe(defaultWalletHookData.address);
     expect(result.current.identities).toStrictEqual(defaultIdentities);
-    expect(fetchIdentities).toBeCalledTimes(1);
-    expect(fetchConnections).toBeCalledTimes(1);
-    expect(fetchHistory).toBeCalledTimes(1);
-    expect(mockDispatch).toBeCalledTimes(3);
+    expect(fetchIdentities).toHaveBeenCalledTimes(1);
+    expect(fetchConnections).toHaveBeenCalledTimes(1);
+    expect(fetchHistory).toHaveBeenCalledTimes(1);
+    expect(mockDispatch).toHaveBeenCalledTimes(3);
   });
 
   test("should refresh connection status properly", async () => {
@@ -117,8 +117,8 @@ describe("ui/pages/Home/useHome", () => {
 
     await act(async () => result.current.refreshConnectionStatus());
 
-    expect(checkHostApproval).toBeCalledTimes(1);
-    expect(checkHostApproval).toBeCalledWith(defaultUrl.origin);
+    expect(checkHostApproval).toHaveBeenCalledTimes(1);
+    expect(checkHostApproval).toHaveBeenCalledWith(defaultUrl.origin);
   });
 
   test("should not refresh connection status if there is no any tab", async () => {

@@ -66,7 +66,7 @@ describe("ui/components/ConnectionModal/ConnectionModal", () => {
       button.click();
     });
 
-    expect(defaultHookData.onRemoveHost).toBeCalledTimes(1);
+    expect(defaultHookData.onRemoveHost).toHaveBeenCalledTimes(1);
   });
 
   test("should close modal properly", async () => {
@@ -77,7 +77,7 @@ describe("ui/components/ConnectionModal/ConnectionModal", () => {
       button.click();
     });
 
-    expect(defaultProps.onClose).toBeCalledTimes(1);
+    expect(defaultProps.onClose).toHaveBeenCalledTimes(1);
   });
 
   test("should set approval properly", async () => {
@@ -88,6 +88,6 @@ describe("ui/components/ConnectionModal/ConnectionModal", () => {
       button.click();
     });
 
-    expect(defaultHookData.onSetApproval).toBeCalledTimes(1);
+    expect(defaultHookData.onSetApproval).toHaveBeenCalledTimes(1);
   });
 });

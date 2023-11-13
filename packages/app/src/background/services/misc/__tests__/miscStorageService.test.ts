@@ -32,8 +32,8 @@ describe("background/services/wallet", () => {
 
     await service.setExternalWalletConnection(newStorageValue);
 
-    expect(walletStorage.set).toBeCalledTimes(1);
-    expect(walletStorage.set).toBeCalledWith(newStorageValue);
+    expect(walletStorage.set).toHaveBeenCalledTimes(1);
+    expect(walletStorage.set).toHaveBeenCalledWith(newStorageValue);
   });
 
   test("should get initialization", async () => {
@@ -57,7 +57,7 @@ describe("background/services/wallet", () => {
 
     await service.setInitialization(newStorageValue);
 
-    expect(initializationStorage.set).toBeCalledTimes(1);
-    expect(initializationStorage.set).toBeCalledWith(newStorageValue);
+    expect(initializationStorage.set).toHaveBeenCalledTimes(1);
+    expect(initializationStorage.set).toHaveBeenCalledWith(newStorageValue);
   });
 });

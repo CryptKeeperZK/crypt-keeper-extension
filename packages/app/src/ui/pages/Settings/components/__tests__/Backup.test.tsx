@@ -32,7 +32,7 @@ describe("ui/pages/Settings/components/Backup", () => {
     const button = await findByText("Delete all identities");
     await act(() => Promise.resolve(button.click()));
 
-    expect(defaultProps.onDeleteIdentities).toBeCalledTimes(1);
+    expect(defaultProps.onDeleteIdentities).toHaveBeenCalledTimes(1);
   });
 
   test("should clear storage properly", async () => {
@@ -47,7 +47,7 @@ describe("ui/pages/Settings/components/Backup", () => {
     const button = await findByText("Delete storage");
     await act(() => Promise.resolve(button.click()));
 
-    expect(defaultProps.onDeleteStorage).toBeCalledTimes(1);
+    expect(defaultProps.onDeleteStorage).toHaveBeenCalledTimes(1);
   });
 
   test("should download backup data properly", async () => {
@@ -62,7 +62,7 @@ describe("ui/pages/Settings/components/Backup", () => {
     const button = await findByText("Download backup");
     await act(() => Promise.resolve(button.click()));
 
-    expect(defaultProps.onGoToBackup).toBeCalledTimes(1);
+    expect(defaultProps.onGoToBackup).toHaveBeenCalledTimes(1);
   });
 
   test("should go to upload backup data properly", async () => {
@@ -77,7 +77,7 @@ describe("ui/pages/Settings/components/Backup", () => {
     const button = await findByText("Upload backup");
     await act(() => Promise.resolve(button.click()));
 
-    expect(defaultProps.onGoToUploadBackup).toBeCalledTimes(1);
+    expect(defaultProps.onGoToUploadBackup).toHaveBeenCalledTimes(1);
   });
 
   test("should render loading state properly", async () => {

@@ -98,8 +98,8 @@ describe("ui/components/VerifiableCredential/List/useVerifiableCredentialList", 
 
     await act(async () => result.current.onRenameVerifiableCredential("name", "hash"));
 
-    expect(renameVerifiableCredential).toBeCalledTimes(1);
-    expect(fetchVerifiableCredentials).toBeCalledTimes(2);
+    expect(renameVerifiableCredential).toHaveBeenCalledTimes(1);
+    expect(fetchVerifiableCredentials).toHaveBeenCalledTimes(2);
   });
 
   test("should call delete properly", async () => {
@@ -107,7 +107,7 @@ describe("ui/components/VerifiableCredential/List/useVerifiableCredentialList", 
 
     await act(async () => result.current.onDeleteVerifiableCredential("hash"));
 
-    expect(deleteVerifiableCredential).toBeCalledTimes(1);
-    expect(fetchVerifiableCredentials).toBeCalledTimes(2);
+    expect(deleteVerifiableCredential).toHaveBeenCalledTimes(1);
+    expect(fetchVerifiableCredentials).toHaveBeenCalledTimes(2);
   });
 });

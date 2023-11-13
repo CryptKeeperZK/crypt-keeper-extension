@@ -71,7 +71,7 @@ describe("ui/pages/RevealIdentityCommitment/useRevealIdentityCommitment", () => 
 
   const waitForData = async (data: IUseRevealIdentityCommitmentData): Promise<void> => {
     await waitFor(() => !data.isLoading);
-    await waitFor(() => expect(fetchIdentities).toBeCalledTimes(1));
+    await waitFor(() => expect(fetchIdentities).toHaveBeenCalledTimes(1));
   };
 
   test("should return initial data", async () => {
@@ -89,13 +89,13 @@ describe("ui/pages/RevealIdentityCommitment/useRevealIdentityCommitment", () => 
 
     await act(() => Promise.resolve(result.current.onGoBack()));
 
-    expect(mockNavigate).toBeCalledTimes(1);
-    expect(mockNavigate).toBeCalledWith(Paths.HOME);
-    expect(mockDispatch).toBeCalledTimes(4);
-    expect(fetchIdentities).toBeCalledTimes(1);
-    expect(fetchConnections).toBeCalledTimes(1);
-    expect(rejectUserRequest).toBeCalledTimes(1);
-    expect(closePopup).toBeCalledTimes(1);
+    expect(mockNavigate).toHaveBeenCalledTimes(1);
+    expect(mockNavigate).toHaveBeenCalledWith(Paths.HOME);
+    expect(mockDispatch).toHaveBeenCalledTimes(4);
+    expect(fetchIdentities).toHaveBeenCalledTimes(1);
+    expect(fetchConnections).toHaveBeenCalledTimes(1);
+    expect(rejectUserRequest).toHaveBeenCalledTimes(1);
+    expect(closePopup).toHaveBeenCalledTimes(1);
   });
 
   test("should handle error properly", async () => {
@@ -115,8 +115,8 @@ describe("ui/pages/RevealIdentityCommitment/useRevealIdentityCommitment", () => 
 
     await act(() => Promise.resolve(result.current.onGoToHost()));
 
-    expect(redirectToNewTab).toBeCalledTimes(1);
-    expect(redirectToNewTab).toBeCalledWith(mockDefaultConnection.urlOrigin);
+    expect(redirectToNewTab).toHaveBeenCalledTimes(1);
+    expect(redirectToNewTab).toHaveBeenCalledWith(mockDefaultConnection.urlOrigin);
   });
 
   test("should reveal connected identity commitment properly", async () => {
@@ -125,13 +125,13 @@ describe("ui/pages/RevealIdentityCommitment/useRevealIdentityCommitment", () => 
 
     await act(() => Promise.resolve(result.current.onReveal()));
 
-    expect(mockDispatch).toBeCalledTimes(4);
-    expect(fetchIdentities).toBeCalledTimes(1);
-    expect(fetchConnections).toBeCalledTimes(1);
-    expect(revealConnectedIdentityCommitment).toBeCalledTimes(1);
-    expect(closePopup).toBeCalledTimes(1);
-    expect(mockNavigate).toBeCalledTimes(1);
-    expect(mockNavigate).toBeCalledWith(Paths.HOME);
+    expect(mockDispatch).toHaveBeenCalledTimes(4);
+    expect(fetchIdentities).toHaveBeenCalledTimes(1);
+    expect(fetchConnections).toHaveBeenCalledTimes(1);
+    expect(revealConnectedIdentityCommitment).toHaveBeenCalledTimes(1);
+    expect(closePopup).toHaveBeenCalledTimes(1);
+    expect(mockNavigate).toHaveBeenCalledTimes(1);
+    expect(mockNavigate).toHaveBeenCalledWith(Paths.HOME);
   });
 
   test("should handle reveal connected identity commitment error properly", async () => {

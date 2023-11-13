@@ -84,7 +84,7 @@ describe("ui/components/ConfirmRequestModal/components/ProofModal/useSemaphorePr
       result.current.onAccept();
     });
 
-    expect(defaultArgs.accept).toBeCalledTimes(1);
+    expect(defaultArgs.accept).toHaveBeenCalledTimes(1);
   });
 
   test("should reject proof generation properly", async () => {
@@ -95,7 +95,7 @@ describe("ui/components/ConfirmRequestModal/components/ProofModal/useSemaphorePr
       result.current.onReject();
     });
 
-    expect(defaultArgs.reject).toBeCalledTimes(1);
+    expect(defaultArgs.reject).toHaveBeenCalledTimes(1);
   });
 
   test("should open circuit file properly", async () => {
@@ -107,8 +107,8 @@ describe("ui/components/ConfirmRequestModal/components/ProofModal/useSemaphorePr
       result.current.onOpenCircuitFile();
     });
 
-    expect(openSpy).toBeCalledTimes(1);
-    expect(openSpy).toBeCalledWith(defaultArgs.pendingRequest.payload?.circuitFilePath, "_blank");
+    expect(openSpy).toHaveBeenCalledTimes(1);
+    expect(openSpy).toHaveBeenCalledWith(defaultArgs.pendingRequest.payload?.circuitFilePath, "_blank");
   });
 
   test("should open zkey file properly", async () => {
@@ -120,8 +120,8 @@ describe("ui/components/ConfirmRequestModal/components/ProofModal/useSemaphorePr
       result.current.onOpenZkeyFile();
     });
 
-    expect(openSpy).toBeCalledTimes(1);
-    expect(openSpy).toBeCalledWith(defaultArgs.pendingRequest.payload?.zkeyFilePath, "_blank");
+    expect(openSpy).toHaveBeenCalledTimes(1);
+    expect(openSpy).toHaveBeenCalledWith(defaultArgs.pendingRequest.payload?.zkeyFilePath, "_blank");
   });
 
   test("should open verification key file properly", async () => {
@@ -133,7 +133,7 @@ describe("ui/components/ConfirmRequestModal/components/ProofModal/useSemaphorePr
       result.current.onOpenVerificationKeyFile();
     });
 
-    expect(openSpy).toBeCalledTimes(1);
-    expect(openSpy).toBeCalledWith(defaultArgs.pendingRequest.payload?.verificationKey, "_blank");
+    expect(openSpy).toHaveBeenCalledTimes(1);
+    expect(openSpy).toHaveBeenCalledWith(defaultArgs.pendingRequest.payload?.verificationKey, "_blank");
   });
 });

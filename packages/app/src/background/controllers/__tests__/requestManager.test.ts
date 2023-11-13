@@ -49,8 +49,8 @@ describe("background/controllers/requestManager", () => {
 
     const requests = requestManager.getRequests();
     expect(requests).toHaveLength(1);
-    expect(pushMessage).toBeCalledTimes(1);
-    expect(pushMessage).toBeCalledWith(setPendingRequests(requests));
+    expect(pushMessage).toHaveBeenCalledTimes(1);
+    expect(pushMessage).toHaveBeenCalledWith(setPendingRequests(requests));
 
     const finalized = await requestManager.finalizeRequest({
       id: nonce.toString(),
@@ -75,9 +75,9 @@ describe("background/controllers/requestManager", () => {
 
     expect(finalized).toBe(true);
     expect(requestPromise).resolves.toStrictEqual({ done: true });
-    expect(pushMessage).toBeCalledTimes(2);
-    expect(mockDefaultBrowserUtils.addRemoveWindowListener).toBeCalledTimes(1);
-    expect(mockDefaultBrowserUtils.removeRemoveWindowListener).toBeCalledTimes(1);
+    expect(pushMessage).toHaveBeenCalledTimes(2);
+    expect(mockDefaultBrowserUtils.addRemoveWindowListener).toHaveBeenCalledTimes(1);
+    expect(mockDefaultBrowserUtils.removeRemoveWindowListener).toHaveBeenCalledTimes(1);
   });
 
   test("should reject request properly", async () => {

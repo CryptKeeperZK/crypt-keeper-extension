@@ -47,8 +47,8 @@ describe("ui/components/Dropdown", () => {
     const select = await screen.findByLabelText(defaultProps.label);
     await selectEvent.select(select, defaultProps.options[1].label);
 
-    expect(defaultProps.onChange).toBeCalledTimes(1);
-    expect(defaultProps.onChange).toBeCalledWith(defaultProps.options[1], {
+    expect(defaultProps.onChange).toHaveBeenCalledTimes(1);
+    expect(defaultProps.onChange).toHaveBeenCalledWith(defaultProps.options[1], {
       action: "select-option",
     });
   });

@@ -31,7 +31,7 @@ describe("ui/pages/Settings/components/General", () => {
     const checkbox = await findByTestId("keepTrackHistory");
     await act(() => Promise.resolve(checkbox.click()));
 
-    expect(defaultProps.onEnableHistory).toBeCalledTimes(1);
+    expect(defaultProps.onEnableHistory).toHaveBeenCalledTimes(1);
   });
 
   test("should clear history properly", async () => {
@@ -46,7 +46,7 @@ describe("ui/pages/Settings/components/General", () => {
     const button = await findByText("Clear operation history");
     await act(() => Promise.resolve(button.click()));
 
-    expect(defaultProps.onDeleteHistory).toBeCalledTimes(1);
+    expect(defaultProps.onDeleteHistory).toHaveBeenCalledTimes(1);
   });
 
   test("should render loading state properly", async () => {

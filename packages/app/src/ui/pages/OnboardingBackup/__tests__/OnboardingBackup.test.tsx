@@ -85,7 +85,7 @@ describe("ui/pages/OnboardingBackup", () => {
     const button = await findByTestId("upload-button");
     await act(async () => Promise.resolve(fireEvent.submit(button)));
 
-    expect(defaultHookData.onDrop).toBeCalledTimes(1);
-    expect(defaultHookData.onSubmit).toBeCalledTimes(1);
+    expect(defaultHookData.onDrop).toHaveBeenCalledTimes(1);
+    expect(defaultHookData.onSubmit).toHaveBeenCalledTimes(1);
   });
 });

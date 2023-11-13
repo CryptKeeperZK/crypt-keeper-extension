@@ -149,7 +149,7 @@ describe("background/services/credentials", () => {
     test("should successfully create an add verifiable credential request", async () => {
       await verifiableCredentialsService.addVerifiableCredentialRequest(exampleCredentialString);
 
-      expect(browser.tabs.query).toBeCalledWith({ lastFocusedWindow: true });
+      expect(browser.tabs.query).toHaveBeenCalledWith({ lastFocusedWindow: true });
 
       const defaultOptions = {
         tabId: defaultPopupTab.id,
@@ -159,14 +159,14 @@ describe("background/services/credentials", () => {
         height: 610,
       };
 
-      expect(browser.windows.create).toBeCalledWith(defaultOptions);
+      expect(browser.windows.create).toHaveBeenCalledWith(defaultOptions);
     });
 
     test("should successfully reject a verifiable credential request", async () => {
       await verifiableCredentialsService.rejectVerifiableCredentialRequest();
 
-      expect(browser.tabs.query).toBeCalledWith({ lastFocusedWindow: true });
-      expect(browser.tabs.sendMessage).toBeCalledWith(defaultTabs[0].id, {
+      expect(browser.tabs.query).toHaveBeenCalledWith({ lastFocusedWindow: true });
+      expect(browser.tabs.sendMessage).toHaveBeenCalledWith(defaultTabs[0].id, {
         type: EventName.USER_REJECT,
         payload: { type: EventName.ADD_VERIFIABLE_CREDENTIAL },
       });
@@ -201,7 +201,7 @@ describe("background/services/credentials", () => {
       const [storage] = (SimpleStorage as jest.Mock).mock.instances as [MockStorage];
       await verifiableCredentialsService.renameVerifiableCredential(defaultArgs);
 
-      expect(storage.set).toBeCalledTimes(1);
+      expect(storage.set).toHaveBeenCalledTimes(1);
     });
   });
 
@@ -209,7 +209,7 @@ describe("background/services/credentials", () => {
     test("should successfully create a generate verifiable presentation request", async () => {
       await verifiableCredentialsService.generateVerifiablePresentationRequest(exampleVerifiablePresentationRequest);
 
-      expect(browser.tabs.query).toBeCalledWith({ lastFocusedWindow: true });
+      expect(browser.tabs.query).toHaveBeenCalledWith({ lastFocusedWindow: true });
 
       const defaultOptions = {
         tabId: defaultPopupTab.id,
@@ -219,14 +219,14 @@ describe("background/services/credentials", () => {
         height: 610,
       };
 
-      expect(browser.windows.create).toBeCalledWith(defaultOptions);
+      expect(browser.windows.create).toHaveBeenCalledWith(defaultOptions);
     });
 
     test("should successfully reject a verifiable presentation request", async () => {
       await verifiableCredentialsService.rejectVerifiablePresentationRequest();
 
-      expect(browser.tabs.query).toBeCalledWith({ lastFocusedWindow: true });
-      expect(browser.tabs.sendMessage).toBeCalledWith(defaultTabs[0].id, {
+      expect(browser.tabs.query).toHaveBeenCalledWith({ lastFocusedWindow: true });
+      expect(browser.tabs.sendMessage).toHaveBeenCalledWith(defaultTabs[0].id, {
         type: EventName.USER_REJECT,
         payload: { type: EventName.VERIFIABLE_PRESENTATION_REQUEST },
       });
@@ -235,8 +235,8 @@ describe("background/services/credentials", () => {
     test("should successfully generate a verifiable presentation", async () => {
       await verifiableCredentialsService.generateVerifiablePresentation(exampleVerifiablePresentation);
 
-      expect(browser.tabs.query).toBeCalledWith({ lastFocusedWindow: true });
-      expect(browser.tabs.sendMessage).toBeCalledWith(defaultTabs[0].id, {
+      expect(browser.tabs.query).toHaveBeenCalledWith({ lastFocusedWindow: true });
+      expect(browser.tabs.sendMessage).toHaveBeenCalledWith(defaultTabs[0].id, {
         type: EventName.GENERATE_VERIFIABLE_PRESENTATION,
         payload: { verifiablePresentation: exampleVerifiablePresentation },
       });
@@ -267,8 +267,8 @@ describe("background/services/credentials", () => {
         ],
       };
 
-      expect(browser.tabs.query).toBeCalledWith({ lastFocusedWindow: true });
-      expect(browser.tabs.sendMessage).toBeCalledWith(defaultTabs[0].id, {
+      expect(browser.tabs.query).toHaveBeenCalledWith({ lastFocusedWindow: true });
+      expect(browser.tabs.sendMessage).toHaveBeenCalledWith(defaultTabs[0].id, {
         type: EventName.GENERATE_VERIFIABLE_PRESENTATION,
         payload: { verifiablePresentation: signedVerifiablePresentation },
       });
@@ -282,8 +282,8 @@ describe("background/services/credentials", () => {
         address: exampleAddress,
       });
 
-      expect(browser.tabs.query).toBeCalledWith({ lastFocusedWindow: true });
-      expect(browser.tabs.sendMessage).toBeCalledTimes(1);
+      expect(browser.tabs.query).toHaveBeenCalledWith({ lastFocusedWindow: true });
+      expect(browser.tabs.sendMessage).toHaveBeenCalledTimes(1);
     });
   });
 
@@ -366,8 +366,8 @@ describe("background/services/credentials", () => {
 
       await verifiableCredentialsService.deleteVerifiableCredential(exampleCredentialHash);
 
-      expect(credentialsStorage.set).toBeCalledTimes(1);
-      expect(credentialsStorage.set).toBeCalledWith(JSON.stringify([[...credentialsMap.entries()][1]]));
+      expect(credentialsStorage.set).toHaveBeenCalledTimes(1);
+      expect(credentialsStorage.set).toHaveBeenCalledWith(JSON.stringify([[...credentialsMap.entries()][1]]));
     });
 
     test("should throw error if there is no vc hash", async () => {
@@ -379,7 +379,7 @@ describe("background/services/credentials", () => {
         "Verifiable Credential hash is required.",
       );
 
-      expect(credentialsStorage.set).toBeCalledTimes(0);
+      expect(credentialsStorage.set).toHaveBeenCalledTimes(0);
     });
 
     test("should not delete a verifiable credential if it does not exist", async () => {
@@ -390,7 +390,7 @@ describe("background/services/credentials", () => {
       await expect(verifiableCredentialsService.deleteVerifiableCredential("example hash")).rejects.toThrow(
         "Verifiable Credential does not exist.",
       );
-      expect(credentialsStorage.set).toBeCalledTimes(0);
+      expect(credentialsStorage.set).toHaveBeenCalledTimes(0);
     });
 
     test("should delete all verifiable credentials", async () => {
@@ -400,7 +400,7 @@ describe("background/services/credentials", () => {
 
       await verifiableCredentialsService.deleteAllVerifiableCredentials();
 
-      expect(credentialsStorage.clear).toBeCalledTimes(1);
+      expect(credentialsStorage.clear).toHaveBeenCalledTimes(1);
     });
 
     test("should return false when deleting all verifiable credentials from empty storage", async () => {
@@ -411,7 +411,7 @@ describe("background/services/credentials", () => {
       await expect(verifiableCredentialsService.deleteAllVerifiableCredentials()).rejects.toThrow(
         "No Verifiable Credentials to delete.",
       );
-      expect(credentialsStorage.clear).toBeCalledTimes(0);
+      expect(credentialsStorage.clear).toHaveBeenCalledTimes(0);
     });
   });
 
@@ -438,8 +438,8 @@ describe("background/services/credentials", () => {
 
       await verifiableCredentialsService.uploadEncryptedStorage(credentialsStorageString, examplePassword);
 
-      expect(credentialsStorage.set).toBeCalledTimes(1);
-      expect(credentialsStorage.set).toBeCalledWith(credentialsStorageString);
+      expect(credentialsStorage.set).toHaveBeenCalledTimes(1);
+      expect(credentialsStorage.set).toHaveBeenCalledWith(credentialsStorageString);
     });
 
     test("should not upload encrypted identities if there is no data", async () => {
@@ -447,7 +447,7 @@ describe("background/services/credentials", () => {
 
       await verifiableCredentialsService.uploadEncryptedStorage("", "");
 
-      expect(credentialsStorage.set).toBeCalledTimes(0);
+      expect(credentialsStorage.set).toHaveBeenCalledTimes(0);
     });
 
     test("should throw error when trying upload incorrect backup", async () => {
@@ -461,7 +461,7 @@ describe("background/services/credentials", () => {
 
       await verifiableCredentialsService.downloadStorage();
 
-      expect(storage.get).toBeCalledTimes(1);
+      expect(storage.get).toHaveBeenCalledTimes(1);
     });
 
     test("should restore storage properly", async () => {
@@ -469,8 +469,8 @@ describe("background/services/credentials", () => {
 
       await verifiableCredentialsService.restoreStorage("storage");
 
-      expect(storage.set).toBeCalledTimes(1);
-      expect(storage.set).toBeCalledWith("storage");
+      expect(storage.set).toHaveBeenCalledTimes(1);
+      expect(storage.set).toHaveBeenCalledWith("storage");
     });
 
     test("should throw error when trying to restore incorrect data", async () => {

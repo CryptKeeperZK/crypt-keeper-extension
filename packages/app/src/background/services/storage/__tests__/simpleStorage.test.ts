@@ -13,8 +13,8 @@ describe("background/services/simpleStorage", () => {
 
     await storage.set("value");
 
-    expect(browser.storage.sync.set).toBeCalledTimes(1);
-    expect(browser.storage.sync.set).toBeCalledWith({
+    expect(browser.storage.sync.set).toHaveBeenCalledTimes(1);
+    expect(browser.storage.sync.set).toHaveBeenCalledWith({
       key: "value",
     });
   });
@@ -24,8 +24,8 @@ describe("background/services/simpleStorage", () => {
 
     await storage.clear();
 
-    expect(browser.storage.sync.remove).toBeCalledTimes(1);
-    expect(browser.storage.sync.remove).toBeCalledWith("key");
+    expect(browser.storage.sync.remove).toHaveBeenCalledTimes(1);
+    expect(browser.storage.sync.remove).toHaveBeenCalledWith("key");
   });
 
   test("should get data properly", async () => {
@@ -33,8 +33,8 @@ describe("background/services/simpleStorage", () => {
 
     const value = await storage.get();
 
-    expect(browser.storage.sync.get).toBeCalledTimes(1);
-    expect(browser.storage.sync.get).toBeCalledWith("key");
+    expect(browser.storage.sync.get).toHaveBeenCalledTimes(1);
+    expect(browser.storage.sync.get).toHaveBeenCalledWith("key");
     expect(value).toBeNull();
   });
 });

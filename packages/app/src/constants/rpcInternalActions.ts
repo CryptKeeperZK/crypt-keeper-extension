@@ -12,6 +12,7 @@ export enum RPCInternalAction {
   CREATE_IDENTITY_REQUEST = "rpc/identity/createRequest",
   IMPORT_IDENTITY = "rpc/identity/import",
   CONNECT = "rpc/connection/connect",
+  DISCONNECT = "rpc/connection/disconnect",
   GET_CONNECTIONS = "rpc/connection/get",
   SET_IDENTITY_NAME = "rpc/identity/setIdentityName",
   DELETE_IDENTITY = "rpc/identity/deleteIdentity",

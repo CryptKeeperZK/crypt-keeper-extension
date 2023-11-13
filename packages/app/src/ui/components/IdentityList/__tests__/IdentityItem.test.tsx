@@ -24,6 +24,7 @@ describe("ui/components/IdentityList/Item", () => {
     metadata: mockDefaultIdentity.metadata,
     onDeleteIdentity: jest.fn(),
     onSelectIdentity: jest.fn(),
+    onDisconnectIdentity: jest.fn(),
     onUpdateIdentityName: jest.fn(),
   };
 
@@ -65,8 +66,8 @@ describe("ui/components/IdentityList/Item", () => {
     const dangerModalAccept = await screen.findByTestId("danger-modal-accept");
     await act(async () => Promise.resolve(dangerModalAccept.click()));
 
-    expect(defaultProps.onDeleteIdentity).toBeCalledTimes(1);
-    expect(defaultProps.onDeleteIdentity).toBeCalledWith(defaultProps.commitment);
+    expect(defaultProps.onDeleteIdentity).toHaveBeenCalledTimes(1);
+    expect(defaultProps.onDeleteIdentity).toHaveBeenCalledWith(defaultProps.commitment);
     expect(dangerModal).not.toBeInTheDocument();
   });
 
@@ -90,7 +91,7 @@ describe("ui/components/IdentityList/Item", () => {
     const dangerModalReject = await screen.findByTestId("danger-modal-reject");
     await act(async () => Promise.resolve(dangerModalReject.click()));
 
-    expect(defaultProps.onDeleteIdentity).toBeCalledTimes(0);
+    expect(defaultProps.onDeleteIdentity).toHaveBeenCalledTimes(0);
     expect(dangerModal).not.toBeInTheDocument();
   });
 
@@ -102,8 +103,8 @@ describe("ui/components/IdentityList/Item", () => {
       selectIcon.click();
     });
 
-    expect(defaultProps.onSelectIdentity).toBeCalledTimes(1);
-    expect(defaultProps.onSelectIdentity).toBeCalledWith(defaultProps.commitment);
+    expect(defaultProps.onSelectIdentity).toHaveBeenCalledTimes(1);
+    expect(defaultProps.onSelectIdentity).toHaveBeenCalledWith(defaultProps.commitment);
   });
 
   test("should rename identity properly", async () => {
@@ -127,8 +128,8 @@ describe("ui/components/IdentityList/Item", () => {
     const renameIcon = await screen.findByTestId(`identity-rename-${defaultProps.commitment}`);
     await act(async () => Promise.resolve(renameIcon.click()));
 
-    expect(defaultProps.onUpdateIdentityName).toBeCalledTimes(1);
-    expect(defaultProps.onUpdateIdentityName).toBeCalledWith(defaultProps.commitment, "Account #1");
+    expect(defaultProps.onUpdateIdentityName).toHaveBeenCalledTimes(1);
+    expect(defaultProps.onUpdateIdentityName).toHaveBeenCalledWith(defaultProps.commitment, "Account #1");
   });
 
   test("should go to identity page properly", async () => {
@@ -144,8 +145,32 @@ describe("ui/components/IdentityList/Item", () => {
       button.click();
     });
 
-    expect(mockNavigate).toBeCalledTimes(1);
-    expect(mockNavigate).toBeCalledWith(replaceUrlParams(Paths.IDENTITY, { id: defaultProps.commitment }));
+    expect(mockNavigate).toHaveBeenCalledTimes(1);
+    expect(mockNavigate).toHaveBeenCalledWith(replaceUrlParams(Paths.IDENTITY, { id: defaultProps.commitment }));
+  });
+
+  test("should disconnect identity properly", async () => {
+    render(<IdentityItem {...defaultProps} />);
+
+    const menu = await screen.findByTestId("menu");
+    act(() => {
+      menu.click();
+    });
+
+    const button = await screen.findByText("Disconnect");
+    act(() => {
+      button.click();
+    });
+
+    const dangerModal = await screen.findByTestId("danger-modal");
+    expect(dangerModal).toBeInTheDocument();
+
+    const dangerModalAccept = await screen.findByTestId("danger-modal-accept");
+    await act(async () => Promise.resolve(dangerModalAccept.click()));
+
+    expect(defaultProps.onDisconnectIdentity).toHaveBeenCalledTimes(1);
+    expect(defaultProps.onDisconnectIdentity).toHaveBeenCalledWith(defaultProps.commitment);
+    expect(dangerModal).not.toBeInTheDocument();
   });
 
   test("should go to host properly", async () => {
@@ -154,7 +179,7 @@ describe("ui/components/IdentityList/Item", () => {
     const icon = await screen.findByTestId("urlOrigin-icon");
     await act(() => Promise.resolve(icon.click()));
 
-    expect(redirectToNewTab).toBeCalledTimes(1);
-    expect(redirectToNewTab).toBeCalledWith(mockDefaultConnection.urlOrigin);
+    expect(redirectToNewTab).toHaveBeenCalledTimes(1);
+    expect(redirectToNewTab).toHaveBeenCalledWith(mockDefaultConnection.urlOrigin);
   });
 });

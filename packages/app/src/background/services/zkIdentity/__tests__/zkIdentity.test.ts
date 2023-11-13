@@ -234,7 +234,7 @@ describe("background/services/zkIdentity", () => {
       const result = await zkIdentityService.deleteAllIdentities();
 
       expect(result).toBe(true);
-      expect(pushMessage).toBeCalledTimes(1);
+      expect(pushMessage).toHaveBeenCalledTimes(1);
     });
 
     test("should not delete all identities if there is no any identity", async () => {
@@ -291,7 +291,7 @@ describe("background/services/zkIdentity", () => {
     test("should request a create identity modal properly", async () => {
       await zkIdentityService.createIdentityRequest({ urlOrigin: "http://localhost:3000" });
 
-      expect(browser.tabs.query).toBeCalledWith({ lastFocusedWindow: true });
+      expect(browser.tabs.query).toHaveBeenCalledWith({ lastFocusedWindow: true });
 
       const defaultOptions = {
         tabId: defaultPopupTab.id,
@@ -301,7 +301,7 @@ describe("background/services/zkIdentity", () => {
         height: 610,
       };
 
-      expect(browser.windows.create).toBeCalledWith(defaultOptions);
+      expect(browser.windows.create).toHaveBeenCalledWith(defaultOptions);
     });
 
     test("should create a new identity with ethereum wallet properly", async () => {
@@ -436,7 +436,7 @@ describe("background/services/zkIdentity", () => {
         { urlOrigin: "http://localhost:3000" },
       );
 
-      expect(browser.tabs.query).toBeCalledWith({ lastFocusedWindow: true });
+      expect(browser.tabs.query).toHaveBeenCalledWith({ lastFocusedWindow: true });
 
       const defaultOptions = {
         tabId: defaultPopupTab.id,
@@ -446,13 +446,13 @@ describe("background/services/zkIdentity", () => {
         height: 610,
       };
 
-      expect(browser.windows.create).toBeCalledWith(defaultOptions);
+      expect(browser.windows.create).toHaveBeenCalledWith(defaultOptions);
     });
 
     test("should request an import identity modal without origin properly", async () => {
       await zkIdentityService.importRequest({ trapdoor: defaultArgs.trapdoor, nullifier: defaultArgs.nullifier }, {});
 
-      expect(browser.tabs.query).toBeCalledWith({ lastFocusedWindow: true });
+      expect(browser.tabs.query).toHaveBeenCalledWith({ lastFocusedWindow: true });
 
       const defaultOptions = {
         tabId: defaultPopupTab.id,
@@ -462,7 +462,7 @@ describe("background/services/zkIdentity", () => {
         height: 610,
       };
 
-      expect(browser.windows.create).toBeCalledWith(defaultOptions);
+      expect(browser.windows.create).toHaveBeenCalledWith(defaultOptions);
     });
   });
 
@@ -486,14 +486,14 @@ describe("background/services/zkIdentity", () => {
       await zkIdentityService.uploadEncryptedStorage("encrypted", "password");
 
       const [instance] = (SimpleStorage as jest.Mock).mock.instances as [MockStorage, MockStorage];
-      expect(instance.set).toBeCalledTimes(1);
+      expect(instance.set).toHaveBeenCalledTimes(1);
     });
 
     test("should not upload encrypted identities if there is no data", async () => {
       await zkIdentityService.uploadEncryptedStorage("", "");
 
       const [instance] = (SimpleStorage as jest.Mock).mock.instances as [MockStorage, MockStorage];
-      expect(instance.set).toBeCalledTimes(0);
+      expect(instance.set).toHaveBeenCalledTimes(0);
     });
 
     test("should throw error when trying upload incorrect backup", async () => {
@@ -507,7 +507,7 @@ describe("background/services/zkIdentity", () => {
 
       await zkIdentityService.downloadStorage();
 
-      expect(storage.get).toBeCalledTimes(1);
+      expect(storage.get).toHaveBeenCalledTimes(1);
     });
 
     test("should restore storage properly", async () => {
@@ -515,8 +515,8 @@ describe("background/services/zkIdentity", () => {
 
       await zkIdentityService.restoreStorage("storage");
 
-      expect(storage.set).toBeCalledTimes(1);
-      expect(storage.set).toBeCalledWith("storage");
+      expect(storage.set).toHaveBeenCalledTimes(1);
+      expect(storage.set).toHaveBeenCalledWith("storage");
     });
 
     test("should throw error when trying to restore incorrect data", async () => {

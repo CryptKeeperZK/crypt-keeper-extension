@@ -143,7 +143,7 @@ describe("background/services/protocol", () => {
       await expect(service.generateSemaphoreProof(defaultProofRequest, defaultMetadata)).rejects.toThrow(
         "CryptKeeper: connected identity is not found",
       );
-      expect(pushMessage).toBeCalledTimes(0);
+      expect(pushMessage).toHaveBeenCalledTimes(0);
     });
 
     test("should throw error there is no circuit and zkey files", async () => {
@@ -182,7 +182,7 @@ describe("background/services/protocol", () => {
 
       const result = await service.generateSemaphoreProof(defaultProofRequest, defaultMetadata);
       expect(result).toStrictEqual(emptyFullProof);
-      expect(pushMessage).toBeCalledTimes(0);
+      expect(pushMessage).toHaveBeenCalledTimes(0);
     });
 
     test("should throw error if generate proof is failed on firefox", async () => {
@@ -203,8 +203,8 @@ describe("background/services/protocol", () => {
       const result = await service.generateSemaphoreProof(defaultProofRequest, defaultMetadata);
 
       expect(result).toStrictEqual(emptyFullProof);
-      expect(pushMessage).toBeCalledTimes(1);
-      expect(pushMessage).toBeCalledWith({
+      expect(pushMessage).toHaveBeenCalledTimes(1);
+      expect(pushMessage).toHaveBeenCalledWith({
         method: RPCInternalAction.GENERATE_SEMAPHORE_PROOF_OFFSCREEN,
         payload: {
           ...omit(defaultProofRequest, ["merkleProofSource"]),
@@ -227,8 +227,8 @@ describe("background/services/protocol", () => {
       await expect(service.generateSemaphoreProof(defaultProofRequest, defaultMetadata)).rejects.toThrowError(
         `CryptKeeper: Error in generating Semaphore proof error`,
       );
-      expect(pushMessage).toBeCalledTimes(1);
-      expect(pushMessage).toBeCalledWith({
+      expect(pushMessage).toHaveBeenCalledTimes(1);
+      expect(pushMessage).toHaveBeenCalledWith({
         method: RPCInternalAction.GENERATE_SEMAPHORE_PROOF_OFFSCREEN,
         payload: {
           ...omit(defaultProofRequest, ["merkleProofSource"]),
@@ -253,7 +253,7 @@ describe("background/services/protocol", () => {
         `CryptKeeper: Error in generating Semaphore proof error`,
       );
 
-      expect(pushMessage).toBeCalledTimes(0);
+      expect(pushMessage).toHaveBeenCalledTimes(0);
     });
   });
 
@@ -277,8 +277,8 @@ describe("background/services/protocol", () => {
       const result = await service.generateRLNProof(defaultProofRequest, defaultMetadata);
 
       expect(result).toStrictEqual(emptyFullProof);
-      expect(pushMessage).toBeCalledTimes(1);
-      expect(pushMessage).toBeCalledWith({
+      expect(pushMessage).toHaveBeenCalledTimes(1);
+      expect(pushMessage).toHaveBeenCalledWith({
         method: RPCInternalAction.GENERATE_RLN_PROOF_OFFSCREEN,
         payload: {
           ...omit(defaultProofRequest, ["merkleProofSource"]),
@@ -301,8 +301,8 @@ describe("background/services/protocol", () => {
       await expect(service.generateRLNProof(defaultProofRequest, defaultMetadata)).rejects.toThrowError(
         `CryptKeeper: Error in generating RLN proof error`,
       );
-      expect(pushMessage).toBeCalledTimes(1);
-      expect(pushMessage).toBeCalledWith({
+      expect(pushMessage).toHaveBeenCalledTimes(1);
+      expect(pushMessage).toHaveBeenCalledWith({
         method: RPCInternalAction.GENERATE_RLN_PROOF_OFFSCREEN,
         payload: {
           ...omit(defaultProofRequest, ["merkleProofSource"]),
@@ -326,7 +326,7 @@ describe("background/services/protocol", () => {
         `CryptKeeper: Error in generating RLN proof error`,
       );
 
-      expect(pushMessage).toBeCalledTimes(0);
+      expect(pushMessage).toHaveBeenCalledTimes(0);
     });
 
     test("should throw error if there is no origin url in metadata", async () => {
@@ -343,7 +343,7 @@ describe("background/services/protocol", () => {
       await expect(service.generateRLNProof(defaultProofRequest, defaultMetadata)).rejects.toThrow(
         "CryptKeeper: connected identity is not found",
       );
-      expect(pushMessage).toBeCalledTimes(0);
+      expect(pushMessage).toHaveBeenCalledTimes(0);
     });
 
     test("should throw error if user rejected semaphore approve request", async () => {
@@ -366,7 +366,7 @@ describe("background/services/protocol", () => {
       const result = await service.generateRLNProof(defaultProofRequest, defaultMetadata);
 
       expect(result).toStrictEqual(emptyFullProof);
-      expect(pushMessage).toBeCalledTimes(0);
+      expect(pushMessage).toHaveBeenCalledTimes(0);
     });
 
     test("should throw error if generate proof is failed", async () => {

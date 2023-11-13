@@ -142,9 +142,9 @@ describe("background/services/connection", () => {
         height: 610,
       };
 
-      expect(browser.tabs.query).toBeCalledWith({ lastFocusedWindow: true });
-      expect(browser.windows.create).toBeCalledTimes(1);
-      expect(browser.windows.create).toBeCalledWith(defaultOptions);
+      expect(browser.tabs.query).toHaveBeenCalledWith({ lastFocusedWindow: true });
+      expect(browser.windows.create).toHaveBeenCalledTimes(1);
+      expect(browser.windows.create).toHaveBeenCalledWith(defaultOptions);
     });
 
     test("should connect properly", async () => {
@@ -154,8 +154,8 @@ describe("background/services/connection", () => {
       const connections = connectionService.getConnections();
       const identity = connectionService.getConnectedIdentity(defaultMetadata.urlOrigin!);
 
-      expect(storage.set).toBeCalledTimes(1);
-      expect(storage.set).toBeCalledWith(mockSerializedConnections);
+      expect(storage.set).toHaveBeenCalledTimes(1);
+      expect(storage.set).toHaveBeenCalledWith(mockSerializedConnections);
       expect(Object.entries(connections)).toHaveLength(1);
       expect(identity?.metadata.name).toBe(mockDefaultIdentity.metadata.name);
     });
@@ -185,8 +185,8 @@ describe("background/services/connection", () => {
       const connections = connectionService.getConnections();
       const identity = connectionService.getConnectedIdentity(defaultMetadata.urlOrigin!);
 
-      expect(storage.set).toBeCalledTimes(1);
-      expect(storage.set).toBeCalledWith(JSON.stringify([]));
+      expect(storage.set).toHaveBeenCalledTimes(1);
+      expect(storage.set).toHaveBeenCalledWith(JSON.stringify([]));
       expect(Object.entries(connections)).toHaveLength(0);
       expect(identity).toBeUndefined();
     });
@@ -201,8 +201,8 @@ describe("background/services/connection", () => {
       const connections = connectionService.getConnections();
       const identity = connectionService.getConnectedIdentity(defaultMetadata.urlOrigin!);
 
-      expect(storage.set).toBeCalledTimes(1);
-      expect(storage.set).toBeCalledWith(JSON.stringify([]));
+      expect(storage.set).toHaveBeenCalledTimes(1);
+      expect(storage.set).toHaveBeenCalledWith(JSON.stringify([]));
       expect(Object.entries(connections)).toHaveLength(0);
       expect(identity).toBeUndefined();
     });
@@ -241,15 +241,15 @@ describe("background/services/connection", () => {
         height: 610,
       };
 
-      expect(browser.tabs.query).toBeCalledWith({ lastFocusedWindow: true });
-      expect(browser.windows.create).toBeCalledWith(defaultOptions);
+      expect(browser.tabs.query).toHaveBeenCalledWith({ lastFocusedWindow: true });
+      expect(browser.windows.create).toHaveBeenCalledWith(defaultOptions);
     });
 
     test("should reveal connected identity commitment", async () => {
       await connectionService.revealConnectedIdentityCommitment({}, defaultMetadata);
 
-      expect(browser.tabs.query).toBeCalledWith({});
-      expect(browser.tabs.sendMessage).toBeCalledTimes(2);
+      expect(browser.tabs.query).toHaveBeenCalledWith({});
+      expect(browser.tabs.sendMessage).toHaveBeenCalledTimes(2);
       expect(browser.tabs.sendMessage).toHaveBeenNthCalledWith(1, defaultTabs[0].id, {
         type: EventName.REVEAL_COMMITMENT,
         payload: { commitment: mockDefaultConnection.commitment },
@@ -313,14 +313,14 @@ describe("background/services/connection", () => {
 
       await connectionService.uploadEncryptedStorage("encrypted", "password");
 
-      expect(storage.set).toBeCalledTimes(1);
+      expect(storage.set).toHaveBeenCalledTimes(1);
     });
 
     test("should not upload encrypted connections if there is no data", async () => {
       await connectionService.uploadEncryptedStorage("", "");
 
       (SimpleStorage as jest.Mock).mock.instances.forEach((instance: MockStorage) => {
-        expect(instance.set).toBeCalledTimes(0);
+        expect(instance.set).toHaveBeenCalledTimes(0);
       });
     });
 
@@ -335,7 +335,7 @@ describe("background/services/connection", () => {
 
       await connectionService.downloadStorage();
 
-      expect(storage.get).toBeCalledTimes(1);
+      expect(storage.get).toHaveBeenCalledTimes(1);
     });
 
     test("should restore storage properly", async () => {
@@ -343,8 +343,8 @@ describe("background/services/connection", () => {
 
       await connectionService.restoreStorage("storage");
 
-      expect(storage.set).toBeCalledTimes(1);
-      expect(storage.set).toBeCalledWith("storage");
+      expect(storage.set).toHaveBeenCalledTimes(1);
+      expect(storage.set).toHaveBeenCalledWith("storage");
     });
 
     test("should throw error when trying to restore incorrect data", async () => {

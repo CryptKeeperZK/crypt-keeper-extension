@@ -52,6 +52,21 @@ export const fetchConnections = (): TypedThunk<Promise<void>> => async (dispatch
   dispatch(setConnections(connections));
 };
 
+export const disconnect =
+  (identityCommitment: string): TypedThunk<Promise<boolean>> =>
+  async (dispatch) => {
+    const result = await postMessage<boolean>({
+      method: RPCInternalAction.DISCONNECT,
+      payload: {
+        identityCommitment,
+      },
+    });
+
+    dispatch(fetchConnections());
+
+    return result;
+  };
+
 export const revealConnectedIdentityCommitment =
   (urlOrigin: string): TypedThunk<Promise<void>> =>
   async () => {

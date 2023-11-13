@@ -85,9 +85,9 @@ describe("ui/pages/Recover", () => {
     const button = await findByTestId("submit-button");
     await act(() => Promise.resolve(button.click()));
 
-    expect(mockDispatch).toBeCalledTimes(1);
-    expect(checkMnemonic).toBeCalledTimes(1);
-    expect(mockNavigate).toBeCalledTimes(1);
-    expect(mockNavigate).toBeCalledWith(`${Paths.RESET_PASSWORD}?mnemonic=${defaultMnemonic}`);
+    expect(mockDispatch).toHaveBeenCalledTimes(1);
+    expect(checkMnemonic).toHaveBeenCalledTimes(1);
+    expect(mockNavigate).toHaveBeenCalledTimes(1);
+    expect(mockNavigate).toHaveBeenCalledWith(`${Paths.RESET_PASSWORD}?mnemonic=${defaultMnemonic}`);
   });
 });

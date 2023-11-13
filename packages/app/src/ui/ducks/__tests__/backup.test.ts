@@ -19,16 +19,16 @@ describe("ui/ducks/backup", () => {
 
     const result = await Promise.resolve(store.dispatch(downloadBackup("password")));
 
-    expect(postMessage).toBeCalledTimes(1);
-    expect(postMessage).toBeCalledWith({ method: RPCInternalAction.DOWNLOAD_BACKUP, payload: "password" });
+    expect(postMessage).toHaveBeenCalledTimes(1);
+    expect(postMessage).toHaveBeenCalledWith({ method: RPCInternalAction.DOWNLOAD_BACKUP, payload: "password" });
     expect(result).toBe("content");
   });
 
   test("should create upload backup request properly", async () => {
     await Promise.resolve(store.dispatch(createUploadBackupRequest()));
 
-    expect(postMessage).toBeCalledTimes(1);
-    expect(postMessage).toBeCalledWith({
+    expect(postMessage).toHaveBeenCalledTimes(1);
+    expect(postMessage).toHaveBeenCalledWith({
       method: RPCInternalAction.REQUEST_UPLOAD_BACKUP,
     });
   });
@@ -36,8 +36,8 @@ describe("ui/ducks/backup", () => {
   test("should create onboarding backup request properly", async () => {
     await Promise.resolve(store.dispatch(createOnboardingBackupRequest()));
 
-    expect(postMessage).toBeCalledTimes(1);
-    expect(postMessage).toBeCalledWith({
+    expect(postMessage).toHaveBeenCalledTimes(1);
+    expect(postMessage).toHaveBeenCalledWith({
       method: RPCInternalAction.REQUEST_ONBOARDING_BACKUP,
     });
   });
@@ -47,8 +47,8 @@ describe("ui/ducks/backup", () => {
       store.dispatch(uploadBackup({ password: "password", backupPassword: "password", content: "content" })),
     );
 
-    expect(postMessage).toBeCalledTimes(1);
-    expect(postMessage).toBeCalledWith({
+    expect(postMessage).toHaveBeenCalledTimes(1);
+    expect(postMessage).toHaveBeenCalledWith({
       method: RPCInternalAction.UPLOAD_BACKUP,
       payload: { password: "password", backupPassword: "password", content: "content" },
     });
