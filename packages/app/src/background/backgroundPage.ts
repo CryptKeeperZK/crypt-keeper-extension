@@ -29,7 +29,21 @@ browser.runtime.onConnect.addListener(async () => {
   log.debug("CryptKeeper onConnect Event, initializing completed...");
 });
 
+const SAVE_TIMESTAMP_INTERVAL_MS = 2 * 1000;
+
+function saveTimestamp() {
+  const timestamp = new Date().toISOString();
+
+  browser.storage.session.set({ timestamp });
+}
+
+let intervalId: NodeJS.Timeout | undefined;
+
 const initialize = async () => {
+  clearInterval(intervalId);
+  saveTimestamp();
+  intervalId = setInterval(saveTimestamp, SAVE_TIMESTAMP_INTERVAL_MS);
+
   try {
     const browserPlatform = getBrowserPlatform();
     const app = new CryptKeeperController();
@@ -54,11 +68,16 @@ const initialize = async () => {
 
     await sendReadyMessageToTabs();
 
-    log.debug("CryptKeeper initialization complete.");
     resolveInitialization?.(true);
   } catch (error) {
     rejectInitialization?.(error);
   }
 };
 
-initialize();
+initialize()
+  .then(() => {
+    log.debug("CryptKeeper initialization complete.");
+  })
+  .catch(() => {
+    log.warn("CryptKeeper initialization error.");
+  });
