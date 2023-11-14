@@ -29,6 +29,6 @@
     "eslint-plugin-unused-imports": "^3.0.0"
   },
   "devDependencies": {
-    "lint-staged": "^15.0.2"
+    "lint-staged": "^15.1.0"
   }
 }
