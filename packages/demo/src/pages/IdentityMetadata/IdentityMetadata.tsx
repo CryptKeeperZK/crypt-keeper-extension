@@ -37,11 +37,12 @@ const IdentityMetadata = (): JSX.Element => {
             <MarkdownBox doc={injectedMarkdown} />
 
             <ActionBox<undefined, void>
+              description="Get Connected Identity Metadata"
               option={undefined}
               title="Get"
-              description="Get Connected Identity Metadata"
               onClick={getConnectedIdentityMetadata}
             />
+
             <Footer />
           </Box>
         </Container>

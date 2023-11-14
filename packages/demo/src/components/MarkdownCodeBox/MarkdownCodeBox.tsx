@@ -1,10 +1,11 @@
-import { FC, HTMLAttributes, memo, useState } from "react";
-import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
-import { vscDarkPlus } from "react-syntax-highlighter/dist/esm/styles/prism";
 import CheckIcon from "@mui/icons-material/Check";
 import FileCopyIcon from "@mui/icons-material/FileCopy";
 import { Box } from "@mui/material";
 import { useTheme } from "@mui/styles";
+import { FC, HTMLAttributes, memo, useState } from "react";
+import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
+import { vscDarkPlus } from "react-syntax-highlighter/dist/esm/styles/prism";
+
 import { useGlobalStyles } from "@src/styles";
 
 type MarkdownCodeBox = {
@@ -41,13 +42,15 @@ export const MarkdownCodeBox: FC<MarkdownCodeBox> = memo(({ language, value }) =
       <SyntaxHighlighter language={language} style={vscDarkPlus}>
         {value}
       </SyntaxHighlighter>
-      <Box onClick={handleCopyClick} className={classes.markdownCodeCopyBox}>
+
+      <Box className={classes.markdownCodeCopyBox} onClick={handleCopyClick}>
         {isCopied ? (
           <>
             <Box className={classes.markdownCodeCopiedBox}>
               Copied!
               <Box className={classes.markdownCodeCopied} />
             </Box>
+
             <Box className={classes.markdownCodeCopiedCheck}>
               <CheckIcon style={{ color: "white", fontSize: "18px" }} />
             </Box>

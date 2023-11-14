@@ -4,12 +4,12 @@ import Typography from "@mui/material/Typography";
 import { ToastContainer } from "react-toastify";
 
 import ActionBox from "@src/components/ActionBox";
+import { Footer } from "@src/components/Footer/Footer";
 import Header from "@src/components/Header";
 import { useFileReader } from "@src/hooks";
 import { useGlobalStyles } from "@src/styles";
 
 import { useVerifiableCredentials } from "./useVerifiableCredentials";
-import { Footer } from "@src/components/Footer/Footer";
 
 export const VerifiableCredentials = (): JSX.Element => {
   const classes = useGlobalStyles();
@@ -55,6 +55,7 @@ export const VerifiableCredentials = (): JSX.Element => {
               title="Generate a Verifiable Presentation"
               onClick={generateVerifiablePresentationRequest}
             />
+
             <Footer />
           </Box>
         </Container>

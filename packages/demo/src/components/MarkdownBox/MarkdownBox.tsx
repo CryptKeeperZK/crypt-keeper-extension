@@ -1,9 +1,11 @@
+import Box from "@mui/material/Box";
+import { useTheme } from "@mui/styles";
 import Markdown from "react-markdown";
 import rehypeAutolinkHeadings from "rehype-autolink-headings";
 import rehypeSlug from "rehype-slug";
-import Box from "@mui/material/Box";
-import { useTheme } from "@mui/styles";
+
 import { useGlobalStyles } from "@src/styles";
+
 import MarkdownCodeBox from "../MarkdownCodeBox";
 import MarkdownHeader from "../MarkdownHeader";
 import MarkdownImg from "../MarkdownImg";
@@ -29,20 +31,6 @@ export const MarkdownBox = ({ doc }: IMarkdownBox): JSX.Element => {
     <Box>
       <Markdown
         className={classes.markdown}
-        rehypePlugins={[
-          rehypeSlug,
-          [
-            rehypeAutolinkHeadings,
-            {
-              behavior: "wrap",
-              properties: {
-                style: {
-                  textDecoration: "none",
-                },
-              },
-            },
-          ],
-        ]}
         components={{
           code({ children, className, ...rest }) {
             // Check if it's an inline code based on className
@@ -57,16 +45,30 @@ export const MarkdownBox = ({ doc }: IMarkdownBox): JSX.Element => {
           },
           h1({ children = "", id, ref, ...rest }) {
             const finalId = id || slugify(String(children));
-            return <MarkdownHeader id={finalId} children={children} variant="h1" {...rest} />;
+            return <MarkdownHeader children={children} id={finalId} variant="h1" {...rest} />;
           },
           h2({ children = "", id, ref, ...rest }) {
             const finalId = id || slugify(String(children));
-            return <MarkdownHeader id={finalId} children={children} variant="h2" {...rest} />;
+            return <MarkdownHeader children={children} id={finalId} variant="h2" {...rest} />;
           },
           img({ src, alt }) {
-            return <MarkdownImg src={src} alt={alt} />;
+            return <MarkdownImg alt={alt} src={src} />;
           },
         }}
+        rehypePlugins={[
+          rehypeSlug,
+          [
+            rehypeAutolinkHeadings,
+            {
+              behavior: "wrap",
+              properties: {
+                style: {
+                  textDecoration: "none",
+                },
+              },
+            },
+          ],
+        ]}
       >
         {doc}
       </Markdown>

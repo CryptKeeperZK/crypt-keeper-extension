@@ -4,18 +4,18 @@ import { Navigate, RouteObject, useRoutes } from "react-router-dom";
 import { Paths } from "@src/constants";
 import Bandada from "@src/pages/Bandada";
 import Connect from "@src/pages/Connect";
+import Contributing from "@src/pages/Contributing";
+import FAQ from "@src/pages/FAQ";
+import Home from "@src/pages/Home";
 import IdentityMetadata from "@src/pages/IdentityMetadata";
 import ImportIdentity from "@src/pages/ImportIdentity";
+import Overview from "@src/pages/Overview";
+import PrivacyPolicy from "@src/pages/PrivacyPolicy";
 import RateLimitingNullifier from "@src/pages/RateLimitingNullifier";
+import Resources from "@src/pages/Resources";
 import RevealIdentity from "@src/pages/RevealIdentity";
 import Semaphore from "@src/pages/Semaphore";
-import Overview from "@src/pages/Overview";
-import Contributing from "@src/pages/Contributing";
-import Resources from "@src/pages/Resources";
-import PrivacyPolicy from "@src/pages/PrivacyPolicy";
-import FAQ from "@src/pages/FAQ";
 import Terms from "@src/pages/Terms";
-import Home from "@src/pages/Home";
 import "@src/styles/style.css";
 
 export const routeConfig: RouteObject[] = [

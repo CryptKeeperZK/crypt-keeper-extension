@@ -1,16 +1,17 @@
-import Drawer from "@mui/material/Drawer";
-import { useTheme } from "@mui/styles";
 import Box from "@mui/material/Box";
-import Typography from "@mui/material/Typography";
-
-import { useGlobalStyles } from "@src/styles";
-import ConnectedIdentity from "../ConnectedIdentity";
-import { useMarkdownHeaders } from "@src/context/MarkdownHeadersProvider";
+import Drawer from "@mui/material/Drawer";
 import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
 import ListItemText from "@mui/material/ListItemText";
-import { handleHeadingClick } from "@src/utils";
+import Typography from "@mui/material/Typography";
+import { useTheme } from "@mui/styles";
 import { useEffect, useState } from "react";
+
+import { useMarkdownHeaders } from "@src/context/MarkdownHeadersProvider";
+import { useGlobalStyles } from "@src/styles";
+import { handleHeadingClick } from "@src/utils";
+
+import ConnectedIdentity from "../ConnectedIdentity";
 
 export const RightSideBar = (): JSX.Element => {
   const theme = useTheme();
@@ -56,22 +57,22 @@ export const RightSideBar = (): JSX.Element => {
             </Typography>
           </Box>
 
-          {headers.map((header, index) => {
-            return (
-              <ListItem
-                className={`${classes.rightSideListItem} 
+          {headers.map((header, index) => (
+            <ListItem
+              key={index}
+              button
+              className={`${classes.rightSideListItem} 
               ${header.type === "h1" ? classes.listItemIndentationH1 : classes.listItemIndentationH2}
               ${header.id === activeHeader ? classes.rightSideListActiveHeader : ""}`}
-                button
-                key={index}
-                component="a"
-                href={`#${header.id}`}
-                onClick={(event) => handleHeadingClick(event, header.id)}
-              >
-                <ListItemText color="primary.main" primary={header.text} />
-              </ListItem>
-            );
-          })}
+              component="a"
+              href={`#${header.id}`}
+              onClick={(event) => {
+                handleHeadingClick(event, header.id);
+              }}
+            >
+              <ListItemText color="primary.main" primary={header.text} />
+            </ListItem>
+          ))}
         </List>
       )}
     </Drawer>

@@ -1,10 +1,12 @@
 import Box from "@mui/material/Box";
+import Divider from "@mui/material/Divider";
 import Drawer from "@mui/material/Drawer";
-import { DrawerList } from "../DrawerList/DrawerList";
 import { useTheme } from "@mui/styles";
+
 import { useGlobalStyles } from "@src/styles";
 import { sharedStyles } from "@src/styles/useGlobalStyles";
-import Divider from "@mui/material/Divider";
+
+import { DrawerList } from "../DrawerList/DrawerList";
 
 interface ILeftSideBar {
   isMobileOpen: boolean;
@@ -24,8 +26,8 @@ export const LeftSideBar = ({ isMobileOpen, handleDrawerToggle }: ILeftSideBar):
       sx={{ width: { sm: sharedStyles.sideBarWidth }, flexShrink: { sm: 0 } }}
     >
       <Drawer
-        className={classes.leftSideBarDrawer}
         anchor="left"
+        className={classes.leftSideBarDrawer}
         container={container}
         ModalProps={{
           keepMounted: true, // Better open performance on mobile.
@@ -42,9 +44,9 @@ export const LeftSideBar = ({ isMobileOpen, handleDrawerToggle }: ILeftSideBar):
       </Drawer>
 
       <Drawer
-        className={classes.leftSideBarDrawer}
         open
         anchor="left"
+        className={classes.leftSideBarDrawer}
         sx={{
           display: { xs: "none", sm: "block" },
           "& .MuiDrawer-paper": { boxSizing: "border-box", width: sharedStyles.sideBarWidth },

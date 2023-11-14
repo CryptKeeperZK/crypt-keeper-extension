@@ -1,15 +1,14 @@
+import PlayCircleFilledIcon from "@mui/icons-material/PlayCircleFilled";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
-import PlayCircleFilledIcon from "@mui/icons-material/PlayCircleFilled";
 import { useTheme } from "@mui/styles";
 import { themes } from "prism-react-renderer";
+import { ReactNode } from "react";
 import { LiveProvider, LiveEditor } from "react-live";
 
 import { useGlobalStyles } from "@src/styles";
 import { sharedStyles } from "@src/styles/useGlobalStyles";
-import { ReactNode } from "react";
-import { ChildCare } from "@mui/icons-material";
 
 type actionFnRequiredOption<T = unknown, U = unknown> = (option: T) => U;
 type actionFnOptionalOption<T = unknown, U = unknown> = (option?: T) => U;
@@ -53,7 +52,7 @@ export const ActionBox = <T, U>({
           </Typography>
         </Box>
 
-        <Typography variant="h6" sx={{ mb: 3 }}>
+        <Typography sx={{ mb: 3 }} variant="h6">
           {description}
         </Typography>
 

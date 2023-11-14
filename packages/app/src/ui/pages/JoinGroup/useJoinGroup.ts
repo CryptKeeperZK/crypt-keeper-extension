@@ -94,7 +94,7 @@ export const useJoinGroup = (): IUseJoinGroupData => {
   }, [groupId, connection?.urlOrigin, dispatch, navigate]);
 
   const onGoToHost = useCallback(() => {
-    redirectToNewTab(connection!.urlOrigin);
+    redirectToNewTab(connection.urlOrigin);
   }, [connection?.urlOrigin]);
 
   const onGoToGroup = useCallback(() => {
@@ -103,7 +103,7 @@ export const useJoinGroup = (): IUseJoinGroupData => {
 
   const onJoin = useCallback(() => {
     setSubmitting(true);
-    dispatch(joinGroup({ groupId: groupId!, apiKey, inviteCode }, connection!.urlOrigin))
+    dispatch(joinGroup({ groupId: groupId!, apiKey, inviteCode }, connection.urlOrigin))
       .then(() => dispatch(closePopup()))
       .then(() => {
         navigate(Paths.HOME);

@@ -1,17 +1,16 @@
 import Box from "@mui/material/Box";
 import Container from "@mui/material/Container";
-import Typography from "@mui/material/Typography";
 
 import ActionBox from "@src/components/ActionBox";
 import DisplayProof from "@src/components/DisplayProof";
+import { Footer } from "@src/components/Footer/Footer";
 import Header from "@src/components/Header";
+import MarkdownBox from "@src/components/MarkdownBox";
 import { useFileReader } from "@src/hooks";
 import { useGlobalStyles } from "@src/styles";
+import { injectMarkdownCode } from "@src/utils";
 
 import { useBandada } from "./useBandada";
-import { injectMarkdownCode } from "@src/utils";
-import MarkdownBox from "@src/components/MarkdownBox";
-import { Footer } from "@src/components/Footer/Footer";
 
 export const Bandada = (): JSX.Element => {
   const classes = useGlobalStyles();
@@ -46,15 +45,16 @@ export const Bandada = (): JSX.Element => {
             <MarkdownBox doc={injectedMarkdown} />
 
             <ActionBox<null, void>
+              description="Generate Group Merkle Proof"
               option={null}
               title="Generate"
-              description="Generate Group Merkle Proof"
               onClick={generateGroupMerkleProof}
             />
 
-            <ActionBox<null, void> option={null} title="Join" description="Join test group" onClick={joinGroup} />
+            <ActionBox<null, void> description="Join test group" option={null} title="Join" onClick={joinGroup} />
 
             <DisplayProof proof={proof} />
+
             <Footer />
           </Box>
         </Container>

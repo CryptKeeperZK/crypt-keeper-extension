@@ -1,12 +1,12 @@
-import { Box, Button, IconButton, Typography, Link, useTheme, Divider } from "@mui/material";
-import GitHubIcon from "@mui/icons-material/GitHub";
 import { faDiscord } from "@fortawesome/free-brands-svg-icons";
-import { useGlobalStyles } from "@src/styles/useGlobalStyles";
-import { ArrowBackIosNewOutlined, ArrowForwardIosOutlined, Twitter } from "@mui/icons-material";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { routeConfig } from "@src/pages/Main/Main";
+import { ArrowBackIosNewOutlined, ArrowForwardIosOutlined, Twitter } from "@mui/icons-material";
+import GitHubIcon from "@mui/icons-material/GitHub";
+import { Box, Button, IconButton, useTheme } from "@mui/material";
 import { useLocation, useNavigate } from "react-router-dom";
+
 import { Paths } from "@src/constants";
+import { useGlobalStyles } from "@src/styles/useGlobalStyles";
 
 const pages = [
   // GettingStarted
@@ -43,17 +43,28 @@ export const Footer = (): JSX.Element => {
     <Box className={classes.footer}>
       {/* Layer One */}
       <Box className={classes.footerLayerOne}>
-        <Button variant="outlined" color="primary" startIcon={<GitHubIcon />} className={classes.footerLayerOneGithub}>
+        <Button className={classes.footerLayerOneGithub} color="primary" startIcon={<GitHubIcon />} variant="outlined">
           Edit on GitHub
         </Button>
       </Box>
 
       {/* Layer Two */}
       <Box className={classes.footerLayerTwo}>
-        <Button startIcon={<ArrowBackIosNewOutlined />} onClick={() => navigate(previousPage.path)}>
+        <Button
+          startIcon={<ArrowBackIosNewOutlined />}
+          onClick={() => {
+            navigate(previousPage.path);
+          }}
+        >
           {previousPage.label}
         </Button>
-        <Button endIcon={<ArrowForwardIosOutlined />} onClick={() => navigate(nextPage.path)}>
+
+        <Button
+          endIcon={<ArrowForwardIosOutlined />}
+          onClick={() => {
+            navigate(nextPage.path);
+          }}
+        >
           {nextPage.label}
         </Button>
       </Box>
@@ -63,9 +74,11 @@ export const Footer = (): JSX.Element => {
         <IconButton aria-label="Discord" color="primary">
           <FontAwesomeIcon icon={faDiscord} />
         </IconButton>
+
         <IconButton aria-label="Twitter" color="primary">
           <Twitter />
         </IconButton>
+
         <IconButton aria-label="GitHub" color="primary">
           <GitHubIcon />
         </IconButton>

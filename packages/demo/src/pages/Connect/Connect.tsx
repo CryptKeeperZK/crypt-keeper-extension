@@ -1,23 +1,17 @@
 import Box from "@mui/material/Box";
 import Container from "@mui/material/Container";
-import Typography from "@mui/material/Typography";
+import { useTheme } from "@mui/styles";
 
 import ActionBox from "@src/components/ActionBox";
+import { Footer } from "@src/components/Footer/Footer";
 import Header from "@src/components/Header";
+import { MarkdownBox } from "@src/components/MarkdownBox/MarkdownBox";
 import { useCryptKeeperClient } from "@src/context/CryptKeeperClientProvider";
 import { useFileReader } from "@src/hooks";
 import { useGlobalStyles } from "@src/styles";
+import { injectMarkdownCode } from "@src/utils";
 
 import { useConnect } from "./useConnect";
-import RightSideBar from "@src/components/RightSideBar";
-import { MarkdownBox } from "@src/components/MarkdownBox/MarkdownBox";
-import List from "@mui/material/List";
-import { useTheme } from "@mui/styles";
-import ListItem from "@mui/material/ListItem";
-import ListItemText from "@mui/material/ListItemText";
-import { useMarkdownHeaders } from "@src/context/MarkdownHeadersProvider";
-import { injectMarkdownCode } from "@src/utils";
-import { Footer } from "@src/components/Footer/Footer";
 
 const Connect = (): JSX.Element => {
   const theme = useTheme();
@@ -52,15 +46,16 @@ const Connect = (): JSX.Element => {
             <MarkdownBox doc={injectedMarkdown} />
 
             <ActionBox<boolean, void>
-              option={isChangeIdentity}
-              title="Connect"
               description={
                 isConnected
                   ? "Change Connected Identity"
                   : "To continue, please connect to your CryptKeeper to continue."
               }
+              option={isChangeIdentity}
+              title="Connect"
               onClick={connect}
             />
+
             <Footer />
           </Box>
         </Container>

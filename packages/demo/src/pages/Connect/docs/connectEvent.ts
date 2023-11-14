@@ -1,4 +1,4 @@
-import { EventName, initializeCryptKeeper } from "@cryptkeeperzk/providers";
+import { initializeCryptKeeper } from "@cryptkeeperzk/providers";
 // import { IIdentityConnection } from "@cryptkeeperzk/types"
 
 const client = initializeCryptKeeper();

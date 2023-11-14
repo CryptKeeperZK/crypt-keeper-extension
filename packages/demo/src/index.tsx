@@ -8,6 +8,7 @@ import "react-toastify/dist/ReactToastify.css";
 import { CryptKeeperClientProvider } from "@src/context/CryptKeeperClientProvider";
 import Main from "@src/pages/Main";
 import { theme } from "@src/styles";
+
 import { MarkdownHeaderProvider } from "./context";
 
 const container = document.getElementById("root");

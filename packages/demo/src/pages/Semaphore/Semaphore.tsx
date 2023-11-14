@@ -1,18 +1,17 @@
 import Box from "@mui/material/Box";
 import Container from "@mui/material/Container";
-import Typography from "@mui/material/Typography";
 
 import ActionBox from "@src/components/ActionBox";
 import DisplayProof from "@src/components/DisplayProof";
+import { Footer } from "@src/components/Footer/Footer";
 import Header from "@src/components/Header";
+import MarkdownBox from "@src/components/MarkdownBox";
 import { useFileReader } from "@src/hooks";
 import { useGlobalStyles } from "@src/styles";
 import { MerkleProofType } from "@src/types";
+import { injectMarkdownCode } from "@src/utils";
 
 import { useSemaphore } from "./useSemaphore";
-import MarkdownBox from "@src/components/MarkdownBox";
-import { injectMarkdownCode } from "@src/utils";
-import { Footer } from "@src/components/Footer/Footer";
 
 export const Semaphore = (): JSX.Element => {
   const classes = useGlobalStyles();
@@ -41,20 +40,21 @@ export const Semaphore = (): JSX.Element => {
             <MarkdownBox doc={injectedMarkdown} />
 
             <ActionBox<MerkleProofType, void>
+              description="Generate proof from Merkle proof storage address"
               option={MerkleProofType.STORAGE_ADDRESS}
               title="Generate"
-              description="Generate proof from Merkle proof storage address"
               onClick={genSemaphoreProof}
             />
 
             <ActionBox<MerkleProofType, void>
+              description="Generate proof from Merkle proof artifacts"
               option={MerkleProofType.ARTIFACTS}
               title="Generate"
-              description="Generate proof from Merkle proof artifacts"
               onClick={genSemaphoreProof}
             />
 
             <DisplayProof proof={proof} />
+
             <Footer />
           </Box>
         </Container>

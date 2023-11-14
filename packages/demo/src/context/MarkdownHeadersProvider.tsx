@@ -1,5 +1,5 @@
-import { useRef, createContext, FC, type PropsWithChildren, useContext, useState, useEffect } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { createContext, type PropsWithChildren, useContext, useState, useEffect } from "react";
+import { useLocation } from "react-router-dom";
 
 interface IHeaderContext {
   type: "h1" | "h2" | "h3" | "h4" | "h5" | "h6";

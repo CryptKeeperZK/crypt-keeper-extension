@@ -1,16 +1,15 @@
 import Box from "@mui/material/Box";
 import Container from "@mui/material/Container";
-import Typography from "@mui/material/Typography";
 
 import ActionBox from "@src/components/ActionBox";
+import { Footer } from "@src/components/Footer/Footer";
 import Header from "@src/components/Header";
+import MarkdownBox from "@src/components/MarkdownBox";
 import { useFileReader } from "@src/hooks";
 import { useGlobalStyles } from "@src/styles";
+import { injectMarkdownCode } from "@src/utils";
 
 import { useRevealIdentity } from "./useRevealIdentity";
-import MarkdownBox from "@src/components/MarkdownBox";
-import { injectMarkdownCode } from "@src/utils";
-import { Footer } from "@src/components/Footer/Footer";
 
 export const RevealIdentity = (): JSX.Element => {
   const classes = useGlobalStyles();
@@ -38,13 +37,15 @@ export const RevealIdentity = (): JSX.Element => {
             sx={{ p: 3, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}
           >
             <MarkdownBox doc={injectedMarkdown} />
+
             <ActionBox<undefined, void>
-              option={undefined}
               description="Reveal connected identity Commitment"
+              option={undefined}
               testId="reveal-connected-identity-commitment"
               title="Reveal"
               onClick={revealConnectedIdentityCommitment}
             />
+
             <Footer />
           </Box>
         </Container>

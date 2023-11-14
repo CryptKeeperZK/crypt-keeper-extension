@@ -1,5 +1,5 @@
 export enum Paths {
-  HOME = "/home",
+  HOME = "/",
   OVERVIEW = "/overview",
   CONTRIBUTING = "/contributing",
   FAQ = "/faq",

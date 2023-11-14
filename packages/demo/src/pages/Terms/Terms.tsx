@@ -1,13 +1,12 @@
 import Box from "@mui/material/Box";
 import Container from "@mui/material/Container";
+import { useTheme } from "@mui/styles";
 
+import { Footer } from "@src/components/Footer/Footer";
 import Header from "@src/components/Header";
+import { MarkdownBox } from "@src/components/MarkdownBox/MarkdownBox";
 import { useFileReader } from "@src/hooks";
 import { useGlobalStyles } from "@src/styles";
-
-import { MarkdownBox } from "@src/components/MarkdownBox/MarkdownBox";
-import { useTheme } from "@mui/styles";
-import { Footer } from "@src/components/Footer/Footer";
 
 const Terms = (): JSX.Element => {
   const theme = useTheme();
@@ -28,6 +27,7 @@ const Terms = (): JSX.Element => {
             sx={{ p: 3, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}
           >
             <MarkdownBox doc={doc} />
+
             <Footer />
           </Box>
         </Container>

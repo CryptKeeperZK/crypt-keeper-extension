@@ -1,17 +1,16 @@
 import Box from "@mui/material/Box";
 import Container from "@mui/material/Container";
 import TextField from "@mui/material/TextField";
-import Typography from "@mui/material/Typography";
 
 import ActionBox from "@src/components/ActionBox";
+import { Footer } from "@src/components/Footer/Footer";
 import Header from "@src/components/Header";
+import MarkdownBox from "@src/components/MarkdownBox";
 import { useFileReader } from "@src/hooks";
 import { useGlobalStyles } from "@src/styles";
+import { injectMarkdownCode } from "@src/utils";
 
 import { useImportIdentity } from "./useImportIdentitiy";
-import MarkdownBox from "@src/components/MarkdownBox";
-import { injectMarkdownCode } from "@src/utils";
-import { Footer } from "@src/components/Footer/Footer";
 
 export const ImportIdentity = (): JSX.Element => {
   const classes = useGlobalStyles();
@@ -42,8 +41,8 @@ export const ImportIdentity = (): JSX.Element => {
             <MarkdownBox doc={injectedMarkdown} />
 
             <ActionBox<undefined, void>
-              option={undefined}
               description="Import identity with trapdoor and nullifier"
+              option={undefined}
               testId="import-identity"
               title="Import"
               onClick={importIdentity}
@@ -52,6 +51,7 @@ export const ImportIdentity = (): JSX.Element => {
 
               <TextField id="nullifier" label="Nullifier" variant="filled" />
             </ActionBox>
+
             <Footer />
           </Box>
         </Container>

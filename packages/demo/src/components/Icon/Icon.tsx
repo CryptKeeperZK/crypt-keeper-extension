@@ -1,8 +1,8 @@
 import Box from "@mui/material/Box";
 import { useTheme } from "@mui/styles";
-import { useGlobalStyles } from "@src/styles";
-import classNames from "classnames";
 import { forwardRef, MouseEventHandler, Ref } from "react";
+
+import { useGlobalStyles } from "@src/styles";
 
 export interface IconProps {
   url?: string;

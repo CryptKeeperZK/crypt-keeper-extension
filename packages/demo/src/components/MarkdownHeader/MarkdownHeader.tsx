@@ -1,10 +1,10 @@
-import { makeStyles } from "@mui/material";
 import Typography from "@mui/material/Typography";
 import { useTheme } from "@mui/styles";
+import { Children, FC, ReactNode, isValidElement, memo, useEffect } from "react";
+
 import { useMarkdownHeaders } from "@src/context/MarkdownHeadersProvider";
 import { useGlobalStyles } from "@src/styles";
 import { handleHeadingClick } from "@src/utils";
-import { Children, FC, ReactNode, isValidElement, memo, useEffect, useMemo, useRef, useState } from "react";
 
 interface IHeader {
   type: "h1" | "h2" | "h3" | "h4" | "h5" | "h6";
@@ -45,10 +45,12 @@ export const MarkdownHeader: FC<HeaderProps> = memo(({ children, id, variant, ..
 
   return (
     <Typography
-      variant={variant}
       component={variant}
       id={id}
-      onClick={(event) => handleHeadingClick(event, id)}
+      variant={variant}
+      onClick={(event) => {
+        handleHeadingClick(event, id);
+      }}
       {...rest}
     >
       {children}

@@ -1,9 +1,10 @@
-import { ArrowDropDown, ArrowRight, Visibility, VisibilityOffOutlined } from "@mui/icons-material";
+import { ArrowDropDown, ArrowRight } from "@mui/icons-material";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import { useTheme } from "@mui/styles";
-import { useGlobalStyles } from "@src/styles";
 import { useState } from "react";
+
+import { useGlobalStyles } from "@src/styles";
 
 export const MarkdownImg = ({ src, alt }: { src?: string; alt?: string }): JSX.Element => {
   const [isExpanded, setIsExpanded] = useState(false);
@@ -14,14 +15,17 @@ export const MarkdownImg = ({ src, alt }: { src?: string; alt?: string }): JSX.E
   return (
     <Box>
       <Button
-        onClick={() => setIsExpanded(!isExpanded)}
-        variant="text"
         color="inherit"
         startIcon={isExpanded ? <ArrowDropDown /> : <ArrowRight />}
+        variant="text"
+        onClick={() => {
+          setIsExpanded(!isExpanded);
+        }}
       >
         {isExpanded ? "Hide Image" : "Show Image"}
       </Button>
-      {isExpanded && <img src={src} alt={alt} />}
+
+      {isExpanded && <img alt={alt} src={src} />}
     </Box>
   );
 };

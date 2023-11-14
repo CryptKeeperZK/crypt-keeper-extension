@@ -44,7 +44,7 @@ export function handleHeadingClick(event: React.MouseEvent, id: string) {
 export const injectMarkdownCode = (doc: string, codeSnippets: Record<string, string>): string => {
   let injectedMarkdown = doc;
 
-  for (let snippetKey in codeSnippets) {
+  for (const snippetKey in codeSnippets) {
     const placeholder = `// ${snippetKey}`;
     injectedMarkdown = injectedMarkdown.replace(placeholder, codeSnippets[+snippetKey]);
   }
