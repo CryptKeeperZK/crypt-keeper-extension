@@ -91,7 +91,7 @@ export const useGroupMerkleProof = (): IUseGroupMerkleProofData => {
   }, [groupId, connection?.urlOrigin, dispatch, navigate]);
 
   const onGoToHost = useCallback(() => {
-    redirectToNewTab(connection!.urlOrigin);
+    redirectToNewTab(connection.urlOrigin);
   }, [connection?.urlOrigin]);
 
   const onGoToGroup = useCallback(() => {
@@ -100,7 +100,7 @@ export const useGroupMerkleProof = (): IUseGroupMerkleProofData => {
 
   const onGenerateMerkleProof = useCallback(() => {
     setSubmitting(true);
-    dispatch(generateGroupMerkleProof({ groupId: groupId! }, connection!.urlOrigin))
+    dispatch(generateGroupMerkleProof({ groupId: groupId! }, connection.urlOrigin))
       .then(() => dispatch(closePopup()))
       .then(() => {
         navigate(Paths.HOME);

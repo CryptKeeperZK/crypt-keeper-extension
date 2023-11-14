@@ -120,7 +120,7 @@ const GroupMerkleProof = (): JSX.Element => {
                   variant="h6"
                   onClick={onGoToHost}
                 >
-                  {connection!.urlOrigin}
+                  {connection.urlOrigin}
                 </Typography>
 
                 <Typography fontWeight="bold" sx={{ display: "inline" }} variant="h6">

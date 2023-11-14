@@ -51,11 +51,11 @@ export const useRevealIdentityCommitment = (): IUseRevealIdentityCommitmentData 
   }, [connection?.urlOrigin, dispatch, navigate]);
 
   const onGoToHost = useCallback(() => {
-    redirectToNewTab(connection!.urlOrigin);
+    redirectToNewTab(connection.urlOrigin);
   }, [connection?.urlOrigin]);
 
   const onReveal = useCallback(() => {
-    dispatch(revealConnectedIdentityCommitment(connection!.urlOrigin))
+    dispatch(revealConnectedIdentityCommitment(connection.urlOrigin))
       .then(() => dispatch(closePopup()))
       .then(() => {
         navigate(Paths.HOME);

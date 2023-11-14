@@ -177,7 +177,7 @@ export default class ConnectionService extends BaseService implements IBackupabl
     { urlOrigin }: IZkMetadata,
   ): Promise<void> => {
     const appOrigin = url || urlOrigin;
-    const connectedIdentity = this.getConnectedIdentity(appOrigin!);
+    const connectedIdentity = this.getConnectedIdentity(appOrigin);
 
     if (!connectedIdentity) {
       throw new Error("CryptKeeper: No connected identity found");
