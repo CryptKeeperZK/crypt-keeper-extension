@@ -1,23 +1,30 @@
 import CssBaseline from "@mui/material/CssBaseline";
 import { ThemeProvider } from "@mui/material/styles";
-import dotenv from "dotenv";
+import { Suspense } from "react";
 import { createRoot } from "react-dom/client";
+import { BrowserRouter } from "react-router-dom";
 import "react-toastify/dist/ReactToastify.css";
 
-import path from "path";
-
+import { CryptKeeperClientProvider } from "@src/context/CryptKeeperClientProvider";
 import Main from "@src/pages/Main";
 import { theme } from "@src/styles";
-
-dotenv.config({ path: path.resolve(__dirname, "../..", ".env"), override: true });
+import { MarkdownHeaderProvider } from "./context";
 
 const container = document.getElementById("root");
 const root = createRoot(container!);
 
 root.render(
-  <ThemeProvider theme={theme}>
-    <CssBaseline />
+  <BrowserRouter>
+    <CryptKeeperClientProvider>
+      <MarkdownHeaderProvider>
+        <Suspense>
+          <ThemeProvider theme={theme}>
+            <CssBaseline />
 
-    <Main />
-  </ThemeProvider>,
+            <Main />
+          </ThemeProvider>
+        </Suspense>
+      </MarkdownHeaderProvider>
+    </CryptKeeperClientProvider>
+  </BrowserRouter>,
 );

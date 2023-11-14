@@ -1,106 +1,52 @@
-import LockOpenIcon from "@mui/icons-material/LockOpen";
 import Box from "@mui/material/Box";
-import Typography from "@mui/material/Typography";
-import { ToastContainer } from "react-toastify";
+import { Navigate, RouteObject, useRoutes } from "react-router-dom";
 
-import Bandada from "@src/components/Bandada";
-import Connect from "@src/components/Connect";
-import ConnectedIdentity from "@src/components/ConnectedIdentity";
-import DisplayProof from "@src/components/DisplayProof";
-import GetCommitment from "@src/components/GetCommitment";
-import GetMetadata from "@src/components/GetMetadata";
-import ImportIdentity from "@src/components/ImportIdentity";
-import RateLimitingNullifier from "@src/components/RateLimitingNullifier";
-import Semaphore from "@src/components/Semaphore";
-import VerifiableCredentials from "@src/components/VerifiableCredentials";
-import { useCryptKeeper } from "@src/hooks/useCryptKeeper";
+import { Paths } from "@src/constants";
+import Bandada from "@src/pages/Bandada";
+import Connect from "@src/pages/Connect";
+import IdentityMetadata from "@src/pages/IdentityMetadata";
+import ImportIdentity from "@src/pages/ImportIdentity";
+import RateLimitingNullifier from "@src/pages/RateLimitingNullifier";
+import RevealIdentity from "@src/pages/RevealIdentity";
+import Semaphore from "@src/pages/Semaphore";
+import Overview from "@src/pages/Overview";
+import Contributing from "@src/pages/Contributing";
+import Resources from "@src/pages/Resources";
+import PrivacyPolicy from "@src/pages/PrivacyPolicy";
+import FAQ from "@src/pages/FAQ";
+import Terms from "@src/pages/Terms";
+import Home from "@src/pages/Home";
+import "@src/styles/style.css";
+
+export const routeConfig: RouteObject[] = [
+  { path: Paths.HOME, element: <Home /> },
+
+  // GettingStarted
+  { path: Paths.OVERVIEW, element: <Overview /> },
+  { path: Paths.CONTRIBUTING, element: <Contributing /> },
+
+  // DEMO
+  { path: Paths.CONNECT, element: <Connect /> },
+  { path: Paths.GET_IDENTITY_METADATA, element: <IdentityMetadata /> },
+  { path: Paths.IMPORT_IDENTITY, element: <ImportIdentity /> },
+  { path: Paths.REVEAL_IDENTITY_COMMITMENT, element: <RevealIdentity /> },
+  { path: Paths.SEMAPHORE, element: <Semaphore /> },
+  { path: Paths.RLN, element: <RateLimitingNullifier /> },
+  { path: Paths.BANDADA, element: <Bandada /> },
+
+  // References
+  { path: Paths.TERMS, element: <Terms /> },
+  { path: Paths.FAQ, element: <FAQ /> },
+  { path: Paths.RESOURCES, element: <Resources /> },
+  { path: Paths.PRIVACY_POLICY, element: <PrivacyPolicy /> },
+  {
+    path: "*",
+    element: <Navigate to={Paths.HOME} />,
+  },
+];
 
 export const Main = (): JSX.Element => {
-  const {
-    isLocked,
-    connectedIdentityMetadata,
-    proof,
-    connectedCommitment,
-    getConnectedIdentityMetadata,
-    connect,
-    genSemaphoreProof,
-    genRLNProof,
-    addVerifiableCredentialRequest,
-    generateVerifiablePresentationRequest,
-    revealConnectedIdentityCommitment,
-    joinGroup,
-    generateGroupMerkleProof,
-    importIdentity,
-  } = useCryptKeeper();
+  const routes = useRoutes(routeConfig);
 
-  if (isLocked) {
-    return (
-      <Box component="form" sx={{ display: "flex", flexDirection: "column", flexWrap: "nowrap", height: "100%" }}>
-        <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center", p: 3, flexGrow: 1 }}>
-          <LockOpenIcon color="primary" fontSize="inherit" />
-
-          <Typography sx={{ pt: 3, fontWeight: "bold", color: "primary.main" }} variant="h4">
-            Welcome to CryptKeeper Demo!
-          </Typography>
-        </Box>
-
-        <Connect
-          connect={connect}
-          isChangeIdentity={false}
-          title="To continue, please connect to your CryptKeeper to continue."
-        />
-      </Box>
-    );
-  }
-
-  <div>
-    <h2>Start the Authorization Process</h2>
-
-    <hr />
-
-    <div>
-      <h2>Example of Unauthorized Actions</h2>
-
-      <br />
-
-      <Semaphore genSemaphoreProof={genSemaphoreProof} />
-    </div>
-
-    <hr />
-
-    <ToastContainer newestOnTop />
-  </div>;
-
-  return (
-    <div>
-      <hr />
-
-      <ConnectedIdentity commitment={connectedCommitment} name={connectedIdentityMetadata?.name} />
-
-      <Connect isChangeIdentity connect={connect} title="Connect identity" />
-
-      <ImportIdentity importIdentity={importIdentity} />
-
-      <GetMetadata getConnectedIdentityMetadata={getConnectedIdentityMetadata} />
-
-      <GetCommitment revealConnectedIdentityCommitment={revealConnectedIdentityCommitment} />
-
-      <Semaphore genSemaphoreProof={genSemaphoreProof} />
-
-      <RateLimitingNullifier genRLNProof={genRLNProof} />
-
-      <Bandada generateGroupMerkleProof={generateGroupMerkleProof} joinGroup={joinGroup} />
-
-      <DisplayProof proof={proof} />
-
-      {process.env.VERIFIABLE_CREDENTIALS === "true" && (
-        <VerifiableCredentials
-          addVerifiableCredentialRequest={addVerifiableCredentialRequest}
-          generateVerifiablePresentationRequest={generateVerifiablePresentationRequest}
-        />
-      )}
-
-      <ToastContainer newestOnTop />
-    </div>
-  );
+  return <Box>{routes}</Box>;
 };

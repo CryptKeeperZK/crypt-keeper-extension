@@ -3,13 +3,13 @@ import { createTheme, lighten } from "@mui/material/styles";
 
 export const PALETTE = {
   background: {
-    default: "#000",
+    default: "#181818",
     paper: "#fff",
   },
 
   common: {
     white: "#fff",
-    black: "#000",
+    black: "#181818",
   },
 
   action: {
@@ -48,6 +48,10 @@ export const PALETTE = {
 
   success: {
     main: "#2ed272",
+  },
+
+  typography: {
+    fontWeightMedium: 600,
   },
 };
 
@@ -105,16 +109,6 @@ export const theme = createTheme({
       },
     },
 
-    MuiSvgIcon: {
-      styleOverrides: {
-        root: {
-          fontSize: "8rem",
-          width: "8rem",
-          height: "8rem",
-        },
-      },
-    },
-
     MuiCssBaseline: {
       styleOverrides: {
         body: {
@@ -122,12 +116,41 @@ export const theme = createTheme({
             'system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif',
           margin: 0,
           padding: 0,
-          backgroundColor: PALETTE.common.black,
+          backgroundColor: PALETTE.background.default,
           color: PALETTE.common.white,
           WebkitFontSmoothing: "antialiased",
           MozOsxFontSmoothing: "grayscale",
           WebkitTapHighlightColor: "rgba(255, 255, 255, 0)",
         },
+      },
+    },
+
+    MuiTabs: {
+      styleOverrides: {
+        flexContainer: {
+          justifyContent: "center",
+        },
+      },
+    },
+
+    MuiDrawer: {
+      styleOverrides: {
+        root: ({ theme: { palette } }) => ({
+          top: 0,
+          backgroundColor: palette.background.default,
+        }),
+        paper: {
+          width: "inherit",
+        },
+      },
+    },
+
+    MuiPaper: {
+      styleOverrides: {
+        root: ({ theme: { palette } }) => ({
+          backgroundColor: palette.background.default,
+          boxShadow: "none",
+        }),
       },
     },
   },

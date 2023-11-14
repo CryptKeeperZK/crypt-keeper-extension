@@ -1,0 +1,17 @@
+export enum Paths {
+  HOME = "/home",
+  OVERVIEW = "/overview",
+  CONTRIBUTING = "/contributing",
+  FAQ = "/faq",
+  TERMS = "/terms",
+  RESOURCES = "/resources",
+  PRIVACY_POLICY = "/privacy-policy",
+  CONNECT = "/connect",
+  GET_IDENTITY_METADATA = "/get-connected-metadata",
+  IMPORT_IDENTITY = "/import-identity",
+  REVEAL_IDENTITY_COMMITMENT = "/reveal-identity-commitment",
+  SEMAPHORE = "/semaphore",
+  RLN = "/rate-limiting-nullifier",
+  BANDADA = "/bandada",
+  VERIFIABLE_CREDENTIALS = "/verifiable-credentials",
+}

@@ -8,7 +8,7 @@ This privacy notice for CryptKeeper ("Company," "we," "us," or "our"), describes
 
 - Engage with us in other related ways, including any sales, marketing, or events
 
-Questions or concerns? Reading this privacy notice will help you understand your privacy rights and choices. If you do not agree with our policies and practices, please do not use our Services. If you still have any questions or concerns, please contact us at `isk.extensions@gmail.com`.
+Questions or concerns? Reading this privacy notice will help you understand your privacy rights and choices. If you do not agree with our policies and practices, please do not use our Services. If you still have any questions or concerns, please contact us at `cryptkeeperzk@proton.me`.
 
 # SUMMARY OF KEY POINTS
 
@@ -165,7 +165,7 @@ We have implemented appropriate and reasonable technical and organizational secu
 
 In Short: We do not knowingly collect data from or market to children under 18 years of age.
 
-We do not knowingly solicit data from or market to children under 18 years of age. By using the Services, you represent that you are at least 18 or that you are the parent or guardian of such a minor and consent to such minor dependent’s use of the Services. If we learn that personal information from users less than 18 years of age has been collected, we will deactivate the account and take reasonable measures to promptly delete such data from our records. If you become aware of any data we may have collected from children under age 18, please contact us at isk.extensions@gmail.com.
+We do not knowingly solicit data from or market to children under 18 years of age. By using the Services, you represent that you are at least 18 or that you are the parent or guardian of such a minor and consent to such minor dependent’s use of the Services. If we learn that personal information from users less than 18 years of age has been collected, we will deactivate the account and take reasonable measures to promptly delete such data from our records. If you become aware of any data we may have collected from children under age 18, please contact us at cryptkeeperzk@proton.me.
 
 # 10. WHAT ARE YOUR PRIVACY RIGHTS?
 
@@ -185,7 +185,7 @@ However, please note that this will not affect the lawfulness of the processing 
 
 <ins>Cookies and similar technologies:</ins> Most Web browsers are set to accept cookies by default. If you prefer, you can usually choose to set your browser to remove cookies and to reject cookies. If you choose to remove cookies or reject cookies, this could affect certain features or services of our Services. To opt out of interest-based advertising by advertisers on our Services visit http://www.aboutads.info/choices/.
 
-If you have questions or comments about your privacy rights, you may email us at `isk.extensions@gmail.com`.
+If you have questions or comments about your privacy rights, you may email us at `cryptkeeperzk@proton.me`.
 
 # 11. CONTROLS FOR DO-NOT-TRACK FEATURES
 
@@ -248,7 +248,7 @@ How do we use and share your personal information?
 
 More information about our data collection and sharing practices can be found in this privacy notice.
 
-You may contact us by email at isk.extensions@gmail.com, or by referring to the contact details at the bottom of this document.
+You may contact us by email at cryptkeeperzk@proton.me, or by referring to the contact details at the bottom of this document.
 
 If you are using an authorized agent to exercise your right to opt out we may deny a request if the authorized agent does not submit proof that they have been validly authorized to act on your behalf.
 
@@ -318,7 +318,7 @@ Once a business receives your request, they are no longer allowed to use or disc
 
 Please note that sensitive personal information that is collected or processed without the purpose of inferring characteristics about a consumer is not covered by this right, as well as the publicly available information.
 
-To exercise your right to limit use and disclosure of sensitive personal information, please email `isk.extensions@gmail.com` or submit a request form by clicking here.
+To exercise your right to limit use and disclosure of sensitive personal information, please email `cryptkeeperzk@proton.me` or submit a request form by clicking here.
 
 <ins>Verification process</ins>
 
@@ -336,7 +336,7 @@ We will only use personal information provided in your request to verify your id
 
 - You may request to opt out from future selling or sharing of your personal information to third parties. Upon receiving an opt-out request, we will act upon the request as soon as feasibly possible, but no later than fifteen (15) days from the date of the request submission.
 
-To exercise these rights, you can contact us by email at isk.extensions@gmail.com, or by referring to the contact details at the bottom of this document. If you have a complaint about how we handle your data, we would like to hear from you.
+To exercise these rights, you can contact us by email at cryptkeeperzk@proton.me, or by referring to the contact details at the bottom of this document. If you have a complaint about how we handle your data, we would like to hear from you.
 
 # 13. DO WE MAKE UPDATES TO THIS NOTICE?
 
@@ -346,7 +346,7 @@ We may update this privacy notice from time to time. The updated version will be
 
 # 14. HOW CAN YOU CONTACT US ABOUT THIS NOTICE?
 
-If you have questions or comments about this notice, you may email us at `isk.extensions@gmail.com` or by post to:
+If you have questions or comments about this notice, you may email us at `cryptkeeperzk@proton.me` or by post to:
 
 CryptKeeper
 
