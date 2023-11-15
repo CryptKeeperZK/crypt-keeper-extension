@@ -19,7 +19,7 @@ importers:
         version: link:packages/manifest-bump
       '@jscutlery/semver':
         specifier: ^4.0.0
-        version: 4.0.0(@nx/devkit@17.1.1)
+        version: 4.0.0(@nx/devkit@17.1.2)
       '@nx/js':
         specifier: ^17.1.2
         version: 17.1.2(@swc/core@1.3.96)(@types/node@20.9.0)(nx@17.1.2)(typescript@5.2.2)
@@ -577,8 +577,8 @@ importers:
   packages/manifest-bump:
     dependencies:
       '@nx/devkit':
-        specifier: 17.1.1
-        version: 17.1.1(nx@17.1.2)
+        specifier: 17.1.2
+        version: 17.1.2(nx@17.1.2)
       tslib:
         specifier: ^2.6.2
         version: 2.6.2
@@ -3304,12 +3304,12 @@ packages:
       '@jridgewell/sourcemap-codec': 1.4.15
     dev: true
 
-  /@jscutlery/semver@4.0.0(@nx/devkit@17.1.1):
+  /@jscutlery/semver@4.0.0(@nx/devkit@17.1.2):
     resolution: {integrity: sha512-ePISUjqHYp4ywOX7hEtkYj3F1zFhnARBtpuTacioXEgVArKEWrSuJmm9ISnQUyh+qBjxgtQcU6GHSolDbKfZDg==}
     peerDependencies:
       '@nx/devkit': ^17.0.0
     dependencies:
-      '@nx/devkit': 17.1.1(nx@17.1.2)
+      '@nx/devkit': 17.1.2(nx@17.1.2)
       chalk: 4.1.2
       conventional-changelog: 4.0.0
       conventional-recommended-bump: 7.0.1
@@ -3776,20 +3776,12 @@ packages:
       '@nodelib/fs.scandir': 2.1.5
       fastq: 1.15.0
 
-  /@nrwl/devkit@17.1.1(nx@17.1.2):
-    resolution: {integrity: sha512-zLq/Sje4XqcZdrL7SYqylFD3Wo9KoiZtj+4CFSphME67TshN8qqEYVa6ePHFdM/CHIEuKHeWK4CHbebyPGvtyg==}
-    dependencies:
-      '@nx/devkit': 17.1.1(nx@17.1.2)
-    transitivePeerDependencies:
-      - nx
-
   /@nrwl/devkit@17.1.2(nx@17.1.2):
     resolution: {integrity: sha512-INPZk4qts3xNJt8E9fttuVTufXdigPUOvUiAiPJmR2oUGDF8SeOlIYNForbz+XMRvxyIVtf45O32azUsgeZe3Q==}
     dependencies:
       '@nx/devkit': 17.1.2(nx@17.1.2)
     transitivePeerDependencies:
       - nx
-    dev: true
 
   /@nrwl/js@17.1.2(@swc/core@1.3.96)(@types/node@20.9.0)(nx@17.1.2)(typescript@5.2.2):
     resolution: {integrity: sha512-70Fx//GJdRt2Uo6ft07Up+eeSK2+jqUnkBhvGLauro91g9SVSgbHlhj+D8l86wccyKz/OULod29WEBkA6Z/t3Q==}
@@ -3829,20 +3821,6 @@ packages:
       - debug
     dev: true
 
-  /@nx/devkit@17.1.1(nx@17.1.2):
-    resolution: {integrity: sha512-fOIaVRu51eG4AvnysWW0vTH9ZhjXlt/xm1uinfjfa8n+F2yVmCfT8erZaW4XsiodfJcCfs3ICwkcVCtF9aCeAQ==}
-    peerDependencies:
-      nx: '>= 16 <= 18'
-    dependencies:
-      '@nrwl/devkit': 17.1.1(nx@17.1.2)
-      ejs: 3.1.9
-      enquirer: 2.3.6
-      ignore: 5.2.4
-      nx: 17.1.2(@swc/core@1.3.96)
-      semver: 7.5.3
-      tmp: 0.2.1
-      tslib: 2.6.2
-
   /@nx/devkit@17.1.2(nx@17.1.2):
     resolution: {integrity: sha512-9Izd9jsa++AaZSSlhi0zkv58k4clzE0kICurx9DjfWN6zXnD08HqJoUYCVVaeYS/SrWlQUbMig8e49BO8ZV5mw==}
     peerDependencies:
@@ -3856,7 +3834,6 @@ packages:
       semver: 7.5.3
       tmp: 0.2.1
       tslib: 2.6.2
-    dev: true
 
   /@nx/js@17.1.2(@swc/core@1.3.96)(@types/node@20.9.0)(nx@17.1.2)(typescript@5.2.2):
     resolution: {integrity: sha512-3fPiOEw+iD1Bc+AvfdGgMSCYDYxAGmZ01lHp/RERTyCHroEoMiq8yiTBbET6TPOvKOBMXA+pR2Ux04QA3S4N6Q==}
