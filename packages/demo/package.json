@@ -18,7 +18,7 @@
     "@cryptkeeperzk/providers": "workspace:^",
     "@cryptkeeperzk/semaphore-identity": "^3.10.3",
     "@cryptkeeperzk/types": "workspace:^",
-    "@mui/icons-material": "^5.14.14",
+    "@mui/icons-material": "^5.14.18",
     "@mui/material": "^5.14.18",
     "@mui/styles": "^5.14.18",
     "bigint-conversion": "^2.4.3",
