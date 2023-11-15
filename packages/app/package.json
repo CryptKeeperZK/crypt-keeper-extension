@@ -100,7 +100,7 @@
     "@fortawesome/react-fontawesome": "^0.2.0",
     "@metamask/providers": "^14.0.0",
     "@mui/icons-material": "^5.14.16",
-    "@mui/material": "^5.14.17",
+    "@mui/material": "^5.14.18",
     "@reduxjs/toolkit": "^1.9.7",
     "@types/json-stable-stringify": "^1.0.36",
     "@web3-react/core": "^8.2.3",
