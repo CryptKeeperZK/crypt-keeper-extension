@@ -129,8 +129,8 @@ importers:
         specifier: ^0.2.0
         version: 0.2.0(@fortawesome/fontawesome-svg-core@6.4.2)(react@18.2.0)
       '@metamask/providers':
-        specifier: ^14.0.0
-        version: 14.0.0
+        specifier: ^14.0.1
+        version: 14.0.1
       '@mui/icons-material':
         specifier: ^5.14.18
         version: 5.14.18(@mui/material@5.14.18)(@types/react@18.2.37)(react@18.2.0)
@@ -3408,8 +3408,8 @@ packages:
       readable-stream: 3.6.2
     dev: false
 
-  /@metamask/providers@14.0.0:
-    resolution: {integrity: sha512-q56jATwKX/uVu4qGiuxwuQiDu10fI4JVRR0TxAtd6u/r3xLRDPvnBuHKFb1q7yXnOcLV40Oxy6rSKaUBJOMWkA==}
+  /@metamask/providers@14.0.1:
+    resolution: {integrity: sha512-9HEeBpIl33uE+7LetKF5zqZ2yOlrqXhJRj2vbZtVEXpy4yfDd7wYhTBI+d5yXqWHdtku9V+5XTAipp5uBU5yvw==}
     engines: {node: '>=16.0.0'}
     dependencies:
       '@metamask/json-rpc-engine': 7.1.1
