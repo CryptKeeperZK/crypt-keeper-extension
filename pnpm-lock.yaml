@@ -22,7 +22,7 @@ importers:
         version: 4.1.0(@nx/devkit@17.1.2)
       '@nx/js':
         specifier: ^17.1.3
-        version: 17.1.3(@swc/core@1.3.96)(@types/node@20.9.3)(nx@17.1.2)(typescript@5.2.2)
+        version: 17.1.3(@swc/core@1.3.96)(@types/node@20.9.3)(nx@17.1.3)(typescript@5.2.2)
       '@playwright/test':
         specifier: ^1.37.1
         version: 1.37.1
@@ -66,8 +66,8 @@ importers:
         specifier: ^3.0.1
         version: 3.0.1
       nx:
-        specifier: 17.1.2
-        version: 17.1.2(@swc/core@1.3.96)
+        specifier: 17.1.3
+        version: 17.1.3(@swc/core@1.3.96)
       os-browserify:
         specifier: ^0.3.0
         version: 0.3.0
@@ -3309,7 +3309,7 @@ packages:
     peerDependencies:
       '@nx/devkit': ^17.0.0
     dependencies:
-      '@nx/devkit': 17.1.2(nx@17.1.2)
+      '@nx/devkit': 17.1.2(nx@17.1.3)
       chalk: 4.1.2
       conventional-changelog: 5.1.0
       conventional-changelog-angular: 7.0.0
@@ -3793,11 +3793,12 @@ packages:
       '@nx/devkit': 17.1.2(nx@17.1.2)
     transitivePeerDependencies:
       - nx
+    dev: false
 
-  /@nrwl/devkit@17.1.3(nx@17.1.2):
-    resolution: {integrity: sha512-8HfIY7P3yIYfQ/XKuHoq0GGLA9GpwWtBlI9kPQ0ygjuJ9BkpiGMtQvO6003zs7c6vpc2vNeG+Jmi72+EKvoN5A==}
+  /@nrwl/devkit@17.1.2(nx@17.1.3):
+    resolution: {integrity: sha512-INPZk4qts3xNJt8E9fttuVTufXdigPUOvUiAiPJmR2oUGDF8SeOlIYNForbz+XMRvxyIVtf45O32azUsgeZe3Q==}
     dependencies:
-      '@nx/devkit': 17.1.3(nx@17.1.2)
+      '@nx/devkit': 17.1.2(nx@17.1.3)
     transitivePeerDependencies:
       - nx
     dev: true
@@ -3810,10 +3811,10 @@ packages:
       - nx
     dev: true
 
-  /@nrwl/js@17.1.3(@swc/core@1.3.96)(@types/node@20.9.3)(nx@17.1.2)(typescript@5.2.2):
+  /@nrwl/js@17.1.3(@swc/core@1.3.96)(@types/node@20.9.3)(nx@17.1.3)(typescript@5.2.2):
     resolution: {integrity: sha512-aUE6lK8+D37xNlRz7ZpFbUOwIU6Vb1aNVjXxaouFQ2kcirv2NdJVmUIpbK7zDE/pzC3YmdZADqG2UjpvSUAErw==}
     dependencies:
-      '@nx/js': 17.1.3(@swc/core@1.3.96)(@types/node@20.9.3)(nx@17.1.2)(typescript@5.2.2)
+      '@nx/js': 17.1.3(@swc/core@1.3.96)(@types/node@20.9.3)(nx@17.1.3)(typescript@5.2.2)
     transitivePeerDependencies:
       - '@babel/traverse'
       - '@swc-node/register'
@@ -3837,6 +3838,7 @@ packages:
       - '@swc-node/register'
       - '@swc/core'
       - debug
+    dev: false
 
   /@nrwl/tao@17.1.3(@swc/core@1.3.96):
     resolution: {integrity: sha512-9YpfEkUpVqOweqgQvMDcWApNx4jhCqBNH5IByZj302Enp3TLnQSvhuX5Dfr8hNQRQokIpEn6tW8SGTctTM5LXw==}
@@ -3873,17 +3875,18 @@ packages:
       semver: 7.5.3
       tmp: 0.2.1
       tslib: 2.6.2
+    dev: false
 
-  /@nx/devkit@17.1.3(nx@17.1.2):
-    resolution: {integrity: sha512-1Is7ooovg3kdGJ5VdkePulRUDaMYLLULr+LwXgx7oHSW7AY2iCmhkoOE/vSR7DJ6rkey2gYx7eT1IoRoORiIaQ==}
+  /@nx/devkit@17.1.2(nx@17.1.3):
+    resolution: {integrity: sha512-9Izd9jsa++AaZSSlhi0zkv58k4clzE0kICurx9DjfWN6zXnD08HqJoUYCVVaeYS/SrWlQUbMig8e49BO8ZV5mw==}
     peerDependencies:
       nx: '>= 16 <= 18'
     dependencies:
-      '@nrwl/devkit': 17.1.3(nx@17.1.2)
+      '@nrwl/devkit': 17.1.2(nx@17.1.3)
       ejs: 3.1.9
       enquirer: 2.3.6
       ignore: 5.2.4
-      nx: 17.1.2(@swc/core@1.3.96)
+      nx: 17.1.3(@swc/core@1.3.96)
       semver: 7.5.3
       tmp: 0.2.1
       tslib: 2.6.2
@@ -3904,7 +3907,7 @@ packages:
       tslib: 2.6.2
     dev: true
 
-  /@nx/js@17.1.3(@swc/core@1.3.96)(@types/node@20.9.3)(nx@17.1.2)(typescript@5.2.2):
+  /@nx/js@17.1.3(@swc/core@1.3.96)(@types/node@20.9.3)(nx@17.1.3)(typescript@5.2.2):
     resolution: {integrity: sha512-FCvIjTtuVYctRJw4S+Sp0ZCPeiwNxOR++CsLciWAogO81k3k6ajMIfjn0Xmwuq/FKWK8thtjkk9MfKjTDuxFkg==}
     peerDependencies:
       verdaccio: ^5.0.4
@@ -3919,8 +3922,8 @@ packages:
       '@babel/preset-env': 7.22.10(@babel/core@7.22.10)
       '@babel/preset-typescript': 7.22.5(@babel/core@7.22.10)
       '@babel/runtime': 7.23.2
-      '@nrwl/js': 17.1.3(@swc/core@1.3.96)(@types/node@20.9.3)(nx@17.1.2)(typescript@5.2.2)
-      '@nx/devkit': 17.1.3(nx@17.1.2)
+      '@nrwl/js': 17.1.3(@swc/core@1.3.96)(@types/node@20.9.3)(nx@17.1.3)(typescript@5.2.2)
+      '@nx/devkit': 17.1.3(nx@17.1.3)
       '@nx/workspace': 17.1.3(@swc/core@1.3.96)
       '@phenomnomnominal/tsquery': 5.0.1(typescript@5.2.2)
       babel-plugin-const-enum: 1.2.0(@babel/core@7.22.10)
@@ -3960,6 +3963,7 @@ packages:
     cpu: [arm64]
     os: [darwin]
     requiresBuild: true
+    dev: false
     optional: true
 
   /@nx/nx-darwin-arm64@17.1.3:
@@ -3977,6 +3981,7 @@ packages:
     cpu: [x64]
     os: [darwin]
     requiresBuild: true
+    dev: false
     optional: true
 
   /@nx/nx-darwin-x64@17.1.3:
@@ -3994,6 +3999,7 @@ packages:
     cpu: [x64]
     os: [freebsd]
     requiresBuild: true
+    dev: false
     optional: true
 
   /@nx/nx-freebsd-x64@17.1.3:
@@ -4011,6 +4017,7 @@ packages:
     cpu: [arm]
     os: [linux]
     requiresBuild: true
+    dev: false
     optional: true
 
   /@nx/nx-linux-arm-gnueabihf@17.1.3:
@@ -4028,6 +4035,7 @@ packages:
     cpu: [arm64]
     os: [linux]
     requiresBuild: true
+    dev: false
     optional: true
 
   /@nx/nx-linux-arm64-gnu@17.1.3:
@@ -4045,6 +4053,7 @@ packages:
     cpu: [arm64]
     os: [linux]
     requiresBuild: true
+    dev: false
     optional: true
 
   /@nx/nx-linux-arm64-musl@17.1.3:
@@ -4062,6 +4071,7 @@ packages:
     cpu: [x64]
     os: [linux]
     requiresBuild: true
+    dev: false
     optional: true
 
   /@nx/nx-linux-x64-gnu@17.1.3:
@@ -4079,6 +4089,7 @@ packages:
     cpu: [x64]
     os: [linux]
     requiresBuild: true
+    dev: false
     optional: true
 
   /@nx/nx-linux-x64-musl@17.1.3:
@@ -4096,6 +4107,7 @@ packages:
     cpu: [arm64]
     os: [win32]
     requiresBuild: true
+    dev: false
     optional: true
 
   /@nx/nx-win32-arm64-msvc@17.1.3:
@@ -4113,6 +4125,7 @@ packages:
     cpu: [x64]
     os: [win32]
     requiresBuild: true
+    dev: false
     optional: true
 
   /@nx/nx-win32-x64-msvc@17.1.3:
@@ -13499,6 +13512,7 @@ packages:
       '@nx/nx-win32-x64-msvc': 17.1.2
     transitivePeerDependencies:
       - debug
+    dev: false
 
   /nx@17.1.3(@swc/core@1.3.96):
     resolution: {integrity: sha512-6LYoTt01nS1d/dvvYtRs+pEAMQmUVsd2fr/a8+X1cDjWrb8wsf1O3DwlBTqKOXOazpS3eOr0Ukc9N1svbu7uXA==}
