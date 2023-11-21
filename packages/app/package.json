@@ -43,7 +43,7 @@
     "@testing-library/react": "^14.1.2",
     "@types/chrome": "^0.0.252",
     "@types/crypto-js": "^4.2.1",
-    "@types/jest": "^29.5.8",
+    "@types/jest": "^29.5.9",
     "@types/lodash": "^4.14.202",
     "@types/react": "^18.2.38",
     "@types/react-dom": "^18.2.16",
