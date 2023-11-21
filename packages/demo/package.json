@@ -37,7 +37,7 @@
     "@types/react": "^18.2.38",
     "@types/react-dom": "^18.2.16",
     "assert": "^2.1.0",
-    "eslint": "^8.53.0",
+    "eslint": "^8.54.0",
     "lint-staged": "^15.1.0",
     "parcel": "^2.10.3",
     "prettier": "^3.1.0",
