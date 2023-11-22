@@ -418,8 +418,8 @@ importers:
         specifier: ^6.8.1
         version: 6.8.1
       prism-react-renderer:
-        specifier: ^2.2.0
-        version: 2.2.0(react@18.2.0)
+        specifier: ^2.3.0
+        version: 2.3.0(react@18.2.0)
       react:
         specifier: ^18.2.0
         version: 18.2.0
@@ -14264,13 +14264,13 @@ packages:
       ansi-styles: 5.2.0
       react-is: 18.2.0
 
-  /prism-react-renderer@2.2.0(react@18.2.0):
-    resolution: {integrity: sha512-j4AN0VkEr72598+47xDvpzeYyeh/wPPRNTt9nJFZqIZUxwGKwYqYgt7RVigZ3ZICJWJWN84KEuMKPNyypyhNIw==}
+  /prism-react-renderer@2.3.0(react@18.2.0):
+    resolution: {integrity: sha512-UYRg2TkVIaI6tRVHC5OJ4/BxqPUxJkJvq/odLT/ykpt1zGYXooNperUxQcCvi87LyRnR4nCh81ceOA+e7nrydg==}
     peerDependencies:
       react: '>=16.0.0'
     dependencies:
       '@types/prismjs': 1.26.2
-      clsx: 1.2.1
+      clsx: 2.0.0
       react: 18.2.0
     dev: false
 
@@ -14537,7 +14537,7 @@ packages:
       react: '>=18.0.0'
       react-dom: '>=18.0.0'
     dependencies:
-      prism-react-renderer: 2.2.0(react@18.2.0)
+      prism-react-renderer: 2.3.0(react@18.2.0)
       react: 18.2.0
       react-dom: 18.2.0(react@18.2.0)
       sucrase: 3.34.0
