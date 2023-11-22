@@ -98,7 +98,7 @@
     "@fortawesome/free-brands-svg-icons": "^6.4.2",
     "@fortawesome/free-solid-svg-icons": "^6.4.2",
     "@fortawesome/react-fontawesome": "^0.2.0",
-    "@metamask/providers": "^14.0.1",
+    "@metamask/providers": "^14.0.2",
     "@mui/icons-material": "^5.14.18",
     "@mui/material": "^5.14.18",
     "@reduxjs/toolkit": "^1.9.7",
