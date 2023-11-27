@@ -1,3 +1,5 @@
+import type { IZkMetadata } from "../proof";
+
 export interface IInjectedMessageData<P = unknown, M = unknown> {
   target: string;
   nonce: string;
@@ -5,10 +7,10 @@ export interface IInjectedMessageData<P = unknown, M = unknown> {
   payload: [string, P];
 }
 
-export interface IInjectedProviderRequest<P = unknown, M = unknown> {
+export interface IInjectedProviderRequest<P = unknown, M = IZkMetadata> {
   method: string;
   payload?: P;
   error?: boolean;
-  meta?: Record<string, M>;
+  meta?: M;
   source?: "offscreen";
 }

@@ -4,16 +4,16 @@
 
 import { renderHook, waitFor } from "@testing-library/react";
 
-import { useVerifiableCredentials } from "@src/ui/ducks/verifiableCredentials";
-import { serializeCryptkeeperVerifiableCredential } from "@src/util/credentials";
+import { useVCs } from "@src/ui/ducks/verifiableCredentials";
+import { serializeCryptkeeperVC } from "@src/util/credentials";
 
-import { useCryptkeeperVerifiableCredentials } from "..";
+import { useCryptkeeperVCs } from "..";
 
 jest.mock("@src/ui/ducks/verifiableCredentials", (): unknown => ({
-  useVerifiableCredentials: jest.fn(),
+  useVCs: jest.fn(),
 }));
 
-describe("ui/hooks/verifiableCredentials", () => {
+describe("ui/hooks/verifiableCredentials/useCryptkeeperVCs", () => {
   const mockCryptkeeperVerifiableCredentials = [
     {
       verifiableCredential: {
@@ -57,12 +57,10 @@ describe("ui/hooks/verifiableCredentials", () => {
     },
   ];
 
-  const mockSerializedVerifiableCredentials = mockCryptkeeperVerifiableCredentials.map(
-    serializeCryptkeeperVerifiableCredential,
-  );
+  const mockSerializedVerifiableCredentials = mockCryptkeeperVerifiableCredentials.map(serializeCryptkeeperVC);
 
   beforeEach(() => {
-    (useVerifiableCredentials as jest.Mock).mockReturnValue(mockSerializedVerifiableCredentials);
+    (useVCs as jest.Mock).mockReturnValue(mockSerializedVerifiableCredentials);
   });
 
   afterEach(() => {
@@ -70,7 +68,7 @@ describe("ui/hooks/verifiableCredentials", () => {
   });
 
   test("it correctly fetches and deserializes verifiable credentials", async () => {
-    const { result } = renderHook(() => useCryptkeeperVerifiableCredentials());
+    const { result } = renderHook(() => useCryptkeeperVCs());
 
     await waitFor(() => {
       expect(result.current).toStrictEqual(mockCryptkeeperVerifiableCredentials);

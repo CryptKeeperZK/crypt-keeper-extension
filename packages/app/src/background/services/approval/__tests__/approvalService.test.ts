@@ -211,7 +211,7 @@ describe("background/services/approval", () => {
     test("should throw error if origin is not approved", async () => {
       await approvalService.unlock();
 
-      expect(() => approvalService.isOriginApproved({}, { urlOrigin: "unknown" })).toThrowError(
+      expect(() => approvalService.isOriginApproved({}, { urlOrigin: "unknown" })).toThrow(
         "CryptKeeper: origin is not approved",
       );
     });
@@ -219,9 +219,7 @@ describe("background/services/approval", () => {
     test("should throw error if origin is not provided", async () => {
       await approvalService.unlock();
 
-      expect(() => approvalService.isOriginApproved({}, { urlOrigin: "" })).toThrowError(
-        "CryptKeeper: origin is not set",
-      );
+      expect(() => approvalService.isOriginApproved({}, { urlOrigin: "" })).toThrow("CryptKeeper: origin is not set");
     });
   });
 

@@ -133,7 +133,7 @@ describe("background/services/protocols", () => {
         merkleStorageUrl: "http://localhost:3000/merkle",
       });
 
-      await expect(promise).rejects.toThrowError("Zk service: Must set circuitFilePath and zkeyFilePath");
+      await expect(promise).rejects.toThrow("Zk service: Must set circuitFilePath and zkeyFilePath");
     });
 
     test("should handle error properly when generating rln proof", async () => {
@@ -160,7 +160,7 @@ describe("background/services/protocols", () => {
         merkleStorageUrl: "http://localhost:3000/merkle",
       });
 
-      await expect(promise).rejects.toThrowError("error");
+      await expect(promise).rejects.toThrow("error");
     });
 
     test("should throw error if there is no merkle proof", async () => {
@@ -185,7 +185,7 @@ describe("background/services/protocols", () => {
         merkleStorageUrl: "http://localhost:3000/merkle",
       });
 
-      await expect(promise).rejects.toThrowError("No merkle proof error");
+      await expect(promise).rejects.toThrow("No merkle proof error");
     });
   });
 
@@ -230,7 +230,7 @@ describe("background/services/protocols", () => {
         merkleStorageUrl: "http://localhost:3000/merkle",
       });
 
-      await expect(promise).rejects.toThrowError("Zk service: Must set circuitFilePath and zkeyFilePath");
+      await expect(promise).rejects.toThrow("Zk service: Must set circuitFilePath and zkeyFilePath");
     });
 
     test("should handle error properly when generating semaphore proof", async () => {
@@ -242,7 +242,7 @@ describe("background/services/protocols", () => {
         merkleStorageUrl: "http://localhost:3000/merkle",
       });
 
-      await expect(promise).rejects.toThrowError("error");
+      await expect(promise).rejects.toThrow("error");
     });
 
     test("should throw error if there is no merkle proof", async () => {
@@ -255,7 +255,7 @@ describe("background/services/protocols", () => {
         merkleStorageUrl: "http://localhost:3000/merkle",
       });
 
-      await expect(promise).rejects.toThrowError("No merkle proof error");
+      await expect(promise).rejects.toThrow("No merkle proof error");
     });
   });
 });

@@ -180,7 +180,7 @@ describe("background/services/locker", () => {
         instance.get.mockResolvedValue(undefined);
       });
 
-      await expect(lockService.unlock(defaultPassword)).rejects.toThrowError(
+      await expect(lockService.unlock(defaultPassword)).rejects.toThrow(
         "Something badly gone wrong (reinstallation probably required)",
       );
     });
@@ -193,7 +193,7 @@ describe("background/services/locker", () => {
           .mockResolvedValue(defaultPassword);
       });
 
-      await expect(lockService.unlock("wrong")).rejects.toThrowError("Incorrect password");
+      await expect(lockService.unlock("wrong")).rejects.toThrow("Incorrect password");
     });
   });
 

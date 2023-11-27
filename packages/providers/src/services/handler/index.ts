@@ -1,11 +1,11 @@
-import type { RequestsPromisesHandlers } from "./types";
+import type { RequestsPromisesHandlers, IHandler } from "./types";
 import type { IInjectedMessageData, IInjectedProviderRequest } from "@cryptkeeperzk/types";
 
 import { type EventHandler, EventEmitter, EventName } from "../event";
 
 const EVENTS = Object.values(EventName);
 
-export class Handler {
+export class Handler implements IHandler {
   /**
    * Nonce used for message communication.
    */
@@ -95,28 +95,29 @@ export class Handler {
   eventResponser(event: MessageEvent<IInjectedMessageData>): unknown {
     const { data } = event;
 
-    if (data.target === "injected-injectedscript") {
-      if (EVENTS.includes(data.nonce as EventName)) {
-        const [, res] = data.payload;
-        this.emit(data.nonce as EventName, res);
-        return;
-      }
-
-      if (!this.requestsPromises.has(data.nonce.toString())) {
-        return;
-      }
-
-      const [err, res] = data.payload;
-      const { reject, resolve } = this.requestsPromises.get(data.nonce.toString())!;
-
-      if (err) {
-        reject(new Error(err));
-        return;
-      }
-
-      resolve(res);
-
-      this.requestsPromises.delete(data.nonce.toString());
+    if (data.target !== "injected-injectedscript") {
+      return;
     }
+
+    if (EVENTS.includes(data.nonce as EventName)) {
+      const [, res] = data.payload;
+      this.emit(data.nonce as EventName, res);
+      return;
+    }
+
+    if (!this.requestsPromises.has(data.nonce.toString())) {
+      return;
+    }
+
+    const [err, res] = data.payload;
+    const { reject, resolve } = this.requestsPromises.get(data.nonce.toString())!;
+
+    if (err) {
+      reject(new Error(err));
+    } else {
+      resolve(res);
+    }
+
+    this.requestsPromises.delete(data.nonce.toString());
   }
 }

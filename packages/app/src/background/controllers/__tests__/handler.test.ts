@@ -57,8 +57,6 @@ describe("background/controllers/handler", () => {
   test("should throw error if there is no registered method", () => {
     const handler = new Handler();
 
-    expect(handler.handle({ method: "unknown" }, defaultOptions)).rejects.toThrowError(
-      "method: unknown is not detected",
-    );
+    expect(handler.handle({ method: "unknown" }, defaultOptions)).rejects.toThrow("method: unknown is not detected");
   });
 });

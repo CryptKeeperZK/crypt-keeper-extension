@@ -7,7 +7,7 @@ import RequestManager from "@src/background/controllers/requestManager";
 import ApprovalService from "@src/background/services/approval";
 import BackupService from "@src/background/services/backup";
 import ConnectionService from "@src/background/services/connection";
-import VerifiableCredentialsService from "@src/background/services/credentials";
+import { VerifiableCredentialService, VerifiablePresentationService } from "@src/background/services/credentials";
 import GroupService from "@src/background/services/group";
 import HistoryService from "@src/background/services/history";
 import { InjectorService } from "@src/background/services/injector";
@@ -18,7 +18,7 @@ import WalletService from "@src/background/services/wallet";
 import ZkIdentityService from "@src/background/services/zkIdentity";
 import { RPCInternalAction } from "@src/constants";
 import { BackupableServices } from "@src/types";
-import { validateSerializedVerifiableCredential } from "@src/util/credentials";
+import { validateSerializedVC } from "@src/util/credentials";
 
 import type { Runtime } from "webextension-polyfill";
 
@@ -37,7 +37,6 @@ const RPC_METHOD_ACCESS: Record<RPCExternalAction, boolean> = {
   [RPCExternalAction.GENERATE_GROUP_MERKLE_PROOF]: true,
   [RPCExternalAction.IMPORT_IDENTITY]: true,
   [RPCExternalAction.REVEAL_CONNECTED_IDENTITY_COMMITMENT]: true,
-  // TODO: Please note that the following 2 actions will be refactored in another PR
   [RPCExternalAction.ADD_VERIFIABLE_CREDENTIAL]: true,
   [RPCExternalAction.GENERATE_VERIFIABLE_PRESENTATION]: true,
 };
@@ -67,7 +66,9 @@ export default class CryptKeeperController {
 
   private walletService: WalletService;
 
-  private verifiableCredentialsService: VerifiableCredentialsService;
+  private verifiableCredentialService: VerifiableCredentialService;
+
+  private verifiablePresentationService: VerifiablePresentationService;
 
   private groupService: GroupService;
 
@@ -86,8 +87,8 @@ export default class CryptKeeperController {
     this.browserService = BrowserUtils.getInstance();
     this.historyService = HistoryService.getInstance();
     this.walletService = WalletService.getInstance();
-    this.verifiableCredentialsService = VerifiableCredentialsService.getInstance();
-    this.verifiableCredentialsService = VerifiableCredentialsService.getInstance();
+    this.verifiableCredentialService = VerifiableCredentialService.getInstance();
+    this.verifiablePresentationService = VerifiablePresentationService.getInstance();
     this.groupService = GroupService.getInstance();
     this.protocolService = ProtocolService.getInstance();
     this.connectionService = ConnectionService.getInstance();
@@ -96,7 +97,7 @@ export default class CryptKeeperController {
       .add(BackupableServices.WALLET, this.walletService)
       .add(BackupableServices.APPROVAL, this.approvalService)
       .add(BackupableServices.IDENTITY, this.zkIdentityService)
-      .add(BackupableServices.VERIFIABLE_CREDENTIALS, this.verifiableCredentialsService)
+      .add(BackupableServices.VERIFIABLE_CREDENTIALS, this.verifiableCredentialService)
       .add(BackupableServices.CONNECTIONS, this.connectionService);
   }
 
@@ -282,60 +283,54 @@ export default class CryptKeeperController {
 
     // Credentials
     this.handler.add(
-      RPCInternalAction.ADD_VERIFIABLE_CREDENTIAL,
-      this.lockService.ensure,
-      this.verifiableCredentialsService.addVerifiableCredential,
-    );
-    this.handler.add(
       RPCExternalAction.ADD_VERIFIABLE_CREDENTIAL,
       this.lockService.ensure,
-      validateSerializedVerifiableCredential,
-      this.verifiableCredentialsService.addVerifiableCredentialRequest,
-    );
-    this.handler.add(
-      RPCInternalAction.REJECT_VERIFIABLE_CREDENTIAL_REQUEST,
-      this.lockService.ensure,
-      this.verifiableCredentialsService.rejectVerifiableCredentialRequest,
-    );
-    this.handler.add(
-      RPCInternalAction.RENAME_VERIFIABLE_CREDENTIAL,
-      this.lockService.ensure,
-      this.verifiableCredentialsService.renameVerifiableCredential,
-    );
-    this.handler.add(
-      RPCInternalAction.GET_ALL_VERIFIABLE_CREDENTIALS,
-      this.lockService.ensure,
-      this.verifiableCredentialsService.getAllVerifiableCredentials,
-    );
-    this.handler.add(
-      RPCInternalAction.DELETE_VERIFIABLE_CREDENTIAL,
-      this.lockService.ensure,
-      this.verifiableCredentialsService.deleteVerifiableCredential,
-    );
-    this.handler.add(
-      RPCInternalAction.DELETE_ALL_VERIFIABLE_CREDENTIALS,
-      this.lockService.ensure,
-      this.verifiableCredentialsService.deleteAllVerifiableCredentials,
-    );
-    this.handler.add(
-      RPCInternalAction.GENERATE_VERIFIABLE_PRESENTATION,
-      this.lockService.ensure,
-      this.verifiableCredentialsService.generateVerifiablePresentation,
-    );
-    this.handler.add(
-      RPCInternalAction.GENERATE_VERIFIABLE_PRESENTATION_WITH_CRYPTKEEPER,
-      this.lockService.ensure,
-      this.verifiableCredentialsService.generateVerifiablePresentationWithCryptkeeper,
+      this.approvalService.isOriginApproved,
+      this.connectionService.isOriginConnected,
+      validateSerializedVC,
+      this.verifiableCredentialService.addRequest,
     );
     this.handler.add(
       RPCExternalAction.GENERATE_VERIFIABLE_PRESENTATION,
       this.lockService.ensure,
-      this.verifiableCredentialsService.generateVerifiablePresentationRequest,
+      this.approvalService.isOriginApproved,
+      this.connectionService.isOriginConnected,
+      this.verifiablePresentationService.generateRequest,
     );
     this.handler.add(
-      RPCInternalAction.REJECT_VERIFIABLE_PRESENTATION_REQUEST,
+      RPCInternalAction.ADD_VERIFIABLE_CREDENTIAL,
       this.lockService.ensure,
-      this.verifiableCredentialsService.rejectVerifiablePresentationRequest,
+      this.verifiableCredentialService.add,
+    );
+    this.handler.add(
+      RPCInternalAction.RENAME_VERIFIABLE_CREDENTIAL,
+      this.lockService.ensure,
+      this.verifiableCredentialService.rename,
+    );
+    this.handler.add(
+      RPCInternalAction.GET_ALL_VERIFIABLE_CREDENTIALS,
+      this.lockService.ensure,
+      this.verifiableCredentialService.getAll,
+    );
+    this.handler.add(
+      RPCInternalAction.DELETE_VERIFIABLE_CREDENTIAL,
+      this.lockService.ensure,
+      this.verifiableCredentialService.delete,
+    );
+    this.handler.add(
+      RPCInternalAction.DELETE_ALL_VERIFIABLE_CREDENTIALS,
+      this.lockService.ensure,
+      this.verifiableCredentialService.deleteAll,
+    );
+    this.handler.add(
+      RPCInternalAction.GENERATE_VERIFIABLE_PRESENTATION,
+      this.lockService.ensure,
+      this.verifiablePresentationService.generate,
+    );
+    this.handler.add(
+      RPCInternalAction.GENERATE_VERIFIABLE_PRESENTATION_WITH_CRYPTKEEPER,
+      this.lockService.ensure,
+      this.verifiablePresentationService.generateWithCryptkeeper,
     );
 
     // Approvals

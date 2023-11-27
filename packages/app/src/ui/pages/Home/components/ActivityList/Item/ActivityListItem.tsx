@@ -30,9 +30,7 @@ const OPERATIONS: Record<OperationType, string> = {
   [OperationType.RENAME_VERIFIABLE_CREDENTIAL]: "Verifiable credential renamed",
   [OperationType.DELETE_VERIFIABLE_CREDENTIAL]: "Verifiable credential deleted",
   [OperationType.DELETE_ALL_VERIFIABLE_CREDENTIALS]: "All verifiable credentials deleted",
-  [OperationType.REJECT_VERIFIABLE_CREDENTIAL_REQUEST]: "Verifiable credential request rejected",
   [OperationType.GENERATE_VERIFIABLE_PRESENTATION]: "Verifiable presentation generated",
-  [OperationType.REJECT_VERIFIABLE_PRESENTATION_REQUEST]: "Verifiable presentation request rejected",
   [OperationType.REVEAL_IDENTITY_COMMITMENT]: "Identity revealed",
   [OperationType.JOIN_GROUP]: "Joined group",
 };

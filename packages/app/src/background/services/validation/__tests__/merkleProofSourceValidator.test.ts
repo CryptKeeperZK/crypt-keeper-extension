@@ -46,13 +46,13 @@ describe("background/services/validation", () => {
   });
 
   test("should throw error if there is no any input", () => {
-    expect(() => validateMerkleProofSource({} as Partial<IMerkleProofInputs>)).toThrowError(
+    expect(() => validateMerkleProofSource({} as Partial<IMerkleProofInputs>)).toThrow(
       "CryptKeeper: please set a merkle proof source.",
     );
   });
 
   test("should throw error if merkle tree inputs are invalid", () => {
-    expect(() => validateMerkleProofSource({ merkleProofSource: {} } as Partial<IMerkleProofInputs>)).toThrowError(
+    expect(() => validateMerkleProofSource({ merkleProofSource: {} } as Partial<IMerkleProofInputs>)).toThrow(
       "CryptKeeper: invalid ZK merkle tree inputs",
     );
   });

@@ -13,7 +13,7 @@ export interface IUseVerifiableCredentialItemData {
   register: UseFormRegister<RenameVerifiableCredentialItemData>;
   onSubmit: (event: ReactFormEvent<HTMLFormElement>) => void;
   onToggleRenaming: () => void;
-  onDelete: () => Promise<void>;
+  onRemove: () => Promise<void>;
   onToggleSelect: () => void;
 }
 
@@ -56,7 +56,7 @@ export const useVerifiableCredentialItem = (
     [name, setIsRenaming, onRename],
   );
 
-  const onDeleteVerifiableCredential = useCallback(async () => {
+  const onRemove = useCallback(async () => {
     await onDelete?.(hash);
   }, [hash, onDelete]);
 
@@ -70,7 +70,7 @@ export const useVerifiableCredentialItem = (
     register,
     onSubmit,
     onToggleRenaming,
-    onDelete: onDeleteVerifiableCredential,
+    onRemove,
     onToggleSelect,
   };
 };

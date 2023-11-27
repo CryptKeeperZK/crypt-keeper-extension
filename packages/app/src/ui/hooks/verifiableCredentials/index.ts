@@ -1,1 +1,1 @@
-export { useCryptkeeperVerifiableCredentials } from "./useCryptkeeperVerifiableCredentials";
+export { useCryptkeeperVCs } from "./useCryptkeeperVCs";

@@ -7,12 +7,10 @@ import { act, renderHook, waitFor } from "@testing-library/react";
 import { defaultWalletHookData } from "@src/config/mock/wallet";
 import { closePopup } from "@src/ui/ducks/app";
 import { useAppDispatch } from "@src/ui/ducks/hooks";
-import {
-  generateVerifiablePresentation,
-  generateVerifiablePresentationWithCryptkeeper,
-  rejectVerifiablePresentationRequest,
-} from "@src/ui/ducks/verifiableCredentials";
-import { useCryptkeeperVerifiableCredentials } from "@src/ui/hooks/verifiableCredentials";
+import { rejectUserRequest } from "@src/ui/ducks/requests";
+import { generateVP, generateVPWithCryptkeeper } from "@src/ui/ducks/verifiableCredentials";
+import { useSearchParam } from "@src/ui/hooks/url";
+import { useCryptkeeperVCs } from "@src/ui/hooks/verifiableCredentials";
 import { useCryptKeeperWallet, useEthWallet } from "@src/ui/hooks/wallet";
 
 import type { BrowserProvider } from "ethers";
@@ -63,7 +61,7 @@ const mockCryptkeeperVerifiableCredentials = [
 ];
 
 jest.mock("@src/ui/hooks/verifiableCredentials", (): unknown => ({
-  useCryptkeeperVerifiableCredentials: jest.fn(),
+  useCryptkeeperVCs: jest.fn(),
 }));
 
 jest.mock("@src/ui/ducks/hooks", (): unknown => ({
@@ -75,20 +73,26 @@ jest.mock("@src/ui/ducks/app", (): unknown => ({
 }));
 
 jest.mock("@src/ui/ducks/verifiableCredentials", (): unknown => ({
-  addVerifiableCredential: jest.fn(),
-  rejectVerifiableCredentialRequest: jest.fn(),
-  renameVerifiableCredential: jest.fn(),
-  deleteVerifiableCredential: jest.fn(),
-  fetchVerifiableCredentials: jest.fn(),
+  addVC: jest.fn(),
+  renameVC: jest.fn(),
+  deleteVC: jest.fn(),
+  fetchVCs: jest.fn(),
   useVerifiableCredentials: jest.fn(),
-  generateVerifiablePresentation: jest.fn(),
-  generateVerifiablePresentationWithCryptkeeper: jest.fn(),
-  rejectVerifiablePresentationRequest: jest.fn(),
+  generateVP: jest.fn(),
+  generateVPWithCryptkeeper: jest.fn(),
+}));
+
+jest.mock("@src/ui/ducks/requests", (): unknown => ({
+  rejectUserRequest: jest.fn(),
 }));
 
 jest.mock("@src/ui/hooks/wallet", (): unknown => ({
   useEthWallet: jest.fn(),
   useCryptKeeperWallet: jest.fn(),
+}));
+
+jest.mock("@src/ui/hooks/url", (): unknown => ({
+  useSearchParam: jest.fn(),
 }));
 
 describe("ui/pages/PresentVerifiableCredential/usePresentVerifiableCredential", () => {
@@ -115,13 +119,15 @@ describe("ui/pages/PresentVerifiableCredential/usePresentVerifiableCredential", 
     beforeEach(() => {
       (useAppDispatch as jest.Mock).mockReturnValue(mockDispatch);
 
-      (useCryptkeeperVerifiableCredentials as jest.Mock).mockReturnValue(mockCryptkeeperVerifiableCredentials);
+      (useCryptkeeperVCs as jest.Mock).mockReturnValue(mockCryptkeeperVerifiableCredentials);
 
       (useEthWallet as jest.Mock).mockReturnValue({ ...defaultWalletHookData, provider: mockProvider, isActive: true });
 
       (useCryptKeeperWallet as jest.Mock).mockReturnValue({ ...defaultWalletHookData, isActive: true });
 
-      window.location.href = `http://localhost:3000/generate-verifiable-presentation-request?request=${exampleRequest}`;
+      (useSearchParam as jest.Mock).mockImplementation((arg: string) =>
+        arg === "urlOrigin" ? "http://localhost:3000" : exampleRequest,
+      );
     });
 
     afterEach(() => {
@@ -134,19 +140,21 @@ describe("ui/pages/PresentVerifiableCredential/usePresentVerifiableCredential", 
       const { result } = renderHook(() => usePresentVerifiableCredential());
 
       await waitFor(() => {
-        expect(result.current.verifiablePresentationRequest).toStrictEqual(exampleRequest);
-        expect(result.current.selectedVerifiableCredentialHashes).toStrictEqual([]);
+        expect(result.current.vpRequest).toStrictEqual(exampleRequest);
+        expect(result.current.selectedVCHashes).toStrictEqual([]);
         expect(result.current.error).toBe(undefined);
       });
     });
 
     test("should have no initial data if request is empty", async () => {
-      window.location.href = `http://localhost:3000/generate-verifiable-presentation-request`;
+      (useSearchParam as jest.Mock).mockImplementation((arg: string) =>
+        arg === "urlOrigin" ? "http://localhost:3000" : undefined,
+      );
 
       const { result } = renderHook(() => usePresentVerifiableCredential());
 
       await waitFor(() => {
-        expect(result.current.verifiablePresentationRequest).toStrictEqual(undefined);
+        expect(result.current.vpRequest).toBeUndefined();
       });
     });
 
@@ -154,7 +162,7 @@ describe("ui/pages/PresentVerifiableCredential/usePresentVerifiableCredential", 
       const { result } = renderHook(() => usePresentVerifiableCredential());
 
       await waitFor(() => {
-        expect(result.current.verifiablePresentationRequest).toStrictEqual(exampleRequest);
+        expect(result.current.vpRequest).toStrictEqual(exampleRequest);
       });
 
       act(() => result.current.onCloseModal());
@@ -167,9 +175,9 @@ describe("ui/pages/PresentVerifiableCredential/usePresentVerifiableCredential", 
       const { result } = renderHook(() => usePresentVerifiableCredential());
 
       await waitFor(() => {
-        expect(result.current.verifiablePresentationRequest).toStrictEqual(exampleRequest);
+        expect(result.current.vpRequest).toStrictEqual(exampleRequest);
       });
-      act(() => result.current.onToggleSelection("0x1234"));
+      act(() => result.current.onSelect("0x1234"));
 
       expect(result.current.checkDisabledItem(MenuItems.METAMASK)).toBe(false);
       expect(result.current.checkDisabledItem(MenuItems.CRYPTKEEPER)).toBe(false);
@@ -180,12 +188,12 @@ describe("ui/pages/PresentVerifiableCredential/usePresentVerifiableCredential", 
       const { result } = renderHook(() => usePresentVerifiableCredential());
 
       await waitFor(() => {
-        expect(result.current.verifiablePresentationRequest).toStrictEqual(exampleRequest);
+        expect(result.current.vpRequest).toStrictEqual(exampleRequest);
       });
 
-      await act(async () => Promise.resolve(result.current.onRejectRequest()));
+      await act(async () => Promise.resolve(result.current.onReject()));
 
-      expect(rejectVerifiablePresentationRequest).toHaveBeenCalledTimes(1);
+      expect(rejectUserRequest).toHaveBeenCalledTimes(1);
       expect(closePopup).toHaveBeenCalledTimes(1);
       expect(mockDispatch).toHaveBeenCalledTimes(3);
     });
@@ -196,16 +204,16 @@ describe("ui/pages/PresentVerifiableCredential/usePresentVerifiableCredential", 
       const { result } = renderHook(() => usePresentVerifiableCredential());
 
       await waitFor(() => {
-        expect(result.current.verifiablePresentationRequest).toStrictEqual(exampleRequest);
+        expect(result.current.vpRequest).toStrictEqual(exampleRequest);
       });
 
-      act(() => result.current.onToggleSelection(hash));
+      act(() => result.current.onSelect(hash));
 
-      expect(result.current.selectedVerifiableCredentialHashes).toStrictEqual([hash]);
+      expect(result.current.selectedVCHashes).toStrictEqual([hash]);
 
-      act(() => result.current.onToggleSelection(hash));
+      act(() => result.current.onSelect(hash));
 
-      expect(result.current.selectedVerifiableCredentialHashes).toStrictEqual([]);
+      expect(result.current.selectedVCHashes).toStrictEqual([]);
     });
 
     test("should erase error after toggling select", async () => {
@@ -214,12 +222,12 @@ describe("ui/pages/PresentVerifiableCredential/usePresentVerifiableCredential", 
       const { result } = renderHook(() => usePresentVerifiableCredential());
 
       await waitFor(() => {
-        expect(result.current.verifiablePresentationRequest).toStrictEqual(exampleRequest);
+        expect(result.current.vpRequest).toStrictEqual(exampleRequest);
       });
 
-      await act(() => result.current.onSubmitVerifiablePresentation(MenuItems.WITHOUT_SIGNATURE));
+      await act(() => result.current.onSubmit(MenuItems.WITHOUT_SIGNATURE));
 
-      act(() => result.current.onToggleSelection(hash));
+      act(() => result.current.onSelect(hash));
 
       expect(result.current.error).toBe(undefined);
     });
@@ -230,13 +238,13 @@ describe("ui/pages/PresentVerifiableCredential/usePresentVerifiableCredential", 
       const { result } = renderHook(() => usePresentVerifiableCredential());
 
       await waitFor(() => {
-        expect(result.current.verifiablePresentationRequest).toStrictEqual(exampleRequest);
+        expect(result.current.vpRequest).toStrictEqual(exampleRequest);
       });
 
-      act(() => result.current.onToggleSelection(hash));
-      await act(() => result.current.onSubmitVerifiablePresentation(MenuItems.WITHOUT_SIGNATURE));
+      act(() => result.current.onSelect(hash));
+      await act(() => result.current.onSubmit(MenuItems.WITHOUT_SIGNATURE));
 
-      expect(generateVerifiablePresentation).toHaveBeenCalledTimes(1);
+      expect(generateVP).toHaveBeenCalledTimes(1);
       expect(closePopup).toHaveBeenCalledTimes(1);
       expect(mockDispatch).toHaveBeenCalledTimes(3);
     });
@@ -245,12 +253,12 @@ describe("ui/pages/PresentVerifiableCredential/usePresentVerifiableCredential", 
       const { result } = renderHook(() => usePresentVerifiableCredential());
 
       await waitFor(() => {
-        expect(result.current.verifiablePresentationRequest).toStrictEqual(exampleRequest);
+        expect(result.current.vpRequest).toStrictEqual(exampleRequest);
       });
 
-      await act(() => result.current.onSubmitVerifiablePresentation(MenuItems.WITHOUT_SIGNATURE));
+      await act(() => result.current.onSubmit(MenuItems.WITHOUT_SIGNATURE));
 
-      expect(generateVerifiablePresentation).toHaveBeenCalledTimes(0);
+      expect(generateVP).toHaveBeenCalledTimes(0);
       expect(result.current.error).toBe("Please select at least one credential.");
     });
 
@@ -260,13 +268,13 @@ describe("ui/pages/PresentVerifiableCredential/usePresentVerifiableCredential", 
       const { result } = renderHook(() => usePresentVerifiableCredential());
 
       await waitFor(() => {
-        expect(result.current.verifiablePresentationRequest).toStrictEqual(exampleRequest);
+        expect(result.current.vpRequest).toStrictEqual(exampleRequest);
       });
 
-      act(() => result.current.onToggleSelection(hash));
-      await act(() => result.current.onSubmitVerifiablePresentation(MenuItems.CRYPTKEEPER));
+      act(() => result.current.onSelect(hash));
+      await act(() => result.current.onSubmit(MenuItems.CRYPTKEEPER));
 
-      expect(generateVerifiablePresentationWithCryptkeeper).toHaveBeenCalledTimes(1);
+      expect(generateVPWithCryptkeeper).toHaveBeenCalledTimes(1);
       expect(closePopup).toHaveBeenCalledTimes(1);
       expect(mockDispatch).toHaveBeenCalledTimes(3);
     });
@@ -275,12 +283,12 @@ describe("ui/pages/PresentVerifiableCredential/usePresentVerifiableCredential", 
       const { result } = renderHook(() => usePresentVerifiableCredential());
 
       await waitFor(() => {
-        expect(result.current.verifiablePresentationRequest).toStrictEqual(exampleRequest);
+        expect(result.current.vpRequest).toStrictEqual(exampleRequest);
       });
 
-      await act(() => result.current.onSubmitVerifiablePresentation(MenuItems.CRYPTKEEPER));
+      await act(() => result.current.onSubmit(MenuItems.CRYPTKEEPER));
 
-      expect(generateVerifiablePresentationWithCryptkeeper).toHaveBeenCalledTimes(0);
+      expect(generateVPWithCryptkeeper).toHaveBeenCalledTimes(0);
       expect(result.current.error).toBe("Please select at least one credential.");
     });
 
@@ -290,13 +298,13 @@ describe("ui/pages/PresentVerifiableCredential/usePresentVerifiableCredential", 
       const { result } = renderHook(() => usePresentVerifiableCredential());
 
       await waitFor(() => {
-        expect(result.current.verifiablePresentationRequest).toStrictEqual(exampleRequest);
+        expect(result.current.vpRequest).toStrictEqual(exampleRequest);
       });
 
-      act(() => result.current.onToggleSelection(hash));
-      await act(() => result.current.onSubmitVerifiablePresentation(MenuItems.METAMASK));
+      act(() => result.current.onSelect(hash));
+      await act(() => result.current.onSubmit(MenuItems.METAMASK));
 
-      expect(generateVerifiablePresentation).toHaveBeenCalledTimes(1);
+      expect(generateVP).toHaveBeenCalledTimes(1);
       expect(closePopup).toHaveBeenCalledTimes(1);
       expect(mockDispatch).toHaveBeenCalledTimes(3);
     });
@@ -305,12 +313,12 @@ describe("ui/pages/PresentVerifiableCredential/usePresentVerifiableCredential", 
       const { result } = renderHook(() => usePresentVerifiableCredential());
 
       await waitFor(() => {
-        expect(result.current.verifiablePresentationRequest).toStrictEqual(exampleRequest);
+        expect(result.current.vpRequest).toStrictEqual(exampleRequest);
       });
 
-      await act(() => result.current.onSubmitVerifiablePresentation(MenuItems.METAMASK));
+      await act(() => result.current.onSubmit(MenuItems.METAMASK));
 
-      expect(generateVerifiablePresentationWithCryptkeeper).toHaveBeenCalledTimes(0);
+      expect(generateVPWithCryptkeeper).toHaveBeenCalledTimes(0);
       expect(result.current.error).toBe("Please select at least one credential.");
     });
 
@@ -318,13 +326,13 @@ describe("ui/pages/PresentVerifiableCredential/usePresentVerifiableCredential", 
       const { result } = renderHook(() => usePresentVerifiableCredential());
 
       await waitFor(() => {
-        expect(result.current.verifiablePresentationRequest).toStrictEqual(exampleRequest);
+        expect(result.current.vpRequest).toStrictEqual(exampleRequest);
       });
 
-      await act(() => result.current.onSubmitVerifiablePresentation(3));
+      await act(() => result.current.onSubmit(3));
 
-      expect(generateVerifiablePresentation).toHaveBeenCalledTimes(0);
-      expect(generateVerifiablePresentationWithCryptkeeper).toHaveBeenCalledTimes(0);
+      expect(generateVP).toHaveBeenCalledTimes(0);
+      expect(generateVPWithCryptkeeper).toHaveBeenCalledTimes(0);
       expect(result.current.error).toBe("Invalid menu index.");
     });
   });
@@ -333,7 +341,7 @@ describe("ui/pages/PresentVerifiableCredential/usePresentVerifiableCredential", 
     beforeEach(() => {
       (useAppDispatch as jest.Mock).mockReturnValue(mockDispatch);
 
-      (useCryptkeeperVerifiableCredentials as jest.Mock).mockReturnValue(mockCryptkeeperVerifiableCredentials);
+      (useCryptkeeperVCs as jest.Mock).mockReturnValue(mockCryptkeeperVerifiableCredentials);
 
       (useEthWallet as jest.Mock).mockReturnValue({
         ...defaultWalletHookData,
@@ -363,11 +371,11 @@ describe("ui/pages/PresentVerifiableCredential/usePresentVerifiableCredential", 
       const { result } = renderHook(() => usePresentVerifiableCredential());
 
       await waitFor(() => {
-        expect(result.current.verifiablePresentationRequest).toStrictEqual(exampleRequest);
+        expect(result.current.vpRequest).toStrictEqual(exampleRequest);
       });
 
-      act(() => result.current.onToggleSelection(hash));
-      await act(() => result.current.onSubmitVerifiablePresentation(MenuItems.METAMASK));
+      act(() => result.current.onSelect(hash));
+      await act(() => result.current.onSubmit(MenuItems.METAMASK));
 
       expect(result.current.error).toStrictEqual("Wallet connection error");
     });
@@ -377,7 +385,7 @@ describe("ui/pages/PresentVerifiableCredential/usePresentVerifiableCredential", 
     beforeEach(() => {
       (useAppDispatch as jest.Mock).mockReturnValue(mockDispatch);
 
-      (useCryptkeeperVerifiableCredentials as jest.Mock).mockReturnValue(mockCryptkeeperVerifiableCredentials);
+      (useCryptkeeperVCs as jest.Mock).mockReturnValue(mockCryptkeeperVerifiableCredentials);
 
       (useEthWallet as jest.Mock).mockReturnValue({
         ...defaultWalletHookData,
@@ -404,11 +412,11 @@ describe("ui/pages/PresentVerifiableCredential/usePresentVerifiableCredential", 
       const { result } = renderHook(() => usePresentVerifiableCredential());
 
       await waitFor(() => {
-        expect(result.current.verifiablePresentationRequest).toStrictEqual(exampleRequest);
+        expect(result.current.vpRequest).toStrictEqual(exampleRequest);
       });
 
-      act(() => result.current.onToggleSelection(hash));
-      await act(() => result.current.onSubmitVerifiablePresentation(MenuItems.METAMASK));
+      act(() => result.current.onSelect(hash));
+      await act(() => result.current.onSubmit(MenuItems.METAMASK));
 
       expect(result.current.error).toStrictEqual("Could not connect to Ethereum account.");
     });
@@ -418,7 +426,7 @@ describe("ui/pages/PresentVerifiableCredential/usePresentVerifiableCredential", 
     beforeEach(() => {
       (useAppDispatch as jest.Mock).mockReturnValue(mockDispatch);
 
-      (useCryptkeeperVerifiableCredentials as jest.Mock).mockReturnValue(mockCryptkeeperVerifiableCredentials);
+      (useCryptkeeperVCs as jest.Mock).mockReturnValue(mockCryptkeeperVerifiableCredentials);
 
       (useEthWallet as jest.Mock).mockReturnValue({
         ...defaultWalletHookData,
@@ -449,11 +457,11 @@ describe("ui/pages/PresentVerifiableCredential/usePresentVerifiableCredential", 
       const { result } = renderHook(() => usePresentVerifiableCredential());
 
       await waitFor(() => {
-        expect(result.current.verifiablePresentationRequest).toStrictEqual(exampleRequest);
+        expect(result.current.vpRequest).toStrictEqual(exampleRequest);
       });
 
-      act(() => result.current.onToggleSelection(hash));
-      await act(() => result.current.onSubmitVerifiablePresentation(MenuItems.METAMASK));
+      act(() => result.current.onSelect(hash));
+      await act(() => result.current.onSubmit(MenuItems.METAMASK));
 
       expect(result.current.error).toStrictEqual("Failed to sign Verifiable Presentation.");
     });
@@ -463,7 +471,7 @@ describe("ui/pages/PresentVerifiableCredential/usePresentVerifiableCredential", 
     beforeEach(() => {
       (useAppDispatch as jest.Mock).mockReturnValue(mockDispatch);
 
-      (useCryptkeeperVerifiableCredentials as jest.Mock).mockReturnValue(mockCryptkeeperVerifiableCredentials);
+      (useCryptkeeperVCs as jest.Mock).mockReturnValue(mockCryptkeeperVerifiableCredentials);
 
       (useEthWallet as jest.Mock).mockReturnValue({ ...defaultWalletHookData, provider: mockProvider, isActive: true });
 
@@ -488,11 +496,11 @@ describe("ui/pages/PresentVerifiableCredential/usePresentVerifiableCredential", 
       const { result } = renderHook(() => usePresentVerifiableCredential());
 
       await waitFor(() => {
-        expect(result.current.verifiablePresentationRequest).toStrictEqual(exampleRequest);
+        expect(result.current.vpRequest).toStrictEqual(exampleRequest);
       });
 
-      act(() => result.current.onToggleSelection(hash));
-      await act(() => result.current.onSubmitVerifiablePresentation(MenuItems.CRYPTKEEPER));
+      act(() => result.current.onSelect(hash));
+      await act(() => result.current.onSubmit(MenuItems.CRYPTKEEPER));
 
       expect(result.current.error).toStrictEqual("Could not connect to CryptKeeper account.");
     });

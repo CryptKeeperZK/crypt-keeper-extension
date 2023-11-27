@@ -5,12 +5,8 @@
 import { act, renderHook } from "@testing-library/react";
 
 import { useAppDispatch } from "@src/ui/ducks/hooks";
-import {
-  deleteVerifiableCredential,
-  fetchVerifiableCredentials,
-  renameVerifiableCredential,
-} from "@src/ui/ducks/verifiableCredentials";
-import { useCryptkeeperVerifiableCredentials } from "@src/ui/hooks/verifiableCredentials";
+import { deleteVC, fetchVCs, renameVC } from "@src/ui/ducks/verifiableCredentials";
+import { useCryptkeeperVCs } from "@src/ui/hooks/verifiableCredentials";
 
 import { useVerifiableCredentialList } from "../useVerifiableCredentialList";
 
@@ -58,7 +54,7 @@ const mockCryptkeeperVerifiableCredentials = [
 ];
 
 jest.mock("@src/ui/hooks/verifiableCredentials", (): unknown => ({
-  useCryptkeeperVerifiableCredentials: jest.fn(),
+  useCryptkeeperVCs: jest.fn(),
 }));
 
 jest.mock("@src/ui/ducks/hooks", (): unknown => ({
@@ -66,19 +62,16 @@ jest.mock("@src/ui/ducks/hooks", (): unknown => ({
 }));
 
 jest.mock("@src/ui/ducks/verifiableCredentials", (): unknown => ({
-  addVerifiableCredential: jest.fn(),
-  rejectVerifiableCredentialRequest: jest.fn(),
-  renameVerifiableCredential: jest.fn(),
-  deleteVerifiableCredential: jest.fn(),
-  fetchVerifiableCredentials: jest.fn(),
-  useVerifiableCredentials: jest.fn(),
+  renameVC: jest.fn(),
+  deleteVC: jest.fn(),
+  fetchVCs: jest.fn(),
 }));
 
 describe("ui/components/VerifiableCredential/List/useVerifiableCredentialList", () => {
   const mockDispatch = jest.fn();
 
   beforeEach(() => {
-    (useCryptkeeperVerifiableCredentials as jest.Mock).mockReturnValue(mockCryptkeeperVerifiableCredentials);
+    (useCryptkeeperVCs as jest.Mock).mockReturnValue(mockCryptkeeperVerifiableCredentials);
     (useAppDispatch as jest.Mock).mockReturnValue(mockDispatch);
   });
 
@@ -89,25 +82,25 @@ describe("ui/components/VerifiableCredential/List/useVerifiableCredentialList", 
   test("should return initial data", () => {
     const { result } = renderHook(() => useVerifiableCredentialList());
 
-    expect(result.current.cryptkeeperVerifiableCredentials.length).toEqual(2);
-    expect(result.current.cryptkeeperVerifiableCredentials).toEqual(mockCryptkeeperVerifiableCredentials);
+    expect(result.current.cryptkeeperVCs.length).toEqual(2);
+    expect(result.current.cryptkeeperVCs).toEqual(mockCryptkeeperVerifiableCredentials);
   });
 
   test("should call rename properly", async () => {
     const { result } = renderHook(() => useVerifiableCredentialList());
 
-    await act(async () => result.current.onRenameVerifiableCredential("name", "hash"));
+    await act(async () => result.current.onRename("name", "hash"));
 
-    expect(renameVerifiableCredential).toHaveBeenCalledTimes(1);
-    expect(fetchVerifiableCredentials).toHaveBeenCalledTimes(2);
+    expect(renameVC).toHaveBeenCalledTimes(1);
+    expect(fetchVCs).toHaveBeenCalledTimes(2);
   });
 
   test("should call delete properly", async () => {
     const { result } = renderHook(() => useVerifiableCredentialList());
 
-    await act(async () => result.current.onDeleteVerifiableCredential("hash"));
+    await act(async () => result.current.onDelete("hash"));
 
-    expect(deleteVerifiableCredential).toHaveBeenCalledTimes(1);
-    expect(fetchVerifiableCredentials).toHaveBeenCalledTimes(2);
+    expect(deleteVC).toHaveBeenCalledTimes(1);
+    expect(fetchVCs).toHaveBeenCalledTimes(2);
   });
 });

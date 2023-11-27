@@ -118,7 +118,7 @@ describe("background/services/wallet", () => {
         instance.get.mockReturnValue(undefined);
       });
 
-      await expect(walletService.generateKeyPair()).rejects.toThrowError("Generate mnemonic first");
+      await expect(walletService.generateKeyPair()).rejects.toThrow("Generate mnemonic first");
     });
 
     test("should sign message properly", async () => {
@@ -134,13 +134,13 @@ describe("background/services/wallet", () => {
         instance.get.mockReturnValue(undefined);
       });
 
-      await expect(walletService.signMessage({ message: "message", address: ZERO_ADDRESS })).rejects.toThrowError(
+      await expect(walletService.signMessage({ message: "message", address: ZERO_ADDRESS })).rejects.toThrow(
         "No key pair available",
       );
     });
 
     test("should not sign message if there is no such address", async () => {
-      await expect(walletService.signMessage({ message: "message", address: "unknown" })).rejects.toThrowError(
+      await expect(walletService.signMessage({ message: "message", address: "unknown" })).rejects.toThrow(
         "There is no unknown account",
       );
     });
@@ -168,7 +168,7 @@ describe("background/services/wallet", () => {
     });
 
     test("should throw an error if key pair is already created", async () => {
-      await expect(walletService.generateMnemonic()).rejects.toThrowError("Key pair is already generated");
+      await expect(walletService.generateMnemonic()).rejects.toThrow("Key pair is already generated");
     });
 
     test("should return already generated mnemonic properly", async () => {

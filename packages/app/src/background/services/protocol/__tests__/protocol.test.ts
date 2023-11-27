@@ -132,7 +132,7 @@ describe("background/services/protocol", () => {
     test("should throw error if there is no origin url in metadata", async () => {
       const service = ProtocolService.getInstance();
 
-      await expect(service.generateSemaphoreProof(defaultProofRequest, {})).rejects.toThrowError("Origin is not set");
+      await expect(service.generateSemaphoreProof(defaultProofRequest, {})).rejects.toThrow("Origin is not set");
     });
 
     test("should throw error if there is no connected identity", async () => {
@@ -192,7 +192,7 @@ describe("background/services/protocol", () => {
 
       const service = ProtocolService.getInstance();
 
-      await expect(service.generateSemaphoreProof(defaultProofRequest, defaultMetadata)).rejects.toThrowError(
+      await expect(service.generateSemaphoreProof(defaultProofRequest, defaultMetadata)).rejects.toThrow(
         `CryptKeeper: Error in generating Semaphore proof error`,
       );
     });
@@ -224,7 +224,7 @@ describe("background/services/protocol", () => {
       (pushMessage as jest.Mock).mockRejectedValue(error);
       const service = ProtocolService.getInstance();
 
-      await expect(service.generateSemaphoreProof(defaultProofRequest, defaultMetadata)).rejects.toThrowError(
+      await expect(service.generateSemaphoreProof(defaultProofRequest, defaultMetadata)).rejects.toThrow(
         `CryptKeeper: Error in generating Semaphore proof error`,
       );
       expect(pushMessage).toHaveBeenCalledTimes(1);
@@ -249,7 +249,7 @@ describe("background/services/protocol", () => {
 
       const service = ProtocolService.getInstance();
 
-      await expect(service.generateSemaphoreProof(defaultProofRequest, defaultMetadata)).rejects.toThrowError(
+      await expect(service.generateSemaphoreProof(defaultProofRequest, defaultMetadata)).rejects.toThrow(
         `CryptKeeper: Error in generating Semaphore proof error`,
       );
 
@@ -298,7 +298,7 @@ describe("background/services/protocol", () => {
       (pushMessage as jest.Mock).mockRejectedValue(error);
       const service = ProtocolService.getInstance();
 
-      await expect(service.generateRLNProof(defaultProofRequest, defaultMetadata)).rejects.toThrowError(
+      await expect(service.generateRLNProof(defaultProofRequest, defaultMetadata)).rejects.toThrow(
         `CryptKeeper: Error in generating RLN proof error`,
       );
       expect(pushMessage).toHaveBeenCalledTimes(1);
@@ -322,7 +322,7 @@ describe("background/services/protocol", () => {
       (createChromeOffscreen as jest.Mock).mockRejectedValue(error);
       const service = ProtocolService.getInstance();
 
-      await expect(service.generateRLNProof(defaultProofRequest, defaultMetadata)).rejects.toThrowError(
+      await expect(service.generateRLNProof(defaultProofRequest, defaultMetadata)).rejects.toThrow(
         `CryptKeeper: Error in generating RLN proof error`,
       );
 
@@ -332,7 +332,7 @@ describe("background/services/protocol", () => {
     test("should throw error if there is no origin url in metadata", async () => {
       const service = ProtocolService.getInstance();
 
-      await expect(service.generateRLNProof(defaultProofRequest, {})).rejects.toThrowError("Origin is not set");
+      await expect(service.generateRLNProof(defaultProofRequest, {})).rejects.toThrow("Origin is not set");
     });
 
     test("should throw error if there is no connected identity", async () => {
@@ -376,7 +376,7 @@ describe("background/services/protocol", () => {
 
       const service = ProtocolService.getInstance();
 
-      await expect(service.generateRLNProof(defaultProofRequest, defaultMetadata)).rejects.toThrowError(
+      await expect(service.generateRLNProof(defaultProofRequest, defaultMetadata)).rejects.toThrow(
         `CryptKeeper: Error in generating RLN proof error`,
       );
     });

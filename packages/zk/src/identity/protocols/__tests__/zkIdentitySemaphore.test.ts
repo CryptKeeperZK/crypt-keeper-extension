@@ -46,9 +46,7 @@ describe("protocols/ZkIdentitySemaphore", () => {
   });
 
   test("should check metadata and secret data when deserializing", () => {
-    expect(() => ZkIdentitySemaphore.genFromSerialized("{}")).toThrowError("Metadata missing");
-    expect(() => ZkIdentitySemaphore.genFromSerialized(JSON.stringify({ metadata: {} }))).toThrowError(
-      "Secret missing",
-    );
+    expect(() => ZkIdentitySemaphore.genFromSerialized("{}")).toThrow("Metadata missing");
+    expect(() => ZkIdentitySemaphore.genFromSerialized(JSON.stringify({ metadata: {} }))).toThrow("Secret missing");
   });
 });

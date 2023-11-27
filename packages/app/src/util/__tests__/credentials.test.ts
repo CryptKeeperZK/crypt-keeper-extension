@@ -2,14 +2,14 @@ import stringify from "json-stable-stringify";
 import { ValidationError } from "yup";
 
 import {
-  serializeCryptkeeperVerifiableCredential,
-  deserializeCryptkeeperVerifiableCredential,
-  serializeVerifiableCredential,
-  deserializeVerifiableCredential,
-  validateSerializedVerifiableCredential,
-  generateInitialMetadataForVerifiableCredential,
-  hashVerifiableCredential,
-  serializeVerifiablePresentation,
+  serializeCryptkeeperVC,
+  deserializeCryptkeeperVC,
+  serializeVC,
+  deserializeVC,
+  validateSerializedVC,
+  generateInitialMetadataForVC,
+  hashVC,
+  serializeVP,
 } from "../credentials";
 
 describe("util/cryptkeeperVerifiableCredential", () => {
@@ -27,23 +27,21 @@ describe("util/cryptkeeperVerifiableCredential", () => {
         },
       },
     };
-    const metadata = generateInitialMetadataForVerifiableCredential(rawCredential, defaultCredentialName);
+    const metadata = generateInitialMetadataForVC(rawCredential, defaultCredentialName);
     const cryptkeeperCred = {
       verifiableCredential: rawCredential,
       metadata,
     };
-    const serializedCredential = serializeCryptkeeperVerifiableCredential(cryptkeeperCred);
-    const deserializedCredential = await deserializeCryptkeeperVerifiableCredential(serializedCredential);
+    const serializedCredential = serializeCryptkeeperVC(cryptkeeperCred);
+    const deserializedCredential = await deserializeCryptkeeperVC(serializedCredential);
 
     expect(deserializedCredential.verifiableCredential).toStrictEqual(rawCredential);
     expect(deserializedCredential.metadata).toStrictEqual(metadata);
-    expect(serializeCryptkeeperVerifiableCredential(deserializedCredential)).toBe(
-      serializeCryptkeeperVerifiableCredential(cryptkeeperCred),
-    );
+    expect(serializeCryptkeeperVC(deserializedCredential)).toBe(serializeCryptkeeperVC(cryptkeeperCred));
   });
 
   test("should throw error if cryptkeeper credential is an empty string", async () => {
-    await expect(deserializeCryptkeeperVerifiableCredential("")).rejects.toThrowError(
+    await expect(deserializeCryptkeeperVC("")).rejects.toThrow(
       "Serialized CryptKeeper Verifiable Credential is not provided",
     );
   });
@@ -69,8 +67,8 @@ describe("util/serializeVerifiablePresentation", () => {
       verifiableCredential: [rawCredential],
     };
 
-    expect(serializeVerifiablePresentation(verifiablePresentation)).toStrictEqual(
-      stringify({ ...verifiablePresentation, verifiableCredential: [serializeVerifiableCredential(rawCredential)] }),
+    expect(serializeVP(verifiablePresentation)).toStrictEqual(
+      stringify({ ...verifiablePresentation, verifiableCredential: [serializeVC(rawCredential)] }),
     );
   });
 
@@ -80,7 +78,7 @@ describe("util/serializeVerifiablePresentation", () => {
       type: ["VerifiablePresentation"],
     };
 
-    expect(serializeVerifiablePresentation(verifiablePresentation)).toStrictEqual(stringify(verifiablePresentation));
+    expect(serializeVP(verifiablePresentation)).toStrictEqual(stringify(verifiablePresentation));
   });
 });
 
@@ -98,17 +96,15 @@ describe("util/deserializeVerifiableCredential", () => {
         },
       },
     };
-    const credentialJson = serializeVerifiableCredential(rawCredential);
-    const deserializedCredential = await deserializeVerifiableCredential(credentialJson);
+    const credentialJson = serializeVC(rawCredential);
+    const deserializedCredential = await deserializeVC(credentialJson);
 
     expect(deserializedCredential).toStrictEqual(rawCredential);
-    expect(serializeVerifiableCredential(deserializedCredential)).toBe(credentialJson);
+    expect(serializeVC(deserializedCredential)).toBe(credentialJson);
   });
 
   test("should throw error if there is no serialized credential", async () => {
-    await expect(deserializeVerifiableCredential("")).rejects.toThrowError(
-      "Serialized Verifiable Credential is not provided",
-    );
+    await expect(deserializeVC("")).rejects.toThrow("Serialized Verifiable Credential is not provided");
   });
 });
 
@@ -126,11 +122,11 @@ describe("util/validateSerializedVerifiableCredential", () => {
         },
       },
     };
-    const credentialJson = serializeVerifiableCredential(rawCredential);
-    const credential = await deserializeVerifiableCredential(credentialJson);
+    const credentialJson = serializeVC(rawCredential);
+    const credential = await deserializeVC(credentialJson);
 
     expect(credential).not.toBeNull();
-    expect(validateSerializedVerifiableCredential(credentialJson)).not.toBeNull();
+    expect(validateSerializedVC(credentialJson)).not.toBeNull();
   });
 
   test("should validate map claim value properly", async () => {
@@ -144,11 +140,11 @@ describe("util/validateSerializedVerifiableCredential", () => {
         claims: { name: { firstName: "John", lastName: "Doe" } },
       },
     };
-    const credentialJson = serializeVerifiableCredential(rawCredential);
-    const credential = await deserializeVerifiableCredential(credentialJson);
+    const credentialJson = serializeVC(rawCredential);
+    const credential = await deserializeVC(credentialJson);
 
     expect(credential).not.toBeNull();
-    expect(validateSerializedVerifiableCredential(credentialJson)).not.toBeNull();
+    expect(validateSerializedVC(credentialJson)).not.toBeNull();
   });
 
   test("should validate array claim value properly", async () => {
@@ -162,11 +158,11 @@ describe("util/validateSerializedVerifiableCredential", () => {
         claims: { name: [{ firstName: "John", lastName: "Doe" }] },
       },
     };
-    const credentialJson = serializeVerifiableCredential(rawCredential);
-    const credential = await deserializeVerifiableCredential(credentialJson);
+    const credentialJson = serializeVC(rawCredential);
+    const credential = await deserializeVC(credentialJson);
 
     expect(credential).not.toBeNull();
-    expect(validateSerializedVerifiableCredential(credentialJson)).not.toBeNull();
+    expect(validateSerializedVC(credentialJson)).not.toBeNull();
   });
 
   test("should throw error is array element is not valid", async () => {
@@ -180,14 +176,14 @@ describe("util/validateSerializedVerifiableCredential", () => {
         claims: { name: [undefined as unknown as string] },
       },
     };
-    const credentialJson = serializeVerifiableCredential(rawCredential);
+    const credentialJson = serializeVC(rawCredential);
 
-    await expect(validateSerializedVerifiableCredential(credentialJson)).rejects.toThrow(ValidationError);
+    await expect(validateSerializedVC(credentialJson)).rejects.toThrow(ValidationError);
   });
 
   test("should return null if the string is not valid JSON", async () => {
     const rawCredential = "asdf";
-    await expect(deserializeVerifiableCredential(rawCredential)).rejects.toThrow(SyntaxError);
+    await expect(deserializeVC(rawCredential)).rejects.toThrow(SyntaxError);
   });
 
   test("should return false if the context property is not an array", async () => {
@@ -205,7 +201,7 @@ describe("util/validateSerializedVerifiableCredential", () => {
     };
     const credentialJson = stringify(rawCredential);
 
-    await expect(deserializeVerifiableCredential(credentialJson)).rejects.toThrow(ValidationError);
+    await expect(deserializeVC(credentialJson)).rejects.toThrow(ValidationError);
   });
 
   test("should return false if context entries are not strings", async () => {
@@ -223,7 +219,7 @@ describe("util/validateSerializedVerifiableCredential", () => {
     };
     const credentialJson = stringify(rawCredential);
 
-    await expect(deserializeVerifiableCredential(credentialJson)).rejects.toThrow(ValidationError);
+    await expect(deserializeVC(credentialJson)).rejects.toThrow(ValidationError);
   });
 
   test("should return false if the id property is not a string", async () => {
@@ -242,7 +238,7 @@ describe("util/validateSerializedVerifiableCredential", () => {
     };
     const credentialJson = stringify(rawCredential);
 
-    await expect(deserializeVerifiableCredential(credentialJson)).rejects.toThrow(ValidationError);
+    await expect(deserializeVC(credentialJson)).rejects.toThrow(ValidationError);
   });
 
   test("should return false if the type property is not an array", async () => {
@@ -260,7 +256,7 @@ describe("util/validateSerializedVerifiableCredential", () => {
     };
     const credentialJson = stringify(rawCredential);
 
-    await expect(deserializeVerifiableCredential(credentialJson)).rejects.toThrow(ValidationError);
+    await expect(deserializeVC(credentialJson)).rejects.toThrow(ValidationError);
   });
 
   test("should return false if the type array entries are not strings", async () => {
@@ -278,7 +274,7 @@ describe("util/validateSerializedVerifiableCredential", () => {
     };
     const credentialJson = stringify(rawCredential);
 
-    await expect(deserializeVerifiableCredential(credentialJson)).rejects.toThrow(ValidationError);
+    await expect(deserializeVC(credentialJson)).rejects.toThrow(ValidationError);
   });
 
   test("should return false if the issuer property does not exist", async () => {
@@ -295,7 +291,7 @@ describe("util/validateSerializedVerifiableCredential", () => {
     };
     const credentialJson = stringify(rawCredential);
 
-    await expect(deserializeVerifiableCredential(credentialJson)).rejects.toThrow(ValidationError);
+    await expect(deserializeVC(credentialJson)).rejects.toThrow(ValidationError);
   });
 
   test("should return false if the issuer property is not a string", async () => {
@@ -313,7 +309,7 @@ describe("util/validateSerializedVerifiableCredential", () => {
     };
     const credentialJson = stringify(rawCredential);
 
-    await expect(deserializeVerifiableCredential(credentialJson)).rejects.toThrow(ValidationError);
+    await expect(deserializeVC(credentialJson)).rejects.toThrow(ValidationError);
   });
 
   test("should return false if the issuance date does not exist", async () => {
@@ -330,7 +326,7 @@ describe("util/validateSerializedVerifiableCredential", () => {
     };
     const credentialJson = stringify(rawCredential);
 
-    await expect(deserializeVerifiableCredential(credentialJson)).rejects.toThrow(ValidationError);
+    await expect(deserializeVC(credentialJson)).rejects.toThrow(ValidationError);
   });
 
   test("should return false if the issuance date is not a date", async () => {
@@ -348,7 +344,7 @@ describe("util/validateSerializedVerifiableCredential", () => {
     };
     const credentialJson = stringify(rawCredential);
 
-    await expect(deserializeVerifiableCredential(credentialJson)).rejects.toThrow(ValidationError);
+    await expect(deserializeVC(credentialJson)).rejects.toThrow(ValidationError);
   });
 
   test("should return false if the expiration date is not a date", async () => {
@@ -367,7 +363,7 @@ describe("util/validateSerializedVerifiableCredential", () => {
     };
     const credentialJson = stringify(rawCredential);
 
-    await expect(deserializeVerifiableCredential(credentialJson)).rejects.toThrow(ValidationError);
+    await expect(deserializeVC(credentialJson)).rejects.toThrow(ValidationError);
   });
 
   test("should return false if the subject property does not exist", async () => {
@@ -379,7 +375,7 @@ describe("util/validateSerializedVerifiableCredential", () => {
     };
     const credentialJson = stringify(rawCredential);
 
-    await expect(deserializeVerifiableCredential(credentialJson)).rejects.toThrow(ValidationError);
+    await expect(deserializeVC(credentialJson)).rejects.toThrow(ValidationError);
   });
 
   test("should return false if the subject id is not a string", async () => {
@@ -397,7 +393,7 @@ describe("util/validateSerializedVerifiableCredential", () => {
     };
     const credentialJson = stringify(rawCredential);
 
-    await expect(deserializeVerifiableCredential(credentialJson)).rejects.toThrow(ValidationError);
+    await expect(deserializeVC(credentialJson)).rejects.toThrow(ValidationError);
   });
 
   test("should return false if the claims are not of valid format", async () => {
@@ -417,7 +413,7 @@ describe("util/validateSerializedVerifiableCredential", () => {
     };
     const credentialJson = stringify(rawCredential);
 
-    await expect(deserializeVerifiableCredential(credentialJson)).rejects.toThrow(ValidationError);
+    await expect(deserializeVC(credentialJson)).rejects.toThrow(ValidationError);
   });
 
   test("should return false if the status id is not a string", async () => {
@@ -439,7 +435,7 @@ describe("util/validateSerializedVerifiableCredential", () => {
     };
     const credentialJson = stringify(rawCredential);
 
-    await expect(deserializeVerifiableCredential(credentialJson)).rejects.toThrow(ValidationError);
+    await expect(deserializeVC(credentialJson)).rejects.toThrow(ValidationError);
   });
 
   test("should return false if the status type is not a string", async () => {
@@ -461,7 +457,7 @@ describe("util/validateSerializedVerifiableCredential", () => {
     };
     const credentialJson = stringify(rawCredential);
 
-    await expect(deserializeVerifiableCredential(credentialJson)).rejects.toThrow(ValidationError);
+    await expect(deserializeVC(credentialJson)).rejects.toThrow(ValidationError);
   });
 
   test("should return false if the proof id is not a string", async () => {
@@ -489,7 +485,7 @@ describe("util/validateSerializedVerifiableCredential", () => {
     };
     const credentialJson = stringify(rawCredential);
 
-    await expect(deserializeVerifiableCredential(credentialJson)).rejects.toThrow(ValidationError);
+    await expect(deserializeVC(credentialJson)).rejects.toThrow(ValidationError);
   });
 
   test("should return false if the proof type is not a string", async () => {
@@ -517,7 +513,7 @@ describe("util/validateSerializedVerifiableCredential", () => {
     };
     const credentialJson = stringify(rawCredential);
 
-    await expect(deserializeVerifiableCredential(credentialJson)).rejects.toThrow(ValidationError);
+    await expect(deserializeVC(credentialJson)).rejects.toThrow(ValidationError);
   });
 
   test("should return false if the proof purpose is not a string", async () => {
@@ -545,7 +541,7 @@ describe("util/validateSerializedVerifiableCredential", () => {
     };
     const credentialJson = stringify(rawCredential);
 
-    await expect(deserializeVerifiableCredential(credentialJson)).rejects.toThrow(ValidationError);
+    await expect(deserializeVC(credentialJson)).rejects.toThrow(ValidationError);
   });
 
   test("should return false if the proof verification method is not a string", async () => {
@@ -573,7 +569,7 @@ describe("util/validateSerializedVerifiableCredential", () => {
     };
     const credentialJson = stringify(rawCredential);
 
-    await expect(deserializeVerifiableCredential(credentialJson)).rejects.toThrow(ValidationError);
+    await expect(deserializeVC(credentialJson)).rejects.toThrow(ValidationError);
   });
 
   test("should return false if the proof created time is not a date", async () => {
@@ -601,7 +597,7 @@ describe("util/validateSerializedVerifiableCredential", () => {
     };
     const credentialJson = stringify(rawCredential);
 
-    await expect(deserializeVerifiableCredential(credentialJson)).rejects.toThrow(ValidationError);
+    await expect(deserializeVC(credentialJson)).rejects.toThrow(ValidationError);
   });
 
   test("should return false if the proof value is not a string", async () => {
@@ -629,7 +625,7 @@ describe("util/validateSerializedVerifiableCredential", () => {
     };
     const credentialJson = stringify(rawCredential);
 
-    await expect(deserializeVerifiableCredential(credentialJson)).rejects.toThrow(ValidationError);
+    await expect(deserializeVC(credentialJson)).rejects.toThrow(ValidationError);
   });
 });
 
@@ -660,7 +656,7 @@ describe("util/hashVerifiableCredential", () => {
       },
     };
 
-    expect(hashVerifiableCredential(credentialOne)).toBe(hashVerifiableCredential(credentialTwo));
+    expect(hashVC(credentialOne)).toBe(hashVC(credentialTwo));
   });
 
   test("should produce the same hash after serialization/deserialization", async () => {
@@ -676,10 +672,10 @@ describe("util/hashVerifiableCredential", () => {
         },
       },
     };
-    const credentialJson = serializeVerifiableCredential(credential);
-    const deserializedCredential = await deserializeVerifiableCredential(credentialJson);
+    const credentialJson = serializeVC(credential);
+    const deserializedCredential = await deserializeVC(credentialJson);
 
-    expect(hashVerifiableCredential(credential)).toBe(hashVerifiableCredential(deserializedCredential));
+    expect(hashVC(credential)).toBe(hashVC(deserializedCredential));
   });
 });
 
@@ -699,10 +695,10 @@ describe("util/generateInitialMetadataForVerifiableCredential", () => {
         },
       },
     };
-    const metadata = generateInitialMetadataForVerifiableCredential(rawCredential, defaultCredentialName);
+    const metadata = generateInitialMetadataForVC(rawCredential, defaultCredentialName);
     const expectedMetadata = {
       name: "Verifiable Credential",
-      hash: hashVerifiableCredential(rawCredential),
+      hash: hashVC(rawCredential),
     };
 
     expect(metadata).toStrictEqual(expectedMetadata);

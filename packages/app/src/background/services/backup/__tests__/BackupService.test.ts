@@ -151,7 +151,7 @@ describe("background/services/backup/BackupService", () => {
     const invalidFileContent = JSON.stringify({ unknown: "encrypted" }, null, 4);
     const fileContent = JSON.stringify({ lock: "encrypted", wallet: "encrypted", approval: "encrypted" }, null, 4);
 
-    await expect(backupService.upload({ content: invalidFileContent, ...defaultPasswords })).rejects.toThrowError(
+    await expect(backupService.upload({ content: invalidFileContent, ...defaultPasswords })).rejects.toThrow(
       "File content is corrupted",
     );
 
