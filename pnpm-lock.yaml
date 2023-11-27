@@ -177,8 +177,8 @@ importers:
         specifier: ^5.3.0
         version: 5.3.0
       ethers:
-        specifier: ^6.8.1
-        version: 6.8.1
+        specifier: ^6.9.0
+        version: 6.9.0
       eventemitter2:
         specifier: ^6.4.9
         version: 6.4.9
@@ -415,8 +415,8 @@ importers:
         specifier: ^16.3.1
         version: 16.3.1
       ethers:
-        specifier: ^6.8.1
-        version: 6.8.1
+        specifier: ^6.9.0
+        version: 6.9.0
       prism-react-renderer:
         specifier: ^2.3.0
         version: 2.3.0(react@18.2.0)
@@ -2313,7 +2313,7 @@ packages:
       '@semaphore-protocol/identity': 3.10.1
       '@zk-kit/incremental-merkle-tree': 0.4.3
       axios: 1.5.0
-      ethers: 6.8.1
+      ethers: 6.9.0
       poseidon-lite: 0.0.2
     transitivePeerDependencies:
       - bufferutil
@@ -5089,7 +5089,7 @@ packages:
       dotenv: 16.3.1
       dotenv-parse-variables: 2.0.0
       download: 8.0.0
-      ethers: 6.8.1
+      ethers: 6.9.0
       etherscan-api: 10.3.0(debug@4.3.4)
       find-config: 1.0.0
       get-port: 6.1.2
@@ -9593,8 +9593,8 @@ packages:
       '@scure/bip39': 1.2.1
     dev: false
 
-  /ethers@6.8.1:
-    resolution: {integrity: sha512-iEKm6zox5h1lDn6scuRWdIdFJUCGg3+/aQWu0F4K0GVyEZiktFkqrJbRjTn1FlYEPz7RKA707D6g5Kdk6j7Ljg==}
+  /ethers@6.9.0:
+    resolution: {integrity: sha512-pmfNyQzc2mseLe91FnT2vmNaTt8dDzhxZ/xItAV7uGsF4dI4ek2ufMu3rAkgQETL/TIs0GS5A+U05g9QyWnv3Q==}
     engines: {node: '>=14.0.0'}
     dependencies:
       '@adraffy/ens-normalize': 1.10.0
