@@ -115,7 +115,7 @@ jobs:
         with:
           run: pnpm run ${{ matrix.command }}
 
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         if: always()
         continue-on-error: true
         with:
